@@ -48,3 +48,7 @@ app.*.map.json
 # Salidas locales de verificación
 build.log
 /coverage/
+
+# APK generado para instalar en el teléfono
+*.apk
+release.log
