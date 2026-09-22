@@ -32,6 +32,9 @@ class SessionDraft {
     this.limitingExercise,
     this.context,
     this.notes,
+    this.techniqueOk,
+    this.fullRange,
+    this.recoveryOk,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
   })  : sets = sets ?? [],
@@ -51,6 +54,11 @@ class SessionDraft {
   String? limitingExercise;
   String? context;
   String? notes;
+
+  // Condiciones de la regla de progresión (null = sin registrar).
+  bool? techniqueOk;
+  bool? fullRange;
+  bool? recoveryOk;
 
   /// En orden de ejecución; el índice de serie se calcula por ejercicio.
   final List<SetDraft> sets;
@@ -111,6 +119,9 @@ class TrainingRepository {
           limitingExerciseId: Value(limitingId),
           context: Value(_blankToNull(d.context)),
           notes: Value(_blankToNull(d.notes)),
+          techniqueOk: Value(d.techniqueOk),
+          fullRange: Value(d.fullRange),
+          recoveryOk: Value(d.recoveryOk),
         );
         final int id;
         if (d.id == null) {
@@ -173,6 +184,9 @@ class TrainingRepository {
       limitingExercise: r.limitingExerciseId == null ? null : names[r.limitingExerciseId],
       context: r.context,
       notes: r.notes,
+      techniqueOk: r.techniqueOk,
+      fullRange: r.fullRange,
+      recoveryOk: r.recoveryOk,
       sets: [
         for (final s in sets)
           SetDraft(
@@ -185,6 +199,24 @@ class TrainingRepository {
       ],
       roundMarksSec: rounds.map((x) => x.elapsedSec).toList(),
     );
+  }
+
+  /// Últimas rondas hechas antes de una fecha, por tipo de circuito.
+  Future<Map<SessionType, int>> lastRoundsBefore(DateTime date) async {
+    final out = <SessionType, int>{};
+    for (final type in SessionType.values.where((t) => t.isCircuit)) {
+      final row = await (db.select(db.sessions)
+            ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.equalsValue(type))
+            ..where((t) => t.roundsDone.isNotNull())
+            ..orderBy([
+              (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+              (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
+            ])
+            ..limit(1))
+          .getSingleOrNull();
+      if (row?.roundsDone != null) out[type] = row!.roundsDone!;
+    }
+    return out;
   }
 
   Future<void> delete(int id) => (db.delete(db.sessions)..where((t) => t.id.equals(id))).go();

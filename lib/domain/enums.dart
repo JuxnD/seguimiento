@@ -2,28 +2,50 @@
 /// renombrar un valor exige migración. Añadir valores al final es seguro.
 library;
 
-enum DayType { circuito, bloques, futbol, descanso }
+enum DayType { circuito, bloques, futbol, descanso, circuitoLigero, progresion }
 
 extension DayTypeLabel on DayType {
   String get label => switch (this) {
         DayType.circuito => 'Circuito',
+        DayType.circuitoLigero => 'Circuito ligero',
+        DayType.progresion => 'Progresión',
         DayType.bloques => 'Bloques',
         DayType.futbol => 'Fútbol',
         DayType.descanso => 'Descanso',
       };
 
   /// Días que cuentan como sesión de entrenamiento esperada.
-  bool get isTraining => this == DayType.circuito || this == DayType.bloques;
+  bool get isTraining => this != DayType.futbol && this != DayType.descanso;
+
+  /// Días que se registran contando rondas.
+  bool get isCircuit =>
+      this == DayType.circuito || this == DayType.circuitoLigero || this == DayType.progresion;
 }
 
 /// Tipo de una sesión registrada. El fútbol va aparte (FootballGames).
-enum SessionType { circuito, bloques, otro }
+enum SessionType { circuito, bloques, otro, circuitoLigero, progresion }
 
 extension SessionTypeLabel on SessionType {
   String get label => switch (this) {
         SessionType.circuito => 'Circuito',
+        SessionType.circuitoLigero => 'Circuito ligero',
+        SessionType.progresion => 'Progresión',
         SessionType.bloques => 'Bloques',
         SessionType.otro => 'Otro',
+      };
+
+  /// Las sesiones de circuito son las que cuentan rondas y récords.
+  bool get isCircuit =>
+      this == SessionType.circuito ||
+      this == SessionType.circuitoLigero ||
+      this == SessionType.progresion;
+
+  DayType get asDayType => switch (this) {
+        SessionType.circuito => DayType.circuito,
+        SessionType.circuitoLigero => DayType.circuitoLigero,
+        SessionType.progresion => DayType.progresion,
+        SessionType.bloques => DayType.bloques,
+        SessionType.otro => DayType.bloques,
       };
 }
 

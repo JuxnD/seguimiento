@@ -71,7 +71,16 @@ ReportInput weekFour({List<MealEntry>? meals, List<MeasurementEntry>? measuremen
         roundsEstimated: true,
         sets: [set('Flexiones', 1, 10, split: true, detail: '6+4')],
       ),
-      SessionEntry(date: d(21), startTime: '18:00', type: SessionType.circuito, totalSec: 1200, warmupSec: 400, cooldownSec: 180, roundsDone: 7),
+      SessionEntry(
+        date: d(21),
+        startTime: '18:00',
+        type: SessionType.circuito,
+        totalSec: 1200,
+        warmupSec: 400,
+        cooldownSec: 180,
+        roundsDone: 7,
+        sets: [set('Flexiones', 1, 12, split: true, detail: '8+4')],
+      ),
     ],
     football: [
       FootballEntry(date: d(17), format: 5, minutes: 60, steps: 7200, intensity: 8, fatigueAfter: 6),
@@ -125,7 +134,7 @@ void main() {
     test('detecta las reglas del plan', () {
       final alerts = buildAlerts(ReportStats(weekFour()));
       expect(alerts, contains('2 días seguidos bajo 2.000 kcal (mié 16, jue 17)'));
-      expect(alerts, contains('Flexiones partidas en 2 sesiones'));
+      expect(alerts, contains('Flexiones partidas en 3 sesiones'));
       expect(alerts, contains('Calentamiento < 6 min en 1 sesión'));
       expect(alerts, contains('Rondas estimadas por tiempo (no contadas) en 1 sesión'));
       expect(alerts.first, startsWith('Sin registro de comidas: sáb 19, dom 20, lun 21, mar 22'));
@@ -148,6 +157,79 @@ void main() {
         MeasurementEntry(date: DateTime(2026, 9, 18), site: MeasureSite.abdomen, valueCm: 84),
       ]);
       expect(buildAlerts(ReportStats(input)).where((a) => a.startsWith('Medición')), isEmpty);
+    });
+  });
+
+  group('regla de progresión', () {
+    test('subir de ronda con series partidas genera alerta', () {
+      final base = weekFour();
+      final input = ReportInput(
+        programStart: base.programStart,
+        rangeStart: base.rangeStart,
+        rangeEnd: base.rangeEnd,
+        today: base.today,
+        planVersions: base.planVersions,
+        roundsBeforeRange: const {SessionType.circuito: 6},
+        sessions: [
+          SessionEntry(
+            date: DateTime(2026, 9, 16),
+            type: SessionType.circuito,
+            roundsDone: 7,
+            sets: [const SetEntry(exercise: 'Flexiones', setIndex: 1, reps: 10, split: true)],
+          ),
+        ],
+      );
+      expect(
+        buildAlerts(ReportStats(input)),
+        contains('Subiste de 6 a 7 rondas el 16 sep sin cumplir la regla de progresión (series partidas)'),
+      );
+    });
+
+    test('subir de ronda limpio no genera alerta', () {
+      final base = weekFour();
+      final input = ReportInput(
+        programStart: base.programStart,
+        rangeStart: base.rangeStart,
+        rangeEnd: base.rangeEnd,
+        today: base.today,
+        roundsBeforeRange: const {SessionType.circuito: 6},
+        sessions: [
+          SessionEntry(
+            date: DateTime(2026, 9, 16),
+            type: SessionType.circuito,
+            roundsDone: 7,
+            techniqueOk: true,
+            fullRange: true,
+            recoveryOk: true,
+            sets: [const SetEntry(exercise: 'Flexiones', setIndex: 1, reps: 10)],
+          ),
+        ],
+      );
+      expect(buildAlerts(ReportStats(input)).where((a) => a.startsWith('Subiste')), isEmpty);
+    });
+
+    test('técnica o recuperación marcadas en no también bloquean', () {
+      final base = weekFour();
+      final input = ReportInput(
+        programStart: base.programStart,
+        rangeStart: base.rangeStart,
+        rangeEnd: base.rangeEnd,
+        today: base.today,
+        roundsBeforeRange: const {SessionType.progresion: 7},
+        sessions: [
+          SessionEntry(
+            date: DateTime(2026, 9, 18),
+            type: SessionType.progresion,
+            roundsDone: 8,
+            techniqueOk: false,
+            recoveryOk: false,
+          ),
+        ],
+      );
+      expect(
+        buildAlerts(ReportStats(input)).firstWhere((a) => a.startsWith('Subiste')),
+        contains('(técnica, recuperación)'),
+      );
     });
   });
 

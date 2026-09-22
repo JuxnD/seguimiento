@@ -42,6 +42,11 @@ Para ver una salida completa con datos de ejemplo:
 - **Récord de rondas**: máximo de rondas de sesiones de circuito dentro del
   rango, comparado con el máximo anterior al rango.
 - **Rondas estimadas**: se marcan con `~` y `(est.)`, y generan alerta.
+- **Regla de progresión**: solo se sube de ronda con 0 series partidas, sin
+  fallo, técnica buena, rango completo y recuperación normal. La sesión guarda
+  esas tres condiciones; el informe compara cada sesión de circuito con la
+  anterior **del mismo tipo** (circuito, circuito ligero y progresión llevan
+  cuentas separadas).
 
 ## Alertas
 
@@ -54,7 +59,8 @@ es independiente; los umbrales viven en el perfil, no en el código.
 | Días seguidos bajo el piso | Racha ≥ 2 días registrados bajo el piso de kcal | `kcalFloor` (2.000) |
 | Proteína baja | Promedio del rango bajo el mínimo | `proteinMin` (130 g) |
 | Sesiones por debajo del plan | Hechas < esperadas | Plan vigente |
-| Ejercicio partido repetido | Mismo ejercicio con serie partida en ≥ 2 sesiones | — |
+| Ejercicio partido repetido | Mismo ejercicio con serie partida en ≥ 3 sesiones | — |
+| Progresión indebida | Se subió de ronda respecto a la sesión previa del mismo tipo con series partidas, fallo, técnica, rango o recuperación en rojo | Regla del plan |
 | Calentamiento corto | Sesiones con calentamiento bajo el mínimo | `minWarmupSec` (6 min) |
 | Rondas estimadas | Sesiones con rondas calculadas por tiempo | — |
 | Medición antes de tiempo | Toma a menos días de la anterior que el intervalo | `measureIntervalDays` (21) |

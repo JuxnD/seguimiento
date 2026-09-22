@@ -25,9 +25,11 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   el respaldo es exportar la base desde Ajustes y restaurarla desde ahí mismo.
 - Las versiones se publican como GitHub Releases públicas y **todas deben ir
   firmadas con la misma llave**, o Android no deja actualizar sobre lo instalado.
-- Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, días entre
-  medidas) viven en la tabla `profiles`, no en el código: este repositorio no
-  guarda los valores de nadie.
+- Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, ventana de
+  medición) viven en la tabla `profiles` y se pueden editar en Ajustes.
+- El plan que se siembra en la primera apertura está en `lib/data/seed_plan.dart`
+  (dos versiones: base y la que añade bloques de core, cuádriceps y hombro).
+  Editarlo desde la app crea versiones nuevas; la siembra no vuelve a correr.
 - El informe de ejemplo (`docs/ejemplo-informe.md`) no se versiona: se genera en
   local con `dart run tool/sample_report.dart`.
 

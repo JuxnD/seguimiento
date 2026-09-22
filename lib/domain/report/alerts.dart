@@ -36,10 +36,16 @@ List<String> buildAlerts(ReportStats s) {
       splitSessions[n] = (splitSessions[n] ?? 0) + 1;
     }
   }
-  final repeated = splitSessions.entries.where((e) => e.value >= 2).toList()
+  // El plan pide avisar a partir de 3 sesiones con el mismo ejercicio partido.
+  final repeated = splitSessions.entries.where((e) => e.value >= 3).toList()
     ..sort((a, b) => b.value.compareTo(a.value));
   for (final e in repeated) {
     out.add('${e.key} partidas en ${e.value} sesiones');
+  }
+
+  for (final (session, before, blockers) in progressionViolations(s)) {
+    out.add('Subiste de $before a ${session.roundsDone} rondas el ${formatShort(session.date)} '
+        'sin cumplir la regla de progresión (${blockers.join(', ')})');
   }
 
   final shortWarmups = s.input.sessions.where((x) => x.warmupSec < t.minWarmupSec).length;

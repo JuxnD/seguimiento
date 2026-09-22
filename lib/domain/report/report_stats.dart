@@ -78,9 +78,7 @@ class ReportStats {
           .compareTo('${dayKey(b.date)} ${b.startTime ?? ''}'));
 
   int? get maxRoundsInRange {
-    final r = input.sessions
-        .where((s) => s.type == SessionType.circuito && s.roundsDone != null)
-        .map((s) => s.roundsDone!);
+    final r = input.sessions.where((s) => s.type.isCircuit && s.roundsDone != null).map((s) => s.roundsDone!);
     return r.isEmpty ? null : r.reduce((a, b) => a > b ? a : b);
   }
 
@@ -100,4 +98,20 @@ class ReportStats {
     if (current.isNotEmpty) streaks.add(current);
     return streaks;
   }
+}
+
+/// Sesiones de circuito que subieron de ronda sin cumplir la regla de
+/// progresión, con el motivo. Orden cronológico.
+List<(SessionEntry, int, List<String>)> progressionViolations(ReportStats s) {
+  final out = <(SessionEntry, int, List<String>)>[];
+  final previous = <SessionType, int>{...s.input.roundsBeforeRange};
+  for (final session in s.sessionsSorted.where((x) => x.type.isCircuit && x.roundsDone != null)) {
+    final before = previous[session.type];
+    final blockers = session.progressionBlockers;
+    if (before != null && session.roundsDone! > before && blockers.isNotEmpty) {
+      out.add((session, before, blockers));
+    }
+    previous[session.type] = session.roundsDone!;
+  }
+  return out;
 }

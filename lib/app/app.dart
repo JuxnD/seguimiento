@@ -6,6 +6,7 @@ import '../features/home/home_screen.dart';
 import '../features/meals/meals_screen.dart';
 import '../features/report/report_screen.dart';
 import '../features/training/training_screen.dart';
+import '../ui/theme.dart';
 
 class SeguimientoApp extends StatelessWidget {
   const SeguimientoApp({super.key});
@@ -22,16 +23,9 @@ class SeguimientoApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF2E7D32),
-        useMaterial3: true,
-        inputDecorationTheme: const InputDecorationTheme(isDense: true),
-      ),
-      darkTheme: ThemeData(
-        colorSchemeSeed: const Color(0xFF2E7D32),
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
+      theme: buildGymTheme(),
+      darkTheme: buildGymTheme(),
+      themeMode: ThemeMode.dark,
       home: const HomeShell(),
     );
   }

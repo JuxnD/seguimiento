@@ -8,6 +8,14 @@ import '../../domain/enums.dart';
 import '../../domain/session_math.dart';
 import '../../ui/widgets.dart';
 
+SessionType _sessionTypeFor(DayType type) => switch (type) {
+      DayType.circuito => SessionType.circuito,
+      DayType.circuitoLigero => SessionType.circuitoLigero,
+      DayType.progresion => SessionType.progresion,
+      DayType.bloques => SessionType.bloques,
+      _ => SessionType.otro,
+    };
+
 /// Alta y edición de una sesión. Acepta un borrador ya poblado por el
 /// contador de rondas.
 class SessionFormScreen extends ConsumerStatefulWidget {
@@ -53,6 +61,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     }
     setState(() {
       d.planDayId = view.dayId;
+      d.type = _sessionTypeFor(view.day.type);
       for (final e in view.day.exercises) {
         final sets = e.sets ?? 1;
         for (var i = 0; i < sets; i++) {
@@ -247,6 +256,28 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             ],
           ),
           AppCard(
+            title: 'Regla de progresión',
+            children: [
+              const Text('Solo se sube de ronda con las tres en verde, sin series partidas y sin fallo.'),
+              const SizedBox(height: 8),
+              _TriToggle(
+                label: 'Técnica buena',
+                value: d.techniqueOk,
+                onChanged: (v) => setState(() => d.techniqueOk = v),
+              ),
+              _TriToggle(
+                label: 'Rango completo',
+                value: d.fullRange,
+                onChanged: (v) => setState(() => d.fullRange = v),
+              ),
+              _TriToggle(
+                label: 'Recuperación normal',
+                value: d.recoveryOk,
+                onChanged: (v) => setState(() => d.recoveryOk = v),
+              ),
+            ],
+          ),
+          AppCard(
             title: 'Sensaciones y contexto',
             children: [
               ScaleSelector(label: 'RPE general', value: d.rpe, onChanged: (v) => setState(() => d.rpe = v)),
@@ -280,6 +311,39 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         onPressed: _saving ? null : _save,
         icon: const Icon(Icons.save),
         label: const Text('Guardar'),
+      ),
+    );
+  }
+}
+
+/// Sí / No / sin registrar. El null importa: no es lo mismo "no lo anoté" que
+/// "la técnica falló".
+class _TriToggle extends StatelessWidget {
+  const _TriToggle({required this.label, required this.value, required this.onChanged});
+
+  final String label;
+  final bool? value;
+  final ValueChanged<bool?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(child: Text(label)),
+          ChoiceChip(
+            label: const Text('Sí'),
+            selected: value == true,
+            onSelected: (sel) => onChanged(sel ? true : null),
+          ),
+          const SizedBox(width: 6),
+          ChoiceChip(
+            label: const Text('No'),
+            selected: value == false,
+            onSelected: (sel) => onChanged(sel ? false : null),
+          ),
+        ],
       ),
     );
   }
@@ -340,6 +404,8 @@ class _SetRow extends StatelessWidget {
             selectedIcon: const Icon(Icons.local_fire_department),
             onPressed: () {
               set.toFailure = !set.toFailure;
+              // El plan dice no entrenar al fallo: se registra, pero se avisa.
+              if (set.toFailure) showSnack(context, 'El plan pide no llegar al fallo (RIR 1–3)');
               onChanged();
             },
           ),

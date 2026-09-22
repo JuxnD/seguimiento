@@ -19,6 +19,16 @@ class Profiles extends Table {
   IntColumn get kcalFloor => integer().withDefault(const Constant(2000))();
   IntColumn get minWarmupSec => integer().withDefault(const Constant(360))();
   IntColumn get measureIntervalDays => integer().withDefault(const Constant(21))();
+
+  /// Ventana recomendada de medición: [measureIntervalDays, measureIntervalMaxDays].
+  IntColumn get measureIntervalMaxDays => integer().withDefault(const Constant(28))();
+
+  /// Próxima medición acordada, si se fijó una fecha concreta.
+  TextColumn get nextMeasurementDate => text().nullable()();
+  IntColumn get cooldownTargetSec => integer().withDefault(const Constant(180))();
+
+  /// Regla del plan: no se entrena al fallo. La app avisa si se marca uno.
+  BoolColumn get neverToFailure => boolean().withDefault(const Constant(true))();
   TextColumn get lengthUnit => textEnum<LengthUnit>().withDefault(const Constant('cm'))();
 
   @override
@@ -49,6 +59,9 @@ class PlanDays extends Table {
   IntColumn get weekday => integer().check(weekday.isBetweenValues(1, 7))();
   TextColumn get type => textEnum<DayType>()();
   IntColumn get targetRounds => integer().nullable()();
+
+  /// Descanso entre rondas del circuito (dentro de la ronda no se descansa).
+  IntColumn get restBetweenRoundsSec => integer().nullable()();
   TextColumn get notes => text().nullable()();
 
   @override
@@ -67,7 +80,29 @@ class PlanExercises extends Table {
   IntColumn get repsMin => integer().nullable()();
   IntColumn get repsMax => integer().nullable()();
   IntColumn get restSec => integer().nullable()();
+
+  /// Descanso máximo cuando el plan da un rango (90–120 s).
+  IntColumn get restSecMax => integer().nullable()();
   TextColumn get grip => text().nullable()();
+
+  /// null = trabajo principal del día; si no, el bloque extra ('core',
+  /// 'cuádriceps', 'hombro') que va después de la sesión.
+  TextColumn get block => text().nullable()();
+
+  /// Bloques que alternan entre variantes: 'A' o 'B'.
+  TextColumn get variant => text().nullable()();
+
+  /// Ejercicios de sostén (plancha, hollow) en lugar de repeticiones.
+  IntColumn get holdSecMin => integer().nullable()();
+  IntColumn get holdSecMax => integer().nullable()();
+
+  /// Las repeticiones o el sostén son por lado.
+  BoolColumn get perSide => boolean().withDefault(const Constant(false))();
+  IntColumn get rirMin => integer().nullable()();
+  IntColumn get rirMax => integer().nullable()();
+
+  /// Cómo progresa y qué hacer si algo se resiente.
+  TextColumn get notes => text().nullable()();
 }
 
 @DataClassName('SessionRow')
@@ -89,6 +124,11 @@ class Sessions extends Table {
       integer().nullable().references(Exercises, #id, onDelete: KeyAction.setNull)();
   TextColumn get context => text().nullable()();
   TextColumn get notes => text().nullable()();
+
+  // Condiciones de la regla de progresión. null = no se registró.
+  BoolColumn get techniqueOk => boolean().nullable()();
+  BoolColumn get fullRange => boolean().nullable()();
+  BoolColumn get recoveryOk => boolean().nullable()();
 }
 
 /// Marcas del contador: segundos desde el inicio del circuito al cerrar cada ronda.

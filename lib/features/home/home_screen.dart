@@ -64,15 +64,52 @@ class HomeScreen extends ConsumerWidget {
                     return const Text('Sin plan para hoy. Créalo en Entreno → Plan.');
                   }
                   final day = view.day;
+                  final rounds = day.targetRounds;
+                  final scheme = Theme.of(context).colorScheme;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Plan v${view.versionNumber}: ${day.type.label}'
-                          '${day.targetRounds == null ? '' : ' · meta ${day.targetRounds} rondas'}'),
-                      if (day.exercises.isNotEmpty)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              day.type.label.toUpperCase(),
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: scheme.primary,
+                                    letterSpacing: 0.6,
+                                  ),
+                            ),
+                          ),
+                          if (rounds != null)
+                            Text('meta $rounds rondas', style: Theme.of(context).textTheme.bodyMedium),
+                          const SizedBox(width: 8),
+                          Text('v${view.versionNumber}', style: Theme.of(context).textTheme.bodySmall),
+                        ],
+                      ),
+                      for (final e in day.main)
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
-                          child: Text(day.exercises.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ')),
+                          child: Text('• ${e.name} ${e.targetLabel}'.trimRight()),
+                        ),
+                      if (day.restBetweenRoundsSec != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text('Descanso entre rondas: ${day.restBetweenRoundsSec} s',
+                              style: Theme.of(context).textTheme.bodySmall),
+                        ),
+                      for (final block in day.blocks.entries) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text('Bloque ${block.key}'.toUpperCase(),
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(letterSpacing: 0.6)),
+                        ),
+                        for (final e in block.value)
+                          Text('• ${e.variantPrefix}${e.name} ${e.targetLabel}'.trimRight()),
+                      ],
+                      if (day.notes != null && day.notes!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(day.notes!, style: Theme.of(context).textTheme.bodySmall),
                         ),
                     ],
                   );
@@ -92,24 +129,26 @@ class HomeScreen extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: ActionButton(
+                      icon: Icons.edit_note,
+                      label: 'Sesión',
                       onPressed: () => openSessionForm(context, SessionDraft(date: today)),
-                      icon: const Icon(Icons.edit_note),
-                      label: const Text('Sesión'),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: ActionButton(
+                      icon: Icons.sports_soccer,
+                      label: 'Fútbol',
                       onPressed: () => Navigator.push(
                           context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
-                      icon: const Icon(Icons.sports_soccer),
-                      label: const Text('Fútbol'),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: ActionButton(
+                      icon: Icons.restaurant,
+                      label: 'Comida',
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -122,8 +161,6 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      icon: const Icon(Icons.restaurant),
-                      label: const Text('Comida'),
                     ),
                   ),
                 ],

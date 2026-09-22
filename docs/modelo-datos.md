@@ -21,9 +21,9 @@ El código generado (`database.g.dart`) no se edita a mano.
 | `profiles` | Fila única (id = 1): inicio, metas, umbrales, unidad | Siempre existe; se crea al abrir la base |
 | `exercises` | Catálogo de ejercicios | Nombre único sin distinguir mayúsculas (se normalizan espacios) |
 | `plan_versions` | Versión del plan vigente desde `validFrom` | **Inmutable**: editar crea otra versión |
-| `plan_days` | Un día por versión (1 = lunes … 7 = domingo) | Único `(planVersionId, weekday)` |
-| `plan_exercises` | Ejercicios del día con series/reps/descanso | `position` ordena |
-| `sessions` | Sesión registrada | `roundsEstimated` marca rondas calculadas, no contadas |
+| `plan_days` | Un día por versión (1 = lunes … 7 = domingo), con rondas objetivo y descanso entre rondas | Único `(planVersionId, weekday)` |
+| `plan_exercises` | Ejercicios del día: series, reps o sostén, descanso (rango), agarre, RIR, por lado, bloque extra y variante | `position` ordena; `block = null` es el trabajo principal |
+| `sessions` | Sesión registrada | `roundsEstimated` marca rondas calculadas, no contadas; `techniqueOk`/`fullRange`/`recoveryOk` en `null` significan "no registrado", no "mal" |
 | `session_rounds` | Marca acumulada (s) al cerrar cada ronda | Procede del contador; permite la media real por ronda |
 | `session_sets` | Serie por ejercicio | `setIndex` es por ejercicio dentro de la sesión |
 | `football_games` | Partido aparte de las sesiones | Formato 5 o 7 |
@@ -61,6 +61,17 @@ El código generado (`database.g.dart`) no se edita a mano.
 | Versión | Cambio |
 |---|---|
 | 1 | Esquema inicial del MVP |
+| 2 | Plan con bloques extra, sostenes, RIR, por lado y descanso en rango; día con descanso entre rondas; sesión con las condiciones de la regla de progresión; perfil con ventana de medición, enfriamiento objetivo y regla de no llegar al fallo |
+
+La migración 1 → 2 solo añade columnas y está cubierta por
+[`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
+del esquema 1 con datos se abre, conserva lo registrado y queda en `user_version = 2`.
+
+## Siembra inicial
+
+En la primera apertura, [`seed_plan.dart`](../lib/data/seed_plan.dart) crea las
+dos versiones del plan y fija las metas del perfil. Es idempotente: si ya existe
+una versión de plan, no toca nada, así que nunca pisa lo que el usuario edite.
 
 ## Respaldo
 

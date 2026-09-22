@@ -73,6 +73,9 @@ class SessionEntry {
     this.notes,
     this.sets = const [],
     this.lapsSec = const [],
+    this.techniqueOk,
+    this.fullRange,
+    this.recoveryOk,
   });
 
   final DateTime date;
@@ -91,6 +94,20 @@ class SessionEntry {
 
   /// Duración de cada ronda registrada con el contador (segundos).
   final List<int> lapsSec;
+
+  // Condiciones de la regla de progresión; null = no registrado.
+  final bool? techniqueOk;
+  final bool? fullRange;
+  final bool? recoveryOk;
+
+  /// Motivos por los que esta sesión no habilita subir de ronda.
+  List<String> get progressionBlockers => [
+        if (sets.any((s) => s.split)) 'series partidas',
+        if (sets.any((s) => s.toFailure)) 'series al fallo',
+        if (techniqueOk == false) 'técnica',
+        if (fullRange == false) 'rango reducido',
+        if (recoveryOk == false) 'recuperación',
+      ];
 }
 
 class FootballEntry {
@@ -160,6 +177,7 @@ class ReportInput {
     this.planVersions = const [],
     this.sessions = const [],
     this.previousRoundsRecord,
+    this.roundsBeforeRange = const {},
     this.football = const [],
     this.meals = const [],
     this.weightsInRange = const [],
@@ -186,6 +204,10 @@ class ReportInput {
 
   /// Máximo de rondas de circuito antes del rango.
   final int? previousRoundsRecord;
+
+  /// Últimas rondas hechas antes del rango, por tipo de circuito: es contra
+  /// esto que se juzga si una sesión subió de ronda.
+  final Map<SessionType, int> roundsBeforeRange;
   final List<FootballEntry> football;
   final List<MealEntry> meals;
   final List<WeightEntry> weightsInRange;

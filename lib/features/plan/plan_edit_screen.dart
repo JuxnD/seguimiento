@@ -93,13 +93,29 @@ class _DayCard extends ConsumerWidget {
               ),
           ],
         ),
-        if (day.type == DayType.circuito) ...[
+        if (day.type.isCircuit) ...[
           const SizedBox(height: 8),
-          TextFormField(
-            initialValue: day.targetRounds?.toString() ?? '',
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Rondas objetivo', border: OutlineInputBorder()),
-            onChanged: (v) => day.targetRounds = int.tryParse(v),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: day.targetRounds?.toString() ?? '',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Rondas objetivo', border: OutlineInputBorder()),
+                  onChanged: (v) => day.targetRounds = int.tryParse(v),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextFormField(
+                  initialValue: day.restBetweenRoundsSec?.toString() ?? '',
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      labelText: 'Descanso entre rondas', suffixText: 's', border: OutlineInputBorder()),
+                  onChanged: (v) => day.restBetweenRoundsSec = int.tryParse(v),
+                ),
+              ),
+            ],
           ),
         ],
         if (day.type.isTraining) ...[
@@ -165,12 +181,40 @@ class _ExerciseRow extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          TextFormField(
-            initialValue: exercise.grip ?? '',
-            decoration: const InputDecoration(
-                labelText: 'Agarre / variante', hintText: 'Prono, supino…', border: OutlineInputBorder()),
-            onChanged: (v) => exercise.grip = v,
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: exercise.grip ?? '',
+                  decoration: const InputDecoration(
+                      labelText: 'Agarre / variante', hintText: 'Prona, supina…', border: OutlineInputBorder()),
+                  onChanged: (v) => exercise.grip = v,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: TextFormField(
+                  initialValue: exercise.block ?? '',
+                  decoration: const InputDecoration(
+                      labelText: 'Bloque', hintText: 'core, hombro…', border: OutlineInputBorder()),
+                  onChanged: (v) => exercise.block = v.trim().isEmpty ? null : v.trim(),
+                ),
+              ),
+            ],
           ),
+          if (exercise.isHold || exercise.perSide || exercise.rirMin != null || exercise.notes != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                [
+                  if (exercise.isHold) 'sostén ${exercise.holdSecMin}–${exercise.holdSecMax}s',
+                  if (exercise.perSide) 'por lado',
+                  if (exercise.rirMin != null) 'RIR ${exercise.rirMin}–${exercise.rirMax}',
+                  if (exercise.notes != null) exercise.notes!,
+                ].join(' · '),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
         ],
       ),
     );

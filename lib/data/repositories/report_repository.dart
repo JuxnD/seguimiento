@@ -5,8 +5,10 @@ import '../../domain/enums.dart';
 import '../../domain/report/report_input.dart';
 import '../../domain/session_math.dart';
 import '../database.dart';
+import 'exercise_repository.dart';
 import 'nutrition_repository.dart';
 import 'profile_repository.dart';
+import 'training_repository.dart';
 
 /// Arma el `ReportInput` desde la base. Toda la lógica de negocio vive en
 /// `domain/report`; aquí solo se consulta y se mapea.
@@ -62,6 +64,9 @@ class ReportRepository {
         limitingExercise: s.limitingExerciseId == null ? null : names[s.limitingExerciseId],
         context: s.context,
         notes: s.notes,
+        techniqueOk: s.techniqueOk,
+        fullRange: s.fullRange,
+        recoveryOk: s.recoveryOk,
         lapsSec: lapDurations(marks),
         sets: [
           for (final x in sets)
@@ -80,9 +85,12 @@ class ReportRepository {
     final maxBefore = db.sessions.roundsDone.max();
     final prevRecord = await (db.selectOnly(db.sessions)
           ..addColumns([maxBefore])
-          ..where(db.sessions.date.isSmallerThanValue(f) & db.sessions.type.equalsValue(SessionType.circuito)))
+          ..where(db.sessions.date.isSmallerThanValue(f) &
+              db.sessions.type.isIn(SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList())))
         .map((r) => r.read(maxBefore))
         .getSingle();
+
+    final roundsBefore = await TrainingRepository(db, ExerciseRepository(db)).lastRoundsBefore(from);
 
     final football = await (db.select(db.footballGames)..where((x) => x.date.isBetweenValues(f, t))).get();
 
@@ -126,6 +134,7 @@ class ReportRepository {
       planVersions: planInfos,
       sessions: sessions,
       previousRoundsRecord: prevRecord,
+      roundsBeforeRange: roundsBefore,
       football: [
         for (final g in football)
           FootballEntry(

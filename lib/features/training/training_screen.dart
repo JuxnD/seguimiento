@@ -68,19 +68,19 @@ class TrainingScreen extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: ActionButton(
+                      icon: Icons.edit_note,
+                      label: 'A mano',
                       onPressed: () => openSessionForm(context, SessionDraft(date: dateOnly(DateTime.now()))),
-                      icon: const Icon(Icons.edit_note),
-                      label: const Text('Registrar a mano'),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: ActionButton(
+                      icon: Icons.sports_soccer,
+                      label: 'Fútbol',
                       onPressed: () => Navigator.push(
                           context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
-                      icon: const Icon(Icons.sports_soccer),
-                      label: const Text('Fútbol'),
                     ),
                   ),
                 ],

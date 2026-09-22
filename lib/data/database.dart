@@ -36,7 +36,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -44,6 +44,33 @@ class AppDatabase extends _$AppDatabase {
           await m.createAll();
           // El programa arranca el día de la instalación; se ajusta en Perfil.
           await into(profiles).insert(ProfilesCompanion.insert(startDate: dayKey(DateTime.now())));
+        },
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            // v2: el plan admite bloques extra, sostenes, RIR y rangos de
+            // descanso; la sesión guarda las condiciones de progresión.
+            await m.addColumn(profiles, profiles.measureIntervalMaxDays);
+            await m.addColumn(profiles, profiles.nextMeasurementDate);
+            await m.addColumn(profiles, profiles.cooldownTargetSec);
+            await m.addColumn(profiles, profiles.neverToFailure);
+            await m.addColumn(planDays, planDays.restBetweenRoundsSec);
+            for (final column in [
+              planExercises.restSecMax,
+              planExercises.block,
+              planExercises.variant,
+              planExercises.holdSecMin,
+              planExercises.holdSecMax,
+              planExercises.perSide,
+              planExercises.rirMin,
+              planExercises.rirMax,
+              planExercises.notes,
+            ]) {
+              await m.addColumn(planExercises, column);
+            }
+            await m.addColumn(sessions, sessions.techniqueOk);
+            await m.addColumn(sessions, sessions.fullRange);
+            await m.addColumn(sessions, sessions.recoveryOk);
+          }
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');

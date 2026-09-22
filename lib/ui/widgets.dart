@@ -39,6 +39,31 @@ class AppCard extends StatelessWidget {
   }
 }
 
+/// Botón de acción compacto para filas de 2–3 botones: el texto nunca parte
+/// en dos líneas, se recorta.
+class ActionButton extends StatelessWidget {
+  const ActionButton({super.key, required this.icon, required this.label, required this.onPressed});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => OutlinedButton(
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, softWrap: false),
+            ),
+          ],
+        ),
+      );
+}
+
 class EmptyHint extends StatelessWidget {
   const EmptyHint(this.text, {super.key});
 

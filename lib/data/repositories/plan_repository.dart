@@ -6,14 +6,48 @@ import '../database.dart';
 import 'exercise_repository.dart';
 
 class PlanExerciseDraft {
-  PlanExerciseDraft({required this.name, this.sets, this.repsMin, this.repsMax, this.restSec, this.grip});
+  PlanExerciseDraft({
+    required this.name,
+    this.sets,
+    this.repsMin,
+    this.repsMax,
+    this.restSec,
+    this.restSecMax,
+    this.grip,
+    this.block,
+    this.variant,
+    this.holdSecMin,
+    this.holdSecMax,
+    this.perSide = false,
+    this.rirMin,
+    this.rirMax,
+    this.notes,
+  });
 
   String name;
   int? sets;
   int? repsMin;
   int? repsMax;
   int? restSec;
+  int? restSecMax;
   String? grip;
+
+  /// null = trabajo principal; si no, el bloque extra ('core', 'hombro'…).
+  String? block;
+
+  /// 'A' o 'B' cuando el bloque alterna entre variantes.
+  String? variant;
+  int? holdSecMin;
+  int? holdSecMax;
+  bool perSide;
+  int? rirMin;
+  int? rirMax;
+  String? notes;
+
+  bool get isHold => holdSecMin != null;
+
+  /// '(A) ' cuando el bloque alterna variantes.
+  String get variantPrefix => variant == null ? '' : '($variant) ';
 
   String get targetLabel {
     final reps = repsMin == null
@@ -21,9 +55,28 @@ class PlanExerciseDraft {
         : (repsMax == null || repsMax == repsMin)
             ? '$repsMin'
             : '$repsMin–$repsMax';
+    final hold = holdSecMin == null
+        ? null
+        : (holdSecMax == null || holdSecMax == holdSecMin)
+            ? '${holdSecMin}s'
+            : '$holdSecMin–${holdSecMax}s';
+    final rest = restSec == null
+        ? null
+        : (restSecMax == null || restSecMax == restSec)
+            ? formatDuration(restSec!)
+            : '${formatDuration(restSec!)}–${formatDuration(restSecMax!)}';
     final parts = [
-      if (sets != null && reps != null) '$sets×$reps' else if (reps != null) '$reps reps',
-      if (restSec != null) 'desc. ${formatDuration(restSec!)}',
+      if (sets != null && hold != null)
+        '$sets×$hold'
+      else if (sets != null && reps != null)
+        '$sets×$reps'
+      else if (hold != null)
+        hold
+      else if (reps != null)
+        '$reps reps',
+      if (perSide) 'por lado',
+      if (rirMin != null) (rirMax == null || rirMax == rirMin) ? 'RIR $rirMin' : 'RIR $rirMin–$rirMax',
+      if (rest != null) 'desc. $rest',
       if (grip != null && grip!.isNotEmpty) grip!,
     ];
     return parts.join(' · ');
@@ -31,14 +84,33 @@ class PlanExerciseDraft {
 }
 
 class PlanDayDraft {
-  PlanDayDraft({required this.weekday, this.type = DayType.descanso, this.targetRounds, this.notes, List<PlanExerciseDraft>? exercises})
-      : exercises = exercises ?? [];
+  PlanDayDraft({
+    required this.weekday,
+    this.type = DayType.descanso,
+    this.targetRounds,
+    this.restBetweenRoundsSec,
+    this.notes,
+    List<PlanExerciseDraft>? exercises,
+  }) : exercises = exercises ?? [];
 
   final int weekday;
   DayType type;
   int? targetRounds;
+  int? restBetweenRoundsSec;
   String? notes;
   final List<PlanExerciseDraft> exercises;
+
+  /// Trabajo principal del día (sin los bloques extra).
+  List<PlanExerciseDraft> get main => exercises.where((e) => e.block == null).toList();
+
+  /// Bloques extra, agrupados por nombre de bloque.
+  Map<String, List<PlanExerciseDraft>> get blocks {
+    final out = <String, List<PlanExerciseDraft>>{};
+    for (final e in exercises.where((e) => e.block != null)) {
+      out.putIfAbsent(e.block!, () => []).add(e);
+    }
+    return out;
+  }
 }
 
 class PlanDraft {
@@ -100,6 +172,7 @@ class PlanRepository {
       final target = draft.days[d.weekday - 1]
         ..type = d.type
         ..targetRounds = d.targetRounds
+        ..restBetweenRoundsSec = d.restBetweenRoundsSec
         ..notes = d.notes;
       final ex = await (db.select(db.planExercises)
             ..where((t) => t.planDayId.equals(d.id))
@@ -111,7 +184,16 @@ class PlanRepository {
             repsMin: e.repsMin,
             repsMax: e.repsMax,
             restSec: e.restSec,
+            restSecMax: e.restSecMax,
             grip: e.grip,
+            block: e.block,
+            variant: e.variant,
+            holdSecMin: e.holdSecMin,
+            holdSecMax: e.holdSecMax,
+            perSide: e.perSide,
+            rirMin: e.rirMin,
+            rirMax: e.rirMax,
+            notes: e.notes,
           )));
     }
     return draft;
@@ -128,7 +210,8 @@ class PlanRepository {
                 planVersionId: versionId,
                 weekday: d.weekday,
                 type: d.type,
-                targetRounds: Value(d.type == DayType.circuito ? d.targetRounds : null),
+                targetRounds: Value(d.type.isCircuit ? d.targetRounds : null),
+                restBetweenRoundsSec: Value(d.type.isCircuit ? d.restBetweenRoundsSec : null),
                 notes: Value(_blankToNull(d.notes)),
               ));
           if (!d.type.isTraining) continue;
@@ -142,7 +225,16 @@ class PlanRepository {
                   repsMin: Value(e.repsMin),
                   repsMax: Value(e.repsMax ?? e.repsMin),
                   restSec: Value(e.restSec),
+                  restSecMax: Value(e.restSecMax),
                   grip: Value(_blankToNull(e.grip)),
+                  block: Value(_blankToNull(e.block)),
+                  variant: Value(_blankToNull(e.variant)),
+                  holdSecMin: Value(e.holdSecMin),
+                  holdSecMax: Value(e.holdSecMax),
+                  perSide: Value(e.perSide),
+                  rirMin: Value(e.rirMin),
+                  rirMax: Value(e.rirMax),
+                  notes: Value(_blankToNull(e.notes)),
                 ));
           }
         }

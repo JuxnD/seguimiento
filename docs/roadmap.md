@@ -19,6 +19,9 @@
 | Exportar la base como respaldo | Listo |
 | Restaurar un respaldo desde la app (con validación y rollback) | Listo |
 | Aviso de versión nueva por GitHub Releases | Listo |
+| Plan real sembrado en la primera apertura (v1 y v2) | Listo |
+| Regla de progresión registrada y auditada en el informe | Listo |
+| Tema oscuro naranja | Listo |
 
 ## Pendientes conocidos del MVP
 
@@ -26,6 +29,7 @@
 |---|---|
 | Persistir el contador en curso | Si la app muere a mitad del circuito, se pierde la sesión |
 | Respaldo automático periódico | Hoy hay que acordarse de exportar |
+| Editor del plan sin campos para sostén, RIR ni variante A/B | Se ven, pero solo se editan desde el código; al guardar no se pierden |
 | Pruebas de UI en Windows | Saltadas: `flutter_tester` se cuelga con `winsqlite3.dll` |
 
 ## v2
