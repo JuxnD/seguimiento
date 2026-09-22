@@ -57,3 +57,6 @@ release.log
 android/key.properties
 *.jks
 *.keystore
+
+# Ejemplo del informe: se genera en local y lleva números propios
+docs/ejemplo-informe.md

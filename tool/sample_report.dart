@@ -93,16 +93,16 @@ void main() {
         MealItemEntry(label: 'Batido', macros: Macros(kcal: 400, protein: 40, carbs: 35, fat: 8)),
       ]),
     ],
-    weightsInRange: [WeightEntry(date: d(16), kg: 71.6), WeightEntry(date: d(20), kg: 71.0)],
-    baselineWeight: WeightEntry(date: start, kg: 72.3),
+    weightsInRange: [WeightEntry(date: d(16), kg: 80.4), WeightEntry(date: d(20), kg: 80.0)],
+    baselineWeight: WeightEntry(date: start, kg: 81.0),
     measurementsInRange: [
-      MeasurementEntry(date: d(18), site: MeasureSite.abdomen, valueCm: 84),
-      MeasurementEntry(date: d(18), site: MeasureSite.brazoTensionado, valueCm: 34.5),
+      MeasurementEntry(date: d(18), site: MeasureSite.abdomen, valueCm: 90),
+      MeasurementEntry(date: d(18), site: MeasureSite.brazoTensionado, valueCm: 35.5),
     ],
     baselineMeasurements: {
-      MeasureSite.abdomen: MeasurementEntry(date: start, site: MeasureSite.abdomen, valueCm: 86),
+      MeasureSite.abdomen: MeasurementEntry(date: start, site: MeasureSite.abdomen, valueCm: 92),
       MeasureSite.brazoTensionado:
-          MeasurementEntry(date: start, site: MeasureSite.brazoTensionado, valueCm: 34),
+          MeasurementEntry(date: start, site: MeasureSite.brazoTensionado, valueCm: 35),
     },
     measurementDatesBefore: [start],
     notes: 'Semana con dos partidos y poca cocina en casa.',

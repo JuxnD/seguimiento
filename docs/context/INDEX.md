@@ -9,7 +9,6 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Alcance, riesgos y gates | [../project-map.md](../project-map.md) | Cambia el alcance o aparece un riesgo nuevo |
 | Datos e invariantes | [../modelo-datos.md](../modelo-datos.md) | Cambia una tabla, una unidad o el esquema |
 | Producto del informe | [../informe.md](../informe.md) | Cambia una sección, una métrica o una alerta |
-| Ejemplo del informe | [../ejemplo-informe.md](../ejemplo-informe.md) | Cambia el formato de salida (regenerar con `dart run tool/sample_report.dart`) |
 | Desviaciones de la planeación | [../auditoria-planeacion.md](../auditoria-planeacion.md) | Se acepta o rechaza un cambio al plan original |
 | Respaldo, restauración y releases | [../actualizaciones.md](../actualizaciones.md) | Cambia el flujo de respaldo, la firma o el pipeline |
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
@@ -17,16 +16,20 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
 ## Hechos que no se deducen del código
 
-- La fecha de inicio del programa (26 ago 2026) ancla las semanas del informe.
-  No es la semana calendario: la semana N va del inicio + (N−1)·7 días a +6.
+- La fecha de inicio del programa (la que el usuario fija en Perfil) ancla las
+  semanas del informe. No es la semana calendario: la semana N va del inicio +
+  (N−1)·7 días a +6.
 - El informe se pega en un chat para que un tercero lo audite. Por eso incluye
   detalle crudo (vueltas, series partidas, contexto) y no solo promedios.
 - Los datos viven únicamente en el dispositivo. No hay backend ni sincronización;
   el respaldo es exportar la base desde Ajustes y restaurarla desde ahí mismo.
 - Las versiones se publican como GitHub Releases públicas y **todas deben ir
   firmadas con la misma llave**, o Android no deja actualizar sobre lo instalado.
-- Metas vigentes: proteína 130–160 g/día, ~2.400 kcal, piso de alerta 2.000 kcal.
-  Están en el perfil, no en el código.
+- Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, días entre
+  medidas) viven en la tabla `profiles`, no en el código: este repositorio no
+  guarda los valores de nadie.
+- El informe de ejemplo (`docs/ejemplo-informe.md`) no se versiona: se genera en
+  local con `dart run tool/sample_report.dart`.
 
 ## Glosario
 

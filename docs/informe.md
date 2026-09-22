@@ -9,7 +9,8 @@ Generador: [`lib/domain/report/report_builder.dart`](../lib/domain/report/report
 [`report_repository.dart`](../lib/data/repositories/report_repository.dart).
 Pruebas: [`test/domain/report_test.dart`](../test/domain/report_test.dart).
 
-Ejemplo de salida con datos ficticios: [ejemplo-informe.md](ejemplo-informe.md).
+Para ver una salida completa con datos de ejemplo:
+`dart run tool/sample_report.dart > docs/ejemplo-informe.md` (no se versiona).
 
 ## Secciones
 

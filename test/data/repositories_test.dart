@@ -40,9 +40,9 @@ void main() {
 
   tearDown(() => db.close());
 
-  test('perfil por defecto con la fecha de inicio del plan', () async {
+  test('perfil por defecto: el programa arranca el día de la instalación', () async {
     final p = await ProfileRepository(db).get();
-    expect(p.startDate, '2026-08-26');
+    expect(p.startDate, dayKey(DateTime.now()));
     expect(p.proteinMin, 130);
     expect(p.kcalFloor, 2000);
   });
@@ -170,7 +170,10 @@ void main() {
     await body.addWeight(d(9, 18), 71.4);
     await ProfileRepository(db).saveWeekNote(4, 'Semana pesada');
 
-    final w = weekRange(parseDay(defaultStartDate), 4);
+    // La semana 4 depende del inicio del programa: se fija aquí.
+    const start = '2026-08-26';
+    await ProfileRepository(db).save(const ProfilesCompanion(startDate: Value(start)));
+    final w = weekRange(parseDay(start), 4);
     final md = buildReport(await report.load(w.start, w.end, today: d(9, 22)));
 
     expect(md, contains('# Informe semanal — 16 sep a 22 sep 2026'));

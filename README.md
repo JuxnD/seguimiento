@@ -83,6 +83,6 @@ Regla: si un cálculo aparece en el informe, vive en `lib/domain` y tiene prueba
 - [docs/modelo-datos.md](docs/modelo-datos.md) — tablas, invariantes, migraciones
 - [docs/actualizaciones.md](docs/actualizaciones.md) — respaldo, restauración, firma y cómo publicar una versión
 - [docs/informe.md](docs/informe.md) — qué contiene el informe y cada alerta
-- [docs/ejemplo-informe.md](docs/ejemplo-informe.md) — cómo se ve (datos ficticios, se regenera con `dart run tool/sample_report.dart`)
+- Para ver cómo queda el informe: `dart run tool/sample_report.dart > docs/ejemplo-informe.md` (ese archivo no se versiona)
 - [docs/auditoria-planeacion.md](docs/auditoria-planeacion.md) — cambios sobre la planeación original
 - [docs/adr/](docs/adr/) — decisiones con su porqué

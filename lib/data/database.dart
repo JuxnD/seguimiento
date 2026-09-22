@@ -5,13 +5,12 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../domain/dates.dart';
 import '../domain/enums.dart';
 import 'tables.dart';
 
 part 'database.g.dart';
 
-/// Fecha de inicio del programa por defecto (26 ago 2026). Editable en Perfil.
-const defaultStartDate = '2026-08-26';
 const databaseFileName = 'seguimiento.sqlite';
 
 @DriftDatabase(tables: [
@@ -43,7 +42,8 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
-          await into(profiles).insert(ProfilesCompanion.insert(startDate: defaultStartDate));
+          // El programa arranca el día de la instalación; se ajusta en Perfil.
+          await into(profiles).insert(ProfilesCompanion.insert(startDate: dayKey(DateTime.now())));
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');
