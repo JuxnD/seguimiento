@@ -66,7 +66,30 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                       onPressed: () => setState(() => _day = addDays(_day, 1))),
                 ],
               ),
-              meals.when(
+              AppCard(
+            title: 'Atajos',
+            children: [
+              ref.watch(mealTemplatesProvider).when(
+                    loading: () => const LinearProgressIndicator(),
+                    error: (e, _) => Text('Error: $e'),
+                    data: (templates) => templates.isEmpty
+                        ? const EmptyHint('Sin combos guardados.')
+                        : Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (final t in templates)
+                                ActionChip(
+                                  avatar: const Icon(Icons.bolt, size: 18),
+                                  label: Text('${t.name} · ${fmtInt(t.macros.kcal)} kcal'),
+                                  onPressed: () => _logTemplate(context, ref, t),
+                                ),
+                            ],
+                          ),
+                  ),
+            ],
+          ),
+          meals.when(
                 loading: () => const LinearProgressIndicator(),
                 error: (e, _) => Text('Error: $e'),
                 data: (list) {
@@ -115,6 +138,28 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
         label: const Text('Comida'),
       ),
     );
+  }
+
+  Future<void> _logTemplate(BuildContext context, WidgetRef ref, MealTemplate template) async {
+    final repo = ref.read(nutritionRepositoryProvider);
+    final now = DateTime.now();
+    final id = await repo.logTemplate(
+      template,
+      _day,
+      slot: template.row.slot ?? _slotForNow(),
+      time: timeKey(now.hour, now.minute),
+    );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text('${template.name}: ${fmtInt(template.macros.kcal)} kcal · '
+            'P ${fmtInt(template.macros.protein)} g'),
+        action: SnackBarAction(
+          label: 'Deshacer',
+          onPressed: () => repo.deleteMeal(id),
+        ),
+      ));
   }
 
   MealSlot _slotForNow() {

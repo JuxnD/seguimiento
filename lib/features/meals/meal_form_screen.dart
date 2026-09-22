@@ -39,6 +39,34 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     if (item != null) setState(() => d.items.add(item));
   }
 
+  /// Añade de un toque los alimentos de un combo frecuente.
+  Future<void> _addTemplate() async {
+    final templates = await ref.read(nutritionRepositoryProvider).templates();
+    if (!mounted) return;
+    if (templates.isEmpty) {
+      showSnack(context, 'No hay combos guardados');
+      return;
+    }
+    final chosen = await showModalBottomSheet<MealTemplate>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            for (final t in templates)
+              ListTile(
+                leading: const Icon(Icons.bolt),
+                title: Text(t.name),
+                subtitle: Text('${fmtInt(t.macros.kcal)} kcal · P ${fmtInt(t.macros.protein)} g'),
+                onTap: () => Navigator.pop(context, t),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (chosen != null) setState(() => d.items.addAll(chosen.toDrafts()));
+  }
+
   Future<void> _addFree() async {
     final item = await showDialog<MealItemDraft>(context: context, builder: (_) => const _FreeItemDialog());
     if (item != null) setState(() => d.items.add(item));
@@ -94,6 +122,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
             title: 'Alimentos',
             trailing: Wrap(
               children: [
+                IconButton(tooltip: 'Combo', icon: const Icon(Icons.bolt), onPressed: _addTemplate),
                 IconButton(
                     tooltip: 'Del catálogo', icon: const Icon(Icons.list_alt), onPressed: _addFromCatalog),
                 IconButton(tooltip: 'Entrada libre', icon: const Icon(Icons.edit), onPressed: _addFree),

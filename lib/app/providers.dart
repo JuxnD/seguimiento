@@ -44,6 +44,8 @@ final planVersionsProvider = StreamProvider((ref) => ref.watch(planRepositoryPro
 final sessionsProvider = StreamProvider((ref) => ref.watch(trainingRepositoryProvider).watchRecent());
 final footballProvider = StreamProvider((ref) => ref.watch(trainingRepositoryProvider).watchFootball());
 final foodsProvider = StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchFoods());
+final mealTemplatesProvider =
+    StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchTemplates());
 final weightsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchWeights());
 final checkInsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchCheckIns());
 

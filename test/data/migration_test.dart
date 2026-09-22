@@ -9,7 +9,8 @@ import 'package:seguimiento/domain/enums.dart';
 
 import '../support/sqlite_host.dart';
 
-/// Columnas que añadió el esquema 2.
+/// Columnas y tablas que añadió cada esquema, para poder reconstruir una base
+/// anterior a partir de la actual.
 const _v2Columns = {
   'profiles': ['measure_interval_max_days', 'next_measurement_date', 'cooldown_target_sec', 'never_to_failure'],
   'plan_days': ['rest_between_rounds_sec'],
@@ -26,6 +27,12 @@ const _v2Columns = {
   ],
   'sessions': ['technique_ok', 'full_range', 'recovery_ok'],
 };
+
+const _v3Columns = {
+  'foods': ['serving_grams', 'source'],
+  'meal_items': ['source_verified'],
+};
+const _v3Tables = ['meal_template_items', 'meal_templates'];
 
 void main() {
   setUpAll(useHostSqlite);
@@ -46,26 +53,41 @@ void main() {
     }
   });
 
-  /// Deja el archivo como lo tendría una app instalada con el esquema 1.
-  Future<void> buildSchemaV1() async {
+  /// Deja el archivo como lo tendría una app instalada con el esquema `version`.
+  Future<void> buildOldSchema(int version) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
-    for (final entry in _v2Columns.entries) {
+    for (final table in _v3Tables) {
+      await db.customStatement('drop table if exists $table');
+    }
+    for (final entry in _v3Columns.entries) {
       for (final column in entry.value) {
         await db.customStatement('alter table ${entry.key} drop column $column');
       }
     }
-    await db.customStatement('pragma user_version = 1');
+    if (version < 2) {
+      for (final entry in _v2Columns.entries) {
+        for (final column in entry.value) {
+          await db.customStatement('alter table ${entry.key} drop column $column');
+        }
+      }
+    }
+    await db.customStatement('pragma user_version = $version');
     await db.close();
   }
 
-  test('una base del esquema 1 se actualiza sin perder datos', () async {
-    await buildSchemaV1();
+  Future<int> userVersion(AppDatabase db) =>
+      db.customSelect('pragma user_version').map((r) => r.data.values.first as int).getSingle();
+
+  test('una base del esquema 1 llega al 3 sin perder datos', () async {
+    await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
     final old = AppDatabase(NativeDatabase(file));
     await old.customStatement("update profiles set start_date = '2026-08-26', kcal_target = 2500");
     await BodyRepository(old).addWeight(DateTime(2026, 9, 18), 71.4);
+    await old.customStatement(
+        "insert into foods (name, basis, unit_label, kcal, protein) values ('Huevo', 'unit', 'unidad', 70, 6)");
     await old.close();
 
     // Abrir con la app nueva dispara onUpgrade.
@@ -82,13 +104,14 @@ void main() {
     final weights = await BodyRepository(migrated).watchWeights().first;
     expect(weights.single.kg, 71.4);
 
-    final version = await migrated
-        .customSelect('pragma user_version')
-        .map((r) => r.data.values.first as int)
-        .getSingle();
-    expect(version, 2);
+    final food = (await migrated.select(migrated.foods).get()).single;
+    expect(food.name, 'Huevo');
+    expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
+    expect(food.servingGrams, isNull);
 
-    // Y el esquema nuevo ya acepta lo que el plan necesita.
+    expect(await userVersion(migrated), 3);
+
+    // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
           PlanVersionsCompanion.insert(validFrom: '2026-09-28', notes: const Value('v2')),
         );
@@ -99,6 +122,27 @@ void main() {
           restBetweenRoundsSec: const Value(30),
         ));
     expect(dayId, greaterThan(0));
+
+    final templateId =
+        await migrated.into(migrated.mealTemplates).insert(MealTemplatesCompanion.insert(name: 'Batido'));
+    expect(templateId, greaterThan(0));
+    await migrated.close();
+  });
+
+  test('una base del esquema 2 llega al 3 conservando el catálogo', () async {
+    await buildOldSchema(2);
+
+    final old = AppDatabase(NativeDatabase(file));
+    await old.customStatement(
+        "insert into foods (name, basis, unit_label, kcal, protein) values ('Atún', 'unit', 'lata', 120, 25)");
+    await old.close();
+
+    final migrated = AppDatabase(NativeDatabase(file));
+    final food = (await migrated.select(migrated.foods).get()).single;
+    expect(food.name, 'Atún');
+    expect(food.kcal, 120);
+    expect(food.source, MacroSource.referencia);
+    expect(await userVersion(migrated), 3);
     await migrated.close();
   });
 }

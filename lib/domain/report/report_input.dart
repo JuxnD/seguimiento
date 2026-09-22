@@ -131,11 +131,20 @@ class FootballEntry {
 }
 
 class MealItemEntry {
-  const MealItemEntry({required this.label, required this.macros, this.quantityLabel});
+  const MealItemEntry({
+    required this.label,
+    required this.macros,
+    this.quantityLabel,
+    this.sourceVerified,
+  });
 
   final String label;
   final String? quantityLabel;
   final Macros macros;
+
+  /// true = macros de etiqueta; false = de tabla de referencia; null = entrada
+  /// libre estimada a ojo.
+  final bool? sourceVerified;
 }
 
 class MealEntry {

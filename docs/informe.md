@@ -29,6 +29,11 @@ Para ver una salida completa con datos de ejemplo:
 7. **Alertas automáticas** — abajo.
 8. **Notas de la semana** — texto libre editable en la app.
 
+La sección de nutrición cierra con la **procedencia de las kcal**: qué parte
+viene de etiquetas verificadas, qué parte de tablas de referencia y qué parte
+son entradas libres estimadas a ojo. Sirve para saber cuánta confianza merece
+un promedio antes de tomar una decisión con él.
+
 ## Reglas de cálculo
 
 - **Semana N** = `floor((fecha − inicio) / 7) + 1`; la semana va del inicio +

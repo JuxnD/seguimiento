@@ -29,7 +29,13 @@ class FoodsScreen extends ConsumerWidget {
                 itemBuilder: (_, i) {
                   final f = list[i];
                   return ListTile(
-                    title: Text(f.name),
+                    title: Row(
+                      children: [
+                        Flexible(child: Text(f.name, overflow: TextOverflow.ellipsis)),
+                        const SizedBox(width: 8),
+                        _SourceBadge(source: f.source),
+                      ],
+                    ),
                     subtitle: Text('${fmtInt(f.kcal)} kcal · P ${fmtDec(f.protein)} · C ${fmtDec(f.carbs)} · '
                         'G ${fmtDec(f.fat)} ${f.basisLabel}'),
                     trailing: IconButton(
@@ -59,6 +65,34 @@ class FoodsScreen extends ConsumerWidget {
   }
 }
 
+/// Distingue lo verificado contra la etiqueta de lo que es un promedio.
+class _SourceBadge extends StatelessWidget {
+  const _SourceBadge({required this.source});
+
+  final MacroSource source;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final verified = source.isVerified;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: verified ? scheme.primary.withOpacity(0.18) : scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: verified ? scheme.primary : scheme.outline),
+      ),
+      child: Text(
+        source.label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: verified ? scheme.primary : scheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+      ),
+    );
+  }
+}
+
 class _FoodDialog extends StatefulWidget {
   const _FoodDialog({this.food});
 
@@ -77,6 +111,7 @@ class _FoodDialogState extends State<_FoodDialog> {
   late final _fat = TextEditingController(text: widget.food == null ? '' : fmtDec(widget.food!.fat));
   late final _qty = TextEditingController(text: fmtDec(widget.food?.defaultQuantity ?? 1));
   late FoodBasis _basis = widget.food?.basis ?? FoodBasis.unit;
+  late MacroSource _source = widget.food?.source ?? MacroSource.referencia;
 
   @override
   void dispose() {
@@ -146,6 +181,19 @@ class _FoodDialogState extends State<_FoodDialog> {
             ),
             const SizedBox(height: 8),
             NumberField(controller: _qty, label: 'Cantidad por defecto', decimal: true),
+            const SizedBox(height: 12),
+            SegmentedButton<MacroSource>(
+              segments: const [
+                ButtonSegment(value: MacroSource.etiqueta, label: Text('De la etiqueta')),
+                ButtonSegment(value: MacroSource.referencia, label: Text('De referencia')),
+              ],
+              selected: {_source},
+              onSelectionChanged: (s) => setState(() => _source = s.first),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: Text('"De referencia" son promedios: el informe los arrastra con esa incertidumbre.'),
+            ),
           ],
         ),
       ),
@@ -172,6 +220,7 @@ class _FoodDialogState extends State<_FoodDialog> {
                 carbs: Value(parseNum(_carbs.text) ?? 0),
                 fat: Value(parseNum(_fat.text) ?? 0),
                 defaultQuantity: Value(parseNum(_qty.text) ?? 1),
+                source: Value(_source),
               ),
             );
           },

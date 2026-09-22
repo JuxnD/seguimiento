@@ -182,6 +182,31 @@ class Foods extends Table {
 
   /// Cantidad por defecto al añadirlo (1 unidad, 100 g…).
   RealColumn get defaultQuantity => real().withDefault(const Constant(1))();
+
+  /// Gramos de una unidad (1 huevo ≈ 55 g). Informativo.
+  RealColumn get servingGrams => real().nullable()();
+
+  /// `etiqueta` = verificado contra el empaque; `referencia` = promedio.
+  TextColumn get source => textEnum<MacroSource>().withDefault(const Constant('referencia'))();
+}
+
+/// Combos de un toque: lo que se repite (batido, cena base…). Guardan
+/// referencias al catálogo; los macros se calculan al registrarlos.
+@DataClassName('MealTemplateRow')
+class MealTemplates extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text().unique()();
+  TextColumn get slot => textEnum<MealSlot>().nullable()();
+  IntColumn get position => integer().withDefault(const Constant(0))();
+}
+
+@DataClassName('MealTemplateItemRow')
+class MealTemplateItems extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get templateId => integer().references(MealTemplates, #id, onDelete: KeyAction.cascade)();
+  IntColumn get foodId => integer().references(Foods, #id, onDelete: KeyAction.cascade)();
+  RealColumn get quantity => real()();
+  IntColumn get position => integer().withDefault(const Constant(0))();
 }
 
 @DataClassName('MealRow')
@@ -207,6 +232,10 @@ class MealItems extends Table {
   RealColumn get protein => real()();
   RealColumn get carbs => real().withDefault(const Constant(0))();
   RealColumn get fat => real().withDefault(const Constant(0))();
+
+  /// Si los macros copiados venían de una etiqueta verificada. null = entrada
+  /// libre, donde la cifra es un cálculo a ojo.
+  BoolColumn get sourceVerified => boolean().nullable()();
 }
 
 @DataClassName('BodyWeightRow')

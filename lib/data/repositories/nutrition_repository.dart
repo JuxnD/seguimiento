@@ -7,7 +7,14 @@ import '../../domain/nutrition.dart';
 import '../database.dart';
 
 class MealItemDraft {
-  MealItemDraft({this.foodId, required this.label, this.quantity, this.quantityUnit, required this.macros});
+  MealItemDraft({
+    this.foodId,
+    required this.label,
+    this.quantity,
+    this.quantityUnit,
+    required this.macros,
+    this.sourceVerified,
+  });
 
   /// Desde el catálogo: los macros se calculan y se congelan al guardar.
   factory MealItemDraft.fromFood(FoodRow food, double quantity) => MealItemDraft(
@@ -16,6 +23,7 @@ class MealItemDraft {
         quantity: quantity,
         quantityUnit: food.unitLabel,
         macros: macrosFor(basis: food.basis, perBasis: food.macros, quantity: quantity),
+        sourceVerified: food.source.isVerified,
       );
 
   int? foodId;
@@ -23,6 +31,9 @@ class MealItemDraft {
   double? quantity;
   String? quantityUnit;
   Macros macros;
+
+  /// null en entradas libres: ahí la cifra es una estimación a ojo.
+  bool? sourceVerified;
 
   bool get isFree => foodId == null;
 
@@ -65,6 +76,24 @@ extension FoodRowMacros on FoodRow {
 
 extension MealItemRowMacros on MealItemRow {
   Macros get macros => Macros(kcal: kcal, protein: protein, carbs: carbs, fat: fat);
+}
+
+
+/// Combo con sus alimentos ya resueltos.
+class MealTemplate {
+  MealTemplate(this.row, this.items);
+
+  final MealTemplateRow row;
+
+  /// (alimento, cantidad en la unidad del alimento).
+  final List<(FoodRow, double)> items;
+
+  String get name => row.name;
+
+  List<MealItemDraft> toDrafts() =>
+      [for (final (food, quantity) in items) MealItemDraft.fromFood(food, quantity)];
+
+  Macros get macros => Macros.sum(toDrafts().map((i) => i.macros));
 }
 
 class NutritionRepository {
@@ -112,6 +141,46 @@ class NutritionRepository {
 
   /// Seguro: los items históricos conservan sus macros (foodId → null).
   Future<void> deleteFood(int id) => (db.delete(db.foods)..where((t) => t.id.equals(id))).go();
+
+  // ---------- Combos ----------
+
+  /// Combos frecuentes, con sus alimentos actuales del catálogo.
+  Future<List<MealTemplate>> templates() async {
+    final rows = await (db.select(db.mealTemplates)
+          ..orderBy([(t) => OrderingTerm(expression: t.position), (t) => OrderingTerm(expression: t.id)]))
+        .get();
+    final out = <MealTemplate>[];
+    for (final row in rows) {
+      final items = await (db.select(db.mealTemplateItems).join([
+        innerJoin(db.foods, db.foods.id.equalsExp(db.mealTemplateItems.foodId)),
+      ])
+            ..where(db.mealTemplateItems.templateId.equals(row.id))
+            ..orderBy([OrderingTerm(expression: db.mealTemplateItems.position)]))
+          .get();
+      out.add(MealTemplate(
+        row,
+        [
+          for (final r in items)
+            (r.readTable(db.foods), r.readTable(db.mealTemplateItems).quantity),
+        ],
+      ));
+    }
+    return out;
+  }
+
+  Stream<List<MealTemplate>> watchTemplates() =>
+      db.select(db.mealTemplates).watch().asyncMap((_) => templates());
+
+  /// Registra el combo como una comida del día. Devuelve el id de la comida.
+  Future<int> logTemplate(MealTemplate template, DateTime date, {MealSlot? slot, String? time}) {
+    final draft = MealDraft(
+      date: date,
+      time: time,
+      slot: slot ?? template.row.slot ?? MealSlot.otro,
+      items: template.toDrafts(),
+    );
+    return saveMeal(draft);
+  }
 
   // ---------- Comidas ----------
 
@@ -172,6 +241,7 @@ class NutritionRepository {
                 protein: it.macros.protein,
                 carbs: Value(it.macros.carbs),
                 fat: Value(it.macros.fat),
+                sourceVerified: Value(it.sourceVerified),
               ));
         }
         d.id = id;
@@ -198,6 +268,7 @@ class NutritionRepository {
             quantity: i.quantity,
             quantityUnit: i.quantityUnit,
             macros: i.macros,
+            sourceVerified: i.sourceVerified,
           ),
       ],
     );

@@ -27,6 +27,9 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   firmadas con la misma llave**, o Android no deja actualizar sobre lo instalado.
 - Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, ventana de
   medición) viven en la tabla `profiles` y se pueden editar en Ajustes.
+- El catálogo de alimentos y los combos se siembran en la primera apertura
+  (`lib/data/seed_foods.dart`). Cada alimento dice si sus macros salen de una
+  etiqueta o de una tabla de referencia, y el informe reporta esa proporción.
 - El plan que se siembra en la primera apertura está en `lib/data/seed_plan.dart`
   (dos versiones: base y la que añade bloques de core, cuádriceps y hombro).
   Editarlo desde la app crea versiones nuevas; la siembra no vuelve a correr.

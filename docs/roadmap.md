@@ -22,6 +22,9 @@
 | Plan real sembrado en la primera apertura (v1 y v2) | Listo |
 | Regla de progresión registrada y auditada en el informe | Listo |
 | Tema oscuro naranja | Listo |
+| Catálogo inicial de 30 alimentos con procedencia (etiqueta / referencia) | Listo |
+| Combos de un toque (batido, cena base, cena completa, almuerzo típico) | Listo |
+| Procedencia de las kcal en el informe | Listo |
 
 ## Pendientes conocidos del MVP
 
@@ -29,6 +32,8 @@
 |---|---|
 | Persistir el contador en curso | Si la app muere a mitad del circuito, se pierde la sesión |
 | Respaldo automático periódico | Hoy hay que acordarse de exportar |
+| Confirmar contra etiqueta Klim, Nestum y atún | Son de uso diario y hoy están como referencia; el catálogo los marca |
+| Crear y editar combos desde la app | Hoy se siembran desde el código |
 | Editor del plan sin campos para sostén, RIR ni variante A/B | Se ven, pero solo se editan desde el código; al guardar no se pierden |
 | Pruebas automáticas de interfaz | Retiradas: se colgaban con drift dentro de `flutter_test`, en Windows y en Linux. La UI se verifica en el teléfono |
 

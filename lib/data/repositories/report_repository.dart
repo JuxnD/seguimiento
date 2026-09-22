@@ -165,6 +165,7 @@ class ReportRepository {
                     macros: i.macros,
                   ).quantityLabel,
                   macros: i.macros,
+                  sourceVerified: i.sourceVerified,
                 ),
             ],
           ),

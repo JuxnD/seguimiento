@@ -65,6 +65,23 @@ class ReportStats {
 
   Macros? macrosOn(DateTime d) => dayMacros[dayKey(d)];
 
+  /// Reparto de las kcal del rango según de dónde salen sus macros.
+  /// (verificadas de etiqueta, de tabla de referencia, estimadas a ojo)
+  (double, double, double) get kcalBySource {
+    var label = 0.0, reference = 0.0, free = 0.0;
+    for (final item in input.meals.expand((m) => m.items)) {
+      switch (item.sourceVerified) {
+        case true:
+          label += item.macros.kcal;
+        case false:
+          reference += item.macros.kcal;
+        case null:
+          free += item.macros.kcal;
+      }
+    }
+    return (label, reference, free);
+  }
+
   double? get avgKcal => loggedDays.isEmpty ? null : _avg((m) => m.kcal);
   double? get avgProtein => loggedDays.isEmpty ? null : _avg((m) => m.protein);
   double? get avgCarbs => loggedDays.isEmpty ? null : _avg((m) => m.carbs);

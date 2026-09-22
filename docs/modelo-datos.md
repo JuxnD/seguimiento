@@ -27,8 +27,9 @@ El código generado (`database.g.dart`) no se edita a mano.
 | `session_rounds` | Marca acumulada (s) al cerrar cada ronda | Procede del contador; permite la media real por ronda |
 | `session_sets` | Serie por ejercicio | `setIndex` es por ejercicio dentro de la sesión |
 | `football_games` | Partido aparte de las sesiones | Formato 5 o 7 |
-| `foods` | Catálogo con macros por unidad o por 100 g/ml | `basis` decide cómo se multiplica la cantidad |
-| `meals` / `meal_items` | Comida y sus alimentos | Los macros del item son **copia**, no referencia |
+| `foods` | Catálogo con macros por unidad o por 100 g/ml, con la procedencia de las cifras | `basis` decide cómo se multiplica la cantidad; `source` distingue etiqueta de referencia |
+| `meal_templates` / `meal_template_items` | Combos de un toque (batido, cena base…) | Referencian el catálogo; no anidan otros combos |
+| `meals` / `meal_items` | Comida y sus alimentos | Los macros del item son **copia**, no referencia; `sourceVerified` recuerda si venían de etiqueta (null = entrada libre) |
 | `body_weights` | Pesajes | `fasted` distingue la condición |
 | `measurements` | Una medida por sitio y fecha | Único `(date, site)`: una toma por día |
 | `week_notes` | Notas libres por semana | La clave es el índice de semana anclado al inicio |
@@ -62,6 +63,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 |---|---|
 | 1 | Esquema inicial del MVP |
 | 2 | Plan con bloques extra, sostenes, RIR, por lado y descanso en rango; día con descanso entre rondas; sesión con las condiciones de la regla de progresión; perfil con ventana de medición, enfriamiento objetivo y regla de no llegar al fallo |
+| 3 | Alimento con gramos por porción y procedencia (`etiqueta` / `referencia`); ítem de comida con `sourceVerified`; tablas de combos |
 
 La migración 1 → 2 solo añade columnas y está cubierta por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
@@ -69,9 +71,22 @@ del esquema 1 con datos se abre, conserva lo registrado y queda en `user_version
 
 ## Siembra inicial
 
-En la primera apertura, [`seed_plan.dart`](../lib/data/seed_plan.dart) crea las
-dos versiones del plan y fija las metas del perfil. Es idempotente: si ya existe
-una versión de plan, no toca nada, así que nunca pisa lo que el usuario edite.
+En la primera apertura:
+
+- [`seed_plan.dart`](../lib/data/seed_plan.dart) crea las dos versiones del plan
+  y fija las metas del perfil.
+- [`seed_foods.dart`](../lib/data/seed_foods.dart) crea el catálogo (30
+  alimentos) y los combos frecuentes.
+
+Ambas son idempotentes: si ya hay plan o alimentos, no tocan nada, así que
+nunca pisan lo que el usuario edite.
+
+**Cómo se guarda cada alimento.** Lo que se mide en gramos o mililitros se
+normaliza a 100 (la cantidad se escribe en g/ml y `defaultQuantity` deja
+prellenada la porción habitual: 40 g de avena, 250 ml de jugo). Lo que se cuenta
+por piezas —huevo, lata, papeleta, vaso— guarda los macros de **una** unidad.
+Esa decisión es la que permite escribir "150 g de arroz" y "3 huevos" sin
+convertir nada mentalmente.
 
 ## Respaldo
 

@@ -26,6 +26,8 @@ const databaseFileName = 'seguimiento.sqlite';
   Foods,
   Meals,
   MealItems,
+  MealTemplates,
+  MealTemplateItems,
   BodyWeights,
   Measurements,
   WeekNotes,
@@ -36,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -70,6 +72,15 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessions, sessions.techniqueOk);
             await m.addColumn(sessions, sessions.fullRange);
             await m.addColumn(sessions, sessions.recoveryOk);
+          }
+          if (from < 3) {
+            // v3: el alimento dice de dónde salen sus macros y aparecen los
+            // combos de un toque.
+            await m.addColumn(foods, foods.servingGrams);
+            await m.addColumn(foods, foods.source);
+            await m.addColumn(mealItems, mealItems.sourceVerified);
+            await m.createTable(mealTemplates);
+            await m.createTable(mealTemplateItems);
           }
         },
         beforeOpen: (details) async {

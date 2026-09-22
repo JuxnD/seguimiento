@@ -182,6 +182,14 @@ void _nutrition(StringBuffer b, ReportStats s) {
         '${total == null ? 'sin registro' : '${fmtInt(total.kcal)}$flag'} | '
         '${total == null ? '—' : '${fmtInt(total.protein)} g'} |');
   }
+  final (verifiedKcal, referenceKcal, freeKcal) = s.kcalBySource;
+  final totalKcal = verifiedKcal + referenceKcal + freeKcal;
+  if (totalKcal > 0) {
+    b.writeln();
+    b.writeln('Procedencia de las kcal: ${_pct(verifiedKcal, totalKcal)} de etiqueta · '
+        '${_pct(referenceKcal, totalKcal)} de tablas de referencia · '
+        '${_pct(freeKcal, totalKcal)} estimado a ojo');
+  }
   if (s.loggedDays.isNotEmpty) {
     b.writeln();
     b.writeln('Promedio (días registrados): ${fmtInt(s.avgKcal!)} kcal · P ${fmtInt(s.avgProtein!)} g · '
@@ -265,6 +273,8 @@ void _notes(StringBuffer b, ReportStats s) {
   final n = s.input.notes?.trim();
   b.writeln(n == null || n.isEmpty ? '—' : n);
 }
+
+String _pct(double part, double total) => '${fmtInt(part / total * 100)}%';
 
 String _dayLabel(DateTime d, String? time) =>
     '${weekdayShort(d.weekday)} ${formatShort(d)}${time == null ? '' : ' $time'}';

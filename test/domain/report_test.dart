@@ -263,6 +263,20 @@ void main() {
       expect(md, contains('| Peso (kg) | 72,3 (26 ago) | 71 | -1,3 |'));
     });
 
+    test('dice de dónde salen las kcal', () {
+      final md = buildReport(weekFour(meals: [
+        MealEntry(date: DateTime(2026, 9, 16), slot: MealSlot.desayuno, items: const [
+          MealItemEntry(label: 'Leche', macros: Macros(kcal: 600, protein: 30), sourceVerified: true),
+          MealItemEntry(label: 'Klim', macros: Macros(kcal: 300, protein: 10), sourceVerified: false),
+          MealItemEntry(label: 'Bandeja', macros: Macros(kcal: 100, protein: 5)),
+        ]),
+      ]));
+      expect(
+        md,
+        contains('Procedencia de las kcal: 60% de etiqueta · 30% de tablas de referencia · 10% estimado a ojo'),
+      );
+    });
+
     test('rango vacío no revienta', () {
       final start = DateTime(2026, 8, 26);
       final md = buildReport(ReportInput(
