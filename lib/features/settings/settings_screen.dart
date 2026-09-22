@@ -73,7 +73,7 @@ class SettingsScreen extends ConsumerWidget {
       final dir = await getTemporaryDirectory();
       final path = p.join(dir.path, 'seguimiento-${dayKey(DateTime.now())}.sqlite');
       final file = await ref.read(databaseProvider).exportTo(path);
-      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'Respaldo Seguimiento'));
+      await Share.shareXFiles([XFile(file.path)], subject: 'Respaldo Seguimiento');
     } on Object catch (e) {
       if (context.mounted) showSnack(context, 'No se pudo exportar: $e');
     }

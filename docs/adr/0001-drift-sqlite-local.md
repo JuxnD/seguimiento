@@ -28,6 +28,7 @@ al rango `>=2.19.2 <2.23.0`.
 - Consultas y migraciones tipadas; el informe se arma con SQL, no en memoria.
 - Hay paso de generación de código (`build_runner`) tras tocar las tablas.
 - **Al actualizar Flutter/Dart, soltar las versiones fijadas** en `pubspec.yaml`
-  y regenerar.
+  y regenerar. Lo mismo aplica a `share_plus`, fijado en `^10.1.4` porque la 12
+  requiere un Flutter más nuevo y rompe el build de Android.
 - Las pruebas de host necesitan una SQLite del sistema
   (`test/support/sqlite_host.dart`).

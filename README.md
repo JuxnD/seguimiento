@@ -22,8 +22,14 @@ dart run build_runner build --delete-conflicting-outputs
 flutter run
 ```
 
-Requiere Flutter 3.22 / Dart 3.4 (las versiones de `drift` están fijadas a ese
-rango; ver [docs/adr/0001-drift-sqlite-local.md](docs/adr/0001-drift-sqlite-local.md)).
+Requiere Flutter 3.22 / Dart 3.4. Por esa versión hay dependencias fijadas a
+propósito: `drift`/`drift_dev` (`>=2.19.2 <2.23.0`) y `share_plus` (`^10.1.4`);
+las versiones actuales exigen Dart ≥ 3.5 o Flutter ≥ 3.27. Ver
+[docs/adr/0001-drift-sqlite-local.md](docs/adr/0001-drift-sqlite-local.md).
+
+Android está configurado para Java 21 (Gradle 8.7, AGP 8.3.2, Kotlin 1.9.22,
+`minSdk` 21 por `sqlite3`). Al actualizar Flutter, revisar esas cuatro cosas
+junto con las dependencias fijadas.
 
 Tras cambiar `lib/data/tables.dart` o `lib/data/database.dart` hay que volver a
 correr `build_runner`.

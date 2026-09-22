@@ -89,8 +89,9 @@
 - Exclusiones explícitas: fotos, gráficas, recordatorios, nube.
 
 ## 7. Verification and closure
-- Evidencia de implementación: `flutter analyze` sin hallazgos; `flutter test`
-  con 24 pruebas verdes (dominio + datos); compilación de la app.
+- Evidencia de implementación (22 sep 2026): `flutter analyze` → "No issues
+  found"; `flutter test` → 24 pruebas verdes y 3 saltadas (las de UI, en
+  Windows); `flutter build apk --debug` → `app-debug.apk` construido.
 - Evidencia operacional: **pendiente**. Nadie ha registrado todavía una semana
   real en un teléfono; el flujo de contador, permisos y compartir solo se han
   verificado por compilación y pruebas, no en uso.

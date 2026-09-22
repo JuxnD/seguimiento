@@ -17,9 +17,9 @@ import '../support/sqlite_host.dart';
 /// En Windows queda saltado: `flutter_tester` se cuelga al cargar la SQLite
 /// del sistema (`winsqlite3.dll`). Con una `sqlite3.dll` propia en el PATH, o
 /// en macOS/Linux, corre normal. Ver docs/project-map.md (riesgos).
-final _skipReason = Platform.isWindows
-    ? 'flutter_tester se cuelga con winsqlite3.dll; correr en macOS/Linux o con sqlite3.dll propia'
-    : null;
+/// `skip` solo acepta bool en esta versión de flutter_test; el motivo queda
+/// aquí y en docs/project-map.md.
+final _skipOnWindows = Platform.isWindows;
 
 void main() {
   setUpAll(useHostSqlite);
@@ -53,7 +53,7 @@ void main() {
     await settle(tester);
   }
 
-  testWidgets(skip: _skipReason, 'arranca en Hoy y navega por todas las pestañas', (tester) async {
+  testWidgets(skip: _skipOnWindows, 'arranca en Hoy y navega por todas las pestañas', (tester) async {
     await pumpApp(tester);
     expect(find.text('Hoy'), findsWidgets);
     expect(find.textContaining('Semana'), findsWidgets);
@@ -66,7 +66,7 @@ void main() {
     await disposeApp(tester);
   });
 
-  testWidgets(skip: _skipReason, 'el informe se genera con los datos registrados', (tester) async {
+  testWidgets(skip: _skipOnWindows, 'el informe se genera con los datos registrados', (tester) async {
     await NutritionRepository(db).saveMeal(
       MealDraft(date: DateTime.now(), slot: MealSlot.almuerzo)
         ..items.add(MealItemDraft(label: 'Bandeja', macros: const Macros(kcal: 1500, protein: 50))),
@@ -81,7 +81,7 @@ void main() {
     await disposeApp(tester);
   });
 
-  testWidgets(skip: _skipReason, 'la pestaña Comidas muestra el total del día', (tester) async {
+  testWidgets(skip: _skipOnWindows, 'la pestaña Comidas muestra el total del día', (tester) async {
     await NutritionRepository(db).saveMeal(
       MealDraft(date: DateTime.now(), slot: MealSlot.desayuno)
         ..items.add(MealItemDraft(label: 'Huevo', quantity: 3, quantityUnit: 'huevo', macros: const Macros(kcal: 216, protein: 19))),

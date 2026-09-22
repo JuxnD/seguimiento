@@ -119,9 +119,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     IconButton(
                       tooltip: 'Compartir',
                       icon: const Icon(Icons.ios_share),
-                      onPressed: report.value == null
-                          ? null
-                          : () => SharePlus.instance.share(ShareParams(text: report.value!)),
+                      onPressed: report.value == null ? null : () => Share.share(report.value!),
                     ),
                   ],
                 ),
