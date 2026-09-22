@@ -47,6 +47,11 @@ Las pruebas de base de datos corren contra SQLite del sistema
 (`test/support/sqlite_host.dart`), no contra la librería que se empaqueta en el
 teléfono.
 
+No hay pruebas de widget: las que abrían la app con la base real se colgaban
+(drift dentro de `flutter_test`), así que la interfaz se verifica en el
+dispositivo. El resto — dominio, repositorios, siembra, restauración y
+migraciones — sí está cubierto.
+
 ## Publicar una versión
 
 ```bash
@@ -71,8 +76,8 @@ lib/
 docs/            Mapa del proyecto, modelo de datos, informe, ADRs
 test/
   domain/        Reglas de negocio (sin base de datos)
-  data/          Repositorios contra SQLite en memoria
-  widget/        Humo de la app completa
+  data/          Repositorios, siembra, restauración y migraciones
+  support/       Utilidades de prueba
 ```
 
 Regla: si un cálculo aparece en el informe, vive en `lib/domain` y tiene prueba.

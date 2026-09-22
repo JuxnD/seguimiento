@@ -30,7 +30,7 @@
 | Persistir el contador en curso | Si la app muere a mitad del circuito, se pierde la sesión |
 | Respaldo automático periódico | Hoy hay que acordarse de exportar |
 | Editor del plan sin campos para sostén, RIR ni variante A/B | Se ven, pero solo se editan desde el código; al guardar no se pierden |
-| Pruebas de UI en Windows | Saltadas: `flutter_tester` se cuelga con `winsqlite3.dll` |
+| Pruebas automáticas de interfaz | Retiradas: se colgaban con drift dentro de `flutter_test`, en Windows y en Linux. La UI se verifica en el teléfono |
 
 ## v2
 

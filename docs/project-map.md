@@ -86,7 +86,7 @@
 | Cambiar la llave de firma | Android no deja actualizar; hay que desinstalar y se pierden los datos | Llave única en secrets, documentada | ADR 0006 · `docs/actualizaciones.md` | Abierto, depende de operar bien |
 | Nadie se acuerda de respaldar | Una restauración llega tarde | Respaldo automático periódico | — | Abierto (roadmap) |
 | App cerrada durante el circuito | Se pierde la sesión en curso | Persistir el estado del contador | — | Abierto (roadmap) |
-| UI sin pruebas automáticas en Windows | Una regresión de pantalla no se detecta sola | `test/widget/app_smoke_test.dart` | Saltado en Windows: `flutter_tester` se cuelga al cargar `winsqlite3.dll`. Corre en macOS/Linux o con una `sqlite3.dll` propia | Abierto |
+| UI sin pruebas automáticas | Una regresión de pantalla no se detecta sola | Pendiente: hoy se verifica compilando y probando en el teléfono | Las pruebas de widget con la base real se cuelgan (drift + `flutter_test`), también en Linux; se retiraron en vez de dejarlas saltadas | Abierto |
 | Actualización de Flutter/Dart | Las versiones fijadas de drift bloquean el upgrade | Revisar `pubspec.yaml` al actualizar | ADR 0001 | Abierto, conocido |
 
 ## 6. Decisions and plan
@@ -100,8 +100,10 @@
 
 ## 7. Verification and closure
 - Evidencia de implementación (22 sep 2026): `flutter analyze` → "No issues
-  found"; `flutter test` → 24 pruebas verdes y 3 saltadas (las de UI, en
-  Windows); `flutter build apk --debug` → `app-debug.apk` construido.
+  found"; `flutter test` → 47 pruebas verdes (dominio, repositorios, siembra,
+  restauración, migración 1 → 2 y actualizaciones); `flutter build apk --release`
+  → APK construido. CI en GitHub Actions repite análisis y pruebas en Linux.
+- La interfaz **no** tiene pruebas automáticas: se verifica en el teléfono.
 - Evidencia operacional: **pendiente**. Nadie ha registrado todavía una semana
   real en un teléfono; el flujo de contador, permisos y compartir solo se han
   verificado por compilación y pruebas, no en uso.
