@@ -26,6 +26,11 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y libsqlite3-0
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
+      # El release se queda sin red si este permiso falta (Flutter solo lo
+      # añade en debug), y el fallo no aparece en ninguna prueba.
+      - name: Permiso de internet declarado
+        run: grep -q 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
+
       - run: flutter analyze
       # El timeout evita que una prueba colgada queme 10 minutos de runner.
       - run: flutter test --timeout 90s

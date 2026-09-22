@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Consultar si hay versión nueva en GitHub. Flutter solo añade este
+         permiso a los builds de debug: sin esta línea, el release falla el
+         DNS (errno 7). Nada más sale del dispositivo. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="seguimiento"
         android:name="${applicationName}"
