@@ -9,6 +9,8 @@ Generador: [`lib/domain/report/report_builder.dart`](../lib/domain/report/report
 [`report_repository.dart`](../lib/data/repositories/report_repository.dart).
 Pruebas: [`test/domain/report_test.dart`](../test/domain/report_test.dart).
 
+Ejemplo de salida con datos ficticios: [ejemplo-informe.md](ejemplo-informe.md).
+
 ## Secciones
 
 1. **Encabezado** — rango, número de semana desde el inicio y versión(es) del

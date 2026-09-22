@@ -9,6 +9,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Alcance, riesgos y gates | [../project-map.md](../project-map.md) | Cambia el alcance o aparece un riesgo nuevo |
 | Datos e invariantes | [../modelo-datos.md](../modelo-datos.md) | Cambia una tabla, una unidad o el esquema |
 | Producto del informe | [../informe.md](../informe.md) | Cambia una sección, una métrica o una alerta |
+| Ejemplo del informe | [../ejemplo-informe.md](../ejemplo-informe.md) | Cambia el formato de salida (regenerar con `dart run tool/sample_report.dart`) |
 | Desviaciones de la planeación | [../auditoria-planeacion.md](../auditoria-planeacion.md) | Se acepta o rechaza un cambio al plan original |
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
 | Fases y pendientes | [../roadmap.md](../roadmap.md) | Entra o sale trabajo del MVP/v2 |
