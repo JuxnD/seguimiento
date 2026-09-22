@@ -1,0 +1,187 @@
+import 'package:drift/drift.dart' show Value;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/data/repositories/body_repository.dart';
+import 'package:seguimiento/data/repositories/exercise_repository.dart';
+import 'package:seguimiento/data/repositories/nutrition_repository.dart';
+import 'package:seguimiento/data/repositories/plan_repository.dart';
+import 'package:seguimiento/data/repositories/profile_repository.dart';
+import 'package:seguimiento/data/repositories/report_repository.dart';
+import 'package:seguimiento/data/repositories/training_repository.dart';
+import 'package:seguimiento/domain/dates.dart';
+import 'package:seguimiento/domain/enums.dart';
+import 'package:seguimiento/domain/nutrition.dart';
+import 'package:seguimiento/domain/report/report_builder.dart';
+
+import '../support/sqlite_host.dart';
+
+void main() {
+  late AppDatabase db;
+  late ExerciseRepository exercises;
+  late PlanRepository plan;
+  late TrainingRepository training;
+  late NutritionRepository nutrition;
+  late BodyRepository body;
+  late ReportRepository report;
+
+  DateTime d(int month, int day) => DateTime(2026, month, day);
+
+  setUpAll(useHostSqlite);
+
+  setUp(() {
+    db = openInMemoryDatabase();
+    exercises = ExerciseRepository(db);
+    plan = PlanRepository(db, exercises);
+    training = TrainingRepository(db, exercises);
+    nutrition = NutritionRepository(db);
+    body = BodyRepository(db);
+    report = ReportRepository(db, nutrition);
+  });
+
+  tearDown(() => db.close());
+
+  test('perfil por defecto con la fecha de inicio del plan', () async {
+    final p = await ProfileRepository(db).get();
+    expect(p.startDate, '2026-08-26');
+    expect(p.proteinMin, 130);
+    expect(p.kcalFloor, 2000);
+  });
+
+  test('ejercicios: mismo nombre sin importar mayúsculas ni espacios', () async {
+    final a = await exercises.getOrCreate('Flexiones');
+    final b = await exercises.getOrCreate('  flexiones ');
+    expect(a, b);
+  });
+
+  test('plan versionado: editar crea versión nueva y la vigente depende de la fecha', () async {
+    final v1 = PlanDraft.empty(d(8, 26));
+    v1.days[0]
+      ..type = DayType.circuito
+      ..targetRounds = 7
+      ..exercises.add(PlanExerciseDraft(name: 'Flexiones', sets: 4, repsMin: 15));
+    v1.days[1].type = DayType.futbol;
+    final id1 = await plan.saveAsNewVersion(v1);
+
+    final v2 = await plan.load(id1)
+      ..validFrom = d(9, 20);
+    v2.days[0].targetRounds = 8;
+    final id2 = await plan.saveAsNewVersion(v2);
+
+    expect(id2, isNot(id1));
+    expect((await plan.activeVersion(d(9, 14)))!.id, id1);
+    expect((await plan.activeVersion(d(9, 21)))!.id, id2);
+    final monday = await plan.dayFor(d(9, 21));
+    expect(monday!.versionNumber, 2);
+    expect(monday.day.targetRounds, 8);
+    expect(monday.day.exercises.single.targetLabel, '4×15');
+    // v1 no cambió.
+    expect((await plan.load(id1)).days[0].targetRounds, 7);
+  });
+
+  test('sesión: guardar, recargar con series partidas y vueltas, editar', () async {
+    final draft = SessionDraft(
+      date: d(9, 18),
+      startTime: '15:10',
+      totalSec: 1200,
+      warmupSec: 540,
+      cooldownSec: 180,
+      roundsDone: 3,
+      rpe: 8,
+      limitingExercise: 'flexiones',
+      roundMarksSec: [150, 310, 480],
+      sets: [
+        SetDraft(exercise: 'Flexiones', reps: 15),
+        SetDraft(exercise: 'Flexiones', reps: 15, split: true, splitDetail: '12+3'),
+        SetDraft(exercise: 'Sentadillas', reps: 20),
+      ],
+    );
+    final id = await training.save(draft);
+    final loaded = await training.load(id);
+    expect(loaded.sets.length, 3);
+    expect(loaded.sets[1].splitDetail, '12+3');
+    expect(loaded.roundMarksSec, [150, 310, 480]);
+    expect(loaded.limitingExercise, 'flexiones');
+    expect(await training.historicalMeanRoundSec(), 160);
+
+    loaded.sets.removeLast();
+    await training.save(loaded);
+    expect((await training.load(id)).sets.length, 2);
+    final list = await training.watchRecent().first;
+    expect(list.single.splitSets, 1);
+  });
+
+  test('comidas: macros congelados aunque cambie el catálogo; copiar comida', () async {
+    final foodId = await nutrition.saveFood(FoodsCompanion.insert(
+      name: 'Huevo',
+      basis: FoodBasis.unit,
+      unitLabel: const Value('huevo'),
+      kcal: 72,
+      protein: 6.3,
+    ));
+    final food = (await nutrition.watchFoods().first).single;
+    final meal = MealDraft(date: d(9, 18), time: '07:30', slot: MealSlot.desayuno)
+      ..items.add(MealItemDraft.fromFood(food, 3))
+      ..items.add(MealItemDraft(label: 'Arepa', macros: const Macros(kcal: 200, protein: 4)));
+    final mealId = await nutrition.saveMeal(meal);
+
+    await nutrition.saveFood(FoodsCompanion(id: Value(foodId), kcal: const Value(999)));
+    final day = await nutrition.watchDay(d(9, 18)).first;
+    expect(day.single.macros.kcal, closeTo(216 + 200, 1e-9));
+
+    await nutrition.copyMeal(mealId, d(9, 19));
+    expect((await nutrition.watchDay(d(9, 19)).first).single.items.length, 2);
+
+    await nutrition.deleteFood(foodId);
+    final after = await nutrition.watchDay(d(9, 18)).first;
+    expect(after.single.items.first.foodId, isNull);
+    expect(after.single.macros.kcal, closeTo(416, 1e-9));
+  });
+
+  test('medidas: una toma por día, reemplazable', () async {
+    await body.saveCheckIn(d(8, 26), true, {MeasureSite.abdomen: 86, MeasureSite.cadera: 95});
+    await body.saveCheckIn(d(8, 26), true, {MeasureSite.abdomen: 85.5});
+    final all = await body.watchCheckIns().first;
+    expect(all.single.valuesCm, {MeasureSite.abdomen: 85.5});
+    expect(await body.lastCheckInBefore(d(9, 20)), d(8, 26));
+  });
+
+  test('informe de extremo a extremo desde la base', () async {
+    final v1 = PlanDraft.empty(d(8, 26));
+    for (final w in [1, 3, 5]) {
+      v1.days[w - 1].type = DayType.circuito;
+    }
+    v1.days[1].type = DayType.futbol;
+    await plan.saveAsNewVersion(v1);
+
+    await training.save(SessionDraft(date: d(9, 9), totalSec: 1200, warmupSec: 540, cooldownSec: 180, roundsDone: 7));
+    await training.save(SessionDraft(
+      date: d(9, 18),
+      startTime: '15:10',
+      totalSec: 1200,
+      warmupSec: 540,
+      cooldownSec: 180,
+      roundsDone: 8,
+      sets: [SetDraft(exercise: 'Flexiones', reps: 15, split: true, splitDetail: '12+3')],
+    ));
+    await training.saveFootball(FootballGamesCompanion.insert(date: '2026-09-22', minutes: 60, format: const Value(7)));
+    await nutrition.saveMeal(MealDraft(date: d(9, 16), slot: MealSlot.almuerzo)
+      ..items.add(MealItemDraft(label: 'Bandeja', macros: const Macros(kcal: 1500, protein: 50))));
+    await body.addWeight(d(8, 26), 72.3);
+    await body.addWeight(d(9, 18), 71.4);
+    await ProfileRepository(db).saveWeekNote(4, 'Semana pesada');
+
+    final w = weekRange(parseDay(defaultStartDate), 4);
+    final md = buildReport(await report.load(w.start, w.end, today: d(9, 22)));
+
+    expect(md, contains('# Informe semanal — 16 sep a 22 sep 2026'));
+    expect(md, contains('Semana 4 desde inicio (26 ago) · Plan v1'));
+    expect(md, contains('- Sesiones: 1/3 · Fútbol: 1/1'));
+    expect(md, contains('- Récord de rondas: 8 (anterior: 7)'));
+    expect(md, contains('- Flexiones: 12+3 (partida)'));
+    expect(md, contains('| mar 22 sep | 7 | 60 |'));
+    expect(md, contains('- Peso promedio: 71,4 kg (en ayunas, 1 pesaje) · Δ vs línea base: -0,9 kg'));
+    expect(md, contains('Sesiones por debajo del plan: 1 de 3'));
+    expect(md, endsWith('Semana pesada'));
+  });
+}
+

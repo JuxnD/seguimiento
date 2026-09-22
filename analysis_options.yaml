@@ -1,0 +1,14 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+  errors:
+    # `weekday => integer()` es la forma idiomática de drift para declarar
+    # columnas; el analizador lo lee como getter recursivo.
+    recursive_getters: ignore
+
+linter:
+  rules:
+    - prefer_single_quotes
+    - unawaited_futures

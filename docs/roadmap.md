@@ -1,0 +1,43 @@
+# Fases
+
+## MVP — implementado
+
+| Módulo | Estado |
+|---|---|
+| Perfil (metas, umbrales, unidad, fecha de inicio) | Listo |
+| Plan semanal versionado con historial | Listo |
+| Sesiones: tiempos, rondas, series, partidas, fallo, RPE, contexto | Listo |
+| Contador de rondas con fases y marcas por vuelta | Listo |
+| Estimación de rondas por tiempo | Listo |
+| Fútbol (formato, minutos, pasos, intensidad, fatiga) | Listo |
+| Catálogo de alimentos y registro de comidas (catálogo + entrada libre) | Listo |
+| Copiar una comida a otro día | Listo |
+| Peso y tomas de medidas con unidad explícita | Listo |
+| Aviso de medición antes de tiempo | Listo |
+| Informe Markdown por semana o rango, copiar y compartir | Listo |
+| Notas de la semana | Listo |
+| Exportar la base como respaldo | Listo |
+
+## Pendientes conocidos del MVP
+
+| Pendiente | Por qué importa |
+|---|---|
+| Restaurar un respaldo desde la app | Hoy se recupera reemplazando el archivo a mano |
+| Persistir el contador en curso | Si la app muere a mitad del circuito, se pierde la sesión |
+| Pruebas de UI en Windows | Saltadas: `flutter_tester` se cuelga con `winsqlite3.dll` |
+
+## v2
+
+- Fotos de progreso (frente, perfil, espalda) con comparador lado a lado.
+  Requiere `image_picker`, guardar rutas **relativas** al directorio de la app
+  (las absolutas se rompen al reinstalar) y su migración de esquema.
+- Gráficas de rondas, proteína y medidas en el tiempo (`fl_chart`).
+- Recordatorios con `flutter_local_notifications`: 15 min antes de la sesión
+  según el plan y aviso de medición cada 3–4 semanas.
+- Respaldo automático a archivo y restauración guiada.
+
+## Fuera de alcance
+
+- Sincronización en la nube o cuentas.
+- Base de datos externa de alimentos.
+- Análisis o IA dentro de la app: eso se hace fuera, con el informe.
