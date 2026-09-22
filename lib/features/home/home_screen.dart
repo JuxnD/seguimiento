@@ -12,6 +12,7 @@ import '../../domain/nutrition.dart';
 import '../../ui/widgets.dart';
 import '../meals/meal_form_screen.dart';
 import '../settings/settings_screen.dart';
+import '../settings/updates_card.dart';
 import '../training/football_form_screen.dart';
 import '../training/training_screen.dart';
 
@@ -40,6 +41,10 @@ class HomeScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
+          UpdateBanner(
+            onOpenSettings: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+          ),
           AppCard(
             children: [
               Text('${weekdayLong(today.weekday)} ${formatLong(today)}',

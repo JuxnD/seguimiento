@@ -9,7 +9,9 @@
   → `HomeShell` (5 pestañas) · SQLite local vía `drift`.
 - Build/test: `flutter pub get`, `dart run build_runner build --delete-conflicting-outputs`,
   `flutter analyze`, `flutter test`, `flutter run`.
-- Seguridad/acceso: sin red, sin cuentas, sin secretos. Todos los datos son
+- Seguridad/acceso: sin cuentas ni secretos en la app. La única salida a red es
+  una consulta GET a la API pública de GitHub para ver si hay versión nueva; no
+  envía nada. Todos los datos son
   personales y quedan en el dispositivo; el único egreso es lo que el usuario
   comparte a mano (informe o respaldo).
 
@@ -64,8 +66,12 @@
 - Configuración: ninguna; los umbrales viven en la tabla `profiles`.
 - Build/lint/test: ver README. Generación de código tras tocar tablas.
 - Migraciones: `schemaVersion` 1; procedimiento en [modelo-datos.md](modelo-datos.md).
-- Entrega: `flutter build apk` / `flutter run`. Sin CI configurado.
-- Respaldo: exportación manual con `VACUUM INTO`; restauración pendiente.
+- Entrega: `flutter build apk` / `flutter run`; CI en GitHub Actions
+  (`.github/workflows/ci.yml` y `release.yml`).
+- Respaldo: exportación manual con `VACUUM INTO` y restauración validada desde
+  Ajustes ([actualizaciones.md](actualizaciones.md)).
+- Entrega de versiones: etiqueta `vX.Y.Z` → GitHub Actions analiza, prueba,
+  firma y publica el APK en una release pública; la app avisa.
 - Observabilidad: ninguna (sin telemetría, por diseño).
 
 ## 5. Risks and gates
@@ -75,7 +81,10 @@
 | Mapeo base → informe incorrecto | El informe no refleja lo registrado | Prueba de extremo a extremo desde SQLite | `test/data/repositories_test.dart` (7 pruebas, incluye informe completo) | Cubierto |
 | Editar el catálogo reescribe el historial | Semanas viejas cambian de valores | Macros copiados + prueba que edita y borra el alimento | ADR 0002 · prueba "macros congelados" | Cubierto |
 | Mezclar cm y pulgadas | Serie de medidas inservible | Guardado único en cm + conversión en el formulario | ADR 0004 · prueba de unidades | Cubierto |
-| Pérdida del dispositivo | Se pierde todo el historial | Exportación de la base | Botón en Ajustes (`VACUUM INTO`) | Parcial: falta restaurar |
+| Pérdida del dispositivo | Se pierde todo el historial | Exportar y poder restaurar | Botones en Ajustes · `test/data/restore_test.dart` (5 pruebas) | Cubierto |
+| Restaurar un archivo inválido | Base corrupta, historial perdido | Validación previa, borrado de `-wal`/`-shm` y rollback | `test/data/restore_test.dart` | Cubierto |
+| Cambiar la llave de firma | Android no deja actualizar; hay que desinstalar y se pierden los datos | Llave única en secrets, documentada | ADR 0006 · `docs/actualizaciones.md` | Abierto, depende de operar bien |
+| Nadie se acuerda de respaldar | Una restauración llega tarde | Respaldo automático periódico | — | Abierto (roadmap) |
 | App cerrada durante el circuito | Se pierde la sesión en curso | Persistir el estado del contador | — | Abierto (roadmap) |
 | UI sin pruebas automáticas en Windows | Una regresión de pantalla no se detecta sola | `test/widget/app_smoke_test.dart` | Saltado en Windows: `flutter_tester` se cuelga al cargar `winsqlite3.dll`. Corre en macOS/Linux o con una `sqlite3.dll` propia | Abierto |
 | Actualización de Flutter/Dart | Las versiones fijadas de drift bloquean el upgrade | Revisar `pubspec.yaml` al actualizar | ADR 0001 | Abierto, conocido |
@@ -83,7 +92,8 @@
 ## 6. Decisions and plan
 - ADRs: [0001](adr/0001-drift-sqlite-local.md), [0002](adr/0002-snapshot-macros-en-comidas.md),
   [0003](adr/0003-versiones-de-plan-inmutables.md), [0004](adr/0004-medidas-siempre-en-cm.md),
-  [0005](adr/0005-contador-de-rondas-con-marcas.md).
+  [0005](adr/0005-contador-de-rondas-con-marcas.md),
+  [0006](adr/0006-actualizaciones-por-github-releases.md).
 - Rebanadas entregadas: dominio + pruebas → esquema + repositorios → UI por
   módulo → informe → documentación.
 - Exclusiones explícitas: fotos, gráficas, recordatorios, nube.

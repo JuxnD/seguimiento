@@ -9,8 +9,9 @@ El informe es el producto. Todo lo demás existe para alimentarlo.
 ## Estado
 
 MVP implementado: perfil, plan versionado, sesiones con contador de rondas,
-fútbol, catálogo de alimentos, comidas, peso, medidas, informe Markdown y
-respaldo de la base. Sin cuentas, sin backend, sin sincronización.
+fútbol, catálogo de alimentos, comidas, peso, medidas, informe Markdown,
+respaldo **y restauración** de la base, y aviso de nuevas versiones por GitHub
+Releases. Sin cuentas, sin backend, sin sincronización de datos.
 
 Detalle y pendientes: [docs/roadmap.md](docs/roadmap.md).
 
@@ -45,6 +46,16 @@ Las pruebas de base de datos corren contra SQLite del sistema
 (`test/support/sqlite_host.dart`), no contra la librería que se empaqueta en el
 teléfono.
 
+## Publicar una versión
+
+```bash
+git tag v1.1.0 && git push origin v1.1.0
+```
+
+CI analiza, prueba, firma el APK y lo publica en la release; la app instalada lo
+detecta. Requisitos (llave de firma y secrets) en
+[docs/actualizaciones.md](docs/actualizaciones.md).
+
 ## Estructura
 
 ```
@@ -70,6 +81,7 @@ Regla: si un cálculo aparece en el informe, vive en `lib/domain` y tiene prueba
 - [docs/context/INDEX.md](docs/context/INDEX.md) — índice de contexto
 - [docs/project-map.md](docs/project-map.md) — mapa del proyecto y riesgos
 - [docs/modelo-datos.md](docs/modelo-datos.md) — tablas, invariantes, migraciones
+- [docs/actualizaciones.md](docs/actualizaciones.md) — respaldo, restauración, firma y cómo publicar una versión
 - [docs/informe.md](docs/informe.md) — qué contiene el informe y cada alerta
 - [docs/ejemplo-informe.md](docs/ejemplo-informe.md) — cómo se ve (datos ficticios, se regenera con `dart run tool/sample_report.dart`)
 - [docs/auditoria-planeacion.md](docs/auditoria-planeacion.md) — cambios sobre la planeación original

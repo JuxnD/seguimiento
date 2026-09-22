@@ -1,6 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
+
 import '../data/database.dart';
+import '../data/database_host.dart';
+import '../data/update_service.dart';
 import '../data/repositories/body_repository.dart';
 import '../data/repositories/exercise_repository.dart';
 import '../data/repositories/nutrition_repository.dart';
@@ -12,7 +16,16 @@ import '../domain/dates.dart';
 import '../domain/report/report_builder.dart';
 
 /// Se sobreescribe en `main` con la base ya abierta.
-final databaseProvider = Provider<AppDatabase>((ref) => throw UnimplementedError());
+final databaseHostProvider = Provider<DatabaseHost>((ref) => throw UnimplementedError());
+
+/// Cambia al restaurar un respaldo: obliga a recrear repositorios y streams
+/// contra la base nueva.
+final databaseGenerationProvider = StateProvider<int>((ref) => 0);
+
+final databaseProvider = Provider<AppDatabase>((ref) {
+  ref.watch(databaseGenerationProvider);
+  return ref.watch(databaseHostProvider).db;
+});
 
 final profileRepositoryProvider = Provider((ref) => ProfileRepository(ref.watch(databaseProvider)));
 final exerciseRepositoryProvider = Provider((ref) => ExerciseRepository(ref.watch(databaseProvider)));
@@ -65,3 +78,21 @@ final mealsRangeRefreshProvider = StreamProvider.family(
         .watch(nutritionRepositoryProvider)
         .watchRange(parseDay(range.$1), parseDay(range.$2))
         .map((meals) => meals.map((m) => '${m.meal.id}:${m.items.length}:${m.macros.kcal}').join(',')));
+
+/// Versión instalada, leída del propio paquete.
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return info.version;
+});
+
+final updateServiceProvider = Provider((ref) {
+  final service = UpdateService();
+  ref.onDispose(service.close);
+  return service;
+});
+
+/// Consulta a GitHub. Se refresca con `ref.invalidate(updateCheckProvider)`.
+final updateCheckProvider = FutureProvider<UpdateCheck>((ref) async {
+  final version = await ref.watch(appVersionProvider.future);
+  return ref.watch(updateServiceProvider).check(currentVersion: version);
+});

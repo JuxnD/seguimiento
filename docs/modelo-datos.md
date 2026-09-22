@@ -65,6 +65,9 @@ El código generado (`database.g.dart`) no se edita a mano.
 ## Respaldo
 
 Ajustes → *Exportar base de datos* usa `VACUUM INTO`, que produce una copia
-consistente incluso con el WAL abierto. La restauración aún no está en la app:
-hoy se recupera reemplazando el archivo `seguimiento.sqlite` del directorio de
-documentos de la app. Ver [roadmap.md](roadmap.md).
+consistente incluso con el WAL abierto. Ajustes → *Restaurar desde un respaldo*
+valida el archivo, reemplaza la base y hace rollback si algo falla. El detalle
+del procedimiento está en [actualizaciones.md](actualizaciones.md).
+
+Un respaldo con `user_version` mayor que el `schemaVersion` de la app se
+rechaza: es de una versión más nueva y restaurarlo rompería los datos.

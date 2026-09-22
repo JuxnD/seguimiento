@@ -11,6 +11,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Producto del informe | [../informe.md](../informe.md) | Cambia una sección, una métrica o una alerta |
 | Ejemplo del informe | [../ejemplo-informe.md](../ejemplo-informe.md) | Cambia el formato de salida (regenerar con `dart run tool/sample_report.dart`) |
 | Desviaciones de la planeación | [../auditoria-planeacion.md](../auditoria-planeacion.md) | Se acepta o rechaza un cambio al plan original |
+| Respaldo, restauración y releases | [../actualizaciones.md](../actualizaciones.md) | Cambia el flujo de respaldo, la firma o el pipeline |
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
 | Fases y pendientes | [../roadmap.md](../roadmap.md) | Entra o sale trabajo del MVP/v2 |
 
@@ -21,7 +22,9 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 - El informe se pega en un chat para que un tercero lo audite. Por eso incluye
   detalle crudo (vueltas, series partidas, contexto) y no solo promedios.
 - Los datos viven únicamente en el dispositivo. No hay backend ni sincronización;
-  el único respaldo es exportar la base desde Ajustes.
+  el respaldo es exportar la base desde Ajustes y restaurarla desde ahí mismo.
+- Las versiones se publican como GitHub Releases públicas y **todas deben ir
+  firmadas con la misma llave**, o Android no deja actualizar sobre lo instalado.
 - Metas vigentes: proteína 130–160 g/día, ~2.400 kcal, piso de alerta 2.000 kcal.
   Están en el perfil, no en el código.
 

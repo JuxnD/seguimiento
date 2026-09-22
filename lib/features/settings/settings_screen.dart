@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' show Value;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
@@ -7,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../app/providers.dart';
 import '../../data/database.dart';
+import '../../data/database_host.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
@@ -14,6 +18,7 @@ import '../../domain/format.dart';
 import '../../ui/widgets.dart';
 import '../meals/foods_screen.dart';
 import '../plan/plan_screen.dart';
+import 'updates_card.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -60,19 +65,65 @@ class SettingsScreen extends ConsumerWidget {
                   icon: const Icon(Icons.save_alt),
                   label: const Text('Exportar base de datos'),
                 ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () => _restore(context, ref),
+                  icon: const Icon(Icons.restore),
+                  label: const Text('Restaurar desde un respaldo'),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Text('Restaurar reemplaza TODO lo registrado por el contenido del respaldo.'),
+                ),
               ],
             ),
+            const UpdatesCard(),
           ],
         ),
       ),
     );
   }
 
+  /// Reemplaza la base por un archivo `.sqlite` exportado antes. Pide
+  /// confirmación explícita porque borra lo registrado desde ese respaldo.
+  Future<void> _restore(BuildContext context, WidgetRef ref) async {
+    final picked = await FilePicker.platform.pickFiles(withData: false);
+    final path = picked?.files.single.path;
+    if (path == null) return;
+
+    if (!context.mounted) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('¿Restaurar este respaldo?'),
+        content: Text('Archivo: ${p.basename(path)}\n\n'
+            'Se reemplazan todas las sesiones, comidas y medidas actuales por las del respaldo. '
+            'Esto no se puede deshacer.\n\n'
+            'Si lo de ahora te sirve, exporta primero.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Restaurar')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      await ref.read(databaseHostProvider).restoreFrom(File(path));
+      ref.read(databaseGenerationProvider.notifier).state++;
+      if (context.mounted) showSnack(context, 'Respaldo restaurado');
+    } on RestoreException catch (e) {
+      if (context.mounted) showSnack(context, e.message);
+    } on Object catch (e) {
+      if (context.mounted) showSnack(context, 'No se pudo restaurar: $e');
+    }
+  }
+
   Future<void> _export(BuildContext context, WidgetRef ref) async {
     try {
       final dir = await getTemporaryDirectory();
       final path = p.join(dir.path, 'seguimiento-${dayKey(DateTime.now())}.sqlite');
-      final file = await ref.read(databaseProvider).exportTo(path);
+      final file = await ref.read(databaseHostProvider).exportTo(path);
       await Share.shareXFiles([XFile(file.path)], subject: 'Respaldo Seguimiento');
     } on Object catch (e) {
       if (context.mounted) showSnack(context, 'No se pudo exportar: $e');

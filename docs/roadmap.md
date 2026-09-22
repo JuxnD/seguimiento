@@ -17,13 +17,15 @@
 | Informe Markdown por semana o rango, copiar y compartir | Listo |
 | Notas de la semana | Listo |
 | Exportar la base como respaldo | Listo |
+| Restaurar un respaldo desde la app (con validación y rollback) | Listo |
+| Aviso de versión nueva por GitHub Releases | Listo |
 
 ## Pendientes conocidos del MVP
 
 | Pendiente | Por qué importa |
 |---|---|
-| Restaurar un respaldo desde la app | Hoy se recupera reemplazando el archivo a mano |
 | Persistir el contador en curso | Si la app muere a mitad del circuito, se pierde la sesión |
+| Respaldo automático periódico | Hoy hay que acordarse de exportar |
 | Pruebas de UI en Windows | Saltadas: `flutter_tester` se cuelga con `winsqlite3.dll` |
 
 ## v2
@@ -34,7 +36,7 @@
 - Gráficas de rondas, proteína y medidas en el tiempo (`fl_chart`).
 - Recordatorios con `flutter_local_notifications`: 15 min antes de la sesión
   según el plan y aviso de medición cada 3–4 semanas.
-- Respaldo automático a archivo y restauración guiada.
+- Respaldo automático a archivo (la restauración ya está).
 
 ## Fuera de alcance
 

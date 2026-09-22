@@ -23,6 +23,19 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+// Firma de release. Si existe android/key.properties se usa esa llave; si no,
+// se firma con la de debug (solo para probar en local). Android solo deja
+// actualizar una app instalada si la firma es la MISMA, así que todas las
+// releases publicadas deben usar la misma llave. Ver docs/actualizaciones.md.
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+def hasKeystore = keystorePropertiesFile.exists()
+if (hasKeystore) {
+    keystorePropertiesFile.withReader("UTF-8") { reader ->
+        keystoreProperties.load(reader)
+    }
+}
+
 android {
     namespace = "com.juandiego.seguimiento"
     compileSdk = flutter.compileSdkVersion
@@ -46,11 +59,20 @@ android {
         versionName = flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            if (hasKeystore) {
+                keyAlias = keystoreProperties["keyAlias"]
+                keyPassword = keystoreProperties["keyPassword"]
+                storeFile = rootProject.file(keystoreProperties["storeFile"])
+                storePassword = keystoreProperties["storePassword"]
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig = hasKeystore ? signingConfigs.release : signingConfigs.debug
         }
     }
 }

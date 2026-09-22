@@ -52,3 +52,8 @@ build.log
 # APK generado para instalar en el teléfono
 *.apk
 release.log
+
+# Firma de release: nunca al repositorio
+android/key.properties
+*.jks
+*.keystore

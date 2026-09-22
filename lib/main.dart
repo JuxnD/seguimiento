@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
 import 'app/providers.dart';
-import 'data/database.dart';
+import 'data/database_host.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final db = await openAppDatabase();
+  final host = await DatabaseHost.open();
   runApp(
     ProviderScope(
-      overrides: [databaseProvider.overrideWithValue(db)],
+      overrides: [databaseHostProvider.overrideWithValue(host)],
       child: const SeguimientoApp(),
     ),
   );
