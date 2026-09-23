@@ -160,6 +160,74 @@ void main() {
     });
   });
 
+  group('sesiones fuera de plan e incompletas', () {
+    ReportInput withSession(SessionEntry session) {
+      final base = weekFour();
+      return ReportInput(
+        programStart: base.programStart,
+        rangeStart: base.rangeStart,
+        rangeEnd: base.rangeEnd,
+        today: base.today,
+        planVersions: base.planVersions,
+        sessions: [session],
+      );
+    }
+
+    test('avisa del tipo fuera de plan y de la sesión incompleta', () {
+      final alerts = buildAlerts(ReportStats(withSession(SessionEntry(
+        date: DateTime(2026, 9, 18),
+        type: SessionType.bloques,
+        totalSec: 1200,
+        warmupSec: 400,
+        cooldownSec: 120,
+        roundsDone: 7,
+        plannedRounds: 8,
+        outOfPlan: true,
+        incomplete: true,
+      ))));
+      expect(alerts, contains('Fuera de plan: Bloques el 18 sep'));
+      expect(alerts, contains('Sesiones cerradas antes de completar el plan: 18 sep'));
+    });
+
+    test('avisa del enfriamiento corto', () {
+      final alerts = buildAlerts(ReportStats(withSession(SessionEntry(
+        date: DateTime(2026, 9, 18),
+        type: SessionType.circuito,
+        totalSec: 1200,
+        warmupSec: 400,
+        cooldownSec: 30,
+      ))));
+      expect(alerts, contains('Enfriamiento < 1 min en 1 sesión'));
+    });
+
+    test('la tabla muestra rondas hechas sobre planificadas', () {
+      final md = buildReport(withSession(SessionEntry(
+        date: DateTime(2026, 9, 18),
+        startTime: '15:10',
+        type: SessionType.circuito,
+        totalSec: 1200,
+        warmupSec: 540,
+        cooldownSec: 180,
+        roundsDone: 7,
+        plannedRounds: 8,
+        incomplete: true,
+      )));
+      expect(md, contains('| 7/8 (incompleta) |'));
+    });
+
+    test('una sesión fuera de plan se marca en la tabla', () {
+      final md = buildReport(withSession(SessionEntry(
+        date: DateTime(2026, 9, 18),
+        type: SessionType.bloques,
+        totalSec: 600,
+        warmupSec: 400,
+        cooldownSec: 120,
+        outOfPlan: true,
+      )));
+      expect(md, contains('| Bloques ⚠ fuera de plan |'));
+    });
+  });
+
   group('regla de progresión', () {
     test('subir de ronda con series partidas genera alerta', () {
       final base = weekFour();

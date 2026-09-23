@@ -100,9 +100,10 @@ void _sessions(StringBuffer b, ReportStats s) {
   b.writeln('|---|---|---|---|---|---|---|---|---|');
   for (final x in list) {
     final net = circuitNetSec(totalSec: x.totalSec, warmupSec: x.warmupSec, cooldownSec: x.cooldownSec);
-    final rounds = x.roundsDone == null ? '—' : (x.roundsEstimated ? '~${x.roundsDone} (est.)' : '${x.roundsDone}');
+    final rounds = _roundsCell(x);
     final splits = x.sets.where((e) => e.split).length;
-    b.writeln('| ${_dayLabel(x.date, x.startTime)} | ${x.type.label} | ${formatDuration(x.totalSec)} | '
+    b.writeln('| ${_dayLabel(x.date, x.startTime)} | ${x.type.label}${x.outOfPlan ? ' ⚠ fuera de plan' : ''} | '
+        '${formatDuration(x.totalSec)} | '
         '${formatDuration(x.warmupSec)} / ${formatDuration(x.cooldownSec)} | ${formatDuration(net)} | $rounds | '
         '${x.rpe ?? '—'} | ${splits == 0 ? '—' : splits} | ${mdCell(x.context)} |');
   }
@@ -131,6 +132,16 @@ void _sessions(StringBuffer b, ReportStats s) {
     if (x.notes != null && x.notes!.trim().isNotEmpty) b.writeln('- Notas: ${x.notes!.trim()}');
     b.writeln();
   }
+}
+
+/// `7/8 (incompleta)`, `~6 (est.)`, `8`.
+String _roundsCell(SessionEntry x) {
+  if (x.roundsDone == null) return '—';
+  final prefix = x.roundsEstimated ? '~' : '';
+  final target = x.plannedRounds == null ? '' : '/${x.plannedRounds}';
+  final estimated = x.roundsEstimated ? ' (est.)' : '';
+  final unfinished = x.incomplete ? ' (incompleta)' : '';
+  return '$prefix${x.roundsDone}$target$estimated$unfinished';
 }
 
 String _setLabel(SetEntry e) {

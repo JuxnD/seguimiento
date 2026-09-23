@@ -38,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -81,6 +81,12 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(mealItems, mealItems.sourceVerified);
             await m.createTable(mealTemplates);
             await m.createTable(mealTemplateItems);
+          }
+          if (from < 4) {
+            // v4: la sesión sabe si se salió del plan o se cerró antes.
+            await m.addColumn(sessions, sessions.outOfPlan);
+            await m.addColumn(sessions, sessions.incomplete);
+            await m.addColumn(sessions, sessions.plannedRounds);
           }
         },
         beforeOpen: (details) async {

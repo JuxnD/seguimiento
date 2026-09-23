@@ -9,7 +9,8 @@ El informe es el producto. Todo lo demás existe para alimentarlo.
 ## Estado
 
 Tema oscuro con acento naranja. MVP implementado: perfil, plan versionado
-(sembrado en la primera apertura), sesiones con contador de rondas,
+(sembrado en la primera apertura), sesiones con [cronómetro guiado por el
+plan](docs/cronometro.md),
 fútbol, catálogo de alimentos, comidas, peso, medidas, informe Markdown,
 respaldo **y restauración** de la base, y aviso de nuevas versiones por GitHub
 Releases. Sin cuentas, sin backend, sin sincronización de datos.

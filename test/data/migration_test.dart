@@ -34,6 +34,10 @@ const _v3Columns = {
 };
 const _v3Tables = ['meal_template_items', 'meal_templates'];
 
+const _v4Columns = {
+  'sessions': ['out_of_plan', 'incomplete', 'planned_rounds'],
+};
+
 void main() {
   setUpAll(useHostSqlite);
 
@@ -57,6 +61,11 @@ void main() {
   Future<void> buildOldSchema(int version) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    for (final entry in _v4Columns.entries) {
+      for (final column in entry.value) {
+        await db.customStatement('alter table ${entry.key} drop column $column');
+      }
+    }
     for (final table in _v3Tables) {
       await db.customStatement('drop table if exists $table');
     }
@@ -79,7 +88,7 @@ void main() {
   Future<int> userVersion(AppDatabase db) =>
       db.customSelect('pragma user_version').map((r) => r.data.values.first as int).getSingle();
 
-  test('una base del esquema 1 llega al 3 sin perder datos', () async {
+  test('una base del esquema 1 llega al 4 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -109,7 +118,7 @@ void main() {
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 3);
+    expect(await userVersion(migrated), 4);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -129,7 +138,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 3 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 4 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -142,7 +151,7 @@ void main() {
     expect(food.name, 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 3);
+    expect(await userVersion(migrated), 4);
     await migrated.close();
   });
 }

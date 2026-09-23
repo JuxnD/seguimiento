@@ -23,7 +23,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 | `plan_versions` | Versión del plan vigente desde `validFrom` | **Inmutable**: editar crea otra versión |
 | `plan_days` | Un día por versión (1 = lunes … 7 = domingo), con rondas objetivo y descanso entre rondas | Único `(planVersionId, weekday)` |
 | `plan_exercises` | Ejercicios del día: series, reps o sostén, descanso (rango), agarre, RIR, por lado, bloque extra y variante | `position` ordena; `block = null` es el trabajo principal |
-| `sessions` | Sesión registrada | `roundsEstimated` marca rondas calculadas, no contadas; `techniqueOk`/`fullRange`/`recoveryOk` en `null` significan "no registrado", no "mal" |
+| `sessions` | Sesión registrada, con el cierre y el plan que regía | `roundsEstimated` marca rondas calculadas, no contadas; `techniqueOk`/`fullRange`/`recoveryOk` en `null` significan "no registrado", no "mal" |
 | `session_rounds` | Marca acumulada (s) al cerrar cada ronda | Procede del contador; permite la media real por ronda |
 | `session_sets` | Serie por ejercicio | `setIndex` es por ejercicio dentro de la sesión |
 | `football_games` | Partido aparte de las sesiones | Formato 5 o 7 |
@@ -64,6 +64,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 1 | Esquema inicial del MVP |
 | 2 | Plan con bloques extra, sostenes, RIR, por lado y descanso en rango; día con descanso entre rondas; sesión con las condiciones de la regla de progresión; perfil con ventana de medición, enfriamiento objetivo y regla de no llegar al fallo |
 | 3 | Alimento con gramos por porción y procedencia (`etiqueta` / `referencia`); ítem de comida con `sourceVerified`; tablas de combos |
+| 4 | Sesión con `outOfPlan`, `incomplete` y `plannedRounds`: distingue entrenar otra cosa de cerrar antes de tiempo |
 
 La migración 1 → 2 solo añade columnas y está cubierta por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base

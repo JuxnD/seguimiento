@@ -125,6 +125,15 @@ class Sessions extends Table {
   TextColumn get context => text().nullable()();
   TextColumn get notes => text().nullable()();
 
+  /// El tipo no coincide con lo que el plan pedía ese día.
+  BoolColumn get outOfPlan => boolean().withDefault(const Constant(false))();
+
+  /// Se cerró antes de completar el plan (paré en la ronda 7 de 8).
+  BoolColumn get incomplete => boolean().withDefault(const Constant(false))();
+
+  /// Rondas o series que pedía el plan, copiadas al registrar.
+  IntColumn get plannedRounds => integer().nullable()();
+
   // Condiciones de la regla de progresión. null = no se registró.
   BoolColumn get techniqueOk => boolean().nullable()();
   BoolColumn get fullRange => boolean().nullable()();

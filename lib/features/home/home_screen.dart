@@ -121,9 +121,9 @@ class HomeScreen extends ConsumerWidget {
             title: 'Registrar',
             children: [
               FilledButton.icon(
-                onPressed: () => startCircuitFlow(context, ref),
+                onPressed: () => startGuidedSession(context, ref),
                 icon: const Icon(Icons.timer),
-                label: const Text('Empezar circuito'),
+                label: const Text('Empezar sesión'),
               ),
               const SizedBox(height: 8),
               Row(

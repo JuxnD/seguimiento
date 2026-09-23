@@ -12,6 +12,7 @@ class Targets {
     this.kcalTarget = 2400,
     this.kcalFloor = 2000,
     this.minWarmupSec = 360,
+    this.minCooldownSec = 60,
     this.measureIntervalDays = 21,
     this.lengthUnit = LengthUnit.cm,
   });
@@ -21,6 +22,9 @@ class Targets {
   final int kcalTarget;
   final int kcalFloor;
   final int minWarmupSec;
+
+  /// Por debajo de esto el enfriamiento no cuenta como tal.
+  final int minCooldownSec;
   final int measureIntervalDays;
   final LengthUnit lengthUnit;
 }
@@ -76,6 +80,9 @@ class SessionEntry {
     this.techniqueOk,
     this.fullRange,
     this.recoveryOk,
+    this.outOfPlan = false,
+    this.incomplete = false,
+    this.plannedRounds,
   });
 
   final DateTime date;
@@ -94,6 +101,15 @@ class SessionEntry {
 
   /// Duración de cada ronda registrada con el contador (segundos).
   final List<int> lapsSec;
+
+  /// El tipo no coincide con lo que pedía el plan ese día.
+  final bool outOfPlan;
+
+  /// Se cerró antes de completar el plan.
+  final bool incomplete;
+
+  /// Rondas (o series) que pedía el plan.
+  final int? plannedRounds;
 
   // Condiciones de la regla de progresión; null = no registrado.
   final bool? techniqueOk;

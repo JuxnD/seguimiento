@@ -35,6 +35,9 @@ class SessionDraft {
     this.techniqueOk,
     this.fullRange,
     this.recoveryOk,
+    this.outOfPlan = false,
+    this.incomplete = false,
+    this.plannedRounds,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
   })  : sets = sets ?? [],
@@ -54,6 +57,13 @@ class SessionDraft {
   String? limitingExercise;
   String? context;
   String? notes;
+
+  /// El tipo registrado no coincide con el plan de ese día.
+  bool outOfPlan;
+
+  /// Se cerró antes de completar el plan.
+  bool incomplete;
+  int? plannedRounds;
 
   // Condiciones de la regla de progresión (null = sin registrar).
   bool? techniqueOk;
@@ -119,6 +129,9 @@ class TrainingRepository {
           limitingExerciseId: Value(limitingId),
           context: Value(_blankToNull(d.context)),
           notes: Value(_blankToNull(d.notes)),
+          outOfPlan: Value(d.outOfPlan),
+          incomplete: Value(d.incomplete),
+          plannedRounds: Value(d.plannedRounds),
           techniqueOk: Value(d.techniqueOk),
           fullRange: Value(d.fullRange),
           recoveryOk: Value(d.recoveryOk),
@@ -184,6 +197,9 @@ class TrainingRepository {
       limitingExercise: r.limitingExerciseId == null ? null : names[r.limitingExerciseId],
       context: r.context,
       notes: r.notes,
+      outOfPlan: r.outOfPlan,
+      incomplete: r.incomplete,
+      plannedRounds: r.plannedRounds,
       techniqueOk: r.techniqueOk,
       fullRange: r.fullRange,
       recoveryOk: r.recoveryOk,

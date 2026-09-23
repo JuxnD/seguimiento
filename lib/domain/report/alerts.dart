@@ -54,6 +54,23 @@ List<String> buildAlerts(ReportStats s) {
         '${shortWarmups == 1 ? 'sesión' : 'sesiones'}');
   }
 
+  final shortCooldowns = s.input.sessions.where((x) => x.cooldownSec < t.minCooldownSec).length;
+  if (shortCooldowns > 0) {
+    out.add('Enfriamiento < ${fmtDec(t.minCooldownSec / 60)} min en $shortCooldowns '
+        '${shortCooldowns == 1 ? 'sesión' : 'sesiones'}');
+  }
+
+  final outOfPlan = s.input.sessions.where((x) => x.outOfPlan).toList();
+  if (outOfPlan.isNotEmpty) {
+    out.add('Fuera de plan: ${outOfPlan.map((x) => '${x.type.label} el ${formatShort(x.date)}').join(', ')}');
+  }
+
+  final unfinished = s.input.sessions.where((x) => x.incomplete).toList();
+  if (unfinished.isNotEmpty) {
+    out.add('Sesiones cerradas antes de completar el plan: '
+        '${unfinished.map((x) => formatShort(x.date)).join(', ')}');
+  }
+
   final estimated = s.input.sessions.where((x) => x.roundsEstimated).length;
   if (estimated > 0) {
     out.add('Rondas estimadas por tiempo (no contadas) en $estimated '
@@ -79,16 +96,6 @@ List<String> buildAlerts(ReportStats s) {
   final notFasted = s.input.measurementsInRange.where((m) => !m.fasted).map((m) => dayKey(m.date)).toSet();
   if (notFasted.isNotEmpty) {
     out.add('Medidas tomadas sin ayunas: ${notFasted.map((k) => formatShort(parseDay(k))).join(', ')}');
-  }
-
-  final mismatch = s.input.sessions.where((x) {
-    final plan = s.planFor(x.date);
-    if (plan == null) return false;
-    final planned = plan.typeFor(x.date.weekday);
-    return !planned.isTraining;
-  }).length;
-  if (mismatch > 0) {
-    out.add('$mismatch ${mismatch == 1 ? 'sesión' : 'sesiones'} en día no planificado para entrenar');
   }
 
   return out;

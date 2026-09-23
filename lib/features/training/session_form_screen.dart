@@ -103,8 +103,38 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     });
   }
 
+  /// El plan manda: si el tipo no coincide con el día, hay que confirmarlo y
+  /// la sesión queda marcada como fuera de plan (y así sale en el informe).
+  Future<bool> _confirmAgainstPlan() async {
+    final view = await ref.read(planRepositoryProvider).dayFor(d.date);
+    if (view == null) return true;
+    final planned = view.day.type;
+    final matches = planned.isTraining && _sessionTypeFor(planned) == d.type;
+    if (matches) {
+      d.outOfPlan = false;
+      return true;
+    }
+    if (!mounted) return false;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('No es lo que toca hoy'),
+        content: Text('El plan pide ${planned.label.toLowerCase()} y estás registrando '
+            '${d.type.label.toLowerCase()}.\n\nSi guardas, queda marcada como fuera de plan.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Corregir')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Guardar igual')),
+        ],
+      ),
+    );
+    if (ok != true) return false;
+    d.outOfPlan = true;
+    return true;
+  }
+
   Future<void> _save() async {
     _syncTimes();
+    if (!await _confirmAgainstPlan()) return;
     d
       ..roundsDone = int.tryParse(_rounds.text)
       ..context = _context.text
@@ -158,12 +188,18 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
               DateTile(date: d.date, onChanged: (v) => setState(() => d.date = v)),
               TimeTile(time: d.startTime, onChanged: (v) => setState(() => d.startTime = v)),
               const SizedBox(height: 8),
-              SegmentedButton<SessionType>(
-                segments: [
-                  for (final t in SessionType.values) ButtonSegment(value: t, label: Text(t.label)),
+              // Cinco tipos no caben en un SegmentedButton de teléfono.
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final t in SessionType.values)
+                    ChoiceChip(
+                      label: Text(t.label),
+                      selected: d.type == t,
+                      onSelected: (_) => setState(() => d.type = t),
+                    ),
                 ],
-                selected: {d.type},
-                onSelectionChanged: (s) => setState(() => d.type = s.first),
               ),
             ],
           ),
@@ -255,6 +291,26 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
               ],
             ],
           ),
+          if (d.outOfPlan)
+            AppCard(
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.warning_amber),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text('Fuera de plan: el día pedía otra cosa.',
+                        style: Theme.of(context).textTheme.bodyMedium)),
+                  ],
+                ),
+              ],
+            ),
+          if (d.incomplete)
+            AppCard(
+              children: [
+                Text('Cerrada antes de completar el plan'
+                    '${d.plannedRounds == null ? '' : ' (${d.roundsDone ?? 0} de ${d.plannedRounds})'}.'),
+              ],
+            ),
           AppCard(
             title: 'Regla de progresión',
             children: [

@@ -22,6 +22,8 @@
 | Plan real sembrado en la primera apertura (v1 y v2) | Listo |
 | Regla de progresión registrada y auditada en el informe | Listo |
 | Tema oscuro naranja | Listo |
+| Cronómetro guiado por el plan (circuito y bloques) con descansos automáticos | Listo |
+| Sesión fuera de plan e incompleta, con aviso y marca en el informe | Listo |
 | Catálogo inicial de 30 alimentos con procedencia (etiqueta / referencia) | Listo |
 | Combos de un toque (batido, cena base, cena completa, almuerzo típico) | Listo |
 | Procedencia de las kcal en el informe | Listo |
@@ -36,6 +38,17 @@
 | Crear y editar combos desde la app | Hoy se siembran desde el código |
 | Editor del plan sin campos para sostén, RIR ni variante A/B | Se ven, pero solo se editan desde el código; al guardar no se pierden |
 | Pruebas automáticas de interfaz | Retiradas: se colgaban con drift dentro de `flutter_test`, en Windows y en Linux. La UI se verifica en el teléfono |
+
+## En curso
+
+Mejoras pedidas tras el primer uso real, en este orden:
+
+| Fase | Qué | Estado |
+|---|---|---|
+| 1 | Cronómetro guiado, fases automáticas, cierre anticipado, validaciones de plan | Listo |
+| 2 | Comidas: crear alimento sin salir del registro, editar cantidades de un combo, guardar combos desde la app, hora vs franja | Pendiente |
+| 3 | Notificaciones locales: sesión, sesión sin registrar, comidas, proteína, medición, fin de descanso | Pendiente |
+| 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Pendiente |
 
 ## v2
 

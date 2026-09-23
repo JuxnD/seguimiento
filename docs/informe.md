@@ -20,7 +20,9 @@ Para ver una salida completa con datos de ejemplo:
    al anterior, proteína y kcal promedio (solo días registrados), días bajo el
    piso, peso promedio y Δ contra la línea base.
 3. **Sesiones** — tabla (día, tipo, total, cal/enf, neto, rondas, RPE, series
-   partidas, contexto) y detalle por sesión con vueltas, series y notas.
+   partidas, contexto) y detalle por sesión con vueltas, series y notas. La
+   celda de rondas dice hechas sobre planificadas (`7/8 (incompleta)`) y el
+   tipo se marca `⚠ fuera de plan` cuando no era lo que tocaba.
 4. **Fútbol** — tabla aparte; el fútbol no es una sesión de circuito.
 5. **Nutrición** — kcal y proteína por comida y día, promedio de macros y
    detalle de qué se comió.
@@ -67,6 +69,9 @@ es independiente; los umbrales viven en el perfil, no en el código.
 | Ejercicio partido repetido | Mismo ejercicio con serie partida en ≥ 3 sesiones | — |
 | Progresión indebida | Se subió de ronda respecto a la sesión previa del mismo tipo con series partidas, fallo, técnica, rango o recuperación en rojo | Regla del plan |
 | Calentamiento corto | Sesiones con calentamiento bajo el mínimo | `minWarmupSec` (6 min) |
+| Enfriamiento corto | Sesiones con enfriamiento bajo el mínimo | `minCooldownSec` (1 min) |
+| Fuera de plan | Se registró un tipo distinto al que pedía el día | Plan vigente |
+| Sesión incompleta | Se cerró antes de completar el plan | — |
 | Rondas estimadas | Sesiones con rondas calculadas por tiempo | — |
 | Medición antes de tiempo | Toma a menos días de la anterior que el intervalo | `measureIntervalDays` (21) |
 | Medidas sin ayunas | Alguna toma del rango marcada sin ayunas | — |
