@@ -258,4 +258,25 @@ void main() {
     expect(again.versionNumber, 1);
     expect(await plan.dayById(99999), isNull);
   });
+
+  test('borrar un alimento: se sabe qué combos lo usan', () async {
+    final pan = await nutrition.saveFood(FoodsCompanion.insert(name: 'Pan', basis: FoodBasis.unit, kcal: 80, protein: 3));
+    final huevo = await nutrition.saveFood(FoodsCompanion.insert(name: 'Huevo', basis: FoodBasis.unit, kcal: 70, protein: 6));
+    await nutrition.saveTemplate('Cena con pan', MealSlot.cena, [(pan, 2), (huevo, 3)]);
+    await nutrition.saveTemplate('Huevos solos', MealSlot.desayuno, [(huevo, 2)]);
+
+    expect(await nutrition.templatesUsingFood(pan), ['Cena con pan']);
+    expect(await nutrition.templatesUsingFood(huevo), ['Cena con pan', 'Huevos solos']);
+  });
+
+  test('pesaje: uno por día y condición', () async {
+    await body.addWeight(d(9, 20), 71.4);
+    await body.addWeight(d(9, 20), 71.2); // se corrige, no se duplica
+    await body.addWeight(d(9, 20), 72.0, fasted: false);
+    final all = await body.watchWeights().first;
+    expect(all.map((w) => (w.kg, w.fasted)).toSet(), {(71.2, true), (72.0, false)});
+
+    await body.addWeight(d(9, 1), 73.0);
+    expect((await body.watchFirstWeight().first)!.kg, 73.0);
+  });
 }

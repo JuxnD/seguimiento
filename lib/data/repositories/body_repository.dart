@@ -28,8 +28,19 @@ class BodyRepository {
         ..limit(limit))
       .watch();
 
-  Future<void> addWeight(DateTime date, double kg, {bool fasted = true}) =>
-      db.into(db.bodyWeights).insert(BodyWeightsCompanion.insert(date: dayKey(date), kg: kg, fasted: Value(fasted)));
+  /// Un pesaje por día **y** condición: volver a pesarse en ayunas el mismo
+  /// día corrige el anterior en vez de duplicar el punto de la gráfica. Uno
+  /// en ayunas y otro sin ayunas conviven (el informe prefiere el de ayunas).
+  Future<void> addWeight(DateTime date, double kg, {bool fasted = true}) => db.transaction(() async {
+        await (db.delete(db.bodyWeights)..where((t) => t.date.equals(dayKey(date)) & t.fasted.equals(fasted))).go();
+        await db.into(db.bodyWeights).insert(BodyWeightsCompanion.insert(date: dayKey(date), kg: kg, fasted: Value(fasted)));
+      });
+
+  /// Primer pesaje registrado: la línea base del "desde…".
+  Stream<BodyWeightRow?> watchFirstWeight() => (db.select(db.bodyWeights)
+        ..orderBy([(t) => OrderingTerm(expression: t.date), (t) => OrderingTerm(expression: t.id)])
+        ..limit(1))
+      .watchSingleOrNull();
 
   Future<void> deleteWeight(int id) => (db.delete(db.bodyWeights)..where((t) => t.id.equals(id))).go();
 

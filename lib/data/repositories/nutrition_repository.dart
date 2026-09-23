@@ -140,7 +140,19 @@ class NutritionRepository {
   }
 
   /// Seguro: los items históricos conservan sus macros (foodId → null).
+  /// Los combos que lo usan sí lo pierden: ver [templatesUsingFood].
   Future<void> deleteFood(int id) => (db.delete(db.foods)..where((t) => t.id.equals(id))).go();
+
+  /// Nombres de los combos que llevan este alimento: borrarlo los cambia.
+  Future<List<String>> templatesUsingFood(int foodId) async {
+    final rows = await (db.select(db.mealTemplates).join([
+      innerJoin(db.mealTemplateItems, db.mealTemplateItems.templateId.equalsExp(db.mealTemplates.id)),
+    ])
+          ..where(db.mealTemplateItems.foodId.equals(foodId))
+          ..orderBy([OrderingTerm(expression: db.mealTemplates.position)]))
+        .get();
+    return {for (final r in rows) r.readTable(db.mealTemplates).name}.toList();
+  }
 
   // ---------- Combos ----------
 

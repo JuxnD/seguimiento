@@ -39,6 +39,7 @@ class BodyScreen extends ConsumerWidget {
         children: [
           _BodyHero(
             weights: weights.value ?? const [],
+            firstWeight: ref.watch(firstWeightProvider).valueOrNull,
             checkIns: checkIns.value ?? const [],
             due: due,
             onWeight: () => _addWeight(context, ref),
@@ -71,8 +72,11 @@ class BodyScreen extends ConsumerWidget {
                               value: fmtDec(w.kg),
                               valueLabel: 'kg',
                               onLongPress: () async {
-                                if (await confirmDelete(context, 'el pesaje')) {
-                                  await ref.read(bodyRepositoryProvider).deleteWeight(w.id);
+                                final repo = ref.read(bodyRepositoryProvider);
+                                await repo.deleteWeight(w.id);
+                                if (context.mounted) {
+                                  showUndoSnack(context, 'Pesaje borrado',
+                                      () => repo.addWeight(parseDay(w.date), w.kg, fasted: w.fasted));
                                 }
                               },
                             ),
@@ -139,14 +143,19 @@ class BodyScreen extends ConsumerWidget {
       Navigator.push(context, MaterialPageRoute(builder: (_) => MeasurementFormScreen(existing: existing)));
 
   Future<void> _addWeight(BuildContext context, WidgetRef ref) async {
-    final result = await showDialog<(double, bool)>(context: context, builder: (_) => const _WeightDialog());
-    if (result == null) return;
-    await ref.read(bodyRepositoryProvider).addWeight(dateOnly(DateTime.now()), result.$1, fasted: result.$2);
+    final result = await showDialog<(DateTime, double, bool)>(
+      context: context,
+      builder: (_) => _WeightDialog(today: ref.read(todayProvider)),
+    );
+    if (result == null || !context.mounted) return;
+    await guarded(context, () => ref.read(bodyRepositoryProvider).addWeight(result.$1, result.$2, fasted: result.$3));
   }
 }
 
 class _WeightDialog extends StatefulWidget {
-  const _WeightDialog();
+  const _WeightDialog({required this.today});
+
+  final DateTime today;
 
   @override
   State<_WeightDialog> createState() => _WeightDialogState();
@@ -155,6 +164,7 @@ class _WeightDialog extends StatefulWidget {
 class _WeightDialogState extends State<_WeightDialog> {
   final _kg = TextEditingController();
   bool _fasted = true;
+  late DateTime _date = widget.today;
 
   @override
   void dispose() {
@@ -169,7 +179,8 @@ class _WeightDialogState extends State<_WeightDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          NumberField(controller: _kg, label: 'Peso', suffix: 'kg', decimal: true),
+          NumberField(controller: _kg, label: 'Peso', suffix: 'kg', decimal: true, autofocus: true),
+          DateTile(date: _date, onChanged: (v) => setState(() => _date = v)),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: const Text('En ayunas'),
@@ -184,7 +195,7 @@ class _WeightDialogState extends State<_WeightDialog> {
           onPressed: () {
             final kg = parseNum(_kg.text);
             if (kg == null || kg <= 0) return;
-            Navigator.pop(context, (kg, _fasted));
+            Navigator.pop(context, (_date, kg, _fasted));
           },
           child: const Text('Guardar'),
         ),
@@ -200,6 +211,7 @@ const _bodyColor = Color(0xFF7ED957);
 class _BodyHero extends StatelessWidget {
   const _BodyHero({
     required this.weights,
+    required this.firstWeight,
     required this.checkIns,
     required this.due,
     required this.onWeight,
@@ -207,6 +219,9 @@ class _BodyHero extends StatelessWidget {
   });
 
   final List<BodyWeightRow> weights;
+
+  /// El primer pesaje de todos, no el más viejo de los que carga la lista.
+  final BodyWeightRow? firstWeight;
   final List<MeasurementCheckIn> checkIns;
   final MeasurementDue? due;
   final VoidCallback onWeight;
@@ -216,8 +231,8 @@ class _BodyHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final latest = weights.isEmpty ? null : weights.first;
-    final first = weights.isEmpty ? null : weights.last;
-    final delta = latest == null || first == null || identical(latest, first) ? null : latest.kg - first.kg;
+    final first = firstWeight;
+    final delta = latest == null || first == null || latest.id == first.id ? null : latest.kg - first.kg;
 
     return HeroCard(
       color: _bodyColor,

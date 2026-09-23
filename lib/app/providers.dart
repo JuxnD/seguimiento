@@ -202,6 +202,7 @@ final foodsProvider = StreamProvider((ref) => ref.watch(nutritionRepositoryProvi
 final mealTemplatesProvider =
     StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchTemplates());
 final weightsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchWeights());
+final firstWeightProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchFirstWeight());
 final checkInsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchCheckIns());
 
 /// La clave es `dayKey` para que la familia compare por valor.

@@ -40,11 +40,8 @@ class FoodsScreen extends ConsumerWidget {
                         'G ${fmtDec(f.fat)} ${f.basisLabel}'),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete_outline),
-                      onPressed: () async {
-                        if (await confirmDelete(context, f.name)) {
-                          await ref.read(nutritionRepositoryProvider).deleteFood(f.id);
-                        }
-                      },
+                      tooltip: 'Borrar',
+                      onPressed: () => _delete(context, ref, f),
                     ),
                     onTap: () => _edit(context, ref, f),
                   );
@@ -57,6 +54,29 @@ class FoodsScreen extends ConsumerWidget {
         label: const Text('Alimento'),
       ),
     );
+  }
+
+  /// Borrar un alimento no toca el historial (los macros están copiados),
+  /// pero sí vacía los combos que lo usan: se dice cuáles antes de borrar.
+  Future<void> _delete(BuildContext context, WidgetRef ref, FoodRow food) async {
+    final repo = ref.read(nutritionRepositoryProvider);
+    final combos = await repo.templatesUsingFood(food.id);
+    if (!context.mounted) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('¿Borrar ${food.name}?'),
+        content: Text(combos.isEmpty
+            ? 'Las comidas ya registradas no cambian.'
+            : 'Las comidas ya registradas no cambian, pero sale de '
+                '${combos.length == 1 ? 'este combo' : 'estos combos'}: ${combos.join(', ')}.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Borrar')),
+        ],
+      ),
+    );
+    if (ok == true && context.mounted) await guarded(context, () => repo.deleteFood(food.id));
   }
 
   Future<void> _edit(BuildContext context, WidgetRef ref, FoodRow? food) async {

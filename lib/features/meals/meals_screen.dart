@@ -207,7 +207,13 @@ class _MealCard extends ConsumerWidget {
             await repo.copyMeal(meal.meal.id, dateOnly(DateTime.now()));
             if (context.mounted) showSnack(context, 'Copiada a hoy');
           } else if (v == 'borrar') {
-            if (await confirmDelete(context, 'la comida')) await repo.deleteMeal(meal.meal.id);
+            // Sin diálogo: se borra y se puede deshacer. Corregir debe costar
+            // un toque, no dos.
+            final backup = await repo.loadMeal(meal.meal.id);
+            await repo.deleteMeal(meal.meal.id);
+            if (context.mounted) {
+              showUndoSnack(context, '${meal.meal.slot.label} borrada', () => repo.saveMeal(backup..id = null));
+            }
           }
           onChanged();
         },

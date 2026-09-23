@@ -87,7 +87,7 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: NumberField(controller: _minutes, label: 'Minutos', suffix: 'min')),
+                  Expanded(child: NumberField(controller: _minutes, label: 'Minutos', suffix: 'min', autofocus: widget.existing == null)),
                   const SizedBox(width: 8),
                   Expanded(child: NumberField(controller: _steps, label: 'Pasos')),
                 ],

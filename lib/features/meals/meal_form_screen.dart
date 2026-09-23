@@ -8,6 +8,7 @@ import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
+import '../../domain/search.dart';
 import '../../ui/widgets.dart';
 import 'foods_screen.dart';
 
@@ -290,7 +291,7 @@ class _FoodPickerState extends State<_FoodPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final list = widget.foods.where((f) => f.name.toLowerCase().contains(_query.toLowerCase())).toList();
+    final list = widget.foods.where((f) => matchesQuery(f.name, _query)).toList();
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SizedBox(
@@ -382,8 +383,9 @@ class _QuantityDialogState extends State<_QuantityDialog> {
           NumberField(
             controller: _qty,
             label: 'Cantidad',
-            suffix: widget.food.basis == FoodBasis.unit ? widget.food.unitLabel : widget.food.unitLabel,
+            suffix: widget.food.unitLabel,
             decimal: true,
+            autofocus: true,
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 12),
@@ -436,6 +438,8 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
           children: [
             TextField(
               controller: _label,
+              autofocus: widget.initial == null,
+              textCapitalization: TextCapitalization.sentences,
               decoration: const InputDecoration(
                   labelText: 'Qué comiste', hintText: 'Bandeja paisa', border: OutlineInputBorder()),
             ),
@@ -464,21 +468,30 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
         FilledButton(
           onPressed: () {
             final label = _label.text.trim();
-            if (label.isEmpty) return;
+            final kcal = parseNum(_kcal.text) ?? 0, protein = parseNum(_protein.text) ?? 0;
+            // Antes el botón no hacía nada sin decir por qué.
+            if (label.isEmpty) {
+              showSnack(context, 'Falta qué comiste');
+              return;
+            }
+            if (kcal <= 0 && protein <= 0) {
+              showSnack(context, 'Pon al menos las kcal o la proteína, aunque sea a ojo');
+              return;
+            }
             Navigator.pop(
               context,
               MealItemDraft(
                 label: label,
                 macros: Macros(
-                  kcal: parseNum(_kcal.text) ?? 0,
-                  protein: parseNum(_protein.text) ?? 0,
+                  kcal: kcal,
+                  protein: protein,
                   carbs: parseNum(_carbs.text) ?? 0,
                   fat: parseNum(_fat.text) ?? 0,
                 ),
               ),
             );
           },
-          child: const Text('Añadir'),
+          child: Text(widget.initial == null ? 'Añadir' : 'Guardar'),
         ),
       ],
     );
