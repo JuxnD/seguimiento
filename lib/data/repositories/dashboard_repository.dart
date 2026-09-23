@@ -27,7 +27,7 @@ class TodayDashboard {
     required this.proteinMax,
     required this.kcalTarget,
     required this.roundsRecord,
-    required this.daysToMeasurement,
+    required this.measurement,
   });
 
   final DateTime date;
@@ -52,8 +52,8 @@ class TodayDashboard {
   /// Mejor marca de rondas hasta hoy.
   final int? roundsRecord;
 
-  /// Negativo = medición vencida. null = sin línea base.
-  final int? daysToMeasurement;
+  /// Cuándo toca medir. null = sin línea base ni fecha acordada.
+  final MeasurementDue? measurement;
 
   bool get trained => sessionsToday > 0;
   double get proteinProgress => goalProgress(macros.protein, proteinMin);
@@ -108,9 +108,13 @@ class DashboardRepository {
       proteinMax: p.proteinMax,
       kcalTarget: p.kcalTarget,
       roundsRecord: record,
-      daysToMeasurement: lastMeasurement == null
-          ? null
-          : p.measureIntervalDays - daysBetween(parseDay(lastMeasurement.date), date),
+      measurement: measurementDue(
+        today: date,
+        lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
+        agreed: p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!),
+        minDays: p.measureIntervalDays,
+        maxDays: p.measureIntervalMaxDays,
+      ),
     );
   }
 

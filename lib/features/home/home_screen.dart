@@ -9,6 +9,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
+import '../../domain/progress.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
@@ -52,7 +53,7 @@ class HomeScreen extends ConsumerWidget {
             _PlanHero(dashboard: d),
             _RingsCard(dashboard: d),
             _ActionsCard(date: today, dayType: d.dayType),
-            if (d.daysToMeasurement != null) _MeasurementCard(days: d.daysToMeasurement!),
+            if (d.measurement != null) _MeasurementCard(due: d.measurement!),
           ],
         ),
       ),
@@ -284,9 +285,9 @@ MealDraft _mealNow(DateTime date) {
 }
 
 class _MeasurementCard extends StatelessWidget {
-  const _MeasurementCard({required this.days});
+  const _MeasurementCard({required this.due});
 
-  final int days;
+  final MeasurementDue due;
 
   @override
   Widget build(BuildContext context) => AppCard(
@@ -296,9 +297,7 @@ class _MeasurementCard extends StatelessWidget {
               const Icon(Icons.straighten, size: 18),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(days > 0
-                    ? 'Próxima medición en $days ${days == 1 ? 'día' : 'días'}'
-                    : 'Toca medir: ya pasó el intervalo'),
+                child: Text(measurementLabel(due)),
               ),
             ],
           ),

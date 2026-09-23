@@ -12,10 +12,15 @@ class Targets {
     this.kcalTarget = 2400,
     this.kcalFloor = 2000,
     this.minWarmupSec = 360,
-    this.minCooldownSec = 60,
+    this.minCooldownSec = minCooldownSecDefault,
     this.measureIntervalDays = 21,
     this.lengthUnit = LengthUnit.cm,
   });
+
+  /// Por debajo de 1 min el enfriamiento no cuenta como tal. Es una
+  /// definición, no una meta: por eso no está en el perfil (la meta,
+  /// `cooldownTargetSec`, sí).
+  static const minCooldownSecDefault = 60;
 
   final int proteinMin;
   final int proteinMax;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../domain/dates.dart';
+import '../domain/progress.dart';
 
 /// Tarjeta con título: unidad visual de todas las pantallas.
 class AppCard extends StatelessWidget {
@@ -352,4 +353,19 @@ class _PromptTextDialogState extends State<_PromptTextDialog> {
           FilledButton(onPressed: _submit, child: const Text('Listo')),
         ],
       );
+}
+
+/// Texto de cuándo medir, igual en Hoy y en Cuerpo.
+String measurementLabel(MeasurementDue due) {
+  final left = due.daysLeft;
+  if (left > 0) {
+    final when = due.agreed ? ' (fecha acordada)' : '';
+    return 'Próxima medición en $left ${left == 1 ? 'día' : 'días'}$when';
+  }
+  if (due.daysLate > 0) {
+    return 'Medición atrasada ${due.daysLate} ${due.daysLate == 1 ? 'día' : 'días'}: mídete en ayunas';
+  }
+  return due.agreed
+      ? 'Hoy toca medir (fecha acordada). En ayunas.'
+      : 'Toca medir: estás en la ventana hasta el ${formatShort(due.windowEnd)}. En ayunas.';
 }

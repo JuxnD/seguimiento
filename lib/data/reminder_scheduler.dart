@@ -1,6 +1,7 @@
 import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/nutrition.dart';
+import '../domain/progress.dart';
 import '../domain/reminders.dart';
 import 'database.dart';
 import 'notification_service.dart';
@@ -61,15 +62,20 @@ class ReminderScheduler {
     final meals = await nutrition.range(today, today);
     final proteinToday = Macros.sum(meals.map((m) => m.macros)).protein;
 
+    final lastMeasurement = await body.lastCheckInBefore(addDays(today, 1));
     final planned = planReminders(ReminderContext(
       now: moment,
       days: days,
       settings: settings,
       proteinToday: proteinToday,
       proteinMin: p.proteinMin,
-      lastMeasurement: await body.lastCheckInBefore(addDays(today, 1)),
+      lastMeasurement: lastMeasurement,
       measureIntervalDays: p.measureIntervalDays,
-      nextMeasurementDate: p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!),
+      // Una fecha acordada ya cumplida no debe seguir avisando.
+      nextMeasurementDate: effectiveAgreedDate(
+        agreed: p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!),
+        lastMeasurement: lastMeasurement,
+      ),
     ));
 
     await service.applySchedule(planned);

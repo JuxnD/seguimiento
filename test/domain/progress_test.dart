@@ -125,4 +125,49 @@ void main() {
       expect(sessionPraise(const SessionComparison(rounds: null)).$1, 'Sesión completa');
     });
   });
+
+  group('cuándo medir', () {
+    MeasurementDue? due({DateTime? last, DateTime? agreed, DateTime? today}) => measurementDue(
+          today: today ?? hoy,
+          lastMeasurement: last,
+          agreed: agreed,
+          minDays: 21,
+          maxDays: 28,
+        );
+
+    test('sin medidas ni fecha acordada no hay cálculo', () {
+      expect(due(), isNull);
+    });
+
+    test('antes de la ventana faltan días', () {
+      final d = due(last: DateTime(2026, 9, 10))!;
+      expect(d.daysLeft, 8);
+      expect(d.isDue, isFalse);
+      expect(d.daysLate, 0);
+    });
+
+    test('dentro de la ventana toca medir sin ir atrasado', () {
+      final d = due(last: DateTime(2026, 8, 30))!; // +21 = 20 sep, +28 = 27 sep
+      expect(d.isDue, isTrue);
+      expect(d.daysLate, 0);
+      expect(d.windowEnd, DateTime(2026, 9, 27));
+    });
+
+    test('pasada la ventana va atrasado', () {
+      final d = due(last: DateTime(2026, 8, 20))!; // fin de ventana 17 sep
+      expect(d.daysLate, 6);
+    });
+
+    test('la fecha acordada manda mientras no se haya medido', () {
+      final d = due(last: DateTime(2026, 9, 10), agreed: DateTime(2026, 9, 25))!;
+      expect(d.agreed, isTrue);
+      expect(d.daysLeft, 2);
+    });
+
+    test('una fecha acordada ya cumplida se ignora', () {
+      final d = due(last: DateTime(2026, 9, 20), agreed: DateTime(2026, 9, 18))!;
+      expect(d.agreed, isFalse);
+      expect(d.dueDate, DateTime(2026, 10, 11));
+    });
+  });
 }

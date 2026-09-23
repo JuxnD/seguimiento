@@ -6,6 +6,7 @@ import '../../data/repositories/body_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import '../../domain/progress.dart';
 import '../../domain/nutrition.dart';
 import '../../data/database.dart';
 import '../../ui/hero.dart';
@@ -22,7 +23,14 @@ class BodyScreen extends ConsumerWidget {
     final checkIns = ref.watch(checkInsProvider);
     final profile = ref.watch(profileProvider).value;
     final unit = profile?.lengthUnit ?? LengthUnit.cm;
-    final interval = profile?.measureIntervalDays ?? 21;
+    final lastCheck = (checkIns.value ?? const []).isEmpty ? null : checkIns.value!.first.date;
+    final due = measurementDue(
+      today: ref.watch(todayProvider),
+      lastMeasurement: lastCheck,
+      agreed: profile?.nextMeasurementDate == null ? null : parseDay(profile!.nextMeasurementDate!),
+      minDays: profile?.measureIntervalDays ?? 21,
+      maxDays: profile?.measureIntervalMaxDays ?? 28,
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Cuerpo')),
@@ -32,7 +40,7 @@ class BodyScreen extends ConsumerWidget {
           _BodyHero(
             weights: weights.value ?? const [],
             checkIns: checkIns.value ?? const [],
-            interval: interval,
+            due: due,
             onWeight: () => _addWeight(context, ref),
             onMeasure: () => _openMeasurement(context, ref, null),
           ),
@@ -193,14 +201,14 @@ class _BodyHero extends StatelessWidget {
   const _BodyHero({
     required this.weights,
     required this.checkIns,
-    required this.interval,
+    required this.due,
     required this.onWeight,
     required this.onMeasure,
   });
 
   final List<BodyWeightRow> weights;
   final List<MeasurementCheckIn> checkIns;
-  final int interval;
+  final MeasurementDue? due;
   final VoidCallback onWeight;
   final VoidCallback onMeasure;
 
@@ -210,8 +218,6 @@ class _BodyHero extends StatelessWidget {
     final latest = weights.isEmpty ? null : weights.first;
     final first = weights.isEmpty ? null : weights.last;
     final delta = latest == null || first == null || identical(latest, first) ? null : latest.kg - first.kg;
-    final lastCheck = checkIns.isEmpty ? null : checkIns.first.date;
-    final due = lastCheck == null ? null : interval - daysBetween(lastCheck, dateOnly(DateTime.now()));
 
     return HeroCard(
       color: _bodyColor,
@@ -224,8 +230,8 @@ class _BodyHero extends StatelessWidget {
       pills: [
         StatPill(
           icon: Icons.straighten,
-          label: due == null ? 'Sin medidas' : (due > 0 ? 'Medir en $due d' : 'Toca medir'),
-          color: due != null && due <= 0 ? _bodyColor : null,
+          label: due == null ? 'Sin medidas' : (due!.isDue ? 'Toca medir' : 'Medir en ${due!.daysLeft} d'),
+          color: due?.isDue == true ? _bodyColor : null,
         ),
       ],
       children: [
@@ -236,11 +242,10 @@ class _BodyHero extends StatelessWidget {
             Expanded(child: ActionButton(icon: Icons.straighten, label: 'Medidas', onPressed: onMeasure)),
           ],
         ),
-        if (due != null && due <= 0)
+        if (due?.isDue == true)
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Text('Ya pasaron $interval días desde la última toma. Mídete en ayunas.',
-                style: text.bodySmall),
+            child: Text(measurementLabel(due!), style: text.bodySmall),
           ),
       ],
     );

@@ -173,29 +173,54 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
   late final _kcalFloor = TextEditingController(text: '${p.kcalFloor}');
   late final _warmup = TextEditingController(text: formatDuration(p.minWarmupSec));
   late final _interval = TextEditingController(text: '${p.measureIntervalDays}');
+  late final _intervalMax = TextEditingController(text: '${p.measureIntervalMaxDays}');
+  late final _cooldown = TextEditingController(text: formatDuration(p.cooldownTargetSec));
   late DateTime _start = p.programStart;
   late DateTime? _birth = p.birthDate == null ? null : parseDay(p.birthDate!);
+  late DateTime? _nextMeasurement = p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!);
   late LengthUnit _unit = p.lengthUnit;
+  late bool _neverToFailure = p.neverToFailure;
 
   @override
   void dispose() {
-    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _warmup, _interval]) {
+    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _warmup, _interval, _intervalMax, _cooldown]) {
       c.dispose();
     }
     super.dispose();
   }
 
   Future<void> _save() async {
+    final proteinMin = int.tryParse(_proteinMin.text) ?? p.proteinMin;
+    final proteinMax = int.tryParse(_proteinMax.text) ?? p.proteinMax;
+    final kcal = int.tryParse(_kcal.text) ?? p.kcalTarget;
+    final kcalFloor = int.tryParse(_kcalFloor.text) ?? p.kcalFloor;
+    final interval = int.tryParse(_interval.text) ?? p.measureIntervalDays;
+    final intervalMax = int.tryParse(_intervalMax.text) ?? p.measureIntervalMaxDays;
+    final problem = proteinMin > proteinMax
+        ? 'La proteína mínima no puede ser mayor que la máxima'
+        : kcalFloor > kcal
+            ? 'El piso de alerta no puede ser mayor que las kcal objetivo'
+            : interval <= 0 || intervalMax < interval
+                ? 'La ventana de medición va de un mínimo (> 0) a un máximo mayor o igual'
+                : null;
+    if (problem != null) {
+      showSnack(context, problem);
+      return;
+    }
     await guarded(context, () => ref.read(profileRepositoryProvider).save(ProfilesCompanion(
           birthDate: Value(_birth == null ? null : dayKey(_birth!)),
           heightCm: Value(parseNum(_height.text)),
           startDate: Value(dayKey(_start)),
-          proteinMin: Value(int.tryParse(_proteinMin.text) ?? p.proteinMin),
-          proteinMax: Value(int.tryParse(_proteinMax.text) ?? p.proteinMax),
-          kcalTarget: Value(int.tryParse(_kcal.text) ?? p.kcalTarget),
-          kcalFloor: Value(int.tryParse(_kcalFloor.text) ?? p.kcalFloor),
+          proteinMin: Value(proteinMin),
+          proteinMax: Value(proteinMax),
+          kcalTarget: Value(kcal),
+          kcalFloor: Value(kcalFloor),
           minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
-          measureIntervalDays: Value(int.tryParse(_interval.text) ?? p.measureIntervalDays),
+          measureIntervalDays: Value(interval),
+          measureIntervalMaxDays: Value(intervalMax),
+          nextMeasurementDate: Value(_nextMeasurement == null ? null : dayKey(_nextMeasurement!)),
+          cooldownTargetSec: Value(parseDuration(_cooldown.text) ?? p.cooldownTargetSec),
+          neverToFailure: Value(_neverToFailure),
           lengthUnit: Value(_unit),
         )), ok: 'Perfil guardado');
   }
@@ -250,8 +275,48 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
           children: [
             Expanded(child: DurationField(controller: _warmup, label: 'Calentamiento mínimo')),
             const SizedBox(width: 8),
-            Expanded(child: NumberField(controller: _interval, label: 'Días entre medidas')),
+            Expanded(child: DurationField(controller: _cooldown, label: 'Meta de enfriamiento')),
           ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: NumberField(controller: _interval, label: 'Medir desde', suffix: 'días')),
+            const SizedBox(width: 8),
+            Expanded(child: NumberField(controller: _intervalMax, label: 'Medir hasta', suffix: 'días')),
+          ],
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.event_available_outlined),
+          title: const Text('Próxima medición acordada'),
+          subtitle: Text(_nextMeasurement == null
+              ? 'Sin fecha: se calcula desde la última toma'
+              : '${weekdayLong(_nextMeasurement!.weekday)} ${formatLong(_nextMeasurement!)}'),
+          trailing: _nextMeasurement == null
+              ? const Icon(Icons.edit_calendar)
+              : IconButton(
+                  tooltip: 'Quitar fecha',
+                  icon: const Icon(Icons.clear),
+                  onPressed: () => setState(() => _nextMeasurement = null),
+                ),
+          onTap: () async {
+            final today = dateOnly(DateTime.now());
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: _nextMeasurement ?? today,
+              firstDate: DateTime(2020),
+              lastDate: DateTime(2100),
+            );
+            if (picked != null) setState(() => _nextMeasurement = dateOnly(picked));
+          },
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('No entrenar al fallo'),
+          subtitle: const Text('Avisa si marcas una serie al fallo'),
+          value: _neverToFailure,
+          onChanged: (v) => setState(() => _neverToFailure = v),
         ),
         const SizedBox(height: 12),
         SegmentedButton<LengthUnit>(

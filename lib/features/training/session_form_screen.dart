@@ -304,6 +304,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                     set: entry.value[i],
                     onChanged: () => setState(() {}),
                     onDelete: () => setState(() => d.sets.remove(entry.value[i])),
+                    warnFailure: ref.watch(profileProvider).value?.neverToFailure ?? true,
                   ),
                 const Divider(),
               ],
@@ -428,12 +429,21 @@ class _TriToggle extends StatelessWidget {
 }
 
 class _SetRow extends StatelessWidget {
-  const _SetRow({required this.index, required this.set, required this.onChanged, required this.onDelete});
+  const _SetRow({
+    required this.index,
+    required this.set,
+    required this.onChanged,
+    required this.onDelete,
+    this.warnFailure = true,
+  });
 
   final int index;
   final SetDraft set;
   final VoidCallback onChanged;
   final VoidCallback onDelete;
+
+  /// Regla del perfil `neverToFailure`: si está activa, marcar fallo avisa.
+  final bool warnFailure;
 
   @override
   Widget build(BuildContext context) {
@@ -483,7 +493,7 @@ class _SetRow extends StatelessWidget {
             onPressed: () {
               set.toFailure = !set.toFailure;
               // El plan dice no entrenar al fallo: se registra, pero se avisa.
-              if (set.toFailure) showSnack(context, 'El plan pide no llegar al fallo (RIR 1–3)');
+              if (set.toFailure && warnFailure) showSnack(context, 'El plan pide no llegar al fallo (RIR 1–3)');
               onChanged();
             },
           ),

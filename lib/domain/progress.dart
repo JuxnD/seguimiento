@@ -131,3 +131,58 @@ class SessionComparison {
   }
   return ('Sesión completa', 'Un día más en la racha.');
 }
+
+/// Cuándo toca medir. La fecha acordada (perfil) manda mientras no se haya
+/// medido ya en o después de ella; si no, la última toma + la ventana
+/// [mínimo, máximo] de días del perfil.
+class MeasurementDue {
+  const MeasurementDue({required this.dueDate, required this.windowEnd, required this.today, this.agreed = false});
+
+  /// Desde cuándo toca medir.
+  final DateTime dueDate;
+
+  /// Hasta cuándo es buen momento; después, la medición va atrasada.
+  final DateTime windowEnd;
+  final DateTime today;
+
+  /// true si sale de una fecha acordada, no del intervalo.
+  final bool agreed;
+
+  /// > 0: faltan días. ≤ 0: toca medir.
+  int get daysLeft => daysBetween(today, dueDate);
+
+  /// Días pasados del final de la ventana (0 si aún se está a tiempo).
+  int get daysLate {
+    final late = daysBetween(windowEnd, today);
+    return late > 0 ? late : 0;
+  }
+
+  bool get isDue => daysLeft <= 0;
+}
+
+/// La fecha acordada solo vale si todavía no se midió en o después de ella.
+DateTime? effectiveAgreedDate({DateTime? agreed, DateTime? lastMeasurement}) {
+  if (agreed == null) return null;
+  if (lastMeasurement != null && !lastMeasurement.isBefore(dateOnly(agreed))) return null;
+  return dateOnly(agreed);
+}
+
+/// null si no hay ni línea base ni fecha acordada: no hay con qué calcular.
+MeasurementDue? measurementDue({
+  required DateTime today,
+  DateTime? lastMeasurement,
+  DateTime? agreed,
+  required int minDays,
+  required int maxDays,
+}) {
+  final day = dateOnly(today);
+  final fixed = effectiveAgreedDate(agreed: agreed, lastMeasurement: lastMeasurement);
+  if (fixed != null) return MeasurementDue(dueDate: fixed, windowEnd: fixed, today: day, agreed: true);
+  if (lastMeasurement == null) return null;
+  final last = dateOnly(lastMeasurement);
+  return MeasurementDue(
+    dueDate: addDays(last, minDays),
+    windowEnd: addDays(last, maxDays < minDays ? minDays : maxDays),
+    today: day,
+  );
+}

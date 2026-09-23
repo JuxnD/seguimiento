@@ -12,6 +12,7 @@ import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
+import '../../domain/report/report_input.dart' show Targets;
 import '../../domain/session_math.dart' show meanSec;
 import '../../domain/session_script.dart';
 import '../../ui/progress_ring.dart';
@@ -154,10 +155,11 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
   int get _cooldownSec => _workEndedAt == null ? 0 : _clock.difference(_workEndedAt!).inSeconds;
 
-  /// Metas del plan: 6 min antes y 3 min después; menos de 1 min no es enfriar.
-  static const _warmupGoalSec = 360;
-  static const _cooldownGoalSec = 180;
-  static const _cooldownMinSec = 60;
+  /// Metas del perfil (6 min antes y 3 min después por defecto). Menos de
+  /// 1 min no es enfriar: esa es una definición, no una meta.
+  late final int _warmupGoalSec = ref.read(profileProvider).value?.minWarmupSec ?? 360;
+  late final int _cooldownGoalSec = ref.read(profileProvider).value?.cooldownTargetSec ?? 180;
+  static const _cooldownMinSec = Targets.minCooldownSecDefault;
 
   int get _restRemaining {
     final step = _current;
@@ -263,8 +265,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         context: context,
         builder: (c) => AlertDialog(
           title: const Text('Enfriamiento muy corto'),
-          content: Text('Llevas ${formatDuration(_cooldownSec)}. El plan pide al menos 1 min '
-              '(la meta son 3).'),
+          content: Text('Llevas ${formatDuration(_cooldownSec)}. Menos de 1 min no cuenta como enfriar '
+              '(la meta es ${formatDuration(_cooldownGoalSec)}).'),
           actions: [
             TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Terminar')),
             FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir')),
@@ -404,7 +406,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         seconds: _warmupSec,
         goalSec: _warmupGoalSec,
         detail: _warmupSec < _warmupGoalSec
-            ? 'Faltan ${formatDuration(_warmupGoalSec - _warmupSec)} para los 6 min del plan'
+            ? 'Faltan ${formatDuration(_warmupGoalSec - _warmupSec)} para la meta de ${formatDuration(_warmupGoalSec)}'
             : 'Calentamiento cumplido',
         action: 'Empezar ${widget.day.type.label.toLowerCase()}',
         icon: Icons.play_arrow,
@@ -418,7 +420,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         seconds: _cooldownSec,
         goalSec: _cooldownGoalSec,
         detail: _cooldownSec < _cooldownGoalSec
-            ? 'Estira y respira. Faltan ${formatDuration(_cooldownGoalSec - _cooldownSec)} para los 3 min'
+            ? 'Estira y respira. Faltan ${formatDuration(_cooldownGoalSec - _cooldownSec)} para la meta de ${formatDuration(_cooldownGoalSec)}'
             : 'Enfriamiento cumplido',
         action: 'Terminar enfriamiento',
         icon: Icons.check,
