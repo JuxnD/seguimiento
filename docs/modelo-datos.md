@@ -32,6 +32,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 | `meals` / `meal_items` | Comida y sus alimentos | Los macros del item son **copia**, no referencia; `sourceVerified` recuerda si venían de etiqueta (null = entrada libre) |
 | `body_weights` | Pesajes | `fasted` distingue la condición |
 | `measurements` | Una medida por sitio y fecha | Único `(date, site)`: una toma por día |
+| `reminders` | Ajustes de cada recordatorio (activo, hora, umbral) | Una fila por tipo; `ensureDefaults` crea las que falten sin pisar lo editado |
 | `week_notes` | Notas libres por semana | La clave es el índice de semana anclado al inicio |
 
 ## Decisiones que el esquema hace cumplir
@@ -65,6 +66,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 2 | Plan con bloques extra, sostenes, RIR, por lado y descanso en rango; día con descanso entre rondas; sesión con las condiciones de la regla de progresión; perfil con ventana de medición, enfriamiento objetivo y regla de no llegar al fallo |
 | 3 | Alimento con gramos por porción y procedencia (`etiqueta` / `referencia`); ítem de comida con `sourceVerified`; tablas de combos |
 | 4 | Sesión con `outOfPlan`, `incomplete` y `plannedRounds`: distingue entrenar otra cosa de cerrar antes de tiempo |
+| 5 | Tabla `reminders` con los ajustes de notificaciones |
 
 La migración 1 → 2 solo añade columnas y está cubierta por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base

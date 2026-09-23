@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../domain/enums.dart';
+import '../domain/reminders.dart';
 
 // Convenciones (ver docs/modelo-datos.md):
 // - Fechas: texto `YYYY-MM-DD` (día local). Horas: texto `HH:mm`.
@@ -267,6 +268,21 @@ class Measurements extends Table {
   List<Set<Column>> get uniqueKeys => [
         {date, site},
       ];
+}
+
+/// Ajustes de cada recordatorio. Una fila por tipo.
+@DataClassName('ReminderRow')
+class Reminders extends Table {
+  TextColumn get kind => textEnum<ReminderKind>()();
+  BoolColumn get enabled => boolean().withDefault(const Constant(true))();
+  IntColumn get hour => integer().nullable()();
+  IntColumn get minute => integer().withDefault(const Constant(0))();
+
+  /// Solo para el aviso de proteína: gramos por debajo de los cuales avisa.
+  IntColumn get threshold => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {kind};
 }
 
 /// Notas libres por semana (índice anclado a la fecha de inicio).

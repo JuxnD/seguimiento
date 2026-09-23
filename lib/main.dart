@@ -5,7 +5,9 @@ import 'app/app.dart';
 import 'app/providers.dart';
 import 'data/database_host.dart';
 import 'data/repositories/exercise_repository.dart';
+import 'data/notification_service.dart';
 import 'data/repositories/plan_repository.dart';
+import 'data/repositories/reminder_repository.dart';
 import 'data/seed_foods.dart';
 import 'data/seed_plan.dart';
 
@@ -15,9 +17,16 @@ Future<void> main() async {
   // Primera apertura: deja el plan y las metas listos para registrar.
   await seedIfEmpty(host.db, PlanRepository(host.db, ExerciseRepository(host.db)));
   await seedFoodsIfEmpty(host.db);
+  await ReminderRepository(host.db).ensureDefaults();
+
+  final notifications = NotificationService();
+  await notifications.init();
   runApp(
     ProviderScope(
-      overrides: [databaseHostProvider.overrideWithValue(host)],
+      overrides: [
+        databaseHostProvider.overrideWithValue(host),
+        notificationServiceProvider.overrideWithValue(notifications),
+      ],
       child: const SeguimientoApp(),
     ),
   );

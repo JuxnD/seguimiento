@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../domain/dates.dart';
 import '../domain/enums.dart';
+import '../domain/reminders.dart';
 import 'tables.dart';
 
 part 'database.g.dart';
@@ -31,6 +32,7 @@ const databaseFileName = 'seguimiento.sqlite';
   BodyWeights,
   Measurements,
   WeekNotes,
+  Reminders,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -38,7 +40,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -87,6 +89,10 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessions, sessions.outOfPlan);
             await m.addColumn(sessions, sessions.incomplete);
             await m.addColumn(sessions, sessions.plannedRounds);
+          }
+          if (from < 5) {
+            // v5: ajustes de recordatorios (una fila por tipo).
+            await m.createTable(reminders);
           }
         },
         beforeOpen: (details) async {

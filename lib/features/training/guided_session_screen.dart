@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../../app/providers.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
@@ -46,7 +48,7 @@ class _Done {
 
 /// Cronómetro que sabe qué toca: recorre el guion del día paso a paso, lleva
 /// los descansos solo y separa calentamiento, trabajo neto y enfriamiento.
-class GuidedSessionScreen extends StatefulWidget {
+class GuidedSessionScreen extends ConsumerStatefulWidget {
   const GuidedSessionScreen({
     super.key,
     required this.day,
@@ -65,10 +67,10 @@ class GuidedSessionScreen extends StatefulWidget {
   final int? roundsOverride;
 
   @override
-  State<GuidedSessionScreen> createState() => _GuidedSessionScreenState();
+  ConsumerState<GuidedSessionScreen> createState() => _GuidedSessionScreenState();
 }
 
-class _GuidedSessionScreenState extends State<GuidedSessionScreen> {
+class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   late final List<ScriptStep> _steps =
       buildScript(scriptDayFrom(widget.day), rounds: widget.roundsOverride, coreVariant: widget.coreVariant);
   late final int _exercisesPerRound = widget.day.main.isEmpty ? 1 : widget.day.main.length;
@@ -99,6 +101,7 @@ class _GuidedSessionScreenState extends State<GuidedSessionScreen> {
   void dispose() {
     _ticker?.cancel();
     WakelockPlus.disable();
+    unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
     super.dispose();
   }
 
@@ -143,11 +146,18 @@ class _GuidedSessionScreenState extends State<GuidedSessionScreen> {
 
   void _prepareStep() {
     final step = _current;
+    final notifications = ref.read(notificationServiceProvider);
     if (step is WorkStep) {
       _reps = step.targetReps;
       _restStartedAt = null;
+      unawaited(notifications.cancelRestEnd());
     } else if (step is RestStep) {
       _restStartedAt = DateTime.now();
+      // Con la app en segundo plano el sonido no llega: la notificación sí.
+      unawaited(notifications.scheduleRestEnd(
+        inSeconds: Duration(seconds: step.seconds),
+        nextLabel: step.nextLabel,
+      ));
     }
   }
 
@@ -176,10 +186,12 @@ class _GuidedSessionScreenState extends State<GuidedSessionScreen> {
   void _endWork() {
     _workEndedAt ??= DateTime.now();
     _phase = _Phase.enfriamiento;
+    unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
   }
 
   void _skipRest() {
     _restStartedAt = null;
+    unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
     _advance();
   }
 

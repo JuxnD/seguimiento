@@ -18,6 +18,7 @@ import '../../domain/format.dart';
 import '../../ui/widgets.dart';
 import '../meals/foods_screen.dart';
 import '../plan/plan_screen.dart';
+import 'reminders_screen.dart';
 import 'updates_card.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -52,6 +53,24 @@ class SettingsScreen extends ConsumerWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlanScreen())),
                 ),
+              ],
+            ),
+            AppCard(
+              title: 'Recordatorios',
+              children: [
+                ref.watch(remindersProvider).when(
+                      loading: () => const LinearProgressIndicator(),
+                      error: (e, _) => Text('Error: $e'),
+                      data: (rows) => ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.notifications_active_outlined),
+                        title: const Text('Avisos y horas'),
+                        subtitle: Text(remindersSummary(rows)),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => Navigator.push(
+                            context, MaterialPageRoute(builder: (_) => const RemindersScreen())),
+                      ),
+                    ),
               ],
             ),
             AppCard(

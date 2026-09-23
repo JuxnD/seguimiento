@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/body/body_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/meals/meals_screen.dart';
 import '../features/report/report_screen.dart';
 import '../features/training/training_screen.dart';
+import 'providers.dart';
 import '../ui/theme.dart';
 
 class SeguimientoApp extends StatelessWidget {
@@ -31,15 +33,25 @@ class SeguimientoApp extends StatelessWidget {
   }
 }
 
-class HomeShell extends StatefulWidget {
+class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
 
   @override
-  State<HomeShell> createState() => _HomeShellState();
+  ConsumerState<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends State<HomeShell> {
+class _HomeShellState extends ConsumerState<HomeShell> {
   int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Android 13+ no manda nada sin permiso explícito.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final service = ref.read(notificationServiceProvider);
+      if (!await service.hasPermission()) await service.requestPermission();
+    });
+  }
 
   static const _tabs = [
     HomeScreen(),
@@ -51,6 +63,8 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    // Deja programados los recordatorios y los mantiene al día.
+    ref.watch(reminderSyncProvider);
     return Scaffold(
       body: IndexedStack(index: _index, children: _tabs),
       bottomNavigationBar: NavigationBar(

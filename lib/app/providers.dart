@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../data/database.dart';
+import '../data/notification_service.dart';
+import '../data/reminder_scheduler.dart';
+import '../data/repositories/reminder_repository.dart';
 import '../data/database_host.dart';
 import '../data/update_service.dart';
 import '../data/repositories/body_repository.dart';
@@ -37,6 +40,48 @@ final nutritionRepositoryProvider = Provider((ref) => NutritionRepository(ref.wa
 final bodyRepositoryProvider = Provider((ref) => BodyRepository(ref.watch(databaseProvider)));
 final reportRepositoryProvider =
     Provider((ref) => ReportRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));
+
+final reminderRepositoryProvider = Provider((ref) => ReminderRepository(ref.watch(databaseProvider)));
+final notificationServiceProvider = Provider((ref) => NotificationService());
+
+final reminderSchedulerProvider = Provider((ref) => ReminderScheduler(
+      db: ref.watch(databaseProvider),
+      plan: ref.watch(planRepositoryProvider),
+      reminders: ref.watch(reminderRepositoryProvider),
+      nutrition: ref.watch(nutritionRepositoryProvider),
+      body: ref.watch(bodyRepositoryProvider),
+      profile: ref.watch(profileRepositoryProvider),
+      service: ref.watch(notificationServiceProvider),
+    ));
+
+final remindersProvider = StreamProvider((ref) => ref.watch(reminderRepositoryProvider).watchAll());
+
+/// Reprograma los avisos cuando cambia algo que los afecta: una sesión, una
+/// comida de hoy, una medida, el plan o los propios ajustes. Se observa desde
+/// el shell para que viva mientras la app esté abierta.
+final reminderSyncProvider = Provider<void>((ref) {
+  final scheduler = ref.watch(reminderSchedulerProvider);
+  var pending = false;
+  Future<void> run() async {
+    if (pending) return;
+    pending = true;
+    try {
+      await scheduler.reschedule();
+    } on Object {
+      // Sin permiso de notificaciones o sin canal: la app sigue igual.
+    } finally {
+      pending = false;
+    }
+  }
+
+  ref.listen(sessionsProvider, (_, __) => run());
+  ref.listen(checkInsProvider, (_, __) => run());
+  ref.listen(planVersionsProvider, (_, __) => run());
+  ref.listen(remindersProvider, (_, __) => run());
+  ref.listen(profileProvider, (_, __) => run());
+  ref.listen(mealsForDayProvider(dayKey(dateOnly(DateTime.now()))), (_, __) => run());
+  run();
+});
 
 final profileProvider = StreamProvider((ref) => ref.watch(profileRepositoryProvider).watch());
 final exercisesProvider = StreamProvider((ref) => ref.watch(exerciseRepositoryProvider).watchAll());

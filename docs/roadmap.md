@@ -47,7 +47,7 @@ Mejoras pedidas tras el primer uso real, en este orden:
 |---|---|---|
 | 1 | Cronómetro guiado, fases automáticas, cierre anticipado, validaciones de plan | Listo |
 | 2 | Comidas: crear alimento sin salir del registro, editar cantidades de un combo, guardar combos desde la app, hora vs franja | Pendiente |
-| 3 | Notificaciones locales: sesión, sesión sin registrar, comidas, proteína, medición, fin de descanso | Pendiente |
+| 3 | Notificaciones locales: sesión, sesión sin registrar, comidas, proteína, medición, fin de descanso | Listo |
 | 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Pendiente |
 
 ## v2
