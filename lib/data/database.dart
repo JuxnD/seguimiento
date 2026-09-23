@@ -33,6 +33,7 @@ const databaseFileName = 'seguimiento.sqlite';
   Measurements,
   WeekNotes,
   Reminders,
+  ProgressPhotos,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -40,7 +41,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -93,6 +94,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 5) {
             // v5: ajustes de recordatorios (una fila por tipo).
             await m.createTable(reminders);
+          }
+          if (from < 6) {
+            // v6: fotos de progreso.
+            await m.createTable(progressPhotos);
           }
         },
         beforeOpen: (details) async {

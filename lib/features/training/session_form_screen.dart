@@ -5,7 +5,9 @@ import '../../app/providers.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
+import '../../ui/record_celebration.dart';
 import '../../ui/widgets.dart';
 
 SessionType _sessionTypeFor(DayType type) => switch (type) {
@@ -142,11 +144,23 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       ..limitingExercise = _limiting.text;
     setState(() => _saving = true);
     try {
-      await ref.read(trainingRepositoryProvider).save(d);
+      final repo = ref.read(trainingRepositoryProvider);
+      await repo.save(d);
+      await _celebrateIfRecord(repo);
       if (mounted) Navigator.pop(context, true);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  /// Si esta sesión superó la mejor marca, se muestra. Es el momento que más
+  /// motiva y antes pasaba desapercibido.
+  Future<void> _celebrateIfRecord(TrainingRepository repo) async {
+    final rounds = d.roundsDone;
+    if (!d.type.isCircuit || rounds == null || d.roundsEstimated || d.incomplete) return;
+    final previous = await repo.bestRounds(excludeSessionId: d.id);
+    if (!isRecord(rounds, previous) || !mounted) return;
+    await showRecordCelebration(context, rounds: rounds, previous: previous);
   }
 
   @override

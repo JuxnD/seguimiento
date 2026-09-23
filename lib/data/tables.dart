@@ -270,6 +270,18 @@ class Measurements extends Table {
       ];
 }
 
+/// Fotos de progreso. Se guarda la ruta **relativa** al directorio de la app:
+/// las absolutas se rompen al reinstalar o restaurar.
+@DataClassName('ProgressPhotoRow')
+class ProgressPhotos extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get date => text()();
+  TextColumn get angle => textEnum<PhotoAngle>()();
+  TextColumn get relativePath => text()();
+  BoolColumn get fasted => boolean().withDefault(const Constant(true))();
+  TextColumn get notes => text().nullable()();
+}
+
 /// Ajustes de cada recordatorio. Una fila por tipo.
 @DataClassName('ReminderRow')
 class Reminders extends Table {

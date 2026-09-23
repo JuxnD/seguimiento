@@ -217,6 +217,18 @@ class TrainingRepository {
     );
   }
 
+  /// Mejor marca de rondas en circuito, sin contar una sesión concreta
+  /// (la recién guardada, para saber si acaba de romper el récord).
+  Future<int?> bestRounds({int? excludeSessionId}) async {
+    final best = db.sessions.roundsDone.max();
+    final query = db.selectOnly(db.sessions)..addColumns([best]);
+    final circuitTypes = SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList();
+    query.where(excludeSessionId == null
+        ? db.sessions.type.isIn(circuitTypes)
+        : db.sessions.type.isIn(circuitTypes) & db.sessions.id.equals(excludeSessionId).not());
+    return query.map((r) => r.read(best)).getSingle();
+  }
+
   /// Últimas rondas hechas antes de una fecha, por tipo de circuito.
   Future<Map<SessionType, int>> lastRoundsBefore(DateTime date) async {
     final out = <SessionType, int>{};

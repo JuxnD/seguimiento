@@ -48,17 +48,13 @@ Mejoras pedidas tras el primer uso real, en este orden:
 | 1 | Cronómetro guiado, fases automáticas, cierre anticipado, validaciones de plan | Listo |
 | 2 | Comidas: crear alimento sin salir del registro, editar cantidades de un combo, guardar combos desde la app, hora vs franja | Pendiente |
 | 3 | Notificaciones locales: sesión, sesión sin registrar, comidas, proteína, medición, fin de descanso | Listo |
-| 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Pendiente |
+| 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Listo |
 
 ## v2
 
-- Fotos de progreso (frente, perfil, espalda) con comparador lado a lado.
-  Requiere `image_picker`, guardar rutas **relativas** al directorio de la app
-  (las absolutas se rompen al reinstalar) y su migración de esquema.
-- Gráficas de rondas, proteína y medidas en el tiempo (`fl_chart`).
-- Recordatorios con `flutter_local_notifications`: 15 min antes de la sesión
-  según el plan y aviso de medición cada 3–4 semanas.
-- Respaldo automático a archivo (la restauración ya está).
+- Respaldo automático a archivo, incluyendo las fotos (hoy el respaldo solo
+  lleva la base de datos).
+- Editar el plan desde la app con todos los campos (sostén, RIR, variante).
 
 ## Fuera de alcance
 

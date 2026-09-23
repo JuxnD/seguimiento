@@ -88,6 +88,7 @@ Regla: si un cálculo aparece en el informe, vive en `lib/domain` y tiene prueba
 - [docs/context/INDEX.md](docs/context/INDEX.md) — índice de contexto
 - [docs/project-map.md](docs/project-map.md) — mapa del proyecto y riesgos
 - [docs/modelo-datos.md](docs/modelo-datos.md) — tablas, invariantes, migraciones
+- [docs/diseno.md](docs/diseno.md) — sistema visual, anillos, gráficas y fotos
 - [docs/notificaciones.md](docs/notificaciones.md) — qué avisa, cuándo y los permisos de Android
 - [docs/actualizaciones.md](docs/actualizaciones.md) — respaldo, restauración, firma y cómo publicar una versión
 - [docs/informe.md](docs/informe.md) — qué contiene el informe y cada alerta

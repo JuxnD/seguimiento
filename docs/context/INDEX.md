@@ -7,6 +7,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 |---|---|---|
 | Qué es y cómo se corre | [../../README.md](../../README.md) | Cambian comandos, stack o estructura |
 | Alcance, riesgos y gates | [../project-map.md](../project-map.md) | Cambia el alcance o aparece un riesgo nuevo |
+| Diseño y motivación | [../diseno.md](../diseno.md) | Cambia la paleta, un anillo, una gráfica o las fotos |
 | Notificaciones | [../notificaciones.md](../notificaciones.md) | Cambia un aviso, su hora o el permiso |
 | Cronómetro guiado | [../cronometro.md](../cronometro.md) | Cambia cómo se recorre la sesión o los descansos |
 | Datos e invariantes | [../modelo-datos.md](../modelo-datos.md) | Cambia una tabla, una unidad o el esquema |

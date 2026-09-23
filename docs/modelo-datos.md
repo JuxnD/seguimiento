@@ -32,6 +32,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 | `meals` / `meal_items` | Comida y sus alimentos | Los macros del item son **copia**, no referencia; `sourceVerified` recuerda si venían de etiqueta (null = entrada libre) |
 | `body_weights` | Pesajes | `fasted` distingue la condición |
 | `measurements` | Una medida por sitio y fecha | Único `(date, site)`: una toma por día |
+| `progress_photos` | Fotos de progreso por fecha y ángulo | Guarda la ruta **relativa** al directorio de la app: las absolutas se rompen al reinstalar |
 | `reminders` | Ajustes de cada recordatorio (activo, hora, umbral) | Una fila por tipo; `ensureDefaults` crea las que falten sin pisar lo editado |
 | `week_notes` | Notas libres por semana | La clave es el índice de semana anclado al inicio |
 
@@ -67,6 +68,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 3 | Alimento con gramos por porción y procedencia (`etiqueta` / `referencia`); ítem de comida con `sourceVerified`; tablas de combos |
 | 4 | Sesión con `outOfPlan`, `incomplete` y `plannedRounds`: distingue entrenar otra cosa de cerrar antes de tiempo |
 | 5 | Tabla `reminders` con los ajustes de notificaciones |
+| 6 | Tabla `progress_photos` |
 
 La migración 1 → 2 solo añade columnas y está cubierta por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
@@ -92,6 +94,10 @@ Esa decisión es la que permite escribir "150 g de arroz" y "3 huevos" sin
 convertir nada mentalmente.
 
 ## Respaldo
+
+**Las fotos no van en el respaldo.** El archivo exportado es la base de datos:
+las imágenes viven aparte, en el directorio de la app. Si cambias de teléfono,
+cópialas por tu cuenta o vuelve a tomarlas.
 
 Ajustes → *Exportar base de datos* usa `VACUUM INTO`, que produce una copia
 consistente incluso con el WAL abierto. Ajustes → *Restaurar desde un respaldo*

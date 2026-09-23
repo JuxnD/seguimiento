@@ -9,6 +9,7 @@ import '../../domain/format.dart';
 import '../../domain/nutrition.dart';
 import '../../ui/widgets.dart';
 import 'measurement_form_screen.dart';
+import 'photos_screen.dart';
 
 class BodyScreen extends ConsumerWidget {
   const BodyScreen({super.key});
@@ -22,7 +23,17 @@ class BodyScreen extends ConsumerWidget {
     final interval = profile?.measureIntervalDays ?? 21;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cuerpo')),
+      appBar: AppBar(
+        title: const Text('Cuerpo'),
+        actions: [
+          IconButton(
+            tooltip: 'Fotos de progreso',
+            icon: const Icon(Icons.photo_library_outlined),
+            onPressed: () =>
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const PhotosScreen())),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 96),
         children: [

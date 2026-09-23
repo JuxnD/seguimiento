@@ -9,13 +9,17 @@ import '../data/repositories/reminder_repository.dart';
 import '../data/database_host.dart';
 import '../data/update_service.dart';
 import '../data/repositories/body_repository.dart';
+import '../data/repositories/chart_repository.dart';
+import '../data/repositories/dashboard_repository.dart';
 import '../data/repositories/exercise_repository.dart';
 import '../data/repositories/nutrition_repository.dart';
+import '../data/repositories/photo_repository.dart';
 import '../data/repositories/plan_repository.dart';
 import '../data/repositories/profile_repository.dart';
 import '../data/repositories/report_repository.dart';
 import '../data/repositories/training_repository.dart';
 import '../domain/dates.dart';
+import '../domain/enums.dart';
 import '../domain/report/report_builder.dart';
 
 /// Se sobreescribe en `main` con la base ya abierta.
@@ -55,6 +59,57 @@ final reminderSchedulerProvider = Provider((ref) => ReminderScheduler(
     ));
 
 final remindersProvider = StreamProvider((ref) => ref.watch(reminderRepositoryProvider).watchAll());
+
+final dashboardRepositoryProvider = Provider((ref) => DashboardRepository(
+      ref.watch(databaseProvider),
+      ref.watch(planRepositoryProvider),
+      ref.watch(nutritionRepositoryProvider),
+      ref.watch(profileRepositoryProvider),
+    ));
+
+final photoRepositoryProvider = Provider((ref) => PhotoRepository(ref.watch(databaseProvider)));
+final photoCheckInsProvider = StreamProvider((ref) => ref.watch(photoRepositoryProvider).watchCheckIns());
+
+final chartRepositoryProvider =
+    Provider((ref) => ChartRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));
+
+/// Rondas de cada sesión de circuito: la línea que debe subir.
+final roundsSeriesProvider = FutureProvider((ref) {
+  ref.watch(sessionsProvider);
+  return ref.watch(chartRepositoryProvider).rounds();
+});
+
+/// Proteína por día del rango del informe.
+final proteinSeriesProvider = FutureProvider.family((ref, (String, String) range) {
+  ref.watch(mealsRangeRefreshProvider(range));
+  return ref.watch(chartRepositoryProvider).nutritionDaily(parseDay(range.$1), parseDay(range.$2));
+});
+
+final weightSeriesProvider = FutureProvider((ref) {
+  ref.watch(weightsProvider);
+  return ref.watch(chartRepositoryProvider).weights();
+});
+
+final measurementSitesProvider = FutureProvider((ref) {
+  ref.watch(checkInsProvider);
+  return ref.watch(chartRepositoryProvider).sitesWithHistory();
+});
+
+final measurementSeriesProvider = FutureProvider.family((ref, MeasureSite site) {
+  ref.watch(checkInsProvider);
+  final unit = ref.watch(profileProvider).value?.lengthUnit ?? LengthUnit.cm;
+  return ref.watch(chartRepositoryProvider).measurements(site, unit: unit);
+});
+
+/// Resumen de Hoy. Se recalcula cuando cambia cualquier dato que muestre.
+final dashboardProvider = FutureProvider((ref) {
+  ref.watch(sessionsProvider);
+  ref.watch(planVersionsProvider);
+  ref.watch(profileProvider);
+  ref.watch(checkInsProvider);
+  ref.watch(mealsForDayProvider(dayKey(dateOnly(DateTime.now()))));
+  return ref.watch(dashboardRepositoryProvider).today();
+});
 
 /// Reprograma los avisos cuando cambia algo que los afecta: una sesión, una
 /// comida de hoy, una medida, el plan o los propios ajustes. Se observa desde

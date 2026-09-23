@@ -101,6 +101,16 @@ extension MeasureSiteLabel on MeasureSite {
       };
 }
 
+enum PhotoAngle { frente, perfil, espalda }
+
+extension PhotoAngleLabel on PhotoAngle {
+  String get label => switch (this) {
+        PhotoAngle.frente => 'Frente',
+        PhotoAngle.perfil => 'Perfil',
+        PhotoAngle.espalda => 'Espalda',
+      };
+}
+
 enum LengthUnit { cm, inch }
 
 extension LengthUnitLabel on LengthUnit {

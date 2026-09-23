@@ -7,6 +7,7 @@ import '../../app/providers.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../domain/dates.dart';
 import '../../ui/widgets.dart';
+import 'charts_section.dart';
 
 /// El informe es el producto: se genera, se copia y se pega en el chat.
 class ReportScreen extends ConsumerStatefulWidget {
@@ -101,6 +102,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     ),
                 ],
               ),
+              ChartsSection(range: key),
               if (_customRange == null) _WeekNotes(weekIndex: week),
               AppCard(
                 title: 'Markdown',
