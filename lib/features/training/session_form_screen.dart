@@ -21,9 +21,12 @@ SessionType _sessionTypeFor(DayType type) => switch (type) {
 /// Alta y edición de una sesión. Acepta un borrador ya poblado por el
 /// contador de rondas.
 class SessionFormScreen extends ConsumerStatefulWidget {
-  const SessionFormScreen({super.key, required this.draft});
+  const SessionFormScreen({super.key, required this.draft, this.celebrate = true});
 
   final SessionDraft draft;
+
+  /// false cuando viene del cronómetro guiado, que ya celebró en su cierre.
+  final bool celebrate;
 
   @override
   ConsumerState<SessionFormScreen> createState() => _SessionFormScreenState();
@@ -146,7 +149,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     try {
       final repo = ref.read(trainingRepositoryProvider);
       await repo.save(d);
-      await _celebrateIfRecord(repo);
+      if (widget.celebrate) await _celebrateIfRecord(repo);
       if (mounted) Navigator.pop(context, true);
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -352,10 +355,14 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             children: [
               ScaleSelector(label: 'RPE general', value: d.rpe, onChanged: (v) => setState(() => d.rpe = v)),
               const SizedBox(height: 12),
-              _ExerciseAutocomplete(
-                controller: _limiting,
-                label: 'Ejercicio limitante',
-                options: (ref.watch(exercisesProvider).value ?? []).map((e) => e.name).toList(),
+              _LimitingPicker(
+                value: _limiting.text.trim().isEmpty ? null : _limiting.text.trim(),
+                // Primero los ejercicios de esta sesión: casi siempre es uno de ellos.
+                options: {
+                  ...d.sets.map((s) => s.exercise),
+                  if (d.sets.isEmpty) ...(ref.watch(exercisesProvider).value ?? []).map((e) => e.name),
+                }.toList(),
+                onChanged: (v) => setState(() => _limiting.text = v ?? ''),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -640,6 +647,69 @@ class _EstimateDialogState extends State<_EstimateDialog> {
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
         FilledButton(onPressed: _result == 0 ? null : () => Navigator.pop(context, _result), child: const Text('Usar')),
+      ],
+    );
+  }
+}
+
+/// Ejercicio limitante con chips de un toque. "Ninguno" es una opción
+/// explícita: hay sesiones en las que nada costó más que lo demás.
+class _LimitingPicker extends StatelessWidget {
+  const _LimitingPicker({required this.value, required this.options, required this.onChanged});
+
+  final String? value;
+  final List<String> options;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final all = [...options, if (value != null && !options.contains(value)) value!];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('¿Qué te costó más?', style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            ChoiceChip(
+              label: const Text('Ninguno'),
+              selected: value == null,
+              onSelected: (_) => onChanged(null),
+            ),
+            for (final name in all)
+              ChoiceChip(
+                label: Text(name),
+                selected: value == name,
+                onSelected: (sel) => onChanged(sel ? name : null),
+              ),
+            ActionChip(
+              avatar: const Icon(Icons.add, size: 16),
+              label: const Text('Otro'),
+              onPressed: () async {
+                final controller = TextEditingController();
+                final other = await showDialog<String>(
+                  context: context,
+                  builder: (c) => AlertDialog(
+                    title: const Text('Ejercicio limitante'),
+                    content: TextField(
+                      controller: controller,
+                      autofocus: true,
+                      decoration: const InputDecoration(labelText: 'Nombre'),
+                    ),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
+                      FilledButton(onPressed: () => Navigator.pop(c, controller.text), child: const Text('Listo')),
+                    ],
+                  ),
+                );
+                controller.dispose();
+                if (other != null && other.trim().isNotEmpty) onChanged(other.trim());
+              },
+            ),
+          ],
+        ),
       ],
     );
   }

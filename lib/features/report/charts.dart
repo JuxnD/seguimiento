@@ -16,6 +16,7 @@ class TrendChart extends StatelessWidget {
     this.goal,
     this.unit = '',
     this.minY,
+    this.integer = false,
   });
 
   final List<SeriesPoint> points;
@@ -25,6 +26,9 @@ class TrendChart extends StatelessWidget {
   final double? goal;
   final String unit;
   final double? minY;
+
+  /// Valores enteros (rondas): el eje no muestra "1,5 rondas".
+  final bool integer;
 
   @override
   Widget build(BuildContext context) {
@@ -51,15 +55,26 @@ class TrendChart extends StatelessWidget {
           borderData: FlBorderData(show: false),
           titlesData: FlTitlesData(
             topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            // Margen derecho para que la última fecha no se corte.
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 22,
+                getTitlesWidget: (_, __) => const SizedBox.shrink(),
+              ),
+            ),
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 36,
-                getTitlesWidget: (value, meta) => Text(
-                  fmtDec(value, decimals: value.abs() < 10 ? 1 : 0),
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
+                interval: integer ? ((top - bottom) / 4).ceilToDouble().clamp(1, double.infinity) : null,
+                getTitlesWidget: (value, meta) => value == meta.max ||
+                        (integer && value != value.roundToDouble())
+                    ? const SizedBox.shrink()
+                    : Text(
+                        integer ? fmtInt(value) : fmtDec(value, decimals: value.abs() < 10 ? 1 : 0),
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
               ),
             ),
             bottomTitles: AxisTitles(
@@ -141,7 +156,9 @@ class DailyBarsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (points.isEmpty) return const EmptyHint('Sin datos en el rango.');
+    if (points.every((p) => p.value == 0)) {
+      return const EmptyHint('Sin comidas registradas en el rango.');
+    }
     final scheme = Theme.of(context).colorScheme;
     final maxValue = seriesMax(points);
     final top = (goal == null ? maxValue : (maxValue > goal! ? maxValue : goal!)) * 1.2;
@@ -163,8 +180,9 @@ class DailyBarsChart extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 40,
-                getTitlesWidget: (value, meta) =>
-                    Text(fmtInt(value), style: Theme.of(context).textTheme.labelSmall),
+                getTitlesWidget: (value, meta) => value == meta.max
+                    ? const SizedBox.shrink()
+                    : Text(fmtInt(value), style: Theme.of(context).textTheme.labelSmall),
               ),
             ),
             bottomTitles: AxisTitles(

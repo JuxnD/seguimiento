@@ -7,6 +7,7 @@ import '../../app/providers.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../domain/dates.dart';
 import '../../ui/widgets.dart';
+import '../../ui/hero.dart';
 import 'charts_section.dart';
 
 /// El informe es el producto: se genera, se copia y se pega en el chat.
@@ -59,7 +60,13 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
           body: ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
-              AppCard(
+              HeroCard(
+                color: Theme.of(context).colorScheme.primary,
+                overline: _customRange == null ? 'Informe semanal' : 'Rango personalizado',
+                pills: [
+                  if (_customRange == null && week == currentWeek)
+                    const StatPill(icon: Icons.today, label: 'Semana en curso'),
+                ],
                 children: [
                   Row(
                     children: [
@@ -74,10 +81,14 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                         child: Column(
                           children: [
                             Text(
-                              _customRange == null ? 'Semana $week' : 'Rango personalizado',
-                              style: Theme.of(context).textTheme.titleMedium,
+                              _customRange == null ? 'SEMANA $week' : 'RANGO',
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
                             ),
-                            Text('${formatShort(range.start)} – ${formatLong(range.end)}'),
+                            Text('${formatShort(range.start)} – ${formatLong(range.end)}',
+                                style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
                       ),

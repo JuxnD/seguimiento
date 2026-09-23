@@ -8,6 +8,9 @@ import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
+import '../../domain/progress.dart';
+import '../../ui/hero.dart';
+import '../../ui/progress_ring.dart';
 import '../../ui/widgets.dart';
 import 'foods_screen.dart';
 import 'meal_form_screen.dart';
@@ -18,6 +21,9 @@ class MealsScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<MealsScreen> createState() => _MealsScreenState();
 }
+
+/// Color de la sección de comidas: el mismo naranja claro del anillo de kcal.
+const _mealColor = Color(0xFFFFB067);
 
 class _MealsScreenState extends ConsumerState<MealsScreen> {
   DateTime _day = dateOnly(DateTime.now());
@@ -41,16 +47,19 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 96),
         children: [
-          AppCard(
+          HeroCard(
+            color: _mealColor,
             children: [
               Row(
                 children: [
                   IconButton(
-                      icon: const Icon(Icons.chevron_left),
-                      onPressed: () => setState(() => _day = addDays(_day, -1))),
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: () => setState(() => _day = addDays(_day, -1)),
+                  ),
                   Expanded(
-                    child: TextButton(
-                      onPressed: () async {
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () async {
                         final picked = await showDatePicker(
                           context: context,
                           initialDate: _day,
@@ -59,14 +68,28 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                         );
                         if (picked != null) setState(() => _day = dateOnly(picked));
                       },
-                      child: Text('${weekdayLong(_day.weekday)} ${formatLong(_day)}'),
+                      child: Column(
+                        children: [
+                          Text(
+                            dayKey(_day) == dayKey(DateTime.now()) ? 'HOY' : weekdayLong(_day.weekday).toUpperCase(),
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(letterSpacing: 1),
+                          ),
+                          Text(formatLong(_day),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.w800, color: _mealColor)),
+                        ],
+                      ),
                     ),
                   ),
                   IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      onPressed: () => setState(() => _day = addDays(_day, 1))),
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: () => setState(() => _day = addDays(_day, 1)),
+                  ),
                 ],
               ),
+              const SizedBox(height: 12),
               meals.when(
                 loading: () => const LinearProgressIndicator(),
                 error: (e, _) => Text('Error: $e'),
@@ -75,15 +98,41 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                   final kcalTarget = profile?.kcalTarget ?? 2400;
                   final proteinMin = profile?.proteinMin ?? 130;
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text('${fmtInt(total.kcal)} kcal de ${fmtInt(kcalTarget)} · '
-                          'P ${fmtInt(total.protein)} g de $proteinMin g'),
-                      const SizedBox(height: 6),
-                      LinearProgressIndicator(value: (total.protein / proteinMin).clamp(0, 1).toDouble()),
-                      const SizedBox(height: 4),
-                      Text('C ${fmtInt(total.carbs)} g · G ${fmtInt(total.fat)} g',
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ProgressRing(
+                            progress: goalProgress(total.protein, proteinMin),
+                            value: fmtInt(total.protein),
+                            sublabel: 'de $proteinMin',
+                            label: 'Proteína (g)',
+                            color: const Color(0xFF4EA8FF),
+                            size: 104,
+                          ),
+                          ProgressRing(
+                            progress: goalProgress(total.kcal, kcalTarget),
+                            value: fmtInt(total.kcal),
+                            sublabel: 'de ${fmtInt(kcalTarget)}',
+                            label: 'kcal',
+                            color: const Color(0xFFFFB067),
+                            size: 104,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text('Carbos ${fmtInt(total.carbs)} g · Grasa ${fmtInt(total.fat)} g',
                           style: Theme.of(context).textTheme.bodySmall),
+                      const SizedBox(height: 14),
+                      FilledButton.icon(
+                        onPressed: _newMeal,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: _mealColor,
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Armar comida'),
+                      ),
                     ],
                   );
                 },
@@ -95,7 +144,12 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
             loading: () => const SizedBox.shrink(),
             error: (e, _) => const SizedBox.shrink(),
             data: (list) => list.isEmpty
-                ? const AppCard(children: [EmptyHint('Sin comidas este día.')])
+                ? const AppCard(children: [
+                    EmptyState(
+                      icon: Icons.restaurant_outlined,
+                      text: 'Sin comidas este día. Usa un atajo o arma una comida.',
+                    ),
+                  ])
                 : Column(
                     children: [
                       for (final m in list) _MealCard(meal: m, onChanged: () => setState(() {})),
@@ -104,21 +158,21 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MealFormScreen(
-              draft: MealDraft(
-                date: _day,
-                slot: slotForTime(DateTime.now().hour, DateTime.now().minute),
-                time: timeKey(DateTime.now().hour, DateTime.now().minute),
-              ),
-            ),
+    );
+  }
+
+  void _newMeal() {
+    final now = DateTime.now();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MealFormScreen(
+          draft: MealDraft(
+            date: _day,
+            slot: slotForTime(now.hour, now.minute),
+            time: timeKey(now.hour, now.minute),
           ),
         ),
-        icon: const Icon(Icons.add),
-        label: const Text('Comida'),
       ),
     );
   }
@@ -188,26 +242,30 @@ class _Shortcuts extends ConsumerWidget {
           loading: () => const LinearProgressIndicator(),
           error: (e, _) => Text('Error: $e'),
           data: (list) => list.isEmpty
-              ? const EmptyHint('Sin combos. Arma una comida y guárdala con el icono de marcador.')
-              : Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+              ? const EmptyState(
+                  icon: Icons.bolt,
+                  text: 'Sin combos. Arma una comida y guárdala con el icono de marcador.',
+                )
+              : Column(
                   children: [
                     for (final t in list)
-                      GestureDetector(
-                        onLongPress: () => _templateMenu(context, ref, t),
-                        child: ActionChip(
-                          avatar: const Icon(Icons.bolt, size: 18),
-                          label: Text('${t.name} · ${fmtInt(t.macros.kcal)} kcal'),
-                          onPressed: () => _logTemplate(context, ref, t),
+                      TypedTile(
+                        icon: Icons.bolt,
+                        color: _mealColor,
+                        title: t.name,
+                        subtitle: 'P ${fmtInt(t.macros.protein)} g · toca para registrar',
+                        value: fmtInt(t.macros.kcal),
+                        valueLabel: 'kcal',
+                        onTap: () => _logTemplate(context, ref, t),
+                        trailing: IconButton(
+                          tooltip: 'Ajustar o borrar',
+                          icon: const Icon(Icons.tune),
+                          onPressed: () => _templateMenu(context, ref, t),
                         ),
                       ),
                   ],
                 ),
         ),
-        const SizedBox(height: 4),
-        Text('Toque: registra tal cual. Mantener: ajustar cantidades o borrar.',
-            style: Theme.of(context).textTheme.bodySmall),
         yesterday.when(
           loading: () => const SizedBox.shrink(),
           error: (e, _) => const SizedBox.shrink(),
@@ -219,18 +277,16 @@ class _Shortcuts extends ConsumerWidget {
                     const SizedBox(height: 12),
                     Text('Repetir de ayer', style: Theme.of(context).textTheme.labelLarge),
                     const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final m in meals)
-                          ActionChip(
-                            avatar: const Icon(Icons.replay, size: 18),
-                            label: Text('${m.meal.slot.label} · ${fmtInt(m.macros.kcal)} kcal'),
-                            onPressed: () => _repeat(context, ref, m),
-                          ),
-                      ],
-                    ),
+                    for (final m in meals)
+                      TypedTile(
+                        icon: Icons.replay,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        title: '${m.meal.slot.label} de ayer',
+                        subtitle: m.items.map((i) => i.label).join(', '),
+                        value: fmtInt(m.macros.kcal),
+                        valueLabel: 'kcal',
+                        onTap: () => _repeat(context, ref, m),
+                      ),
                   ],
                 ),
         ),

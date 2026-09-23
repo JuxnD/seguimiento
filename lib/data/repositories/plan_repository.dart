@@ -60,7 +60,8 @@ class PlanExerciseDraft {
         : (holdSecMax == null || holdSecMax == holdSecMin)
             ? '${holdSecMin}s'
             : '$holdSecMin–${holdSecMax}s';
-    final rest = restSec == null
+    // Un descanso de 0 (dentro de la ronda del circuito) no se anuncia.
+    final rest = restSec == null || restSec == 0
         ? null
         : (restSecMax == null || restSecMax == restSec)
             ? formatDuration(restSec!)

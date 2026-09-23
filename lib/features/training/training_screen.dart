@@ -7,6 +7,8 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/session_math.dart';
+import '../../ui/hero.dart';
+import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../plan/plan_screen.dart';
@@ -81,7 +83,8 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
     ),
   );
   if (draft == null || !context.mounted) return;
-  await openSessionForm(context, draft);
+  // El cierre del cronómetro ya celebró: el formulario no lo repite.
+  await openSessionForm(context, draft, celebrate: false);
 }
 
 class _SessionSetup {
@@ -178,8 +181,9 @@ Future<void> startFreeCounter(BuildContext context, WidgetRef ref,
 }
 
 
-Future<void> openSessionForm(BuildContext context, SessionDraft draft) =>
-    Navigator.push(context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft)));
+Future<void> openSessionForm(BuildContext context, SessionDraft draft, {bool celebrate = true}) =>
+    Navigator.push(
+        context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
 
 class TrainingScreen extends ConsumerWidget {
   const TrainingScreen({super.key});
@@ -188,13 +192,16 @@ class TrainingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final sessions = ref.watch(sessionsProvider);
     final football = ref.watch(footballProvider);
+    final dashboard = ref.watch(dashboardProvider).value;
+    final dayType = dashboard?.dayType ?? DayType.descanso;
+    final style = styleForDay(dayType);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Entreno'),
         actions: [
           IconButton(
-            tooltip: 'Plan',
+            tooltip: 'Plan semanal',
             icon: const Icon(Icons.calendar_view_week),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlanScreen())),
           ),
@@ -203,12 +210,28 @@ class TrainingScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 96),
         children: [
-          AppCard(
+          HeroCard(
+            color: style.color,
+            overline: dashboard == null ? 'Hoy' : 'Hoy · semana ${dashboard.weekIndex}',
+            title: dayType.label,
+            subtitle: dashboard?.targetRounds == null ? null : 'Meta: ${dashboard!.targetRounds} rondas',
+            icon: style.icon,
+            pills: [
+              if (dashboard != null)
+                StatPill(
+                  icon: Icons.local_fire_department,
+                  label: dashboard.streak == 0 ? 'Sin racha' : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
+                  color: dashboard.streak >= 3 ? style.color : null,
+                ),
+              if (dashboard?.roundsRecord != null)
+                StatPill(icon: Icons.emoji_events_outlined, label: 'Récord ${dashboard!.roundsRecord}'),
+            ],
             children: [
               FilledButton.icon(
                 onPressed: () => startGuidedSession(context, ref),
-                icon: const Icon(Icons.timer),
-                label: const Text('Empezar sesión guiada'),
+                style: FilledButton.styleFrom(backgroundColor: style.color),
+                icon: const Icon(Icons.play_arrow),
+                label: Text(dayType.isTraining ? 'Empezar ${dayType.label.toLowerCase()}' : 'Empezar sesión'),
               ),
               const SizedBox(height: 8),
               Row(
@@ -240,7 +263,12 @@ class TrainingScreen extends ConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (e, _) => Text('Error: $e'),
                 data: (list) => list.isEmpty
-                    ? const EmptyHint('Aún no hay sesiones.')
+                    ? EmptyState(
+                        icon: Icons.fitness_center,
+                        text: 'Aún no hay sesiones. La primera marca la línea base.',
+                        actionLabel: 'Empezar ahora',
+                        onAction: () => startGuidedSession(context, ref),
+                      )
                     : Column(children: [for (final s in list) _SessionTile(summary: s)]),
               ),
             ],
@@ -252,7 +280,13 @@ class TrainingScreen extends ConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (e, _) => Text('Error: $e'),
                 data: (list) => list.isEmpty
-                    ? const EmptyHint('Sin partidos registrados.')
+                    ? EmptyState(
+                        icon: Icons.sports_soccer,
+                        text: 'Sin partidos registrados.',
+                        actionLabel: 'Registrar partido',
+                        onAction: () => Navigator.push(
+                            context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
+                      )
                     : Column(children: [for (final g in list) _FootballTile(game: g)]),
               ),
             ],
@@ -272,16 +306,26 @@ class _SessionTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = summary.row;
     final date = parseDay(s.date);
+    final style = styleForSession(s.type);
     final net = circuitNetSec(totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec);
-    final rounds = s.roundsDone == null ? '—' : '${s.roundsEstimated ? '~' : ''}${s.roundsDone}';
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text('${weekdayShort(date.weekday)} ${formatShort(date)}'
-          '${s.startTime == null ? '' : ' · ${s.startTime}'} · ${s.type.label}'),
-      subtitle: Text('Total ${formatDuration(s.totalSec)} · neto ${formatDuration(net)} · '
-          'rondas $rounds${s.rpe == null ? '' : ' · RPE ${s.rpe}'}'
-          '${summary.splitSets > 0 ? ' · ${summary.splitSets} partidas' : ''}'),
-      trailing: const Icon(Icons.chevron_right),
+    final flags = [
+      if (s.outOfPlan) 'fuera de plan',
+      if (s.incomplete) 'incompleta',
+      if (summary.splitSets > 0) '${summary.splitSets} partidas',
+    ];
+    return TypedTile(
+      icon: style.icon,
+      color: style.color,
+      title: '${s.type.label} · ${weekdayShort(date.weekday)} ${formatShort(date)}',
+      subtitle: [
+        'Neto ${formatDuration(net)}',
+        if (s.rpe != null) 'RPE ${s.rpe}',
+        ...flags,
+      ].join(' · '),
+      value: s.roundsDone == null ? null : '${s.roundsEstimated ? '~' : ''}${s.roundsDone}',
+      valueLabel: s.roundsDone == null
+          ? null
+          : (s.plannedRounds == null ? 'rondas' : 'de ${s.plannedRounds}'),
       onTap: () async {
         final draft = await ref.read(trainingRepositoryProvider).load(s.id);
         if (context.mounted) await openSessionForm(context, draft);
@@ -298,14 +342,18 @@ class _FootballTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = parseDay(game.date);
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text('${weekdayShort(date.weekday)} ${formatShort(date)} · Fútbol ${game.format}'),
-      subtitle: Text('${game.minutes} min'
-          '${game.steps == null ? '' : ' · ${game.steps} pasos'}'
-          '${game.intensity == null ? '' : ' · intensidad ${game.intensity}'}'
-          '${game.fatigueAfter == null ? '' : ' · fatiga ${game.fatigueAfter}'}'),
-      trailing: const Icon(Icons.chevron_right),
+    final style = styleForDay(DayType.futbol);
+    return TypedTile(
+      icon: style.icon,
+      color: style.color,
+      title: 'Fútbol ${game.format} · ${weekdayShort(date.weekday)} ${formatShort(date)}',
+      subtitle: [
+        if (game.steps != null) '${game.steps} pasos',
+        if (game.intensity != null) 'intensidad ${game.intensity}',
+        if (game.fatigueAfter != null) 'fatiga ${game.fatigueAfter}',
+      ].join(' · '),
+      value: '${game.minutes}',
+      valueLabel: 'min',
       onTap: () => Navigator.push(
           context, MaterialPageRoute(builder: (_) => FootballFormScreen(existing: game))),
     );

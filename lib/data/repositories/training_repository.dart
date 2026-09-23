@@ -229,6 +229,26 @@ class TrainingRepository {
     return query.map((r) => r.read(best)).getSingle();
   }
 
+  /// La sesión anterior del mismo tipo (antes de `date`), con sus vueltas,
+  /// para comparar al cerrar. null si es la primera.
+  Future<(DateTime, int?, List<int>)?> previousOfType(SessionType type, DateTime date) async {
+    final row = await (db.select(db.sessions)
+          ..where((t) => t.type.equalsValue(type) & t.date.isSmallerThanValue(dayKey(date)))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+            (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+    if (row == null) return null;
+    final marks = await (db.select(db.sessionRounds)
+          ..where((t) => t.sessionId.equals(row.id))
+          ..orderBy([(t) => OrderingTerm(expression: t.roundIndex)]))
+        .map((r) => r.elapsedSec)
+        .get();
+    return (parseDay(row.date), row.roundsDone, marks);
+  }
+
   /// Últimas rondas hechas antes de una fecha, por tipo de circuito.
   Future<Map<SessionType, int>> lastRoundsBefore(DateTime date) async {
     final out = <SessionType, int>{};

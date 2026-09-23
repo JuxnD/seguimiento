@@ -76,3 +76,58 @@ List<SeriesPoint> fillDays(List<SeriesPoint> points, DateTime from, DateTime to)
 /// Máximo de la serie, útil para escalar el eje.
 double seriesMax(List<SeriesPoint> points, {double atLeast = 1}) =>
     points.isEmpty ? atLeast : points.map((p) => p.value).reduce((a, b) => a > b ? a : b).clamp(atLeast, double.infinity);
+
+/// Comparación con la sesión anterior del mismo tipo, para el cierre.
+class SessionComparison {
+  const SessionComparison({
+    required this.rounds,
+    this.plannedRounds,
+    this.meanLapSec,
+    this.previousRounds,
+    this.previousMeanLapSec,
+    this.previousDateLabel,
+    this.incomplete = false,
+    this.isRecord = false,
+  });
+
+  final int? rounds;
+  final int? plannedRounds;
+  final int? meanLapSec;
+  final int? previousRounds;
+  final int? previousMeanLapSec;
+
+  /// "el lunes 21", para que el mensaje diga contra qué se compara.
+  final String? previousDateLabel;
+  final bool incomplete;
+  final bool isRecord;
+}
+
+/// Titular y frase de cierre. Siempre dice algo verdadero y concreto: nada de
+/// "¡buen trabajo!" genérico si el dato no lo respalda.
+(String, String) sessionPraise(SessionComparison c) {
+  final rounds = c.rounds;
+  final since = c.previousDateLabel == null ? '' : ' que ${c.previousDateLabel}';
+
+  if (c.isRecord && rounds != null) {
+    return ('¡Récord!', '$rounds rondas: nunca habías hecho tantas.');
+  }
+  if (c.incomplete) {
+    final done = rounds == null ? 'Lo que hiciste' : '$rounds de ${c.plannedRounds ?? '?'} ${c.plannedRounds == 1 ? 'ronda' : 'rondas'}';
+    return ('Sesión registrada', '$done. Parar a tiempo también es entrenar bien.');
+  }
+  if (rounds != null && c.previousRounds != null && rounds > c.previousRounds!) {
+    final diff = rounds - c.previousRounds!;
+    return ('¡Subiste!', '+$diff ${diff == 1 ? 'ronda' : 'rondas'} más$since.');
+  }
+  if (c.meanLapSec != null && c.previousMeanLapSec != null) {
+    final faster = c.previousMeanLapSec! - c.meanLapSec!;
+    if (faster >= 2) {
+      return ('Más rápido', 'Cada ronda te tomó $faster s menos$since.');
+    }
+  }
+  if (rounds != null && c.plannedRounds != null && rounds >= c.plannedRounds!) {
+    final unit = c.plannedRounds == 1 ? 'ronda' : 'rondas';
+    return ('Plan cumplido', '$rounds de ${c.plannedRounds} $unit. Constancia es lo que suma.');
+  }
+  return ('Sesión completa', 'Un día más en la racha.');
+}

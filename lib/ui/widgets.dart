@@ -5,9 +5,13 @@ import '../domain/dates.dart';
 
 /// Tarjeta con título: unidad visual de todas las pantallas.
 class AppCard extends StatelessWidget {
-  const AppCard({super.key, this.title, this.trailing, required this.children, this.padding});
+  const AppCard({super.key, this.title, this.trailing, required this.children, this.padding, this.margin});
 
   final String? title;
+
+  /// Por defecto separa la tarjeta del borde; dentro de un layout con padding
+  /// propio (cronómetro) va a ras para alinear con los botones.
+  final EdgeInsets? margin;
   final Widget? trailing;
   final List<Widget> children;
   final EdgeInsets? padding;
@@ -15,7 +19,7 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+      margin: margin ?? const EdgeInsets.fromLTRB(12, 6, 12, 6),
       child: Padding(
         padding: padding ?? const EdgeInsets.all(12),
         child: Column(
@@ -124,7 +128,10 @@ class DurationField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: 'mm:ss',
-        helperText: value == null ? null : formatDuration(value),
+        // Solo si aporta: "45" se lee como 45:00; "0:36" no necesita eco.
+        helperText: value == null || formatDuration(value) == controller.text.trim()
+            ? null
+            : formatDuration(value),
         errorText: controller.text.trim().isNotEmpty && value == null ? 'Formato mm:ss' : null,
         border: const OutlineInputBorder(),
       ),

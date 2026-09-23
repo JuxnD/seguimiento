@@ -38,8 +38,9 @@ class ChartsSection extends ConsumerWidget {
                     color: Theme.of(context).colorScheme.primary,
                     unit: 'rondas',
                     minY: 0,
+                    integer: true,
                   ),
-                  if (points.length >= 2)
+                  if (points.length >= 2 && dayKey(points.first.date) != dayKey(points.last.date))
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
@@ -66,9 +67,11 @@ class ChartsSection extends ConsumerWidget {
                 unit: 'g',
               ),
             ),
-            const SizedBox(height: 6),
-            Text('La línea punteada es el mínimo de ${profile?.proteinMin ?? 130} g.',
-                style: Theme.of(context).textTheme.bodySmall),
+            if (protein.value?.any((p) => p.value > 0) ?? false) ...[
+              const SizedBox(height: 6),
+              Text('La línea punteada es el mínimo de ${profile?.proteinMin ?? 130} g.',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ],
           ],
         ),
         AppCard(

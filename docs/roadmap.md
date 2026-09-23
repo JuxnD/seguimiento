@@ -48,6 +48,7 @@ Mejoras pedidas tras el primer uso real, en este orden:
 | 2 | Comidas: crear alimento sin salir del registro, editar cantidades de un combo, guardar combos desde la app, hora vs franja | Listo |
 | 3 | Notificaciones locales: sesión, sesión sin registrar, comidas, proteína, medición, fin de descanso | Listo |
 | 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Listo |
+| 5 | Pulido tras uso real: tarjeta principal en todas las pestañas, enfriamiento como fase igual al calentamiento, medalla y frase de cierre con el dato real, insignia al cerrar ronda, selector de "qué costó más" con chips | Listo |
 
 ## v2
 

@@ -23,23 +23,37 @@ solo incluye la elegida.
 
 ## Durante la sesión
 
-- Pantalla grande con **ejercicio, objetivo y contador**: "Ronda 3/7" o
-  "Serie 2/4 · Flexiones 14–16".
-- Un botón **Hecho** avanza. Las repeticiones vienen prellenadas con el objetivo
-  y se ajustan con −/+ si hiciste otra cosa.
-- Al cerrar un paso con descanso, arranca la **cuenta regresiva automática** con
-  la duración del plan, muestra qué viene después y avisa con sonido y vibración
-  al terminar. Se puede saltar.
-- **Fases explícitas**: la sesión empieza en calentamiento, se marca el inicio
-  del trabajo y termina en enfriamiento. La app calcula sola calentamiento,
-  trabajo neto y enfriamiento; no hay que escribirlos.
+Tres fases con la **misma forma**: calentamiento → trabajo → enfriamiento.
+Calentamiento y enfriamiento tienen pantalla propia, anillo contra la meta del
+plan (6 min y 3 min) y un botón grande para cerrarlas; nada se salta por
+accidente.
+
+- **Calentamiento**: debajo del reloj, "Lo que viene" con los ejercicios, el
+  objetivo y el agarre del plan.
+- **Trabajo**: contador ("RONDA 3/7" o "SERIE 2/4"), ejercicio, agarre si el
+  plan lo pide, y un **anillo con las repeticiones** que se llena al llegar al
+  objetivo; −/+ a los lados si hiciste otra cosa. Debajo, qué viene después y
+  una barra de avance de la sesión. **Hecho** avanza, con transición animada.
+- **Descanso**: cuenta regresiva en un anillo azul con la duración del plan,
+  "A continuación" y la barra de avance; avisa con sonido y vibración al
+  terminar y se puede saltar. Si el descanso viene de cerrar una ronda, aparece
+  la insignia **"Ronda N lista · m:ss"** con el tiempo de esa vuelta.
+- **Enfriamiento**: igual que el calentamiento, con "Ya hiciste" (rondas o
+  series, repeticiones y neto). Cerrarlo con menos de **1 min** pide
+  confirmación: guardar sin enfriar casi siempre es un descuido.
+- La app calcula sola calentamiento, trabajo neto (total − calentamiento −
+  enfriamiento, la misma cuenta del formulario) y enfriamiento.
 - La pantalla no se apaga (wakelock).
 - **Terminar antes** cierra la sesión con lo hecho hasta ahí y la marca como
   incompleta. Paraste en la ronda 7 de 8: eso es un dato, no un error.
 
-Al final, un resumen con tiempos, rondas o series completadas y tiempo por
-ronda, y de ahí al formulario con todo prellenado para añadir RPE, contexto y
-notas.
+Al final, una **medalla animada** con una frase basada en el dato real
+([`sessionPraise`](../lib/domain/progress.dart)): récord, "+N rondas más que el
+lunes", "más rápido", "plan cumplido" o "sesión registrada" si quedó
+incompleta. Nunca un "¡buen trabajo!" genérico. Debajo, tiempos, rondas o
+series y tiempo por ronda, y de ahí al formulario prellenado para añadir RPE,
+"¿qué te costó más?" (chips con los ejercicios de la sesión, "Ninguno" por
+defecto) y notas. El formulario no repite la celebración.
 
 ## Límite conocido
 

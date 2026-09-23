@@ -82,4 +82,47 @@ void main() {
       expect(seriesMax([SeriesPoint(hoy, 8), SeriesPoint(hoy, 6)]), 8);
     });
   });
+
+  group('mensaje de cierre', () {
+    test('el récord manda sobre todo lo demás', () {
+      final (title, body) = sessionPraise(const SessionComparison(rounds: 9, isRecord: true, previousRounds: 8));
+      expect(title, '¡Récord!');
+      expect(body, contains('9 rondas'));
+    });
+
+    test('subir de ronda respecto a la anterior se celebra con el dato', () {
+      final (title, body) = sessionPraise(const SessionComparison(
+        rounds: 6, plannedRounds: 6, previousRounds: 5, previousDateLabel: 'el lunes 21'));
+      expect(title, '¡Subiste!');
+      expect(body, '+1 ronda más que el lunes 21.');
+    });
+
+    test('mismas rondas pero más rápido', () {
+      final (title, body) = sessionPraise(const SessionComparison(
+        rounds: 5, previousRounds: 5, meanLapSec: 78, previousMeanLapSec: 84));
+      expect(title, 'Más rápido');
+      expect(body, contains('6 s menos'));
+    });
+
+    test('una diferencia de 1 s no se vende como mejora', () {
+      final (title, _) = sessionPraise(const SessionComparison(
+        rounds: 5, plannedRounds: 5, previousRounds: 5, meanLapSec: 83, previousMeanLapSec: 84));
+      expect(title, 'Plan cumplido');
+    });
+
+    test('incompleta: registrada, sin culpa y con el dato', () {
+      final (title, body) = sessionPraise(const SessionComparison(rounds: 7, plannedRounds: 8, incomplete: true));
+      expect(title, 'Sesión registrada');
+      expect(body, startsWith('7 de 8 rondas'));
+    });
+
+    test('una sola ronda se dice en singular', () {
+      final (_, body) = sessionPraise(const SessionComparison(rounds: 1, plannedRounds: 1));
+      expect(body, startsWith('1 de 1 ronda.'));
+    });
+
+    test('sin comparación posible, igual cierra en positivo', () {
+      expect(sessionPraise(const SessionComparison(rounds: null)).$1, 'Sesión completa');
+    });
+  });
 }

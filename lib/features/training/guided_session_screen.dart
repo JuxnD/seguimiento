@@ -10,7 +10,11 @@ import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/progress.dart';
+import '../../domain/session_math.dart' show meanSec;
 import '../../domain/session_script.dart';
+import '../../ui/progress_ring.dart';
+import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 
 /// Convierte el día del plan en algo que el guion entiende.
@@ -32,11 +36,14 @@ ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
             perSide: e.perSide,
             blockName: e.block,
             variant: e.variant,
+            grip: e.grip,
           ),
       ],
     );
 
-enum _Phase { calentamiento, trabajo, enfriamiento }
+/// Calentamiento y enfriamiento son fases iguales: pantalla propia, reloj
+/// visible y botón para cerrarlas. El enfriamiento no se salta por accidente.
+enum _Phase { calentamiento, trabajo, enfriamiento, terminado }
 
 class _Done {
   _Done(this.exercise, this.reps, this.isRound);
@@ -78,6 +85,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   final _startedAt = DateTime.now();
   DateTime? _workStartedAt;
   DateTime? _workEndedAt;
+  DateTime? _endedAt;
   DateTime? _restStartedAt;
 
   final _done = <_Done>[];
@@ -107,12 +115,23 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   ScriptStep? get _current => _index < _steps.length ? _steps[_index] : null;
 
-  int get _totalSec => DateTime.now().difference(_startedAt).inSeconds;
+  DateTime get _clock => _endedAt ?? DateTime.now();
+  int get _totalSec => _clock.difference(_startedAt).inSeconds;
   int get _warmupSec => (_workStartedAt ?? DateTime.now()).difference(_startedAt).inSeconds;
-  int get _netSec => _workStartedAt == null
-      ? 0
-      : (_workEndedAt ?? DateTime.now()).difference(_workStartedAt!).inSeconds;
-  int get _cooldownSec => _workEndedAt == null ? 0 : DateTime.now().difference(_workEndedAt!).inSeconds;
+  /// Con el trabajo cerrado, neto = total − calentamiento − enfriamiento: la
+  /// misma cuenta del formulario, para que ambos muestren el mismo número.
+  int get _netSec {
+    if (_workStartedAt == null) return 0;
+    if (_workEndedAt == null) return DateTime.now().difference(_workStartedAt!).inSeconds;
+    final net = _totalSec - _warmupSec - _cooldownSec;
+    return net < 0 ? 0 : net;
+  }
+  int get _cooldownSec => _workEndedAt == null ? 0 : _clock.difference(_workEndedAt!).inSeconds;
+
+  /// Metas del plan: 6 min antes y 3 min después; menos de 1 min no es enfriar.
+  static const _warmupGoalSec = 360;
+  static const _cooldownGoalSec = 180;
+  static const _cooldownMinSec = 60;
 
   int get _restRemaining {
     final step = _current;
@@ -168,6 +187,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     // Al cerrar la última parada de una ronda, queda la marca de la vuelta.
     if (step.isRound && _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
       _roundMarks.add(DateTime.now().difference(_workStartedAt!).inSeconds);
+      unawaited(HapticFeedback.mediumImpact());
     }
     _advance();
   }
@@ -187,6 +207,32 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     _workEndedAt ??= DateTime.now();
     _phase = _Phase.enfriamiento;
     unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
+    unawaited(HapticFeedback.mediumImpact());
+  }
+
+  /// Cierra el enfriamiento. Por debajo del mínimo pide confirmación: guardar
+  /// una sesión con 12 s de enfriamiento casi siempre es un descuido.
+  Future<void> _finishCooldown() async {
+    if (_cooldownSec < _cooldownMinSec) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('Enfriamiento muy corto'),
+          content: Text('Llevas ${formatDuration(_cooldownSec)}. El plan pide al menos 1 min '
+              '(la meta son 3).'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Terminar')),
+            FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir')),
+          ],
+        ),
+      );
+      if (ok != true) return;
+    }
+    setState(() {
+      _endedAt = DateTime.now();
+      _phase = _Phase.terminado;
+    });
+    unawaited(HapticFeedback.heavyImpact());
   }
 
   void _skipRest() {
@@ -218,9 +264,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   SessionDraft _buildDraft() {
     final isCircuit = widget.day.type.isCircuit;
-    final rounds = isCircuit
-        ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound)
-        : null;
+    final rounds = isCircuit ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound) : null;
     return SessionDraft(
       date: widget.date,
       startTime: timeKey(_startedAt.hour, _startedAt.minute),
@@ -247,7 +291,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final finished = _phase == _Phase.enfriamiento;
+    final finished = _phase == _Phase.terminado;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -259,14 +303,33 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         appBar: AppBar(
           title: Text(widget.day.type.label),
           actions: [
-            if (_phase == _Phase.trabajo)
-              TextButton(onPressed: _finishEarly, child: const Text('Terminar')),
+            if (_phase == _Phase.trabajo) TextButton(onPressed: _finishEarly, child: const Text('Terminar')),
           ],
         ),
         body: Column(
           children: [
             _timesBar(),
-            Expanded(child: Padding(padding: const EdgeInsets.all(12), child: _body(finished))),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                // Cada paso entra deslizándose: el cambio de ejercicio se siente.
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 280),
+                  layoutBuilder: (current, previous) => Stack(
+                    fit: StackFit.expand,
+                    children: [...previous, if (current != null) current],
+                  ),
+                  transitionBuilder: (child, anim) => FadeTransition(
+                    opacity: anim,
+                    child: SlideTransition(
+                      position: Tween(begin: const Offset(0.12, 0), end: Offset.zero).animate(anim),
+                      child: child,
+                    ),
+                  ),
+                  child: KeyedSubtree(key: ValueKey('${_phase.name}-$_index'), child: _body(finished)),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -289,13 +352,31 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   Widget _body(bool finished) {
     if (_phase == _Phase.calentamiento) {
-      return _BigPanel(
+      return _PhasePanel(
         title: 'Calentando',
-        subtitle: formatDuration(_warmupSec),
-        detail: 'El plan pide mínimo 6 min antes de empezar',
+        seconds: _warmupSec,
+        goalSec: _warmupGoalSec,
+        detail: _warmupSec < _warmupGoalSec
+            ? 'Faltan ${formatDuration(_warmupGoalSec - _warmupSec)} para los 6 min del plan'
+            : 'Calentamiento cumplido',
         action: 'Empezar ${widget.day.type.label.toLowerCase()}',
         icon: Icons.play_arrow,
         onAction: _startWork,
+        footer: _planPreview(),
+      );
+    }
+    if (_phase == _Phase.enfriamiento) {
+      return _PhasePanel(
+        title: 'Enfriando',
+        seconds: _cooldownSec,
+        goalSec: _cooldownGoalSec,
+        detail: _cooldownSec < _cooldownGoalSec
+            ? 'Estira y respira. Faltan ${formatDuration(_cooldownGoalSec - _cooldownSec)} para los 3 min'
+            : 'Enfriamiento cumplido',
+        action: 'Terminar enfriamiento',
+        icon: Icons.check,
+        onAction: _finishCooldown,
+        footer: _doneSoFar(),
       );
     }
     if (finished) return _summary();
@@ -308,89 +389,197 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   Widget _work(WorkStep step) {
     final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+    final target = step.targetReps;
+    final next = _nextWorkLabel();
     return Column(
       children: [
-        Text(step.counterLabel, style: Theme.of(context).textTheme.titleMedium),
-        if (step.blockName != null)
-          Text('Bloque ${step.blockName}', style: Theme.of(context).textTheme.bodySmall),
+        Text(step.counterLabel.toUpperCase(), style: text.titleMedium?.copyWith(letterSpacing: 2)),
+        if (step.blockName != null) Text('Bloque ${step.blockName}', style: text.bodySmall),
         const SizedBox(height: 8),
         Text(
           step.exercise,
           textAlign: TextAlign.center,
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium
-              ?.copyWith(color: scheme.primary, fontWeight: FontWeight.w800),
+          style: text.headlineMedium?.copyWith(color: scheme.primary, fontWeight: FontWeight.w800),
         ),
-        Text('Objetivo: ${step.targetLabel}', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 16),
-        if (step.targetReps != null) _repsStepper(),
+        if (step.grip != null) Text('Agarre ${step.grip}', style: text.titleMedium),
         const Spacer(),
+        // El anillo se llena al llegar al objetivo: ajustar reps se ve.
+        if (target != null)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton.filledTonal(
+                iconSize: 32,
+                onPressed: (_reps ?? 0) > 0 ? () => setState(() => _reps = _reps! - 1) : null,
+                icon: const Icon(Icons.remove),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: ProgressRing(
+                  progress: target == 0 ? 1 : (_reps ?? 0) / target,
+                  value: '${_reps ?? 0}',
+                  sublabel: 'de $target reps',
+                  label: '',
+                  size: 200,
+                  stroke: 14,
+                  color: (_reps ?? 0) >= target ? scheme.primary : scheme.primary.withOpacity(0.6),
+                ),
+              ),
+              IconButton.filledTonal(
+                iconSize: 32,
+                onPressed: () => setState(() => _reps = (_reps ?? 0) + 1),
+                icon: const Icon(Icons.add),
+              ),
+            ],
+          )
+        else
+          Text(step.targetLabel,
+              textAlign: TextAlign.center,
+              style: text.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
+        const Spacer(),
+        if (next != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text('Después: $next', textAlign: TextAlign.center, style: text.bodyLarge),
+          ),
+        _sessionProgress(),
+        const SizedBox(height: 12),
         SizedBox(
-          height: 120,
+          height: 110,
           child: _BigButton(label: 'Hecho', icon: Icons.check, onTap: _completeWork),
         ),
-        const SizedBox(height: 8),
-        Text('Paso ${_index + 1} de ${_steps.length}',
-            style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }
 
-  Widget _repsStepper() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton.filledTonal(
-            iconSize: 32,
-            onPressed: (_reps ?? 0) > 0 ? () => setState(() => _reps = _reps! - 1) : null,
-            icon: const Icon(Icons.remove),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Text('${_reps ?? 0}',
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold)),
-          ),
-          IconButton.filledTonal(
-            iconSize: 32,
-            onPressed: () => setState(() => _reps = (_reps ?? 0) + 1),
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      );
-
   Widget _rest(RestStep step) {
     final remaining = _restRemaining.clamp(0, step.seconds);
-    final progress = step.seconds == 0 ? 1.0 : 1 - remaining / step.seconds;
+    // El anillo se vacía con el tiempo que queda: se lee de un vistazo.
+    final left = step.seconds == 0 ? 0.0 : remaining / step.seconds;
+    // Si este descanso viene de cerrar una ronda, se celebra la vuelta.
+    final prev = _index > 0 ? _steps[_index - 1] : null;
+    final roundsClosed = _done.where((d) => d.isRound).length;
+    final closedRound =
+        prev is WorkStep && prev.isRound && roundsClosed > 0 && roundsClosed % _exercisesPerRound == 0
+            ? prev.position
+            : null;
+    final laps = _roundMarks.isEmpty ? const <int>[] : lapDurationsOf(_roundMarks);
     return Column(
       children: [
-        Text('Descanso', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 180,
-          width: 180,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              SizedBox.expand(
-                child: CircularProgressIndicator(value: progress, strokeWidth: 10),
-              ),
-              Text(formatDuration(remaining),
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold)),
-            ],
+        if (closedRound != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _RoundBadge(round: closedRound, lapSec: laps.isEmpty ? null : laps.last),
           ),
+        Text('DESCANSO', style: Theme.of(context).textTheme.titleMedium?.copyWith(letterSpacing: 2)),
+        const SizedBox(height: 16),
+        ProgressRing(
+          progress: left,
+          value: formatDuration(remaining),
+          sublabel: 'plan ${step.label}',
+          label: '',
+          size: 200,
+          stroke: 14,
+          color: const Color(0xFF4EA8FF),
         ),
         const SizedBox(height: 12),
-        Text('Plan: ${step.label}', style: Theme.of(context).textTheme.bodyMedium),
+        Text('A continuación', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 4),
-        Text(step.nextLabel, style: Theme.of(context).textTheme.titleMedium),
+        Text(step.nextLabel,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
         const Spacer(),
-        OutlinedButton.icon(
-          onPressed: _skipRest,
-          icon: const Icon(Icons.skip_next),
-          label: const Text('Saltar descanso'),
+        _sessionProgress(),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: OutlinedButton.icon(
+            onPressed: _skipRest,
+            icon: const Icon(Icons.skip_next),
+            label: const Text('Saltar descanso'),
+          ),
         ),
       ],
     );
+  }
+
+  /// Barra de avance de la sesión: cuánto va de lo que pide el plan.
+  Widget _sessionProgress() {
+    final total = workStepCount(_steps);
+    final done = _done.length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: LinearProgressIndicator(
+            value: total == 0 ? 0 : done / total,
+            minHeight: 8,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+            widget.day.type.isCircuit ? '$done de $total ejercicios hechos' : '$done de $total series hechas',
+            textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+      ],
+    );
+  }
+
+  /// Mientras calienta, el circuito a la vista: llega sabiendo qué sigue.
+  Widget _planPreview() {
+    final seen = <String>{};
+    final lines = [
+      for (final s in _steps)
+        if (s is WorkStep && seen.add(s.exercise))
+          [s.exercise, s.targetLabel, if (s.grip != null) s.grip!].join(' · '),
+    ];
+    final isCircuit = widget.day.type.isCircuit;
+    final rounds = widget.roundsOverride ?? widget.day.targetRounds;
+    return AppCard(
+      margin: EdgeInsets.zero,
+      title: isCircuit && rounds != null ? 'Lo que viene · $rounds ${rounds == 1 ? 'ronda' : 'rondas'}' : 'Lo que viene',
+      children: [
+        for (final l in lines)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text('• $l', style: Theme.of(context).textTheme.bodyLarge),
+          ),
+      ],
+    );
+  }
+
+  /// En el enfriamiento, lo logrado: motiva a cerrar bien en vez de cortar.
+  Widget _doneSoFar() {
+    final isCircuit = widget.day.type.isCircuit;
+    final rounds = isCircuit ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound) : null;
+    final reps = _done.fold<int>(0, (a, d) => a + d.reps);
+    return AppCard(
+      margin: EdgeInsets.zero,
+      title: 'Ya hiciste',
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            if (rounds != null) _Stat('Rondas', '$rounds'),
+            if (rounds == null) _Stat('Series', '${_done.length}'),
+            _Stat('Reps', '$reps'),
+            _Stat('Neto', formatDuration(_netSec)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Lo que viene después del paso actual, para no tener que pensar.
+  String? _nextWorkLabel() {
+    for (var i = _index + 1; i < _steps.length; i++) {
+      final s = _steps[i];
+      if (s is WorkStep) return '${s.exercise} · ${s.targetLabel}';
+    }
+    return null;
   }
 
   Widget _summary() {
@@ -398,23 +587,30 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final laps = _roundMarks.isEmpty ? <int>[] : lapDurationsOf(_roundMarks);
     return ListView(
       children: [
-        Text('Sesión terminada', style: Theme.of(context).textTheme.headlineSmall),
+        _CompletionHeader(draft: draft, lapsSec: laps, color: styleForDay(widget.day.type).color),
         const SizedBox(height: 12),
-        AppCard(
-          children: [
-            _SummaryRow('Calentamiento', formatDuration(draft.warmupSec)),
-            _SummaryRow('Trabajo neto', formatDuration(_netSec)),
-            _SummaryRow('Enfriamiento', formatDuration(draft.cooldownSec)),
-            _SummaryRow('Total', formatDuration(draft.totalSec)),
-            const Divider(),
-            if (draft.roundsDone != null)
-              _SummaryRow('Rondas', '${draft.roundsDone} de ${draft.plannedRounds ?? '—'}')
-            else
-              _SummaryRow('Series', '${_done.length} de ${draft.plannedRounds ?? '—'}'),
-            if (laps.isNotEmpty)
-              _SummaryRow('Tiempo por ronda', laps.map(formatDuration).join(' · ')),
-            if (draft.incomplete) const _SummaryRow('Cierre', 'Incompleta'),
-          ],
+        // Sin el margen de AppCard: aquí ya hay padding y quedaba más angosta
+        // que la cabecera.
+        Card(
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              children: [
+                _SummaryRow('Calentamiento', formatDuration(draft.warmupSec)),
+                _SummaryRow('Trabajo neto', formatDuration(_netSec)),
+                _SummaryRow('Enfriamiento', formatDuration(draft.cooldownSec)),
+                _SummaryRow('Total', formatDuration(draft.totalSec)),
+                const Divider(),
+                if (draft.roundsDone != null)
+                  _SummaryRow('Rondas', '${draft.roundsDone} de ${draft.plannedRounds ?? '—'}')
+                else
+                  _SummaryRow('Series', '${_done.length} de ${draft.plannedRounds ?? '—'}'),
+                if (laps.isNotEmpty) _SummaryRow('Tiempo por ronda', laps.map(formatDuration).join(' · ')),
+                if (draft.incomplete) const _SummaryRow('Cierre', 'Incompleta'),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 12),
         FilledButton.icon(
@@ -491,37 +687,6 @@ class _SummaryRow extends StatelessWidget {
       );
 }
 
-class _BigPanel extends StatelessWidget {
-  const _BigPanel({
-    required this.title,
-    required this.subtitle,
-    required this.detail,
-    required this.action,
-    required this.icon,
-    required this.onAction,
-  });
-
-  final String title;
-  final String subtitle;
-  final String detail;
-  final String action;
-  final IconData icon;
-  final VoidCallback onAction;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        children: [
-          Text(title, style: Theme.of(context).textTheme.titleMedium),
-          Text(subtitle,
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(detail, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyMedium),
-          const Spacer(),
-          SizedBox(height: 120, child: _BigButton(label: action, icon: icon, onTap: onAction)),
-        ],
-      );
-}
-
 class _BigButton extends StatelessWidget {
   const _BigButton({required this.label, required this.icon, required this.onTap});
 
@@ -559,6 +724,205 @@ class _BigButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Insignia al cerrar una ronda: entra con rebote para que se note el logro.
+class _RoundBadge extends StatelessWidget {
+  const _RoundBadge({required this.round, this.lapSec});
+
+  final int round;
+  final int? lapSec;
+
+  @override
+  Widget build(BuildContext context) {
+    const green = Color(0xFF7ED957);
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.4, end: 1),
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.elasticOut,
+      builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        decoration: BoxDecoration(
+          color: green.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: green.withOpacity(0.6)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.check_circle, color: green),
+            const SizedBox(width: 8),
+            Text(
+              lapSec == null ? 'Ronda $round lista' : 'Ronda $round lista · ${formatDuration(lapSec!)}',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: green, fontWeight: FontWeight.w800),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Fase con reloj propio y meta visible: calentamiento y enfriamiento se ven y
+/// se cierran igual.
+class _PhasePanel extends StatelessWidget {
+  const _PhasePanel({
+    required this.title,
+    required this.seconds,
+    required this.goalSec,
+    required this.detail,
+    required this.action,
+    required this.icon,
+    required this.onAction,
+    this.footer,
+  });
+
+  final String title;
+  final Widget? footer;
+  final int seconds;
+  final int goalSec;
+  final String detail;
+  final String action;
+  final IconData icon;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final done = seconds >= goalSec;
+    final scheme = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        Text(title.toUpperCase(), style: Theme.of(context).textTheme.titleMedium?.copyWith(letterSpacing: 2)),
+        const SizedBox(height: 16),
+        ProgressRing(
+          progress: goalProgress(seconds, goalSec),
+          value: formatDuration(seconds),
+          sublabel: 'meta ${formatDuration(goalSec)}',
+          label: '',
+          size: 200,
+          stroke: 14,
+          color: done ? const Color(0xFF7ED957) : scheme.primary,
+        ),
+        const SizedBox(height: 8),
+        Text(detail, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
+        const Spacer(),
+        if (footer != null) ...[footer!, const SizedBox(height: 12)],
+        SizedBox(height: 110, child: _BigButton(label: action, icon: icon, onTap: onAction)),
+      ],
+    );
+  }
+}
+
+/// Cierre de sesión: medalla animada y un mensaje con el dato real de hoy
+/// frente a la sesión anterior del mismo tipo.
+class _CompletionHeader extends ConsumerStatefulWidget {
+  const _CompletionHeader({required this.draft, required this.lapsSec, required this.color});
+
+  final SessionDraft draft;
+  final List<int> lapsSec;
+  final Color color;
+
+  @override
+  ConsumerState<_CompletionHeader> createState() => _CompletionHeaderState();
+}
+
+class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with SingleTickerProviderStateMixin {
+  late final AnimationController _anim =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))..forward();
+  late final Future<SessionComparison> _comparison = _compare();
+
+  @override
+  void dispose() {
+    _anim.dispose();
+    super.dispose();
+  }
+
+  Future<SessionComparison> _compare() async {
+    final d = widget.draft;
+    final repo = ref.read(trainingRepositoryProvider);
+    final previous = await repo.previousOfType(d.type, d.date);
+    final best = d.type.isCircuit ? await repo.bestRounds() : null;
+    final record = d.type.isCircuit && d.roundsDone != null && !d.incomplete && isRecord(d.roundsDone!, best);
+    return SessionComparison(
+      rounds: d.roundsDone,
+      plannedRounds: d.plannedRounds,
+      meanLapSec: meanSec(widget.lapsSec),
+      previousRounds: previous?.$2,
+      previousMeanLapSec: previous == null ? null : meanSec(lapDurationsOf(previous.$3)),
+      previousDateLabel:
+          previous == null ? null : 'el ${weekdayLong(previous.$1.weekday).toLowerCase()} ${previous.$1.day}',
+      incomplete: d.incomplete,
+      isRecord: record,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return FutureBuilder<SessionComparison>(
+      future: _comparison,
+      builder: (context, snap) {
+        final c = snap.data;
+        final (title, body) = c == null ? ('Sesión terminada', '') : sessionPraise(c);
+        final record = c?.isRecord ?? false;
+        final color = record ? const Color(0xFFFFC53D) : widget.color;
+        return AnimatedBuilder(
+          animation: _anim,
+          builder: (context, _) {
+            final t = Curves.easeOutBack.transform(_anim.value.clamp(0.0, 1.0));
+            return Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [color.withOpacity(0.30), Colors.transparent],
+                ),
+                border: Border.all(color: color.withOpacity(0.5)),
+              ),
+              child: Column(
+                children: [
+                  Transform.scale(
+                    scale: 0.4 + 0.6 * t,
+                    child: Container(
+                      width: 96,
+                      height: 96,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color.withOpacity(0.18),
+                        boxShadow: [
+                          BoxShadow(
+                              color: color.withOpacity(0.45 * _anim.value), blurRadius: 32, spreadRadius: 4),
+                        ],
+                      ),
+                      child: Icon(record ? Icons.emoji_events : Icons.military_tech, size: 56, color: color),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Opacity(
+                    opacity: _anim.value,
+                    child: Column(
+                      children: [
+                        Text(title,
+                            style: text.headlineMedium?.copyWith(fontWeight: FontWeight.w900, color: color)),
+                        if (body.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(body, textAlign: TextAlign.center, style: text.titleMedium),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

@@ -22,9 +22,13 @@ class WorkStep extends ScriptStep {
     required this.total,
     required this.isRound,
     this.blockName,
+    this.grip,
   });
 
   final String exercise;
+
+  /// Agarre o ejecución que pide el plan ("prona"), para no olvidarlo.
+  final String? grip;
 
   /// Lo que pide el plan: "14–16", "8", "20–40 s".
   final String targetLabel;
@@ -75,9 +79,11 @@ class ScriptExercise {
     this.perSide = false,
     this.blockName,
     this.variant,
+    this.grip,
   });
 
   final String name;
+  final String? grip;
   final int? sets;
   final int? repsMin;
   final int? repsMax;
@@ -187,6 +193,7 @@ List<ScriptStep> _blockSteps(List<ScriptExercise> exercises) {
 WorkStep _work(ScriptExercise e, {required int position, required int total, required bool isRound}) =>
     WorkStep(
       exercise: e.name,
+      grip: e.grip,
       targetLabel: e.targetLabel,
       targetReps: e.repsMin,
       holdSec: e.holdSecMin,

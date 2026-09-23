@@ -89,7 +89,7 @@ class _PlanHero extends StatelessWidget {
                 const Spacer(),
                 _Chip(
                   icon: Icons.local_fire_department,
-                  label: dashboard.streak == 0 ? 'Sin racha' : '${dashboard.streak} días',
+                  label: dashboard.streak == 0 ? 'Sin racha' : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
                   color: dashboard.streak >= 3 ? style.color : null,
                 ),
                 const SizedBox(width: 6),
@@ -291,7 +291,7 @@ class _MeasurementCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(days > 0
-                    ? 'Próxima medición en $days días'
+                    ? 'Próxima medición en $days ${days == 1 ? 'día' : 'días'}'
                     : 'Toca medir: ya pasó el intervalo'),
               ),
             ],

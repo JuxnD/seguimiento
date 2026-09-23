@@ -26,6 +26,21 @@ y usado en Hoy, el plan y las sesiones, para que el tipo se reconozca sin leer.
 Los anillos usan su propio color fijo: proteína azul, kcal naranja claro,
 rondas el color del tipo del día.
 
+## Tarjeta principal en todas las pestañas
+
+Cada pestaña abre con una **tarjeta principal** ([`lib/ui/hero.dart`](../lib/ui/hero.dart))
+con el lenguaje de Hoy: degradado del color de la sección, rótulo en mayúsculas,
+dato en grande y píldoras de estado. Debajo, filas con icono de color
+(`TypedTile`) y estados vacíos con icono (`EmptyState`).
+
+| Pestaña | Color | Qué muestra la tarjeta |
+|---|---|---|
+| Hoy | Color del día | Tipo de día, racha, semana, ejercicios |
+| Entreno | Color del día | Qué toca hoy, racha, récord, empezar / a mano / fútbol |
+| Comidas | Naranja claro | Día con navegación, anillos de proteína y kcal, armar comida |
+| Cuerpo | Verde | Último peso, cambio desde el primero, cuándo medir |
+| Informe | Naranja | Semana con navegación |
+
 ## Pantalla Hoy
 
 [`home_screen.dart`](../lib/features/home/home_screen.dart), alimentada por
@@ -66,11 +81,12 @@ incompleta: un récord tiene que ser contado.
 | Medidas | Una línea por sitio, con selector; solo aparecen los sitios con al menos dos tomas |
 
 Los días sin dato se dibujan en cero en vez de unirse con una pendiente
-inventada.
+inventada. El eje de rondas solo muestra enteros y se deja margen para que la
+última fecha no se corte.
 
 ## Fotos de progreso
 
-**Cuerpo → icono de galería.** Frente, perfil y espalda por fecha, con
+**Cuerpo → Fotos de progreso.** Frente, perfil y espalda por fecha, con
 **comparador lado a lado**: dos fechas, el mismo ángulo, y los días entre ellas.
 Mantén presionada una foto para borrarla.
 

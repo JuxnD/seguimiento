@@ -54,21 +54,27 @@ class ProgressRing extends StatelessWidget {
                   children: [
                     Text(
                       value,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
+                      // En anillos grandes (cronómetro) el número manda.
+                      style: (size >= 160
+                              ? Theme.of(context).textTheme.displayMedium
+                              : Theme.of(context).textTheme.titleLarge)
                           ?.copyWith(fontWeight: FontWeight.w800, height: 1.1),
                     ),
                     if (sublabel != null)
-                      Text(sublabel!, style: Theme.of(context).textTheme.labelSmall),
+                      Text(sublabel!,
+                          style: size >= 160
+                              ? Theme.of(context).textTheme.titleSmall
+                              : Theme.of(context).textTheme.labelSmall),
                   ],
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 6),
-        Text(label, style: Theme.of(context).textTheme.labelMedium),
+        if (label.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(label, style: Theme.of(context).textTheme.labelMedium),
+        ],
       ],
     );
   }
