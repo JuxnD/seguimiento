@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/providers.dart';
 import 'app/startup_error.dart';
+import 'data/active_session_store.dart';
 import 'data/database_host.dart';
 import 'data/local_flags.dart';
 import 'data/notification_service.dart';
@@ -25,6 +26,7 @@ Future<void> main() async {
     await seedFoodsIfEmpty(host.db);
     await ReminderRepository(host.db).ensureDefaults();
     final flags = await LocalFlags.open();
+    final activeSession = await ActiveSessionStore.open();
 
     // Sin notificaciones la app sirve igual: un fallo aquí no debe impedir
     // abrirla.
@@ -40,6 +42,7 @@ Future<void> main() async {
         overrides: [
           databaseHostProvider.overrideWithValue(host),
           localFlagsProvider.overrideWithValue(flags),
+          activeSessionStoreProvider.overrideWithValue(activeSession),
           notificationServiceProvider.overrideWithValue(notifications),
         ],
         child: const SeguimientoApp(),

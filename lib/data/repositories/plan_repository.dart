@@ -279,6 +279,19 @@ class PlanRepository {
     return PlanDayView(versionNumber: await versionNumber(v.id), dayId: row.id, day: draft.days[date.weekday - 1]);
   }
 
+  /// Un día concreto del plan por su id (para retomar una sesión: las
+  /// versiones son inmutables, así que es el mismo guion). null si ya no existe.
+  Future<PlanDayView?> dayById(int planDayId) async {
+    final row = await (db.select(db.planDays)..where((t) => t.id.equals(planDayId))).getSingleOrNull();
+    if (row == null) return null;
+    final draft = await load(row.planVersionId);
+    return PlanDayView(
+      versionNumber: await versionNumber(row.planVersionId),
+      dayId: row.id,
+      day: draft.days[row.weekday - 1],
+    );
+  }
+
   /// Cambia cuando cambia cualquier versión; útil para refrescar "Hoy".
   Stream<PlanDayView?> watchDayFor(DateTime date) =>
       db.select(db.planVersions).watch().asyncMap((_) => dayFor(date));

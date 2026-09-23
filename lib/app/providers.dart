@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../data/active_session_store.dart';
 import '../data/database.dart';
 import 'coalesce.dart';
 import '../data/notification_service.dart';
@@ -23,6 +24,7 @@ import '../data/repositories/plan_repository.dart';
 import '../data/repositories/profile_repository.dart';
 import '../data/repositories/report_repository.dart';
 import '../data/repositories/training_repository.dart';
+import '../domain/active_session.dart';
 import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/report/report_builder.dart';
@@ -32,6 +34,13 @@ final databaseHostProvider = Provider<DatabaseHost>((ref) => throw Unimplemented
 
 /// Se sobreescribe en `main` con las banderas ya abiertas.
 final localFlagsProvider = Provider<LocalFlags>((ref) => throw UnimplementedError());
+
+/// Se sobreescribe en `main` con el almacén ya abierto.
+final activeSessionStoreProvider = Provider<ActiveSessionStore>((ref) => throw UnimplementedError());
+
+/// Sesión de cronómetro que quedó a medias (Android cerró la app). Se
+/// invalida al terminar o descartar una sesión.
+final activeSessionProvider = FutureProvider<ActiveSession?>((ref) => ref.watch(activeSessionStoreProvider).load());
 
 /// Cambia al restaurar un respaldo: obliga a recrear repositorios y streams
 /// contra la base nueva.

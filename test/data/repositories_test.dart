@@ -236,4 +236,26 @@ void main() {
     draft.days[6].exercises.add(PlanExerciseDraft(name: 'X', sets: 0));
     expect(planDraftProblem(draft), isNull);
   });
+
+  test('un día del plan se relee por id aunque después haya versiones nuevas', () async {
+    final v1 = PlanDraft.empty(d(9, 1));
+    v1.days[0]
+      ..type = DayType.circuito
+      ..targetRounds = 6
+      ..exercises.add(PlanExerciseDraft(name: 'Flexiones', repsMin: 10));
+    await plan.saveAsNewVersion(v1);
+    final monday = await plan.dayFor(d(9, 7));
+
+    final v2 = PlanDraft.empty(d(9, 7));
+    v2.days[0]
+      ..type = DayType.circuito
+      ..targetRounds = 8;
+    await plan.saveAsNewVersion(v2);
+
+    final again = await plan.dayById(monday!.dayId);
+    expect(again!.day.targetRounds, 6);
+    expect(again.day.exercises.single.name, 'Flexiones');
+    expect(again.versionNumber, 1);
+    expect(await plan.dayById(99999), isNull);
+  });
 }

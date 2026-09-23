@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../../app/providers.dart';
+import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../ui/widgets.dart';
 
@@ -27,24 +30,30 @@ class CounterResult {
   int get rounds => roundMarksSec.length;
 }
 
-enum _Phase { warmup, circuit, cooldown }
-
 /// Cronómetro por fases con contador de rondas de toque grande.
 /// Los tiempos se calculan con marcas de reloj, no acumulando ticks: si la
 /// pantalla se apaga o la app pasa a segundo plano, no se pierde tiempo.
-class RoundCounterScreen extends StatefulWidget {
-  const RoundCounterScreen({super.key});
+class RoundCounterScreen extends ConsumerStatefulWidget {
+  const RoundCounterScreen({super.key, required this.date, this.outOfPlan = false, this.resume});
+
+  /// Día de la sesión y si va fuera de plan: se guardan con la foto para que
+  /// una sesión retomada se registre igual que la original.
+  final DateTime date;
+  final bool outOfPlan;
+
+  /// Sesión que Android cerró a mitad: se retoma donde iba.
+  final CounterSnapshot? resume;
 
   @override
-  State<RoundCounterScreen> createState() => _RoundCounterScreenState();
+  ConsumerState<RoundCounterScreen> createState() => _RoundCounterScreenState();
 }
 
-class _RoundCounterScreenState extends State<RoundCounterScreen> {
-  final _startedAt = DateTime.now();
-  DateTime? _circuitStart;
-  DateTime? _circuitEnd;
-  final _marks = <int>[];
-  _Phase _phase = _Phase.warmup;
+class _RoundCounterScreenState extends ConsumerState<RoundCounterScreen> {
+  late final DateTime _startedAt = widget.resume?.startedAt ?? DateTime.now();
+  late DateTime? _circuitStart = widget.resume?.circuitStart;
+  late DateTime? _circuitEnd = widget.resume?.circuitEnd;
+  late final _marks = <int>[...?widget.resume?.marks];
+  late CounterPhase _phase = widget.resume?.phase ?? CounterPhase.warmup;
   Timer? _timer;
 
   @override
@@ -52,6 +61,24 @@ class _RoundCounterScreenState extends State<RoundCounterScreen> {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
     WakelockPlus.enable();
+    _persist();
+  }
+
+  /// Foto del estado en disco: si Android mata la app, se retoma desde aquí.
+  void _persist() => unawaited(ref.read(activeSessionStoreProvider).save(CounterSnapshot(
+        date: dayKey(widget.date),
+        startedAt: _startedAt,
+        phase: _phase,
+        outOfPlan: widget.outOfPlan,
+        circuitStart: _circuitStart,
+        circuitEnd: _circuitEnd,
+        marks: List.of(_marks),
+      )));
+
+  /// Cambia el estado y deja la foto al día.
+  void _update(VoidCallback change) {
+    setState(change);
+    _persist();
   }
 
   @override
@@ -71,20 +98,20 @@ class _RoundCounterScreenState extends State<RoundCounterScreen> {
 
   int get _cooldownSec => _circuitEnd == null ? 0 : DateTime.now().difference(_circuitEnd!).inSeconds;
 
-  void _startCircuit() => setState(() {
+  void _startCircuit() => _update(() {
         _circuitStart = DateTime.now();
-        _phase = _Phase.circuit;
+        _phase = CounterPhase.circuit;
       });
 
-  void _addRound() => setState(() => _marks.add(DateTime.now().difference(_circuitStart!).inSeconds));
+  void _addRound() => _update(() => _marks.add(DateTime.now().difference(_circuitStart!).inSeconds));
 
-  void _undoRound() => setState(() {
+  void _undoRound() => _update(() {
         if (_marks.isNotEmpty) _marks.removeLast();
       });
 
-  void _endCircuit() => setState(() {
+  void _endCircuit() => _update(() {
         _circuitEnd = DateTime.now();
-        _phase = _Phase.cooldown;
+        _phase = CounterPhase.cooldown;
       });
 
   void _finish() {
@@ -151,14 +178,14 @@ class _RoundCounterScreenState extends State<RoundCounterScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: _phase == _Phase.warmup
+                child: _phase == CounterPhase.warmup
                     ? _BigButton(
                         label: 'Empezar circuito',
                         sub: 'Calentando ${formatDuration(_warmupSec)}',
                         icon: Icons.play_arrow,
                         onTap: _startCircuit,
                       )
-                    : _phase == _Phase.circuit
+                    : _phase == CounterPhase.circuit
                         ? _BigButton(
                             label: '${_marks.length}',
                             sub: lastLap == null
@@ -179,7 +206,7 @@ class _RoundCounterScreenState extends State<RoundCounterScreen> {
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
               child: Row(
                 children: [
-                  if (_phase == _Phase.circuit) ...[
+                  if (_phase == CounterPhase.circuit) ...[
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: _marks.isEmpty ? null : _undoRound,

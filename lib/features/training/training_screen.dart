@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/database.dart';
 import '../../data/repositories/training_repository.dart';
+import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/session_math.dart';
@@ -12,6 +13,7 @@ import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../plan/plan_screen.dart';
+import 'active_session_banner.dart';
 import 'football_form_screen.dart';
 import 'guided_session_screen.dart';
 import 'round_counter_screen.dart';
@@ -21,6 +23,8 @@ import 'session_form_screen.dart';
 /// cuenta rondas, si tocan bloques cuenta series. Sin plan, cae al cronómetro
 /// libre, que no inventa rondas.
 Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? date}) async {
+  final canStart = await _noPendingSession(context, ref);
+  if (!canStart || !context.mounted) return;
   final day = date ?? dateOnly(DateTime.now());
   final view = await ref.read(planRepositoryProvider).dayFor(day);
 
@@ -70,21 +74,94 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   );
   if (setup == null || !context.mounted) return;
 
-  final draft = await Navigator.push<SessionDraft>(
+  await _runGuided(
     context,
-    MaterialPageRoute(
-      builder: (_) => GuidedSessionScreen(
-        day: planDay,
-        date: day,
-        planDayId: view.dayId,
-        coreVariant: setup.variant,
-        roundsOverride: setup.rounds,
-      ),
+    GuidedSessionScreen(
+      day: planDay,
+      date: day,
+      planDayId: view.dayId,
+      coreVariant: setup.variant,
+      roundsOverride: setup.rounds,
     ),
   );
-  if (draft == null || !context.mounted) return;
-  // El cierre del cronómetro ya celebró: el formulario no lo repite.
-  await openSessionForm(context, draft, celebrate: false);
+}
+
+/// Cronómetro guiado → formulario. Al terminar (guardada o descartada) se
+/// borra la foto de la sesión en curso: ya no hay nada que retomar.
+Future<void> _runGuided(BuildContext context, GuidedSessionScreen screen) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  try {
+    final draft = await Navigator.push<SessionDraft>(context, MaterialPageRoute(builder: (_) => screen));
+    if (draft == null || !context.mounted) return;
+    // El cierre del cronómetro ya celebró: el formulario no lo repite.
+    await openSessionForm(context, draft, celebrate: false);
+  } finally {
+    await _clearActive(container);
+  }
+}
+
+Future<void> _clearActive(ProviderContainer container) async {
+  await container.read(activeSessionStoreProvider).clear();
+  container.invalidate(activeSessionProvider);
+}
+
+/// Antes de empezar otra: si quedó una sesión a medias, se ofrece retomarla.
+/// Devuelve true si se puede empezar una nueva.
+Future<bool> _noPendingSession(BuildContext context, WidgetRef ref) async {
+  final pending = await ref.read(activeSessionProvider.future);
+  if (pending == null || !context.mounted) return true;
+  final choice = await showDialog<bool>(
+    context: context,
+    builder: (c) => AlertDialog(
+      title: const Text('Hay una sesión sin terminar'),
+      content: Text('Empezó ${describeActiveSession(pending)}. Si empiezas otra, esa se descarta.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Descartarla')),
+        FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Retomarla')),
+      ],
+    ),
+  );
+  if (choice == null || !context.mounted) return false;
+  if (choice) {
+    await resumeActiveSession(context, ref, pending);
+    return false;
+  }
+  await _clearActive(ProviderScope.containerOf(context, listen: false));
+  return true;
+}
+
+/// "el mar 23 sep a las 15:10".
+String describeActiveSession(ActiveSession s) {
+  final d = parseDay(s.date);
+  return 'el ${weekdayShort(d.weekday)} ${formatShort(d)} a las ${timeKey(s.startedAt.hour, s.startedAt.minute)}';
+}
+
+/// Retoma el cronómetro que Android cerró, en el punto exacto donde iba.
+Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSession session) async {
+  switch (session) {
+    case GuidedSnapshot s:
+      final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
+      if (!context.mounted) return;
+      if (view == null) {
+        showSnack(context, 'El día del plan de esa sesión ya no existe; se descarta.');
+        await _clearActive(ProviderScope.containerOf(context, listen: false));
+        return;
+      }
+      await _runGuided(
+        context,
+        GuidedSessionScreen(
+          day: view.day,
+          date: parseDay(s.date),
+          planDayId: s.planDayId,
+          sessionType: s.sessionType,
+          coreVariant: s.coreVariant,
+          roundsOverride: s.roundsOverride,
+          resume: s,
+        ),
+      );
+    case CounterSnapshot s:
+      await _runCounter(context, date: parseDay(s.date), outOfPlan: s.outOfPlan, resume: s);
+  }
 }
 
 class _SessionSetup {
@@ -161,23 +238,35 @@ class _SetupDialogState extends State<_SetupDialog> {
 /// Cronómetro sin plan: mide tiempos y cuenta vueltas genéricas.
 Future<void> startFreeCounter(BuildContext context, WidgetRef ref,
     {DateTime? date, bool outOfPlan = false}) async {
-  final result = await Navigator.push<CounterResult>(
-    context,
-    MaterialPageRoute(builder: (_) => const RoundCounterScreen()),
-  );
-  if (result == null || !context.mounted) return;
-  final draft = SessionDraft(
-    date: date ?? dateOnly(DateTime.now()),
-    startTime: result.startTime,
-    type: SessionType.otro,
-    totalSec: result.totalSec,
-    warmupSec: result.warmupSec,
-    cooldownSec: result.cooldownSec,
-    roundsDone: result.rounds == 0 ? null : result.rounds,
-    roundMarksSec: result.roundMarksSec,
-    outOfPlan: outOfPlan,
-  );
-  await openSessionForm(context, draft);
+  final canStart = await _noPendingSession(context, ref);
+  if (!canStart || !context.mounted) return;
+  await _runCounter(context, date: date ?? dateOnly(DateTime.now()), outOfPlan: outOfPlan);
+}
+
+Future<void> _runCounter(BuildContext context,
+    {required DateTime date, required bool outOfPlan, CounterSnapshot? resume}) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  try {
+    final result = await Navigator.push<CounterResult>(
+      context,
+      MaterialPageRoute(builder: (_) => RoundCounterScreen(date: date, outOfPlan: outOfPlan, resume: resume)),
+    );
+    if (result == null || !context.mounted) return;
+    final draft = SessionDraft(
+      date: date,
+      startTime: result.startTime,
+      type: SessionType.otro,
+      totalSec: result.totalSec,
+      warmupSec: result.warmupSec,
+      cooldownSec: result.cooldownSec,
+      roundsDone: result.rounds == 0 ? null : result.rounds,
+      roundMarksSec: result.roundMarksSec,
+      outOfPlan: outOfPlan,
+    );
+    await openSessionForm(context, draft);
+  } finally {
+    await _clearActive(container);
+  }
 }
 
 
@@ -210,6 +299,7 @@ class TrainingScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 96),
         children: [
+          const ActiveSessionBanner(),
           HeroCard(
             color: style.color,
             overline: dashboard == null ? 'Hoy' : 'Hoy · semana ${dashboard.weekIndex}',

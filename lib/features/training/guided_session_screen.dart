@@ -8,6 +8,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../app/providers.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
+import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
@@ -41,17 +42,9 @@ ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
       ],
     );
 
-/// Calentamiento y enfriamiento son fases iguales: pantalla propia, reloj
-/// visible y botón para cerrarlas. El enfriamiento no se salta por accidente.
-enum _Phase { calentamiento, trabajo, enfriamiento, terminado }
-
-class _Done {
-  _Done(this.exercise, this.reps, this.isRound);
-
-  final String exercise;
-  final int reps;
-  final bool isRound;
-}
+// Calentamiento y enfriamiento son fases iguales (GuidedPhase): pantalla
+// propia, reloj visible y botón para cerrarlas. El enfriamiento no se salta
+// por accidente.
 
 /// Cronómetro que sabe qué toca: recorre el guion del día paso a paso, lleva
 /// los descansos solo y separa calentamiento, trabajo neto y enfriamiento.
@@ -64,6 +57,7 @@ class GuidedSessionScreen extends ConsumerStatefulWidget {
     this.sessionType,
     this.coreVariant,
     this.roundsOverride,
+    this.resume,
   });
 
   final PlanDayDraft day;
@@ -72,6 +66,9 @@ class GuidedSessionScreen extends ConsumerStatefulWidget {
   final SessionType? sessionType;
   final String? coreVariant;
   final int? roundsOverride;
+
+  /// Sesión que Android cerró a mitad: se retoma donde iba.
+  final GuidedSnapshot? resume;
 
   @override
   ConsumerState<GuidedSessionScreen> createState() => _GuidedSessionScreenState();
@@ -82,20 +79,20 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       buildScript(scriptDayFrom(widget.day), rounds: widget.roundsOverride, coreVariant: widget.coreVariant);
   late final int _exercisesPerRound = widget.day.main.isEmpty ? 1 : widget.day.main.length;
 
-  final _startedAt = DateTime.now();
-  DateTime? _workStartedAt;
-  DateTime? _workEndedAt;
-  DateTime? _endedAt;
-  DateTime? _restStartedAt;
+  late final DateTime _startedAt = widget.resume?.startedAt ?? DateTime.now();
+  late DateTime? _workStartedAt = widget.resume?.workStartedAt;
+  late DateTime? _workEndedAt = widget.resume?.workEndedAt;
+  late DateTime? _endedAt = widget.resume?.endedAt;
+  late DateTime? _restStartedAt = widget.resume?.restStartedAt;
 
-  final _done = <_Done>[];
+  late final _done = <DoneStep>[...?widget.resume?.done];
 
   /// Segundos desde el inicio del trabajo al cerrar cada ronda.
-  final _roundMarks = <int>[];
+  late final _roundMarks = <int>[...?widget.resume?.roundMarks];
 
-  int _index = 0;
-  int? _reps;
-  _Phase _phase = _Phase.calentamiento;
+  late int _index = widget.resume?.index ?? 0;
+  late int? _reps = widget.resume?.reps;
+  late GuidedPhase _phase = widget.resume?.phase ?? GuidedPhase.calentamiento;
   Timer? _ticker;
 
   @override
@@ -103,7 +100,36 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     super.initState();
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     WakelockPlus.enable();
+    // Una sesión retomada en mitad de un descanso vuelve a programar su aviso.
+    if (widget.resume != null && _current is RestStep && _restStartedAt != null) {
+      final left = (_current as RestStep).seconds - DateTime.now().difference(_restStartedAt!).inSeconds;
+      if (left > 0) {
+        unawaited(ref
+            .read(notificationServiceProvider)
+            .scheduleRestEnd(inSeconds: Duration(seconds: left), nextLabel: (_current as RestStep).nextLabel));
+      }
+    }
+    _persist();
   }
+
+  /// Foto del estado en disco: si Android mata la app, se retoma desde aquí.
+  void _persist() => unawaited(ref.read(activeSessionStoreProvider).save(GuidedSnapshot(
+        date: dayKey(widget.date),
+        startedAt: _startedAt,
+        planDayId: widget.planDayId ?? -1,
+        sessionType: widget.sessionType,
+        coreVariant: widget.coreVariant,
+        roundsOverride: widget.roundsOverride,
+        phase: _phase,
+        index: _index,
+        workStartedAt: _workStartedAt,
+        workEndedAt: _workEndedAt,
+        endedAt: _endedAt,
+        restStartedAt: _restStartedAt,
+        reps: _reps,
+        done: List.of(_done),
+        roundMarks: List.of(_roundMarks),
+      )));
 
   @override
   void dispose() {
@@ -157,11 +183,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     unawaited(HapticFeedback.heavyImpact());
   }
 
-  void _startWork() => setState(() {
-        _workStartedAt = DateTime.now();
-        _phase = _Phase.trabajo;
-        _prepareStep();
-      });
+  void _startWork() {
+    setState(() {
+      _workStartedAt = DateTime.now();
+      _phase = GuidedPhase.trabajo;
+      _prepareStep();
+    });
+    _persist();
+  }
 
   void _prepareStep() {
     final step = _current;
@@ -190,9 +219,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         'Permite alarmas exactas en Ajustes › Recordatorios.');
   }
 
+  void _setReps(int value) {
+    setState(() => _reps = value);
+    _persist();
+  }
+
   void _completeWork() {
     final step = _current as WorkStep;
-    _done.add(_Done(step.exercise, _reps ?? step.targetReps ?? 0, step.isRound));
+    _done.add(DoneStep(step.exercise, _reps ?? step.targetReps ?? 0, step.isRound));
 
     // Al cerrar la última parada de una ronda, queda la marca de la vuelta.
     if (step.isRound && _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
@@ -211,11 +245,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         _prepareStep();
       }
     });
+    _persist();
   }
 
   void _endWork() {
     _workEndedAt ??= DateTime.now();
-    _phase = _Phase.enfriamiento;
+    _phase = GuidedPhase.enfriamiento;
     unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
     unawaited(HapticFeedback.mediumImpact());
   }
@@ -240,8 +275,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     }
     setState(() {
       _endedAt = DateTime.now();
-      _phase = _Phase.terminado;
+      _phase = GuidedPhase.terminado;
     });
+    _persist();
     unawaited(HapticFeedback.heavyImpact());
   }
 
@@ -270,6 +306,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       _index = _steps.length;
       _endWork();
     });
+    _persist();
   }
 
   SessionDraft _buildDraft() {
@@ -301,7 +338,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final finished = _phase == _Phase.terminado;
+    final finished = _phase == GuidedPhase.terminado;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -313,7 +350,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         appBar: AppBar(
           title: Text(widget.day.type.label),
           actions: [
-            if (_phase == _Phase.trabajo) TextButton(onPressed: _finishEarly, child: const Text('Terminar')),
+            if (_phase == GuidedPhase.trabajo) TextButton(onPressed: _finishEarly, child: const Text('Terminar')),
           ],
         ),
         body: Column(
@@ -361,7 +398,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       );
 
   Widget _body(bool finished) {
-    if (_phase == _Phase.calentamiento) {
+    if (_phase == GuidedPhase.calentamiento) {
       return _PhasePanel(
         title: 'Calentando',
         seconds: _warmupSec,
@@ -375,7 +412,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         footer: _planPreview(),
       );
     }
-    if (_phase == _Phase.enfriamiento) {
+    if (_phase == GuidedPhase.enfriamiento) {
       return _PhasePanel(
         title: 'Enfriando',
         seconds: _cooldownSec,
@@ -421,7 +458,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             children: [
               IconButton.filledTonal(
                 iconSize: 32,
-                onPressed: (_reps ?? 0) > 0 ? () => setState(() => _reps = _reps! - 1) : null,
+                onPressed: (_reps ?? 0) > 0 ? () => _setReps(_reps! - 1) : null,
                 icon: const Icon(Icons.remove),
               ),
               Padding(
@@ -438,7 +475,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
               ),
               IconButton.filledTonal(
                 iconSize: 32,
-                onPressed: () => setState(() => _reps = (_reps ?? 0) + 1),
+                onPressed: () => _setReps((_reps ?? 0) + 1),
                 icon: const Icon(Icons.add),
               ),
             ],
