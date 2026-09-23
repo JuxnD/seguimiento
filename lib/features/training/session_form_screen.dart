@@ -145,10 +145,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       ..context = _context.text
       ..notes = _notes.text
       ..limitingExercise = _limiting.text;
+    if (!mounted) return;
     setState(() => _saving = true);
     try {
       final repo = ref.read(trainingRepositoryProvider);
-      await repo.save(d);
+      if (!await guarded(context, () => repo.save(d))) return;
       if (widget.celebrate) await _celebrateIfRecord(repo);
       if (mounted) Navigator.pop(context, true);
     } finally {
@@ -160,7 +161,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
   /// motiva y antes pasaba desapercibido.
   Future<void> _celebrateIfRecord(TrainingRepository repo) async {
     final rounds = d.roundsDone;
-    if (!d.type.isCircuit || rounds == null || d.roundsEstimated || d.incomplete) return;
+    if (!d.type.isCircuit || rounds == null || d.roundsEstimated) return;
     final previous = await repo.bestRounds(excludeSessionId: d.id);
     if (!isRecord(rounds, previous) || !mounted) return;
     await showRecordCelebration(context, rounds: rounds, previous: previous);
@@ -688,23 +689,7 @@ class _LimitingPicker extends StatelessWidget {
               avatar: const Icon(Icons.add, size: 16),
               label: const Text('Otro'),
               onPressed: () async {
-                final controller = TextEditingController();
-                final other = await showDialog<String>(
-                  context: context,
-                  builder: (c) => AlertDialog(
-                    title: const Text('Ejercicio limitante'),
-                    content: TextField(
-                      controller: controller,
-                      autofocus: true,
-                      decoration: const InputDecoration(labelText: 'Nombre'),
-                    ),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
-                      FilledButton(onPressed: () => Navigator.pop(c, controller.text), child: const Text('Listo')),
-                    ],
-                  ),
-                );
-                controller.dispose();
+                final other = await promptText(context, title: 'Ejercicio limitante', label: 'Nombre');
                 if (other != null && other.trim().isNotEmpty) onChanged(other.trim());
               },
             ),

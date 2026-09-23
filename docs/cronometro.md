@@ -55,12 +55,12 @@ series y tiempo por ronda, y de ahí al formulario prellenado para añadir RPE,
 "¿qué te costó más?" (chips con los ejercicios de la sesión, "Ninguno" por
 defecto) y notas. El formulario no repite la celebración.
 
-## Límite conocido
+## Fin del descanso
 
-El aviso de fin de descanso **suena solo con la app en primer plano**: usa el
-sonido del sistema y la vibración. Para que avise con la pantalla apagada hacen
-falta notificaciones locales, que van en la siguiente fase
-([roadmap](roadmap.md)).
+En primer plano suena el sonido del sistema y vibra. Con la pantalla apagada
+avisa una notificación programada con alarma exacta; si Android no la permite
+(14+ por defecto), el aviso puede llegar tarde y la app lo dice una vez. Detalle
+en [notificaciones.md](notificaciones.md).
 
 ## Sin plan para hoy
 

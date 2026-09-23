@@ -81,6 +81,29 @@ void main() {
     await expectLater(host.restoreFrom(vacia), throwsA(isA<RestoreException>()));
   });
 
+  test('si la base restaurada no abre, vuelve la anterior con todo lo registrado', () async {
+    await BodyRepository(host.db).addWeight(DateTime(2026, 9, 18), 71.4);
+    final backup = await exportBackup('respaldo.sqlite');
+    await BodyRepository(host.db).addWeight(DateTime(2026, 9, 20), 70.9);
+
+    // La primera reapertura (la del respaldo) falla; la del rollback no.
+    var fail = true;
+    final failing = DatabaseHost(host.file, (f) {
+      if (fail) {
+        fail = false;
+        throw StateError('no abre');
+      }
+      return AppDatabase(NativeDatabase(f));
+    }, initial: host.db);
+
+    await expectLater(failing.restoreFrom(backup), throwsA(isA<RestoreException>()));
+
+    final weights = await BodyRepository(failing.db).watchWeights().first;
+    expect(weights.map((w) => w.kg), [70.9, 71.4]);
+    expect(File('${host.file.path}.pre-restore').existsSync(), isFalse);
+    host = failing;
+  });
+
   test('un archivo inexistente se rechaza con mensaje claro', () async {
     await expectLater(
       host.restoreFrom(File('${dir.path}/no-existe.sqlite')),

@@ -160,8 +160,9 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
   Future<void> _save() async {
     if (!await _confirmSlot()) return;
     d.notes = _notes.text;
-    await ref.read(nutritionRepositoryProvider).saveMeal(d);
-    if (mounted) Navigator.pop(context, true);
+    if (!mounted) return;
+    final ok = await guarded(context, () => ref.read(nutritionRepositoryProvider).saveMeal(d));
+    if (ok && mounted) Navigator.pop(context, true);
   }
 
   @override

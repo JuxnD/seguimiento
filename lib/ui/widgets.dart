@@ -80,7 +80,7 @@ class EmptyHint extends StatelessWidget {
       );
 }
 
-class NumberField extends StatelessWidget {
+class NumberField extends StatefulWidget {
   const NumberField({
     super.key,
     required this.controller,
@@ -89,6 +89,7 @@ class NumberField extends StatelessWidget {
     this.decimal = false,
     this.onChanged,
     this.enabled = true,
+    this.autofocus = false,
   });
 
   final TextEditingController controller;
@@ -98,18 +99,42 @@ class NumberField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool enabled;
 
+  /// Abre el teclado con el valor seleccionado: se escribe encima sin borrar.
+  /// Pensado para diálogos de un solo número (cantidad, peso, umbral).
+  final bool autofocus;
+
+  @override
+  State<NumberField> createState() => _NumberFieldState();
+}
+
+class _NumberFieldState extends State<NumberField> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.autofocus) selectAll(widget.controller);
+  }
+
   @override
   Widget build(BuildContext context) => TextField(
-        controller: controller,
-        enabled: enabled,
-        keyboardType: TextInputType.numberWithOptions(decimal: decimal),
+        controller: widget.controller,
+        enabled: widget.enabled,
+        autofocus: widget.autofocus,
+        keyboardType: TextInputType.numberWithOptions(decimal: widget.decimal),
         inputFormatters: [
-          FilteringTextInputFormatter.allow(decimal ? RegExp(r'[0-9.,]') : RegExp(r'[0-9]')),
+          FilteringTextInputFormatter.allow(widget.decimal ? RegExp(r'[0-9.,]') : RegExp(r'[0-9]')),
         ],
-        decoration: InputDecoration(labelText: label, suffixText: suffix, border: const OutlineInputBorder()),
-        onChanged: onChanged,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          suffixText: widget.suffix,
+          border: const OutlineInputBorder(),
+        ),
+        onChanged: widget.onChanged,
       );
 }
+
+/// Selecciona todo el texto: el siguiente dígito reemplaza el valor sugerido.
+void selectAll(TextEditingController c) =>
+    c.selection = TextSelection(baseOffset: 0, extentOffset: c.text.length);
 
 /// Campo de duración en `mm:ss` (o minutos sueltos).
 class DurationField extends StatelessWidget {
@@ -184,10 +209,7 @@ class TimeTile extends StatelessWidget {
             ? const Icon(Icons.more_time)
             : IconButton(icon: const Icon(Icons.clear), onPressed: () => onChanged(null)),
         onTap: () async {
-          final parts = time?.split(':');
-          final initial = parts == null
-              ? TimeOfDay.now()
-              : TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+          final initial = parseTimeOfDay(time) ?? TimeOfDay.now();
           final picked = await showTimePicker(context: context, initialTime: initial);
           if (picked != null) onChanged(timeKey(picked.hour, picked.minute));
         },
@@ -246,3 +268,88 @@ void showSnack(BuildContext context, String message) {
 
 /// Parseo tolerante de números escritos con coma.
 double? parseNum(String s) => double.tryParse(s.trim().replaceAll(',', '.'));
+
+/// `HH:mm` (o `HH:mm:ss`) → hora. null si no se entiende: un respaldo viejo o
+/// editado a mano no debe tumbar la pantalla.
+TimeOfDay? parseTimeOfDay(String? time) {
+  final parts = time?.split(':');
+  if (parts == null || parts.length < 2) return null;
+  final h = int.tryParse(parts[0].trim()), m = int.tryParse(parts[1].trim());
+  if (h == null || m == null || h < 0 || h > 23 || m < 0 || m > 59) return null;
+  return TimeOfDay(hour: h, minute: m);
+}
+
+/// Corre una escritura y avisa si falla, en vez de dejar un future perdido y
+/// la pantalla sin respuesta. Devuelve true si salió bien.
+Future<bool> guarded(BuildContext context, Future<void> Function() action, {String? ok}) async {
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  try {
+    await action();
+    if (ok != null) {
+      messenger
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(ok)));
+    }
+    return true;
+  } on Object catch (e) {
+    messenger
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text('No se pudo guardar: $e')));
+    return false;
+  }
+}
+
+/// Aviso con "Deshacer": para borrados de un toque, en lugar de un diálogo
+/// de confirmación que frena cada corrección.
+void showUndoSnack(BuildContext context, String message, Future<void> Function() undo) {
+  final messenger = ScaffoldMessenger.of(context);
+  messenger
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      content: Text(message),
+      action: SnackBarAction(label: 'Deshacer', onPressed: () => undo()),
+    ));
+}
+
+/// Pide un texto corto en un diálogo. El diálogo es dueño de su controller:
+/// liberarlo al volver de `showDialog` falla mientras la ruta anima la salida.
+Future<String?> promptText(BuildContext context, {required String title, required String label}) =>
+    showDialog<String>(context: context, builder: (_) => _PromptTextDialog(title: title, label: label));
+
+class _PromptTextDialog extends StatefulWidget {
+  const _PromptTextDialog({required this.title, required this.label});
+
+  final String title;
+  final String label;
+
+  @override
+  State<_PromptTextDialog> createState() => _PromptTextDialogState();
+}
+
+class _PromptTextDialogState extends State<_PromptTextDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() => Navigator.pop(context, _controller.text);
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: Text(widget.title),
+        content: TextField(
+          controller: _controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: InputDecoration(labelText: widget.label),
+          onSubmitted: (_) => _submit(),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+          FilledButton(onPressed: _submit, child: const Text('Listo')),
+        ],
+      );
+}

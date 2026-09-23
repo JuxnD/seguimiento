@@ -173,11 +173,21 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     } else if (step is RestStep) {
       _restStartedAt = DateTime.now();
       // Con la app en segundo plano el sonido no llega: la notificación sí.
-      unawaited(notifications.scheduleRestEnd(
-        inSeconds: Duration(seconds: step.seconds),
-        nextLabel: step.nextLabel,
-      ));
+      unawaited(notifications
+          .scheduleRestEnd(inSeconds: Duration(seconds: step.seconds), nextLabel: step.nextLabel)
+          .then(_warnIfInexact));
     }
+  }
+
+  bool _warnedInexact = false;
+
+  /// Una sola vez por sesión: sin alarma exacta, el aviso con la pantalla
+  /// apagada puede llegar tarde. Aquí se dice dónde arreglarlo.
+  void _warnIfInexact(bool exact) {
+    if (exact || _warnedInexact || !mounted) return;
+    _warnedInexact = true;
+    showSnack(context, 'Con la pantalla apagada el fin del descanso puede avisar tarde. '
+        'Permite alarmas exactas en Ajustes › Recordatorios.');
   }
 
   void _completeWork() {
@@ -845,7 +855,9 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
     final repo = ref.read(trainingRepositoryProvider);
     final previous = await repo.previousOfType(d.type, d.date);
     final best = d.type.isCircuit ? await repo.bestRounds() : null;
-    final record = d.type.isCircuit && d.roundsDone != null && !d.incomplete && isRecord(d.roundsDone!, best);
+    // Misma regla que Hoy y el informe: cuentan las rondas hechas, aunque la
+    // sesión se cerrara antes; no cuentan las estimadas.
+    final record = d.type.isCircuit && d.roundsDone != null && !d.roundsEstimated && isRecord(d.roundsDone!, best);
     return SessionComparison(
       rounds: d.roundsDone,
       plannedRounds: d.plannedRounds,

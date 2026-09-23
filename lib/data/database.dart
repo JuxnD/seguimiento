@@ -105,7 +105,16 @@ class AppDatabase extends _$AppDatabase {
         },
       );
 
-  /// Copia consistente de la base (incluye WAL) para respaldo.
+  /// Sesiones cuyas rondas cuentan para el récord: de circuito y **contadas**.
+  /// Una estimación por tiempo no es una marca. Las incompletas sí cuentan:
+  /// sus rondas se hicieron de verdad. Una sola definición para Hoy, el
+  /// cierre de sesión y el informe.
+  Expression<bool> get countedCircuitRounds =>
+      sessions.type.isIn(SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList()) &
+      sessions.roundsEstimated.equals(false);
+
+  /// Copia consistente de la base para respaldo (la hace SQLite, no una copia
+  /// del archivo: sirve aunque haya una escritura en curso).
   Future<File> exportTo(String path) async {
     final f = File(path);
     if (f.existsSync()) f.deleteSync();

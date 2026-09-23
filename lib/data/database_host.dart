@@ -19,7 +19,8 @@ class RestoreException implements Exception {
 /// (restaurar un respaldo) sin reiniciar la app: cierra, cambia el archivo y
 /// vuelve a abrir. Los providers se recrean después con la instancia nueva.
 class DatabaseHost {
-  DatabaseHost(this.file, this.opener) : _db = opener(file);
+  /// `initial` permite adoptar una conexión ya abierta (pruebas).
+  DatabaseHost(this.file, this.opener, {AppDatabase? initial}) : _db = initial ?? opener(file);
 
   static Future<DatabaseHost> open() async =>
       DatabaseHost(await databaseFile(), (f) => AppDatabase(NativeDatabase.createInBackground(f)));
@@ -32,7 +33,7 @@ class DatabaseHost {
 
   AppDatabase get db => _db;
 
-  /// Copia consistente de la base actual (incluye lo que esté en el WAL).
+  /// Copia consistente de la base actual.
   Future<File> exportTo(String path) => _db.exportTo(path);
 
   /// Reemplaza la base por el respaldo. Valida antes de tocar nada y, si algo
@@ -40,11 +41,11 @@ class DatabaseHost {
   Future<void> restoreFrom(File backup) async {
     await _validate(backup);
 
+    // Copia consistente hecha por SQLite con la conexión aún abierta: no
+    // depende de que no haya una escritura a medias en ese instante.
     final safetyCopy = File('${file.path}.pre-restore');
-    if (file.existsSync()) {
-      if (safetyCopy.existsSync()) safetyCopy.deleteSync();
-      await file.copy(safetyCopy.path);
-    }
+    if (safetyCopy.existsSync()) safetyCopy.deleteSync();
+    await _db.exportTo(safetyCopy.path);
 
     await _db.close();
     try {

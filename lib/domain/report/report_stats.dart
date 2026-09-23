@@ -27,7 +27,10 @@ class ReportStats {
       final p = planFor(d);
       if (p == null) continue;
       final t = p.typeFor(d.weekday);
-      if (t.isTraining) expectedTraining++;
+      if (t.isTraining) {
+        expectedTraining++;
+        if (d.isBefore(today)) expectedTrainingClosed++;
+      }
       if (t == DayType.futbol) expectedFootball++;
     }
   }
@@ -43,7 +46,15 @@ class ReportStats {
   late final List<DateTime> daysBelowFloor;
   late final List<PlanVersionInfo> _plans;
   int expectedTraining = 0;
+
+  /// Sesiones que el plan pedía en días ya cerrados (antes de hoy). Es contra
+  /// esto que se juzga si vas por debajo: hoy todavía se puede entrenar y los
+  /// días que no han llegado no cuentan como faltas.
+  int expectedTrainingClosed = 0;
   int expectedFootball = 0;
+
+  /// Sesiones del plan que aún quedan por delante en el rango (hoy incluido).
+  int get expectedTrainingAhead => expectedTraining - expectedTrainingClosed;
 
   PlanVersionInfo? planFor(DateTime day) {
     PlanVersionInfo? found;
@@ -94,8 +105,11 @@ class ReportStats {
       [...input.sessions]..sort((a, b) => '${dayKey(a.date)} ${a.startTime ?? ''}'
           .compareTo('${dayKey(b.date)} ${b.startTime ?? ''}'));
 
+  /// Máximo de rondas **contadas**: una estimación por tiempo no es marca.
   int? get maxRoundsInRange {
-    final r = input.sessions.where((s) => s.type.isCircuit && s.roundsDone != null).map((s) => s.roundsDone!);
+    final r = input.sessions
+        .where((s) => s.type.isCircuit && s.roundsDone != null && !s.roundsEstimated)
+        .map((s) => s.roundsDone!);
     return r.isEmpty ? null : r.reduce((a, b) => a > b ? a : b);
   }
 

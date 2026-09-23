@@ -32,10 +32,10 @@ class PhotoRepository {
   }
 
   /// Ruta absoluta de una foto guardada.
-  Future<File> fileOf(ProgressPhotoRow row) async {
-    final base = await getApplicationDocumentsDirectory();
-    return File(p.join(base.path, row.relativePath));
-  }
+  Future<File> fileOf(ProgressPhotoRow row) async => fileIn(await getApplicationDocumentsDirectory(), row);
+
+  /// Igual, con el directorio ya resuelto (para pintar sin esperar).
+  static File fileIn(Directory base, ProgressPhotoRow row) => File(p.join(base.path, row.relativePath));
 
   /// Copia la imagen al directorio de la app y la registra. Si ya había una
   /// foto de ese ángulo ese día, la reemplaza.
@@ -53,7 +53,9 @@ class PhotoRepository {
     final existing = await (db.select(db.progressPhotos)
           ..where((t) => t.date.equals(dayKey(date)) & t.angle.equalsValue(angle)))
         .getSingleOrNull();
-    if (existing != null) await delete(existing, keepFile: true);
+    // Si la anterior tenía otra extensión (.png → .jpg), su archivo no fue
+    // sobrescrito: se borra para no dejar huérfanos.
+    if (existing != null) await delete(existing, keepFile: existing.relativePath == p.join(folder, name));
 
     await db.into(db.progressPhotos).insert(ProgressPhotosCompanion.insert(
           date: dayKey(date),

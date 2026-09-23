@@ -61,7 +61,7 @@ class FoodsScreen extends ConsumerWidget {
 
   Future<void> _edit(BuildContext context, WidgetRef ref, FoodRow? food) async {
     final data = await showDialog<FoodsCompanion>(context: context, builder: (_) => FoodDialog(food: food));
-    if (data != null) await ref.read(nutritionRepositoryProvider).saveFood(data);
+    if (data != null && context.mounted) await guarded(context, () => ref.read(nutritionRepositoryProvider).saveFood(data));
   }
 }
 

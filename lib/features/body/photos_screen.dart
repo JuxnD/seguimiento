@@ -21,6 +21,12 @@ class PhotosScreen extends ConsumerStatefulWidget {
 }
 
 class _PhotosScreenState extends ConsumerState<PhotosScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _recoverLostPhoto();
+  }
+
   PhotoAngle _angle = PhotoAngle.frente;
 
   @override
@@ -93,15 +99,35 @@ class _PhotosScreenState extends ConsumerState<PhotosScreen> {
     );
     if (source == null) return;
 
-    final picked = await ImagePicker().pickImage(source: source, maxWidth: 1600, imageQuality: 85);
+    final XFile? picked;
+    try {
+      picked = await ImagePicker().pickImage(source: source, maxWidth: 1600, imageQuality: 85);
+    } on Object catch (e) {
+      // Permiso de cámara negado o sin cámara: se dice, no se revienta.
+      if (mounted) showSnack(context, 'No se pudo abrir la cámara o la galería: $e');
+      return;
+    }
     if (picked == null || !mounted) return;
+    await _save(File(picked.path));
+  }
 
-    await ref.read(photoRepositoryProvider).add(
-          source: File(picked.path),
-          date: dateOnly(DateTime.now()),
-          angle: _angle,
-        );
-    if (mounted) showSnack(context, 'Foto de ${_angle.label.toLowerCase()} guardada');
+  Future<void> _save(File file) => guarded(
+        context,
+        () => ref.read(photoRepositoryProvider).add(source: file, date: dateOnly(DateTime.now()), angle: _angle),
+        ok: 'Foto de ${_angle.label.toLowerCase()} guardada',
+      );
+
+  /// Si Android cerró la app mientras la cámara estaba abierta, la foto no se
+  /// pierde: al volver se recupera y se guarda.
+  Future<void> _recoverLostPhoto() async {
+    try {
+      final lost = await ImagePicker().retrieveLostData();
+      final file = lost.file;
+      if (lost.isEmpty || file == null || !mounted) return;
+      await _save(File(file.path));
+    } on Object {
+      // Nada que recuperar.
+    }
   }
 }
 
@@ -133,8 +159,14 @@ class _ComparatorState extends ConsumerState<_Comparator> {
       .firstWhere((c) => dayKey(c.date) == dayKey(date), orElse: () => widget.checkIns.first)
       .byAngle[widget.angle];
 
+  bool _exists(DateTime date) => widget.checkIns.any((c) => dayKey(c.date) == dayKey(date));
+
   @override
   Widget build(BuildContext context) {
+    // Si se borró la toma elegida, el desplegable quedaría con un valor que
+    // no está en la lista (assertion en debug, vacío en release).
+    if (!_exists(_left)) _left = widget.checkIns.last.date;
+    if (!_exists(_right)) _right = widget.checkIns.first.date;
     final days = daysBetween(_left, _right);
     return AppCard(
       title: 'Comparar',
@@ -234,11 +266,13 @@ class _PhotoView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FutureBuilder<File>(
-      future: ref.read(photoRepositoryProvider).fileOf(row),
-      builder: (context, snap) {
-        if (!snap.hasData) return const ColoredBox(color: Colors.black26);
-        final file = snap.data!;
+    // El directorio se resuelve una vez para toda la app: antes cada rebuild
+    // creaba un Future nuevo y la foto parpadeaba en negro.
+    final base = ref.watch(documentsDirProvider).valueOrNull;
+    if (base == null) return const ColoredBox(color: Colors.black26);
+    final file = PhotoRepository.fileIn(base, row);
+    return Builder(
+      builder: (context) {
         if (!file.existsSync()) {
           return const ColoredBox(
             color: Colors.black26,

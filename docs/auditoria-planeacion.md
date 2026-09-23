@@ -65,24 +65,23 @@ Se añadió `week_notes`, con la semana anclada al inicio como clave.
 ### 12. Respaldo dentro del MVP
 Estaba en v2. Con datos solo en el teléfono y sin cuentas, una pérdida borra
 meses de registro. Exportar la base es barato (`VACUUM INTO` + compartir) y ya
-está. **La restauración sigue pendiente**; ver [roadmap.md](roadmap.md).
+está. La restauración llegó después, con validación y rollback
+([actualizaciones.md](actualizaciones.md)).
 
 ### 13. Fotos fuera del esquema del MVP
 Estaban listadas como módulo 6 y a la vez como v2. No se crearon tablas que
-nadie escribe: entran en v2 con su migración.
+nadie escribe en el MVP; entraron en la fase 4 con su migración
+(`progress_photos`, esquema 6).
 
 ### 14. `isar` descartado
 Se eligió `drift`. Ver [adr/0001](adr/0001-drift-sqlite-local.md).
 
-## Riesgos que quedan abiertos
+## Riesgos que quedaban abiertos
 
-- **Sin restauración de respaldo en la app.** Hoy se recupera reemplazando el
-  archivo a mano.
-- **Sin recordatorios.** El plan los pedía en el MVP (módulo 7); se movieron a
-  v2 junto con las notificaciones locales. En su lugar, la pantalla *Hoy*
-  muestra cuántos días faltan para la próxima medición.
-- **Pruebas de UI saltadas en Windows.** Explicado en
-  [project-map.md](project-map.md), sección de riesgos.
+Los tres riesgos que este documento dejó abiertos ya se cerraron: la
+restauración de respaldos, los recordatorios (fase 3) y las pruebas de UI, que
+se retiraron en vez de dejarse saltadas (ver [project-map.md](project-map.md)).
+El estado vigente de riesgos vive en project-map, no aquí.
 
 ## Sugerencias no implementadas (decisión tuya)
 

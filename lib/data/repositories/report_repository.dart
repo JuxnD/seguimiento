@@ -88,8 +88,7 @@ class ReportRepository {
     final maxBefore = db.sessions.roundsDone.max();
     final prevRecord = await (db.selectOnly(db.sessions)
           ..addColumns([maxBefore])
-          ..where(db.sessions.date.isSmallerThanValue(f) &
-              db.sessions.type.isIn(SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList())))
+          ..where(db.sessions.date.isSmallerThanValue(f) & db.countedCircuitRounds))
         .map((r) => r.read(maxBefore))
         .getSingle();
 

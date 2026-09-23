@@ -222,10 +222,9 @@ class TrainingRepository {
   Future<int?> bestRounds({int? excludeSessionId}) async {
     final best = db.sessions.roundsDone.max();
     final query = db.selectOnly(db.sessions)..addColumns([best]);
-    final circuitTypes = SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList();
     query.where(excludeSessionId == null
-        ? db.sessions.type.isIn(circuitTypes)
-        : db.sessions.type.isIn(circuitTypes) & db.sessions.id.equals(excludeSessionId).not());
+        ? db.countedCircuitRounds
+        : db.countedCircuitRounds & db.sessions.id.equals(excludeSessionId).not());
     return query.map((r) => r.read(best)).getSingle();
   }
 

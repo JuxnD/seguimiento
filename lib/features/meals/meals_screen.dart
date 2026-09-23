@@ -26,10 +26,16 @@ class MealsScreen extends ConsumerStatefulWidget {
 const _mealColor = Color(0xFFFFB067);
 
 class _MealsScreenState extends ConsumerState<MealsScreen> {
-  DateTime _day = dateOnly(DateTime.now());
+  late DateTime _day = ref.read(todayProvider);
 
   @override
   Widget build(BuildContext context) {
+    // Si estaba en "hoy" y cambia el día, sigue en hoy: los atajos de un toque
+    // registran en la fecha visible, y quedarse en ayer sería un error mudo.
+    ref.listen(todayProvider, (previous, next) {
+      if (previous != null && _day == previous) setState(() => _day = next);
+    });
+    final today = ref.watch(todayProvider);
     final meals = ref.watch(mealsForDayProvider(dayKey(_day)));
     final profile = ref.watch(profileProvider).value;
 
@@ -71,7 +77,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                       child: Column(
                         children: [
                           Text(
-                            dayKey(_day) == dayKey(DateTime.now()) ? 'HOY' : weekdayLong(_day.weekday).toUpperCase(),
+                            _day == today ? 'HOY' : weekdayLong(_day.weekday).toUpperCase(),
                             style: Theme.of(context).textTheme.labelSmall?.copyWith(letterSpacing: 1),
                           ),
                           Text(formatLong(_day),
@@ -306,7 +312,7 @@ class _Shortcuts extends ConsumerWidget {
       time: _now(),
     );
     if (!context.mounted) return;
-    _undoable(
+    showUndoSnack(
         context,
         '${template.name}: ${fmtInt(template.macros.kcal)} kcal · '
         'P ${fmtInt(template.macros.protein)} g',
@@ -318,7 +324,7 @@ class _Shortcuts extends ConsumerWidget {
     final repo = ref.read(nutritionRepositoryProvider);
     final id = await repo.copyMeal(meal.meal.id, day, time: _now());
     if (!context.mounted) return;
-    _undoable(context, '${meal.meal.slot.label} de ayer repetido', () => repo.deleteMeal(id));
+    showUndoSnack(context, '${meal.meal.slot.label} de ayer repetido', () => repo.deleteMeal(id));
   }
 
   Future<void> _templateMenu(BuildContext context, WidgetRef ref, MealTemplate template) async {
@@ -366,14 +372,5 @@ class _Shortcuts extends ConsumerWidget {
         await repo.deleteTemplate(template.row.id);
       }
     }
-  }
-
-  void _undoable(BuildContext context, String message, Future<void> Function() undo) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text(message),
-        action: SnackBarAction(label: 'Deshacer', onPressed: () => undo()),
-      ));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
@@ -29,8 +30,13 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
 
   Future<void> _save() async {
     d.notes = _notes.text;
-    await ref.read(planRepositoryProvider).saveAsNewVersion(d);
-    if (mounted) Navigator.pop(context, true);
+    final problem = planDraftProblem(d);
+    if (problem != null) {
+      showSnack(context, problem);
+      return;
+    }
+    final ok = await guarded(context, () => ref.read(planRepositoryProvider).saveAsNewVersion(d));
+    if (ok && mounted) Navigator.pop(context, true);
   }
 
   @override
@@ -56,7 +62,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
               ),
             ],
           ),
-          for (final day in d.days) _DayCard(day: day, onChanged: () => setState(() {})),
+          for (final day in d.days) _DayCard(key: ObjectKey(day), day: day, onChanged: () => setState(() {})),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -69,7 +75,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
 }
 
 class _DayCard extends ConsumerWidget {
-  const _DayCard({required this.day, required this.onChanged});
+  const _DayCard({super.key, required this.day, required this.onChanged});
 
   final PlanDayDraft day;
   final VoidCallback onChanged;
@@ -101,6 +107,7 @@ class _DayCard extends ConsumerWidget {
                 child: TextFormField(
                   initialValue: day.targetRounds?.toString() ?? '',
                   keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   decoration: const InputDecoration(labelText: 'Rondas objetivo', border: OutlineInputBorder()),
                   onChanged: (v) => day.targetRounds = int.tryParse(v),
                 ),
@@ -110,6 +117,7 @@ class _DayCard extends ConsumerWidget {
                 child: TextFormField(
                   initialValue: day.restBetweenRoundsSec?.toString() ?? '',
                   keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   decoration: const InputDecoration(
                       labelText: 'Descanso entre rondas', suffixText: 's', border: OutlineInputBorder()),
                   onChanged: (v) => day.restBetweenRoundsSec = int.tryParse(v),
@@ -120,7 +128,10 @@ class _DayCard extends ConsumerWidget {
         ],
         if (day.type.isTraining) ...[
           const SizedBox(height: 8),
+          // La clave ata cada fila a su ejercicio: sin ella, al borrar uno los
+          // campos de abajo heredan el texto del borrado y se guarda otra cosa.
           for (var i = 0; i < day.exercises.length; i++) _ExerciseRow(
+            key: ObjectKey(day.exercises[i]),
             exercise: day.exercises[i],
             onDelete: () {
               day.exercises.removeAt(i);
@@ -145,7 +156,7 @@ class _DayCard extends ConsumerWidget {
 }
 
 class _ExerciseRow extends StatelessWidget {
-  const _ExerciseRow({required this.exercise, required this.onDelete});
+  const _ExerciseRow({super.key, required this.exercise, required this.onDelete});
 
   final PlanExerciseDraft exercise;
   final VoidCallback onDelete;
@@ -232,6 +243,7 @@ class _Num extends StatelessWidget {
   Widget build(BuildContext context) => TextFormField(
         initialValue: value?.toString() ?? '',
         keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
         onChanged: (v) => onChanged(int.tryParse(v)),
       );

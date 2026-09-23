@@ -136,6 +136,32 @@ class PlanDayView {
   final PlanDayDraft day;
 }
 
+/// Primer problema que impide guardar el plan, o null. Valida lo que el
+/// teclado no puede impedir: rangos al revés y ceros donde no tienen sentido.
+String? planDraftProblem(PlanDraft draft) {
+  for (final day in draft.days) {
+    final label = weekdayLong(day.weekday);
+    if (day.type.isCircuit && day.targetRounds != null && day.targetRounds! <= 0) {
+      return '$label: la meta de rondas debe ser mayor que 0';
+    }
+    if (!day.type.isTraining) continue;
+    for (final e in day.exercises.where((e) => e.name.trim().isNotEmpty)) {
+      final name = '$label, ${e.name.trim()}';
+      if (e.sets != null && e.sets! <= 0) return '$name: las series deben ser más de 0';
+      if (e.repsMin != null && e.repsMax != null && e.repsMin! > e.repsMax!) {
+        return '$name: reps mínimas (${e.repsMin}) mayores que las máximas (${e.repsMax})';
+      }
+      if (e.restSec != null && e.restSecMax != null && e.restSec! > e.restSecMax!) {
+        return '$name: descanso mínimo mayor que el máximo';
+      }
+      if (e.holdSecMin != null && e.holdSecMax != null && e.holdSecMin! > e.holdSecMax!) {
+        return '$name: sostén mínimo mayor que el máximo';
+      }
+    }
+  }
+  return null;
+}
+
 class PlanRepository {
   PlanRepository(this.db, this.exercises);
 

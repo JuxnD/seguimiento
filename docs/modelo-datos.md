@@ -53,7 +53,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **1**. Al cambiar una tabla:
+`schemaVersion` vale **6**. Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -64,15 +64,27 @@ El código generado (`database.g.dart`) no se edita a mano.
 | Versión | Cambio |
 |---|---|
 | 1 | Esquema inicial del MVP |
-| 2 | Plan con bloques extra, sostenes, RIR, por lado y descanso en rango; día con descanso entre rondas; sesión con las condiciones de la regla de progresión; perfil con ventana de medición, enfriamiento objetivo y regla de no llegar al fallo |
+| 2 | Plan con bloques extra, variante A/B, notas, sostenes, RIR, por lado y descanso en rango; día con descanso entre rondas; sesión con las condiciones de la regla de progresión; perfil con ventana de medición, enfriamiento objetivo y regla de no llegar al fallo |
 | 3 | Alimento con gramos por porción y procedencia (`etiqueta` / `referencia`); ítem de comida con `sourceVerified`; tablas de combos |
 | 4 | Sesión con `outOfPlan`, `incomplete` y `plannedRounds`: distingue entrenar otra cosa de cerrar antes de tiempo |
 | 5 | Tabla `reminders` con los ajustes de notificaciones |
 | 6 | Tabla `progress_photos` |
 
-La migración 1 → 2 solo añade columnas y está cubierta por
+Los saltos 1 → 6 y 2 → 6 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-del esquema 1 con datos se abre, conserva lo registrado y queda en `user_version = 2`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 6`.
+
+**Récord de rondas.** Una sola definición en
+`AppDatabase.countedCircuitRounds`: sesiones de circuito con rondas
+**contadas**. Las estimadas por tiempo no son marca; las de una sesión cerrada
+antes de tiempo sí (esas rondas se hicieron). La usan Hoy, el cierre de sesión
+y el informe.
+
+**Qué no vive en la base.** Las banderas del dispositivo (si ya se pidió el
+permiso de notificaciones, fecha del último respaldo automático y de la
+última consulta a GitHub) van en `flags.json` en el directorio de soporte de la
+app ([`local_flags.dart`](../lib/data/local_flags.dart)). Restaurar un respaldo
+no las toca, a propósito.
 
 ## Siembra inicial
 

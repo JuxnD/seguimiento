@@ -48,7 +48,10 @@ void _summary(StringBuffer b, ReportStats s) {
   b.writeln('## Resumen');
 
   final done = i.sessions.length;
-  final sessions = s.expectedTraining > 0 ? '$done/${s.expectedTraining}' : '$done';
+  final ahead = s.expectedTrainingAhead;
+  final sessions = s.expectedTraining == 0
+      ? '$done'
+      : '$done/${s.expectedTraining}${ahead > 0 ? ' (${ahead == 1 ? 'queda 1' : 'quedan $ahead'} en el plan)' : ''}';
   final foot = s.expectedFootball > 0 ? '${i.football.length}/${s.expectedFootball}' : '${i.football.length}';
   b.writeln('- Sesiones: $sessions · Fútbol: $foot');
 

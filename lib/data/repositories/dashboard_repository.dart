@@ -81,8 +81,7 @@ class DashboardRepository {
     final maxRounds = db.sessions.roundsDone.max();
     final record = await (db.selectOnly(db.sessions)
           ..addColumns([maxRounds])
-          ..where(db.sessions.type
-              .isIn(SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList())))
+          ..where(db.countedCircuitRounds))
         .map((r) => r.read(maxRounds))
         .getSingle();
 

@@ -16,7 +16,8 @@ Para ver una salida completa con datos de ejemplo:
 
 1. **Encabezado** — rango, número de semana desde el inicio y versión(es) del
    plan vigentes en el rango (`Plan v1 (desde 26 ago) → v2 (desde 20 sep)`).
-2. **Resumen** — sesiones hechas/planificadas, fútbol, récord de rondas frente
+2. **Resumen** — sesiones hechas/planificadas (con cuántas quedan por delante
+   si el rango no ha terminado: `1/3 (quedan 2 en el plan)`), fútbol, récord de rondas frente
    al anterior, proteína y kcal promedio (solo días registrados), días bajo el
    piso, peso promedio y Δ contra la línea base.
 3. **Sesiones** — tabla (día, tipo, total, cal/enf, neto, rondas, RPE, series
@@ -42,12 +43,16 @@ un promedio antes de tomar una decisión con él.
   (N−1)·7 días a +6. No es semana calendario.
 - **Circuito neto** = total − calentamiento − enfriamiento (mínimo 0).
 - **Sesiones esperadas** = días del rango cuyo tipo, según la versión del plan
-  vigente *ese día*, es circuito o bloques. El fútbol se cuenta aparte.
+  vigente *ese día*, es circuito o bloques. El fútbol se cuenta aparte. La
+  alerta de "por debajo del plan" solo mira los **días ya cerrados** (antes de
+  hoy): a mitad de semana, hoy y lo que falta no son faltas.
 - **Promedios de nutrición**: solo sobre días con al menos una comida
   registrada. Un día sin registro no cuenta como día de 0 kcal; se lista como
   alerta para que el promedio no engañe.
-- **Récord de rondas**: máximo de rondas de sesiones de circuito dentro del
-  rango, comparado con el máximo anterior al rango.
+- **Récord de rondas**: máximo de rondas **contadas** de sesiones de circuito
+  dentro del rango, comparado con el máximo anterior al rango. Las rondas
+  estimadas por tiempo no cuentan como marca; las de una sesión cerrada antes
+  de tiempo sí.
 - **Rondas estimadas**: se marcan con `~` y `(est.)`, y generan alerta.
 - **Regla de progresión**: solo se sube de ronda con 0 series partidas, sin
   fallo, técnica buena, rango completo y recuperación normal. La sesión guarda
@@ -58,24 +63,24 @@ un promedio antes de tomar una decisión con él.
 ## Alertas
 
 Implementadas en [`alerts.dart`](../lib/domain/report/alerts.dart). Cada regla
-es independiente; los umbrales viven en el perfil, no en el código.
+es independiente; los umbrales viven en el perfil salvo el mínimo de
+enfriamiento, que es una definición y no una meta.
 
 | Alerta | Condición | Umbral |
 |---|---|---|
 | Sin registro de comidas | Días del rango ya transcurridos sin ninguna comida | — |
 | Días seguidos bajo el piso | Racha ≥ 2 días registrados bajo el piso de kcal | `kcalFloor` (2.000) |
 | Proteína baja | Promedio del rango bajo el mínimo | `proteinMin` (130 g) |
-| Sesiones por debajo del plan | Hechas < esperadas | Plan vigente |
+| Sesiones por debajo del plan | Hechas < esperadas en días ya cerrados | Plan vigente |
 | Ejercicio partido repetido | Mismo ejercicio con serie partida en ≥ 3 sesiones | — |
 | Progresión indebida | Se subió de ronda respecto a la sesión previa del mismo tipo con series partidas, fallo, técnica, rango o recuperación en rojo | Regla del plan |
 | Calentamiento corto | Sesiones con calentamiento bajo el mínimo | `minWarmupSec` (6 min) |
-| Enfriamiento corto | Sesiones con enfriamiento bajo el mínimo | `minCooldownSec` (1 min) |
+| Enfriamiento corto | Sesiones con enfriamiento bajo el mínimo | 1 min, fijo en el código (`Targets.minCooldownSec`): por debajo no es enfriar. La meta de 3 min sí es del perfil |
 | Fuera de plan | Se registró un tipo distinto al que pedía el día | Plan vigente |
 | Sesión incompleta | Se cerró antes de completar el plan | — |
 | Rondas estimadas | Sesiones con rondas calculadas por tiempo | — |
 | Medición antes de tiempo | Toma a menos días de la anterior que el intervalo | `measureIntervalDays` (21) |
 | Medidas sin ayunas | Alguna toma del rango marcada sin ayunas | — |
-| Sesión en día no planificado | Entrenaste un día marcado como descanso o fútbol | Plan vigente |
 
 La app también avisa **antes** de guardar una medición prematura, con la opción
 de guardarla igual.
@@ -84,4 +89,5 @@ de guardarla igual.
 
 - No interpreta ni recomienda: el análisis se hace fuera, con el informe pegado
   en el chat.
-- No incluye fotos; cuando existan, las referenciará por fecha y ángulo.
+- No incluye fotos: son para mirarlas en el teléfono. Si algún día hacen falta,
+  el informe diría qué tomas hay en el rango (fecha y ángulo), no las imágenes.

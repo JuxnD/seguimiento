@@ -35,7 +35,9 @@ class SettingsScreen extends ConsumerWidget {
         data: (p) => ListView(
           padding: const EdgeInsets.only(bottom: 24),
           children: [
-            _ProfileCard(profile: p),
+            // La clave recrea la tarjeta al restaurar: si no, mostraría (y al
+            // guardar escribiría) el perfil anterior.
+            _ProfileCard(key: ValueKey(ref.watch(databaseGenerationProvider)), profile: p),
             AppCard(
               title: 'Catálogos',
               children: [
@@ -129,12 +131,15 @@ class SettingsScreen extends ConsumerWidget {
 
     try {
       await ref.read(databaseHostProvider).restoreFrom(File(path));
-      ref.read(databaseGenerationProvider.notifier).state++;
       if (context.mounted) showSnack(context, 'Respaldo restaurado');
     } on RestoreException catch (e) {
       if (context.mounted) showSnack(context, e.message);
     } on Object catch (e) {
       if (context.mounted) showSnack(context, 'No se pudo restaurar: $e');
+    } finally {
+      // Siempre: aunque falle, la conexión pudo cerrarse y reabrirse en el
+      // rollback. Sin esto, repositorios y streams quedan sobre la vieja.
+      ref.read(databaseGenerationProvider.notifier).state++;
     }
   }
 
@@ -151,7 +156,7 @@ class SettingsScreen extends ConsumerWidget {
 }
 
 class _ProfileCard extends ConsumerStatefulWidget {
-  const _ProfileCard({required this.profile});
+  const _ProfileCard({super.key, required this.profile});
 
   final ProfileRow profile;
 
@@ -181,7 +186,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
   }
 
   Future<void> _save() async {
-    await ref.read(profileRepositoryProvider).save(ProfilesCompanion(
+    await guarded(context, () => ref.read(profileRepositoryProvider).save(ProfilesCompanion(
           birthDate: Value(_birth == null ? null : dayKey(_birth!)),
           heightCm: Value(parseNum(_height.text)),
           startDate: Value(dayKey(_start)),
@@ -192,8 +197,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
           minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
           measureIntervalDays: Value(int.tryParse(_interval.text) ?? p.measureIntervalDays),
           lengthUnit: Value(_unit),
-        ));
-    if (mounted) showSnack(context, 'Perfil guardado');
+        )), ok: 'Perfil guardado');
   }
 
   @override

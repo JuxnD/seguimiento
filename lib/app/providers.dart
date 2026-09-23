@@ -1,12 +1,17 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../data/database.dart';
+import 'coalesce.dart';
 import '../data/notification_service.dart';
 import '../data/reminder_scheduler.dart';
 import '../data/repositories/reminder_repository.dart';
 import '../data/database_host.dart';
+import '../data/local_flags.dart';
 import '../data/update_service.dart';
 import '../data/repositories/body_repository.dart';
 import '../data/repositories/chart_repository.dart';
@@ -24,6 +29,9 @@ import '../domain/report/report_builder.dart';
 
 /// Se sobreescribe en `main` con la base ya abierta.
 final databaseHostProvider = Provider<DatabaseHost>((ref) => throw UnimplementedError());
+
+/// Se sobreescribe en `main` con las banderas ya abiertas.
+final localFlagsProvider = Provider<LocalFlags>((ref) => throw UnimplementedError());
 
 /// Cambia al restaurar un respaldo: obliga a recrear repositorios y streams
 /// contra la base nueva.
@@ -67,6 +75,9 @@ final dashboardRepositoryProvider = Provider((ref) => DashboardRepository(
       ref.watch(profileRepositoryProvider),
     ));
 
+/// Directorio de documentos de la app, resuelto una sola vez.
+final documentsDirProvider = FutureProvider<Directory>((ref) => getApplicationDocumentsDirectory());
+
 final photoRepositoryProvider = Provider((ref) => PhotoRepository(ref.watch(databaseProvider)));
 final photoCheckInsProvider = StreamProvider((ref) => ref.watch(photoRepositoryProvider).watchCheckIns());
 
@@ -101,42 +112,77 @@ final measurementSeriesProvider = FutureProvider.family((ref, MeasureSite site) 
   return ref.watch(chartRepositoryProvider).measurements(site, unit: unit);
 });
 
+/// Día de hoy. Cambia sola a medianoche y cuando la app vuelve a primer plano
+/// (`refresh`), así que nada que dependa de ella se queda en "ayer" con la app
+/// abierta de un día para otro.
+final todayProvider = NotifierProvider<TodayNotifier, DateTime>(TodayNotifier.new);
+
+class TodayNotifier extends Notifier<DateTime> {
+  Timer? _midnight;
+
+  @override
+  DateTime build() {
+    ref.onDispose(() => _midnight?.cancel());
+    _scheduleMidnight();
+    return dateOnly(DateTime.now());
+  }
+
+  /// Revisa la fecha; solo notifica si de verdad cambió.
+  void refresh() {
+    final now = dateOnly(DateTime.now());
+    if (now != state) state = now;
+    _scheduleMidnight();
+  }
+
+  void _scheduleMidnight() {
+    _midnight?.cancel();
+    final now = DateTime.now();
+    final next = addDays(dateOnly(now), 1);
+    _midnight = Timer(next.difference(now) + const Duration(seconds: 1), refresh);
+  }
+}
+
 /// Resumen de Hoy. Se recalcula cuando cambia cualquier dato que muestre.
 final dashboardProvider = FutureProvider((ref) {
+  final today = ref.watch(todayProvider);
   ref.watch(sessionsProvider);
   ref.watch(planVersionsProvider);
   ref.watch(profileProvider);
   ref.watch(checkInsProvider);
-  ref.watch(mealsForDayProvider(dayKey(dateOnly(DateTime.now()))));
-  return ref.watch(dashboardRepositoryProvider).today();
+  ref.watch(mealsForDayProvider(dayKey(today)));
+  return ref.watch(dashboardRepositoryProvider).today(now: today);
 });
 
 /// Reprograma los avisos cuando cambia algo que los afecta: una sesión, una
 /// comida de hoy, una medida, el plan o los propios ajustes. Se observa desde
 /// el shell para que viva mientras la app esté abierta.
+///
+/// Al cambiar el día se recrea entero: escucha las comidas del día nuevo y
+/// reprograma con la proteína de hoy, no la de ayer.
 final reminderSyncProvider = Provider<void>((ref) {
-  final scheduler = ref.watch(reminderSchedulerProvider);
-  var pending = false;
-  Future<void> run() async {
-    if (pending) return;
-    pending = true;
-    try {
-      await scheduler.reschedule();
-    } on Object {
-      // Sin permiso de notificaciones o sin canal: la app sigue igual.
-    } finally {
-      pending = false;
-    }
-  }
+  final today = ref.watch(todayProvider);
+  final run = ref.watch(rescheduleRemindersProvider);
 
   ref.listen(sessionsProvider, (_, __) => run());
   ref.listen(checkInsProvider, (_, __) => run());
   ref.listen(planVersionsProvider, (_, __) => run());
   ref.listen(remindersProvider, (_, __) => run());
   ref.listen(profileProvider, (_, __) => run());
-  ref.listen(mealsForDayProvider(dayKey(dateOnly(DateTime.now()))), (_, __) => run());
+  ref.listen(mealsForDayProvider(dayKey(today)), (_, __) => run());
+  ref.listen(reminderSchedulerProvider, (_, __) => run());
   run();
 });
+
+/// Única puerta para reprogramar los avisos. Nunca lanza: sin permiso de
+/// notificaciones o sin canal, la app sigue igual.
+final rescheduleRemindersProvider = Provider<Future<void> Function()>((ref) => coalesce(() async {
+      try {
+        await ref.read(reminderSchedulerProvider).reschedule();
+      } on Object {
+        // Sin permiso o sin canal: no hay nada que reprogramar.
+      }
+    }));
+
 
 final profileProvider = StreamProvider((ref) => ref.watch(profileRepositoryProvider).watch());
 final exercisesProvider = StreamProvider((ref) => ref.watch(exerciseRepositoryProvider).watchAll());

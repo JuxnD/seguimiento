@@ -99,9 +99,13 @@ verifica que la etiqueta coincida con `pubspec.yaml`, compila el APK firmado y
 lo publica en la release como `seguimiento-v1.1.0.apk`. La app instalada lo
 detecta en el siguiente chequeo.
 
-[`ci.yml`](../.github/workflows/ci.yml) corre análisis y pruebas en cada push a
-`main` y en los PR; en Linux también corren las pruebas de UI que en Windows
-quedan saltadas.
+El workflow se dispara con cualquier etiqueta `v*` o a mano
+(`workflow_dispatch`). Además de lo anterior genera el código de drift y borra
+la llave del runner al terminar, pase lo que pase. Corre en Java 17.
+
+[`ci.yml`](../.github/workflows/ci.yml) corre en cada push a `main` y en los PR:
+genera código, comprueba el manifiesto de Android (permisos y receivers que
+ninguna prueba de Dart detecta), analiza y prueba.
 
 ## Qué sigue siendo manual
 

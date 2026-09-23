@@ -39,7 +39,7 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
       showSnack(context, 'Faltan los minutos jugados');
       return;
     }
-    await ref.read(trainingRepositoryProvider).saveFootball(FootballGamesCompanion(
+    final ok = await guarded(context, () => ref.read(trainingRepositoryProvider).saveFootball(FootballGamesCompanion(
           id: widget.existing == null ? const Value.absent() : Value(widget.existing!.id),
           date: Value(dayKey(_date)),
           format: Value(_format),
@@ -48,8 +48,8 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
           intensity: Value(_intensity),
           fatigueAfter: Value(_fatigue),
           notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
-        ));
-    if (mounted) Navigator.pop(context, true);
+        )));
+    if (ok && mounted) Navigator.pop(context, true);
   }
 
   @override

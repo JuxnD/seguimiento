@@ -1,4 +1,4 @@
-﻿import '../dates.dart';
+import '../dates.dart';
 import '../enums.dart';
 import '../format.dart';
 import 'report_stats.dart';
@@ -23,9 +23,11 @@ List<String> buildAlerts(ReportStats s) {
     out.add('Proteína promedio ${fmtInt(p)} g, bajo el mínimo de ${t.proteinMin} g');
   }
 
+  // Solo días ya cerrados: a mitad de semana no es una falta lo que aún no llega.
   final done = s.input.sessions.length;
-  if (s.expectedTraining > 0 && done < s.expectedTraining) {
-    out.add('Sesiones por debajo del plan: $done de ${s.expectedTraining}');
+  if (s.expectedTrainingClosed > 0 && done < s.expectedTrainingClosed) {
+    out.add('Sesiones por debajo del plan: $done de ${s.expectedTrainingClosed} '
+        'en los días ya cerrados');
   }
 
   // Mismo ejercicio partido en varias sesiones.

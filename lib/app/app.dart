@@ -7,6 +7,7 @@ import '../features/home/home_screen.dart';
 import '../features/meals/meals_screen.dart';
 import '../features/report/report_screen.dart';
 import '../features/training/training_screen.dart';
+import '../data/local_flags.dart';
 import 'providers.dart';
 import '../ui/theme.dart';
 
@@ -40,17 +41,41 @@ class HomeShell extends ConsumerStatefulWidget {
   ConsumerState<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends ConsumerState<HomeShell> {
+class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserver {
   int _index = 0;
 
   @override
   void initState() {
     super.initState();
-    // Android 13+ no manda nada sin permiso explícito.
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final service = ref.read(notificationServiceProvider);
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _askNotificationsOnce());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Al volver de segundo plano puede ser otro día: Hoy, Comidas y los avisos
+  /// tienen que enterarse.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) ref.read(todayProvider.notifier).refresh();
+  }
+
+  /// Android 13+ no manda nada sin permiso explícito. Se pide **una** vez; si
+  /// se niega, Recordatorios muestra cómo activarlo, sin insistir en cada
+  /// arranque.
+  Future<void> _askNotificationsOnce() async {
+    final flags = ref.read(localFlagsProvider);
+    if (flags.get<bool>(FlagKeys.notificationsAsked) == true) return;
+    final service = ref.read(notificationServiceProvider);
+    try {
       if (!await service.hasPermission()) await service.requestPermission();
-    });
+    } finally {
+      await flags.set(FlagKeys.notificationsAsked, true);
+    }
   }
 
   static const _tabs = [

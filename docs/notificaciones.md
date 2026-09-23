@@ -33,18 +33,30 @@ Reglas que importan:
 - El aviso de proteína se calcula con lo comido **hoy**; si ya pasaste el
   umbral, no se programa.
 - Nada se programa en el pasado.
-- Cada aviso tiene un id estable por tipo y día: reprogramar no duplica.
+- Cada aviso tiene un id estable por tipo y día (`tipo·1000 + día del mes·24 +
+  hora`): reprogramar no duplica. El horizonte es de 7 días, así que el día del
+  mes no choca. El fin del descanso usa el id fijo `90001` y la cancelación
+  masiva lo respeta.
+- Los canales de Android se llaman `recordatorios` y `descanso`. **No se
+  renombran**: el sistema crearía otro canal y el usuario perdería sus ajustes.
 
 La reprogramación es completa (cancelar y volver a programar) y se dispara al
-abrir la app y cuando cambian sesiones, comidas de hoy, medidas, plan, perfil o
-los propios ajustes.
+abrir la app, al cambiar el día (medianoche o al volver de segundo plano) y
+cuando cambian sesiones, comidas de hoy, medidas, plan, perfil o los propios
+ajustes. Pasa por una sola puerta (`rescheduleRemindersProvider`) que nunca
+corre dos veces a la vez y no pierde cambios: si llega uno mientras corre, se
+repite al terminar.
 
 ## Android
 
-- `POST_NOTIFICATIONS` (13+) se pide al primer arranque. Si se niega, la app
-  funciona igual y la pantalla de recordatorios ofrece pedirlo de nuevo.
+- `POST_NOTIFICATIONS` (13+) se pide **una sola vez**, en el primer arranque.
+  Si se niega, la app funciona igual y Recordatorios ofrece pedirlo de nuevo.
 - El fin del descanso usa **alarma exacta** (`SCHEDULE_EXACT_ALARM`): 30 s tarde
-  no sirve. El resto usa alarmas inexactas, que gastan menos batería.
+  no sirve. En Android 14+ ese permiso **no viene concedido**: la app lo
+  comprueba, y si falta programa el aviso inexacto (puede llegar tarde), lo
+  dice una vez en el cronómetro y Recordatorios muestra el botón para
+  permitirlo. El resto de avisos usa alarmas inexactas, que gastan menos
+  batería.
 - Los receivers de `flutter_local_notifications` están declarados en
   [`AndroidManifest.xml`](../android/app/src/main/AndroidManifest.xml). **El
   plugin no los trae**: sin ellos la alarma se dispara y no aparece nada, sin

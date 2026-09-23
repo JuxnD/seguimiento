@@ -183,8 +183,57 @@ void main() {
     expect(md, contains('- Flexiones: 12+3 (partida)'));
     expect(md, contains('| mar 22 sep | 7 | 60 |'));
     expect(md, contains('- Peso promedio: 71,4 kg (en ayunas, 1 pesaje) · Δ vs línea base: -0,9 kg'));
-    expect(md, contains('Sesiones por debajo del plan: 1 de 3'));
+    expect(md, contains('Sesiones por debajo del plan: 1 de 3 en los días ya cerrados'));
     expect(md, endsWith('Semana pesada'));
   });
-}
 
+  test('editar una toma y cambiarle la fecha no la duplica', () async {
+    await body.saveCheckIn(d(9, 1), true, {MeasureSite.abdomen: 80});
+    await body.saveCheckIn(d(9, 2), false, {MeasureSite.abdomen: 79.5}, replacing: d(9, 1));
+
+    final checkIns = await body.watchCheckIns().first;
+    expect(checkIns.map((c) => dayKey(c.date)), ['2026-09-02']);
+    expect(checkIns.single.valuesCm[MeasureSite.abdomen], 79.5);
+  });
+
+  test('guardar la misma fecha al editar reemplaza, no suma', () async {
+    await body.saveCheckIn(d(9, 1), true, {MeasureSite.abdomen: 80, MeasureSite.cadera: 95});
+    await body.saveCheckIn(d(9, 1), true, {MeasureSite.abdomen: 81}, replacing: d(9, 1));
+
+    final checkIns = await body.watchCheckIns().first;
+    expect(checkIns.single.valuesCm, {MeasureSite.abdomen: 81});
+  });
+
+  test('récord: las rondas estimadas no cuentan, las de una sesión incompleta sí', () async {
+    await training.save(SessionDraft(date: d(9, 1), roundsDone: 7));
+    await training.save(SessionDraft(date: d(9, 3), roundsDone: 9, roundsEstimated: true));
+    expect(await training.bestRounds(), 7);
+
+    await training.save(SessionDraft(date: d(9, 5), roundsDone: 8, incomplete: true, plannedRounds: 10));
+    expect(await training.bestRounds(), 8);
+
+    await ProfileRepository(db).save(const ProfilesCompanion(startDate: Value('2026-09-01')));
+    final input = await report.load(d(9, 8), d(9, 14), today: d(9, 14));
+    expect(input.previousRoundsRecord, 8);
+  });
+
+  test('el plan no se guarda con rangos al revés ni ceros', () {
+    final draft = PlanDraft.empty(d(9, 1));
+    draft.days[0]
+      ..type = DayType.circuito
+      ..targetRounds = 6
+      ..exercises.add(PlanExerciseDraft(name: 'Flexiones', repsMin: 12, repsMax: 10));
+    expect(planDraftProblem(draft), contains('reps mínimas (12) mayores que las máximas (10)'));
+
+    draft.days[0].exercises.single.repsMax = 15;
+    expect(planDraftProblem(draft), isNull);
+
+    draft.days[0].targetRounds = 0;
+    expect(planDraftProblem(draft), contains('meta de rondas'));
+
+    // Un día de descanso con basura no bloquea: sus ejercicios no se guardan.
+    draft.days[0].targetRounds = 6;
+    draft.days[6].exercises.add(PlanExerciseDraft(name: 'X', sets: 0));
+    expect(planDraftProblem(draft), isNull);
+  });
+}

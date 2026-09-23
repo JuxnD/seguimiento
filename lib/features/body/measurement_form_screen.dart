@@ -77,8 +77,12 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
       );
       if (ok != true) return;
     }
-    await repo.saveCheckIn(_date, _fasted, values);
-    if (mounted) Navigator.pop(context, true);
+    if (!mounted) return;
+    final ok = await guarded(
+      context,
+      () => repo.saveCheckIn(_date, _fasted, values, replacing: widget.existing?.date),
+    );
+    if (ok && mounted) Navigator.pop(context, true);
   }
 
   @override

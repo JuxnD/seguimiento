@@ -55,8 +55,12 @@ class BodyRepository {
   }
 
   /// Reemplaza la toma de ese día. Valores ya en cm.
-  Future<void> saveCheckIn(DateTime date, bool fasted, Map<MeasureSite, double> valuesCm) =>
+  ///
+  /// `replacing`: fecha original al editar una toma. Si la fecha cambió, la
+  /// toma vieja se borra en la misma transacción (si no, quedaría duplicada).
+  Future<void> saveCheckIn(DateTime date, bool fasted, Map<MeasureSite, double> valuesCm, {DateTime? replacing}) =>
       db.transaction(() async {
+        if (replacing != null && dayKey(replacing) != dayKey(date)) await deleteCheckIn(replacing);
         await deleteCheckIn(date);
         for (final e in valuesCm.entries) {
           await db.into(db.measurements).insert(MeasurementsCompanion.insert(

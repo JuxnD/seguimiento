@@ -75,9 +75,28 @@ class NotificationService implements NotificationSink {
     return await android?.requestNotificationsPermission() ?? false;
   }
 
-  Future<bool> hasPermission() async {
-    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    return await android?.areNotificationsEnabled() ?? true;
+  AndroidFlutterLocalNotificationsPlugin? get _android =>
+      _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+
+  Future<bool> hasPermission() async => await _android?.areNotificationsEnabled() ?? true;
+
+  /// Android 14+ no concede alarmas exactas por defecto. Sin ellas el fin de
+  /// descanso en segundo plano puede llegar minutos tarde.
+  Future<bool> canScheduleExact() async {
+    try {
+      return await _android?.canScheduleExactNotifications() ?? true;
+    } on Object {
+      return false;
+    }
+  }
+
+  /// Abre el ajuste del sistema para permitir alarmas exactas.
+  Future<bool> requestExactAlarms() async {
+    try {
+      return await _android?.requestExactAlarmsPermission() ?? false;
+    } on Object {
+      return false;
+    }
   }
 
   /// Reemplaza todos los recordatorios programados por los de la lista.
@@ -122,9 +141,22 @@ class NotificationService implements NotificationSink {
   }
 
   /// Aviso de fin de descanso: exacto, porque 30 s tarde no sirve de nada.
-  Future<void> scheduleRestEnd({required Duration inSeconds, required String nextLabel}) async {
-    await init();
-    await cancelRestEnd();
+  /// Sin permiso de alarma exacta cae a inexacta (mejor tarde que nunca).
+  /// Nunca lanza: devuelve false si no se pudo programar, y el cronómetro
+  /// sigue sonando en primer plano de todos modos.
+  Future<bool> scheduleRestEnd({required Duration inSeconds, required String nextLabel}) async {
+    try {
+      await init();
+      await cancelRestEnd();
+      final exact = await canScheduleExact();
+      await _scheduleRest(inSeconds, nextLabel, exact);
+      return exact;
+    } on Object {
+      return false;
+    }
+  }
+
+  Future<void> _scheduleRest(Duration inSeconds, String nextLabel, bool exact) async {
     final when = tz.TZDateTime.now(tz.local).add(inSeconds);
     await _plugin.zonedSchedule(
       restNotificationId,
@@ -144,12 +176,18 @@ class NotificationService implements NotificationSink {
         ),
         iOS: const DarwinNotificationDetails(interruptionLevel: InterruptionLevel.timeSensitive),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: exact ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
-  Future<void> cancelRestEnd() => _plugin.cancel(restNotificationId);
+  Future<void> cancelRestEnd() async {
+    try {
+      await _plugin.cancel(restNotificationId);
+    } on Object {
+      // Nada programado o plugin sin iniciar: no hay nada que cancelar.
+    }
+  }
 
   Future<List<PendingNotificationRequest>> pending() => _plugin.pendingNotificationRequests();
 }

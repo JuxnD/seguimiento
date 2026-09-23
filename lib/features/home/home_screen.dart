@@ -8,6 +8,7 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import '../../domain/meal_slots.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
@@ -23,7 +24,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final today = dateOnly(DateTime.now());
+    final today = ref.watch(todayProvider);
     final dashboard = ref.watch(dashboardProvider);
 
     return Scaffold(
@@ -260,11 +261,7 @@ class _ActionsCard extends ConsumerWidget {
                   context,
                   MaterialPageRoute(
                     builder: (_) => MealFormScreen(
-                      draft: MealDraft(
-                        date: date,
-                        slot: MealSlot.desayuno,
-                        time: timeKey(DateTime.now().hour, DateTime.now().minute),
-                      ),
+                      draft: _mealNow(date),
                     ),
                   ),
                 ),
@@ -275,6 +272,13 @@ class _ActionsCard extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// Comida de ahora: la franja sale de la hora, igual que en la pestaña
+/// Comidas, para no tener que corregirla a las 8 p. m.
+MealDraft _mealNow(DateTime date) {
+  final now = DateTime.now();
+  return MealDraft(date: date, slot: slotForTime(now.hour, now.minute), time: timeKey(now.hour, now.minute));
 }
 
 class _MeasurementCard extends StatelessWidget {

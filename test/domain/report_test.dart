@@ -301,6 +301,55 @@ void main() {
     });
   });
 
+  group('semana en curso', () {
+    ReportInput midWeek({required int todayDay, List<SessionEntry> sessions = const []}) {
+      final start = DateTime(2026, 8, 26);
+      final w = weekRange(start, 4);
+      return ReportInput(
+        programStart: start,
+        rangeStart: w.start,
+        rangeEnd: w.end,
+        today: DateTime(2026, 9, todayDay),
+        planVersions: [
+          PlanVersionInfo(number: 1, validFrom: start, dayTypes: {
+            1: DayType.circuito,
+            3: DayType.circuito,
+            5: DayType.circuito,
+          }),
+        ],
+        sessions: sessions,
+      );
+    }
+
+    test('a mitad de semana, los días que no han llegado no son faltas', () {
+      // mié 16 C (hecha), vie 18 C (hoy, aún no), lun 21 C (futuro).
+      final input = midWeek(todayDay: 18, sessions: [
+        SessionEntry(date: DateTime(2026, 9, 16), type: SessionType.circuito, warmupSec: 400, cooldownSec: 120),
+      ]);
+      final s = ReportStats(input);
+      expect(s.expectedTraining, 3);
+      expect(s.expectedTrainingClosed, 1);
+      expect(buildAlerts(s).where((a) => a.startsWith('Sesiones por debajo')), isEmpty);
+      expect(buildReport(input), contains('- Sesiones: 1/3 (quedan 2 en el plan)'));
+    });
+
+    test('un día de entrenamiento ya cerrado sin sesión sí es falta', () {
+      final input = midWeek(todayDay: 19); // mié 16 y vie 18 ya pasaron.
+      expect(
+        buildAlerts(ReportStats(input)),
+        contains('Sesiones por debajo del plan: 0 de 2 en los días ya cerrados'),
+      );
+    });
+
+    test('una ronda estimada no es récord', () {
+      final input = midWeek(todayDay: 22, sessions: [
+        SessionEntry(date: DateTime(2026, 9, 16), type: SessionType.circuito, roundsDone: 7),
+        SessionEntry(date: DateTime(2026, 9, 18), type: SessionType.circuito, roundsDone: 9, roundsEstimated: true),
+      ]);
+      expect(ReportStats(input).maxRoundsInRange, 7);
+    });
+  });
+
   group('informe markdown', () {
     test('encabezado, resumen y secciones', () {
       final md = buildReport(weekFour(notes: 'Semana pesada en la oficina'));

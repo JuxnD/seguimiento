@@ -14,6 +14,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Datos e invariantes | [../modelo-datos.md](../modelo-datos.md) | Cambia una tabla, una unidad o el esquema |
 | Producto del informe | [../informe.md](../informe.md) | Cambia una sección, una métrica o una alerta |
 | Desviaciones de la planeación | [../auditoria-planeacion.md](../auditoria-planeacion.md) | Se acepta o rechaza un cambio al plan original |
+| Auditoría técnica y plan de mejora | [../auditoria-2026-09-23.md](../auditoria-2026-09-23.md) | Se cierra un hallazgo o una fase del plan |
 | Respaldo, restauración y releases | [../actualizaciones.md](../actualizaciones.md) | Cambia el flujo de respaldo, la firma o el pipeline |
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
 | Fases y pendientes | [../roadmap.md](../roadmap.md) | Entra o sale trabajo del MVP/v2 |

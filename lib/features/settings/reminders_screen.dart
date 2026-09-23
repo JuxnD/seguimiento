@@ -18,6 +18,7 @@ class RemindersScreen extends ConsumerStatefulWidget {
 
 class _RemindersScreenState extends ConsumerState<RemindersScreen> {
   bool? _permission;
+  bool? _exact;
 
   @override
   void initState() {
@@ -26,14 +27,26 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
   }
 
   Future<void> _checkPermission() async {
-    final ok = await ref.read(notificationServiceProvider).hasPermission();
-    if (mounted) setState(() => _permission = ok);
+    final service = ref.read(notificationServiceProvider);
+    final ok = await service.hasPermission();
+    final exact = await service.canScheduleExact();
+    if (mounted) {
+      setState(() {
+        _permission = ok;
+        _exact = exact;
+      });
+    }
+  }
+
+  Future<void> _askExact() async {
+    await ref.read(notificationServiceProvider).requestExactAlarms();
+    await _checkPermission();
   }
 
   Future<void> _askPermission() async {
     await ref.read(notificationServiceProvider).requestPermission();
     await _checkPermission();
-    if (mounted) await ref.read(reminderSchedulerProvider).reschedule();
+    if (mounted) await ref.read(rescheduleRemindersProvider)();
   }
 
   @override
@@ -65,6 +78,15 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                         'Sin permiso no llega ningún aviso.'),
                     const SizedBox(height: 8),
                     FilledButton(onPressed: _askPermission, child: const Text('Pedir permiso')),
+                  ],
+                ),
+              if (_permission == true && _exact == false && byKind[ReminderKind.descanso]?.enabled == true)
+                AppCard(
+                  children: [
+                    const Text('Android no deja a esta app usar alarmas exactas. El aviso de fin de '
+                        'descanso con la pantalla apagada puede llegar varios minutos tarde.'),
+                    const SizedBox(height: 8),
+                    FilledButton(onPressed: _askExact, child: const Text('Permitir alarmas exactas')),
                   ],
                 ),
               for (final kind in ReminderKind.values)
@@ -129,7 +151,7 @@ class _ReminderCard extends ConsumerWidget {
             ),
             Switch(
               value: row.enabled,
-              onChanged: (v) => repo.save(row.kind, enabled: v),
+              onChanged: (v) => guarded(context, () => repo.save(row.kind, enabled: v)),
             ),
           ],
         ),
@@ -147,7 +169,7 @@ class _ReminderCard extends ConsumerWidget {
                     initialTime: TimeOfDay(hour: row.hour ?? 8, minute: row.minute),
                   );
                   if (picked != null) {
-                    await repo.save(row.kind, hour: picked.hour, minute: picked.minute);
+                    if (context.mounted) await guarded(context, () => repo.save(row.kind, hour: picked.hour, minute: picked.minute));
                   }
                 },
               ),
@@ -165,24 +187,46 @@ class _ReminderCard extends ConsumerWidget {
   }
 
   Future<void> _editThreshold(BuildContext context, ReminderRepository repo) async {
-    final controller = TextEditingController(text: '${row.threshold ?? 100}');
     final value = await showDialog<int>(
       context: context,
-      builder: (c) => AlertDialog(
+      builder: (_) => _ThresholdDialog(initial: row.threshold ?? 100),
+    );
+    if (value != null && context.mounted) await guarded(context, () => repo.save(row.kind, threshold: value));
+  }
+}
+
+/// Dueño de su controller: se libera cuando el diálogo termina de cerrarse,
+/// no mientras todavía anima la salida.
+class _ThresholdDialog extends StatefulWidget {
+  const _ThresholdDialog({required this.initial});
+
+  final int initial;
+
+  @override
+  State<_ThresholdDialog> createState() => _ThresholdDialogState();
+}
+
+class _ThresholdDialogState extends State<_ThresholdDialog> {
+  late final _controller = TextEditingController(text: '${widget.initial}');
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
         title: const Text('Avisar si voy por debajo de'),
-        content: NumberField(controller: controller, label: 'Proteína', suffix: 'g'),
+        content: NumberField(controller: _controller, label: 'Proteína', suffix: 'g', autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
           FilledButton(
-            onPressed: () => Navigator.pop(c, int.tryParse(controller.text)),
+            onPressed: () => Navigator.pop(context, int.tryParse(_controller.text)),
             child: const Text('Guardar'),
           ),
         ],
-      ),
-    );
-    controller.dispose();
-    if (value != null) await repo.save(row.kind, threshold: value);
-  }
+      );
 }
 
 /// Texto corto para la pantalla de ajustes: cuántos avisos están activos.
