@@ -168,6 +168,45 @@ class NutritionRepository {
     return out;
   }
 
+  /// Guarda un combo desde la app. Si ya existe uno con ese nombre, se
+  /// reemplazan sus alimentos (renombrar = guardar con el nombre nuevo).
+  /// Solo entran alimentos del catálogo: una entrada libre no tiene receta.
+  Future<int> saveTemplate(String name, MealSlot? slot, List<(int, double)> items) =>
+      db.transaction(() async {
+        final clean = name.trim();
+        final existing = await (db.select(db.mealTemplates)..where((t) => t.name.equals(clean)))
+            .getSingleOrNull();
+        final int id;
+        if (existing == null) {
+          final count = (await db.select(db.mealTemplates).get()).length;
+          id = await db.into(db.mealTemplates).insert(MealTemplatesCompanion.insert(
+                name: clean,
+                slot: Value(slot),
+                position: Value(count),
+              ));
+        } else {
+          id = existing.id;
+          await (db.update(db.mealTemplates)..where((t) => t.id.equals(id)))
+              .write(MealTemplatesCompanion(slot: Value(slot)));
+          await (db.delete(db.mealTemplateItems)..where((t) => t.templateId.equals(id))).go();
+        }
+        var position = 0;
+        for (final (foodId, quantity) in items) {
+          await db.into(db.mealTemplateItems).insert(MealTemplateItemsCompanion.insert(
+                templateId: id,
+                foodId: foodId,
+                quantity: quantity,
+                position: Value(position++),
+              ));
+        }
+        return id;
+      });
+
+  Future<void> deleteTemplate(int id) => (db.delete(db.mealTemplates)..where((t) => t.id.equals(id))).go();
+
+  Future<FoodRow?> foodById(int id) =>
+      (db.select(db.foods)..where((t) => t.id.equals(id))).getSingleOrNull();
+
   Stream<List<MealTemplate>> watchTemplates() =>
       db.select(db.mealTemplates).watch().asyncMap((_) => templates());
 

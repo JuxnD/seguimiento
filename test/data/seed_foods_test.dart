@@ -132,4 +132,58 @@ void main() {
       expect(meals.single.macros.kcal, closeTo(569, 0.5));
     });
   });
+
+  group('combos creados desde la app', () {
+    Future<int> foodId(String name) async =>
+        (await db.select(db.foods).get()).firstWhere((f) => f.name == name).id;
+
+    test('guardar un combo nuevo y registrarlo en un toque', () async {
+      await nutrition.saveTemplate('Cena con pan', MealSlot.cena, [
+        (await foodId('Huevo (unidad)'), 4),
+        (await foodId('Pan (unidad)'), 1),
+        (await foodId('Atún en lata (escurrido)'), 1),
+      ]);
+      final combo = (await nutrition.templates()).firstWhere((t) => t.name == 'Cena con pan');
+      // 4 huevos (280) + pan (140) + atún (120).
+      expect(combo.macros.kcal, closeTo(540, 0.5));
+      expect(combo.macros.protein, closeTo(24 + 4.5 + 25, 0.1));
+
+      await nutrition.logTemplate(combo, DateTime(2026, 9, 24));
+      final meal = (await nutrition.watchDay(DateTime(2026, 9, 24)).first).single;
+      expect(meal.meal.slot, MealSlot.cena);
+      expect(meal.items.length, 3);
+    });
+
+    test('guardar con el mismo nombre reemplaza, no duplica', () async {
+      final huevo = await foodId('Huevo (unidad)');
+      await nutrition.saveTemplate('Desayuno', MealSlot.desayuno, [(huevo, 2)]);
+      await nutrition.saveTemplate('Desayuno', MealSlot.desayuno, [(huevo, 3)]);
+      final combos = (await nutrition.templates()).where((t) => t.name == 'Desayuno').toList();
+      expect(combos.length, 1);
+      expect(combos.single.items.single.$2, 3);
+    });
+
+    test('borrar un combo no toca las comidas ya registradas', () async {
+      final base = (await nutrition.templates()).firstWhere((t) => t.name.startsWith('Cena base'));
+      await nutrition.logTemplate(base, DateTime(2026, 9, 24));
+      await nutrition.deleteTemplate(base.row.id);
+
+      expect((await nutrition.templates()).any((t) => t.name.startsWith('Cena base')), isFalse);
+      final meal = (await nutrition.watchDay(DateTime(2026, 9, 24)).first).single;
+      expect(meal.macros.kcal, closeTo(330, 0.5));
+    });
+
+    test('un alimento creado en el registro queda en el catálogo', () async {
+      final id = await nutrition.saveFood(FoodsCompanion.insert(
+        name: 'Arepa de huevo',
+        basis: FoodBasis.unit,
+        kcal: 350,
+        protein: 12,
+      ));
+      final food = await nutrition.foodById(id);
+      expect(food!.name, 'Arepa de huevo');
+      expect(food.source, MacroSource.referencia, reason: 'lo nuevo empieza como referencia');
+      expect((await nutrition.foodsByRecentUse()).any((f) => f.id == id), isTrue);
+    });
+  });
 }

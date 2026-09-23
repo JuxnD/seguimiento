@@ -6,6 +6,7 @@ import '../../data/repositories/nutrition_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
 import '../../ui/widgets.dart';
 import 'foods_screen.dart';
@@ -66,30 +67,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                       onPressed: () => setState(() => _day = addDays(_day, 1))),
                 ],
               ),
-              AppCard(
-            title: 'Atajos',
-            children: [
-              ref.watch(mealTemplatesProvider).when(
-                    loading: () => const LinearProgressIndicator(),
-                    error: (e, _) => Text('Error: $e'),
-                    data: (templates) => templates.isEmpty
-                        ? const EmptyHint('Sin combos guardados.')
-                        : Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              for (final t in templates)
-                                ActionChip(
-                                  avatar: const Icon(Icons.bolt, size: 18),
-                                  label: Text('${t.name} · ${fmtInt(t.macros.kcal)} kcal'),
-                                  onPressed: () => _logTemplate(context, ref, t),
-                                ),
-                            ],
-                          ),
-                  ),
-            ],
-          ),
-          meals.when(
+              meals.when(
                 loading: () => const LinearProgressIndicator(),
                 error: (e, _) => Text('Error: $e'),
                 data: (list) {
@@ -112,6 +90,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
               ),
             ],
           ),
+          _Shortcuts(day: _day),
           meals.when(
             loading: () => const SizedBox.shrink(),
             error: (e, _) => const SizedBox.shrink(),
@@ -130,7 +109,11 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
           context,
           MaterialPageRoute(
             builder: (_) => MealFormScreen(
-              draft: MealDraft(date: _day, slot: _slotForNow(), time: timeKey(DateTime.now().hour, DateTime.now().minute)),
+              draft: MealDraft(
+                date: _day,
+                slot: slotForTime(DateTime.now().hour, DateTime.now().minute),
+                time: timeKey(DateTime.now().hour, DateTime.now().minute),
+              ),
             ),
           ),
         ),
@@ -138,36 +121,6 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
         label: const Text('Comida'),
       ),
     );
-  }
-
-  Future<void> _logTemplate(BuildContext context, WidgetRef ref, MealTemplate template) async {
-    final repo = ref.read(nutritionRepositoryProvider);
-    final now = DateTime.now();
-    final id = await repo.logTemplate(
-      template,
-      _day,
-      slot: template.row.slot ?? _slotForNow(),
-      time: timeKey(now.hour, now.minute),
-    );
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text('${template.name}: ${fmtInt(template.macros.kcal)} kcal · '
-            'P ${fmtInt(template.macros.protein)} g'),
-        action: SnackBarAction(
-          label: 'Deshacer',
-          onPressed: () => repo.deleteMeal(id),
-        ),
-      ));
-  }
-
-  MealSlot _slotForNow() {
-    final h = DateTime.now().hour;
-    if (h < 11) return MealSlot.desayuno;
-    if (h < 15) return MealSlot.almuerzo;
-    if (h < 18) return MealSlot.merienda;
-    return MealSlot.cena;
   }
 }
 
@@ -215,5 +168,156 @@ class _MealCard extends ConsumerWidget {
         if (meal.meal.notes != null) Text(meal.meal.notes!, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
+  }
+}
+
+/// Registro en un toque: combos guardados y lo que comiste ayer.
+class _Shortcuts extends ConsumerWidget {
+  const _Shortcuts({required this.day});
+
+  final DateTime day;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final templates = ref.watch(mealTemplatesProvider);
+    final yesterday = ref.watch(mealsForDayProvider(dayKey(addDays(day, -1))));
+    return AppCard(
+      title: 'Atajos',
+      children: [
+        templates.when(
+          loading: () => const LinearProgressIndicator(),
+          error: (e, _) => Text('Error: $e'),
+          data: (list) => list.isEmpty
+              ? const EmptyHint('Sin combos. Arma una comida y guárdala con el icono de marcador.')
+              : Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final t in list)
+                      GestureDetector(
+                        onLongPress: () => _templateMenu(context, ref, t),
+                        child: ActionChip(
+                          avatar: const Icon(Icons.bolt, size: 18),
+                          label: Text('${t.name} · ${fmtInt(t.macros.kcal)} kcal'),
+                          onPressed: () => _logTemplate(context, ref, t),
+                        ),
+                      ),
+                  ],
+                ),
+        ),
+        const SizedBox(height: 4),
+        Text('Toque: registra tal cual. Mantener: ajustar cantidades o borrar.',
+            style: Theme.of(context).textTheme.bodySmall),
+        yesterday.when(
+          loading: () => const SizedBox.shrink(),
+          error: (e, _) => const SizedBox.shrink(),
+          data: (meals) => meals.isEmpty
+              ? const SizedBox.shrink()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+                    Text('Repetir de ayer', style: Theme.of(context).textTheme.labelLarge),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final m in meals)
+                          ActionChip(
+                            avatar: const Icon(Icons.replay, size: 18),
+                            label: Text('${m.meal.slot.label} · ${fmtInt(m.macros.kcal)} kcal'),
+                            onPressed: () => _repeat(context, ref, m),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+
+  String _now() => timeKey(DateTime.now().hour, DateTime.now().minute);
+
+  Future<void> _logTemplate(BuildContext context, WidgetRef ref, MealTemplate template) async {
+    final repo = ref.read(nutritionRepositoryProvider);
+    final now = DateTime.now();
+    final id = await repo.logTemplate(
+      template,
+      day,
+      slot: template.row.slot ?? slotForTime(now.hour, now.minute),
+      time: _now(),
+    );
+    if (!context.mounted) return;
+    _undoable(
+        context,
+        '${template.name}: ${fmtInt(template.macros.kcal)} kcal · '
+        'P ${fmtInt(template.macros.protein)} g',
+        () => repo.deleteMeal(id));
+  }
+
+  /// Copia una comida de ayer al día mostrado, con la hora de ahora.
+  Future<void> _repeat(BuildContext context, WidgetRef ref, MealWithItems meal) async {
+    final repo = ref.read(nutritionRepositoryProvider);
+    final id = await repo.copyMeal(meal.meal.id, day, time: _now());
+    if (!context.mounted) return;
+    _undoable(context, '${meal.meal.slot.label} de ayer repetido', () => repo.deleteMeal(id));
+  }
+
+  Future<void> _templateMenu(BuildContext context, WidgetRef ref, MealTemplate template) async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+                title: Text(template.name), subtitle: Text(template.items.map((i) => i.$1.name).join(', '))),
+            ListTile(
+              leading: const Icon(Icons.tune),
+              title: const Text('Ajustar cantidades y registrar'),
+              onTap: () => Navigator.pop(context, 'ajustar'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline),
+              title: const Text('Borrar combo'),
+              onTap: () => Navigator.pop(context, 'borrar'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!context.mounted) return;
+    final repo = ref.read(nutritionRepositoryProvider);
+    if (action == 'ajustar') {
+      final now = DateTime.now();
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MealFormScreen(
+            draft: MealDraft(
+              date: day,
+              slot: template.row.slot ?? slotForTime(now.hour, now.minute),
+              time: _now(),
+              items: template.toDrafts(),
+            ),
+          ),
+        ),
+      );
+    } else if (action == 'borrar') {
+      if (await confirmDelete(context, 'el combo "${template.name}"')) {
+        await repo.deleteTemplate(template.row.id);
+      }
+    }
+  }
+
+  void _undoable(BuildContext context, String message, Future<void> Function() undo) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(message),
+        action: SnackBarAction(label: 'Deshacer', onPressed: () => undo()),
+      ));
   }
 }

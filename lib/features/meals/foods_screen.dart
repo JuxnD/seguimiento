@@ -60,7 +60,7 @@ class FoodsScreen extends ConsumerWidget {
   }
 
   Future<void> _edit(BuildContext context, WidgetRef ref, FoodRow? food) async {
-    final data = await showDialog<FoodsCompanion>(context: context, builder: (_) => _FoodDialog(food: food));
+    final data = await showDialog<FoodsCompanion>(context: context, builder: (_) => FoodDialog(food: food));
     if (data != null) await ref.read(nutritionRepositoryProvider).saveFood(data);
   }
 }
@@ -93,17 +93,22 @@ class _SourceBadge extends StatelessWidget {
   }
 }
 
-class _FoodDialog extends StatefulWidget {
-  const _FoodDialog({this.food});
+/// Alta y edición de un alimento. Se usa desde el catálogo y desde el
+/// registro de comidas, para no tener que salir del flujo.
+class FoodDialog extends StatefulWidget {
+  const FoodDialog({super.key, this.food, this.initialName});
 
   final FoodRow? food;
 
+  /// Nombre prellenado (lo que se estaba buscando).
+  final String? initialName;
+
   @override
-  State<_FoodDialog> createState() => _FoodDialogState();
+  State<FoodDialog> createState() => _FoodDialogState();
 }
 
-class _FoodDialogState extends State<_FoodDialog> {
-  late final _name = TextEditingController(text: widget.food?.name ?? '');
+class _FoodDialogState extends State<FoodDialog> {
+  late final _name = TextEditingController(text: widget.food?.name ?? widget.initialName ?? '');
   late final _unit = TextEditingController(text: widget.food?.unitLabel ?? 'unidad');
   late final _kcal = TextEditingController(text: widget.food == null ? '' : fmtDec(widget.food!.kcal));
   late final _protein = TextEditingController(text: widget.food == null ? '' : fmtDec(widget.food!.protein));

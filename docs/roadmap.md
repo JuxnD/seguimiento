@@ -35,7 +35,6 @@
 | Persistir el contador en curso | Si la app muere a mitad del circuito, se pierde la sesión |
 | Respaldo automático periódico | Hoy hay que acordarse de exportar |
 | Confirmar contra etiqueta Klim, Nestum y atún | Son de uso diario y hoy están como referencia; el catálogo los marca |
-| Crear y editar combos desde la app | Hoy se siembran desde el código |
 | Editor del plan sin campos para sostén, RIR ni variante A/B | Se ven, pero solo se editan desde el código; al guardar no se pierden |
 | Pruebas automáticas de interfaz | Retiradas: se colgaban con drift dentro de `flutter_test`, en Windows y en Linux. La UI se verifica en el teléfono |
 
@@ -46,7 +45,7 @@ Mejoras pedidas tras el primer uso real, en este orden:
 | Fase | Qué | Estado |
 |---|---|---|
 | 1 | Cronómetro guiado, fases automáticas, cierre anticipado, validaciones de plan | Listo |
-| 2 | Comidas: crear alimento sin salir del registro, editar cantidades de un combo, guardar combos desde la app, hora vs franja | Pendiente |
+| 2 | Comidas: crear alimento sin salir del registro, editar cantidades de un combo, guardar combos desde la app, hora vs franja | Listo |
 | 3 | Notificaciones locales: sesión, sesión sin registrar, comidas, proteína, medición, fin de descanso | Listo |
 | 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Listo |
 
