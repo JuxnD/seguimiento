@@ -8,12 +8,14 @@ El informe es el producto. Todo lo demás existe para alimentarlo.
 
 ## Estado
 
-Tema oscuro con acento naranja. MVP implementado: perfil, plan versionado
+Tema oscuro con acento naranja. Implementado: perfil, plan versionado
 (sembrado en la primera apertura), sesiones con [cronómetro guiado por el
-plan](docs/cronometro.md),
-fútbol, catálogo de alimentos, comidas, peso, medidas, informe Markdown,
-respaldo **y restauración** de la base, y aviso de nuevas versiones por GitHub
-Releases. Sin cuentas, sin backend, sin sincronización de datos.
+plan](docs/cronometro.md) que se retoma si Android cierra la app, fútbol,
+catálogo de alimentos con combos, comidas, peso, medidas, fotos de progreso,
+gráficas, [recordatorios locales](docs/notificaciones.md), informe Markdown,
+respaldo manual, copia automática semanal y restauración, y aviso de nuevas
+versiones por GitHub Releases. Sin cuentas, sin backend, sin sincronización de
+datos.
 
 Detalle y pendientes: [docs/roadmap.md](docs/roadmap.md).
 
@@ -26,11 +28,13 @@ flutter run
 ```
 
 Requiere Flutter 3.22 / Dart 3.4. Por esa versión hay dependencias fijadas a
-propósito: `drift`/`drift_dev` (`>=2.19.2 <2.23.0`) y `share_plus` (`^10.1.4`);
-las versiones actuales exigen Dart ≥ 3.5 o Flutter ≥ 3.27. Ver
+propósito: `drift`/`drift_dev` (`>=2.19.2 <2.23.0`), `share_plus` (`10.1.4`) y
+`fl_chart` (`<0.70`); las versiones actuales exigen Dart ≥ 3.5 o Flutter ≥ 3.27,
+y algunas `pub` las deja instalar aunque luego no compilan (se probó el 23 sep
+2026 con `fl_chart` 0.71 y `share_plus` 12). Ver
 [docs/adr/0001-drift-sqlite-local.md](docs/adr/0001-drift-sqlite-local.md).
 
-Android está configurado para Java 21 (Gradle 8.7, AGP 8.3.2, Kotlin 1.9.22,
+Android compila con Java 17 (Gradle 8.7, AGP 8.3.2, Kotlin 1.9.22,
 `minSdk` 21 por `sqlite3`). Al actualizar Flutter, revisar esas cuatro cosas
 junto con las dependencias fijadas.
 

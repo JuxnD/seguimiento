@@ -321,3 +321,64 @@ reemplaza», repo por defecto embebido en `config.dart`.
 
 Orden recomendado: A → B → C. C es la más grande y conviene hacerla con A y B
 cerradas, porque las pruebas nuevas de A y B son la red para C.
+
+## Estado de cierre (23 sep 2026)
+
+Trabajo en la rama `mejoras/auditoria-2026-09`, sin publicar. Commits:
+fase A `0d541f3`; fase B `2bc154c`, `608c9fa`, `0d8cd4c`, `8c20526`; fase C
+`f823fc1` y el cierre documental.
+
+| Hallazgos | Estado | Evidencia |
+|---|---|---|
+| 1 cronómetros sin persistencia | Resuelto en código | Pruebas de foto y almacén; **falta** matar la app a mitad de circuito en el teléfono |
+| 2 alarma exacta Android 14+ | Resuelto en código | **Falta** verificar el aviso con pantalla apagada en el teléfono |
+| 3, 4, 5 restauración | Resuelto | `restore_test.dart` (incluye rollback) |
+| 6 editor del plan | Resuelto | Claves por ejercicio y día; validación con prueba |
+| 7 toma duplicada | Resuelto | Prueba de repositorio |
+| 8, 12 «hoy» congelado | Resuelto | `todayProvider`; sin prueba automática de medianoche |
+| 9 comparador de fotos | Resuelto | Sin prueba automática |
+| 10 controllers de diálogos | Resuelto | `promptText` y diálogo de umbral dueños del controller |
+| 11 alerta a mitad de semana | Resuelto | Pruebas de semana en curso |
+| 13 umbrales del perfil | Resuelto | `measurementDue` con pruebas; metas en Ajustes |
+| 14 récord con estimadas | Resuelto (decisión: estimadas no cuentan, incompletas sí) | Pruebas de dominio y repositorio |
+| 15 reprogramación | Resuelto | `coalesce` con pruebas |
+| 16 permiso en cada arranque | Resuelto | Bandera local |
+| 17 escrituras sin error | Resuelto en los guardados principales | `guarded`; algunos borrados menores siguen sin envoltura |
+| 18 arranque sin red | Resuelto | Pantalla de error con exportación de rescate |
+| 19–24 fricción | Resuelto | Búsqueda con pruebas; pesaje por día con pruebas |
+| 25 gráficas y pantallas | Resuelto | Pruebas de pantalla cargan Informe |
+| 26 duplicación | Resuelto salvo `targetLabel` doble (formatos distintos a propósito) y `_streak` | — |
+| 27 validación | Resuelto | — |
+| 28 N+1 | Resuelto en el informe; `PlanRepository.dayFor` sigue cargando la versión completa | Aceptable a esta escala |
+| 29 CI sin APK | Resuelto | `ci.yml` compila debug |
+| 30 lints | Resuelto | `flutter analyze` limpio con reglas estrictas |
+| 31 pruebas de widget | Resuelto | 4 pruebas de pantalla; causa documentada en README |
+| 32 accesibilidad | Resuelto | Tooltips y `Semantics` |
+| 33 higiene | Resuelto | — |
+| 34 red al arrancar | Documentado (decisión: se mantiene automático) | `project-map.md` |
+| 35 dependencias | **Abierto** | Ver abajo |
+| Docs | Resuelto | Tabla de deriva aplicada |
+
+## Salto de SDK (pendiente, requiere decisión)
+
+No se hizo. Subir Flutter cambia la herramienta global del equipo
+(`C:lutter`), el SDK fijado en `ci.yml` y `release.yml` y, con él, la cadena
+de releases firmadas. Dentro de 3.22 no hay subidas seguras: `fl_chart` 0.71 y
+`share_plus` 12 se probaron y no compilan, aunque `pub` los resuelve.
+
+Orden propuesto, en una rama propia y con la suite actual como red:
+
+1. Instalar el Flutter estable nuevo **aparte** (fvm o una carpeta propia),
+   sin tocar `C:lutter`.
+2. Subir Java/AGP/Kotlin/Gradle a lo que pida esa versión; `compileSdk 35` y
+   NDK que ya piden los plugins (aviso actual del build).
+3. Soltar `drift`/`drift_dev`, `sqlite3`/`sqlite3_flutter_libs` (la 0.5 está
+   marcada EOL), `fl_chart`, `share_plus` (`SharePlus.instance.share`),
+   `file_picker`, `package_info_plus`. Regenerar con `build_runner`.
+4. `flutter_local_notifications` 19+ (quita `uiLocalNotificationDateInterpretation`)
+   junto con `timezone` y `flutter_timezone`: probar en el teléfono los ocho
+   avisos y el fin de descanso con pantalla apagada.
+5. Riverpod 3 al final y aparte: cambia `StateProvider` y la forma de los
+   providers; es el cambio más grande en líneas.
+6. Gate: `flutter analyze`, `flutter test` (176+), APK de release firmado
+   instalado **encima** de 1.5.0 conservando datos, y una semana de uso.

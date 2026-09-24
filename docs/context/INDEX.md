@@ -26,8 +26,15 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   (N−1)·7 días a +6.
 - El informe se pega en un chat para que un tercero lo audite. Por eso incluye
   detalle crudo (vueltas, series partidas, contexto) y no solo promedios.
-- Los datos viven únicamente en el dispositivo. No hay backend ni sincronización;
-  el respaldo es exportar la base desde Ajustes y restaurarla desde ahí mismo.
+- Los datos viven únicamente en el dispositivo. No hay backend ni sincronización.
+  Respaldo: exportar a mano desde Ajustes (lo único que protege de perder el
+  teléfono) y una copia automática semanal dentro de la app (protege de
+  errores). Ambas se restauran desde Ajustes. Las fotos no van en ninguna.
+- Fuera de la base viven `flags.json` (permisos ya pedidos, fechas de copia) y
+  `sesion-en-curso.json` (cronómetro a medias). Restaurar no los toca.
+- Flutter está fijado en 3.22: `pub` resuelve versiones de `fl_chart` y
+  `share_plus` que luego no compilan. Compilar el APK y correr las pruebas de
+  pantalla es la verificación real de cualquier cambio de dependencias.
 - Las versiones se publican como GitHub Releases públicas y **todas deben ir
   firmadas con la misma llave**, o Android no deja actualizar sobre lo instalado.
 - Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, ventana de
