@@ -96,8 +96,9 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 if (await confirmDelete(context, 'la medición')) {
-                  await ref.read(bodyRepositoryProvider).deleteCheckIn(widget.existing!.date);
-                  if (context.mounted) Navigator.pop(context, true);
+                  if (!context.mounted) return;
+                  final ok = await guarded(context, () => ref.read(bodyRepositoryProvider).deleteCheckIn(widget.existing!.date), failure: 'No se pudo borrar');
+                  if (ok && context.mounted) Navigator.pop(context, true);
                 }
               },
             ),

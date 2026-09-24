@@ -205,14 +205,17 @@ class _MealCard extends ConsumerWidget {
               await Navigator.push(context, MaterialPageRoute(builder: (_) => MealFormScreen(draft: draft)));
             }
           } else if (v == 'hoy') {
-            await repo.copyMeal(meal.meal.id, dateOnly(DateTime.now()));
-            if (context.mounted) showSnack(context, 'Copiada a hoy');
+            await guarded(context, () => repo.copyMeal(meal.meal.id, dateOnly(DateTime.now())),
+                ok: 'Copiada a hoy');
           } else if (v == 'borrar') {
             // Sin diálogo: se borra y se puede deshacer. Corregir debe costar
             // un toque, no dos.
-            final backup = await repo.loadMeal(meal.meal.id);
-            await repo.deleteMeal(meal.meal.id);
-            if (context.mounted) {
+            late MealDraft backup;
+            final ok = await guarded(context, () async {
+              backup = await repo.loadMeal(meal.meal.id);
+              await repo.deleteMeal(meal.meal.id);
+            }, failure: 'No se pudo borrar');
+            if (ok && context.mounted) {
               showUndoSnack(context, '${meal.meal.slot.label} borrada', () => repo.saveMeal(backup..id = null));
             }
           }
@@ -375,8 +378,8 @@ class _Shortcuts extends ConsumerWidget {
         ),
       );
     } else if (action == 'borrar') {
-      if (await confirmDelete(context, 'el combo "${template.name}"')) {
-        await repo.deleteTemplate(template.row.id);
+      if (await confirmDelete(context, 'el combo "${template.name}"') && context.mounted) {
+        await guarded(context, () => repo.deleteTemplate(template.row.id), failure: 'No se pudo borrar');
       }
     }
   }

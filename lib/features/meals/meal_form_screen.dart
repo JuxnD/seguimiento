@@ -183,8 +183,9 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 if (await confirmDelete(context, 'la comida')) {
-                  await ref.read(nutritionRepositoryProvider).deleteMeal(d.id!);
-                  if (context.mounted) Navigator.pop(context, true);
+                  if (!context.mounted) return;
+                  final ok = await guarded(context, () => ref.read(nutritionRepositoryProvider).deleteMeal(d.id!), failure: 'No se pudo borrar');
+                  if (ok && context.mounted) Navigator.pop(context, true);
                 }
               },
             ),

@@ -239,8 +239,9 @@ class _CheckInRow extends ConsumerWidget {
                       padding: const EdgeInsets.only(right: 8),
                       child: GestureDetector(
                         onLongPress: () async {
-                          if (await confirmDelete(context, 'la foto de ${angle.label.toLowerCase()}')) {
-                            await ref.read(photoRepositoryProvider).delete(checkIn.byAngle[angle]!);
+                          if (await confirmDelete(context, 'la foto de ${angle.label.toLowerCase()}') && context.mounted) {
+                            await guarded(context, () => ref.read(photoRepositoryProvider).delete(checkIn.byAngle[angle]!),
+                                failure: 'No se pudo borrar');
                           }
                         },
                         child: Semantics(

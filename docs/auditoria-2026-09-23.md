@@ -343,7 +343,7 @@ fase A `0d541f3`; fase B `2bc154c`, `608c9fa`, `0d8cd4c`, `8c20526`; fase C
 | 14 récord con estimadas | Resuelto (decisión: estimadas no cuentan, incompletas sí) | Pruebas de dominio y repositorio |
 | 15 reprogramación | Resuelto | `coalesce` con pruebas |
 | 16 permiso en cada arranque | Resuelto | Bandera local |
-| 17 escrituras sin error | Resuelto en los guardados principales | `guarded`; algunos borrados menores siguen sin envoltura |
+| 17 escrituras sin error | Resuelto | `guarded` en guardados, borrados y copias (24 sep) |
 | 18 arranque sin red | Resuelto | Pantalla de error con exportación de rescate |
 | 19–24 fricción | Resuelto | Búsqueda con pruebas; pesaje por día con pruebas |
 | 25 gráficas y pantallas | Resuelto | Pruebas de pantalla cargan Informe |

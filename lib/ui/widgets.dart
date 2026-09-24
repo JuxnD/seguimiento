@@ -282,7 +282,8 @@ TimeOfDay? parseTimeOfDay(String? time) {
 
 /// Corre una escritura y avisa si falla, en vez de dejar un future perdido y
 /// la pantalla sin respuesta. Devuelve true si salió bien.
-Future<bool> guarded(BuildContext context, Future<void> Function() action, {String? ok}) async {
+Future<bool> guarded(BuildContext context, Future<void> Function() action,
+    {String? ok, String failure = 'No se pudo guardar'}) async {
   final messenger = ScaffoldMessenger.maybeOf(context);
   try {
     await action();
@@ -295,7 +296,7 @@ Future<bool> guarded(BuildContext context, Future<void> Function() action, {Stri
   } on Object catch (e) {
     messenger
       ?..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('No se pudo guardar: $e')));
+      ..showSnackBar(SnackBar(content: Text('$failure: $e')));
     return false;
   }
 }

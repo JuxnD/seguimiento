@@ -187,8 +187,9 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 if (await confirmDelete(context, 'la sesión')) {
-                  await ref.read(trainingRepositoryProvider).delete(d.id!);
-                  if (context.mounted) Navigator.pop(context, true);
+                  if (!context.mounted) return;
+                  final ok = await guarded(context, () => ref.read(trainingRepositoryProvider).delete(d.id!), failure: 'No se pudo borrar');
+                  if (ok && context.mounted) Navigator.pop(context, true);
                 }
               },
             ),

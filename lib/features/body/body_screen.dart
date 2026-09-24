@@ -74,8 +74,9 @@ class BodyScreen extends ConsumerWidget {
                               valueLabel: 'kg',
                               onLongPress: () async {
                                 final repo = ref.read(bodyRepositoryProvider);
-                                await repo.deleteWeight(w.id);
-                                if (context.mounted) {
+                                final ok =
+                                    await guarded(context, () => repo.deleteWeight(w.id), failure: 'No se pudo borrar');
+                                if (ok && context.mounted) {
                                   showUndoSnack(context, 'Pesaje borrado',
                                       () => repo.addWeight(parseDay(w.date), w.kg, fasted: w.fasted));
                                 }
