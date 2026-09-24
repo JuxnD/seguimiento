@@ -32,11 +32,8 @@
 
 | Pendiente | Por qué importa |
 |---|---|
-| Persistir el contador en curso | Si la app muere a mitad del circuito, se pierde la sesión |
-| Respaldo automático periódico | Hoy hay que acordarse de exportar |
 | Confirmar contra etiqueta Klim, Nestum y atún | Son de uso diario y hoy están como referencia; el catálogo los marca |
-| Editor del plan sin campos para sostén, RIR ni variante A/B | Se ven, pero solo se editan desde el código; al guardar no se pierden |
-| Pruebas automáticas de interfaz | Retiradas: se colgaban con drift dentro de `flutter_test`, en Windows y en Linux. La UI se verifica en el teléfono |
+| Editor del plan sin campos para sostén ni RIR | Se ven, pero solo se editan desde el código; al guardar no se pierden. Agarre/variante y bloque sí se editan |
 
 ## En curso
 
@@ -49,11 +46,12 @@ Mejoras pedidas tras el primer uso real, en este orden:
 | 3 | Notificaciones locales: sesión, sesión sin registrar, comidas, proteína, medición, fin de descanso | Listo |
 | 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Listo |
 | 5 | Pulido tras uso real: tarjeta principal en todas las pestañas, enfriamiento como fase igual al calentamiento, medalla y frase de cierre con el dato real, insignia al cerrar ronda, selector de "qué costó más" con chips | Listo |
+| 6 | Auditoría del 23 sep 2026 ([auditoria-2026-09-23.md](auditoria-2026-09-23.md)): correcciones, retomar el cronómetro, respaldo automático, umbrales del perfil, menos toques, pruebas de pantalla y CI que compila | Listo |
 
 ## v2
 
-- Respaldo automático a archivo, incluyendo las fotos (hoy el respaldo solo
-  lleva la base de datos).
+- Respaldo que incluya las fotos (hoy exportar y las copias automáticas solo
+  llevan la base de datos) y que pueda salir del teléfono sin acción manual.
 - Editar el plan desde la app con todos los campos (sostén, RIR, variante).
 
 ## Fuera de alcance

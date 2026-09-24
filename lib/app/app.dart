@@ -48,7 +48,10 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _askNotificationsOnce());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _askNotificationsOnce();
+      _autoBackup();
+    });
   }
 
   @override
@@ -62,6 +65,13 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) ref.read(todayProvider.notifier).refresh();
+  }
+
+  /// Respaldo semanal en segundo plano, después de pintar: nunca frena el
+  /// arranque ni lanza.
+  Future<void> _autoBackup() async {
+    final backup = await ref.read(autoBackupProvider.future);
+    if (await backup.runIfDue() != null) ref.invalidate(autoBackupsProvider);
   }
 
   /// Android 13+ no manda nada sin permiso explícito. Se pide **una** vez; si

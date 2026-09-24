@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../data/active_session_store.dart';
+import '../data/auto_backup.dart';
 import '../data/database.dart';
 import 'coalesce.dart';
 import '../data/notification_service.dart';
@@ -34,6 +35,16 @@ final databaseHostProvider = Provider<DatabaseHost>((ref) => throw Unimplemented
 
 /// Se sobreescribe en `main` con las banderas ya abiertas.
 final localFlagsProvider = Provider<LocalFlags>((ref) => throw UnimplementedError());
+
+/// Respaldo automático semanal (ver `data/auto_backup.dart`).
+final autoBackupProvider = FutureProvider<AutoBackup>(
+    (ref) => AutoBackup.open(ref.watch(databaseHostProvider), ref.watch(localFlagsProvider)));
+
+/// Respaldos automáticos guardados. Se invalida tras crear uno.
+final autoBackupsProvider = FutureProvider<List<AutoBackupFile>>((ref) async {
+  final backup = await ref.watch(autoBackupProvider.future);
+  return backup.list();
+});
 
 /// Se sobreescribe en `main` con el almacén ya abierto.
 final activeSessionStoreProvider = Provider<ActiveSessionStore>((ref) => throw UnimplementedError());

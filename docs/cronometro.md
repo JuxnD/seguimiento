@@ -25,7 +25,8 @@ solo incluye la elegida.
 
 Tres fases con la **misma forma**: calentamiento → trabajo → enfriamiento.
 Calentamiento y enfriamiento tienen pantalla propia, anillo contra la meta del
-plan (6 min y 3 min) y un botón grande para cerrarlas; nada se salta por
+perfil (calentamiento mínimo y meta de enfriamiento; 6 y 3 min por defecto,
+editables en Ajustes) y un botón grande para cerrarlas; nada se salta por
 accidente.
 
 - **Calentamiento**: debajo del reloj, "Lo que viene" con los ejercicios, el
@@ -54,6 +55,17 @@ incompleta. Nunca un "¡buen trabajo!" genérico. Debajo, tiempos, rondas o
 series y tiempo por ronda, y de ahí al formulario prellenado para añadir RPE,
 "¿qué te costó más?" (chips con los ejercicios de la sesión, "Ninguno" por
 defecto) y notas. El formulario no repite la celebración.
+
+## Si Android cierra la app a mitad de sesión
+
+Cada paso (empezar, hecho, ajustar repeticiones, descanso, cerrar fases) deja
+una foto del estado en `sesion-en-curso.json`
+([`active_session.dart`](../lib/domain/active_session.dart), fuera de la base).
+Si la app muere, Hoy y Entreno muestran **"Sesión sin terminar"** con Retomar y
+Descartar; empezar otra sesión pregunta antes de pisarla. Al retomar, el reloj
+ya contó el tiempo que la app estuvo cerrada (todo son marcas de reloj) y un
+descanso en curso vuelve a programar su aviso. El cronómetro libre funciona
+igual. La foto se borra al guardar o descartar la sesión.
 
 ## Fin del descanso
 

@@ -96,6 +96,35 @@ class SettingsScreen extends ConsumerWidget {
                   padding: EdgeInsets.only(top: 8),
                   child: Text('Restaurar reemplaza TODO lo registrado por el contenido del respaldo.'),
                 ),
+                const SizedBox(height: 12),
+                Text('Copias automáticas', style: Theme.of(context).textTheme.titleSmall),
+                const Text('Una por semana, dentro de la app; se guardan las 4 últimas. Sirven para '
+                    'deshacer un error, no para cambiar de teléfono: para eso, exporta.'),
+                ref.watch(autoBackupsProvider).when(
+                      loading: () => const LinearProgressIndicator(),
+                      error: (e, _) => Text('Error: $e'),
+                      data: (list) => list.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Text('Todavía no hay copias: la primera se hace al abrir la app.'),
+                            )
+                          : Column(
+                              children: [
+                                for (final b in list)
+                                  ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: const Icon(Icons.history),
+                                    title: Text('${weekdayLong(b.date.weekday)} ${formatLong(b.date)}'),
+                                    subtitle: Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB'),
+                                    trailing: TextButton(
+                                      onPressed: () => _restoreFile(context, ref, b.file,
+                                          'la copia automática del ${formatLong(b.date)}'),
+                                      child: const Text('Restaurar'),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                    ),
               ],
             ),
             const UpdatesCard(),
@@ -110,14 +139,16 @@ class SettingsScreen extends ConsumerWidget {
   Future<void> _restore(BuildContext context, WidgetRef ref) async {
     final picked = await FilePicker.platform.pickFiles(withData: false);
     final path = picked?.files.single.path;
-    if (path == null) return;
+    if (path == null || !context.mounted) return;
+    await _restoreFile(context, ref, File(path), p.basename(path));
+  }
 
-    if (!context.mounted) return;
+  Future<void> _restoreFile(BuildContext context, WidgetRef ref, File file, String label) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('¿Restaurar este respaldo?'),
-        content: Text('Archivo: ${p.basename(path)}\n\n'
+        content: Text('Respaldo: $label\n\n'
             'Se reemplazan todas las sesiones, comidas y medidas actuales por las del respaldo. '
             'Esto no se puede deshacer.\n\n'
             'Si lo de ahora te sirve, exporta primero.'),
@@ -130,7 +161,7 @@ class SettingsScreen extends ConsumerWidget {
     if (confirmed != true) return;
 
     try {
-      await ref.read(databaseHostProvider).restoreFrom(File(path));
+      await ref.read(databaseHostProvider).restoreFrom(file);
       if (context.mounted) showSnack(context, 'Respaldo restaurado');
     } on RestoreException catch (e) {
       if (context.mounted) showSnack(context, e.message);

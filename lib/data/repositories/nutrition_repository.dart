@@ -237,20 +237,20 @@ class NutritionRepository {
 
   Stream<List<MealWithItems>> watchDay(DateTime day) => watchRange(day, day);
 
-  Stream<List<MealWithItems>> watchRange(DateTime from, DateTime to) {
-    final q = db.select(db.meals).join([
-      leftOuterJoin(db.mealItems, db.mealItems.mealId.equalsExp(db.meals.id)),
-    ])
-      ..where(db.meals.date.isBetweenValues(dayKey(from), dayKey(to)))
-      ..orderBy([
-        OrderingTerm(expression: db.meals.date),
-        OrderingTerm(expression: db.meals.time),
-        OrderingTerm(expression: db.mealItems.id),
-      ]);
-    return q.watch().map(_group);
-  }
+  JoinedSelectStatement<HasResultSet, dynamic> _rangeQuery(DateTime from, DateTime to) => db.select(db.meals).join([
+        leftOuterJoin(db.mealItems, db.mealItems.mealId.equalsExp(db.meals.id)),
+      ])
+        ..where(db.meals.date.isBetweenValues(dayKey(from), dayKey(to)))
+        ..orderBy([
+          OrderingTerm(expression: db.meals.date),
+          OrderingTerm(expression: db.meals.time),
+          OrderingTerm(expression: db.mealItems.id),
+        ]);
 
-  Future<List<MealWithItems>> range(DateTime from, DateTime to) => watchRange(from, to).first;
+  Stream<List<MealWithItems>> watchRange(DateTime from, DateTime to) => _rangeQuery(from, to).watch().map(_group);
+
+  /// Consulta de una vez (no abre un stream para quedarse con el primer valor).
+  Future<List<MealWithItems>> range(DateTime from, DateTime to) async => _group(await _rangeQuery(from, to).get());
 
   List<MealWithItems> _group(List<TypedResult> rows) {
     final byId = <int, MealWithItems>{};

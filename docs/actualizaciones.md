@@ -6,8 +6,23 @@ poder volver a un respaldo y poder instalar una versión nueva encima.
 ## Respaldo y restauración
 
 **Exportar** (Ajustes → *Exportar base de datos*): `VACUUM INTO` produce una
-copia consistente aunque el WAL tenga escrituras pendientes; luego se comparte
-el archivo `seguimiento-AAAA-MM-DD.sqlite` a donde quieras (Drive, correo…).
+copia consistente aunque haya una escritura en curso; luego se comparte el
+archivo `seguimiento-AAAA-MM-DD.sqlite` a donde quieras (Drive, correo…).
+
+**Copias automáticas** ([`auto_backup.dart`](../lib/data/auto_backup.dart)):
+al abrir la app, si pasaron 7 días desde la última, se hace una copia con el
+mismo `VACUUM INTO` en `respaldos/respaldo-AAAA-MM-DD.sqlite`, dentro del
+directorio de la app, y se guardan las 4 más recientes. Ajustes las lista y
+cada una se puede restaurar con el flujo de abajo. Sirven para deshacer un
+error (un borrado, una restauración equivocada, una base dañada), **no** para
+cambiar de teléfono: si se pierde el teléfono se pierden con él. Para eso sigue
+el exportar a mano. Android puede incluir esa carpeta en su copia de seguridad
+en la nube (la app no la desactiva), pero no está verificado y no se debe
+contar con ello. Las fotos no van en ninguna copia.
+
+Si la app no logra arrancar (base dañada, migración fallida), muestra una
+pantalla con el error y, si la base alcanzó a abrir, un botón para exportarla
+antes de reinstalar.
 
 **Restaurar** (Ajustes → *Restaurar desde un respaldo*): eliges el archivo,
 confirmas y la app reemplaza la base. Implementación:
@@ -19,18 +34,24 @@ El orden importa y por eso está así:
    tener las tablas `profiles`, `sessions`, `meals` y `measurements`, y un
    `user_version` (esquema) que esta app entienda. Un respaldo de una versión
    más nueva se rechaza con ese mensaje, en vez de corromper datos.
-2. **Copia de seguridad** de la base actual en `seguimiento.sqlite.pre-restore`.
+2. **Copia de seguridad** de la base actual en `seguimiento.sqlite.pre-restore`,
+   hecha con `VACUUM INTO` antes de cerrar la conexión.
 3. Cerrar la conexión, **borrar `-wal` y `-shm`** (pertenecen al archivo viejo;
    mezclarlos con la base restaurada la corrompe) y copiar el respaldo encima.
 4. Reabrir y hacer una consulta real. Si algo falla, **rollback**: vuelve la
    base anterior y el error se muestra tal cual.
 5. Al terminar bien, se borra la copia de seguridad.
 
-Después de restaurar, `databaseGenerationProvider` cambia y Riverpod recrea
-repositorios y streams: la app muestra los datos nuevos sin reiniciarse.
+Después de restaurar, **salga bien o mal**, `databaseGenerationProvider`
+cambia y Riverpod recrea repositorios y streams: la app muestra los datos
+nuevos sin reiniciarse, y un rollback no deja nada apuntando a la conexión
+cerrada. La tarjeta de Perfil también se recrea.
 
 Pruebas: [`test/data/restore_test.dart`](../test/data/restore_test.dart) cubre
-restaurar, descartar lo posterior, archivo basura, base ajena e inexistente.
+restaurar, descartar lo posterior, archivo basura, base ajena, inexistente y
+el rollback cuando la base restaurada no abre;
+[`test/data/auto_backup_test.dart`](../test/data/auto_backup_test.dart) cubre la
+frecuencia, la rotación y que una copia automática se pueda restaurar.
 
 ## Actualizaciones por GitHub Releases
 
@@ -105,7 +126,9 @@ la llave del runner al terminar, pase lo que pase. Corre en Java 17.
 
 [`ci.yml`](../.github/workflows/ci.yml) corre en cada push a `main` y en los PR:
 genera código, comprueba el manifiesto de Android (permisos y receivers que
-ninguna prueba de Dart detecta), analiza y prueba.
+ninguna prueba de Dart detecta), analiza, prueba (incluidas las de pantalla) y
+compila un APK de debug, para que un cambio de Gradle o de un plugin nativo no
+se descubra recién al etiquetar.
 
 ## Qué sigue siendo manual
 

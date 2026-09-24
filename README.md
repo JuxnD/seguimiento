@@ -48,10 +48,14 @@ Las pruebas de base de datos corren contra SQLite del sistema
 (`test/support/sqlite_host.dart`), no contra la librería que se empaqueta en el
 teléfono.
 
-No hay pruebas de widget: las que abrían la app con la base real se colgaban
-(drift dentro de `flutter_test`), así que la interfaz se verifica en el
-dispositivo. El resto — dominio, repositorios, siembra, restauración y
-migraciones — sí está cubierto.
+Hay pruebas de pantalla ([`test/ui/app_smoke_test.dart`](test/ui/app_smoke_test.dart)):
+abren la app completa sobre una base en memoria y recorren las pestañas y
+Ajustes. `flutter_test` corre en tiempo simulado, así que en esas pruebas nada
+puede esperar E/S real: la base es SQLite en memoria en el mismo isolate, lo
+que toca disco se prepara antes de montar y la base se cierra dentro de la
+prueba. Una consulta de una vez debe ser `get()`, no `watch().first`, que ahí
+se queda colgada. Permisos, notificaciones, cámara y el aspecto a ancho de
+teléfono se siguen verificando en el dispositivo.
 
 ## Publicar una versión
 
