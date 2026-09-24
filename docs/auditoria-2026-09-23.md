@@ -330,8 +330,8 @@ fase A `0d541f3`; fase B `2bc154c`, `608c9fa`, `0d8cd4c`, `8c20526`; fase C
 
 | Hallazgos | Estado | Evidencia |
 |---|---|---|
-| 1 cronómetros sin persistencia | Resuelto en código | Pruebas de foto y almacén; **falta** matar la app a mitad de circuito en el teléfono |
-| 2 alarma exacta Android 14+ | Resuelto en código | **Falta** verificar el aviso con pantalla apagada en el teléfono |
+| 1 cronómetros sin persistencia | Resuelto y verificado | Emulador Android 15 (24 sep): app matada en pleno descanso, "Retomar" vuelve al mismo descanso con el reloj al día |
+| 2 alarma exacta Android 14+ | Resuelto y verificado | Emulador Android 15: sin permiso queda alarma inexacta (ventana ~1 min) y se avisa una vez; Recordatorios abre el ajuste; con permiso queda exacta y la notificación llegó a la hora exacta con la app en segundo plano |
 | 3, 4, 5 restauración | Resuelto | `restore_test.dart` (incluye rollback) |
 | 6 editor del plan | Resuelto | Claves por ejercicio y día; validación con prueba |
 | 7 toma duplicada | Resuelto | Prueba de repositorio |
@@ -382,3 +382,20 @@ Orden propuesto, en una rama propia y con la suite actual como red:
    providers; es el cambio más grande en líneas.
 6. Gate: `flutter analyze`, `flutter test` (176+), APK de release firmado
    instalado **encima** de 1.5.0 conservando datos, y una semana de uso.
+
+## Verificación en emulador (24 sep 2026)
+
+Android 15 (API 35), app instalada encima de una base real del esquema 6:
+
+- La migración al esquema 7 abrió sin errores y conservó los datos.
+- Cronómetro: reps por ejercicio, descanso aparte del neto (los tiempos
+  suman el total), kcal con 70 kg (≈ 2 kcal a los 22 s, lo que da la fórmula).
+- Retomar tras matar el proceso en pleno descanso: mismo paso, reloj al día.
+- Alarma exacta: comportamiento de los dos casos, notificación puntual.
+- Copia automática: una en la primera apertura del día, ninguna al reabrir.
+
+La verificación encontró dos defectos que venían de antes y quedaron
+corregidos con pruebas: "Terminar" guardaba la sesión como completa (en
+circuitos, con todas las rondas del plan), y al salir del cronómetro el aviso
+de descanso no se cancelaba. Si alguna sesión anterior a la 1.7 se cerró con
+"Terminar", sus rondas pueden estar infladas: conviene revisarlas en Entreno.
