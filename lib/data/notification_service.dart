@@ -78,7 +78,13 @@ class NotificationService implements NotificationSink {
   AndroidFlutterLocalNotificationsPlugin? get _android =>
       _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
-  Future<bool> hasPermission() async => await _android?.areNotificationsEnabled() ?? true;
+  /// Fuera de Android (la app solo se publica ahí) no se puede saber: se
+  /// responde false en vez de fingir que hay permiso.
+  Future<bool> hasPermission() async {
+    final android = _android;
+    if (android == null) return false;
+    return await android.areNotificationsEnabled() ?? false;
+  }
 
   /// Android 14+ no concede alarmas exactas por defecto. Sin ellas el fin de
   /// descanso en segundo plano puede llegar minutos tarde.

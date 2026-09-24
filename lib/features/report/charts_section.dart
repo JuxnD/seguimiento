@@ -7,6 +7,7 @@ import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../ui/widgets.dart';
 import 'charts.dart';
+import '../../ui/theme.dart';
 
 /// Gráficas del informe: rondas, proteína del rango, peso y medidas.
 class ChartsSection extends ConsumerWidget {
@@ -62,7 +63,7 @@ class ChartsSection extends ConsumerWidget {
               error: (e, _) => Text('Error: $e'),
               data: (points) => DailyBarsChart(
                 points: points,
-                color: const Color(0xFF4EA8FF),
+                color: AppColors.protein,
                 goal: (profile?.proteinMin ?? 130).toDouble(),
                 unit: 'g',
               ),
@@ -80,7 +81,7 @@ class ChartsSection extends ConsumerWidget {
             weights.when(
               loading: () => const LinearProgressIndicator(),
               error: (e, _) => Text('Error: $e'),
-              data: (points) => TrendChart(points: points, color: const Color(0xFFFFB067), unit: 'kg'),
+              data: (points) => TrendChart(points: points, color: AppColors.kcal, unit: 'kg'),
             ),
           ],
         ),
@@ -127,7 +128,7 @@ class _MeasurementChartState extends ConsumerState<_MeasurementChart> {
                 Padding(
                   padding: const EdgeInsets.only(right: 6),
                   child: ChoiceChip(
-                    label: Text(site.label.split(' ').first),
+                    label: Text(site.shortLabel),
                     selected: _site == site,
                     onSelected: (_) => setState(() => _site = site),
                   ),
@@ -141,7 +142,7 @@ class _MeasurementChartState extends ConsumerState<_MeasurementChart> {
           error: (e, _) => Text('Error: $e'),
           data: (points) => TrendChart(
             points: points,
-            color: const Color(0xFF7ED957),
+            color: AppColors.body,
             unit: unit.label,
           ),
         ),

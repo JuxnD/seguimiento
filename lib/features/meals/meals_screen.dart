@@ -14,6 +14,7 @@ import '../../ui/progress_ring.dart';
 import '../../ui/widgets.dart';
 import 'foods_screen.dart';
 import 'meal_form_screen.dart';
+import '../../ui/theme.dart';
 
 class MealsScreen extends ConsumerStatefulWidget {
   const MealsScreen({super.key});
@@ -23,7 +24,7 @@ class MealsScreen extends ConsumerStatefulWidget {
 }
 
 /// Color de la sección de comidas: el mismo naranja claro del anillo de kcal.
-const _mealColor = Color(0xFFFFB067);
+const _mealColor = AppColors.kcal;
 
 class _MealsScreenState extends ConsumerState<MealsScreen> {
   late DateTime _day = ref.read(todayProvider);
@@ -58,7 +59,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
             children: [
               Row(
                 children: [
-                  IconButton(
+                  IconButton(tooltip: 'Día anterior', 
                     icon: const Icon(Icons.chevron_left),
                     onPressed: () => setState(() => _day = addDays(_day, -1)),
                   ),
@@ -89,7 +90,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                       ),
                     ),
                   ),
-                  IconButton(
+                  IconButton(tooltip: 'Día siguiente', 
                     icon: const Icon(Icons.chevron_right),
                     onPressed: () => setState(() => _day = addDays(_day, 1)),
                   ),
@@ -113,7 +114,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                             value: fmtInt(total.protein),
                             sublabel: 'de $proteinMin',
                             label: 'Proteína (g)',
-                            color: const Color(0xFF4EA8FF),
+                            color: AppColors.protein,
                             size: 104,
                           ),
                           ProgressRing(
@@ -121,7 +122,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                             value: fmtInt(total.kcal),
                             sublabel: 'de ${fmtInt(kcalTarget)}',
                             label: 'kcal',
-                            color: const Color(0xFFFFB067),
+                            color: AppColors.kcal,
                             size: 104,
                           ),
                         ],

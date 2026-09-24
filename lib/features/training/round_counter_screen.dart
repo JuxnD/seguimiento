@@ -266,7 +266,12 @@ class _BigButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Material(
+    // Un lector de pantalla leía solo "5": se dice qué hace el botón.
+    return Semantics(
+      button: true,
+      label: '$label. $sub',
+      excludeSemantics: true,
+      child: Material(
       color: scheme.primaryContainer,
       borderRadius: BorderRadius.circular(24),
       child: InkWell(
@@ -290,6 +295,7 @@ class _BigButton extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

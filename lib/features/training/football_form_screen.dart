@@ -59,7 +59,7 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
         title: Text(widget.existing == null ? 'Nuevo fútbol' : 'Editar fútbol'),
         actions: [
           if (widget.existing != null)
-            IconButton(
+            IconButton(tooltip: 'Borrar', 
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 if (await confirmDelete(context, 'el partido')) {

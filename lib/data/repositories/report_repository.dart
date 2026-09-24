@@ -24,12 +24,17 @@ class ReportRepository {
     final start = profile.programStart;
     final names = {for (final e in await db.select(db.exercises).get()) e.id: e.name};
 
-    // Plan: todas las versiones con su mapa de tipos por día.
+    // Plan: todas las versiones con su mapa de tipos por día. Dos consultas
+    // en total, no una por versión.
     final versions = await (db.select(db.planVersions)..orderBy([(x) => OrderingTerm(expression: x.id)])).get();
+    final daysByVersion = <int, List<PlanDayRow>>{};
+    for (final d in await db.select(db.planDays).get()) {
+      daysByVersion.putIfAbsent(d.planVersionId, () => []).add(d);
+    }
     final planInfos = <PlanVersionInfo>[];
     for (var i = 0; i < versions.length; i++) {
       final v = versions[i];
-      final days = await (db.select(db.planDays)..where((x) => x.planVersionId.equals(v.id))).get();
+      final days = daysByVersion[v.id] ?? const <PlanDayRow>[];
       planInfos.add(PlanVersionInfo(
         number: i + 1,
         validFrom: parseDay(v.validFrom),
@@ -38,19 +43,31 @@ class ReportRepository {
       ));
     }
 
-    // Sesiones.
+    // Sesiones, con sus series y vueltas en dos consultas (no dos por sesión).
     final sessionRows = await (db.select(db.sessions)..where((x) => x.date.isBetweenValues(f, t))).get();
-    final sessions = <SessionEntry>[];
-    for (final s in sessionRows) {
-      final sets = await (db.select(db.sessionSets)
-            ..where((x) => x.sessionId.equals(s.id))
+    final ids = [for (final s in sessionRows) s.id];
+    final setsBySession = <int, List<SessionSetRow>>{};
+    final marksBySession = <int, List<int>>{};
+    if (ids.isNotEmpty) {
+      final allSets = await (db.select(db.sessionSets)
+            ..where((x) => x.sessionId.isIn(ids))
             ..orderBy([(x) => OrderingTerm(expression: x.id)]))
           .get();
-      final marks = await (db.select(db.sessionRounds)
-            ..where((x) => x.sessionId.equals(s.id))
+      for (final set in allSets) {
+        setsBySession.putIfAbsent(set.sessionId, () => []).add(set);
+      }
+      final allRounds = await (db.select(db.sessionRounds)
+            ..where((x) => x.sessionId.isIn(ids))
             ..orderBy([(x) => OrderingTerm(expression: x.roundIndex)]))
-          .map((r) => r.elapsedSec)
           .get();
+      for (final r in allRounds) {
+        marksBySession.putIfAbsent(r.sessionId, () => []).add(r.elapsedSec);
+      }
+    }
+    final sessions = <SessionEntry>[];
+    for (final s in sessionRows) {
+      final sets = setsBySession[s.id] ?? const <SessionSetRow>[];
+      final marks = marksBySession[s.id] ?? const <int>[];
       sessions.add(SessionEntry(
         date: parseDay(s.date),
         startTime: s.startTime,
@@ -105,14 +122,10 @@ class ReportRepository {
         .getSingleOrNull();
 
     final measures = await (db.select(db.measurements)..where((x) => x.date.isBetweenValues(f, t))).get();
+    // Línea base: la primera toma de cada sitio, en una sola consulta.
     final baseline = <MeasureSite, MeasurementEntry>{};
-    for (final site in MeasureSite.values) {
-      final first = await (db.select(db.measurements)
-            ..where((x) => x.site.equalsValue(site))
-            ..orderBy([(x) => OrderingTerm(expression: x.date)])
-            ..limit(1))
-          .getSingleOrNull();
-      if (first != null) baseline[site] = _measure(first);
+    for (final m in await (db.select(db.measurements)..orderBy([(x) => OrderingTerm(expression: x.date)])).get()) {
+      baseline.putIfAbsent(m.site, () => _measure(m));
     }
     final datesBefore = await (db.selectOnly(db.measurements, distinct: true)
           ..addColumns([db.measurements.date])

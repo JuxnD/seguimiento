@@ -19,6 +19,7 @@ import '../settings/updates_card.dart';
 import '../training/active_session_banner.dart';
 import '../training/football_form_screen.dart';
 import '../training/training_screen.dart';
+import '../../ui/theme.dart';
 
 /// Pantalla de entrada: qué toca hoy, cómo voy y cómo registrarlo rápido.
 class HomeScreen extends ConsumerWidget {
@@ -33,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Hoy'),
         actions: [
-          IconButton(
+          IconButton(tooltip: 'Ajustes', 
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
           ),
@@ -176,14 +177,14 @@ class _RingsCard extends StatelessWidget {
               value: fmtInt(d.macros.protein),
               sublabel: 'de ${d.proteinMin}',
               label: 'Proteína',
-              color: const Color(0xFF4EA8FF),
+              color: AppColors.protein,
             ),
             ProgressRing(
               progress: d.kcalProgress,
               value: fmtInt(d.macros.kcal),
               sublabel: 'de ${fmtInt(d.kcalTarget)}',
               label: 'kcal',
-              color: const Color(0xFFFFB067),
+              color: AppColors.kcal,
             ),
             if (showRounds)
               ProgressRing(

@@ -76,13 +76,13 @@ class _VersionCard extends ConsumerWidget {
       ),
       children: [
         if (notes != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(notes!)),
-        FutureBuilder<PlanDraft>(
-          future: ref.read(planRepositoryProvider).load(versionId),
-          builder: (context, snap) {
-            if (!snap.hasData) return const LinearProgressIndicator();
+        ref.watch(planDraftProvider(versionId)).when(
+          loading: () => const LinearProgressIndicator(),
+          error: (e, _) => Text('Error: $e'),
+          data: (plan) {
             return Column(
               children: [
-                for (final day in snap.data!.days)
+                for (final day in plan.days)
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     dense: true,

@@ -192,7 +192,12 @@ class DailyBarsChart extends StatelessWidget {
                 getTitlesWidget: (value, meta) {
                   final i = value.round();
                   if (i < 0 || i >= points.length) return const SizedBox.shrink();
-                  return Text(weekdayShort(points[i].date.weekday),
+                  // En rangos largos, una etiqueta cada tantas barras (con el
+                  // día del mes, no el de la semana, que se repite).
+                  final every = (points.length / 8).ceil();
+                  if (i % every != 0) return const SizedBox.shrink();
+                  final d = points[i].date;
+                  return Text(points.length <= 8 ? weekdayShort(d.weekday) : '${d.day}',
                       style: Theme.of(context).textTheme.labelSmall);
                 },
               ),
@@ -223,7 +228,8 @@ class DailyBarsChart extends StatelessWidget {
                 barRods: [
                   BarChartRodData(
                     toY: points[i].value,
-                    width: 16,
+                    // 16 para una semana; más delgadas si el rango es largo.
+                    width: (16 * 7 / points.length).clamp(3, 16).toDouble(),
                     borderRadius: BorderRadius.circular(6),
                     // Bajo la meta se ve apagado: el día flojo salta a la vista.
                     color: goal != null && points[i].value < goal!

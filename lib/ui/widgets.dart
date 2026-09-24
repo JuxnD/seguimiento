@@ -208,7 +208,7 @@ class TimeTile extends StatelessWidget {
         subtitle: Text(time ?? 'Sin hora'),
         trailing: time == null
             ? const Icon(Icons.more_time)
-            : IconButton(icon: const Icon(Icons.clear), onPressed: () => onChanged(null)),
+            : IconButton(tooltip: 'Quitar', icon: const Icon(Icons.clear), onPressed: () => onChanged(null)),
         onTap: () async {
           final initial = parseTimeOfDay(time) ?? TimeOfDay.now();
           final picked = await showTimePicker(context: context, initialTime: initial);

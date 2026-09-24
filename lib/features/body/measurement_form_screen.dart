@@ -92,7 +92,7 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
         title: Text(widget.existing == null ? 'Nueva medición' : 'Editar medición'),
         actions: [
           if (widget.existing != null)
-            IconButton(
+            IconButton(tooltip: 'Borrar', 
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 if (await confirmDelete(context, 'la medición')) {

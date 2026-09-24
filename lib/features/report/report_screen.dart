@@ -30,7 +30,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (p) {
         final start = p.programStart;
-        final currentWeek = weekIndexFor(start, dateOnly(DateTime.now()));
+        final currentWeek = weekIndexFor(start, ref.watch(todayProvider));
         final week = _weekIndex ?? currentWeek;
         final range = _customRange == null
             ? weekRange(start, week)
@@ -71,11 +71,15 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                   Row(
                     children: [
                       IconButton(
+                        tooltip: 'Semana anterior',
                         icon: const Icon(Icons.chevron_left),
-                        onPressed: () => setState(() {
-                          _customRange = null;
-                          _weekIndex = week - 1;
-                        }),
+                        // Antes de la semana 1 no hay programa: no hay qué informar.
+                        onPressed: week <= 1 && _customRange == null
+                            ? null
+                            : () => setState(() {
+                                  _customRange = null;
+                                  _weekIndex = week <= 1 ? 1 : week - 1;
+                                }),
                       ),
                       Expanded(
                         child: Column(
@@ -93,6 +97,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                         ),
                       ),
                       IconButton(
+                        tooltip: 'Semana siguiente',
                         icon: const Icon(Icons.chevron_right),
                         onPressed: week >= currentWeek && _customRange == null
                             ? null

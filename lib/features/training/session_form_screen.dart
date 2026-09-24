@@ -10,14 +10,6 @@ import '../../domain/session_math.dart';
 import '../../ui/record_celebration.dart';
 import '../../ui/widgets.dart';
 
-SessionType _sessionTypeFor(DayType type) => switch (type) {
-      DayType.circuito => SessionType.circuito,
-      DayType.circuitoLigero => SessionType.circuitoLigero,
-      DayType.progresion => SessionType.progresion,
-      DayType.bloques => SessionType.bloques,
-      _ => SessionType.otro,
-    };
-
 /// Alta y edición de una sesión. Acepta un borrador ya poblado por el
 /// contador de rondas.
 class SessionFormScreen extends ConsumerStatefulWidget {
@@ -66,7 +58,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     }
     setState(() {
       d.planDayId = view.dayId;
-      d.type = _sessionTypeFor(view.day.type);
+      d.type = view.day.type.asSessionType;
       for (final e in view.day.exercises) {
         final sets = e.sets ?? 1;
         for (var i = 0; i < sets; i++) {
@@ -114,7 +106,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     final view = await ref.read(planRepositoryProvider).dayFor(d.date);
     if (view == null) return true;
     final planned = view.day.type;
-    final matches = planned.isTraining && _sessionTypeFor(planned) == d.type;
+    final matches = planned.isTraining && planned.asSessionType == d.type;
     if (matches) {
       d.outOfPlan = false;
       return true;
@@ -186,7 +178,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         title: Text(d.id == null ? 'Nueva sesión' : 'Editar sesión'),
         actions: [
           if (d.id != null)
-            IconButton(
+            IconButton(tooltip: 'Borrar', 
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 if (await confirmDelete(context, 'la sesión')) {
@@ -289,7 +281,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                 Row(
                   children: [
                     Expanded(child: Text(entry.key, style: Theme.of(context).textTheme.titleSmall)),
-                    IconButton(
+                    IconButton(tooltip: 'Añadir otra serie', 
                       icon: const Icon(Icons.add_circle_outline),
                       onPressed: () => setState(() => d.sets.add(SetDraft(
                             exercise: entry.key,
@@ -497,7 +489,7 @@ class _SetRow extends StatelessWidget {
               onChanged();
             },
           ),
-          IconButton(icon: const Icon(Icons.close), onPressed: onDelete),
+          IconButton(tooltip: 'Quitar', icon: const Icon(Icons.close), onPressed: onDelete),
         ],
       ),
     );

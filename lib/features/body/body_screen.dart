@@ -13,6 +13,7 @@ import '../../ui/hero.dart';
 import '../../ui/widgets.dart';
 import 'measurement_form_screen.dart';
 import 'photos_screen.dart';
+import '../../ui/theme.dart';
 
 class BodyScreen extends ConsumerWidget {
   const BodyScreen({super.key});
@@ -136,7 +137,7 @@ class BodyScreen extends ConsumerWidget {
   }
 
   String _summary(MeasurementCheckIn c, LengthUnit unit) => c.valuesCm.entries
-      .map((e) => '${e.key.label.split(' ').first} ${fmtDec(fromCm(e.value, unit))}')
+      .map((e) => '${e.key.shortLabel} ${fmtDec(fromCm(e.value, unit))}')
       .join(' · ');
 
   Future<void> _openMeasurement(BuildContext context, WidgetRef ref, MeasurementCheckIn? existing) =>
@@ -205,7 +206,7 @@ class _WeightDialogState extends State<_WeightDialog> {
 }
 
 /// Color de la sección Cuerpo: el verde del progreso físico.
-const _bodyColor = Color(0xFF7ED957);
+const _bodyColor = AppColors.body;
 
 /// Resumen de Cuerpo: último peso, cambio desde el primero y cuándo medir.
 class _BodyHero extends StatelessWidget {

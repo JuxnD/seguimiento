@@ -139,7 +139,7 @@ String describeActiveSession(ActiveSession s) {
 /// Retoma el cronómetro que Android cerró, en el punto exacto donde iba.
 Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSession session) async {
   switch (session) {
-    case GuidedSnapshot s:
+    case final GuidedSnapshot s:
       final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
       if (!context.mounted) return;
       if (view == null) {
@@ -159,7 +159,7 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
           resume: s,
         ),
       );
-    case CounterSnapshot s:
+    case final CounterSnapshot s:
       await _runCounter(context, date: parseDay(s.date), outOfPlan: s.outOfPlan, resume: s);
   }
 }
@@ -226,7 +226,8 @@ class _SetupDialogState extends State<_SetupDialog> {
         FilledButton(
           onPressed: () => Navigator.pop(
             context,
-            _SessionSetup(isCircuit ? int.tryParse(_rounds.text) : null, _variant),
+            // 0 rondas o vacío: se usa la meta del plan.
+            _SessionSetup(isCircuit ? _positiveOrNull(int.tryParse(_rounds.text)) : null, _variant),
           ),
           child: const Text('Empezar'),
         ),
@@ -303,7 +304,8 @@ class TrainingScreen extends ConsumerWidget {
           HeroCard(
             color: style.color,
             overline: dashboard == null ? 'Hoy' : 'Hoy · semana ${dashboard.weekIndex}',
-            title: dayType.label,
+            // Mientras carga no se muestra "Descanso": parpadeaba en gris al abrir.
+            title: dashboard == null ? ' ' : dayType.label,
             subtitle: dashboard?.targetRounds == null ? null : 'Meta: ${dashboard!.targetRounds} rondas',
             icon: style.icon,
             pills: [
@@ -449,3 +451,5 @@ class _FootballTile extends StatelessWidget {
     );
   }
 }
+
+int? _positiveOrNull(int? v) => v == null || v <= 0 ? null : v;

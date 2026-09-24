@@ -179,7 +179,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
             onPressed: d.items.isEmpty ? null : _saveAsTemplate,
           ),
           if (d.id != null)
-            IconButton(
+            IconButton(tooltip: 'Borrar', 
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 if (await confirmDelete(context, 'la comida')) {
@@ -231,7 +231,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
                   subtitle: Text('${item.isFree ? 'estimado · ' : ''}'
                       '${fmtInt(item.macros.kcal)} kcal · P ${fmtDec(item.macros.protein)} g · '
                       'C ${fmtDec(item.macros.carbs)} g · G ${fmtDec(item.macros.fat)} g'),
-                  trailing: IconButton(
+                  trailing: IconButton(tooltip: 'Quitar', 
                     icon: const Icon(Icons.close),
                     onPressed: () => setState(() => d.items.remove(item)),
                   ),

@@ -176,7 +176,7 @@ class _ExerciseRow extends StatelessWidget {
                   onChanged: (v) => exercise.name = v,
                 ),
               ),
-              IconButton(icon: const Icon(Icons.close), onPressed: onDelete),
+              IconButton(tooltip: 'Quitar', icon: const Icon(Icons.close), onPressed: onDelete),
             ],
           ),
           const SizedBox(height: 6),

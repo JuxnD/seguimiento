@@ -243,9 +243,14 @@ class _CheckInRow extends ConsumerWidget {
                             await ref.read(photoRepositoryProvider).delete(checkIn.byAngle[angle]!);
                           }
                         },
-                        child: AspectRatio(
-                          aspectRatio: 3 / 4,
-                          child: _PhotoView(row: checkIn.byAngle[angle]!, caption: angle.label),
+                        child: Semantics(
+                          label: 'Foto de ${angle.label.toLowerCase()} del ${formatLong(checkIn.date)}. '
+                              'Mantén presionado para borrarla.',
+                          image: true,
+                          child: AspectRatio(
+                            aspectRatio: 3 / 4,
+                            child: _PhotoView(row: checkIn.byAngle[angle]!, caption: angle.label),
+                          ),
                         ),
                       ),
                     ),

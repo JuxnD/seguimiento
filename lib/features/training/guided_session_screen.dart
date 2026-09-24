@@ -13,11 +13,12 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
 import '../../domain/report/report_input.dart' show Targets;
-import '../../domain/session_math.dart' show meanSec;
+import '../../domain/session_math.dart' show lapDurations, meanSec;
 import '../../domain/session_script.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
+import '../../ui/theme.dart';
 
 /// Convierte el día del plan en algo que el guion entiende.
 ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
@@ -317,7 +318,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     return SessionDraft(
       date: widget.date,
       startTime: timeKey(_startedAt.hour, _startedAt.minute),
-      type: widget.sessionType ?? _typeFor(widget.day.type),
+      type: widget.sessionType ?? widget.day.type.asSessionType,
       planDayId: widget.planDayId,
       totalSec: _totalSec,
       warmupSec: _warmupSec,
@@ -329,14 +330,6 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       sets: [for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps)],
     );
   }
-
-  static SessionType _typeFor(DayType type) => switch (type) {
-        DayType.circuito => SessionType.circuito,
-        DayType.circuitoLigero => SessionType.circuitoLigero,
-        DayType.progresion => SessionType.progresion,
-        DayType.bloques => SessionType.bloques,
-        _ => SessionType.otro,
-      };
 
   @override
   Widget build(BuildContext context) {
@@ -458,7 +451,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton.filledTonal(
+              IconButton.filledTonal(tooltip: 'Una menos', 
                 iconSize: 32,
                 onPressed: (_reps ?? 0) > 0 ? () => _setReps(_reps! - 1) : null,
                 icon: const Icon(Icons.remove),
@@ -475,7 +468,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                   color: (_reps ?? 0) >= target ? scheme.primary : scheme.primary.withOpacity(0.6),
                 ),
               ),
-              IconButton.filledTonal(
+              IconButton.filledTonal(tooltip: 'Una más', 
                 iconSize: 32,
                 onPressed: () => _setReps((_reps ?? 0) + 1),
                 icon: const Icon(Icons.add),
@@ -513,7 +506,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         prev is WorkStep && prev.isRound && roundsClosed > 0 && roundsClosed % _exercisesPerRound == 0
             ? prev.position
             : null;
-    final laps = _roundMarks.isEmpty ? const <int>[] : lapDurationsOf(_roundMarks);
+    final laps = _roundMarks.isEmpty ? const <int>[] : lapDurations(_roundMarks);
     return Column(
       children: [
         if (closedRound != null)
@@ -530,7 +523,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           label: '',
           size: 200,
           stroke: 14,
-          color: const Color(0xFF4EA8FF),
+          color: AppColors.protein,
         ),
         const SizedBox(height: 12),
         Text('A continuación', style: Theme.of(context).textTheme.labelLarge),
@@ -633,7 +626,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   Widget _summary() {
     final draft = _buildDraft();
-    final laps = _roundMarks.isEmpty ? <int>[] : lapDurationsOf(_roundMarks);
+    final laps = _roundMarks.isEmpty ? <int>[] : lapDurations(_roundMarks);
     return ListView(
       children: [
         _CompletionHeader(draft: draft, lapsSec: laps, color: styleForDay(widget.day.type).color),
@@ -692,17 +685,6 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 }
 
-/// Marcas acumuladas → duración de cada vuelta.
-List<int> lapDurationsOf(List<int> marks) {
-  final out = <int>[];
-  var prev = 0;
-  for (final m in marks) {
-    out.add(m - prev);
-    prev = m;
-  }
-  return out;
-}
-
 class _Stat extends StatelessWidget {
   const _Stat(this.label, this.value);
 
@@ -746,7 +728,11 @@ class _BigButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Material(
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: Material(
       color: scheme.primary,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
@@ -773,6 +759,7 @@ class _BigButton extends StatelessWidget {
           ),
         ),
       ),
+      ),
     );
   }
 }
@@ -786,7 +773,7 @@ class _RoundBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const green = Color(0xFF7ED957);
+    const green = AppColors.body;
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.4, end: 1),
       duration: const Duration(milliseconds: 700),
@@ -853,7 +840,7 @@ class _PhasePanel extends StatelessWidget {
           label: '',
           size: 200,
           stroke: 14,
-          color: done ? const Color(0xFF7ED957) : scheme.primary,
+          color: done ? AppColors.body : scheme.primary,
         ),
         const SizedBox(height: 8),
         Text(detail, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
@@ -902,7 +889,7 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
       plannedRounds: d.plannedRounds,
       meanLapSec: meanSec(widget.lapsSec),
       previousRounds: previous?.$2,
-      previousMeanLapSec: previous == null ? null : meanSec(lapDurationsOf(previous.$3)),
+      previousMeanLapSec: previous == null ? null : meanSec(lapDurations(previous.$3)),
       previousDateLabel:
           previous == null ? null : 'el ${weekdayLong(previous.$1.weekday).toLowerCase()} ${previous.$1.day}',
       incomplete: d.incomplete,
@@ -919,7 +906,7 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
         final c = snap.data;
         final (title, body) = c == null ? ('Sesión terminada', '') : sessionPraise(c);
         final record = c?.isRecord ?? false;
-        final color = record ? const Color(0xFFFFC53D) : widget.color;
+        final color = record ? AppColors.record : widget.color;
         return AnimatedBuilder(
           animation: _anim,
           builder: (context, _) {

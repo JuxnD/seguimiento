@@ -244,7 +244,8 @@ class _FoodDialogState extends State<FoodDialog> {
                 protein: Value(protein),
                 carbs: Value(parseNum(_carbs.text) ?? 0),
                 fat: Value(parseNum(_fat.text) ?? 0),
-                defaultQuantity: Value(parseNum(_qty.text) ?? 1),
+                // 0 o vacío abriría el diálogo de cantidad con el botón apagado.
+                defaultQuantity: Value(_positiveOr(parseNum(_qty.text), 1)),
                 source: Value(_source),
               ),
             );
@@ -255,3 +256,5 @@ class _FoodDialogState extends State<FoodDialog> {
     );
   }
 }
+
+double _positiveOr(double? value, double fallback) => value == null || value <= 0 ? fallback : value;

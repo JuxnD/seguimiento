@@ -178,6 +178,10 @@ class SettingsScreen extends ConsumerWidget {
     try {
       final dir = await getTemporaryDirectory();
       final path = p.join(dir.path, 'seguimiento-${dayKey(DateTime.now())}.sqlite');
+      // Las exportaciones anteriores ya se compartieron: se borran para no
+      // acumular una copia de la base por día. La de hoy se deja, porque la
+      // app que la recibe puede leerla después de cerrar el menú de compartir.
+      await _deleteOldExports(dir, keep: p.basename(path));
       final file = await ref.read(databaseHostProvider).exportTo(path);
       await Share.shareXFiles([XFile(file.path)], subject: 'Respaldo Seguimiento');
     } on Object catch (e) {
@@ -365,5 +369,18 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
         ),
       ],
     );
+  }
+}
+
+Future<void> _deleteOldExports(Directory dir, {required String keep}) async {
+  final exports = RegExp(r'^seguimiento-\d{4}-\d{2}-\d{2}\.sqlite$');
+  for (final f in dir.listSync().whereType<File>()) {
+    final name = p.basename(f.path);
+    if (name == keep || !exports.hasMatch(name)) continue;
+    try {
+      await f.delete();
+    } on Object {
+      // Tomado por otra app: se intenta la próxima vez.
+    }
   }
 }

@@ -20,6 +20,16 @@ extension DayTypeLabel on DayType {
   /// Días que se registran contando rondas.
   bool get isCircuit =>
       this == DayType.circuito || this == DayType.circuitoLigero || this == DayType.progresion;
+
+  /// Tipo de sesión que corresponde a entrenar este día. Fútbol y descanso no
+  /// son sesiones: si se entrena igual, queda como "Otro".
+  SessionType get asSessionType => switch (this) {
+        DayType.circuito => SessionType.circuito,
+        DayType.circuitoLigero => SessionType.circuitoLigero,
+        DayType.progresion => SessionType.progresion,
+        DayType.bloques => SessionType.bloques,
+        DayType.futbol || DayType.descanso => SessionType.otro,
+      };
 }
 
 /// Tipo de una sesión registrada. El fútbol va aparte (FootballGames).
@@ -94,6 +104,20 @@ extension MeasureSiteLabel on MeasureSite {
         MeasureSite.cadera => 'Cadera',
         MeasureSite.brazoRelajado => 'Brazo relajado',
         MeasureSite.brazoTensionado => 'Brazo tensionado',
+        MeasureSite.cuadriceps => 'Cuádriceps',
+        MeasureSite.pantorrilla => 'Pantorrilla',
+        MeasureSite.pecho => 'Pecho',
+        MeasureSite.hombros => 'Hombros',
+      };
+
+  /// Para chips y resúmenes. Distinta por sitio: "Brazo" a secas no dice si
+  /// es relajado o tensionado.
+  String get shortLabel => switch (this) {
+        MeasureSite.abdomen => 'Abdomen',
+        MeasureSite.cinturaEstrecha => 'Cintura',
+        MeasureSite.cadera => 'Cadera',
+        MeasureSite.brazoRelajado => 'Brazo rel.',
+        MeasureSite.brazoTensionado => 'Brazo tens.',
         MeasureSite.cuadriceps => 'Cuádriceps',
         MeasureSite.pantorrilla => 'Pantorrilla',
         MeasureSite.pecho => 'Pecho',

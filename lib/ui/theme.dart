@@ -3,6 +3,15 @@ import 'package:flutter/services.dart';
 
 /// Tema oscuro tipo gimnasio: negro de fondo, naranja para lo accionable.
 /// El naranja se reserva para acciones y datos en foco; el resto es gris.
+/// Colores de dato: cada métrica se ve igual en toda la app (anillos,
+/// gráficas, tarjetas). Antes estaban repetidos a mano en seis archivos.
+abstract final class AppColors {
+  static const protein = Color(0xFF4EA8FF);
+  static const kcal = Color(0xFFFFB067);
+  static const body = Color(0xFF7ED957);
+  static const record = Color(0xFFFFC53D);
+}
+
 const _orange = Color(0xFFFF7A18);
 const _orangeDeep = Color(0xFFE85D04);
 const _black = Color(0xFF0B0B0C);
@@ -16,11 +25,11 @@ const appColors = ColorScheme(
   onPrimary: Color(0xFF1A0C00),
   primaryContainer: _orangeDeep,
   onPrimaryContainer: Color(0xFFFFF2E6),
-  secondary: Color(0xFFFFB067),
+  secondary: AppColors.kcal,
   onSecondary: Color(0xFF241100),
   secondaryContainer: Color(0xFF3A2410),
   onSecondaryContainer: Color(0xFFFFDDBF),
-  tertiary: Color(0xFF7ED957),
+  tertiary: AppColors.body,
   onTertiary: Color(0xFF0B1A05),
   error: Color(0xFFFF6B6B),
   onError: Color(0xFF2A0000),

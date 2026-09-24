@@ -206,6 +206,11 @@ final rescheduleRemindersProvider = Provider<Future<void> Function()>((ref) => c
 
 final profileProvider = StreamProvider((ref) => ref.watch(profileRepositoryProvider).watch());
 final exercisesProvider = StreamProvider((ref) => ref.watch(exerciseRepositoryProvider).watchAll());
+/// Una versión del plan completa. Es inmutable: se carga una vez y queda.
+final planDraftProvider = FutureProvider.family<PlanDraft, int>((ref, versionId) {
+  ref.watch(databaseGenerationProvider);
+  return ref.read(planRepositoryProvider).load(versionId);
+});
 final planVersionsProvider = StreamProvider((ref) => ref.watch(planRepositoryProvider).watchVersions());
 final sessionsProvider = StreamProvider((ref) => ref.watch(trainingRepositoryProvider).watchRecent());
 final footballProvider = StreamProvider((ref) => ref.watch(trainingRepositoryProvider).watchFootball());
