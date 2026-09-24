@@ -15,9 +15,15 @@ class ActiveSessionBanner extends ConsumerWidget {
     final session = ref.watch(activeSessionProvider).valueOrNull;
     if (session == null) return const SizedBox.shrink();
     final scheme = Theme.of(context).colorScheme;
+    // Fondo oscuro con borde de acento: sobre el contenedor naranja,
+    // "Descartar" (texto naranja) y "Retomar" (botón naranja) no se veían.
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-      color: scheme.primaryContainer,
+      color: scheme.surfaceContainerHighest,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: scheme.primary, width: 1.5),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -25,12 +31,12 @@ class ActiveSessionBanner extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.timer_outlined, color: scheme.onPrimaryContainer),
+                Icon(Icons.timer_outlined, color: scheme.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Sesión sin terminar: empezó ${describeActiveSession(session)}',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(color: scheme.onPrimaryContainer),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(color: scheme.onSurface),
                   ),
                 ),
               ],

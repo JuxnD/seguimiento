@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../app/providers.dart';
+import '../../data/notification_service.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
@@ -83,7 +85,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       buildScript(scriptDayFrom(widget.day), rounds: widget.roundsOverride, coreVariant: widget.coreVariant);
   late final int _exercisesPerRound = widget.day.main.isEmpty ? 1 : widget.day.main.length;
 
-  late final DateTime _startedAt = widget.resume?.startedAt ?? DateTime.now();
+  late final DateTime _startedAt = widget.resume?.startedAt ?? clock.now();
   late DateTime? _workStartedAt = widget.resume?.workStartedAt;
   late DateTime? _workEndedAt = widget.resume?.workEndedAt;
   late DateTime? _endedAt = widget.resume?.endedAt;
@@ -102,14 +104,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   late GuidedPhase _phase = widget.resume?.phase ?? GuidedPhase.calentamiento;
   Timer? _ticker;
 
+  /// Se toma al iniciar: en `dispose` Riverpod ya no deja usar `ref`, y ahí
+  /// hay que cancelar el aviso de fin de descanso.
+  late final NotificationService _notifications;
+
   @override
   void initState() {
     super.initState();
+    _notifications = ref.read(notificationServiceProvider);
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     WakelockPlus.enable();
     // Una sesión retomada en mitad de un descanso vuelve a programar su aviso.
     if (widget.resume != null && _current is RestStep && _restStartedAt != null) {
-      final left = (_current as RestStep).seconds - DateTime.now().difference(_restStartedAt!).inSeconds;
+      final left = (_current as RestStep).seconds - clock.now().difference(_restStartedAt!).inSeconds;
       if (left > 0) {
         unawaited(ref
             .read(notificationServiceProvider)
@@ -143,19 +150,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   void dispose() {
     _ticker?.cancel();
     WakelockPlus.disable();
-    unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
+    unawaited(_notifications.cancelRestEnd());
     super.dispose();
   }
 
   ScriptStep? get _current => _index < _steps.length ? _steps[_index] : null;
 
-  DateTime get _clock => _endedAt ?? DateTime.now();
+  DateTime get _clock => _endedAt ?? clock.now();
   int get _totalSec => _clock.difference(_startedAt).inSeconds;
-  int get _warmupSec => (_workStartedAt ?? DateTime.now()).difference(_startedAt).inSeconds;
+  int get _warmupSec => (_workStartedAt ?? clock.now()).difference(_startedAt).inSeconds;
   /// Descanso en curso: lo que va de la cuenta regresiva actual.
   int get _restNowSec {
     if (_current is! RestStep || _restStartedAt == null) return 0;
-    return _restCap(DateTime.now().difference(_restStartedAt!).inSeconds);
+    return _restCap(clock.now().difference(_restStartedAt!).inSeconds);
   }
 
   /// Descansos de la sesión (cerrados + el que corre).
@@ -166,7 +173,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// enfriamiento − descanso), para que ambos muestren el mismo número.
   int get _netSec {
     if (_workStartedAt == null) return 0;
-    final span = (_workEndedAt ?? DateTime.now()).difference(_workStartedAt!).inSeconds;
+    final span = (_workEndedAt ?? clock.now()).difference(_workStartedAt!).inSeconds;
     final net = span - _restSec;
     return net < 0 ? 0 : net;
   }
@@ -219,7 +226,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   int get _restRemaining {
     final step = _current;
     if (step is! RestStep || _restStartedAt == null) return 0;
-    final elapsed = DateTime.now().difference(_restStartedAt!).inSeconds;
+    final elapsed = clock.now().difference(_restStartedAt!).inSeconds;
     return step.seconds - elapsed;
   }
 
@@ -242,7 +249,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   void _startWork() {
     setState(() {
-      _workStartedAt = DateTime.now();
+      _workStartedAt = clock.now();
       _phase = GuidedPhase.trabajo;
       _prepareStep();
     });
@@ -251,13 +258,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   void _prepareStep() {
     final step = _current;
-    final notifications = ref.read(notificationServiceProvider);
+    final notifications = _notifications;
     if (step is WorkStep) {
       _reps = step.targetReps;
       _restStartedAt = null;
       unawaited(notifications.cancelRestEnd());
     } else if (step is RestStep) {
-      _restStartedAt = DateTime.now();
+      _restStartedAt = clock.now();
       // Con la app en segundo plano el sonido no llega: la notificación sí.
       unawaited(notifications
           .scheduleRestEnd(inSeconds: Duration(seconds: step.seconds), nextLabel: step.nextLabel)
@@ -287,7 +294,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
     // Al cerrar la última parada de una ronda, queda la marca de la vuelta.
     if (step.isRound && _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
-      _roundMarks.add(DateTime.now().difference(_workStartedAt!).inSeconds);
+      _roundMarks.add(clock.now().difference(_workStartedAt!).inSeconds);
       unawaited(HapticFeedback.mediumImpact());
     }
     _advance();
@@ -308,9 +315,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   void _endWork() {
     _closeRest();
-    _workEndedAt ??= DateTime.now();
+    _workEndedAt ??= clock.now();
     _phase = GuidedPhase.enfriamiento;
-    unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
+    unawaited(_notifications.cancelRestEnd());
     unawaited(HapticFeedback.mediumImpact());
   }
 
@@ -333,7 +340,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       if (ok != true) return;
     }
     setState(() {
-      _endedAt = DateTime.now();
+      _endedAt = clock.now();
       _phase = GuidedPhase.terminado;
     });
     _persist();
@@ -341,7 +348,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 
   void _skipRest() {
-    unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
+    unawaited(_notifications.cancelRestEnd());
     _advance();
   }
 
@@ -361,8 +368,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     );
     if (ok != true) return;
     setState(() {
+      // El índice queda donde iba: de él salen "incompleta" y las rondas
+      // completas. Antes se ponía al final y una sesión cortada se guardaba
+      // como completa, con todas las rondas del plan.
       _closeRest();
-      _index = _steps.length;
       _endWork();
     });
     _persist();
