@@ -105,31 +105,38 @@ En GitHub → *Settings* → *Secrets and variables* → *Actions*:
 | `KEY_ALIAS` | `seguimiento` |
 | `KEY_PASSWORD` | Contraseña de la llave |
 
-### Estado real de la firma (24 sep 2026)
+### La llave de las releases
 
-**El repositorio no tiene los secrets de firma** (`gh secret list` vacío), así
-que `release.yml` nunca publicó: pasa análisis, pruebas y la comprobación de la
-etiqueta, y falla en "Preparar llave de firma". Todas las releases, de la 1.0.1
-a la 1.6.0, se publicaron **a mano** con un APK compilado en el equipo de
-desarrollo sin `key.properties`, es decir, **firmado con la llave debug de ese
-equipo** (`~/.android/debug.keystore`, SHA-256 `6F:83:9C:41:…:AC:13:3E:D7`).
+Hasta la 1.6.0 el repositorio no tenía secrets de firma: `release.yml` fallaba en
+"Preparar llave de firma" y todas las releases (1.0.1 a 1.6.0) se subieron **a
+mano**, con un APK compilado en el equipo de desarrollo sin `key.properties`, es
+decir, **firmado con la llave debug de ese equipo** (`~/.android/debug.keystore`,
+SHA-256 `6F:83:9C:41:…:AC:13:3E:D7`).
+
+Decisión (24 sep 2026): esa llave debug **es** la llave de las releases, para no
+romper la ruta de actualización de lo ya instalado. Se subió como secret:
+
+| Secret | Valor |
+|---|---|
+| `KEYSTORE_BASE64` | `debug.keystore` en base64 |
+| `KEYSTORE_PASSWORD` | `android` |
+| `KEY_ALIAS` | `androiddebugkey` |
+| `KEY_PASSWORD` | `android` |
+
+Desde la próxima etiqueta, CI firma y publica solo. Pendiente: confirmar con la
+primera release de CI que la huella del APK publicado es la de arriba
+(`keytool -printcert -jarfile`).
 
 Consecuencias:
 
-- La app instalada solo acepta actualizaciones firmadas con **esa** llave
-  debug. Si se configuran los secrets con una llave nueva, la siguiente release
-  de CI **no se podrá instalar encima**: habría que exportar, desinstalar,
-  instalar y restaurar (las fotos no viajan en el respaldo).
-- Perder o reinstalar ese equipo (o borrar `debug.keystore`) corta la ruta de
-  actualización igual. Hay que respaldar ese archivo como si fuera la llave de
-  release.
-- Mientras tanto, para publicar: `flutter build apk --release
-  --dart-define=GITHUB_REPO=JuxnD/seguimiento`, comprobar la firma con
-  `keytool -printcert -jarfile` y `gh release create vX.Y.Z <apk>`.
-
-La salida limpia es decidir una sola llave: o se sube la debug actual como
-secret (y se respalda), o se migra a una llave propia aceptando reinstalar una
-vez. Es una decisión del dueño, pendiente.
+- `debug.keystore` de ese equipo **es la llave de release**: hay que respaldarlo
+  fuera del equipo. Perderlo corta la ruta de actualización (habría que
+  exportar, desinstalar, instalar y restaurar; las fotos no viajan).
+- Su contraseña es la pública de Android: la protección real es que el archivo
+  no salga del equipo ni de los secrets. No se sube al repositorio.
+- Para subir los secrets desde `cmd` (sin salto de línea al final, que rompe el
+  `base64 -d` del runner):
+  `powershell -NoProfile -Command "$b = [Convert]::ToBase64String([IO.File]::ReadAllBytes($env:USERPROFILE + '\.android\debug.keystore')); gh secret set KEYSTORE_BASE64 -R JuxnD/seguimiento --body $b"`
 
 ### Publicar una versión
 
