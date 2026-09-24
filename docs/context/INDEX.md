@@ -38,7 +38,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 - Las versiones se publican como GitHub Releases públicas y **todas deben ir
   firmadas con la misma llave**, o Android no deja actualizar sobre lo instalado.
   Esa llave es la **debug del equipo de desarrollo**, subida como secret el 24
-  sep 2026; desde ahí CI firma y publica. Ver "La llave de las releases" en
+  sep 2026; desde la 1.6.1 CI firma y publica (huella verificada). Ver "La llave de las releases" en
   [actualizaciones.md](../actualizaciones.md).
 - Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, ventana de
   medición) viven en la tabla `profiles` y se pueden editar en Ajustes.

@@ -123,9 +123,9 @@ romper la ruta de actualización de lo ya instalado. Se subió como secret:
 | `KEY_ALIAS` | `androiddebugkey` |
 | `KEY_PASSWORD` | `android` |
 
-Desde la próxima etiqueta, CI firma y publica solo. Pendiente: confirmar con la
-primera release de CI que la huella del APK publicado es la de arriba
-(`keytool -printcert -jarfile`).
+Desde la 1.6.1 CI firma y publica solo. Verificado el 24 sep 2026: el APK que
+publicó CI para la 1.6.1 tiene la misma huella que las releases manuales
+(`keytool -printcert -jarfile`) y `versionCode` 10, así que se instala encima.
 
 Consecuencias:
 
