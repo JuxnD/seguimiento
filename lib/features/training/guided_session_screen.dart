@@ -10,6 +10,8 @@ import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
+import '../../domain/energy.dart';
+import '../../domain/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
 import '../../domain/report/report_input.dart' show Targets;
@@ -87,6 +89,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   late DateTime? _endedAt = widget.resume?.endedAt;
   late DateTime? _restStartedAt = widget.resume?.restStartedAt;
 
+  /// Descansos ya cerrados, en segundos. El trabajo neto los descuenta.
+  late int _restAccumSec = widget.resume?.restAccumSec ?? 0;
+
   late final _done = <DoneStep>[...?widget.resume?.done];
 
   /// Segundos desde el inicio del trabajo al cerrar cada ronda.
@@ -128,6 +133,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         workEndedAt: _workEndedAt,
         endedAt: _endedAt,
         restStartedAt: _restStartedAt,
+        restAccumSec: _restAccumSec,
         reps: _reps,
         done: List.of(_done),
         roundMarks: List.of(_roundMarks),
@@ -146,14 +152,62 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   DateTime get _clock => _endedAt ?? DateTime.now();
   int get _totalSec => _clock.difference(_startedAt).inSeconds;
   int get _warmupSec => (_workStartedAt ?? DateTime.now()).difference(_startedAt).inSeconds;
-  /// Con el trabajo cerrado, neto = total − calentamiento − enfriamiento: la
-  /// misma cuenta del formulario, para que ambos muestren el mismo número.
+  /// Descanso en curso: lo que va de la cuenta regresiva actual.
+  int get _restNowSec {
+    if (_current is! RestStep || _restStartedAt == null) return 0;
+    return _restCap(DateTime.now().difference(_restStartedAt!).inSeconds);
+  }
+
+  /// Descansos de la sesión (cerrados + el que corre).
+  int get _restSec => _restAccumSec + _restNowSec;
+
+  /// Trabajo neto: desde que empieza el trabajo hasta que termina, sin los
+  /// descansos. Es la misma cuenta del formulario (total − calentamiento −
+  /// enfriamiento − descanso), para que ambos muestren el mismo número.
   int get _netSec {
     if (_workStartedAt == null) return 0;
-    if (_workEndedAt == null) return DateTime.now().difference(_workStartedAt!).inSeconds;
-    final net = _totalSec - _warmupSec - _cooldownSec;
+    final span = (_workEndedAt ?? DateTime.now()).difference(_workStartedAt!).inSeconds;
+    final net = span - _restSec;
     return net < 0 ? 0 : net;
   }
+
+  /// Un descanso cuenta como mucho lo que pide el plan: si la app estuvo en
+  /// segundo plano y el aviso ya sonó, el tiempo de más casi siempre fue
+  /// trabajo, no descanso.
+  int _restCap(int elapsed) {
+    final step = _current;
+    if (step is! RestStep) return elapsed;
+    final max = step.maxSec ?? step.seconds;
+    return elapsed.clamp(0, max);
+  }
+
+  /// Suma el descanso que corre al acumulado. Se llama al salir de un paso de
+  /// descanso por cualquier camino: se acabó, se saltó o se terminó antes.
+  void _closeRest() {
+    if (_current is RestStep && _restStartedAt != null) {
+      _restAccumSec += _restNowSec;
+    }
+    _restStartedAt = null;
+  }
+
+  /// Peso más reciente para estimar las kcal; null si no hay pesajes.
+  double? get _weightKg => ref.read(latestWeightProvider);
+
+  SessionType get _sessionType => widget.sessionType ?? widget.day.type.asSessionType;
+
+  /// kcal aproximadas hasta ahora (MET por fase × peso × tiempo).
+  double? get _kcal => sessionKcal(
+        type: _sessionType,
+        weightKg: _weightKg,
+        warmupSec: _warmupSec,
+        workSec: _netSec,
+        restSec: _restSec,
+        cooldownSec: _cooldownSec,
+      );
+
+  /// Repeticiones ya hechas de un ejercicio en esta sesión.
+  int _repsSoFar(String exercise) =>
+      _done.where((d) => d.exercise == exercise).fold(0, (sum, d) => sum + d.reps);
   int get _cooldownSec => _workEndedAt == null ? 0 : _clock.difference(_workEndedAt!).inSeconds;
 
   /// Metas del perfil (6 min antes y 3 min después por defecto). Menos de
@@ -241,6 +295,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   void _advance() {
     setState(() {
+      _closeRest();
       _index++;
       if (_current == null) {
         _endWork();
@@ -252,6 +307,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 
   void _endWork() {
+    _closeRest();
     _workEndedAt ??= DateTime.now();
     _phase = GuidedPhase.enfriamiento;
     unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
@@ -285,7 +341,6 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 
   void _skipRest() {
-    _restStartedAt = null;
     unawaited(ref.read(notificationServiceProvider).cancelRestEnd());
     _advance();
   }
@@ -306,6 +361,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     );
     if (ok != true) return;
     setState(() {
+      _closeRest();
       _index = _steps.length;
       _endWork();
     });
@@ -318,11 +374,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     return SessionDraft(
       date: widget.date,
       startTime: timeKey(_startedAt.hour, _startedAt.minute),
-      type: widget.sessionType ?? widget.day.type.asSessionType,
+      type: _sessionType,
       planDayId: widget.planDayId,
       totalSec: _totalSec,
       warmupSec: _warmupSec,
       cooldownSec: _cooldownSec,
+      restSec: _restSec,
       roundsDone: rounds,
       plannedRounds: isCircuit ? (widget.roundsOverride ?? widget.day.targetRounds) : workStepCount(_steps),
       incomplete: _index < _steps.length,
@@ -333,6 +390,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Para que las kcal aparezcan en cuanto se conozca el peso.
+    ref.watch(latestWeightProvider);
     final finished = _phase == GuidedPhase.terminado;
     return PopScope(
       canPop: false,
@@ -386,9 +445,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
               _Stat('Total', formatDuration(_totalSec)),
               _Stat('Calent.', formatDuration(_warmupSec)),
               _Stat('Neto', formatDuration(_netSec)),
+              _Stat('Desc.', formatDuration(_restSec)),
               _Stat('Enfr.', formatDuration(_cooldownSec)),
             ],
           ),
+          const SizedBox(height: 6),
+          _KcalLine(kcal: _kcal),
         ],
       );
 
@@ -445,6 +507,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           style: text.headlineMedium?.copyWith(color: scheme.primary, fontWeight: FontWeight.w800),
         ),
         if (step.grip != null) Text('Agarre ${step.grip}', style: text.titleMedium),
+        _RepsSoFar(exercise: step.exercise, reps: _repsSoFar(step.exercise)),
         const Spacer(),
         // El anillo se llena al llegar al objetivo: ajustar reps se ve.
         if (target != null)
@@ -609,10 +672,20 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             if (rounds == null) _Stat('Series', '${_done.length}'),
             _Stat('Reps', '$reps'),
             _Stat('Neto', formatDuration(_netSec)),
+            _Stat('Desc.', formatDuration(_restSec)),
           ],
         ),
       ],
     );
+  }
+
+  /// Repeticiones por ejercicio, en el orden en que aparecieron.
+  Map<String, int> _exerciseTotals() {
+    final out = <String, int>{};
+    for (final d in _done) {
+      out[d.exercise] = (out[d.exercise] ?? 0) + d.reps;
+    }
+    return out;
   }
 
   /// Lo que viene después del paso actual, para no tener que pensar.
@@ -641,14 +714,18 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
               children: [
                 _SummaryRow('Calentamiento', formatDuration(draft.warmupSec)),
                 _SummaryRow('Trabajo neto', formatDuration(_netSec)),
+                _SummaryRow('Descanso', formatDuration(draft.restSec)),
                 _SummaryRow('Enfriamiento', formatDuration(draft.cooldownSec)),
                 _SummaryRow('Total', formatDuration(draft.totalSec)),
+                if (_kcal != null) _SummaryRow('Gasto aproximado', '≈ ${fmtInt(_kcal!)} kcal'),
                 const Divider(),
                 if (draft.roundsDone != null)
                   _SummaryRow('Rondas', '${draft.roundsDone} de ${draft.plannedRounds ?? '—'}')
                 else
                   _SummaryRow('Series', '${_done.length} de ${draft.plannedRounds ?? '—'}'),
                 if (laps.isNotEmpty) _SummaryRow('Tiempo por ronda', laps.map(formatDuration).join(' · ')),
+                const Divider(),
+                for (final e in _exerciseTotals().entries) _SummaryRow(e.key, '${e.value} reps'),
                 if (draft.incomplete) const _SummaryRow('Cierre', 'Incompleta'),
               ],
             ),
@@ -698,6 +775,52 @@ class _Stat extends StatelessWidget {
           Text(value, style: Theme.of(context).textTheme.titleMedium),
         ],
       );
+}
+
+/// "Llevas 36 reps de Flexiones": el acumulado del ejercicio en pantalla,
+/// sin contar la serie que se está haciendo.
+class _RepsSoFar extends StatelessWidget {
+  const _RepsSoFar({required this.exercise, required this.reps});
+
+  final String exercise;
+  final int reps;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: Text(
+          reps == 0 ? 'Primera vez hoy con este ejercicio' : 'Llevas $reps reps de $exercise',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+      );
+}
+
+/// Gasto aproximado en vivo. Sin peso registrado no inventa un número: dice
+/// qué falta.
+class _KcalLine extends StatelessWidget {
+  const _KcalLine({required this.kcal});
+
+  final double? kcal;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.local_fire_department, size: 16, color: AppColors.kcal),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            kcal == null ? 'Registra tu peso para estimar las kcal' : '≈ ${fmtInt(kcal!)} kcal (aprox.)',
+            style: text.labelLarge,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _SummaryRow extends StatelessWidget {

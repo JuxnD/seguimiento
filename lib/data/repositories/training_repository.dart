@@ -26,6 +26,7 @@ class SessionDraft {
     this.totalSec = 0,
     this.warmupSec = 0,
     this.cooldownSec = 0,
+    this.restSec = 0,
     this.roundsDone,
     this.roundsEstimated = false,
     this.rpe,
@@ -51,6 +52,9 @@ class SessionDraft {
   int totalSec;
   int warmupSec;
   int cooldownSec;
+
+  /// Descansos sumados: van aparte del trabajo neto.
+  int restSec;
   int? roundsDone;
   bool roundsEstimated;
   int? rpe;
@@ -76,7 +80,12 @@ class SessionDraft {
   /// Marcas acumuladas del contador (s desde el inicio del circuito).
   final List<int> roundMarksSec;
 
-  int get netSec => circuitNetSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec);
+  /// Trabajo neto: sin calentamiento, enfriamiento ni descansos.
+  int get netSec =>
+      circuitNetSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec, restSec: restSec);
+
+  /// Tiempo de circuito con descansos: sobre esto se miden las vueltas.
+  int get spanSec => circuitSpanSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec);
 }
 
 /// Fila de lista: sesión con conteos para mostrar sin abrirla.
@@ -123,6 +132,7 @@ class TrainingRepository {
           totalSec: Value(d.totalSec),
           warmupSec: Value(d.warmupSec),
           cooldownSec: Value(d.cooldownSec),
+          restSec: Value(d.restSec),
           roundsDone: Value(d.roundsDone),
           roundsEstimated: Value(d.roundsEstimated),
           rpe: Value(d.rpe),
@@ -191,6 +201,7 @@ class TrainingRepository {
       totalSec: r.totalSec,
       warmupSec: r.warmupSec,
       cooldownSec: r.cooldownSec,
+      restSec: r.restSec,
       roundsDone: r.roundsDone,
       roundsEstimated: r.roundsEstimated,
       rpe: r.rpe,

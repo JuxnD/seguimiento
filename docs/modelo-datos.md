@@ -53,7 +53,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **6**. Al cambiar una tabla:
+`schemaVersion` vale **7**. Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -69,10 +69,11 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 4 | Sesión con `outOfPlan`, `incomplete` y `plannedRounds`: distingue entrenar otra cosa de cerrar antes de tiempo |
 | 5 | Tabla `reminders` con los ajustes de notificaciones |
 | 6 | Tabla `progress_photos` |
+| 7 | `sessions.rest_sec`: descansos sumados, aparte del trabajo neto (0 en sesiones anteriores) |
 
-Los saltos 1 → 6 y 2 → 6 están cubiertos por
+Los saltos 1 → 7, 2 → 7 y 6 → 7 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-vieja con datos se abre, conserva lo registrado y queda en `user_version = 6`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 7`.
 
 **Récord de rondas.** Una sola definición en
 `AppDatabase.countedCircuitRounds`: sesiones de circuito con rondas

@@ -358,8 +358,8 @@ void main() {
       expect(md, contains('- Sesiones: 3/3 · Fútbol: 1/2'));
       expect(md, contains('- Récord de rondas: 8 (anterior: 7)'));
       expect(md, contains('- Días bajo 2.000 kcal: 2'));
-      expect(md, contains('| vie 18 sep 15:10 | Circuito | 20:00 | 9:00 / 3:00 | 8:00 | 8 | 8 | 1 | Oficina \\| fútbol intenso ayer |'));
-      expect(md, contains('| mié 16 sep 07:00 | Circuito | 18:20 | 5:00 / 2:00 | 11:20 | ~6 (est.) |'));
+      expect(md, contains('| vie 18 sep 15:10 | Circuito | 20:00 | 9:00 / 3:00 | — | 8:00 | 8 | 8 | 1 | Oficina \\| fútbol intenso ayer |'));
+      expect(md, contains('| mié 16 sep 07:00 | Circuito | 18:20 | 5:00 / 2:00 | — | 11:20 | ~6 (est.) |'));
       expect(md, contains('- Flexiones: 15 · 15 · 12+3 (partida) (fallo)'));
       expect(md, contains('- Vueltas: 2:30 · 2:40 · 2:50 (media 2:40)'));
       expect(md, contains('| mié 16 sep | 216 · 19 g | 1.500 · 50 g | — | — | 1.716 ⚠ | 69 g |'));
@@ -378,6 +378,30 @@ void main() {
       final md = buildReport(input);
       expect(md, contains('| Abdomen (ombligo) | 86 (26 ago) | 84 | -2 |'));
       expect(md, contains('| Peso (kg) | 72,3 (26 ago) | 71 | -1,3 |'));
+    });
+
+    test('el descanso va en su columna y no cuenta como trabajo neto', () {
+      final start = DateTime(2026, 8, 26);
+      final w = weekRange(start, 4);
+      final md = buildReport(ReportInput(
+        programStart: start,
+        rangeStart: w.start,
+        rangeEnd: w.end,
+        today: w.end,
+        sessions: [
+          SessionEntry(
+            date: DateTime(2026, 9, 18),
+            type: SessionType.circuito,
+            totalSec: 1500,
+            warmupSec: 360,
+            cooldownSec: 180,
+            restSec: 150,
+            roundsDone: 6,
+          ),
+        ],
+      ));
+      // 1500 − 360 − 180 = 960 de circuito; menos 150 de descanso = 810 (13:30).
+      expect(md, contains('| 25:00 | 6:00 / 3:00 | 2:30 | 13:30 | 6 |'));
     });
 
     test('dice de dónde salen las kcal', () {

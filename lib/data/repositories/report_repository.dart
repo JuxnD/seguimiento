@@ -75,6 +75,7 @@ class ReportRepository {
         totalSec: s.totalSec,
         warmupSec: s.warmupSec,
         cooldownSec: s.cooldownSec,
+        restSec: s.restSec,
         roundsDone: s.roundsDone,
         roundsEstimated: s.roundsEstimated,
         rpe: s.rpe,

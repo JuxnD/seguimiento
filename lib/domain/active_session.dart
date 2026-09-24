@@ -62,6 +62,7 @@ class GuidedSnapshot extends ActiveSession {
     this.workEndedAt,
     this.endedAt,
     this.restStartedAt,
+    this.restAccumSec = 0,
     this.reps,
     this.done = const [],
     this.roundMarks = const [],
@@ -80,6 +81,9 @@ class GuidedSnapshot extends ActiveSession {
   final DateTime? workEndedAt;
   final DateTime? endedAt;
   final DateTime? restStartedAt;
+
+  /// Descansos ya cerrados (s). Falta en fotos anteriores a la 1.7: vale 0.
+  final int restAccumSec;
   final int? reps;
   final List<DoneStep> done;
   final List<int> roundMarks;
@@ -99,6 +103,7 @@ class GuidedSnapshot extends ActiveSession {
         'workEndedAt': workEndedAt?.toIso8601String(),
         'endedAt': endedAt?.toIso8601String(),
         'restStartedAt': restStartedAt?.toIso8601String(),
+        'restAccumSec': restAccumSec,
         'reps': reps,
         'done': [for (final d in done) d.toJson()],
         'roundMarks': roundMarks,
@@ -117,6 +122,7 @@ class GuidedSnapshot extends ActiveSession {
         workEndedAt: _date(j['workEndedAt']),
         endedAt: _date(j['endedAt']),
         restStartedAt: _date(j['restStartedAt']),
+        restAccumSec: (j['restAccumSec'] as num?)?.toInt() ?? 0,
         reps: (j['reps'] as num?)?.toInt(),
         done: [for (final d in j['done']! as List) DoneStep.fromJson((d as Map).cast<String, Object?>())],
         roundMarks: [for (final m in j['roundMarks']! as List) (m as num).toInt()],

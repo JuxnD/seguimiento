@@ -116,6 +116,10 @@ class Sessions extends Table {
   IntColumn get totalSec => integer().withDefault(const Constant(0))();
   IntColumn get warmupSec => integer().withDefault(const Constant(0))();
   IntColumn get cooldownSec => integer().withDefault(const Constant(0))();
+
+  /// Descansos entre series o rondas, sumados. Van aparte del trabajo neto.
+  /// 0 en sesiones anteriores al esquema 7 o registradas a mano sin él.
+  IntColumn get restSec => integer().withDefault(const Constant(0))();
   IntColumn get roundsDone => integer().nullable()();
 
   /// true si las rondas salieron de la estimación por tiempo.

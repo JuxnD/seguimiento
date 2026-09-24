@@ -20,7 +20,7 @@ Para ver una salida completa con datos de ejemplo:
    si el rango no ha terminado: `1/3 (quedan 2 en el plan)`), fútbol, récord de rondas frente
    al anterior, proteína y kcal promedio (solo días registrados), días bajo el
    piso, peso promedio y Δ contra la línea base.
-3. **Sesiones** — tabla (día, tipo, total, cal/enf, neto, rondas, RPE, series
+3. **Sesiones** — tabla (día, tipo, total, cal/enf, descanso, neto, rondas, RPE, series
    partidas, contexto) y detalle por sesión con vueltas, series y notas. La
    celda de rondas dice hechas sobre planificadas (`7/8 (incompleta)`) y el
    tipo se marca `⚠ fuera de plan` cuando no era lo que tocaba.
@@ -41,7 +41,13 @@ un promedio antes de tomar una decisión con él.
 
 - **Semana N** = `floor((fecha − inicio) / 7) + 1`; la semana va del inicio +
   (N−1)·7 días a +6. No es semana calendario.
-- **Circuito neto** = total − calentamiento − enfriamiento (mínimo 0).
+- **Trabajo neto** = total − calentamiento − enfriamiento − descansos
+  (mínimo 0). Desde la 1.7 el cronómetro guiado registra los descansos aparte;
+  las sesiones anteriores o manuales sin descanso muestran `—` y su neto sigue
+  incluyendo los descansos, como antes.
+- **Tiempo de circuito** = total − calentamiento − enfriamiento, descansos
+  incluidos. Es sobre lo que se miden las vueltas del contador y lo que usa la
+  estimación de rondas.
 - **Sesiones esperadas** = días del rango cuyo tipo, según la versión del plan
   vigente *ese día*, es circuito o bloques. El fútbol se cuenta aparte. La
   alerta de "por debajo del plan" solo mira los **días ya cerrados** (antes de

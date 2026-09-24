@@ -218,6 +218,11 @@ final foodsProvider = StreamProvider((ref) => ref.watch(nutritionRepositoryProvi
 final mealTemplatesProvider =
     StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchTemplates());
 final weightsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchWeights());
+/// Peso más reciente (kg) para estimar kcal; null sin pesajes.
+final latestWeightProvider = Provider<double?>((ref) {
+  final list = ref.watch(weightsProvider).valueOrNull;
+  return list == null || list.isEmpty ? null : list.first.kg;
+});
 final firstWeightProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchFirstWeight());
 final checkInsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchCheckIns());
 

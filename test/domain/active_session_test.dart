@@ -19,6 +19,7 @@ void main() {
       index: 7,
       workStartedAt: t0.add(const Duration(minutes: 6)),
       restStartedAt: t0.add(const Duration(minutes: 9)),
+      restAccumSec: 90,
       reps: 12,
       done: const [DoneStep('Flexiones', 12, true), DoneStep('Dominadas', 5, true)],
       roundMarks: const [150, 310],
@@ -37,6 +38,7 @@ void main() {
     expect(back.workEndedAt, isNull);
     expect(back.restStartedAt, t0.add(const Duration(minutes: 9)));
     expect(back.reps, 12);
+    expect(back.restAccumSec, 90);
     expect(back.done.map((d) => (d.exercise, d.reps, d.isRound)), [('Flexiones', 12, true), ('Dominadas', 5, true)]);
     expect(back.roundMarks, [150, 310]);
   });
@@ -64,5 +66,18 @@ void main() {
     expect(ActiveSession.fromJson({'kind': 'otro'}), isNull);
     expect(ActiveSession.fromJson({'kind': 'guided', 'date': '2026-09-23'}), isNull);
     expect(ActiveSession.fromJson({'kind': 'counter', 'date': 1, 'startedAt': 'x'}), isNull);
+  });
+
+  test('una foto de antes de registrar el descanso se lee con descanso 0', () {
+    final json = GuidedSnapshot(
+      date: '2026-09-23',
+      startedAt: t0,
+      planDayId: 1,
+      phase: GuidedPhase.trabajo,
+      index: 2,
+    ).toJson()
+      ..remove('restAccumSec');
+    final back = ActiveSession.fromJson(jsonDecode(jsonEncode(json))) as GuidedSnapshot;
+    expect(back.restAccumSec, 0);
   });
 }

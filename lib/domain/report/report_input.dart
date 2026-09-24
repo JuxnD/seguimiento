@@ -74,6 +74,7 @@ class SessionEntry {
     this.totalSec = 0,
     this.warmupSec = 0,
     this.cooldownSec = 0,
+    this.restSec = 0,
     this.roundsDone,
     this.roundsEstimated = false,
     this.rpe,
@@ -96,6 +97,9 @@ class SessionEntry {
   final int totalSec;
   final int warmupSec;
   final int cooldownSec;
+
+  /// Descansos sumados (0 si no se registraron).
+  final int restSec;
   final int? roundsDone;
   final bool roundsEstimated;
   final int? rpe;

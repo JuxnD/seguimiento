@@ -41,7 +41,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -98,6 +98,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 6) {
             // v6: fotos de progreso.
             await m.createTable(progressPhotos);
+          }
+          if (from < 7) {
+            // v7: el descanso se registra aparte del trabajo neto.
+            await m.addColumn(sessions, sessions.restSec);
           }
         },
         beforeOpen: (details) async {

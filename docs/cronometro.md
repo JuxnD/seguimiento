@@ -33,17 +33,28 @@ accidente.
   objetivo y el agarre del plan.
 - **Trabajo**: contador ("RONDA 3/7" o "SERIE 2/4"), ejercicio, agarre si el
   plan lo pide, y un **anillo con las repeticiones** que se llena al llegar al
-  objetivo; −/+ a los lados si hiciste otra cosa. Debajo, qué viene después y
-  una barra de avance de la sesión. **Hecho** avanza, con transición animada.
+  objetivo; −/+ a los lados si hiciste otra cosa. Debajo del ejercicio,
+  **"Llevas N reps de <ejercicio>"**: lo acumulado de ese ejercicio en la
+  sesión, sin contar la serie en curso. Luego, qué viene después y una barra de
+  avance. **Hecho** avanza, con transición animada.
 - **Descanso**: cuenta regresiva en un anillo azul con la duración del plan,
   "A continuación" y la barra de avance; avisa con sonido y vibración al
   terminar y se puede saltar. Si el descanso viene de cerrar una ronda, aparece
   la insignia **"Ronda N lista · m:ss"** con el tiempo de esa vuelta.
 - **Enfriamiento**: igual que el calentamiento, con "Ya hiciste" (rondas o
-  series, repeticiones y neto). Cerrarlo con menos de **1 min** pide
+  series, repeticiones, neto y descanso). Cerrarlo con menos de **1 min** pide
   confirmación: guardar sin enfriar casi siempre es un descuido.
-- La app calcula sola calentamiento, trabajo neto (total − calentamiento −
-  enfriamiento, la misma cuenta del formulario) y enfriamiento.
+- Arriba, siempre a la vista: **Total, Calentamiento, Neto, Descanso y
+  Enfriamiento**. El descanso se lleva **aparte**: el neto es solo el tiempo
+  trabajando (total − calentamiento − enfriamiento − descansos, la misma cuenta
+  del formulario). Un descanso cuenta como mucho lo que pide el plan: si la app
+  quedó en segundo plano después del aviso, lo de más se toma como trabajo.
+- **kcal aproximadas** en vivo, debajo de los tiempos, con MET por fase
+  (trabajo según el tipo de día, calentamiento, descanso y enfriamiento) y el
+  último peso registrado ([`energy.dart`](../lib/domain/energy.dart)). Es una
+  estimación (±30 %), no una medición; sin pesajes dice que falta el peso.
+- El cierre muestra además el gasto aproximado y las **repeticiones totales de
+  cada ejercicio**.
 - La pantalla no se apaga (wakelock).
 - **Terminar antes** cierra la sesión con lo hecho hasta ahí y la marca como
   incompleta. Paraste en la ronda 7 de 8: eso es un dato, no un error.

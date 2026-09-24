@@ -42,6 +42,9 @@ void main() {
     test('circuito neto = total − cal − enf, nunca negativo', () {
       expect(circuitNetSec(totalSec: 1200, warmupSec: 540, cooldownSec: 180), 480);
       expect(circuitNetSec(totalSec: 100, warmupSec: 540, cooldownSec: 180), 0);
+      // El descanso sale aparte: 480 s de circuito con 150 s descansando.
+      expect(circuitNetSec(totalSec: 1200, warmupSec: 540, cooldownSec: 180, restSec: 150), 330);
+      expect(circuitSpanSec(totalSec: 1200, warmupSec: 540, cooldownSec: 180), 480);
     });
 
     test('estimación de rondas por tiempo', () {

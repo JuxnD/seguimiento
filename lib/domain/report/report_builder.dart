@@ -99,15 +99,17 @@ void _sessions(StringBuffer b, ReportStats s) {
     b.writeln();
     return;
   }
-  b.writeln('| Día | Tipo | Total | Cal/Enf | Neto | Rondas | RPE | Series partidas | Contexto |');
-  b.writeln('|---|---|---|---|---|---|---|---|---|');
+  b.writeln('| Día | Tipo | Total | Cal/Enf | Descanso | Neto | Rondas | RPE | Series partidas | Contexto |');
+  b.writeln('|---|---|---|---|---|---|---|---|---|---|');
   for (final x in list) {
-    final net = circuitNetSec(totalSec: x.totalSec, warmupSec: x.warmupSec, cooldownSec: x.cooldownSec);
+    final net =
+        circuitNetSec(totalSec: x.totalSec, warmupSec: x.warmupSec, cooldownSec: x.cooldownSec, restSec: x.restSec);
     final rounds = _roundsCell(x);
     final splits = x.sets.where((e) => e.split).length;
     b.writeln('| ${_dayLabel(x.date, x.startTime)} | ${x.type.label}${x.outOfPlan ? ' ⚠ fuera de plan' : ''} | '
         '${formatDuration(x.totalSec)} | '
-        '${formatDuration(x.warmupSec)} / ${formatDuration(x.cooldownSec)} | ${formatDuration(net)} | $rounds | '
+        '${formatDuration(x.warmupSec)} / ${formatDuration(x.cooldownSec)} | '
+        '${x.restSec == 0 ? '—' : formatDuration(x.restSec)} | ${formatDuration(net)} | $rounds | '
         '${x.rpe ?? '—'} | ${splits == 0 ? '—' : splits} | ${mdCell(x.context)} |');
   }
   b.writeln();

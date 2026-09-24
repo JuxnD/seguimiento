@@ -29,6 +29,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
   late final _total = TextEditingController(text: d.totalSec == 0 ? '' : formatDuration(d.totalSec));
   late final _warmup = TextEditingController(text: d.warmupSec == 0 ? '' : formatDuration(d.warmupSec));
   late final _cooldown = TextEditingController(text: d.cooldownSec == 0 ? '' : formatDuration(d.cooldownSec));
+  late final _rest = TextEditingController(text: d.restSec == 0 ? '' : formatDuration(d.restSec));
   late final _rounds = TextEditingController(text: d.roundsDone?.toString() ?? '');
   late final _context = TextEditingController(text: d.context ?? '');
   late final _notes = TextEditingController(text: d.notes ?? '');
@@ -37,7 +38,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
 
   @override
   void dispose() {
-    for (final c in [_total, _warmup, _cooldown, _rounds, _context, _notes, _limiting]) {
+    for (final c in [_total, _warmup, _cooldown, _rest, _rounds, _context, _notes, _limiting]) {
       c.dispose();
     }
     super.dispose();
@@ -47,7 +48,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     d
       ..totalSec = parseDuration(_total.text) ?? 0
       ..warmupSec = parseDuration(_warmup.text) ?? 0
-      ..cooldownSec = parseDuration(_cooldown.text) ?? 0;
+      ..cooldownSec = parseDuration(_cooldown.text) ?? 0
+      ..restSec = parseDuration(_rest.text) ?? 0;
   }
 
   Future<void> _loadPlanExercises() async {
@@ -74,7 +76,9 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     if (!mounted) return;
     final result = await showDialog<int>(
       context: context,
-      builder: (_) => _EstimateDialog(netSec: d.netSec, historicalMeanSec: historical),
+      // Las vueltas del contador incluyen el descanso: se estima sobre el
+      // tiempo de circuito con descansos, no sobre el neto.
+      builder: (_) => _EstimateDialog(netSec: d.spanSec, historicalMeanSec: historical),
     );
     if (result != null) {
       setState(() {
@@ -171,6 +175,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             totalSec: parseDuration(_total.text) ?? 0,
             warmupSec: parseDuration(_warmup.text) ?? 0,
             cooldownSec: parseDuration(_cooldown.text) ?? 0,
+            restSec: parseDuration(_rest.text) ?? 0,
           );
 
     return Scaffold(
@@ -222,13 +227,20 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                       child: DurationField(controller: _warmup, label: 'Calentamiento', onChanged: (_) => setState(() {}))),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                      child: DurationField(controller: _rest, label: 'Descansos', onChanged: (_) => setState(() {}))),
                   const SizedBox(width: 8),
                   Expanded(
                       child: DurationField(controller: _cooldown, label: 'Enfriamiento', onChanged: (_) => setState(() {}))),
                 ],
               ),
               const SizedBox(height: 8),
-              Text('Circuito neto: ${net == null ? '—' : formatDuration(net)}',
+              Text('Trabajo neto (sin descansos): ${net == null ? '—' : formatDuration(net)}',
                   style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 12),
               Row(
@@ -624,7 +636,7 @@ class _EstimateDialogState extends State<_EstimateDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Neto: ${formatDuration(widget.netSec)}'),
+          Text('Tiempo de circuito: ${formatDuration(widget.netSec)}'),
           const SizedBox(height: 12),
           DurationField(controller: _mean, label: 'Tiempo medio por ronda', onChanged: (_) => setState(() {})),
           const SizedBox(height: 8),

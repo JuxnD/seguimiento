@@ -279,4 +279,12 @@ void main() {
     await body.addWeight(d(9, 1), 73.0);
     expect((await body.watchFirstWeight().first)!.kg, 73.0);
   });
+
+  test('el descanso de la sesión se guarda y se relee', () async {
+    final id = await training.save(SessionDraft(date: d(9, 18), totalSec: 1500, warmupSec: 360, cooldownSec: 180, restSec: 150));
+    final back = await training.load(id);
+    expect(back.restSec, 150);
+    expect(back.netSec, 810);
+    expect(back.spanSec, 960);
+  });
 }

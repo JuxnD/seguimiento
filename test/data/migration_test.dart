@@ -36,6 +36,10 @@ const _v3Tables = ['meal_template_items', 'meal_templates'];
 const _v5Tables = ['reminders'];
 const _v6Tables = ['progress_photos'];
 
+const _v7Columns = {
+  'sessions': ['rest_sec'],
+};
+
 const _v4Columns = {
   'sessions': ['out_of_plan', 'incomplete', 'planned_rounds'],
 };
@@ -63,6 +67,16 @@ void main() {
   Future<void> buildOldSchema(int version) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    for (final entry in _v7Columns.entries) {
+      for (final column in entry.value) {
+        await db.customStatement('alter table ${entry.key} drop column $column');
+      }
+    }
+    if (version >= 6) {
+      await db.customStatement('pragma user_version = $version');
+      await db.close();
+      return;
+    }
     for (final entry in _v4Columns.entries) {
       for (final column in entry.value) {
         await db.customStatement('alter table ${entry.key} drop column $column');
@@ -90,7 +104,7 @@ void main() {
   Future<int> userVersion(AppDatabase db) =>
       db.customSelect('pragma user_version').map((r) => r.data.values.first as int).getSingle();
 
-  test('una base del esquema 1 llega al 6 sin perder datos', () async {
+  test('una base del esquema 1 llega al 7 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -120,7 +134,7 @@ void main() {
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 6);
+    expect(await userVersion(migrated), 7);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -140,7 +154,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 6 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 7 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -153,7 +167,22 @@ void main() {
     expect(food.name, 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 6);
+    expect(await userVersion(migrated), 7);
+    await migrated.close();
+  });
+
+  test('una base del esquema 6 llega al 7: las sesiones viejas quedan con descanso 0', () async {
+    await buildOldSchema(6);
+    final old = AppDatabase(NativeDatabase(file));
+    await old.customStatement(
+        "insert into sessions (date, type, total_sec, warmup_sec, cooldown_sec) values ('2026-09-20', 'circuito', 1200, 360, 180)");
+    await old.close();
+
+    final migrated = AppDatabase(NativeDatabase(file));
+    final session = await migrated.select(migrated.sessions).getSingle();
+    expect(session.totalSec, 1200);
+    expect(session.restSec, 0);
+    expect(await userVersion(migrated), 7);
     await migrated.close();
   });
 }

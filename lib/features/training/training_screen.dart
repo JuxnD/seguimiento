@@ -399,7 +399,8 @@ class _SessionTile extends ConsumerWidget {
     final s = summary.row;
     final date = parseDay(s.date);
     final style = styleForSession(s.type);
-    final net = circuitNetSec(totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec);
+    final net = circuitNetSec(
+        totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec, restSec: s.restSec);
     final flags = [
       if (s.outOfPlan) 'fuera de plan',
       if (s.incomplete) 'incompleta',

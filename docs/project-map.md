@@ -68,7 +68,7 @@
 ## 4. Operation and delivery
 - Configuración: ninguna; los umbrales viven en la tabla `profiles`.
 - Build/lint/test: ver README. Generación de código tras tocar tablas.
-- Migraciones: `schemaVersion` 6; procedimiento en [modelo-datos.md](modelo-datos.md).
+- Migraciones: `schemaVersion` 7; procedimiento en [modelo-datos.md](modelo-datos.md).
 - Estado fuera de la base: `flags.json` (permisos pedidos, fechas de copia y
   consulta) y `sesion-en-curso.json` (cronómetro a medias), ambos en el
   directorio de soporte de la app; `respaldos/` con las copias automáticas.

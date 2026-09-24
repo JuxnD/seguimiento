@@ -53,7 +53,9 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
 ## Glosario
 
-- **Circuito neto**: total − calentamiento − enfriamiento.
+- **Trabajo neto**: total − calentamiento − enfriamiento − descansos.
+- **Tiempo de circuito**: total − calentamiento − enfriamiento (con descansos);
+  sobre él se miden las vueltas.
 - **Ronda**: vuelta completa al circuito. **Vuelta/marca**: tiempo de una ronda
   registrado con el contador.
 - **Serie partida**: serie que no se completó de corrido (12+3).
