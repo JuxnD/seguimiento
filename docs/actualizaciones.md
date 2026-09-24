@@ -105,6 +105,32 @@ En GitHub → *Settings* → *Secrets and variables* → *Actions*:
 | `KEY_ALIAS` | `seguimiento` |
 | `KEY_PASSWORD` | Contraseña de la llave |
 
+### Estado real de la firma (24 sep 2026)
+
+**El repositorio no tiene los secrets de firma** (`gh secret list` vacío), así
+que `release.yml` nunca publicó: pasa análisis, pruebas y la comprobación de la
+etiqueta, y falla en "Preparar llave de firma". Todas las releases, de la 1.0.1
+a la 1.6.0, se publicaron **a mano** con un APK compilado en el equipo de
+desarrollo sin `key.properties`, es decir, **firmado con la llave debug de ese
+equipo** (`~/.android/debug.keystore`, SHA-256 `6F:83:9C:41:…:AC:13:3E:D7`).
+
+Consecuencias:
+
+- La app instalada solo acepta actualizaciones firmadas con **esa** llave
+  debug. Si se configuran los secrets con una llave nueva, la siguiente release
+  de CI **no se podrá instalar encima**: habría que exportar, desinstalar,
+  instalar y restaurar (las fotos no viajan en el respaldo).
+- Perder o reinstalar ese equipo (o borrar `debug.keystore`) corta la ruta de
+  actualización igual. Hay que respaldar ese archivo como si fuera la llave de
+  release.
+- Mientras tanto, para publicar: `flutter build apk --release
+  --dart-define=GITHUB_REPO=JuxnD/seguimiento`, comprobar la firma con
+  `keytool -printcert -jarfile` y `gh release create vX.Y.Z <apk>`.
+
+La salida limpia es decidir una sola llave: o se sube la debug actual como
+secret (y se respalda), o se migra a una llave propia aceptando reinstalar una
+vez. Es una decisión del dueño, pendiente.
+
 ### Publicar una versión
 
 1. Subir la versión en `pubspec.yaml` (`version: 1.1.0+2`; el `+N` siempre crece).
