@@ -15,6 +15,8 @@ enum ReminderKind {
   proteina,
   medicion,
   descanso,
+  calorias,
+  comidasSinRegistrar,
 }
 
 extension ReminderKindLabel on ReminderKind {
@@ -27,6 +29,8 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.proteina => 'Proteína del día',
         ReminderKind.medicion => 'Medición',
         ReminderKind.descanso => 'Fin del descanso',
+        ReminderKind.calorias => 'Calorías del día',
+        ReminderKind.comidasSinRegistrar => 'Comidas sin registrar',
       };
 
   String get description => switch (this) {
@@ -38,6 +42,9 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.proteina => 'Si a esa hora vas por debajo del mínimo, dice cuánto falta',
         ReminderKind.medicion => 'Cuando se cumple el intervalo desde la última toma, en la mañana',
         ReminderKind.descanso => 'Suena y vibra al terminar el descanso, aunque la app esté en segundo plano',
+        ReminderKind.calorias => 'Si a esa hora vas por debajo del umbral, dice cuánto falta para la meta',
+        ReminderKind.comidasSinRegistrar =>
+          'Si a esa hora falta desayuno, almuerzo o cena, dice cuál (no suena si cerraste el día)',
       };
 
   /// Los que no se programan por hora del día.
@@ -53,7 +60,7 @@ class ReminderSetting {
   final int? hour;
   final int? minute;
 
-  /// Umbral para el aviso de proteína (gramos).
+  /// Umbral del aviso de proteína (g) o de calorías (kcal).
   final int? threshold;
 
   String get timeLabel => hour == null ? '—' : timeKey(hour!, minute ?? 0);
@@ -104,6 +111,9 @@ class ReminderContext {
     required this.settings,
     this.proteinToday = 0,
     this.proteinMin = 130,
+    this.kcalToday = 0,
+    this.kcalTarget = 2400,
+    this.missingMealsToday = const [],
     this.lastMeasurement,
     this.measureIntervalDays = 21,
     this.nextMeasurementDate,
@@ -116,6 +126,11 @@ class ReminderContext {
   final Map<ReminderKind, ReminderSetting> settings;
   final double proteinToday;
   final int proteinMin;
+  final double kcalToday;
+  final int kcalTarget;
+
+  /// Comidas principales que faltan hoy; vacío si el día está cerrado.
+  final List<MealSlot> missingMealsToday;
   final DateTime? lastMeasurement;
   final int measureIntervalDays;
   final DateTime? nextMeasurementDate;
@@ -133,6 +148,8 @@ List<PlannedNotification> planReminders(ReminderContext ctx) {
     out.addAll(_mealReminders(ctx, day));
   }
   out.addAll(_protein(ctx));
+  out.addAll(_calories(ctx));
+  out.addAll(_missingMeals(ctx));
   out.addAll(_measurement(ctx));
 
   return out.where((n) => n.when.isAfter(ctx.now)).toList()
@@ -196,6 +213,33 @@ Iterable<PlannedNotification> _protein(ReminderContext ctx) sync* {
     when: _at(ctx.now, s),
     title: 'Proteína: ${ctx.proteinToday.round()} g',
     body: 'Faltan $missing g para el mínimo de ${ctx.proteinMin} g.',
+  );
+}
+
+Iterable<PlannedNotification> _calories(ReminderContext ctx) sync* {
+  final s = ctx.setting(ReminderKind.calorias);
+  if (s == null || !s.enabled) return;
+  final threshold = s.threshold ?? 1800;
+  if (ctx.kcalToday >= threshold) return;
+  final missing = (ctx.kcalTarget - ctx.kcalToday).round();
+  yield PlannedNotification(
+    kind: ReminderKind.calorias,
+    when: _at(ctx.now, s),
+    title: 'Calorías: ${ctx.kcalToday.round()} kcal',
+    body: 'Faltan $missing kcal para la meta de ${ctx.kcalTarget}. El déficit es lo que frena la recomposición.',
+  );
+}
+
+Iterable<PlannedNotification> _missingMeals(ReminderContext ctx) sync* {
+  final s = ctx.setting(ReminderKind.comidasSinRegistrar);
+  if (s == null || !s.enabled || ctx.missingMealsToday.isEmpty) return;
+  final names = ctx.missingMealsToday.map((m) => m.label.toLowerCase()).toList();
+  final list = names.length == 1 ? names.first : '${names.take(names.length - 1).join(', ')} y ${names.last}';
+  yield PlannedNotification(
+    kind: ReminderKind.comidasSinRegistrar,
+    when: _at(ctx.now, s),
+    title: 'Falta registrar: $list',
+    body: 'Si no comiste más hoy, cierra el día en Comidas para que no cuente como incompleto.',
   );
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/database.dart';
 import '../../data/repositories/reminder_repository.dart';
+import '../../data/system_health.dart';
 import '../../domain/dates.dart';
 import '../../domain/reminders.dart';
 import '../../ui/widgets.dart';
@@ -19,6 +20,9 @@ class RemindersScreen extends ConsumerStatefulWidget {
 class _RemindersScreenState extends ConsumerState<RemindersScreen> {
   bool? _permission;
   bool? _exact;
+  bool? _battery;
+  bool? _paused;
+  static const _system = SystemHealth();
 
   @override
   void initState() {
@@ -30,11 +34,46 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     final service = ref.read(notificationServiceProvider);
     final ok = await service.hasPermission();
     final exact = await service.canScheduleExact();
+    final battery = await _system.batteryOptimized();
+    final paused = await _system.pausedIfUnused();
     if (mounted) {
       setState(() {
         _permission = ok;
         _exact = exact;
+        _battery = battery;
+        _paused = paused;
       });
+    }
+  }
+
+  /// Abre un ajuste del sistema y, al volver, revisa otra vez.
+  Future<void> _openAndRecheck(Future<bool> Function() open) async {
+    await open();
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    await _checkPermission();
+  }
+
+  Future<void> _testNow() async {
+    try {
+      await ref.read(notificationServiceProvider).showTest();
+      if (mounted) showSnack(context, 'Enviado. Si no aparece, revisa el permiso y el canal "Recordatorios".');
+    } on Object {
+      if (mounted) showSnack(context, 'No se pudo mostrar: revisa el permiso de notificaciones');
+    }
+  }
+
+  Future<void> _testScheduled() async {
+    try {
+      final exact = await ref.read(notificationServiceProvider).scheduleTest();
+      if (mounted) {
+        showSnack(
+            context,
+            exact
+                ? 'Programado para dentro de 1 min. Cierra la app y apaga la pantalla.'
+                : 'Programado (inexacto: puede tardar unos minutos). Cierra la app y apaga la pantalla.');
+      }
+    } on Object {
+      if (mounted) showSnack(context, 'No se pudo programar');
     }
   }
 
@@ -89,12 +128,74 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                     FilledButton(onPressed: _askExact, child: const Text('Permitir alarmas exactas')),
                   ],
                 ),
+              if (_battery == true || _paused == true) _systemWarnings(),
+              _diagnostics(),
               for (final kind in ReminderKind.values)
                 if (byKind[kind] != null) _ReminderCard(row: byKind[kind]!),
             ],
           );
         },
       ),
+    );
+  }
+
+  /// Ajustes de Android que callan los recordatorios aunque haya permiso.
+  Widget _systemWarnings() => AppCard(
+        title: 'Android puede estar callando los avisos',
+        children: [
+          if (_paused == true) ...[
+            const Text('"Pausar la actividad de la app si no se usa" está activado. Android puede quitarle '
+                'permisos y cancelar los avisos programados. Desactívalo en los permisos de la app.'),
+            const SizedBox(height: 8),
+            FilledButton.tonal(
+              onPressed: () => _openAndRecheck(_system.openUnusedAppSettings),
+              child: const Text('Abrir ajuste de pausa'),
+            ),
+            const SizedBox(height: 12),
+          ],
+          if (_battery == true) ...[
+            const Text('La app está bajo optimización de batería. En varios teléfonos eso retrasa o descarta '
+                'los avisos con la pantalla apagada. Ponla en "Sin restricciones".'),
+            const SizedBox(height: 8),
+            FilledButton.tonal(
+              onPressed: () => _openAndRecheck(_system.openBatterySettings),
+              child: const Text('Abrir ajuste de batería'),
+            ),
+          ],
+        ],
+      );
+
+  /// Estado de todo lo que decide si un aviso llega, y dos pruebas: una
+  /// inmediata (permiso y canal) y otra programada (alarma y batería).
+  Widget _diagnostics() {
+    String state(bool? ok, {String yes = 'Sí', String no = 'No'}) => ok == null ? '—' : (ok ? yes : no);
+    return AppCard(
+      title: '¿Llegan los avisos?',
+      children: [
+        _CheckRow('Permiso de notificaciones', state(_permission), ok: _permission),
+        _CheckRow('Alarmas exactas', state(_exact), ok: _exact),
+        _CheckRow('Optimización de batería', state(_battery, yes: 'Activa', no: 'Sin restricciones'),
+            ok: _battery == null ? null : !_battery!),
+        _CheckRow('Pausar si no se usa', state(_paused, yes: 'Activado', no: 'Desactivado'),
+            ok: _paused == null ? null : !_paused!),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            OutlinedButton.icon(
+              onPressed: _testNow,
+              icon: const Icon(Icons.notifications_active_outlined),
+              label: const Text('Probar ahora'),
+            ),
+            OutlinedButton.icon(
+              onPressed: _testScheduled,
+              icon: const Icon(Icons.alarm),
+              label: const Text('Probar en 1 min'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -180,6 +281,13 @@ class _ReminderCard extends ConsumerWidget {
                   onPressed: () => _editThreshold(context, repo),
                 ),
               ],
+              if (row.kind == ReminderKind.calorias) ...[
+                const Spacer(),
+                TextButton(
+                  child: Text('Bajo ${row.threshold ?? 1800} kcal'),
+                  onPressed: () => _editThreshold(context, repo),
+                ),
+              ],
             ],
           ),
       ],
@@ -189,7 +297,9 @@ class _ReminderCard extends ConsumerWidget {
   Future<void> _editThreshold(BuildContext context, ReminderRepository repo) async {
     final value = await showDialog<int>(
       context: context,
-      builder: (_) => _ThresholdDialog(initial: row.threshold ?? 100),
+      builder: (_) => row.kind == ReminderKind.calorias
+          ? _ThresholdDialog(initial: row.threshold ?? 1800, label: 'Calorías', suffix: 'kcal')
+          : _ThresholdDialog(initial: row.threshold ?? 100),
     );
     if (value != null && context.mounted) await guarded(context, () => repo.save(row.kind, threshold: value));
   }
@@ -198,9 +308,11 @@ class _ReminderCard extends ConsumerWidget {
 /// Dueño de su controller: se libera cuando el diálogo termina de cerrarse,
 /// no mientras todavía anima la salida.
 class _ThresholdDialog extends StatefulWidget {
-  const _ThresholdDialog({required this.initial});
+  const _ThresholdDialog({required this.initial, this.label = 'Proteína', this.suffix = 'g'});
 
   final int initial;
+  final String label;
+  final String suffix;
 
   @override
   State<_ThresholdDialog> createState() => _ThresholdDialogState();
@@ -218,7 +330,7 @@ class _ThresholdDialogState extends State<_ThresholdDialog> {
   @override
   Widget build(BuildContext context) => AlertDialog(
         title: const Text('Avisar si voy por debajo de'),
-        content: NumberField(controller: _controller, label: 'Proteína', suffix: 'g', autofocus: true),
+        content: NumberField(controller: _controller, label: widget.label, suffix: widget.suffix, autofocus: true),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
           FilledButton(
@@ -227,6 +339,34 @@ class _ThresholdDialogState extends State<_ThresholdDialog> {
           ),
         ],
       );
+}
+
+class _CheckRow extends StatelessWidget {
+  const _CheckRow(this.label, this.value, {this.ok});
+
+  final String label;
+  final String value;
+  final bool? ok;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Icon(
+            ok == null ? Icons.remove_circle_outline : (ok! ? Icons.check_circle : Icons.error),
+            size: 18,
+            color: ok == null ? scheme.outline : (ok! ? scheme.primary : scheme.error),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(label)),
+          Text(value, style: Theme.of(context).textTheme.labelLarge),
+        ],
+      ),
+    );
+  }
 }
 
 /// Texto corto para la pantalla de ajustes: cuántos avisos están activos.

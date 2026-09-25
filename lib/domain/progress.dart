@@ -186,3 +186,77 @@ MeasurementDue? measurementDue({
     today: day,
   );
 }
+
+/// Escala RPE en palabras del usuario: cuántas repeticiones quedaban.
+/// Se muestra junto al selector para que 10 no se use como "me sentí bien".
+const rpeScale = <(String, String)>[
+  ('10', 'No podía hacer ni una repetición más'),
+  ('9', 'Me quedaba 1'),
+  ('8', 'Me quedaban 2'),
+  ('7', 'Me quedaban 3'),
+  ('5–6', 'Moderado, cómodo'),
+  ('3–4', 'Fácil'),
+];
+
+/// Significado corto de un valor de RPE.
+String rpeMeaning(int rpe) => switch (rpe) {
+      10 => 'no quedaba ninguna',
+      9 => 'quedaba 1',
+      8 => 'quedaban 2',
+      7 => 'quedaban 3',
+      5 || 6 => 'moderado, cómodo',
+      3 || 4 => 'fácil',
+      _ => 'muy fácil',
+    };
+
+/// Propuesta de rondas para el próximo intento de progresión. La app no sube
+/// la meta sola: propone y dice qué criterio falló si no se puede subir.
+class ProgressionProposal {
+  const ProgressionProposal({required this.rounds, required this.lastRounds, required this.unmet, this.lastDate});
+
+  /// Rondas que se proponen.
+  final int rounds;
+
+  /// Rondas de la última sesión de progresión.
+  final int lastRounds;
+  final DateTime? lastDate;
+
+  /// Criterios de la regla que no se cumplieron (vacío = se puede subir).
+  final List<String> unmet;
+
+  bool get canProgress => unmet.isEmpty;
+}
+
+/// Regla de progresión: se sube una ronda solo si la última sesión de
+/// progresión cumplió **todo**: sin series partidas, técnica buena en la
+/// última ronda, sin rango reducido, sin fallo temprano y recuperación normal
+/// entre rondas. Una condición sin registrar no cuenta como cumplida. Tampoco
+/// se sube si esa sesión no completó su meta.
+ProgressionProposal? proposeProgression({
+  required int? lastRounds,
+  int? lastPlanned,
+  DateTime? lastDate,
+  required bool anySplit,
+  required bool anyFailure,
+  bool? techniqueOk,
+  bool? fullRange,
+  bool? recoveryOk,
+  bool incomplete = false,
+}) {
+  if (lastRounds == null) return null;
+  String check(bool? ok, String label) => ok == null ? '$label sin registrar' : label;
+  final unmet = [
+    if (incomplete || (lastPlanned != null && lastRounds < lastPlanned)) 'no completó la meta de $lastPlanned',
+    if (anySplit) 'series partidas',
+    if (techniqueOk != true) check(techniqueOk, 'técnica'),
+    if (fullRange != true) check(fullRange, 'rango completo'),
+    if (anyFailure) 'fallo temprano',
+    if (recoveryOk != true) check(recoveryOk, 'recuperación'),
+  ];
+  return ProgressionProposal(
+    rounds: unmet.isEmpty ? lastRounds + 1 : lastRounds,
+    lastRounds: lastRounds,
+    lastDate: lastDate,
+    unmet: unmet,
+  );
+}

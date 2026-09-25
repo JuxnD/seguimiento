@@ -133,8 +133,60 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     return true;
   }
 
+  /// Validaciones blandas: avisan y dejan seguir. Un dato imperfecto
+  /// registrado vale más que uno perfecto que nunca se anota. Solo el RPE es
+  /// obligatorio: sin él la regla de progresión no funciona.
+  Future<bool> _softChecks() async {
+    if (d.rpe == null) {
+      final rpe = await showDialog<int>(context: context, builder: (_) => const _RpeDialog());
+      if (rpe == null || !mounted) return false;
+      setState(() => d.rpe = rpe);
+    }
+    if ((d.rpe ?? 0) >= 9 && d.type == SessionType.circuitoLigero) {
+      final ok = await _confirm(
+        'RPE ${d.rpe} en día ligero',
+        '¿Seguro? Este día debería salir cómodo (RPE 5–6). RPE ${d.rpe} significa que '
+            '${rpeMeaning(d.rpe!)} repetición más.',
+        keep: 'Sí, fue duro',
+      );
+      if (!ok) return false;
+    }
+    const minPhaseSec = 60;
+    final shortPhases = [
+      if (d.totalSec > 0 && d.warmupSec < minPhaseSec) 'calentamiento de ${formatDuration(d.warmupSec)}',
+      if (d.totalSec > 0 && d.cooldownSec < minPhaseSec) 'enfriamiento de ${formatDuration(d.cooldownSec)}',
+    ];
+    if (shortPhases.isNotEmpty) {
+      final ok = await _confirm(
+        'Fase muy corta',
+        'Registraste ${shortPhases.join(' y ')}. Menos de 1 min casi siempre es un descuido al '
+            'tocar el cronómetro.',
+        keep: 'Guardar igual',
+      );
+      if (!ok) return false;
+    }
+    return true;
+  }
+
+  Future<bool> _confirm(String title, String body, {required String keep}) async {
+    if (!mounted) return false;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Corregir')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(keep)),
+        ],
+      ),
+    );
+    return ok ?? false;
+  }
+
   Future<void> _save() async {
     _syncTimes();
+    if (!await _softChecks()) return;
     if (!await _confirmAgainstPlan()) return;
     d
       ..roundsDone = int.tryParse(_rounds.text)
@@ -360,7 +412,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
           AppCard(
             title: 'Sensaciones y contexto',
             children: [
-              ScaleSelector(label: 'RPE general', value: d.rpe, onChanged: (v) => setState(() => d.rpe = v)),
+              RpeSelector(value: d.rpe, onChanged: (v) => setState(() => d.rpe = v)),
               const SizedBox(height: 12),
               _LimitingPicker(
                 value: _limiting.text.trim().isEmpty ? null : _limiting.text.trim(),
@@ -713,4 +765,32 @@ class _LimitingPicker extends StatelessWidget {
       ],
     );
   }
+}
+
+/// El RPE se pide al cerrar: sin él la regla de progresión no funciona. La
+/// escala va en la misma pantalla.
+class _RpeDialog extends StatefulWidget {
+  const _RpeDialog();
+
+  @override
+  State<_RpeDialog> createState() => _RpeDialogState();
+}
+
+class _RpeDialogState extends State<_RpeDialog> {
+  int? _value;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: const Text('¿Qué tan duro fue?'),
+        content: SingleChildScrollView(
+          child: RpeSelector(value: _value, onChanged: (v) => setState(() => _value = v)),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Volver')),
+          FilledButton(
+            onPressed: _value == null ? null : () => Navigator.pop(context, _value),
+            child: const Text('Guardar'),
+          ),
+        ],
+      );
 }

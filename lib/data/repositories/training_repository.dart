@@ -305,6 +305,19 @@ class TrainingRepository {
     return out;
   }
 
+  /// Última sesión de un tipo antes de `date`, completa (con series).
+  Future<SessionDraft?> lastOfType(SessionType type, DateTime date) async {
+    final row = await (db.select(db.sessions)
+          ..where((t) => t.type.equalsValue(type) & t.date.isSmallerThanValue(dayKey(date)))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+            (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+    return row == null ? null : load(row.id);
+  }
+
   /// Última carga externa usada en un ejercicio, para proponerla de nuevo.
   Future<double?> lastLoad(String exercise) async {
     final exId = await exercises.idOf(exercise);

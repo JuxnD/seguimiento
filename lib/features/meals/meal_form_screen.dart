@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/database.dart';
 import '../../data/repositories/nutrition_repository.dart';
+import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
@@ -13,9 +14,12 @@ import '../../ui/widgets.dart';
 import 'foods_screen.dart';
 
 class MealFormScreen extends ConsumerStatefulWidget {
-  const MealFormScreen({super.key, required this.draft});
+  const MealFormScreen({super.key, required this.draft, this.template});
 
   final MealDraft draft;
+
+  /// Si viene, se edita este combo en vez de registrar una comida.
+  final MealTemplate? template;
 
   @override
   ConsumerState<MealFormScreen> createState() => _MealFormScreenState();
@@ -159,10 +163,64 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
   }
 
   Future<void> _save() async {
+    if (widget.template != null) return _saveTemplateEdit();
     if (!await _confirmSlot()) return;
     d.notes = _notes.text;
     if (!mounted) return;
-    final ok = await guarded(context, () => ref.read(nutritionRepositoryProvider).saveMeal(d));
+    final repo = ref.read(nutritionRepositoryProvider);
+    // Dos cenas el mismo día casi siempre son una sola registrada dos veces.
+    if (d.slot != MealSlot.otro) {
+      final other = await repo.sameSlot(d.date, d.slot, excludeId: d.id);
+      if (other != null && mounted) {
+        final choice = await showDialog<String>(
+          context: context,
+          builder: (c) => AlertDialog(
+            title: Text('Ya hay ${d.slot.label.toLowerCase()} ese día'),
+            content: Text('Registrada${other.time == null ? '' : ' a las ${other.time}'}. '
+                '¿La fusiono con esta en una sola comida?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
+              TextButton(onPressed: () => Navigator.pop(c, 'aparte'), child: const Text('Guardar aparte')),
+              FilledButton(onPressed: () => Navigator.pop(c, 'fusionar'), child: const Text('Fusionar')),
+            ],
+          ),
+        );
+        if (choice == null || !mounted) return;
+        if (choice == 'fusionar') {
+          final ok = await guarded(context, () => repo.mergeInto(other.id, d), ok: 'Comidas fusionadas');
+          if (ok && mounted) Navigator.pop(context, true);
+          return;
+        }
+      }
+    }
+    if (!mounted) return;
+    final ok = await guarded(context, () => repo.saveMeal(d));
+    if (ok && mounted) Navigator.pop(context, true);
+  }
+
+  /// Guarda los cambios del combo (nombre, franja y cantidades).
+  Future<void> _saveTemplateEdit() async {
+    final template = widget.template!;
+    final fromCatalog = d.items.where((i) => i.foodId != null && i.quantity != null).toList();
+    if (fromCatalog.isEmpty) {
+      showSnack(context, 'Un combo necesita al menos un alimento del catálogo');
+      return;
+    }
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => _TemplateNameDialog(skipped: d.items.length - fromCatalog.length, initial: template.name),
+    );
+    if (name == null || name.trim().isEmpty || !mounted) return;
+    final ok = await guarded(
+      context,
+      () => ref.read(nutritionRepositoryProvider).updateTemplate(
+            template.row.id,
+            name,
+            d.slot == MealSlot.otro ? null : d.slot,
+            [for (final i in fromCatalog) (i.foodId!, i.quantity!)],
+          ),
+      ok: 'Combo guardado',
+    );
     if (ok && mounted) Navigator.pop(context, true);
   }
 
@@ -171,14 +229,19 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     final m = d.macros;
     return Scaffold(
       appBar: AppBar(
-        title: Text(d.id == null ? 'Nueva comida' : 'Editar comida'),
+        title: Text(widget.template != null
+            ? 'Editar combo'
+            : d.id == null
+                ? 'Nueva comida'
+                : 'Editar comida'),
         actions: [
+          if (widget.template == null)
           IconButton(
             tooltip: 'Guardar como combo',
             icon: const Icon(Icons.bookmark_add_outlined),
             onPressed: d.items.isEmpty ? null : _saveAsTemplate,
           ),
-          if (d.id != null)
+          if (d.id != null && widget.template == null)
             IconButton(tooltip: 'Borrar', 
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
@@ -194,11 +257,14 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 96),
         children: [
+          if (widget.template == null) _DayTotals(draft: d),
           AppCard(
             children: [
-              DateTile(date: d.date, onChanged: (v) => setState(() => d.date = v)),
-              TimeTile(time: d.time, onChanged: (v) => setState(() => d.time = v)),
-              const SizedBox(height: 8),
+              if (widget.template == null) ...[
+                DateTile(date: d.date, onChanged: (v) => setState(() => d.date = v)),
+                TimeTile(time: d.time, onChanged: (v) => setState(() => d.time = v)),
+                const SizedBox(height: 8),
+              ],
               Wrap(
                 spacing: 6,
                 children: [
@@ -500,17 +566,20 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
 }
 
 class _TemplateNameDialog extends StatefulWidget {
-  const _TemplateNameDialog({required this.skipped});
+  const _TemplateNameDialog({required this.skipped, this.initial});
 
   /// Entradas libres que no entran al combo.
   final int skipped;
+
+  /// Nombre actual al editar un combo.
+  final String? initial;
 
   @override
   State<_TemplateNameDialog> createState() => _TemplateNameDialogState();
 }
 
 class _TemplateNameDialogState extends State<_TemplateNameDialog> {
-  final _name = TextEditingController();
+  late final _name = TextEditingController(text: widget.initial ?? '');
 
   @override
   void dispose() {
@@ -520,7 +589,7 @@ class _TemplateNameDialogState extends State<_TemplateNameDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Guardar como combo'),
+        title: Text(widget.initial == null ? 'Guardar como combo' : 'Nombre del combo'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -535,7 +604,7 @@ class _TemplateNameDialogState extends State<_TemplateNameDialog> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text('Si ya existe un combo con ese nombre, se reemplaza.'),
+            if (widget.initial == null) const Text('Si ya existe un combo con ese nombre, se reemplaza.'),
             if (widget.skipped > 0)
               Padding(
                 padding: const EdgeInsets.only(top: 6),
@@ -549,4 +618,35 @@ class _TemplateNameDialogState extends State<_TemplateNameDialog> {
           FilledButton(onPressed: () => Navigator.pop(context, _name.text), child: const Text('Guardar')),
         ],
       );
+}
+
+/// Acumulado del día con esta comida incluida y lo que falta para la meta:
+/// se ve mientras se registra, no al final en el informe.
+class _DayTotals extends ConsumerWidget {
+  const _DayTotals({required this.draft});
+
+  final MealDraft draft;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meals = ref.watch(mealsForDayProvider(dayKey(draft.date))).value ?? const [];
+    final profile = ref.watch(profileProvider).value;
+    final others = Macros.sum(meals.where((m) => m.meal.id != draft.id).map((m) => m.macros));
+    final day = others + draft.macros;
+    final kcalTarget = profile?.kcalTarget ?? 2400;
+    final proteinMin = profile?.proteinMin ?? 130;
+    final text = Theme.of(context).textTheme;
+    String left(double have, num goal, String unit) {
+      final missing = goal - have;
+      return missing <= 0 ? 'meta cumplida' : 'faltan ${fmtInt(missing)} $unit';
+    }
+
+    return AppCard(
+      title: 'El día con esta comida',
+      children: [
+        Text('${fmtInt(day.kcal)} kcal · ${left(day.kcal, kcalTarget, 'kcal')}', style: text.titleSmall),
+        Text('P ${fmtInt(day.protein)} g · ${left(day.protein, proteinMin, 'g')}', style: text.titleSmall),
+      ],
+    );
+  }
 }

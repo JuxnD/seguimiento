@@ -130,6 +130,8 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                       const SizedBox(height: 10),
                       Text('Carbos ${fmtInt(total.carbs)} g · Grasa ${fmtInt(total.fat)} g',
                           style: Theme.of(context).textTheme.bodySmall),
+                      if (!_day.isAfter(today) && list.isNotEmpty)
+                        _DayStatus(day: _day, slots: {for (final m in list) m.meal.slot}),
                       const SizedBox(height: 14),
                       FilledButton.icon(
                         onPressed: _newMeal,
@@ -352,6 +354,11 @@ class _Shortcuts extends ConsumerWidget {
               onTap: () => Navigator.pop(context, 'ajustar'),
             ),
             ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar combo'),
+              onTap: () => Navigator.pop(context, 'editar'),
+            ),
+            ListTile(
               leading: const Icon(Icons.delete_outline),
               title: const Text('Borrar combo'),
               onTap: () => Navigator.pop(context, 'borrar'),
@@ -377,10 +384,61 @@ class _Shortcuts extends ConsumerWidget {
           ),
         ),
       );
+    } else if (action == 'editar') {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MealFormScreen(
+            template: template,
+            draft: MealDraft(date: day, slot: template.row.slot ?? MealSlot.otro, items: template.toDrafts()),
+          ),
+        ),
+      );
     } else if (action == 'borrar') {
       if (await confirmDelete(context, 'el combo "${template.name}"') && context.mounted) {
         await guarded(context, () => repo.deleteTemplate(template.row.id), failure: 'No se pudo borrar');
       }
     }
+  }
+}
+
+/// Si el día cuenta para promedios y alertas: con desayuno, almuerzo y cena,
+/// o cerrado a mano. Cerrar es decir "hoy no hubo más", no inventar comidas.
+class _DayStatus extends ConsumerWidget {
+  const _DayStatus({required this.day, required this.slots});
+
+  final DateTime day;
+  final Set<MealSlot> slots;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final manual = ref.watch(dayClosedProvider(dayKey(day))).value ?? false;
+    final missing = missingMainMeals(slots);
+    final text = Theme.of(context).textTheme;
+    final repo = ref.read(nutritionRepositoryProvider);
+    if (missing.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Text('Día completo: cuenta para los promedios', style: text.bodySmall),
+      );
+    }
+    final names = missing.map((m) => m.label.toLowerCase()).join(', ');
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              manual ? 'Día cerrado a mano (sin $names)' : 'Falta $names: no entra a los promedios',
+              style: text.bodySmall,
+            ),
+          ),
+          TextButton(
+            onPressed: () => guarded(context, () => repo.setClosed(day, !manual)),
+            child: Text(manual ? 'Reabrir' : 'Cerrar día'),
+          ),
+        ],
+      ),
+    );
   }
 }

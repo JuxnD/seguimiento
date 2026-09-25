@@ -214,6 +214,49 @@ class NutritionRepository {
         return id;
       });
 
+  /// Edita un combo existente: nombre, franja y alimentos. Si el nombre nuevo
+  /// ya es de otro combo, se rechaza en vez de pisarlo.
+  Future<void> updateTemplate(int id, String name, MealSlot? slot, List<(int, double)> items) =>
+      db.transaction(() async {
+        final clean = name.trim();
+        final clash = await (db.select(db.mealTemplates)
+              ..where((t) => t.name.equals(clean) & t.id.equals(id).not()))
+            .getSingleOrNull();
+        if (clash != null) throw StateError('Ya existe un combo llamado "$clean"');
+        await (db.update(db.mealTemplates)..where((t) => t.id.equals(id)))
+            .write(MealTemplatesCompanion(name: Value(clean), slot: Value(slot)));
+        await (db.delete(db.mealTemplateItems)..where((t) => t.templateId.equals(id))).go();
+        var position = 0;
+        for (final (foodId, quantity) in items) {
+          await db.into(db.mealTemplateItems).insert(MealTemplateItemsCompanion.insert(
+                templateId: id,
+                foodId: foodId,
+                quantity: quantity,
+                position: Value(position++),
+              ));
+        }
+      });
+
+  /// Otra comida del mismo día y franja (para ofrecer fusionarlas).
+  Future<MealRow?> sameSlot(DateTime date, MealSlot slot, {int? excludeId}) async {
+    final rows = await (db.select(db.meals)
+          ..where((t) => t.date.equals(dayKey(date)) & t.slot.equalsValue(slot))
+          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+        .get();
+    return rows.where((r) => r.id != excludeId).firstOrNull;
+  }
+
+  /// Suma los alimentos de `draft` a la comida `intoId` y borra `draft` si ya
+  /// estaba guardada. Las notas se juntan.
+  Future<void> mergeInto(int intoId, MealDraft draft) => db.transaction(() async {
+        final target = await loadMeal(intoId);
+        target.items.addAll(draft.items);
+        final notes = [target.notes, draft.notes].where((n) => n != null && n.trim().isNotEmpty).join(' · ');
+        target.notes = notes.isEmpty ? null : notes;
+        await saveMeal(target);
+        if (draft.id != null && draft.id != intoId) await deleteMeal(draft.id!);
+      });
+
   Future<void> deleteTemplate(int id) => (db.delete(db.mealTemplates)..where((t) => t.id.equals(id))).go();
 
   Future<FoodRow?> foodById(int id) =>
@@ -250,6 +293,20 @@ class NutritionRepository {
   Stream<List<MealWithItems>> watchRange(DateTime from, DateTime to) => _rangeQuery(from, to).watch().map(_group);
 
   /// Consulta de una vez (no abre un stream para quedarse con el primer valor).
+  // ---------- Días cerrados ----------
+
+  /// El usuario dice que ese día ya no registra más (no desayunó, comió dos
+  /// veces…): entra a promedios y alertas aunque falte una comida principal.
+  Future<bool> isClosed(DateTime date) async =>
+      await (db.select(db.closedDays)..where((t) => t.date.equals(dayKey(date)))).getSingleOrNull() != null;
+
+  Stream<bool> watchClosed(DateTime date) =>
+      (db.select(db.closedDays)..where((t) => t.date.equals(dayKey(date)))).watch().map((r) => r.isNotEmpty);
+
+  Future<void> setClosed(DateTime date, bool closed) => closed
+      ? db.into(db.closedDays).insertOnConflictUpdate(ClosedDaysCompanion.insert(date: dayKey(date)))
+      : (db.delete(db.closedDays)..where((t) => t.date.equals(dayKey(date)))).go();
+
   Future<List<MealWithItems>> range(DateTime from, DateTime to) async => _group(await _rangeQuery(from, to).get());
 
   List<MealWithItems> _group(List<TypedResult> rows) {

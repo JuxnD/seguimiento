@@ -7,6 +7,7 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
 import '../../ui/hero.dart';
 import '../../ui/session_style.dart';
@@ -68,9 +69,28 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   if (!context.mounted) return;
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
   final variants = planDay.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
+  // El día de progresión propone la meta según la regla; no la sube solo.
+  ProgressionProposal? proposal;
+  if (planDay.type == DayType.progresion) {
+    final last = await ref.read(trainingRepositoryProvider).lastOfType(SessionType.progresion, day);
+    if (last != null) {
+      proposal = proposeProgression(
+        lastRounds: last.roundsDone,
+        lastPlanned: last.plannedRounds,
+        lastDate: last.date,
+        anySplit: last.sets.any((s) => s.split),
+        anyFailure: last.sets.any((s) => s.toFailure),
+        techniqueOk: last.techniqueOk,
+        fullRange: last.fullRange,
+        recoveryOk: last.recoveryOk,
+        incomplete: last.incomplete,
+      );
+    }
+  }
+  if (!context.mounted) return;
   final setup = await showDialog<_SessionSetup>(
     context: context,
-    builder: (_) => _SetupDialog(day: planDay, variants: variants),
+    builder: (_) => _SetupDialog(day: planDay, variants: variants, proposal: proposal),
   );
   if (setup == null || !context.mounted) return;
 
@@ -172,10 +192,11 @@ class _SessionSetup {
 }
 
 class _SetupDialog extends StatefulWidget {
-  const _SetupDialog({required this.day, required this.variants});
+  const _SetupDialog({required this.day, required this.variants, this.proposal});
 
   final PlanDayDraft day;
   final List<String> variants;
+  final ProgressionProposal? proposal;
 
   @override
   State<_SetupDialog> createState() => _SetupDialogState();
@@ -203,6 +224,7 @@ class _SetupDialogState extends State<_SetupDialog> {
           for (final e in widget.day.main) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
           if (isCircuit) ...[
             const SizedBox(height: 12),
+            if (widget.proposal case final p?) _ProposalCard(proposal: p, onUse: (r) => _rounds.text = '$r'),
             NumberField(controller: _rounds, label: 'Rondas objetivo'),
             const Padding(
               padding: EdgeInsets.only(top: 6),
@@ -232,6 +254,41 @@ class _SetupDialogState extends State<_SetupDialog> {
           child: const Text('Empezar'),
         ),
       ],
+    );
+  }
+}
+
+/// Qué propone la regla de progresión y por qué.
+class _ProposalCard extends StatelessWidget {
+  const _ProposalCard({required this.proposal, required this.onUse});
+
+  final ProgressionProposal proposal;
+  final ValueChanged<int> onUse;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = proposal;
+    final text = Theme.of(context).textTheme;
+    final when = p.lastDate == null ? 'la última' : 'la del ${formatShort(p.lastDate!)}';
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(p.canProgress ? 'Propuesta: ${p.rounds} rondas' : 'Propuesta: mantener ${p.rounds}',
+              style: text.titleSmall),
+          Text(
+            p.canProgress
+                ? '$when (${p.lastRounds}) cumplió los 5 criterios de la regla.'
+                : '$when (${p.lastRounds}) no cumplió: ${p.unmet.join(', ')}.',
+            style: text.bodySmall,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(onPressed: () => onUse(p.rounds), child: Text('Usar ${p.rounds}')),
+          ),
+        ],
+      ),
     );
   }
 }

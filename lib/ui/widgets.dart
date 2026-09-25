@@ -246,6 +246,41 @@ class ScaleSelector extends StatelessWidget {
       );
 }
 
+/// Selector de RPE con la escala a la vista, no en un menú de ayuda.
+class RpeSelector extends StatelessWidget {
+  const RpeSelector({super.key, required this.value, required this.onChanged});
+
+  final int? value;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ScaleSelector(label: 'RPE: ¿cuántas repeticiones te quedaban?', value: value, onChanged: onChanged),
+        if (value != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text('RPE $value: ${rpeMeaning(value!)}', style: text.bodyMedium),
+          ),
+        const SizedBox(height: 8),
+        for (final (v, meaning) in rpeScale)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 1),
+            child: Row(
+              children: [
+                SizedBox(width: 40, child: Text(v, style: text.labelLarge)),
+                Expanded(child: Text(meaning, style: text.bodySmall)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 Future<bool> confirmDelete(BuildContext context, String what) async {
   final ok = await showDialog<bool>(
     context: context,

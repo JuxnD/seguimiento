@@ -42,6 +42,13 @@ class NotificationService implements NotificationSink {
   /// Id fijo para el aviso de fin de descanso: siempre hay uno solo.
   static const restNotificationId = 90001;
 
+  /// Aviso de prueba programado: reprogramar los recordatorios no lo toca.
+  static const testNotificationId = 90002;
+
+  /// Ícono monocromo de la barra de estado (el del lanzador sale como un
+  /// cuadro gris).
+  static const _statusIcon = '@drawable/ic_stat_seguimiento';
+
   Future<void> init() async {
     if (_ready) return;
     tzdata.initializeTimeZones();
@@ -53,7 +60,7 @@ class NotificationService implements NotificationSink {
     }
 
     await _plugin.initialize(const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings(_statusIcon),
       iOS: DarwinInitializationSettings(),
     ));
 
@@ -120,7 +127,7 @@ class NotificationService implements NotificationSink {
   Future<void> cancelScheduled() async {
     final pending = await _plugin.pendingNotificationRequests();
     for (final p in pending) {
-      if (p.id != restNotificationId) await _plugin.cancel(p.id);
+      if (p.id != restNotificationId && p.id != testNotificationId) await _plugin.cancel(p.id);
     }
   }
 
@@ -185,6 +192,48 @@ class NotificationService implements NotificationSink {
       androidScheduleMode: exact ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
+  }
+
+  /// Aviso inmediato: si no aparece, el problema es el permiso o el canal,
+  /// no la programación.
+  Future<void> showTest() async {
+    await init();
+    await _plugin.show(
+      testNotificationId,
+      'Prueba de Seguimiento',
+      'Si ves esto, las notificaciones llegan.',
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          _reminderChannel.id,
+          _reminderChannel.name,
+          channelDescription: _reminderChannel.description,
+        ),
+      ),
+    );
+  }
+
+  /// Aviso programado a un minuto, igual que los recordatorios. Si el
+  /// inmediato llega y este no, lo que falla es la alarma (batería, pausa por
+  /// no uso o el fabricante cerrando la app). Devuelve si fue exacto.
+  Future<bool> scheduleTest({Duration after = const Duration(minutes: 1)}) async {
+    await init();
+    final exact = await canScheduleExact();
+    await _plugin.zonedSchedule(
+      testNotificationId,
+      'Prueba programada',
+      'Llegó a tiempo: los recordatorios también deberían llegar.',
+      tz.TZDateTime.now(tz.local).add(after),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          _reminderChannel.id,
+          _reminderChannel.name,
+          channelDescription: _reminderChannel.description,
+        ),
+      ),
+      androidScheduleMode: exact ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    );
+    return exact;
   }
 
   Future<void> cancelRestEnd() async {

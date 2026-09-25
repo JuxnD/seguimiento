@@ -189,6 +189,7 @@ final reminderSyncProvider = Provider<void>((ref) {
   ref.listen(remindersProvider, (_, __) => run());
   ref.listen(profileProvider, (_, __) => run());
   ref.listen(mealsForDayProvider(dayKey(today)), (_, __) => run());
+  ref.listen(dayClosedProvider(dayKey(today)), (_, __) => run());
   ref.listen(reminderSchedulerProvider, (_, __) => run());
   run();
 });
@@ -217,6 +218,9 @@ final footballProvider = StreamProvider((ref) => ref.watch(trainingRepositoryPro
 final foodsProvider = StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchFoods());
 final mealTemplatesProvider =
     StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchTemplates());
+/// Si el día (`YYYY-MM-DD`) se cerró a mano en Comidas.
+final dayClosedProvider =
+    StreamProvider.family<bool, String>((ref, day) => ref.watch(nutritionRepositoryProvider).watchClosed(parseDay(day)));
 final weightsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchWeights());
 /// Peso más reciente (kg) para estimar kcal; null sin pesajes.
 final latestWeightProvider = Provider<double?>((ref) {

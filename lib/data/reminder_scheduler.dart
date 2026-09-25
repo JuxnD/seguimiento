@@ -60,15 +60,20 @@ class ReminderScheduler {
     }
 
     final meals = await nutrition.range(today, today);
-    final proteinToday = Macros.sum(meals.map((m) => m.macros)).protein;
+    final totals = Macros.sum(meals.map((m) => m.macros));
+    final closed = await nutrition.isClosed(today);
+    final missing = closed ? const <MealSlot>[] : missingMainMeals({for (final m in meals) m.meal.slot});
 
     final lastMeasurement = await body.lastCheckInBefore(addDays(today, 1));
     final planned = planReminders(ReminderContext(
       now: moment,
       days: days,
       settings: settings,
-      proteinToday: proteinToday,
+      proteinToday: totals.protein,
       proteinMin: p.proteinMin,
+      kcalToday: totals.kcal,
+      kcalTarget: p.kcalTarget,
+      missingMealsToday: missing,
       lastMeasurement: lastMeasurement,
       measureIntervalDays: p.measureIntervalDays,
       // Una fecha acordada ya cumplida no debe seguir avisando.

@@ -12,12 +12,12 @@ abstract final class AppColors {
   static const record = Color(0xFFFFC53D);
 }
 
-const _orange = Color(0xFFFF7A18);
-const _orangeDeep = Color(0xFFE85D04);
-const _black = Color(0xFF0B0B0C);
-const _surface = Color(0xFF141417);
-const _surfaceHigh = Color(0xFF1D1D21);
-const _outline = Color(0xFF3A3A40);
+const _orange = Color(0xFFF08A34);
+const _orangeDeep = Color(0xFFE4661F);
+const _black = Color(0xFF0B0806);
+const _surface = Color(0xFF150F0B);
+const _surfaceHigh = Color(0xFF241A13);
+const _outline = Color(0xFF4A3526);
 
 const appColors = ColorScheme(
   brightness: Brightness.dark,
@@ -36,14 +36,14 @@ const appColors = ColorScheme(
   errorContainer: Color(0xFF4A1414),
   onErrorContainer: Color(0xFFFFDAD6),
   surface: _surface,
-  onSurface: Color(0xFFF2F2F3),
-  onSurfaceVariant: Color(0xFFB9B9C0),
+  onSurface: Color(0xFFFFF6EC),
+  onSurfaceVariant: Color(0xFFC9B8A8),
   surfaceContainerHighest: _surfaceHigh,
   outline: _outline,
-  outlineVariant: Color(0xFF2A2A30),
+  outlineVariant: Color(0xFF35251A),
   shadow: Colors.black,
   scrim: Colors.black,
-  inverseSurface: Color(0xFFE6E6E8),
+  inverseSurface: Color(0xFFF3E6D8),
   onInverseSurface: _black,
   inversePrimary: _orangeDeep,
 );
@@ -70,10 +70,10 @@ ThemeData buildGymTheme() {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFF232329)),
+        side: const BorderSide(color: Color(0xFF2A1F17)),
       ),
     ),
-    dividerTheme: const DividerThemeData(color: Color(0xFF232329), space: 24),
+    dividerTheme: const DividerThemeData(color: Color(0xFF2A1F17), space: 24),
     textTheme: base.textTheme.copyWith(
       titleMedium: base.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
       titleSmall: base.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
@@ -90,7 +90,7 @@ ThemeData buildGymTheme() {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: const Color(0xFFF2F2F3),
+        foregroundColor: const Color(0xFFFFF6EC),
         minimumSize: const Size(0, 44),
         padding: const EdgeInsets.symmetric(horizontal: 10),
         side: const BorderSide(color: _outline),
@@ -103,7 +103,7 @@ ThemeData buildGymTheme() {
       foregroundColor: Color(0xFF1A0C00),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: const Color(0xFF101013),
+      backgroundColor: const Color(0xFF0F0A07),
       indicatorColor: _orange.withOpacity(0.18),
       elevation: 0,
       height: 68,
@@ -111,12 +111,12 @@ ThemeData buildGymTheme() {
         (states) => TextStyle(
           fontSize: 11,
           fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
-          color: states.contains(WidgetState.selected) ? _orange : const Color(0xFF9A9AA2),
+          color: states.contains(WidgetState.selected) ? _orange : const Color(0xFFA08E7E),
         ),
       ),
       iconTheme: WidgetStateProperty.resolveWith(
         (states) => IconThemeData(
-          color: states.contains(WidgetState.selected) ? _orange : const Color(0xFF9A9AA2),
+          color: states.contains(WidgetState.selected) ? _orange : const Color(0xFFA08E7E),
         ),
       ),
     ),
@@ -124,7 +124,7 @@ ThemeData buildGymTheme() {
       isDense: true,
       filled: true,
       fillColor: _surfaceHigh,
-      labelStyle: const TextStyle(color: Color(0xFFB9B9C0)),
+      labelStyle: const TextStyle(color: Color(0xFFC9B8A8)),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: _outline),
@@ -142,7 +142,7 @@ ThemeData buildGymTheme() {
       backgroundColor: _surfaceHigh,
       selectedColor: _orange,
       side: const BorderSide(color: _outline),
-      labelStyle: const TextStyle(color: Color(0xFFE6E6E8), fontWeight: FontWeight.w600),
+      labelStyle: const TextStyle(color: Color(0xFFF3E6D8), fontWeight: FontWeight.w600),
       secondaryLabelStyle: const TextStyle(color: Color(0xFF1A0C00), fontWeight: FontWeight.w700),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
@@ -152,20 +152,20 @@ ThemeData buildGymTheme() {
           (states) => states.contains(WidgetState.selected) ? _orange : _surfaceHigh,
         ),
         foregroundColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected) ? const Color(0xFF1A0C00) : const Color(0xFFE6E6E8),
+          (states) => states.contains(WidgetState.selected) ? const Color(0xFF1A0C00) : const Color(0xFFF3E6D8),
         ),
         side: WidgetStateProperty.all(const BorderSide(color: _outline)),
         textStyle: WidgetStateProperty.all(const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
       ),
     ),
-    listTileTheme: const ListTileThemeData(iconColor: Color(0xFFB9B9C0)),
+    listTileTheme: const ListTileThemeData(iconColor: Color(0xFFC9B8A8)),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: _orange,
-      linearTrackColor: Color(0xFF2A2A30),
+      linearTrackColor: Color(0xFF35251A),
     ),
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: _surfaceHigh,
-      contentTextStyle: TextStyle(color: Color(0xFFF2F2F3)),
+      contentTextStyle: TextStyle(color: Color(0xFFFFF6EC)),
       behavior: SnackBarBehavior.floating,
     ),
     dialogTheme: DialogTheme(
@@ -176,10 +176,10 @@ ThemeData buildGymTheme() {
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: _surface, surfaceTintColor: Colors.transparent),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected) ? _orange : const Color(0xFF9A9AA2),
+        (states) => states.contains(WidgetState.selected) ? _orange : const Color(0xFFA08E7E),
       ),
       trackColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected) ? _orange.withOpacity(0.35) : const Color(0xFF2A2A30),
+        (states) => states.contains(WidgetState.selected) ? _orange.withOpacity(0.35) : const Color(0xFF35251A),
       ),
     ),
   );
