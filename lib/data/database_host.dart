@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import 'database.dart';
+import 'repositories/reminder_repository.dart';
 
 /// Error de restauración con mensaje listo para mostrar.
 class RestoreException implements Exception {
@@ -54,6 +55,9 @@ class DatabaseHost {
       _db = opener(file);
       // Consulta real: si el archivo no sirve, falla aquí y no en la UI.
       await _db.customSelect('select count(*) as n from profiles').getSingle();
+      // Un respaldo viejo puede llegar sin recordatorios (anterior al esquema 5,
+      // o reiniciados por la migración al 9): se recrean con sus valores.
+      await ReminderRepository(_db).ensureDefaults();
       if (safetyCopy.existsSync()) safetyCopy.deleteSync();
     } on Object catch (e) {
       await _rollback(safetyCopy);

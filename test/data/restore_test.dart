@@ -6,6 +6,7 @@ import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/repositories/body_repository.dart';
 import 'package:seguimiento/data/repositories/profile_repository.dart';
+import 'package:seguimiento/domain/reminders.dart';
 
 import '../support/sqlite_host.dart';
 
@@ -44,6 +45,16 @@ void main() {
     final weights = await BodyRepository(host.db).watchWeights().first;
     expect(weights.map((w) => w.kg), [71.4]);
     expect(File('${host.file.path}.pre-restore').existsSync(), isFalse);
+  });
+
+  test('un respaldo sin recordatorios queda con los de por defecto', () async {
+    await host.db.delete(host.db.reminders).go();
+    final backup = await exportBackup('sin-avisos.sqlite');
+
+    await host.restoreFrom(backup);
+
+    final kinds = (await host.db.select(host.db.reminders).get()).map((r) => r.kind).toSet();
+    expect(kinds, ReminderKind.values.toSet());
   });
 
   test('el perfil restaurado es el del respaldo, no el actual', () async {

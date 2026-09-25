@@ -43,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -120,6 +120,13 @@ class AppDatabase extends _$AppDatabase {
             // Datos que la siembra ya no puede llevar a una base existente.
             await applyExerciseGuides(this);
             await addMissingCatalog(this);
+          }
+          if (from >= 5 && from < 9) {
+            // v9 (solo datos): los recordatorios vuelven una vez a los valores
+            // acordados el 26 sep 2026 (sesión 3:00 p. m., proteína y calorías
+            // 8:00 p. m., comidas sin registrar 10:00 p. m.…). Al borrar las
+            // filas, `ReminderRepository.ensureDefaults` las recrea al abrir.
+            await delete(reminders).go();
           }
         },
         beforeOpen: (details) async {

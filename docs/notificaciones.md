@@ -16,7 +16,9 @@ los vuelve a calcular cada vez que cambia algo que los afecta.
 | Medición | La fecha acordada, o última toma + intervalo, a las 7:00 a. m. | En ayunas, antes de desayunar |
 | Fin del descanso | Al terminar la cuenta regresiva de la sesión | Qué viene después; suena y vibra con la app en segundo plano |
 
-Todo se activa, se apaga y se mueve de hora en **Ajustes → Recordatorios**.
+Esos son los valores acordados con el usuario el 26 sep 2026; la 1.8.1 los
+dejó así una vez en la app instalada (migración al esquema 9). Todo se activa,
+se apaga y se mueve de hora en **Ajustes → Recordatorios**.
 Esa pantalla también muestra la cola de avisos ya programados, para comprobar
 sin esperar a que suenen.
 
