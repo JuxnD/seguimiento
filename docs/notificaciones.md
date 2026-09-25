@@ -11,12 +11,28 @@ los vuelve a calcular cada vez que cambia algo que los afecta.
 | Sesión sin registrar | 9:00 p. m. de un día de entrenamiento sin sesión guardada | Recuerda registrarla, aunque no hayas entrenado |
 | Comidas | Hora por franja: merienda 4:30 p. m. y cena 8:00 p. m. activas; desayuno apagado | Invita a usar un combo si repetiste |
 | Proteína | 8:00 p. m., solo si vas por debajo del umbral (100 g) | "Proteína: 68 g — Faltan 62 g para el mínimo de 130 g" |
+| Calorías | 8:00 p. m., solo si vas por debajo del umbral (1.800 kcal) | "Calorías: 1200 kcal — Faltan 1200 kcal para la meta de 2400" |
+| Comidas sin registrar | 10:00 p. m., si falta desayuno, almuerzo o cena y el día no se cerró a mano | "Falta registrar: desayuno y cena" |
 | Medición | La fecha acordada, o última toma + intervalo, a las 7:00 a. m. | En ayunas, antes de desayunar |
 | Fin del descanso | Al terminar la cuenta regresiva de la sesión | Qué viene después; suena y vibra con la app en segundo plano |
 
 Todo se activa, se apaga y se mueve de hora en **Ajustes → Recordatorios**.
 Esa pantalla también muestra la cola de avisos ya programados, para comprobar
 sin esperar a que suenen.
+
+### ¿Llegan los avisos?
+
+Arriba en Recordatorios, una tarjeta con lo que decide si un aviso llega:
+permiso de notificaciones, alarmas exactas, **optimización de batería** y
+**"Pausar la actividad de la app si no se usa"** (Android 11+). Los dos últimos
+no los ve ningún plugin: los lee `MainActivity.kt` por el canal
+`seguimiento/sistema` ([`system_health.dart`](../lib/data/system_health.dart)).
+Si alguno está activo, un aviso explica el efecto y abre el ajuste exacto.
+
+Dos pruebas separan las causas: **Probar ahora** (inmediato: si no aparece, es
+el permiso o el canal) y **Probar en 1 min** (programado igual que los
+recordatorios: si el inmediato llega y este no, es la alarma, la batería o el
+fabricante). Verificado en el emulador Android 15 con la pantalla apagada.
 
 ## Cómo se decide
 
@@ -62,13 +78,18 @@ repite al terminar.
   plugin no los trae**: sin ellos la alarma se dispara y no aparece nada, sin
   ningún error visible. Hay una comprobación en CI que falla si se pierden.
 - `RECEIVE_BOOT_COMPLETED` deja que los avisos sobrevivan a un reinicio.
+- El ícono de la barra de estado es `@drawable/ic_stat_seguimiento` (blanco
+  sobre transparente, generado por `tool/icons.py`): el del lanzador se veía
+  como un cuadro gris.
 - La app usa desugaring de `java.time` (`coreLibraryDesugaring`), que el plugin
   exige para `minSdk` 21.
 
 ## Límites conocidos
 
 - El ahorro de batería agresivo de algunos fabricantes puede retrasar los avisos
-  inexactos. Si pasa, conviene excluir la app de la optimización de batería.
+  inexactos. La tarjeta de diagnóstico lo detecta y abre el ajuste; algunos
+  fabricantes tienen además su propio gestor, que la app no puede leer.
 - Los avisos se calculan con los datos del momento de programar: si registras
-  una comida a las 7:55 p. m., el de proteína ya quedó fijado con lo anterior
-  salvo que la app esté abierta (ahí se reprograma sola).
+  una comida a las 7:55 p. m., los de proteína, calorías y comidas ya quedaron
+  fijados con lo anterior salvo que la app esté abierta (ahí se reprograman
+  solos al guardar, igual que al cerrar el día).

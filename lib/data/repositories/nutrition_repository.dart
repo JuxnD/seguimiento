@@ -303,6 +303,11 @@ class NutritionRepository {
   Stream<bool> watchClosed(DateTime date) =>
       (db.select(db.closedDays)..where((t) => t.date.equals(dayKey(date)))).watch().map((r) => r.isNotEmpty);
 
+  Stream<List<String>> watchClosedRange(DateTime from, DateTime to) =>
+      (db.select(db.closedDays)..where((t) => t.date.isBetweenValues(dayKey(from), dayKey(to))))
+          .watch()
+          .map((rows) => rows.map((r) => r.date).toList()..sort());
+
   Future<void> setClosed(DateTime date, bool closed) => closed
       ? db.into(db.closedDays).insertOnConflictUpdate(ClosedDaysCompanion.insert(date: dayKey(date)))
       : (db.delete(db.closedDays)..where((t) => t.date.equals(dayKey(date)))).go();

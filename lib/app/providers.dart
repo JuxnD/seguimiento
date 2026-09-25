@@ -251,6 +251,7 @@ final reportProvider = FutureProvider.family<String, (String, String)>((ref, ran
   ref.watch(profileProvider);
   final from = parseDay(range.$1), to = parseDay(range.$2);
   ref.watch(mealsRangeRefreshProvider((range.$1, range.$2)));
+  ref.watch(closedDaysRangeProvider((range.$1, range.$2)));
   final input = await ref.watch(reportRepositoryProvider).load(from, to);
   return buildReport(input);
 });
@@ -261,6 +262,13 @@ final mealsRangeRefreshProvider = StreamProvider.family(
         .watch(nutritionRepositoryProvider)
         .watchRange(parseDay(range.$1), parseDay(range.$2))
         .map((meals) => meals.map((m) => '${m.meal.id}:${m.items.length}:${m.macros.kcal}').join(',')));
+
+/// Días cerrados a mano en un rango: cerrar o reabrir uno cambia promedios y
+/// alertas del informe.
+final closedDaysRangeProvider = StreamProvider.family(
+    (ref, (String, String) range) => ref
+        .watch(nutritionRepositoryProvider)
+        .watchClosedRange(parseDay(range.$1), parseDay(range.$2)));
 
 /// Versión instalada, leída del propio paquete.
 final appVersionProvider = FutureProvider<String>((ref) async {

@@ -422,14 +422,17 @@ class _DayStatus extends ConsumerWidget {
         child: Text('Día completo: cuenta para los promedios', style: text.bodySmall),
       );
     }
-    final names = missing.map((m) => m.label.toLowerCase()).join(', ');
+    final labels = missing.map((m) => m.label.toLowerCase()).toList();
+    final names = labels.length == 1 ? labels.first : '${labels.take(labels.length - 1).join(', ')} y ${labels.last}';
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
           Expanded(
             child: Text(
-              manual ? 'Día cerrado a mano (sin $names)' : 'Falta $names: no entra a los promedios',
+              manual
+                  ? 'Día cerrado a mano (sin $names)'
+                  : '${labels.length == 1 ? 'Falta' : 'Faltan'} $names: no entra a los promedios',
               style: text.bodySmall,
             ),
           ),

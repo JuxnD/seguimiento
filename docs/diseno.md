@@ -5,9 +5,15 @@ progreso se ve antes de leerse**, y cada color significa algo.
 
 ## Sistema visual
 
-Tema oscuro único ([`lib/ui/theme.dart`](../lib/ui/theme.dart)): negro de fondo,
-superficies en gris muy oscuro y el naranja reservado para lo accionable y el
-dato en foco. Todo lo demás es gris.
+Tema oscuro único ([`lib/ui/theme.dart`](../lib/ui/theme.dart)) con la paleta
+del logo: fondo `#0B0806`, superficies `#150F0B` y `#241A13`, naranja base
+`#F08A34` (profundo `#E4661F`) reservado para lo accionable y el dato en foco,
+texto `#FFF6EC`. Todo lo demás son neutros cálidos.
+
+**Ícono**: anillo de 10 segmentos (la meta de 10 rondas) con la figura colgada
+de la barra. Los originales están en `assets/icon/`; `python tool/icons.py`
+genera el ícono clásico, el adaptable (con capa monocroma para los íconos
+temáticos) y el de la barra de estado.
 
 ### Color por tipo de día
 

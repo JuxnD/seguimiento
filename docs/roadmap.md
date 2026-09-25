@@ -47,6 +47,7 @@ Mejoras pedidas tras el primer uso real, en este orden:
 | 4 | Diseño: anillos de progreso, racha, gráficas, celebración de récord, fotos con comparador | Listo |
 | 5 | Pulido tras uso real: tarjeta principal en todas las pestañas, enfriamiento como fase igual al calentamiento, medalla y frase de cierre con el dato real, insignia al cerrar ronda, selector de "qué costó más" con chips | Listo |
 | 6 | Auditoría del 23 sep 2026 ([auditoria-2026-09-23.md](auditoria-2026-09-23.md)): correcciones, retomar el cronómetro, respaldo automático, umbrales del perfil, menos toques, pruebas de pantalla y CI que compila | Listo |
+| 7 | Traspaso v2 del 25 sep ([handoff-v2-2026-09-25.md](handoff-v2-2026-09-25.md)): trabajo y descanso por ronda, técnica y carga en el cronómetro, RPE obligatorio, propuesta de progresión, días cerrados, volumen e interferencia en el informe, diagnóstico de avisos, logo | Listo en la rama `v2/handoff`, sin publicar |
 
 ## v2
 

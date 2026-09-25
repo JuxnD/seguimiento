@@ -30,17 +30,27 @@ editables en Ajustes) y un botón grande para cerrarlas; nada se salta por
 accidente.
 
 - **Calentamiento**: debajo del reloj, "Lo que viene" con los ejercicios, el
-  objetivo y el agarre del plan.
+  objetivo y el agarre del plan. Empezar antes de la meta pide confirmar
+  ("Calentamiento corto"): se puede, pero con 4–5 min se rinde peor.
 - **Trabajo**: contador ("RONDA 3/7" o "SERIE 2/4"), ejercicio, agarre si el
   plan lo pide, y un **anillo con las repeticiones** que se llena al llegar al
   objetivo; −/+ a los lados si hiciste otra cosa. Debajo del ejercicio,
   **"Llevas N reps de <ejercicio>"**: lo acumulado de ese ejercicio en la
-  sesión, sin contar la serie en curso. Luego, qué viene después y una barra de
-  avance. **Hecho** avanza, con transición animada.
+  sesión, sin contar la serie en curso. **Técnica** abre las claves del
+  ejercicio, su progresión y "Ver cómo se hace" (salen del catálogo de
+  ejercicios). En los que progresan con peso (búlgara) aparece la **carga en
+  kg**, que arranca en la última usada y se guarda con cada serie. Luego, qué
+  viene después y una barra de avance. **Hecho** avanza, con transición
+  animada.
 - **Descanso**: cuenta regresiva en un anillo azul con la duración del plan,
   "A continuación" y la barra de avance; avisa con sonido y vibración al
   terminar y se puede saltar. Si el descanso viene de cerrar una ronda, aparece
-  la insignia **"Ronda N lista · m:ss"** con el tiempo de esa vuelta.
+  la insignia **"Ronda N lista · m:ss"** con el trabajo de esa ronda. Durante
+  el descanso hay acceso a la técnica del siguiente ejercicio.
+- **Trabajo y descanso por ronda.** Cada ronda guarda su trabajo (de su
+  arranque a la última repetición) y el descanso que la siguió. Antes la
+  vuelta iba de marca a marca y llevaba dentro el descanso previo, así que la
+  ronda 1 (sin descanso delante) parecía 30 s más rápida.
 - **Enfriamiento**: igual que el calentamiento, con "Ya hiciste" (rondas o
   series, repeticiones, neto y descanso). Cerrarlo con menos de **1 min** pide
   confirmación: guardar sin enfriar casi siempre es un descuido.
@@ -63,7 +73,9 @@ Al final, una **medalla animada** con una frase basada en el dato real
 ([`sessionPraise`](../lib/domain/progress.dart)): récord, "+N rondas más que el
 lunes", "más rápido", "plan cumplido" o "sesión registrada" si quedó
 incompleta. Nunca un "¡buen trabajo!" genérico. Debajo, tiempos, rondas o
-series y tiempo por ronda, y de ahí al formulario prellenado para añadir RPE,
+series, trabajo y descanso por ronda, y de ahí al formulario prellenado. Al
+guardar se pide el **RPE** con la escala a la vista (es lo único obligatorio:
+sin él no funciona la regla de progresión). También se pueden añadir
 "¿qué te costó más?" (chips con los ejercicios de la sesión, "Ninguno" por
 defecto) y notas. El formulario no repite la celebración.
 
@@ -84,6 +96,15 @@ En primer plano suena el sonido del sistema y vibra. Con la pantalla apagada
 avisa una notificación programada con alarma exacta; si Android no la permite
 (14+ por defecto), el aviso puede llegar tarde y la app lo dice una vez. Detalle
 en [notificaciones.md](notificaciones.md).
+
+## Propuesta de rondas (día de progresión)
+
+Antes de empezar, el día de progresión muestra la propuesta de la regla: una
+ronda más si la última sesión de progresión completó su meta sin series
+partidas, sin fallo, con técnica buena, rango completo y recuperación normal;
+si no, la misma meta y qué criterio falló. Una condición sin registrar no
+cuenta como cumplida. La app no cambia la meta sola: "Usar N" la pone en el
+campo.
 
 ## Sin plan para hoy
 

@@ -322,7 +322,9 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Vueltas: ${lapDurations(d.roundMarksSec).map(formatDuration).join(' · ')}',
+                    d.roundWorkSec != null
+                        ? 'Trabajo por ronda: ${d.roundWorkSec!.map(formatDuration).join(' · ')}'
+                        : 'Vueltas (con descanso): ${lapDurations(d.roundMarksSec).map(formatDuration).join(' · ')}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),

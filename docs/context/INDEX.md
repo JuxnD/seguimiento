@@ -14,6 +14,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Datos e invariantes | [../modelo-datos.md](../modelo-datos.md) | Cambia una tabla, una unidad o el esquema |
 | Producto del informe | [../informe.md](../informe.md) | Cambia una sección, una métrica o una alerta |
 | Desviaciones de la planeación | [../auditoria-planeacion.md](../auditoria-planeacion.md) | Se acepta o rechaza un cambio al plan original |
+| Traspaso v2: qué se hizo con cada punto | [../handoff-v2-2026-09-25.md](../handoff-v2-2026-09-25.md) | Se cierra un pendiente del traspaso |
 | Auditoría técnica y plan de mejora | [../auditoria-2026-09-23.md](../auditoria-2026-09-23.md) | Se cierra un hallazgo o una fase del plan |
 | Respaldo, restauración y releases | [../actualizaciones.md](../actualizaciones.md) | Cambia el flujo de respaldo, la firma o el pipeline |
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
@@ -56,6 +57,11 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 - **Trabajo neto**: total − calentamiento − enfriamiento − descansos.
 - **Tiempo de circuito**: total − calentamiento − enfriamiento (con descansos);
   sobre él se miden las vueltas.
+- **Trabajo por ronda**: de que arranca la ronda a su última repetición, sin
+  el descanso previo. **R1→Rn**: trabajo de la última menos el de la primera
+  (degradación).
+- **Día cerrado**: con desayuno, almuerzo y cena, o cerrado a mano. Solo esos
+  entran a promedios y alertas de nutrición.
 - **Ronda**: vuelta completa al circuito. **Vuelta/marca**: tiempo de una ronda
   registrado con el contador.
 - **Serie partida**: serie que no se completó de corrido (12+3).

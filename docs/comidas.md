@@ -23,6 +23,18 @@ Dentro del formulario:
   comida quedan como combo de un toque. Si el nombre ya existe, se reemplaza.
   Las entradas libres no entran, porque un combo es una receta del catálogo.
 
+## Día cerrado
+
+Un día entra a promedios y alertas si tiene **desayuno, almuerzo y cena**, o si
+se **cierra a mano** en Comidas ("Cerrar día": ese día no hubo más). Debajo de
+los anillos, Comidas dice qué falta; el informe marca los demás días como
+"(incompleto)". Cerrar se puede deshacer con "Reabrir".
+
+Mientras se arma una comida, "El día con esta comida" muestra el acumulado y lo
+que falta para la meta de kcal y proteína. Guardar una segunda comida en la
+misma franja y día ofrece **fusionarlas** en una sola. Los combos se editan
+(nombre, franja y cantidades) desde su menú en Atajos.
+
 ## Franja y hora
 
 La franja se propone según la hora
