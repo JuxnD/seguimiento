@@ -115,11 +115,20 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400)); // transición
   }
 
+  /// Empieza el circuito sin calentar: el aviso de calentamiento corto sale y
+  /// se acepta.
+  Future<void> startNow(WidgetTester tester) async {
+    await tester.tap(find.text('Empezar circuito'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Calentamiento corto'), findsOneWidget);
+    await tester.tap(find.text('Empezar igual'));
+    await step(tester);
+  }
+
   testWidgets('terminar antes guarda solo lo hecho y la marca como incompleta', (tester) async {
     final results = await pumpGuided(tester);
 
-    await tester.tap(find.text('Empezar circuito'));
-    await step(tester);
+    await startNow(tester);
 
     // Ronda 1: dos paradas.
     expect(find.text('Primera vez hoy con este ejercicio'), findsOneWidget);
@@ -145,12 +154,49 @@ void main() {
     expect(draft.sets.map((s) => (s.exercise, s.reps)), [('Flexiones', 10), ('Sentadillas', 15)]);
     expect(draft.restSec, inInclusiveRange(9, 11), reason: 'el descanso en curso cuenta hasta el corte');
     expect(draft.netSec, lessThan(draft.spanSec), reason: 'el neto no incluye el descanso');
+    expect(draft.roundRestSec.single, inInclusiveRange(9, 11), reason: 'el descanso es de la ronda 1');
+    expect(draft.roundWorkSec, [draft.roundMarksSec.single], reason: 'la ronda 1 no tiene descanso delante');
+  });
+
+  testWidgets('cada ronda separa su trabajo del descanso que la precede', (tester) async {
+    final results = await pumpGuided(tester);
+    await startNow(tester);
+
+    // Ronda 1: 10 s de trabajo.
+    await tester.tap(find.text('Hecho'));
+    await step(tester);
+    await tester.tap(find.text('Hecho'));
+    await step(tester, const Duration(seconds: 20)); // 20 s de descanso
+
+    await tester.tap(find.text('Saltar descanso'));
+    await step(tester);
+    // Ronda 2.
+    await tester.tap(find.text('Hecho'));
+    await step(tester);
+    await tester.tap(find.text('Hecho'));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.tap(find.text('Terminar'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+    await step(tester, const Duration(seconds: 70));
+    await tester.tap(find.text('Terminar enfriamiento'));
+    await step(tester, const Duration(seconds: 2));
+    await tester.tap(find.text('Revisar y guardar'));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final draft = results.single!;
+    expect(draft.roundMarksSec, hasLength(2));
+    final rest = draft.roundRestSec.first;
+    expect(rest, inInclusiveRange(19, 21));
+    final lap2 = draft.roundMarksSec[1] - draft.roundMarksSec[0];
+    expect(draft.roundWorkSec![1], lap2 - rest, reason: 'la vuelta 2 sin el descanso previo');
+    expect(draft.roundWorkSec![1], inInclusiveRange(9, 12));
   });
 
   testWidgets('el acumulado de reps es por ejercicio', (tester) async {
     await pumpGuided(tester);
-    await tester.tap(find.text('Empezar circuito'));
-    await step(tester);
+    await startNow(tester);
 
     await tester.tap(find.text('Hecho')); // Flexiones 10
     await step(tester);

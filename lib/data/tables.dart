@@ -41,6 +41,18 @@ class Profiles extends Table {
 class Exercises extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 1, max: 80).unique()();
+
+  /// Referencia visual: se abre en el navegador.
+  TextColumn get mediaUrl => text().nullable()();
+
+  /// Claves de técnica, una por línea (3–5). Se muestran en el cronómetro.
+  TextColumn get formCues => text().nullable()();
+
+  /// Cómo se progresa este ejercicio ("pike → pies elevados → HSPU").
+  TextColumn get progressionNote => text().nullable()();
+
+  /// Progresa con carga externa (mochila, garrafas): el cronómetro pide kg.
+  BoolColumn get tracksLoad => boolean().withDefault(const Constant(false))();
 }
 
 /// Versión inmutable del plan. Editar = crear versión nueva.
@@ -152,6 +164,14 @@ class SessionRounds extends Table {
   IntColumn get sessionId => integer().references(Sessions, #id, onDelete: KeyAction.cascade)();
   IntColumn get roundIndex => integer()();
   IntColumn get elapsedSec => integer()();
+
+  /// Trabajo de la ronda: de su arranque a la última repetición, sin el
+  /// descanso que la precede. null en rondas anteriores al esquema 8 o del
+  /// contador libre, que no separa el descanso.
+  IntColumn get workSec => integer().nullable()();
+
+  /// Descanso posterior a la ronda (0 en la última). null = no se midió.
+  IntColumn get restSec => integer().nullable()();
 }
 
 @DataClassName('SessionSetRow')
@@ -166,6 +186,9 @@ class SessionSets extends Table {
   /// p. ej. "12+3".
   TextColumn get splitDetail => text().nullable()();
   BoolColumn get toFailure => boolean().withDefault(const Constant(false))();
+
+  /// Carga externa en kg (mochila, garrafas). null = peso corporal.
+  RealColumn get loadKg => real().nullable()();
 }
 
 @DataClassName('FootballGameRow')
@@ -299,6 +322,17 @@ class Reminders extends Table {
 
   @override
   Set<Column> get primaryKey => {kind};
+}
+
+/// Días de comidas cerrados a mano: el usuario dice que ya no registra nada
+/// más ese día aunque falte una comida principal (p. ej. no desayunó). Un día
+/// con desayuno, almuerzo y cena se da por cerrado sin estar aquí.
+@DataClassName('ClosedDayRow')
+class ClosedDays extends Table {
+  TextColumn get date => text()();
+
+  @override
+  Set<Column> get primaryKey => {date};
 }
 
 /// Notas libres por semana (índice anclado a la fecha de inicio).

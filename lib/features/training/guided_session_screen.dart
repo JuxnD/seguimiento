@@ -4,10 +4,13 @@ import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../app/providers.dart';
+import '../../data/database.dart' show ExerciseRow;
 import '../../data/notification_service.dart';
+import '../../data/repositories/exercise_repository.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
@@ -17,7 +20,7 @@ import '../../domain/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
 import '../../domain/report/report_input.dart' show Targets;
-import '../../domain/session_math.dart' show lapDurations, meanSec;
+import '../../domain/session_math.dart' show lapDurations, meanSec, roundWork;
 import '../../domain/session_script.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
@@ -99,6 +102,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// Segundos desde el inicio del trabajo al cerrar cada ronda.
   late final _roundMarks = <int>[...?widget.resume?.roundMarks];
 
+  /// Descanso después de cada ronda, en paralelo a `_roundMarks`. Así cada
+  /// vuelta se separa en trabajo y descanso (una vuelta sola los mezcla).
+  late final _roundRests = <int>[...?widget.resume?.roundRests];
+
+  /// Guías de técnica de los ejercicios del día, por nombre.
+  Map<String, ExerciseRow> _guides = const {};
+
+  /// Carga externa (kg) por ejercicio: arranca en la última usada.
+  final _loads = <String, double>{};
+
   late int _index = widget.resume?.index ?? 0;
   late int? _reps = widget.resume?.reps;
   late GuidedPhase _phase = widget.resume?.phase ?? GuidedPhase.calentamiento;
@@ -112,6 +125,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   void initState() {
     super.initState();
     _notifications = ref.read(notificationServiceProvider);
+    unawaited(_loadGuides());
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     WakelockPlus.enable();
     // Una sesión retomada en mitad de un descanso vuelve a programar su aviso.
@@ -144,7 +158,37 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         reps: _reps,
         done: List.of(_done),
         roundMarks: List.of(_roundMarks),
+        roundRests: List.of(_roundRests),
       )));
+
+  /// Claves de técnica y última carga usada de cada ejercicio del guion.
+  Future<void> _loadGuides() async {
+    final names = {for (final st in _steps) if (st is WorkStep) st.exercise};
+    try {
+      final guides = await ref.read(exerciseRepositoryProvider).byNames(names);
+      final training = ref.read(trainingRepositoryProvider);
+      final loads = <String, double>{};
+      for (final g in guides.values.where((g) => g.tracksLoad)) {
+        loads[g.name] = await training.lastLoad(g.name) ?? 0;
+      }
+      if (!mounted) return;
+      setState(() {
+        _guides = guides;
+        for (final e in loads.entries) {
+          _loads.putIfAbsent(e.key, () => e.value);
+        }
+      });
+    } on Object {
+      // Sin guías el cronómetro funciona igual.
+    }
+  }
+
+  /// Trabajo de cada ronda (sin descansos), o las vueltas completas si los
+  /// descansos no se midieron (sesión retomada de una versión anterior).
+  List<int> get _roundWork {
+    if (_roundMarks.isEmpty) return const [];
+    return roundWork(_roundMarks, _roundRests) ?? lapDurations(_roundMarks);
+  }
 
   @override
   void dispose() {
@@ -192,7 +236,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// descanso por cualquier camino: se acabó, se saltó o se terminó antes.
   void _closeRest() {
     if (_current is RestStep && _restStartedAt != null) {
-      _restAccumSec += _restNowSec;
+      final rest = _restNowSec;
+      _restAccumSec += rest;
+      // En circuito el descanso va entre rondas: es de la ronda que acaba de cerrar.
+      if (_roundMarks.isNotEmpty && _roundRests.length == _roundMarks.length) {
+        _roundRests[_roundRests.length - 1] += rest;
+      }
     }
     _restStartedAt = null;
   }
@@ -247,6 +296,27 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     unawaited(HapticFeedback.heavyImpact());
   }
 
+  /// Empezar antes de la meta de calentamiento se puede, pero se avisa: con
+  /// 4–5 min se rinde peor.
+  Future<void> _tryStartWork() async {
+    if (_warmupSec < _warmupGoalSec) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('Calentamiento corto'),
+          content: Text('Llevas ${formatDuration(_warmupSec)} de ${formatDuration(_warmupGoalSec)}. '
+              'Con menos de la meta sueles rendir peor.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Empezar igual')),
+            FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir calentando')),
+          ],
+        ),
+      );
+      if (ok != true || !mounted) return;
+    }
+    _startWork();
+  }
+
   void _startWork() {
     setState(() {
       _workStartedAt = clock.now();
@@ -290,10 +360,11 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   void _completeWork() {
     final step = _current as WorkStep;
-    _done.add(DoneStep(step.exercise, _reps ?? step.targetReps ?? 0, step.isRound));
+    _done.add(DoneStep(step.exercise, _reps ?? step.targetReps ?? 0, step.isRound, loadKg: _loadFor(step.exercise)));
 
     // Al cerrar la última parada de una ronda, queda la marca de la vuelta.
     if (step.isRound && _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
+      if (_roundRests.length == _roundMarks.length) _roundRests.add(0);
       _roundMarks.add(clock.now().difference(_workStartedAt!).inSeconds);
       unawaited(HapticFeedback.mediumImpact());
     }
@@ -393,7 +464,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       plannedRounds: isCircuit ? (widget.roundsOverride ?? widget.day.targetRounds) : workStepCount(_steps),
       incomplete: _index < _steps.length,
       roundMarksSec: List.of(_roundMarks),
-      sets: [for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps)],
+      roundRestSec: _roundRests.length == _roundMarks.length ? List.of(_roundRests) : null,
+      sets: [for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg)],
     );
   }
 
@@ -474,7 +546,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             : 'Calentamiento cumplido',
         action: 'Empezar ${widget.day.type.label.toLowerCase()}',
         icon: Icons.play_arrow,
-        onAction: _startWork,
+        onAction: _tryStartWork,
         footer: _planPreview(),
       );
     }
@@ -517,6 +589,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         ),
         if (step.grip != null) Text('Agarre ${step.grip}', style: text.titleMedium),
         _RepsSoFar(exercise: step.exercise, reps: _repsSoFar(step.exercise)),
+        if (_guides[step.exercise]?.hasGuide ?? false)
+          TextButton.icon(
+            onPressed: () => _showGuide(_guides[step.exercise]!),
+            icon: const Icon(Icons.menu_book_outlined),
+            label: const Text('Técnica'),
+          ),
+        if (_guides[step.exercise]?.tracksLoad ?? false) _loadRow(step.exercise),
         const Spacer(),
         // El anillo se llena al llegar al objetivo: ajustar reps se ve.
         if (target != null)
@@ -567,6 +646,44 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     );
   }
 
+  double? _loadFor(String exercise) {
+    final kg = _loads[exercise];
+    return kg == null || kg == 0 ? null : kg;
+  }
+
+  /// Carga externa del ejercicio: la búlgara progresa con peso, no con reps.
+  Widget _loadRow(String exercise) {
+    final kg = _loads[exercise] ?? 0;
+    void set(double v) {
+      setState(() => _loads[exercise] = v < 0 ? 0 : v);
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          tooltip: 'Menos carga',
+          onPressed: kg > 0 ? () => set(kg - 1) : null,
+          icon: const Icon(Icons.remove_circle_outline),
+        ),
+        Text(kg == 0 ? 'Sin carga' : 'Carga ${fmtDec(kg)} kg', style: Theme.of(context).textTheme.titleMedium),
+        IconButton(
+          tooltip: 'Más carga',
+          onPressed: () => set(kg + 1),
+          icon: const Icon(Icons.add_circle_outline),
+        ),
+      ],
+    );
+  }
+
+  /// Claves de técnica en el momento de hacerlo, con el enlace al video.
+  Future<void> _showGuide(ExerciseRow guide) => showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (c) => _GuideSheet(guide: guide),
+      );
+
   Widget _rest(RestStep step) {
     final remaining = _restRemaining.clamp(0, step.seconds);
     // El anillo se vacía con el tiempo que queda: se lee de un vistazo.
@@ -578,7 +695,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         prev is WorkStep && prev.isRound && roundsClosed > 0 && roundsClosed % _exercisesPerRound == 0
             ? prev.position
             : null;
-    final laps = _roundMarks.isEmpty ? const <int>[] : lapDurations(_roundMarks);
+    final laps = _roundWork;
     return Column(
       children: [
         if (closedRound != null)
@@ -603,6 +720,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         Text(step.nextLabel,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+        if (_nextGuide case final guide?)
+          TextButton.icon(
+            onPressed: () => _showGuide(guide),
+            icon: const Icon(Icons.menu_book_outlined),
+            label: Text('Técnica: ${guide.name}'),
+          ),
         const Spacer(),
         _sessionProgress(),
         const SizedBox(height: 12),
@@ -697,6 +820,18 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     return out;
   }
 
+  /// Guía del próximo ejercicio: el descanso es el momento de repasarla.
+  ExerciseRow? get _nextGuide {
+    for (var i = _index + 1; i < _steps.length; i++) {
+      final st = _steps[i];
+      if (st is WorkStep) {
+        final g = _guides[st.exercise];
+        return g != null && g.hasGuide ? g : null;
+      }
+    }
+    return null;
+  }
+
   /// Lo que viene después del paso actual, para no tener que pensar.
   String? _nextWorkLabel() {
     for (var i = _index + 1; i < _steps.length; i++) {
@@ -708,7 +843,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   Widget _summary() {
     final draft = _buildDraft();
-    final laps = _roundMarks.isEmpty ? <int>[] : lapDurations(_roundMarks);
+    final laps = _roundWork;
+    final measuredRests = _roundRests.length == _roundMarks.length && _roundMarks.isNotEmpty;
     return ListView(
       children: [
         _CompletionHeader(draft: draft, lapsSec: laps, color: styleForDay(widget.day.type).color),
@@ -732,7 +868,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                   _SummaryRow('Rondas', '${draft.roundsDone} de ${draft.plannedRounds ?? '—'}')
                 else
                   _SummaryRow('Series', '${_done.length} de ${draft.plannedRounds ?? '—'}'),
-                if (laps.isNotEmpty) _SummaryRow('Tiempo por ronda', laps.map(formatDuration).join(' · ')),
+                if (laps.isNotEmpty)
+                  _SummaryRow(measuredRests ? 'Trabajo por ronda' : 'Tiempo por ronda',
+                      laps.map(formatDuration).join(' · ')),
+                if (measuredRests && _roundRests.length > 1)
+                  _SummaryRow('Descanso por ronda',
+                      _roundRests.take(_roundRests.length - 1).map(formatDuration).join(' · ')),
                 const Divider(),
                 for (final e in _exerciseTotals().entries) _SummaryRow(e.key, '${e.value} reps'),
                 if (draft.incomplete) const _SummaryRow('Cierre', 'Incompleta'),
@@ -768,6 +909,56 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       ),
     );
     return ok ?? false;
+  }
+}
+
+/// Claves de técnica, progresión y enlace a la referencia visual.
+class _GuideSheet extends StatelessWidget {
+  const _GuideSheet({required this.guide});
+
+  final ExerciseRow guide;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final url = guide.mediaUrl == null ? null : Uri.tryParse(guide.mediaUrl!);
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(guide.name, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 12),
+            for (final (i, cue) in guide.cues.indexed)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 24, child: Text('${i + 1}.', style: text.titleMedium)),
+                    Expanded(child: Text(cue, style: text.bodyLarge)),
+                  ],
+                ),
+              ),
+            if (guide.progressionNote != null) ...[
+              const SizedBox(height: 4),
+              Text('Progresión', style: text.labelLarge),
+              Text(guide.progressionNote!, style: text.bodyMedium),
+            ],
+            if (url != null) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => launchUrl(url, mode: LaunchMode.externalApplication),
+                icon: const Icon(Icons.play_circle_outline),
+                label: const Text('Ver cómo se hace'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -25,9 +25,9 @@ void main() {
       (await db.select(db.foods).get()).firstWhere((f) => f.name == name);
 
   test('siembra el catálogo completo una sola vez', () async {
-    expect((await db.select(db.foods).get()).length, 30);
+    expect((await db.select(db.foods).get()).length, 33);
     expect(await seedFoodsIfEmpty(db), isFalse);
-    expect((await db.select(db.foods).get()).length, 30);
+    expect((await db.select(db.foods).get()).length, 33);
   });
 
   test('lo que se mide en unidades guarda los macros de una unidad', () async {

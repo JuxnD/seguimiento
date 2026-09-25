@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/reminders.dart';
+import 'catalog_updates.dart';
 import 'tables.dart';
 
 part 'database.g.dart';
@@ -34,6 +35,7 @@ const databaseFileName = 'seguimiento.sqlite';
   WeekNotes,
   Reminders,
   ProgressPhotos,
+  ClosedDays,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -41,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -102,6 +104,22 @@ class AppDatabase extends _$AppDatabase {
           if (from < 7) {
             // v7: el descanso se registra aparte del trabajo neto.
             await m.addColumn(sessions, sessions.restSec);
+          }
+          if (from < 8) {
+            // v8: cada ronda separa trabajo y descanso, las series guardan la
+            // carga externa, los ejercicios traen claves de técnica y los
+            // días de comida se pueden cerrar a mano.
+            await m.addColumn(exercises, exercises.mediaUrl);
+            await m.addColumn(exercises, exercises.formCues);
+            await m.addColumn(exercises, exercises.progressionNote);
+            await m.addColumn(exercises, exercises.tracksLoad);
+            await m.addColumn(sessionRounds, sessionRounds.workSec);
+            await m.addColumn(sessionRounds, sessionRounds.restSec);
+            await m.addColumn(sessionSets, sessionSets.loadKg);
+            await m.createTable(closedDays);
+            // Datos que la siembra ya no puede llevar a una base existente.
+            await applyExerciseGuides(this);
+            await addMissingCatalog(this);
           }
         },
         beforeOpen: (details) async {

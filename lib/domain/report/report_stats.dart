@@ -17,9 +17,17 @@ class ReportStats {
       final k = dayKey(m.date);
       dayMacros[k] = (dayMacros[k] ?? Macros.zero) + m.macros;
     }
+    final slotsByDay = <String, Set<MealSlot>>{};
+    for (final m in input.meals) {
+      slotsByDay.putIfAbsent(dayKey(m.date), () => {}).add(m.slot);
+    }
     loggedDays = days.where((d) => dayMacros.containsKey(dayKey(d))).toList();
     unloggedDays = elapsedDays.where((d) => !dayMacros.containsKey(dayKey(d))).toList();
-    daysBelowFloor = loggedDays.where((d) => dayMacros[dayKey(d)]!.kcal < input.targets.kcalFloor).toList();
+    closedDays = loggedDays
+        .where((d) => isDayClosed(slotsByDay[dayKey(d)] ?? const {}, manuallyClosed: input.closedDays.contains(dayKey(d))))
+        .toList();
+    incompleteDays = loggedDays.where((d) => !closedDays.contains(d)).toList();
+    daysBelowFloor = closedDays.where((d) => dayMacros[dayKey(d)]!.kcal < input.targets.kcalFloor).toList();
 
     final sortedPlans = [...input.planVersions]..sort((a, b) => a.validFrom.compareTo(b.validFrom));
     _plans = sortedPlans;
@@ -43,6 +51,14 @@ class ReportStats {
   final Map<String, Macros> dayMacros = {};
   late final List<DateTime> loggedDays;
   late final List<DateTime> unloggedDays;
+
+  /// Días con registro que cuentan para promedios y alertas: con desayuno,
+  /// almuerzo y cena, o cerrados a mano. Un día con solo el desayuno no dice
+  /// nada del día y solo metería ruido en las alertas.
+  late final List<DateTime> closedDays;
+
+  /// Días con algo registrado pero sin cerrar: se muestran, no se promedian.
+  late final List<DateTime> incompleteDays;
   late final List<DateTime> daysBelowFloor;
   late final List<PlanVersionInfo> _plans;
   int expectedTraining = 0;
@@ -93,13 +109,27 @@ class ReportStats {
     return (label, reference, free);
   }
 
-  double? get avgKcal => loggedDays.isEmpty ? null : _avg((m) => m.kcal);
-  double? get avgProtein => loggedDays.isEmpty ? null : _avg((m) => m.protein);
-  double? get avgCarbs => loggedDays.isEmpty ? null : _avg((m) => m.carbs);
-  double? get avgFat => loggedDays.isEmpty ? null : _avg((m) => m.fat);
+  double? get avgKcal => closedDays.isEmpty ? null : _avg((m) => m.kcal);
+  double? get avgProtein => closedDays.isEmpty ? null : _avg((m) => m.protein);
+  double? get avgCarbs => closedDays.isEmpty ? null : _avg((m) => m.carbs);
+  double? get avgFat => closedDays.isEmpty ? null : _avg((m) => m.fat);
 
   double _avg(double Function(Macros) f) =>
-      loggedDays.map((d) => f(dayMacros[dayKey(d)]!)).reduce((a, b) => a + b) / loggedDays.length;
+      closedDays.map((d) => f(dayMacros[dayKey(d)]!)).reduce((a, b) => a + b) / closedDays.length;
+
+  bool isClosed(DateTime d) => closedDays.any((c) => dayKey(c) == dayKey(d));
+
+  /// Repeticiones totales por ejercicio en el rango (volumen).
+  Map<String, int> get volumeByExercise {
+    final out = <String, int>{};
+    for (final set in input.sessions.expand((x) => x.sets)) {
+      out[set.exercise] = (out[set.exercise] ?? 0) + set.reps;
+    }
+    return out;
+  }
+
+  /// Estadísticas del rango anterior, si se cargó.
+  late final ReportStats? previous = input.previous == null ? null : ReportStats(input.previous!);
 
   List<SessionEntry> get sessionsSorted =>
       [...input.sessions]..sort((a, b) => '${dayKey(a.date)} ${a.startTime ?? ''}'
@@ -118,7 +148,7 @@ class ReportStats {
     final streaks = <List<DateTime>>[];
     var current = <DateTime>[];
     for (final d in days) {
-      final m = macrosOn(d);
+      final m = isClosed(d) ? macrosOn(d) : null;
       if (m != null && m.kcal < input.targets.kcalFloor) {
         current.add(d);
       } else {

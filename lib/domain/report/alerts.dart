@@ -1,6 +1,7 @@
 import '../dates.dart';
 import '../enums.dart';
 import '../format.dart';
+import 'report_input.dart';
 import 'report_stats.dart';
 
 /// Alertas automáticas del informe. Cada regla es independiente y devuelve
@@ -12,6 +13,12 @@ List<String> buildAlerts(ReportStats s) {
   // Calidad del dato primero: sin esto los promedios engañan.
   if (s.unloggedDays.isNotEmpty) {
     out.add('Sin registro de comidas: ${_days(s.unloggedDays)} — excluidos de los promedios');
+  }
+  // Hoy todavía se está registrando: no es un día incompleto.
+  final incomplete = s.incompleteDays.where((d) => dayKey(d) != dayKey(s.input.today)).toList();
+  if (incomplete.isNotEmpty) {
+    out.add('Días incompletos (falta desayuno, almuerzo o cena): ${_days(incomplete)} — fuera de los promedios. '
+        'Si ese día no hubo más comidas, ciérralo en Comidas');
   }
 
   for (final streak in s.lowKcalStreaks.where((st) => st.length >= 2)) {
@@ -62,6 +69,16 @@ List<String> buildAlerts(ReportStats s) {
         '${shortCooldowns == 1 ? 'sesión' : 'sesiones'}');
   }
 
+  // RPE 9–10 en un día que debería salir cómodo: casi siempre es un error de
+  // registro (la escala es al revés de lo que parece).
+  final hardLight = s.input.sessions.where((x) => x.type == SessionType.circuitoLigero && (x.rpe ?? 0) >= 9).toList();
+  if (hardLight.isNotEmpty) {
+    out.add('RPE ≥ 9 en circuito ligero: ${hardLight.map((x) => 'RPE ${x.rpe} el ${formatShort(x.date)}').join(', ')} '
+        '— revisa si fue un error de registro');
+  }
+
+  out.addAll(interferenceNotes(s));
+
   final outOfPlan = s.input.sessions.where((x) => x.outOfPlan).toList();
   if (outOfPlan.isNotEmpty) {
     out.add('Fuera de plan: ${outOfPlan.map((x) => '${x.type.label} el ${formatShort(x.date)}').join(', ')}');
@@ -101,6 +118,53 @@ List<String> buildAlerts(ReportStats s) {
   }
 
   return out;
+}
+
+/// Ejercicio del circuito → ejercicio del Plan v2 que puede restarle.
+const interferencePairs = {
+  'Flexiones': ('Pike push-up', 'miércoles'),
+  'Sentadillas': ('Sentadilla búlgara', 'martes'),
+};
+
+/// Si el ejercicio del circuito empeoró en el viernes (progresión) respecto
+/// al viernes anterior y esa semana se hizo el ejercicio nuevo que lo carga,
+/// sugiere bajarlo a 2 series. Peor = más series partidas o menos reps por
+/// serie.
+List<String> interferenceNotes(ReportStats s) {
+  final all = [...?s.input.previous?.sessions, ...s.input.sessions]
+    ..sort((a, c) => a.date.compareTo(c.date));
+  final progression = all.where((x) => x.type == SessionType.progresion).toList();
+  final out = <String>[];
+  for (final session in s.input.sessions.where((x) => x.type == SessionType.progresion)) {
+    final i = progression.indexOf(session);
+    if (i <= 0) continue;
+    final before = progression[i - 1];
+    for (final entry in interferencePairs.entries) {
+      final (extra, day) = entry.value;
+      final now = _setStats(session, entry.key);
+      final prev = _setStats(before, entry.key);
+      if (now == null || prev == null) continue;
+      final worse = now.$1 > prev.$1 || now.$2 < prev.$2 - 0.01;
+      if (!worse) continue;
+      final weekStart = addDays(session.date, -6);
+      final didExtra = all.any((x) =>
+          !x.date.isBefore(weekStart) && x.date.isBefore(session.date) && x.sets.any((set) => set.exercise == extra));
+      if (!didExtra) continue;
+      final detail = now.$1 > prev.$1
+          ? 'partidas ${prev.$1}→${now.$1}'
+          : 'reps por serie ${fmtDec(prev.$2)}→${fmtDec(now.$2)}';
+      out.add('${entry.key} del ${formatShort(session.date)} peor que el ${formatShort(before.date)} ($detail) '
+          'y esa semana hubo $extra: considera bajar $extra del $day a 2 series');
+    }
+  }
+  return out;
+}
+
+/// (series partidas, reps medias por serie) de un ejercicio; null si no se hizo.
+(int, double)? _setStats(SessionEntry x, String exercise) {
+  final sets = x.sets.where((set) => set.exercise == exercise).toList();
+  if (sets.isEmpty) return null;
+  return (sets.where((set) => set.split).length, sets.map((set) => set.reps).reduce((a, c) => a + c) / sets.length);
 }
 
 String _days(List<DateTime> days) => days.map((d) => '${weekdayShort(d.weekday)} ${d.day}').join(', ');

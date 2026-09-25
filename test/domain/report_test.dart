@@ -8,7 +8,16 @@ import 'package:seguimiento/domain/report/report_input.dart';
 import 'package:seguimiento/domain/report/report_stats.dart';
 
 /// Semana 4 (mié 16 sep – mar 22 sep 2026) con un caso realista.
-ReportInput weekFour({List<MealEntry>? meals, List<MeasurementEntry>? measurements, String? notes}) {
+/// Los días con comidas se dan por cerrados a mano (así los promedios los
+/// cuentan aunque falte una comida principal); `closedDays` lo cambia.
+ReportInput weekFour({
+  List<MealEntry>? meals,
+  List<MeasurementEntry>? measurements,
+  String? notes,
+  Set<String> closedDays = const {'2026-09-16', '2026-09-17', '2026-09-18'},
+  ReportInput? previous,
+  List<SessionEntry>? sessions,
+}) {
   final start = DateTime(2026, 8, 26);
   final w = weekRange(start, 4);
   DateTime d(int day) => DateTime(2026, 9, day);
@@ -39,7 +48,7 @@ ReportInput weekFour({List<MealEntry>? meals, List<MeasurementEntry>? measuremen
     today: d(22),
     planVersions: [v2, v1],
     previousRoundsRecord: 7,
-    sessions: [
+    sessions: sessions ?? [
       SessionEntry(
         date: d(18),
         startTime: '15:10',
@@ -107,6 +116,8 @@ ReportInput weekFour({List<MealEntry>? meals, List<MeasurementEntry>? measuremen
       MeasureSite.abdomen: MeasurementEntry(date: start, site: MeasureSite.abdomen, valueCm: 86),
     },
     measurementDatesBefore: [start],
+    closedDays: closedDays,
+    previous: previous,
     notes: notes,
   );
 }
@@ -361,7 +372,7 @@ void main() {
       expect(md, contains('| vie 18 sep 15:10 | Circuito | 20:00 | 9:00 / 3:00 | — | 8:00 | 8 | 8 | 1 | Oficina \\| fútbol intenso ayer |'));
       expect(md, contains('| mié 16 sep 07:00 | Circuito | 18:20 | 5:00 / 2:00 | — | 11:20 | ~6 (est.) |'));
       expect(md, contains('- Flexiones: 15 · 15 · 12+3 (partida) (fallo)'));
-      expect(md, contains('- Vueltas: 2:30 · 2:40 · 2:50 (media 2:40)'));
+      expect(md, contains('- Vueltas (con descanso): 2:30 · 2:40 · 2:50 (media 2:40)'));
       expect(md, contains('| mié 16 sep | 216 · 19 g | 1.500 · 50 g | — | — | 1.716 ⚠ | 69 g |'));
       expect(md, contains('| sáb 19 sep | — | — | — | — | sin registro | — |'));
       expect(md, contains('## Fútbol'));
@@ -416,6 +427,138 @@ void main() {
         md,
         contains('Procedencia de las kcal: 60% de etiqueta · 30% de tablas de referencia · 10% estimado a ojo'),
       );
+    });
+
+    test('trabajo por ronda sin descanso, R1→Rn y descansos aparte', () {
+      final base = weekFour();
+      final md = buildReport(ReportInput(
+        programStart: base.programStart,
+        rangeStart: base.rangeStart,
+        rangeEnd: base.rangeEnd,
+        today: base.today,
+        sessions: [
+          SessionEntry(
+            date: DateTime(2026, 9, 18),
+            type: SessionType.progresion,
+            roundsDone: 3,
+            lapsSec: const [50, 82, 89],
+            roundWorkSec: const [50, 52, 59],
+            roundRestSec: const [30, 30, 0],
+            sets: const [SetEntry(exercise: 'Sentadilla búlgara', setIndex: 1, reps: 10, loadKg: 5)],
+          ),
+        ],
+      ));
+      expect(md, contains('- Trabajo por ronda: 0:50 · 0:52 · 0:59 (media 0:54 · R1→R3 +9 s)'));
+      expect(md, contains('- Descanso entre rondas: 0:30 · 0:30'));
+      expect(md, isNot(contains('Vueltas')));
+      expect(md, contains('- Sentadilla búlgara: 10 @ 5 kg'));
+    });
+
+    test('sin descansos medidos las vueltas dicen que los llevan dentro', () {
+      final md = buildReport(weekFour());
+      expect(md, contains('- Vueltas (con descanso):'));
+    });
+
+    test('un día sin desayuno, almuerzo y cena no entra al promedio ni a las alertas', () {
+      final s = ReportStats(weekFour(closedDays: const {}, meals: [
+        MealEntry(date: DateTime(2026, 9, 16), slot: MealSlot.desayuno, items: const [
+          MealItemEntry(label: 'Desayuno', macros: Macros(kcal: 400, protein: 27)),
+        ]),
+        for (final slot in [MealSlot.desayuno, MealSlot.almuerzo, MealSlot.cena])
+          MealEntry(date: DateTime(2026, 9, 17), slot: slot, items: const [
+            MealItemEntry(label: 'Plato', macros: Macros(kcal: 800, protein: 50)),
+          ]),
+      ]));
+      expect(s.closedDays.map((d) => d.day), [17]);
+      expect(s.incompleteDays.map((d) => d.day), [16]);
+      expect(s.avgProtein, 150, reason: 'el desayuno solo del 16 no baja el promedio');
+      final alerts = buildAlerts(s);
+      expect(alerts.any((a) => a.startsWith('Proteína promedio')), isFalse);
+      expect(alerts, contains(startsWith('Días incompletos (falta desayuno, almuerzo o cena): mié 16')));
+      expect(buildReport(s.input), contains('400 (incompleto)'));
+    });
+
+    test('cerrar el día a mano lo cuenta aunque falte una comida', () {
+      final s = ReportStats(weekFour(closedDays: const {'2026-09-16'}, meals: [
+        MealEntry(date: DateTime(2026, 9, 16), slot: MealSlot.almuerzo, items: const [
+          MealItemEntry(label: 'Almuerzo', macros: Macros(kcal: 1000, protein: 60)),
+        ]),
+      ]));
+      expect(s.closedDays.map((d) => d.day), [16]);
+      expect(s.avgKcal, 1000);
+    });
+
+    test('volumen por ejercicio contra la semana anterior', () {
+      final previous = weekFour(sessions: const []);
+      final prevWithSets = ReportInput(
+        programStart: previous.programStart,
+        rangeStart: DateTime(2026, 9, 9),
+        rangeEnd: DateTime(2026, 9, 15),
+        today: previous.today,
+        sessions: [
+          SessionEntry(date: DateTime(2026, 9, 11), type: SessionType.progresion, roundsDone: 7, sets: const [
+            SetEntry(exercise: 'Flexiones', setIndex: 1, reps: 70),
+          ]),
+        ],
+      );
+      final md = buildReport(weekFour(previous: prevWithSets));
+      expect(md, contains('## Volumen por ejercicio'));
+      expect(md, matches(RegExp(r'\| Flexiones \| \d+ \| 70 \| [+-]?\d+ \|')));
+      expect(md, contains('- Rondas vs semana anterior: 7 → 8 (+1)'));
+    });
+
+    test('flexiones peores el viernes tras una semana con pike push-ups sugiere bajar a 2 series', () {
+      SessionEntry friday(int day, List<SetEntry> sets) =>
+          SessionEntry(date: DateTime(2026, 9, day), type: SessionType.progresion, roundsDone: 8, sets: sets);
+      const clean = [SetEntry(exercise: 'Flexiones', setIndex: 1, reps: 10)];
+      const broken = [SetEntry(exercise: 'Flexiones', setIndex: 1, reps: 10, split: true, splitDetail: '7+3')];
+      final prev = ReportInput(
+        programStart: DateTime(2026, 8, 26),
+        rangeStart: DateTime(2026, 9, 9),
+        rangeEnd: DateTime(2026, 9, 15),
+        today: DateTime(2026, 9, 22),
+        sessions: [friday(11, clean)],
+      );
+      final base = weekFour();
+      final input = ReportInput(
+        programStart: base.programStart,
+        rangeStart: base.rangeStart,
+        rangeEnd: base.rangeEnd,
+        today: base.today,
+        previous: prev,
+        sessions: [
+          SessionEntry(date: DateTime(2026, 9, 16), type: SessionType.circuitoLigero, sets: const [
+            SetEntry(exercise: 'Pike push-up', setIndex: 1, reps: 7),
+          ]),
+          friday(18, broken),
+        ],
+      );
+      final notes = interferenceNotes(ReportStats(input));
+      expect(notes.single, contains('Flexiones del 18 sep peor que el 11 sep (partidas 0→1)'));
+      expect(notes.single, contains('bajar Pike push-up del miércoles a 2 series'));
+
+      // Sin pike push-ups esa semana no hay a quién culpar.
+      final without = ReportInput(
+        programStart: input.programStart,
+        rangeStart: input.rangeStart,
+        rangeEnd: input.rangeEnd,
+        today: input.today,
+        previous: prev,
+        sessions: [friday(18, broken)],
+      );
+      expect(interferenceNotes(ReportStats(without)), isEmpty);
+    });
+
+    test('RPE 9 o 10 en circuito ligero se señala', () {
+      final base = weekFour();
+      final alerts = buildAlerts(ReportStats(ReportInput(
+        programStart: base.programStart,
+        rangeStart: base.rangeStart,
+        rangeEnd: base.rangeEnd,
+        today: base.today,
+        sessions: [SessionEntry(date: DateTime(2026, 9, 16), type: SessionType.circuitoLigero, rpe: 10)],
+      )));
+      expect(alerts, contains(startsWith('RPE ≥ 9 en circuito ligero: RPE 10 el 16 sep')));
     });
 
     test('rango vacío no revienta', () {

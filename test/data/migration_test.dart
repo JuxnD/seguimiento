@@ -40,6 +40,13 @@ const _v7Columns = {
   'sessions': ['rest_sec'],
 };
 
+const _v8Columns = {
+  'exercises': ['media_url', 'form_cues', 'progression_note', 'tracks_load'],
+  'session_rounds': ['work_sec', 'rest_sec'],
+  'session_sets': ['load_kg'],
+};
+const _v8Tables = ['closed_days'];
+
 const _v4Columns = {
   'sessions': ['out_of_plan', 'incomplete', 'planned_rounds'],
 };
@@ -64,9 +71,25 @@ void main() {
   });
 
   /// Deja el archivo como lo tendría una app instalada con el esquema `version`.
-  Future<void> buildOldSchema(int version) async {
+  /// `rows` inserta datos con el esquema viejo ya armado, antes de cerrar: si
+  /// se insertaran abriendo otra vez con la app, la migración correría antes.
+  Future<void> buildOldSchema(int version, {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    for (final entry in _v8Columns.entries) {
+      for (final column in entry.value) {
+        await db.customStatement('alter table ${entry.key} drop column $column');
+      }
+    }
+    for (final table in _v8Tables) {
+      await db.customStatement('drop table if exists $table');
+    }
+    if (version >= 7) {
+      await rows?.call(db);
+      await db.customStatement('pragma user_version = $version');
+      await db.close();
+      return;
+    }
     for (final entry in _v7Columns.entries) {
       for (final column in entry.value) {
         await db.customStatement('alter table ${entry.key} drop column $column');
@@ -104,7 +127,7 @@ void main() {
   Future<int> userVersion(AppDatabase db) =>
       db.customSelect('pragma user_version').map((r) => r.data.values.first as int).getSingle();
 
-  test('una base del esquema 1 llega al 7 sin perder datos', () async {
+  test('una base del esquema 1 llega al 8 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -129,12 +152,12 @@ void main() {
     final weights = await BodyRepository(migrated).watchWeights().first;
     expect(weights.single.kg, 71.4);
 
-    final food = (await migrated.select(migrated.foods).get()).single;
-    expect(food.name, 'Huevo');
+    // La migración al 8 añade al catálogo lo nuevo; lo del usuario sigue ahí.
+    final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Huevo');
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 7);
+    expect(await userVersion(migrated), 8);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -154,7 +177,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 7 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 8 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -163,15 +186,48 @@ void main() {
     await old.close();
 
     final migrated = AppDatabase(NativeDatabase(file));
-    final food = (await migrated.select(migrated.foods).get()).single;
-    expect(food.name, 'Atún');
+    final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 7);
+    expect(await userVersion(migrated), 8);
     await migrated.close();
   });
 
-  test('una base del esquema 6 llega al 7: las sesiones viejas quedan con descanso 0', () async {
+  test('una base del esquema 7 llega al 8 con guías, catálogo nuevo y rondas sin separar', () async {
+    await buildOldSchema(7, rows: (old) async {
+      await old.customStatement("insert into exercises (name) values ('Pike push-up'), ('Sentadilla búlgara')");
+      await old.customStatement(
+          "insert into foods (name, basis, unit_label, kcal, protein) values ('Peto sin maíz (vaso)', 'unit', 'vaso', 180, 6)");
+      await old.customStatement(
+          "insert into sessions (date, type, total_sec, warmup_sec, cooldown_sec) values ('2026-09-25', 'progresion', 1153, 370, 180)");
+      await old.customStatement('insert into session_rounds (session_id, round_index, elapsed_sec) values (1, 1, 50)');
+    });
+
+    final migrated = AppDatabase(NativeDatabase(file));
+    expect(await userVersion(migrated), 8);
+
+    final pike = await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Pike push-up'))).getSingle();
+    expect(pike.formCues, startsWith('Posición de V invertida'));
+    expect(pike.progressionNote, 'pike → pies elevados → HSPU asistido → HSPU');
+    expect(pike.tracksLoad, isFalse);
+    final bulgara =
+        await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Sentadilla búlgara'))).getSingle();
+    expect(bulgara.tracksLoad, isTrue, reason: 'la búlgara progresa con carga');
+
+    final foods = {for (final f in await migrated.select(migrated.foods).get()) f.name: f};
+    expect(foods['Peto sin maíz (vaso)']!.kcal, 180, reason: 'lo que el usuario ya tenía no se pisa');
+    expect(foods.keys, containsAll(['Salchichón de pollo', 'Almuerzo corriente (arroz + grano + carne + jugo)']));
+    final templates = await migrated.select(migrated.mealTemplates).get();
+    expect(templates.map((t) => t.name), contains('Almuerzo corriente'));
+
+    final round = await migrated.select(migrated.sessionRounds).getSingle();
+    expect(round.elapsedSec, 50);
+    expect(round.workSec, isNull, reason: 'una ronda vieja no sabe cuánto fue descanso');
+    expect(await migrated.select(migrated.closedDays).get(), isEmpty);
+    await migrated.close();
+  });
+
+  test('una base del esquema 6 llega al 8: las sesiones viejas quedan con descanso 0', () async {
     await buildOldSchema(6);
     final old = AppDatabase(NativeDatabase(file));
     await old.customStatement(
@@ -182,7 +238,7 @@ void main() {
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.totalSec, 1200);
     expect(session.restSec, 0);
-    expect(await userVersion(migrated), 7);
+    expect(await userVersion(migrated), 8);
     await migrated.close();
   });
 }

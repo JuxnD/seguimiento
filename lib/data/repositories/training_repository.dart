@@ -7,13 +7,23 @@ import '../database.dart';
 import 'exercise_repository.dart';
 
 class SetDraft {
-  SetDraft({required this.exercise, this.reps = 0, this.split = false, this.splitDetail, this.toFailure = false});
+  SetDraft({
+    required this.exercise,
+    this.reps = 0,
+    this.split = false,
+    this.splitDetail,
+    this.toFailure = false,
+    this.loadKg,
+  });
 
   String exercise;
   int reps;
   bool split;
   String? splitDetail;
   bool toFailure;
+
+  /// Carga externa (mochila, garrafas). null = peso corporal.
+  double? loadKg;
 }
 
 class SessionDraft {
@@ -41,8 +51,10 @@ class SessionDraft {
     this.plannedRounds,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
+    List<int>? roundRestSec,
   })  : sets = sets ?? [],
-        roundMarksSec = roundMarksSec ?? [];
+        roundMarksSec = roundMarksSec ?? [],
+        roundRestSec = roundRestSec ?? [];
 
   int? id;
   DateTime date;
@@ -79,6 +91,13 @@ class SessionDraft {
 
   /// Marcas acumuladas del contador (s desde el inicio del circuito).
   final List<int> roundMarksSec;
+
+  /// Descanso después de cada ronda, en paralelo a `roundMarksSec`. Vacío si
+  /// no se midió (contador libre, sesiones anteriores al esquema 8).
+  final List<int> roundRestSec;
+
+  /// Trabajo de cada ronda, sin descansos. null si no hay descansos medidos.
+  List<int>? get roundWorkSec => roundWork(roundMarksSec, roundRestSec);
 
   /// Trabajo neto: sin calentamiento, enfriamiento ni descansos.
   int get netSec =>
@@ -168,13 +187,17 @@ class TrainingRepository {
                 split: Value(s.split),
                 splitDetail: Value(s.split ? _blankToNull(s.splitDetail) : null),
                 toFailure: Value(s.toFailure),
+                loadKg: Value(s.loadKg),
               ));
         }
+        final work = d.roundWorkSec;
         for (var i = 0; i < d.roundMarksSec.length; i++) {
           await db.into(db.sessionRounds).insert(SessionRoundsCompanion.insert(
                 sessionId: id,
                 roundIndex: i + 1,
                 elapsedSec: d.roundMarksSec[i],
+                workSec: Value(work?[i]),
+                restSec: Value(work == null ? null : d.roundRestSec[i]),
               ));
         }
         d.id = id;
@@ -222,9 +245,11 @@ class TrainingRepository {
             split: s.split,
             splitDetail: s.splitDetail,
             toFailure: s.toFailure,
+            loadKg: s.loadKg,
           ),
       ],
       roundMarksSec: rounds.map((x) => x.elapsedSec).toList(),
+      roundRestSec: rounds.every((x) => x.restSec != null) ? rounds.map((x) => x.restSec!).toList() : null,
     );
   }
 
@@ -239,8 +264,9 @@ class TrainingRepository {
     return query.map((r) => r.read(best)).getSingle();
   }
 
-  /// La sesión anterior del mismo tipo (antes de `date`), con sus vueltas,
-  /// para comparar al cerrar. null si es la primera.
+  /// La sesión anterior del mismo tipo (antes de `date`), con el trabajo de
+  /// cada ronda (o sus vueltas, si es anterior al esquema 8), para comparar al
+  /// cerrar. null si es la primera.
   Future<(DateTime, int?, List<int>)?> previousOfType(SessionType type, DateTime date) async {
     final row = await (db.select(db.sessions)
           ..where((t) => t.type.equalsValue(type) & t.date.isSmallerThanValue(dayKey(date)))
@@ -251,12 +277,14 @@ class TrainingRepository {
           ..limit(1))
         .getSingleOrNull();
     if (row == null) return null;
-    final marks = await (db.select(db.sessionRounds)
+    final rounds = await (db.select(db.sessionRounds)
           ..where((t) => t.sessionId.equals(row.id))
           ..orderBy([(t) => OrderingTerm(expression: t.roundIndex)]))
-        .map((r) => r.elapsedSec)
         .get();
-    return (parseDay(row.date), row.roundsDone, marks);
+    final work = rounds.every((r) => r.workSec != null)
+        ? rounds.map((r) => r.workSec!).toList()
+        : lapDurations(rounds.map((r) => r.elapsedSec).toList());
+    return (parseDay(row.date), row.roundsDone, work);
   }
 
   /// Últimas rondas hechas antes de una fecha, por tipo de circuito.
@@ -275,6 +303,18 @@ class TrainingRepository {
       if (row?.roundsDone != null) out[type] = row!.roundsDone!;
     }
     return out;
+  }
+
+  /// Última carga externa usada en un ejercicio, para proponerla de nuevo.
+  Future<double?> lastLoad(String exercise) async {
+    final exId = await exercises.idOf(exercise);
+    if (exId == null) return null;
+    final row = await (db.select(db.sessionSets)
+          ..where((t) => t.exerciseId.equals(exId) & t.loadKg.isNotNull())
+          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
+          ..limit(1))
+        .getSingleOrNull();
+    return row?.loadKg;
   }
 
   Future<void> delete(int id) => (db.delete(db.sessions)..where((t) => t.id.equals(id))).go();

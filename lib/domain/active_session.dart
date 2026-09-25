@@ -33,16 +33,23 @@ sealed class ActiveSession {
 
 /// Una serie o parada ya hecha en el cronómetro guiado.
 class DoneStep {
-  const DoneStep(this.exercise, this.reps, this.isRound);
+  const DoneStep(this.exercise, this.reps, this.isRound, {this.loadKg});
 
   final String exercise;
   final int reps;
   final bool isRound;
 
-  Map<String, Object?> toJson() => {'e': exercise, 'r': reps, 'round': isRound};
+  /// Carga externa de la serie (kg). null = peso corporal.
+  final double? loadKg;
 
-  static DoneStep fromJson(Map<String, Object?> j) =>
-      DoneStep(j['e']! as String, (j['r']! as num).toInt(), j['round']! as bool);
+  Map<String, Object?> toJson() => {'e': exercise, 'r': reps, 'round': isRound, if (loadKg != null) 'kg': loadKg};
+
+  static DoneStep fromJson(Map<String, Object?> j) => DoneStep(
+        j['e']! as String,
+        (j['r']! as num).toInt(),
+        j['round']! as bool,
+        loadKg: (j['kg'] as num?)?.toDouble(),
+      );
 }
 
 /// Fases del cronómetro guiado. El nombre se persiste.
@@ -66,6 +73,7 @@ class GuidedSnapshot extends ActiveSession {
     this.reps,
     this.done = const [],
     this.roundMarks = const [],
+    this.roundRests = const [],
   });
 
   /// El día del plan se relee por id: las versiones del plan son inmutables,
@@ -88,6 +96,10 @@ class GuidedSnapshot extends ActiveSession {
   final List<DoneStep> done;
   final List<int> roundMarks;
 
+  /// Descanso después de cada ronda (s), en paralelo a `roundMarks`. Falta en
+  /// fotos anteriores al esquema 8: sin él no se separa el trabajo por ronda.
+  final List<int> roundRests;
+
   @override
   Map<String, Object?> toJson() => {
         'kind': 'guided',
@@ -107,6 +119,7 @@ class GuidedSnapshot extends ActiveSession {
         'reps': reps,
         'done': [for (final d in done) d.toJson()],
         'roundMarks': roundMarks,
+        'roundRests': roundRests,
       };
 
   static GuidedSnapshot _fromJson(Map<String, Object?> j) => GuidedSnapshot(
@@ -126,6 +139,7 @@ class GuidedSnapshot extends ActiveSession {
         reps: (j['reps'] as num?)?.toInt(),
         done: [for (final d in j['done']! as List) DoneStep.fromJson((d as Map).cast<String, Object?>())],
         roundMarks: [for (final m in j['roundMarks']! as List) (m as num).toInt()],
+        roundRests: [for (final m in (j['roundRests'] as List?) ?? const []) (m as num).toInt()],
       );
 }
 

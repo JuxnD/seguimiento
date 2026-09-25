@@ -14,6 +14,7 @@ String buildReport(ReportInput input) {
   _header(b, s);
   _summary(b, s);
   _sessions(b, s);
+  _volume(b, s);
   _football(b, s);
   _nutrition(b, s);
   _body(b, s);
@@ -66,15 +67,26 @@ void _summary(StringBuffer b, ReportStats s) {
       b.writeln('- Máximo de rondas: $max (récord vigente: $prev)');
     }
   }
+  final prevMax = s.previous?.maxRoundsInRange;
+  if (max != null && prevMax != null) {
+    b.writeln('- Rondas vs semana anterior: $prevMax → $max (${fmtDelta(max - prevMax, decimals: 0)})');
+  }
 
   final logged = s.loggedDays.length;
   final elapsed = s.elapsedDays.length;
+  final closed = s.closedDays.length;
   if (logged == 0) {
     b.writeln('- Nutrición: sin registros');
+  } else if (closed == 0) {
+    b.writeln('- Nutrición: $logged ${logged == 1 ? 'día registrado' : 'días registrados'}, ninguno cerrado '
+        '(falta desayuno, almuerzo o cena): sin promedios');
   } else {
-    b.writeln('- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta ${t.proteinMin}–${t.proteinMax}) · '
-        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${fmtInt(t.kcalTarget)}) · '
-        'días registrados: $logged/$elapsed');
+    final prev = s.previous;
+    String vs(double now, double? before) => before == null ? '' : ' (${fmtDelta(now - before, decimals: 0)} vs semana anterior)';
+    b.writeln('- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta ${t.proteinMin}–${t.proteinMax})'
+        '${vs(s.avgProtein!, prev?.avgProtein)} · '
+        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${fmtInt(t.kcalTarget)})${vs(s.avgKcal!, prev?.avgKcal)} · '
+        'días cerrados: $closed/$elapsed');
     b.writeln('- Días bajo ${fmtInt(t.kcalFloor)} kcal: ${s.daysBelowFloor.length}');
   }
 
@@ -117,8 +129,16 @@ void _sessions(StringBuffer b, ReportStats s) {
   b.writeln('### Detalle por sesión');
   for (final x in list) {
     b.writeln('**${_dayLabel(x.date, x.startTime)} · ${x.type.label}**');
-    if (x.lapsSec.isNotEmpty) {
-      b.writeln('- Vueltas: ${x.lapsSec.map(formatDuration).join(' · ')} '
+    if (x.roundWorkSec.isNotEmpty) {
+      final delta = firstToLastDelta(x.roundWorkSec);
+      b.writeln('- Trabajo por ronda: ${x.roundWorkSec.map(formatDuration).join(' · ')} '
+          '(media ${formatDuration(meanSec(x.roundWorkSec)!)}'
+          '${delta == null ? '' : ' · R1→R${x.roundWorkSec.length} ${fmtDelta(delta, decimals: 0)} s'})');
+      final rests = x.roundRestSec.take(x.roundRestSec.length - 1).toList();
+      if (rests.isNotEmpty) b.writeln('- Descanso entre rondas: ${rests.map(formatDuration).join(' · ')}');
+    } else if (x.lapsSec.isNotEmpty) {
+      // Sin descansos medidos cada vuelta lleva dentro el descanso previo.
+      b.writeln('- Vueltas (con descanso): ${x.lapsSec.map(formatDuration).join(' · ')} '
           '(media ${formatDuration(meanSec(x.lapsSec)!)})');
     }
     final byExercise = <String, List<SetEntry>>{};
@@ -155,8 +175,33 @@ String _setLabel(SetEntry e) {
       : e.split
           ? '${e.reps} (partida)'
           : '${e.reps}';
+  if (e.loadKg != null) out += ' @ ${fmtDec(e.loadKg!)} kg';
   if (e.toFailure) out += ' (fallo)';
   return out;
+}
+
+/// Volumen de la semana por ejercicio y su cambio contra la anterior.
+void _volume(StringBuffer b, ReportStats s) {
+  final now = s.volumeByExercise;
+  if (now.isEmpty) return;
+  final before = s.previous?.volumeByExercise;
+  b.writeln('## Volumen por ejercicio');
+  if (before == null) {
+    b.writeln('| Ejercicio | Reps |');
+    b.writeln('|---|---|');
+    for (final e in now.entries) {
+      b.writeln('| ${e.key} | ${e.value} |');
+    }
+  } else {
+    b.writeln('| Ejercicio | Reps | Semana anterior | Δ |');
+    b.writeln('|---|---|---|---|');
+    for (final e in now.entries) {
+      final prev = before[e.key];
+      b.writeln('| ${e.key} | ${e.value} | ${prev ?? '—'} | '
+          '${prev == null ? 'nuevo' : fmtDelta(e.value - prev, decimals: 0)} |');
+    }
+  }
+  b.writeln();
 }
 
 void _football(StringBuffer b, ReportStats s) {
@@ -193,9 +238,11 @@ void _nutrition(StringBuffer b, ReportStats s) {
       return any ? '${fmtInt(m.kcal)} · ${fmtInt(m.protein)} g' : '—';
     });
     final total = s.macrosOn(d);
-    final flag = total != null && total.kcal < s.input.targets.kcalFloor ? ' ⚠' : '';
+    final closed = s.isClosed(d);
+    final flag = closed && total != null && total.kcal < s.input.targets.kcalFloor ? ' ⚠' : '';
+    final open = total != null && !closed ? ' (incompleto)' : '';
     b.writeln('| ${_dayLabel(d, null)} | ${cells.join(' | ')} | '
-        '${total == null ? 'sin registro' : '${fmtInt(total.kcal)}$flag'} | '
+        '${total == null ? 'sin registro' : '${fmtInt(total.kcal)}$flag$open'} | '
         '${total == null ? '—' : '${fmtInt(total.protein)} g'} |');
   }
   final (verifiedKcal, referenceKcal, freeKcal) = s.kcalBySource;
@@ -206,9 +253,9 @@ void _nutrition(StringBuffer b, ReportStats s) {
         '${_pct(referenceKcal, totalKcal)} de tablas de referencia · '
         '${_pct(freeKcal, totalKcal)} estimado a ojo');
   }
-  if (s.loggedDays.isNotEmpty) {
+  if (s.closedDays.isNotEmpty) {
     b.writeln();
-    b.writeln('Promedio (días registrados): ${fmtInt(s.avgKcal!)} kcal · P ${fmtInt(s.avgProtein!)} g · '
+    b.writeln('Promedio (días cerrados): ${fmtInt(s.avgKcal!)} kcal · P ${fmtInt(s.avgProtein!)} g · '
         'C ${fmtInt(s.avgCarbs!)} g · G ${fmtInt(s.avgFat!)} g');
   }
   b.writeln();

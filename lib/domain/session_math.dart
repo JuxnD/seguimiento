@@ -37,5 +37,21 @@ List<int> lapDurations(List<int> cumulativeSec) {
   return out;
 }
 
+/// Trabajo de cada ronda a partir de las marcas acumuladas y del descanso
+/// medido después de cada una: la vuelta k va de la marca k−1 a la k y lleva
+/// dentro el descanso que siguió a la ronda k−1, que aquí se descuenta.
+/// null si los descansos no se midieron (listas de distinto largo).
+List<int>? roundWork(List<int> cumulativeSec, List<int> restAfterSec) {
+  if (cumulativeSec.isEmpty || restAfterSec.length != cumulativeSec.length) return null;
+  final laps = lapDurations(cumulativeSec);
+  return [
+    for (var i = 0; i < laps.length; i++) math.max(0, laps[i] - (i == 0 ? 0 : restAfterSec[i - 1])),
+  ];
+}
+
+/// Diferencia de trabajo entre la última ronda y la primera (positivo = la
+/// última fue más lenta). Indicador de degradación; null con menos de 2.
+int? firstToLastDelta(List<int> workSec) => workSec.length < 2 ? null : workSec.last - workSec.first;
+
 int? meanSec(List<int> values) =>
     values.isEmpty ? null : (values.reduce((a, b) => a + b) / values.length).round();

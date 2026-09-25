@@ -18,7 +18,9 @@ class ReportRepository {
   final AppDatabase db;
   final NutritionRepository nutrition;
 
-  Future<ReportInput> load(DateTime from, DateTime to, {DateTime? today}) async {
+  /// Carga el rango y, si `withPrevious`, también el rango anterior del mismo
+  /// largo (la semana pasada) para las comparaciones.
+  Future<ReportInput> load(DateTime from, DateTime to, {DateTime? today, bool withPrevious = true}) async {
     final f = dayKey(from), t = dayKey(to);
     final profile = await (db.select(db.profiles)..where((x) => x.id.equals(1))).getSingle();
     final start = profile.programStart;
@@ -47,7 +49,7 @@ class ReportRepository {
     final sessionRows = await (db.select(db.sessions)..where((x) => x.date.isBetweenValues(f, t))).get();
     final ids = [for (final s in sessionRows) s.id];
     final setsBySession = <int, List<SessionSetRow>>{};
-    final marksBySession = <int, List<int>>{};
+    final roundsBySession = <int, List<SessionRoundRow>>{};
     if (ids.isNotEmpty) {
       final allSets = await (db.select(db.sessionSets)
             ..where((x) => x.sessionId.isIn(ids))
@@ -61,13 +63,14 @@ class ReportRepository {
             ..orderBy([(x) => OrderingTerm(expression: x.roundIndex)]))
           .get();
       for (final r in allRounds) {
-        marksBySession.putIfAbsent(r.sessionId, () => []).add(r.elapsedSec);
+        roundsBySession.putIfAbsent(r.sessionId, () => []).add(r);
       }
     }
     final sessions = <SessionEntry>[];
     for (final s in sessionRows) {
       final sets = setsBySession[s.id] ?? const <SessionSetRow>[];
-      final marks = marksBySession[s.id] ?? const <int>[];
+      final rounds = roundsBySession[s.id] ?? const <SessionRoundRow>[];
+      final measured = rounds.isNotEmpty && rounds.every((r) => r.workSec != null && r.restSec != null);
       sessions.add(SessionEntry(
         date: parseDay(s.date),
         startTime: s.startTime,
@@ -88,7 +91,9 @@ class ReportRepository {
         techniqueOk: s.techniqueOk,
         fullRange: s.fullRange,
         recoveryOk: s.recoveryOk,
-        lapsSec: lapDurations(marks),
+        lapsSec: lapDurations(rounds.map((r) => r.elapsedSec).toList()),
+        roundWorkSec: measured ? rounds.map((r) => r.workSec!).toList() : const [],
+        roundRestSec: measured ? rounds.map((r) => r.restSec!).toList() : const [],
         sets: [
           for (final x in sets)
             SetEntry(
@@ -98,6 +103,7 @@ class ReportRepository {
               split: x.split,
               splitDetail: x.splitDetail,
               toFailure: x.toFailure,
+              loadKg: x.loadKg,
             ),
         ],
       ));
@@ -140,6 +146,13 @@ class ReportRepository {
           ..where((x) => x.weekIndex.isBetweenValues(wFrom, wTo))
           ..orderBy([(x) => OrderingTerm(expression: x.weekIndex)]))
         .get();
+
+    final closed = await (db.select(db.closedDays)..where((x) => x.date.isBetweenValues(f, t))).get();
+
+    final span = daysBetween(from, to) + 1;
+    final previous = withPrevious
+        ? await load(addDays(from, -span), addDays(from, -1), today: today, withPrevious: false)
+        : null;
 
     return ReportInput(
       programStart: start,
@@ -193,6 +206,8 @@ class ReportRepository {
       measurementsInRange: measures.map(_measure).toList(),
       baselineMeasurements: baseline,
       measurementDatesBefore: datesBefore,
+      closedDays: {for (final c in closed) c.date},
+      previous: previous,
       notes: notes.length <= 1
           ? notes.firstOrNull?.body
           : notes.map((n) => '**Semana ${n.weekIndex}:** ${n.body}').join('\n\n'),

@@ -56,6 +56,7 @@ class SetEntry {
     this.split = false,
     this.splitDetail,
     this.toFailure = false,
+    this.loadKg,
   });
 
   final String exercise;
@@ -64,6 +65,9 @@ class SetEntry {
   final bool split;
   final String? splitDetail;
   final bool toFailure;
+
+  /// Carga externa (kg). null = peso corporal.
+  final double? loadKg;
 }
 
 class SessionEntry {
@@ -83,6 +87,8 @@ class SessionEntry {
     this.notes,
     this.sets = const [],
     this.lapsSec = const [],
+    this.roundWorkSec = const [],
+    this.roundRestSec = const [],
     this.techniqueOk,
     this.fullRange,
     this.recoveryOk,
@@ -108,8 +114,16 @@ class SessionEntry {
   final String? notes;
   final List<SetEntry> sets;
 
-  /// Duración de cada ronda registrada con el contador (segundos).
+  /// Duración de cada ronda registrada con el contador (segundos). Incluye
+  /// el descanso previo: por eso la primera parece más rápida.
   final List<int> lapsSec;
+
+  /// Trabajo de cada ronda sin descansos. Vacío si no se midió (sesiones
+  /// anteriores al esquema 8 o del contador libre).
+  final List<int> roundWorkSec;
+
+  /// Descanso después de cada ronda (0 en la última). Vacío si no se midió.
+  final List<int> roundRestSec;
 
   /// El tipo no coincide con lo que pedía el plan ese día.
   final bool outOfPlan;
@@ -219,6 +233,8 @@ class ReportInput {
     this.measurementsInRange = const [],
     this.baselineMeasurements = const {},
     this.measurementDatesBefore = const [],
+    this.closedDays = const {},
+    this.previous,
     this.notes,
   });
 
@@ -253,5 +269,13 @@ class ReportInput {
 
   /// Fechas de medición anteriores al rango (para la alerta de intervalo).
   final List<DateTime> measurementDatesBefore;
+
+  /// Días (`YYYY-MM-DD`) que el usuario cerró a mano aunque les falte una
+  /// comida principal.
+  final Set<String> closedDays;
+
+  /// El rango anterior del mismo largo (la semana pasada), para comparar.
+  /// null en el propio rango anterior: la comparación no se encadena.
+  final ReportInput? previous;
   final String? notes;
 }

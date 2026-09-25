@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../domain/enums.dart';
+import 'catalog_updates.dart';
 import 'database.dart';
 import 'repositories/plan_repository.dart';
 
@@ -141,6 +142,7 @@ Future<bool> seedIfEmpty(AppDatabase db, PlanRepository plan) async {
 
   await plan.saveAsNewVersion(planV1());
   await plan.saveAsNewVersion(planV2());
+  await applyExerciseGuides(db);
   await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(const ProfilesCompanion(
     startDate: Value(programStartDate),
     proteinMin: Value(130),
