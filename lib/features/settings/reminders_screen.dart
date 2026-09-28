@@ -9,6 +9,7 @@ import '../../data/system_health.dart';
 import '../../domain/dates.dart';
 import '../../domain/reminders.dart';
 import '../../ui/widgets.dart';
+import 'custom_reminders.dart';
 
 /// Activar, apagar y mover de hora cada recordatorio.
 class RemindersScreen extends ConsumerStatefulWidget {
@@ -133,6 +134,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                 ),
               if (_battery == true || _paused == true) _systemWarnings(),
               _diagnostics(),
+              const CustomRemindersCard(),
               for (final kind in ReminderKind.values)
                 if (byKind[kind] != null) _ReminderCard(row: byKind[kind]!),
             ],

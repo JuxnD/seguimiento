@@ -39,6 +39,7 @@ const databaseFileName = 'seguimiento.sqlite';
   ClosedDays,
   DailySteps,
   ExercisePhotos,
+  CustomReminders,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -46,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -148,6 +149,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 11) {
             // v11: foto de referencia por ejercicio.
             await m.createTable(exercisePhotos);
+          }
+          if (from < 12) {
+            // v12: recordatorios que crea el usuario.
+            await m.createTable(customReminders);
           }
         },
         beforeOpen: (details) async {

@@ -87,6 +87,24 @@ repite al terminar.
 - La app usa desugaring de `java.time` (`coreLibraryDesugaring`), que el plugin
   exige para `minSdk` 21.
 
+## Recordatorios propios
+
+Desde la 1.10.0, en **Ajustes → Recordatorios → Tus recordatorios** el usuario
+crea los suyos: *Ejercicios de cuello cada 3 días a las 19:00*, con una nota
+opcional (qué hacer). Tabla `custom_reminders`; lógica en `CustomReminder`
+(`domain/reminders.dart`).
+
+- **Cada N días se cuenta desde la última vez marcado como hecho** (o desde
+  "Primera vez" si nunca): sirve para rutinas flexibles y un día saltado corre
+  el siguiente. No es un calendario fijo.
+- El día que toca avisa a su hora; si no se marca, **vuelve a avisar cada día**
+  ("Pendiente desde el …") hasta marcarlo.
+- En Hoy, la tarjeta **Pendiente hoy** los lista con **Hecho** (y *Deshacer*).
+- Atajos de frecuencia: diario, cada 2, 3, 4 días y semanal; cualquier número
+  de 1 a 90. Se pueden apagar sin borrarlos.
+- Ids de notificación en su propio rango (100000 + id·64 + día), lejos de los
+  avisos fijos.
+
 ## El APK de release (lo que no se ve en debug)
 
 De la 1.8.0 a la 1.9.0 **ningún aviso salió en el teléfono**, aunque en el

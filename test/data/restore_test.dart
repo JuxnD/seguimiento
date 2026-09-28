@@ -54,7 +54,7 @@ void main() {
     await host.restoreFrom(backup);
 
     final kinds = (await host.db.select(host.db.reminders).get()).map((r) => r.kind).toSet();
-    expect(kinds, ReminderKind.values.toSet());
+    expect(kinds, ReminderKind.values.toSet()..remove(ReminderKind.personalizado));
   });
 
   test('el perfil restaurado es el del respaldo, no el actual', () async {

@@ -24,6 +24,7 @@ import '../data/repositories/photo_repository.dart';
 import '../data/repositories/plan_repository.dart';
 import '../data/repositories/profile_repository.dart';
 import '../data/health_connect.dart';
+import '../data/repositories/custom_reminder_repository.dart';
 import '../data/repositories/exercise_photo_repository.dart';
 import '../data/repositories/report_repository.dart';
 import '../data/repositories/steps_repository.dart';
@@ -103,6 +104,8 @@ final reminderSchedulerProvider = Provider((ref) => ReminderScheduler(
     ));
 
 final remindersProvider = StreamProvider((ref) => ref.watch(reminderRepositoryProvider).watchAll());
+final customReminderRepositoryProvider = Provider((ref) => CustomReminderRepository(ref.watch(databaseProvider)));
+final customRemindersProvider = StreamProvider((ref) => ref.watch(customReminderRepositoryProvider).watchAll());
 
 final dashboardRepositoryProvider = Provider((ref) => DashboardRepository(
       ref.watch(databaseProvider),
@@ -214,6 +217,7 @@ final reminderSyncProvider = Provider<void>((ref) {
   ref.listen(checkInsProvider, (_, __) => run());
   ref.listen(planVersionsProvider, (_, __) => run());
   ref.listen(remindersProvider, (_, __) => run());
+  ref.listen(customRemindersProvider, (_, __) => run());
   ref.listen(profileProvider, (_, __) => run());
   ref.listen(mealsForDayProvider(dayKey(today)), (_, __) => run());
   ref.listen(dayClosedProvider(dayKey(today)), (_, __) => run());

@@ -85,8 +85,15 @@ void main() {
   Future<void> buildOldSchema(int version, {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    if (version >= 12) {
+      await rows?.call(db);
+      await db.close();
+      return;
+    }
+    await db.customStatement('drop table if exists custom_reminders');
     if (version >= 11) {
       await rows?.call(db);
+      await db.customStatement('pragma user_version = $version');
       await db.close();
       return;
     }
@@ -162,7 +169,7 @@ void main() {
   Future<int> userVersion(AppDatabase db) =>
       db.customSelect('pragma user_version').map((r) => r.data.values.first as int).getSingle();
 
-  test('una base del esquema 1 llega al 11 sin perder datos', () async {
+  test('una base del esquema 1 llega al 12 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -192,7 +199,7 @@ void main() {
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 11);
+    expect(await userVersion(migrated), 12);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -212,7 +219,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 11 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 12 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -224,11 +231,11 @@ void main() {
     final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 11);
+    expect(await userVersion(migrated), 12);
     await migrated.close();
   });
 
-  test('una base del esquema 7 llega al 11 con guías, catálogo nuevo y rondas sin separar', () async {
+  test('una base del esquema 7 llega al 12 con guías, catálogo nuevo y rondas sin separar', () async {
     await buildOldSchema(7, rows: (old) async {
       await old.customStatement("insert into exercises (name) values ('Pike push-up'), ('Sentadilla búlgara')");
       await old.customStatement(
@@ -239,7 +246,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 11);
+    expect(await userVersion(migrated), 12);
 
     final pike = await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Pike push-up'))).getSingle();
     expect(pike.formCues, startsWith('Posición de V invertida'));
@@ -270,7 +277,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 11);
+    expect(await userVersion(migrated), 12);
     final repo = ReminderRepository(migrated);
     await repo.ensureDefaults(); // lo que hace el arranque
     final settings = await repo.settings();
@@ -280,12 +287,13 @@ void main() {
     expect(settings[ReminderKind.proteina]!.threshold, 100);
     expect(settings[ReminderKind.calorias]!.threshold, 1800);
     expect(settings[ReminderKind.comidasSinRegistrar]!.hour, 22);
-    expect(settings.length, ReminderKind.values.length);
+    // Los propios no tienen fila en `reminders`: viven en `custom_reminders`.
+    expect(settings.length, ReminderKind.values.length - 1);
     expect(await migrated.select(migrated.sessions).get(), hasLength(1), reason: 'solo se tocan los avisos');
     await migrated.close();
   });
 
-  test('una base del esquema 6 llega al 11: las sesiones viejas quedan con descanso 0', () async {
+  test('una base del esquema 6 llega al 12: las sesiones viejas quedan con descanso 0', () async {
     await buildOldSchema(6);
     final old = AppDatabase(NativeDatabase(file));
     await old.customStatement(
@@ -296,11 +304,11 @@ void main() {
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.totalSec, 1200);
     expect(session.restSec, 0);
-    expect(await userVersion(migrated), 11);
+    expect(await userVersion(migrated), 12);
     await migrated.close();
   });
 
-  test('una base del esquema 9 llega al 11: pasos, golpe en el fútbol y alimentos marcados', () async {
+  test('una base del esquema 9 llega al 12: pasos, golpe en el fútbol y alimentos marcados', () async {
     await buildOldSchema(9, rows: (db) async {
       await db.customStatement(
           "insert into foods (name, basis, unit_label, kcal, protein) values ('Pan (unidad)', 'unit', 'unidad', 140, 4.5)");
@@ -324,15 +332,23 @@ void main() {
     final profile = await migrated.select(migrated.profiles).getSingle();
     expect(profile.stepsTarget, 7500);
     expect(await migrated.select(migrated.dailySteps).get(), isEmpty);
-    expect(await userVersion(migrated), 11);
+    expect(await userVersion(migrated), 12);
     await migrated.close();
   });
 
-  test('una base del esquema 10 llega al 11 con la tabla de fotos de referencia', () async {
+  test('una base del esquema 10 llega al 12 con la tabla de fotos de referencia', () async {
     await buildOldSchema(10);
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await migrated.select(migrated.exercisePhotos).get(), isEmpty);
-    expect(await userVersion(migrated), 11);
+    expect(await userVersion(migrated), 12);
+    await migrated.close();
+  });
+
+  test('una base del esquema 11 llega al 12 con la tabla de recordatorios propios', () async {
+    await buildOldSchema(11);
+    final migrated = AppDatabase(NativeDatabase(file));
+    expect(await migrated.select(migrated.customReminders).get(), isEmpty);
+    expect(await userVersion(migrated), 12);
     await migrated.close();
   });
 }

@@ -14,6 +14,7 @@ import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../meals/meal_form_screen.dart';
+import '../settings/custom_reminders.dart';
 import '../settings/settings_screen.dart';
 import '../settings/updates_card.dart';
 import '../training/active_session_banner.dart';
@@ -54,6 +55,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             _PlanHero(dashboard: d),
             _RingsCard(dashboard: d),
+            const TodayCustomRemindersCard(),
             _ActionsCard(date: today, dayType: d.dayType, suggestLight: d.hardFootballYesterday != null),
             if (d.measurement != null) _MeasurementCard(due: d.measurement!),
           ],

@@ -8,6 +8,7 @@ import '../domain/reminders.dart';
 import 'database.dart';
 import 'notification_service.dart';
 import 'repositories/body_repository.dart';
+import 'repositories/custom_reminder_repository.dart';
 import 'repositories/nutrition_repository.dart';
 import 'repositories/plan_repository.dart';
 import 'repositories/profile_repository.dart';
@@ -79,6 +80,7 @@ class ReminderScheduler {
       missingMealsToday: missing,
       stepsToday: steps?.steps,
       stepsTarget: p.stepsTarget,
+      custom: await CustomReminderRepository(db).all(),
       lastMeasurement: lastMeasurement,
       measureIntervalDays: p.measureIntervalDays,
       // Una fecha acordada ya cumplida no debe seguir avisando.

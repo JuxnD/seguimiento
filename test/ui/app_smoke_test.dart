@@ -13,6 +13,7 @@ import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/local_flags.dart';
 import 'package:seguimiento/data/notification_service.dart';
+import 'package:seguimiento/data/repositories/custom_reminder_repository.dart';
 import 'package:seguimiento/data/repositories/nutrition_repository.dart';
 import 'package:seguimiento/data/repositories/reminder_repository.dart';
 import 'package:seguimiento/data/update_service.dart';
@@ -124,6 +125,25 @@ void main() {
     await db.close();
     await tester.pump(const Duration(milliseconds: 10));
   }
+
+  testWidgets('un recordatorio propio que toca hoy sale en Hoy y se marca hecho', (tester) async {
+    await CustomReminderRepository(db).save(
+      title: 'Ejercicios de cuello',
+      intervalDays: 3,
+      hour: 19,
+      minute: 0,
+      startDate: DateTime.now(),
+    );
+    await pumpApp(tester);
+    expect(find.text('Pendiente hoy'), findsOneWidget);
+    expect(find.text('Ejercicios de cuello'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Hecho'));
+    await settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.text('Pendiente hoy'), findsNothing);
+    expect((await CustomReminderRepository(db).all()).single.lastDone, isNotNull);
+    await disposeApp(tester);
+  });
 
   testWidgets('anotar los pasos desde el anillo de Hoy', (tester) async {
     await pumpApp(tester);

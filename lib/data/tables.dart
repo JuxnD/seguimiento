@@ -373,6 +373,21 @@ class ExercisePhotos extends Table {
   Set<Column> get primaryKey => {nameKey};
 }
 
+/// Recordatorios que crea el usuario ("Ejercicios de cuello cada 3 días").
+/// Los días se cuentan desde `lastDone` (o `startDate` si nunca se hizo).
+@DataClassName('CustomReminderRow')
+class CustomReminders extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text().withLength(min: 1, max: 80)();
+  TextColumn get note => text().nullable()();
+  IntColumn get intervalDays => integer().check(intervalDays.isBetweenValues(1, 90))();
+  IntColumn get hour => integer().check(hour.isBetweenValues(0, 23))();
+  IntColumn get minute => integer().withDefault(const Constant(0))();
+  TextColumn get startDate => text()();
+  TextColumn get lastDone => text().nullable()();
+  BoolColumn get enabled => boolean().withDefault(const Constant(true))();
+}
+
 /// Notas libres por semana (índice anclado a la fecha de inicio).
 @DataClassName('WeekNoteRow')
 class WeekNotes extends Table {

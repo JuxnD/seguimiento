@@ -20,6 +20,10 @@ enum ReminderKind {
   calorias,
   comidasSinRegistrar,
   pasos,
+
+  /// Recordatorios que crea el usuario (cuello, estiramientos…). No tienen
+  /// fila en `reminders`: cada uno vive en `custom_reminders`.
+  personalizado,
 }
 
 extension ReminderKindLabel on ReminderKind {
@@ -35,6 +39,7 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.calorias => 'Calorías del día',
         ReminderKind.comidasSinRegistrar => 'Comidas sin registrar',
         ReminderKind.pasos => 'Pasos del día',
+        ReminderKind.personalizado => 'Recordatorio propio',
       };
 
   String get description => switch (this) {
@@ -50,6 +55,7 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.comidasSinRegistrar =>
           'Si a esa hora falta desayuno, almuerzo o cena, dice cuál (no suena si cerraste el día)',
         ReminderKind.pasos => 'Entre semana, si a esa hora vas por debajo del umbral de pasos',
+        ReminderKind.personalizado => 'Cada N días desde la última vez que lo marcaste como hecho',
       };
 
   /// Los que no se programan por hora del día.
@@ -78,6 +84,7 @@ class PlannedNotification {
     required this.when,
     required this.title,
     required this.body,
+    this.customId,
   });
 
   final ReminderKind kind;
@@ -85,8 +92,12 @@ class PlannedNotification {
   final String title;
   final String body;
 
-  /// Id estable por tipo y día, para poder reprogramar sin duplicar.
-  int get id => kind.index * 1000 + when.day * 24 + when.hour;
+  /// Recordatorio propio del que sale este aviso.
+  final int? customId;
+
+  /// Id estable por tipo y día, para poder reprogramar sin duplicar. Los
+  /// propios van en su propio rango (100000+), lejos de los fijos (< 12000).
+  int get id => customId != null ? 100000 + customId! * 64 + when.day : kind.index * 1000 + when.day * 24 + when.hour;
 }
 
 /// Lo que el planificador necesita saber de un día.
@@ -121,6 +132,7 @@ class ReminderContext {
     this.missingMealsToday = const [],
     this.stepsToday,
     this.stepsTarget = 7500,
+    this.custom = const [],
     this.lastMeasurement,
     this.measureIntervalDays = 21,
     this.nextMeasurementDate,
@@ -142,6 +154,9 @@ class ReminderContext {
   /// Pasos registrados hoy; null = aún no se anotan.
   final int? stepsToday;
   final int stepsTarget;
+
+  /// Recordatorios propios del usuario.
+  final List<CustomReminder> custom;
   final DateTime? lastMeasurement;
   final int measureIntervalDays;
   final DateTime? nextMeasurementDate;
@@ -157,6 +172,7 @@ List<PlannedNotification> planReminders(ReminderContext ctx) {
     out.addAll(_sessionReminder(ctx, day));
     out.addAll(_unloggedSession(ctx, day));
     out.addAll(_mealReminders(ctx, day));
+    out.addAll(_customReminders(ctx, day));
   }
   out.addAll(_protein(ctx));
   out.addAll(_calories(ctx));
@@ -274,6 +290,25 @@ Iterable<PlannedNotification> _steps(ReminderContext ctx) sync* {
   );
 }
 
+Iterable<PlannedNotification> _customReminders(ReminderContext ctx, ReminderDay day) sync* {
+  for (final r in ctx.custom) {
+    if (!r.dueOn(day.date)) continue;
+    final overdue = day.date.isAfter(r.nextDue);
+    yield PlannedNotification(
+      kind: ReminderKind.personalizado,
+      customId: r.id,
+      when: DateTime(day.date.year, day.date.month, day.date.day, r.hour, r.minute),
+      title: r.title,
+      body: [
+        if (r.note != null && r.note!.trim().isNotEmpty) r.note!.trim(),
+        overdue
+            ? 'Pendiente desde el ${weekdayShort(r.nextDue.weekday)} ${formatShort(r.nextDue)}. Márcalo en Hoy cuando lo hagas.'
+            : 'Toca hoy (${r.frequencyLabel}). Márcalo como hecho en Hoy.',
+      ].join('\n'),
+    );
+  }
+}
+
 Iterable<PlannedNotification> _measurement(ReminderContext ctx) sync* {
   final s = ctx.setting(ReminderKind.medicion);
   if (s == null || !s.enabled) return;
@@ -302,4 +337,53 @@ String planSummaryFor(DayType type, int? targetRounds, List<String> exerciseLabe
     return '${type.label}$rounds: ${exerciseLabels.join(' · ')}';
   }
   return '${type.label} — ${exerciseLabels.join(' · ')}';
+}
+
+/// Recordatorio que crea el usuario: "Ejercicios de cuello cada 3 días a las
+/// 7:00 p. m.". Los días se cuentan desde la **última vez que se marcó como
+/// hecho** (o desde el inicio, si nunca): así sirve para rutinas flexibles
+/// ("cada 3–4 días") y un día saltado corre el siguiente. Mientras no se
+/// marque, vuelve a avisar cada día a la misma hora.
+class CustomReminder {
+  const CustomReminder({
+    required this.id,
+    required this.title,
+    this.note,
+    required this.intervalDays,
+    required this.hour,
+    required this.minute,
+    required this.startDate,
+    this.lastDone,
+    this.enabled = true,
+  });
+
+  final int id;
+  final String title;
+  final String? note;
+  final int intervalDays;
+  final int hour;
+  final int minute;
+  final DateTime startDate;
+  final DateTime? lastDone;
+  final bool enabled;
+
+  /// Primer día en que toca.
+  DateTime get nextDue => lastDone == null ? dateOnly(startDate) : addDays(dateOnly(lastDone!), intervalDays);
+
+  /// Toca (o está pendiente) ese día: activo, ya llegó la fecha y no se hizo
+  /// ese mismo día.
+  bool dueOn(DateTime day) {
+    final d = dateOnly(day);
+    if (!enabled || d.isBefore(nextDue)) return false;
+    return lastDone == null || d.isAfter(dateOnly(lastDone!));
+  }
+
+  /// "cada 3 días", "todos los días", "cada semana".
+  String get frequencyLabel => switch (intervalDays) {
+        1 => 'todos los días',
+        7 => 'cada semana',
+        final n => 'cada $n días',
+      };
+
+  String get timeLabel => timeKey(hour, minute);
 }
