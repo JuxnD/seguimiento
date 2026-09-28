@@ -97,6 +97,25 @@ avisa una notificación programada con alarma exacta; si Android no la permite
 (14+ por defecto), el aviso puede llegar tarde y la app lo dice una vez. Detalle
 en [notificaciones.md](notificaciones.md).
 
+## Bloque del día y versión ligera
+
+Hoy muestra el trabajo principal **y** los bloques extra (core A y B, que se
+alternan; hombro; cuádriceps). Antes solo salía el circuito y parecía que el
+plan v2 no tenía core, aunque el cronómetro sí lo recorría.
+
+Al empezar, el diálogo muestra el bloque de la variante elegida y un
+interruptor **Versión ligera** para cuando se viene cargado:
+
+- circuito: una ronda menos (6 → 5);
+- bloques: una serie menos si tiene 3 o más (3 → 2; 2 se queda) y el rango
+  recortado por arriba (8–12 → 8–10, 20–40 s → 20–30 s).
+
+Se sugiere sola, y Hoy muestra el botón **Aplicar versión ligera**, cuando el
+día anterior hubo un partido intenso (≥ 8) o con golpe. La sesión queda con
+"Versión ligera" en el contexto, se planifica contra 5 rondas (no cuenta como
+incompleta) y, si Android cierra la app, se retoma ligera. Lógica:
+`lightVersion` en `plan_repository.dart`.
+
 ## Propuesta de rondas (día de progresión)
 
 Antes de empezar, el día de progresión muestra la propuesta de la regla: una

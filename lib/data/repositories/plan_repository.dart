@@ -114,6 +114,51 @@ class PlanDayDraft {
   }
 }
 
+/// Versión ligera de un día, para cuando el cuerpo viene cargado (fútbol
+/// intenso o con golpe el día antes). No cambia el objetivo del día, solo le
+/// quita margen:
+/// - circuito: una ronda menos (mínimo 1);
+/// - bloques extra (core, hombro…) y días de bloques: una serie menos si
+///   tiene 3 o más (3 → 2; 2 se queda) y el rango recortado por arriba:
+///   8–12 → 8–10, 20–40 s → 20–30 s.
+/// El trabajo principal del circuito no cambia de repeticiones.
+PlanDayDraft lightVersion(PlanDayDraft day) {
+  PlanExerciseDraft lighter(PlanExerciseDraft e) => PlanExerciseDraft(
+        name: e.name,
+        sets: e.sets == null || e.sets! < 3 ? e.sets : e.sets! - 1,
+        repsMin: e.repsMin,
+        repsMax: e.repsMin == null || e.repsMax == null || e.repsMax! - e.repsMin! <= 2
+            ? e.repsMax
+            : e.repsMin! + 2,
+        restSec: e.restSec,
+        restSecMax: e.restSecMax,
+        grip: e.grip,
+        block: e.block,
+        variant: e.variant,
+        holdSecMin: e.holdSecMin,
+        holdSecMax: e.holdSecMin == null || e.holdSecMax == null || e.holdSecMax! - e.holdSecMin! <= 10
+            ? e.holdSecMax
+            : e.holdSecMin! + 10,
+        perSide: e.perSide,
+        rirMin: e.rirMin,
+        rirMax: e.rirMax,
+        notes: e.notes,
+      );
+
+  final circuit = day.type.isCircuit;
+  return PlanDayDraft(
+    weekday: day.weekday,
+    type: day.type,
+    targetRounds: day.targetRounds == null ? null : (day.targetRounds! > 1 ? day.targetRounds! - 1 : 1),
+    restBetweenRoundsSec: day.restBetweenRoundsSec,
+    notes: day.notes,
+    exercises: [
+      for (final e in day.exercises)
+        if (circuit && e.block == null) e else lighter(e),
+    ],
+  );
+}
+
 class PlanDraft {
   PlanDraft({required this.validFrom, this.notes, required this.days});
 

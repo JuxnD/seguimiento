@@ -66,6 +66,7 @@ class GuidedSessionScreen extends ConsumerStatefulWidget {
     this.sessionType,
     this.coreVariant,
     this.roundsOverride,
+    this.light = false,
     this.resume,
   });
 
@@ -75,6 +76,10 @@ class GuidedSessionScreen extends ConsumerStatefulWidget {
   final SessionType? sessionType;
   final String? coreVariant;
   final int? roundsOverride;
+
+  /// `day` ya viene recortado; esto solo se guarda para retomar y se anota
+  /// en la sesión.
+  final bool light;
 
   /// Sesión que Android cerró a mitad: se retoma donde iba.
   final GuidedSnapshot? resume;
@@ -148,6 +153,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         sessionType: widget.sessionType,
         coreVariant: widget.coreVariant,
         roundsOverride: widget.roundsOverride,
+        light: widget.light,
         phase: _phase,
         index: _index,
         workStartedAt: _workStartedAt,
@@ -465,6 +471,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       incomplete: _index < _steps.length,
       roundMarksSec: List.of(_roundMarks),
       roundRestSec: _roundRests.length == _roundMarks.length ? List.of(_roundRests) : null,
+      context: widget.light ? 'Versión ligera (venía cargado del día anterior)' : null,
       sets: [for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg)],
     );
   }

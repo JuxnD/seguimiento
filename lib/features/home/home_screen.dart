@@ -54,7 +54,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             _PlanHero(dashboard: d),
             _RingsCard(dashboard: d),
-            _ActionsCard(date: today, dayType: d.dayType),
+            _ActionsCard(date: today, dayType: d.dayType, suggestLight: d.hardFootballYesterday != null),
             if (d.measurement != null) _MeasurementCard(due: d.measurement!),
           ],
         ),
@@ -145,12 +145,24 @@ class _PlanHero extends StatelessWidget {
                   child: Text('• $e', style: text.bodyMedium),
                 ),
             ],
+            if (dashboard.blockExercises.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                dashboard.blockExercises.length > 1 ? 'Después, una variante (se alternan):' : 'Después:',
+                style: text.labelLarge,
+              ),
+              for (final line in dashboard.blockExercises)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text('• $line', style: text.bodyMedium),
+                ),
+            ],
             if (dashboard.hardFootballYesterday case final game? when dashboard.dayType.isTraining)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   'Ayer fútbol ${game.knock == true ? 'con golpe o molestia' : 'intenso (${game.intensity}/10)'}: '
-                  'hoy baja la carga, una ronda o una serie menos.',
+                  'hoy conviene la versión ligera (una ronda menos, el bloque con una serie menos).',
                   style: text.bodyMedium?.copyWith(color: style.color),
                 ),
               ),
@@ -366,10 +378,13 @@ class _RecordSuspectTile extends ConsumerWidget {
 }
 
 class _ActionsCard extends ConsumerWidget {
-  const _ActionsCard({required this.date, required this.dayType});
+  const _ActionsCard({required this.date, required this.dayType, this.suggestLight = false});
 
   final DateTime date;
   final DayType dayType;
+
+  /// Ayer hubo un partido intenso o con golpe: se ofrece la versión ligera.
+  final bool suggestLight;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -383,6 +398,14 @@ class _ActionsCard extends ConsumerWidget {
           icon: Icon(dayType.isTraining ? Icons.play_arrow : Icons.timer),
           label: Text(dayType.isTraining ? 'Empezar ${dayType.label.toLowerCase()}' : 'Empezar sesión'),
         ),
+        if (suggestLight && dayType.isTraining) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => startGuidedSession(context, ref, light: true),
+            icon: const Icon(Icons.battery_charging_full),
+            label: const Text('Aplicar versión ligera'),
+          ),
+        ],
         const SizedBox(height: 8),
         Row(
           children: [

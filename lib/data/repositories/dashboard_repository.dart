@@ -19,6 +19,7 @@ class TodayDashboard {
     required this.planVersion,
     required this.planSummary,
     required this.mainExercises,
+    this.blockExercises = const [],
     required this.targetRounds,
     required this.roundsDone,
     required this.sessionsToday,
@@ -44,6 +45,10 @@ class TodayDashboard {
   /// "6 rondas · Dominadas 5 · Flexiones 10 · Sentadillas 15".
   final String? planSummary;
   final List<String> mainExercises;
+
+  /// Bloques extra del día (core, hombro…), una línea por variante:
+  /// "Core A: Elevación de piernas colgado 3×8–12 · Hollow body hold 2×20–40 s".
+  final List<String> blockExercises;
   final int? targetRounds;
 
   /// Rondas de la sesión de hoy, si ya se registró.
@@ -138,6 +143,7 @@ class DashboardRepository {
       mainExercises: view == null
           ? const []
           : view.day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).toList(),
+      blockExercises: view == null ? const [] : blockLines(view.day),
       targetRounds: view?.day.targetRounds,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
       sessionsToday: sessions.length,
@@ -176,6 +182,12 @@ class DashboardRepository {
       }
     }
     return null;
+  }
+
+  /// Si el día anterior a `day` hubo un partido intenso o con golpe.
+  Future<bool> hardGameBefore(DateTime day) async {
+    final game = await _lastGame(addDays(dateOnly(day), -1));
+    return game != null && isHardGame(game);
   }
 
   Future<FootballGameRow?> _lastGame(DateTime day) => (db.select(db.footballGames)
@@ -225,3 +237,16 @@ class DashboardRepository {
 /// Un partido que pide bajar la sesión del día siguiente: intensidad 8 o más,
 /// o terminó con golpe o molestia.
 bool isHardGame(FootballGameRow game) => (game.intensity ?? 0) >= 8 || game.knock == true;
+
+/// Una línea por bloque y variante: "Core A: Elevación de piernas colgado
+/// 3×8–12 · Hollow body hold 2×20–40 s".
+List<String> blockLines(PlanDayDraft day) {
+  final groups = <String, List<PlanExerciseDraft>>{};
+  for (final e in day.exercises.where((e) => e.block != null)) {
+    final block = e.block![0].toUpperCase() + e.block!.substring(1);
+    groups.putIfAbsent(e.variant == null ? block : '$block ${e.variant}', () => []).add(e);
+  }
+  return [
+    for (final g in groups.entries) '${g.key}: ${g.value.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ')}',
+  ];
+}

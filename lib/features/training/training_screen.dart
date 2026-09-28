@@ -24,7 +24,9 @@ import 'session_form_screen.dart';
 /// Arranca el cronómetro con el plan del día ya cargado: si toca circuito
 /// cuenta rondas, si tocan bloques cuenta series. Sin plan, cae al cronómetro
 /// libre, que no inventa rondas.
-Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? date}) async {
+/// `light`: true arranca con la versión ligera marcada (botón de Hoy); null
+/// la sugiere si el día anterior hubo un partido intenso o con golpe.
+Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? date, bool? light}) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
   final day = date ?? dateOnly(DateTime.now());
@@ -89,20 +91,23 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
     }
   }
   if (!context.mounted) return;
+  final suggestLight = light ?? await ref.read(dashboardRepositoryProvider).hardGameBefore(day);
+  if (!context.mounted) return;
   final setup = await showDialog<_SessionSetup>(
     context: context,
-    builder: (_) => _SetupDialog(day: planDay, variants: variants, proposal: proposal),
+    builder: (_) => _SetupDialog(day: planDay, variants: variants, proposal: proposal, light: suggestLight),
   );
   if (setup == null || !context.mounted) return;
 
   await _runGuided(
     context,
     GuidedSessionScreen(
-      day: planDay,
+      day: setup.light ? lightVersion(planDay) : planDay,
       date: day,
       planDayId: view.dayId,
       coreVariant: setup.variant,
       roundsOverride: setup.rounds,
+      light: setup.light,
     ),
   );
 }
@@ -171,12 +176,13 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       await _runGuided(
         context,
         GuidedSessionScreen(
-          day: view.day,
+          day: s.light ? lightVersion(view.day) : view.day,
           date: parseDay(s.date),
           planDayId: s.planDayId,
           sessionType: s.sessionType,
           coreVariant: s.coreVariant,
           roundsOverride: s.roundsOverride,
+          light: s.light,
           resume: s,
         ),
       );
@@ -186,26 +192,35 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
 }
 
 class _SessionSetup {
-  const _SessionSetup(this.rounds, this.variant);
+  const _SessionSetup(this.rounds, this.variant, {this.light = false});
 
   final int? rounds;
   final String? variant;
+  final bool light;
 }
 
 class _SetupDialog extends StatefulWidget {
-  const _SetupDialog({required this.day, required this.variants, this.proposal});
+  const _SetupDialog({required this.day, required this.variants, this.proposal, this.light = false});
 
   final PlanDayDraft day;
   final List<String> variants;
   final ProgressionProposal? proposal;
+
+  /// Empieza con la versión ligera marcada.
+  final bool light;
 
   @override
   State<_SetupDialog> createState() => _SetupDialogState();
 }
 
 class _SetupDialogState extends State<_SetupDialog> {
-  late final _rounds = TextEditingController(text: widget.day.targetRounds?.toString() ?? '');
+  late bool _light = widget.light;
+  late final _rounds = TextEditingController(text: _roundsFor(_light));
   late String? _variant = widget.variants.isEmpty ? null : widget.variants.first;
+
+  PlanDayDraft get _day => _light ? lightVersion(widget.day) : widget.day;
+
+  String _roundsFor(bool light) => (light ? lightVersion(widget.day) : widget.day).targetRounds?.toString() ?? '';
 
   @override
   void dispose() {
@@ -216,33 +231,58 @@ class _SetupDialogState extends State<_SetupDialog> {
   @override
   Widget build(BuildContext context) {
     final isCircuit = widget.day.type.isCircuit;
+    final day = _day;
+    final block = [
+      for (final e in day.exercises)
+        if (e.block != null && (e.variant == null || e.variant == _variant)) e,
+    ];
     return AlertDialog(
       title: Text(widget.day.type.label),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final e in widget.day.main) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
-          if (isCircuit) ...[
-            const SizedBox(height: 12),
-            if (widget.proposal case final p?) _ProposalCard(proposal: p, onUse: (r) => _rounds.text = '$r'),
-            NumberField(controller: _rounds, label: 'Rondas objetivo'),
-            const Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: Text('Bájalas si vienes de un domingo intenso.'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final e in day.main) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
+            if (block.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text('Después, ${block.first.block}:', style: Theme.of(context).textTheme.labelLarge),
+              for (final e in block) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
+            ],
+            const SizedBox(height: 8),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Versión ligera'),
+              subtitle: Text(widget.light
+                  ? 'Sugerida: ayer hubo un partido intenso o con golpe'
+                  : 'Una ronda menos y el bloque con una serie menos'),
+              value: _light,
+              onChanged: (v) => setState(() {
+                _light = v;
+                _rounds.text = _roundsFor(v);
+              }),
             ),
+            if (isCircuit) ...[
+              const SizedBox(height: 12),
+              if (widget.proposal case final p?) _ProposalCard(proposal: p, onUse: (r) => _rounds.text = '$r'),
+              NumberField(controller: _rounds, label: 'Rondas objetivo'),
+              const Padding(
+                padding: EdgeInsets.only(top: 6),
+                child: Text('Bájalas si vienes de un domingo intenso.'),
+              ),
+            ],
+            if (widget.variants.length > 1) ...[
+              const SizedBox(height: 12),
+              const Text('Variante del bloque'),
+              const SizedBox(height: 6),
+              SegmentedButton<String>(
+                segments: [for (final v in widget.variants) ButtonSegment(value: v, label: Text(v))],
+                selected: {_variant!},
+                onSelectionChanged: (s) => setState(() => _variant = s.first),
+              ),
+            ],
           ],
-          if (widget.variants.length > 1) ...[
-            const SizedBox(height: 12),
-            const Text('Variante del bloque'),
-            const SizedBox(height: 6),
-            SegmentedButton<String>(
-              segments: [for (final v in widget.variants) ButtonSegment(value: v, label: Text(v))],
-              selected: {_variant!},
-              onSelectionChanged: (s) => setState(() => _variant = s.first),
-            ),
-          ],
-        ],
+        ),
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
@@ -250,7 +290,7 @@ class _SetupDialogState extends State<_SetupDialog> {
           onPressed: () => Navigator.pop(
             context,
             // 0 rondas o vacío: se usa la meta del plan.
-            _SessionSetup(isCircuit ? _positiveOrNull(int.tryParse(_rounds.text)) : null, _variant),
+            _SessionSetup(isCircuit ? _positiveOrNull(int.tryParse(_rounds.text)) : null, _variant, light: _light),
           ),
           child: const Text('Empezar'),
         ),

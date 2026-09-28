@@ -65,6 +65,7 @@ class GuidedSnapshot extends ActiveSession {
     this.sessionType,
     this.coreVariant,
     this.roundsOverride,
+    this.light = false,
     this.workStartedAt,
     this.workEndedAt,
     this.endedAt,
@@ -82,6 +83,9 @@ class GuidedSnapshot extends ActiveSession {
   final SessionType? sessionType;
   final String? coreVariant;
   final int? roundsOverride;
+
+  /// Se hacía la versión ligera del día: al retomar se reconstruye igual.
+  final bool light;
 
   final GuidedPhase phase;
   final int index;
@@ -109,6 +113,7 @@ class GuidedSnapshot extends ActiveSession {
         'sessionType': sessionType?.name,
         'coreVariant': coreVariant,
         'roundsOverride': roundsOverride,
+        'light': light,
         'phase': phase.name,
         'index': index,
         'workStartedAt': workStartedAt?.toIso8601String(),
@@ -129,6 +134,7 @@ class GuidedSnapshot extends ActiveSession {
         sessionType: _enumOrNull(SessionType.values, j['sessionType']),
         coreVariant: j['coreVariant'] as String?,
         roundsOverride: (j['roundsOverride'] as num?)?.toInt(),
+        light: j['light'] == true,
         phase: GuidedPhase.values.byName(j['phase']! as String),
         index: (j['index']! as num).toInt(),
         workStartedAt: _date(j['workStartedAt']),
