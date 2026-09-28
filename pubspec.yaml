@@ -1,7 +1,7 @@
 name: seguimiento
 description: "Seguimiento de entrenamiento, comidas y medidas con informe semanal en Markdown."
 publish_to: 'none'
-version: 1.9.2+16
+version: 1.10.0+17
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
