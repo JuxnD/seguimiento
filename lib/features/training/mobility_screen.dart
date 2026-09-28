@@ -11,9 +11,11 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/mobility.dart';
+import '../../ui/exercise_figure.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
+import 'technique_sheet.dart';
 
 /// Lo que devuelve el cronómetro de movilidad al cerrarse con "Guardar".
 class MobilityResult {
@@ -222,11 +224,15 @@ class _MobilityScreenState extends State<MobilityScreen> {
         AppCard(
           title: 'Técnica',
           children: [
+            ExerciseArtView(exercise: step.exercise.name, frameHeight: 124),
+            const SizedBox(height: 14),
             for (final cue in step.exercise.formCues)
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Text('• $cue', style: text.bodyMedium),
               ),
+            const SizedBox(height: 8),
+            ExerciseReferencePhoto(exercise: step.exercise.name),
           ],
         ),
         if (next != null)

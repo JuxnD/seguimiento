@@ -51,8 +51,10 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   Editarlo desde la app crea versiones nuevas; la siembra no vuelve a correr.
 - Los pasos se anotan a mano (leídos del reloj SW/46 o del teléfono): uno por
   día, y anotar otra vez reemplaza. La meta (7.500) es solo entre semana.
-  Health Connect no está integrado; queda pendiente comprobar si la app del
-  reloj escribe ahí.
+  Health Connect no está integrado. La app del reloj ofrece conectarse a
+  Health Connect (Yo → Health Connect); falta confirmar que los pasos llegan.
+- Las figuras de técnica se generan con `python tool/figuras.py` (fuente
+  única) en `assets/tecnica/figuras.json`; no se editan a mano.
 - Las entradas libres se guardan solas en el catálogo (`origin =
   entradaLibre`). Un alimento "a ojo" sigue contando como estimado en el
   informe aunque ya esté en el catálogo.

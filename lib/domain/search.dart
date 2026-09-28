@@ -29,3 +29,7 @@ bool matchesQuery(String text, String query) {
   final words = foldText(query).split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
   return words.every(haystack.contains);
 }
+
+/// Clave de un nombre escrito a mano: sin mayúsculas, tildes ni espacios de
+/// sobra. "Sentadilla Búlgara " y "sentadilla bulgara" son la misma.
+String nameKey(String name) => foldText(name.trim()).replaceAll(RegExp(r'\s+'), ' ');

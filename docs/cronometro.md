@@ -106,6 +106,29 @@ si no, la misma meta y qué criterio falló. Una condición sin registrar no
 cuenta como cumplida. La app no cambia la meta sola: "Usar N" la pone en el
 campo.
 
+## Técnica: figuras y foto de referencia
+
+El botón *Técnica* (y *Técnica: siguiente* durante el descanso) abre una hoja
+con, en este orden:
+
+- **Figuras** de los momentos clave (inicio y final, y un cuadro *Evita* con
+  el error típico cuando se ve de lado). En naranja el músculo que trabaja; en
+  gris el lado lejano; una silueta tenue de la posición anterior para ver el
+  recorrido; en turquesa la dirección y el punto de apoyo; en ámbar ángulos,
+  medidas y líneas de alineación. Debajo, "Trabaja: …".
+- Las claves de técnica y la progresión.
+- **Tu foto de referencia** (cámara o galería; una captura de un video sirve).
+  Una por ejercicio; se cambia o se quita ahí mismo y se abre con zoom.
+- El enlace al video.
+
+Las figuras salen de [`tool/figuras.py`](../tool/figuras.py), que genera
+`assets/tecnica/figuras.json`; la app solo pinta esas primitivas
+(`lib/ui/exercise_figure.dart`). Para ajustar una postura se edita el
+generador y se corre `python tool/figuras.py`. Hay figura para los ejercicios
+del plan (circuito, core, búlgara, pike) y los de movilidad; un ejercicio sin
+figura muestra la hoja sin ella. La movilidad usa las mismas figuras y la
+misma foto dentro de su tarjeta de técnica.
+
 ## Movilidad nocturna (opcional)
 
 Desde Hoy o Entreno, *Movilidad nocturna · opcional*. Rutina fija de

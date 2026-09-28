@@ -23,6 +23,7 @@ import '../data/repositories/nutrition_repository.dart';
 import '../data/repositories/photo_repository.dart';
 import '../data/repositories/plan_repository.dart';
 import '../data/repositories/profile_repository.dart';
+import '../data/repositories/exercise_photo_repository.dart';
 import '../data/repositories/report_repository.dart';
 import '../data/repositories/steps_repository.dart';
 import '../data/repositories/training_repository.dart';
@@ -108,6 +109,8 @@ final stepsHistoryProvider = StreamProvider((ref) => ref.watch(stepsRepositoryPr
 final documentsDirProvider = FutureProvider<Directory>((ref) => getApplicationDocumentsDirectory());
 
 final photoRepositoryProvider = Provider((ref) => PhotoRepository(ref.watch(databaseProvider)));
+final exercisePhotoRepositoryProvider = Provider(
+    (ref) => ExercisePhotoRepository(ref.watch(databaseProvider), () => ref.read(documentsDirProvider.future)));
 final photoCheckInsProvider = StreamProvider((ref) => ref.watch(photoRepositoryProvider).watchCheckIns());
 
 final chartRepositoryProvider =

@@ -38,6 +38,7 @@ const databaseFileName = 'seguimiento.sqlite';
   ProgressPhotos,
   ClosedDays,
   DailySteps,
+  ExercisePhotos,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -45,7 +46,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -143,6 +144,10 @@ class AppDatabase extends _$AppDatabase {
             await (update(foods)..where((t) => t.name.isIn(initialFoods.map((f) => f.name))))
                 .write(const FoodsCompanion(origin: Value(FoodOrigin.semilla)));
             await addMissingCatalog(this);
+          }
+          if (from < 11) {
+            // v11: foto de referencia por ejercicio.
+            await m.createTable(exercisePhotos);
           }
         },
         beforeOpen: (details) async {

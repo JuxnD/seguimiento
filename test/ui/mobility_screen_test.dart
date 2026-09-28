@@ -1,8 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/app/providers.dart';
 import 'package:seguimiento/domain/mobility.dart';
 import 'package:seguimiento/features/training/mobility_screen.dart';
+import 'package:seguimiento/features/training/technique_sheet.dart';
+import 'package:seguimiento/ui/exercise_art.dart';
+import 'package:seguimiento/ui/exercise_figure.dart';
 import 'package:wakelock_plus/wakelock_plus.dart' as wakelock;
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 
@@ -47,15 +54,22 @@ void main() {
     addTearDown(tester.view.reset);
 
     MobilityResult? result;
-    await tester.pumpWidget(MaterialApp(
-      home: Builder(
-        builder: (context) => TextButton(
-          onPressed: () async => result = await Navigator.push<MobilityResult>(
-              context, MaterialPageRoute(builder: (_) => const MobilityScreen(routine: _routine))),
-          child: const Text('abrir'),
-        ),
-      ),
-    ));
+    final art = ExerciseArtCatalog.fromJsonString(File(ExerciseArtCatalog.asset).readAsStringSync());
+    await tester.pumpWidget(ProviderScope(
+        overrides: [
+          exerciseArtProvider.overrideWith((ref) => art),
+          exercisePhotoProvider.overrideWith((ref, _) => Stream.value(null)),
+          documentsDirProvider.overrideWith((ref) => Directory.systemTemp),
+        ],
+        child: MaterialApp(
+          home: Builder(
+            builder: (context) => TextButton(
+              onPressed: () async => result = await Navigator.push<MobilityResult>(
+                  context, MaterialPageRoute(builder: (_) => const MobilityScreen(routine: _routine))),
+              child: const Text('abrir'),
+            ),
+          ),
+        )));
     await tester.tap(find.text('abrir'));
     await tester.pumpAndSettle();
 

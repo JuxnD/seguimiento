@@ -360,6 +360,19 @@ class DailySteps extends Table {
   Set<Column> get primaryKey => {date};
 }
 
+/// Foto de referencia que el usuario guarda para un ejercicio (una captura de
+/// un video, una foto propia bien hecha). Una por ejercicio; la clave es el
+/// nombre sin mayúsculas ni tildes, así sirve también para la movilidad, que
+/// no está en el catálogo de ejercicios. Ruta relativa, como las de progreso.
+@DataClassName('ExercisePhotoRow')
+class ExercisePhotos extends Table {
+  TextColumn get nameKey => text()();
+  TextColumn get relativePath => text()();
+
+  @override
+  Set<Column> get primaryKey => {nameKey};
+}
+
 /// Notas libres por semana (índice anclado a la fecha de inicio).
 @DataClassName('WeekNoteRow')
 class WeekNotes extends Table {

@@ -4,7 +4,6 @@ import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../app/providers.dart';
@@ -26,6 +25,7 @@ import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../../ui/theme.dart';
+import 'technique_sheet.dart';
 
 /// Convierte el día del plan en algo que el guion entiende.
 ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
@@ -677,11 +677,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 
   /// Claves de técnica en el momento de hacerlo, con el enlace al video.
-  Future<void> _showGuide(ExerciseRow guide) => showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        showDragHandle: true,
-        builder: (c) => _GuideSheet(guide: guide),
+  Future<void> _showGuide(ExerciseRow guide) => showTechniqueSheet(
+        context,
+        exercise: guide.name,
+        cues: guide.cues,
+        progressionNote: guide.progressionNote,
+        mediaUrl: guide.mediaUrl,
       );
 
   Widget _rest(RestStep step) {
@@ -909,56 +910,6 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       ),
     );
     return ok ?? false;
-  }
-}
-
-/// Claves de técnica, progresión y enlace a la referencia visual.
-class _GuideSheet extends StatelessWidget {
-  const _GuideSheet({required this.guide});
-
-  final ExerciseRow guide;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    final url = guide.mediaUrl == null ? null : Uri.tryParse(guide.mediaUrl!);
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(guide.name, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 12),
-            for (final (i, cue) in guide.cues.indexed)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(width: 24, child: Text('${i + 1}.', style: text.titleMedium)),
-                    Expanded(child: Text(cue, style: text.bodyLarge)),
-                  ],
-                ),
-              ),
-            if (guide.progressionNote != null) ...[
-              const SizedBox(height: 4),
-              Text('Progresión', style: text.labelLarge),
-              Text(guide.progressionNote!, style: text.bodyMedium),
-            ],
-            if (url != null) ...[
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () => launchUrl(url, mode: LaunchMode.externalApplication),
-                icon: const Icon(Icons.play_circle_outline),
-                label: const Text('Ver cómo se hace'),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
   }
 }
 
