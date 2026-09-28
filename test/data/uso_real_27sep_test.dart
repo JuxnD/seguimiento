@@ -230,4 +230,23 @@ void main() {
           'entre semana 4.968 (meta 7.500, 1/2 días en meta)'));
     });
   });
+
+  group('§13 movilidad', () {
+    test('es opcional: no marca Hoy, no sostiene la racha y va aparte en el informe', () async {
+      await training.save(SessionDraft(date: d(9, 24), type: SessionType.circuitoLigero, roundsDone: 5, rpe: 6));
+      await training.save(SessionDraft(date: d(9, 25), type: SessionType.movilidad, totalSec: 540));
+      await training.save(SessionDraft(date: d(9, 26), type: SessionType.movilidad, totalSec: 480));
+
+      final friday = await dashboard.today(now: d(9, 25));
+      expect(friday.trained, isFalse, reason: 'el viernes tocaba progresión y no se hizo');
+      expect((await dashboard.today(now: d(9, 26))).streak, 0, reason: 'la movilidad no reemplaza una sesión');
+
+      final report = ReportRepository(db, NutritionRepository(db));
+      final input = await report.load(d(9, 23), d(9, 29), today: d(9, 29));
+      expect(input.sessions.map((s) => s.type), [SessionType.circuitoLigero]);
+      final md = buildReport(input);
+      expect(md, contains('- Movilidad (opcional): 2 (17 min)'));
+      expect(md, isNot(contains('| Movilidad |')));
+    });
+  });
 }

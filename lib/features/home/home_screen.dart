@@ -18,6 +18,7 @@ import '../settings/settings_screen.dart';
 import '../settings/updates_card.dart';
 import '../training/active_session_banner.dart';
 import '../training/football_form_screen.dart';
+import '../training/mobility_screen.dart';
 import '../training/training_screen.dart';
 import '../../ui/theme.dart';
 
@@ -34,7 +35,8 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Hoy'),
         actions: [
-          IconButton(tooltip: 'Ajustes', 
+          IconButton(
+            tooltip: 'Ajustes',
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
           ),
@@ -48,8 +50,7 @@ class HomeScreen extends ConsumerWidget {
           children: [
             const ActiveSessionBanner(),
             UpdateBanner(
-              onOpenSettings: () =>
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+              onOpenSettings: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
             ),
             _PlanHero(dashboard: d),
             _RingsCard(dashboard: d),
@@ -94,7 +95,9 @@ class _PlanHero extends StatelessWidget {
                 const Spacer(),
                 _Chip(
                   icon: Icons.local_fire_department,
-                  label: dashboard.streak == 0 ? 'Sin racha' : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
+                  label: dashboard.streak == 0
+                      ? 'Sin racha'
+                      : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
                   color: dashboard.streak >= 3 ? style.color : null,
                 ),
                 const SizedBox(width: 6),
@@ -127,13 +130,11 @@ class _PlanHero extends StatelessWidget {
                       ),
                       if (dashboard.targetRounds != null)
                         Text('Meta: ${dashboard.targetRounds} rondas', style: text.titleSmall),
-                      if (dashboard.planVersion != null)
-                        Text('Plan v${dashboard.planVersion}', style: text.bodySmall),
+                      if (dashboard.planVersion != null) Text('Plan v${dashboard.planVersion}', style: text.bodySmall),
                     ],
                   ),
                 ),
-                if (dashboard.trained)
-                  Icon(Icons.check_circle, color: style.color, size: 28),
+                if (dashboard.trained) Icon(Icons.check_circle, color: style.color, size: 28),
               ],
             ),
             if (dashboard.mainExercises.isNotEmpty) ...[
@@ -234,8 +235,7 @@ class _RingsCard extends StatelessWidget {
             children: [
               const Icon(Icons.emoji_events_outlined, size: 18),
               const SizedBox(width: 8),
-              Text('Récord de rondas: ${d.roundsRecord}',
-                  style: Theme.of(context).textTheme.bodyMedium),
+              Text('Récord de rondas: ${d.roundsRecord}', style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
           if (d.recordSuspect != null) _RecordSuspectTile(suspect: d.recordSuspect!),
@@ -398,6 +398,15 @@ class _ActionsCard extends ConsumerWidget {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 4),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () => startMobility(context, ref),
+            icon: const Icon(Icons.self_improvement),
+            label: const Text('Movilidad nocturna · opcional'),
+          ),
         ),
       ],
     );

@@ -158,6 +158,10 @@ class AppDatabase extends _$AppDatabase {
       sessions.type.isIn(SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList()) &
       sessions.roundsEstimated.equals(false);
 
+  /// Sesiones que cuentan como entrenamiento del plan: todas menos la
+  /// movilidad, que es opcional y no suma adherencia, racha ni avisos.
+  Expression<bool> get trainingSessions => sessions.type.equalsValue(SessionType.movilidad).not();
+
   /// Copia consistente de la base para respaldo (la hace SQLite, no una copia
   /// del archivo: sirve aunque haya una escritura en curso).
   Future<File> exportTo(String path) async {

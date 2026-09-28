@@ -55,6 +55,11 @@ void _summary(StringBuffer b, ReportStats s) {
       : '$done/${s.expectedTraining}${ahead > 0 ? ' (${ahead == 1 ? 'queda 1' : 'quedan $ahead'} en el plan)' : ''}';
   final foot = s.expectedFootball > 0 ? '${i.football.length}/${s.expectedFootball}' : '${i.football.length}';
   b.writeln('- Sesiones: $sessions · Fútbol: $foot');
+  final mobility = i.mobility;
+  if (mobility.isNotEmpty) {
+    final minutes = (mobility.fold<int>(0, (a, m) => a + m.totalSec) / 60).round();
+    b.writeln('- Movilidad (opcional): ${mobility.length} (${fmtInt(minutes)} min)');
+  }
 
   final max = s.maxRoundsInRange;
   final prev = i.previousRoundsRecord;

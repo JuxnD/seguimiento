@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart' show BooleanExpressionOperators;
+
 import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/nutrition.dart';
@@ -92,7 +94,7 @@ class ReminderScheduler {
 
   Future<bool> _hasSession(DateTime date) async {
     final row = await (db.select(db.sessions)
-          ..where((t) => t.date.equals(dayKey(date)))
+          ..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions)
           ..limit(1))
         .getSingleOrNull();
     return row != null;

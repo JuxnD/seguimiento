@@ -153,6 +153,13 @@ class SessionEntry {
       ];
 }
 
+class MobilityEntry {
+  const MobilityEntry({required this.date, required this.totalSec});
+
+  final DateTime date;
+  final int totalSec;
+}
+
 class FootballEntry {
   const FootballEntry({
     required this.date,
@@ -243,6 +250,7 @@ class ReportInput {
     this.measurementDatesBefore = const [],
     this.closedDays = const {},
     this.steps = const {},
+    this.mobility = const [],
     this.previous,
     this.notes,
   });
@@ -285,6 +293,10 @@ class ReportInput {
 
   /// Pasos registrados por día del rango. Un día ausente no es un día de 0.
   final Map<DateTime, int> steps;
+
+  /// Sesiones de movilidad: opcionales, fuera de `sessions` para que no
+  /// cuenten en adherencia, récords ni alertas.
+  final List<MobilityEntry> mobility;
 
   /// El rango anterior del mismo largo (la semana pasada), para comparar.
   /// null en el propio rango anterior: la comparación no se encadena.

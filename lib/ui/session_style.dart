@@ -18,6 +18,7 @@ const _progresion = Color(0xFFFF4D4D); // rojo: el día de récord
 const _bloques = AppColors.protein; // azul: fuerza por bloques
 const _futbol = AppColors.body; // verde: cardio de fin de semana
 const _descanso = Color(0xFF9A9AA2); // gris: no hay nada que hacer
+const _movilidad = Color(0xFFB39DDB); // lavanda: la noche, sin exigencia
 
 SessionStyle styleForDay(DayType type) => switch (type) {
       DayType.circuito => const SessionStyle(Icons.replay_circle_filled, _circuito),
@@ -34,4 +35,5 @@ SessionStyle styleForSession(SessionType type) => switch (type) {
       SessionType.progresion => styleForDay(DayType.progresion),
       SessionType.bloques => styleForDay(DayType.bloques),
       SessionType.otro => const SessionStyle(Icons.fitness_center, _descanso),
+      SessionType.movilidad => const SessionStyle(Icons.self_improvement, _movilidad),
     };

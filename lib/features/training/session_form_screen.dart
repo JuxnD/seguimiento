@@ -107,6 +107,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
   /// El plan manda: si el tipo no coincide con el día, hay que confirmarlo y
   /// la sesión queda marcada como fuera de plan (y así sale en el informe).
   Future<bool> _confirmAgainstPlan() async {
+    // La movilidad va por fuera del plan a propósito: no es una desviación.
+    if (d.type == SessionType.movilidad) {
+      d.outOfPlan = false;
+      return true;
+    }
     final view = await ref.read(planRepositoryProvider).dayFor(d.date);
     if (view == null) return true;
     final planned = view.day.type;
@@ -137,6 +142,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
   /// registrado vale más que uno perfecto que nunca se anota. Solo el RPE es
   /// obligatorio: sin él la regla de progresión no funciona.
   Future<bool> _softChecks() async {
+    // Movilidad: sin RPE ni fases; no entra en la regla de progresión.
+    if (d.type == SessionType.movilidad) return true;
     if (d.rpe == null) {
       final rpe = await showDialog<int>(context: context, builder: (_) => const _RpeDialog());
       if (rpe == null || !mounted) return false;

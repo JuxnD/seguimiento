@@ -46,7 +46,12 @@ class ReportRepository {
     }
 
     // Sesiones, con sus series y vueltas en dos consultas (no dos por sesión).
-    final sessionRows = await (db.select(db.sessions)..where((x) => x.date.isBetweenValues(f, t))).get();
+    final allSessions = await (db.select(db.sessions)..where((x) => x.date.isBetweenValues(f, t))).get();
+    final sessionRows = [for (final s in allSessions) if (s.type.isTraining) s];
+    final mobility = [
+      for (final s in allSessions)
+        if (!s.type.isTraining) MobilityEntry(date: parseDay(s.date), totalSec: s.totalSec),
+    ];
     final ids = [for (final s in sessionRows) s.id];
     final setsBySession = <int, List<SessionSetRow>>{};
     final roundsBySession = <int, List<SessionRoundRow>>{};
@@ -210,6 +215,7 @@ class ReportRepository {
       measurementDatesBefore: datesBefore,
       closedDays: {for (final c in closed) c.date},
       steps: {for (final s in steps) parseDay(s.date): s.steps},
+      mobility: mobility,
       previous: previous,
       notes: notes.length <= 1
           ? notes.firstOrNull?.body

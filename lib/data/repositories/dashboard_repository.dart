@@ -107,7 +107,9 @@ class DashboardRepository {
     final view = await plan.dayFor(date);
     final type = view?.day.type ?? DayType.descanso;
 
-    final sessions = await (db.select(db.sessions)..where((t) => t.date.equals(dayKey(date)))).get();
+    final sessions = await (db.select(db.sessions)
+          ..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions))
+        .get();
     final meals = await nutrition.range(date, date);
     final football = await _lastGame(date);
     final yesterday = await _lastGame(addDays(date, -1));
@@ -188,7 +190,7 @@ class DashboardRepository {
   /// Días seguidos entrenando, sin que el descanso planificado los rompa. Un
   /// partido de fútbol cuenta como día entrenado.
   Future<int> _streak(DateTime today) async {
-    final rows = await db.select(db.sessions).get();
+    final rows = await (db.select(db.sessions)..where((_) => db.trainingSessions)).get();
     final games = await db.select(db.footballGames).get();
     final dates = {...rows.map((s) => s.date), ...games.map((g) => g.date)};
     final versions = await plan.versions();

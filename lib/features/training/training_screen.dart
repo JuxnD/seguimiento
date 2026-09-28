@@ -17,6 +17,7 @@ import '../plan/plan_screen.dart';
 import 'active_session_banner.dart';
 import 'football_form_screen.dart';
 import 'guided_session_screen.dart';
+import 'mobility_screen.dart';
 import 'round_counter_screen.dart';
 import 'session_form_screen.dart';
 
@@ -294,8 +295,7 @@ class _ProposalCard extends StatelessWidget {
 }
 
 /// Cronómetro sin plan: mide tiempos y cuenta vueltas genéricas.
-Future<void> startFreeCounter(BuildContext context, WidgetRef ref,
-    {DateTime? date, bool outOfPlan = false}) async {
+Future<void> startFreeCounter(BuildContext context, WidgetRef ref, {DateTime? date, bool outOfPlan = false}) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
   await _runCounter(context, date: date ?? dateOnly(DateTime.now()), outOfPlan: outOfPlan);
@@ -327,10 +327,8 @@ Future<void> _runCounter(BuildContext context,
   }
 }
 
-
 Future<void> openSessionForm(BuildContext context, SessionDraft draft, {bool celebrate = true}) =>
-    Navigator.push(
-        context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
+    Navigator.push(context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
 
 class TrainingScreen extends ConsumerWidget {
   const TrainingScreen({super.key});
@@ -369,7 +367,9 @@ class TrainingScreen extends ConsumerWidget {
               if (dashboard != null)
                 StatPill(
                   icon: Icons.local_fire_department,
-                  label: dashboard.streak == 0 ? 'Sin racha' : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
+                  label: dashboard.streak == 0
+                      ? 'Sin racha'
+                      : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
                   color: dashboard.streak >= 3 ? style.color : null,
                 ),
               if (dashboard?.roundsRecord != null)
@@ -397,11 +397,20 @@ class TrainingScreen extends ConsumerWidget {
                     child: ActionButton(
                       icon: Icons.sports_soccer,
                       label: 'Fútbol',
-                      onPressed: () => Navigator.push(
-                          context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
+                      onPressed: () =>
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => startMobility(context, ref),
+                  icon: const Icon(Icons.self_improvement),
+                  label: const Text('Movilidad nocturna · opcional'),
+                ),
               ),
             ],
           ),
@@ -433,8 +442,8 @@ class TrainingScreen extends ConsumerWidget {
                         icon: Icons.sports_soccer,
                         text: 'Sin partidos registrados.',
                         actionLabel: 'Registrar partido',
-                        onAction: () => Navigator.push(
-                            context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
+                        onAction: () =>
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
                       )
                     : Column(children: [for (final g in list) _FootballTile(game: g)]),
               ),
@@ -456,8 +465,8 @@ class _SessionTile extends ConsumerWidget {
     final s = summary.row;
     final date = parseDay(s.date);
     final style = styleForSession(s.type);
-    final net = circuitNetSec(
-        totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec, restSec: s.restSec);
+    final net =
+        circuitNetSec(totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec, restSec: s.restSec);
     final flags = [
       if (s.outOfPlan) 'fuera de plan',
       if (s.incomplete) 'incompleta',
@@ -473,9 +482,7 @@ class _SessionTile extends ConsumerWidget {
         ...flags,
       ].join(' · '),
       value: s.roundsDone == null ? null : '${s.roundsEstimated ? '~' : ''}${s.roundsDone}',
-      valueLabel: s.roundsDone == null
-          ? null
-          : (s.plannedRounds == null ? 'rondas' : 'de ${s.plannedRounds}'),
+      valueLabel: s.roundsDone == null ? null : (s.plannedRounds == null ? 'rondas' : 'de ${s.plannedRounds}'),
       onTap: () async {
         final draft = await ref.read(trainingRepositoryProvider).load(s.id);
         if (context.mounted) await openSessionForm(context, draft);
@@ -504,8 +511,7 @@ class _FootballTile extends StatelessWidget {
       ].join(' · '),
       value: '${game.minutes}',
       valueLabel: 'min',
-      onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (_) => FootballFormScreen(existing: game))),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FootballFormScreen(existing: game))),
     );
   }
 }

@@ -21,6 +21,7 @@ double workMet(SessionType type) => switch (type) {
       SessionType.circuito || SessionType.progresion => 8.0,
       SessionType.circuitoLigero => 5.0,
       SessionType.bloques || SessionType.otro => 5.0,
+      SessionType.movilidad => cooldownMet,
     };
 
 const warmupMet = 3.5;
