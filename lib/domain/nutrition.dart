@@ -23,6 +23,18 @@ class Macros {
 Macros macrosFor({required FoodBasis basis, required Macros perBasis, required double quantity}) =>
     perBasis.scale(basis == FoodBasis.unit ? quantity : quantity / 100);
 
+/// Dos cifras de un mismo plato son la misma si no difieren en más de medio
+/// gramo o media kcal: lo que se reescribe a mano no sale idéntico.
+bool sameMacros(Macros a, Macros b) =>
+    (a.kcal - b.kcal).abs() <= 0.5 &&
+    (a.protein - b.protein).abs() <= 0.5 &&
+    (a.carbs - b.carbs).abs() <= 0.5 &&
+    (a.fat - b.fat).abs() <= 0.5;
+
+/// Multiplicadores de porción de un toque: "comí muchas pastas" es ×1,5, no un
+/// alimento nuevo.
+const portionMultipliers = [0.5, 1.0, 1.5, 2.0];
+
 /// Pulgadas → cm. Todo se guarda en cm; solo la vista convierte.
 const cmPerInch = 2.54;
 

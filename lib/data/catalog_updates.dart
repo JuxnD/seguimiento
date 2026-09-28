@@ -114,6 +114,10 @@ const addedFoodNames = [
   'Almuerzo corriente (arroz + grano + carne + jugo)',
   'Peto sin maíz (vaso)',
   'Salchichón de pollo',
+  'Pan Mipan (unidad 60 g)',
+  'Avena bebida (vaso 350 g)',
+  'Sopa de mondongo + arroz',
+  'Pasta con queso y salchicha (plato grande)',
 ];
 const addedTemplateNames = ['Almuerzo corriente'];
 

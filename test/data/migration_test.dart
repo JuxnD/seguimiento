@@ -49,6 +49,13 @@ const _v8Columns = {
 };
 const _v8Tables = ['closed_days'];
 
+const _v10Columns = {
+  'profiles': ['steps_target'],
+  'football_games': ['knock'],
+  'foods': ['origin', 'favorite'],
+};
+const _v10Tables = ['daily_steps'];
+
 const _v4Columns = {
   'sessions': ['out_of_plan', 'incomplete', 'planned_rounds'],
 };
@@ -78,6 +85,19 @@ void main() {
   Future<void> buildOldSchema(int version, {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    if (version >= 10) {
+      await rows?.call(db);
+      await db.close();
+      return;
+    }
+    for (final entry in _v10Columns.entries) {
+      for (final column in entry.value) {
+        await db.customStatement('alter table ${entry.key} drop column $column');
+      }
+    }
+    for (final table in _v10Tables) {
+      await db.customStatement('drop table if exists $table');
+    }
     if (version >= 8) {
       await rows?.call(db);
       await db.customStatement('pragma user_version = $version');
@@ -135,7 +155,7 @@ void main() {
   Future<int> userVersion(AppDatabase db) =>
       db.customSelect('pragma user_version').map((r) => r.data.values.first as int).getSingle();
 
-  test('una base del esquema 1 llega al 9 sin perder datos', () async {
+  test('una base del esquema 1 llega al 10 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -165,7 +185,7 @@ void main() {
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 9);
+    expect(await userVersion(migrated), 10);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -185,7 +205,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 9 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 10 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -197,11 +217,11 @@ void main() {
     final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 9);
+    expect(await userVersion(migrated), 10);
     await migrated.close();
   });
 
-  test('una base del esquema 7 llega al 9 con guías, catálogo nuevo y rondas sin separar', () async {
+  test('una base del esquema 7 llega al 10 con guías, catálogo nuevo y rondas sin separar', () async {
     await buildOldSchema(7, rows: (old) async {
       await old.customStatement("insert into exercises (name) values ('Pike push-up'), ('Sentadilla búlgara')");
       await old.customStatement(
@@ -212,7 +232,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 9);
+    expect(await userVersion(migrated), 10);
 
     final pike = await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Pike push-up'))).getSingle();
     expect(pike.formCues, startsWith('Posición de V invertida'));
@@ -243,7 +263,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 9);
+    expect(await userVersion(migrated), 10);
     final repo = ReminderRepository(migrated);
     await repo.ensureDefaults(); // lo que hace el arranque
     final settings = await repo.settings();
@@ -258,7 +278,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 6 llega al 9: las sesiones viejas quedan con descanso 0', () async {
+  test('una base del esquema 6 llega al 10: las sesiones viejas quedan con descanso 0', () async {
     await buildOldSchema(6);
     final old = AppDatabase(NativeDatabase(file));
     await old.customStatement(
@@ -269,7 +289,35 @@ void main() {
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.totalSec, 1200);
     expect(session.restSec, 0);
-    expect(await userVersion(migrated), 9);
+    expect(await userVersion(migrated), 10);
+    await migrated.close();
+  });
+
+  test('una base del esquema 9 llega al 10: pasos, golpe en el fútbol y alimentos marcados', () async {
+    await buildOldSchema(9, rows: (db) async {
+      await db.customStatement(
+          "insert into foods (name, basis, unit_label, kcal, protein) values ('Pan (unidad)', 'unit', 'unidad', 140, 4.5)");
+      await db.customStatement(
+          "insert into foods (name, basis, unit_label, kcal, protein) values ('Arepa de huevo', 'unit', 'unidad', 400, 12)");
+      await db.customStatement("insert into football_games (date, minutes) values ('2026-09-27', 90)");
+    });
+
+    final migrated = AppDatabase(NativeDatabase(file));
+    final foods = {for (final f in await migrated.select(migrated.foods).get()) f.name: f};
+    expect(foods['Pan (unidad)']!.origin, FoodOrigin.semilla, reason: 'lo sembrado se reconoce por nombre');
+    expect(foods['Arepa de huevo']!.origin, FoodOrigin.usuario, reason: 'lo demás lo creó el usuario');
+    expect(foods['Pan Mipan (unidad 60 g)']!.kcal, 199);
+    expect(foods['Pan Mipan (unidad 60 g)']!.source, MacroSource.etiqueta);
+    expect(foods['Sopa de mondongo + arroz']!.source, MacroSource.estimado);
+
+    final game = await migrated.select(migrated.footballGames).getSingle();
+    expect(game.minutes, 90);
+    expect(game.knock, isNull);
+
+    final profile = await migrated.select(migrated.profiles).getSingle();
+    expect(profile.stepsTarget, 7500);
+    expect(await migrated.select(migrated.dailySteps).get(), isEmpty);
+    expect(await userVersion(migrated), 10);
     await migrated.close();
   });
 }

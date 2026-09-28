@@ -208,12 +208,13 @@ void _football(StringBuffer b, ReportStats s) {
   final list = [...s.input.football]..sort((a, c) => a.date.compareTo(c.date));
   if (list.isEmpty) return;
   b.writeln('## Fútbol');
-  b.writeln('| Día | Formato | Min | Pasos | Intensidad | Fatiga | Notas |');
-  b.writeln('|---|---|---|---|---|---|---|');
+  b.writeln('| Día | Formato | Min | Pasos | Intensidad | Fatiga | Golpe | Notas |');
+  b.writeln('|---|---|---|---|---|---|---|---|');
   for (final f in list) {
+    final knock = switch (f.knock) { true => 'sí', false => 'no', null => '—' };
     b.writeln('| ${_dayLabel(f.date, null)} | ${f.format} | ${f.minutes} | '
         '${f.steps == null ? '—' : fmtInt(f.steps!)} | ${f.intensity ?? '—'} | ${f.fatigueAfter ?? '—'} | '
-        '${mdCell(f.notes)} |');
+        '$knock | ${mdCell(f.notes)} |');
   }
   b.writeln();
 }

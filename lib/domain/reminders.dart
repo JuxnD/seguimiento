@@ -17,6 +17,7 @@ enum ReminderKind {
   descanso,
   calorias,
   comidasSinRegistrar,
+  pasos,
 }
 
 extension ReminderKindLabel on ReminderKind {
@@ -31,6 +32,7 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.descanso => 'Fin del descanso',
         ReminderKind.calorias => 'Calorías del día',
         ReminderKind.comidasSinRegistrar => 'Comidas sin registrar',
+        ReminderKind.pasos => 'Pasos del día',
       };
 
   String get description => switch (this) {
@@ -45,6 +47,7 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.calorias => 'Si a esa hora vas por debajo del umbral, dice cuánto falta para la meta',
         ReminderKind.comidasSinRegistrar =>
           'Si a esa hora falta desayuno, almuerzo o cena, dice cuál (no suena si cerraste el día)',
+        ReminderKind.pasos => 'Entre semana, si a esa hora vas por debajo del umbral de pasos',
       };
 
   /// Los que no se programan por hora del día.

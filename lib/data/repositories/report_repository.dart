@@ -173,6 +173,7 @@ class ReportRepository {
             steps: g.steps,
             intensity: g.intensity,
             fatigueAfter: g.fatigueAfter,
+            knock: g.knock,
             notes: g.notes,
           ),
       ],

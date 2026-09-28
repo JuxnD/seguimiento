@@ -32,6 +32,9 @@ class Profiles extends Table {
   BoolColumn get neverToFailure => boolean().withDefault(const Constant(true))();
   TextColumn get lengthUnit => textEnum<LengthUnit>().withDefault(const Constant('cm'))();
 
+  /// Meta de pasos diarios entre semana.
+  IntColumn get stepsTarget => integer().withDefault(const Constant(7500))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -200,6 +203,9 @@ class FootballGames extends Table {
   IntColumn get steps => integer().nullable()();
   IntColumn get intensity => integer().nullable().check(intensity.isBetweenValues(1, 10))();
   IntColumn get fatigueAfter => integer().nullable().check(fatigueAfter.isBetweenValues(1, 10))();
+
+  /// Hubo golpe o molestia. null = no se registró. Decide si el lunes baja.
+  BoolColumn get knock => boolean().nullable()();
   TextColumn get notes => text().nullable()();
 }
 
@@ -225,6 +231,13 @@ class Foods extends Table {
 
   /// `etiqueta` = verificado contra el empaque; `referencia` = promedio.
   TextColumn get source => textEnum<MacroSource>().withDefault(const Constant('referencia'))();
+
+  /// Quién lo creó: la siembra, el usuario en el catálogo o una entrada libre
+  /// guardada sola al registrar una comida.
+  TextColumn get origin => textEnum<FoodOrigin>().withDefault(const Constant('usuario'))();
+
+  /// Marcado para salir primero al buscar.
+  BoolColumn get favorite => boolean().withDefault(const Constant(false))();
 }
 
 /// Combos de un toque: lo que se repite (batido, cena base…). Guardan
@@ -330,6 +343,18 @@ class Reminders extends Table {
 @DataClassName('ClosedDayRow')
 class ClosedDays extends Table {
   TextColumn get date => text()();
+
+  @override
+  Set<Column> get primaryKey => {date};
+}
+
+/// Pasos del día. Uno por fecha: registrar otra vez reemplaza. `source` dice de
+/// dónde salió la cifra (hoy solo `manual`, leída del reloj o del teléfono).
+@DataClassName('DailyStepsRow')
+class DailySteps extends Table {
+  TextColumn get date => text()();
+  IntColumn get steps => integer().check(steps.isBiggerOrEqualValue(0))();
+  TextColumn get source => text().withDefault(const Constant('manual'))();
 
   @override
   Set<Column> get primaryKey => {date};

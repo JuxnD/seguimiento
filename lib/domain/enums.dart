@@ -72,14 +72,18 @@ extension MealSlotLabel on MealSlot {
 }
 
 /// De dónde salen los macros de un alimento: leídos de la etiqueta del
-/// empaque o tomados de una tabla de referencia (promedio, no medición).
-enum MacroSource { etiqueta, referencia }
+/// empaque, tomados de una tabla de referencia (promedio, no medición) o
+/// estimados a ojo (un plato de la calle, una entrada libre).
+enum MacroSource { etiqueta, referencia, estimado }
 
 extension MacroSourceLabel on MacroSource {
-  String get label => this == MacroSource.etiqueta ? 'etiqueta' : 'referencia';
+  String get label => name;
 
   bool get isVerified => this == MacroSource.etiqueta;
 }
+
+/// Quién creó un alimento del catálogo.
+enum FoodOrigin { semilla, usuario, entradaLibre }
 
 /// Base de los macros de un alimento del catálogo.
 /// `unit`: macros por 1 unidad (huevo, lata). `per100`: por 100 g o 100 ml.

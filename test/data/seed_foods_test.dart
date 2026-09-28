@@ -25,9 +25,9 @@ void main() {
       (await db.select(db.foods).get()).firstWhere((f) => f.name == name);
 
   test('siembra el catálogo completo una sola vez', () async {
-    expect((await db.select(db.foods).get()).length, 33);
+    expect((await db.select(db.foods).get()).length, 37);
     expect(await seedFoodsIfEmpty(db), isFalse);
-    expect((await db.select(db.foods).get()).length, 33);
+    expect((await db.select(db.foods).get()).length, 37);
   });
 
   test('lo que se mide en unidades guarda los macros de una unidad', () async {
@@ -73,7 +73,8 @@ void main() {
     expect((await food('Huevo (unidad)')).source, MacroSource.referencia);
 
     final verificados = (await db.select(db.foods).get()).where((f) => f.source.isVerified);
-    expect(verificados.length, 4);
+    // Leche, Avena Alpina, yogur, leche entera y el pan Mipan (27 sep).
+    expect(verificados.length, 5);
   });
 
   group('combos', () {

@@ -4,6 +4,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/nutrition.dart';
+import '../../domain/search.dart';
 import '../database.dart';
 
 class MealItemDraft {
@@ -23,7 +24,9 @@ class MealItemDraft {
         quantity: quantity,
         quantityUnit: food.unitLabel,
         macros: macrosFor(basis: food.basis, perBasis: food.macros, quantity: quantity),
-        sourceVerified: food.source.isVerified,
+        // Un plato estimado a ojo sigue siendo una estimación aunque ya esté
+        // guardado: el informe lo cuenta como entrada libre, no como referencia.
+        sourceVerified: food.source == MacroSource.estimado ? null : food.source.isVerified,
       );
 
   int? foodId;
@@ -72,6 +75,12 @@ extension FoodRowMacros on FoodRow {
   Macros get macros => Macros(kcal: kcal, protein: protein, carbs: carbs, fat: fat);
 
   String get basisLabel => basis == FoodBasis.unit ? 'por $unitLabel' : 'por 100 $unitLabel';
+
+  /// Macros de la porción habitual (1 unidad, o los g/ml por defecto).
+  Macros get portionMacros => macrosFor(basis: basis, perBasis: macros, quantity: defaultQuantity);
+
+  /// Lo creó el usuario (a mano o desde una entrada libre), no la siembra.
+  bool get isCustom => origin != FoodOrigin.semilla;
 }
 
 extension MealItemRowMacros on MealItemRow {
@@ -130,6 +139,77 @@ class NutritionRepository {
         .get();
     return rows.map((r) => r.readTable(db.foods)).toList();
   }
+
+  /// Para sugerir al escribir: favoritos, luego lo creado por el usuario y al
+  /// final lo sembrado; dentro de cada grupo, lo más usado en 30 días primero.
+  Future<List<FoodRow>> foodsForSuggestions() async {
+    final byUse = await foodsByRecentUse();
+    int rank(FoodRow f) => f.favorite ? 0 : (f.isCustom ? 1 : 2);
+    final indexed = [for (var i = 0; i < byUse.length; i++) (i, byUse[i])]
+      ..sort((a, b) {
+        final r = rank(a.$2).compareTo(rank(b.$2));
+        return r != 0 ? r : a.$1.compareTo(b.$1);
+      });
+    return [for (final (_, f) in indexed) f];
+  }
+
+  /// Alimento con ese nombre, sin distinguir mayúsculas, tildes ni espacios
+  /// de sobra. "Almuerzo Corriente" y "almuerzo corriente" son el mismo.
+  Future<FoodRow?> foodNamed(String name) async {
+    final key = _nameKey(name);
+    for (final f in await db.select(db.foods).get()) {
+      if (_nameKey(f.name) == key) return f;
+    }
+    return null;
+  }
+
+  static String _nameKey(String name) => foldText(name.trim()).replaceAll(RegExp(r'\s+'), ' ');
+
+  /// Guarda una entrada libre como alimento: una porción con sus macros a ojo.
+  /// Con `replacing`, actualiza las cifras de ese alimento (conserva nombre y
+  /// origen) en vez de crear otro.
+  Future<int> saveFreeEntryFood(String name, Macros perPortion, {FoodRow? replacing}) async {
+    final values = FoodsCompanion(
+      kcal: Value(perPortion.kcal),
+      protein: Value(perPortion.protein),
+      carbs: Value(perPortion.carbs),
+      fat: Value(perPortion.fat),
+      source: const Value(MacroSource.estimado),
+    );
+    if (replacing != null) {
+      await (db.update(db.foods)..where((t) => t.id.equals(replacing.id))).write(values.copyWith(
+        basis: const Value(FoodBasis.unit),
+        unitLabel: const Value('porción'),
+        defaultQuantity: const Value(1),
+        servingGrams: const Value(null),
+      ));
+      return replacing.id;
+    }
+    final clean = name.trim();
+    return db.into(db.foods).insert(values.copyWith(
+          name: Value(clean.length > 80 ? clean.substring(0, 80) : clean),
+          basis: const Value(FoodBasis.unit),
+          unitLabel: const Value('porción'),
+          defaultQuantity: const Value(1),
+          origin: const Value(FoodOrigin.entradaLibre),
+        ));
+  }
+
+  /// Nombre libre en el catálogo a partir de uno ocupado: "Pasta (2)", "(3)"…
+  Future<String> freeFoodName(String name) async {
+    final base = name.trim();
+    for (var n = 2;; n++) {
+      final candidate = '$base ($n)';
+      if (await foodNamed(candidate) == null) return candidate;
+    }
+  }
+
+  Future<void> setFavorite(int id, bool favorite) =>
+      (db.update(db.foods)..where((t) => t.id.equals(id))).write(FoodsCompanion(favorite: Value(favorite)));
+
+  /// Combo de un solo alimento con su porción habitual. Si ya hay un combo con
+  /// ese nombre, se reemplaza (como al guardar cualquier combo).
+  Future<int> templateFromFood(FoodRow food) => saveTemplate(food.name, null, [(food.id, food.defaultQuantity)]);
 
   Future<int> saveFood(FoodsCompanion data) async {
     if (data.id.present) {

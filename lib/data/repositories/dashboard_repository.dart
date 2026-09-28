@@ -21,12 +21,15 @@ class TodayDashboard {
     required this.targetRounds,
     required this.roundsDone,
     required this.sessionsToday,
+    this.footballToday,
+    this.hardFootballYesterday,
     required this.streak,
     required this.macros,
     required this.proteinMin,
     required this.proteinMax,
     required this.kcalTarget,
     required this.roundsRecord,
+    this.recordSuspect,
     required this.measurement,
   });
 
@@ -43,6 +46,13 @@ class TodayDashboard {
   /// Rondas de la sesión de hoy, si ya se registró.
   final int? roundsDone;
   final int sessionsToday;
+
+  /// Partido registrado hoy. Va aparte de las sesiones (`FootballGames`), pero
+  /// para Hoy y la racha cuenta igual que entrenar.
+  final FootballGameRow? footballToday;
+
+  /// Partido de ayer si fue intenso (≥ 8) o hubo golpe: hoy se baja la carga.
+  final FootballGameRow? hardFootballYesterday;
   final int streak;
   final Macros macros;
   final int proteinMin;
@@ -52,13 +62,25 @@ class TodayDashboard {
   /// Mejor marca de rondas hasta hoy.
   final int? roundsRecord;
 
+  /// Sesión que da el récord pero cayó en un día que el plan no marca como
+  /// circuito: casi siempre un día de bloques guardado como circuito.
+  final RecordSuspect? recordSuspect;
+
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
 
-  bool get trained => sessionsToday > 0;
+  bool get trained => sessionsToday > 0 || footballToday != null;
   double get proteinProgress => goalProgress(macros.protein, proteinMin);
   double get kcalProgress => goalProgress(macros.kcal, kcalTarget);
   double get roundsProgress => goalProgress(roundsDone ?? 0, targetRounds ?? 0);
+}
+
+class RecordSuspect {
+  const RecordSuspect({required this.sessionId, required this.date, required this.plannedType});
+
+  final int sessionId;
+  final DateTime date;
+  final DayType plannedType;
 }
 
 class DashboardRepository {
@@ -77,6 +99,8 @@ class DashboardRepository {
 
     final sessions = await (db.select(db.sessions)..where((t) => t.date.equals(dayKey(date)))).get();
     final meals = await nutrition.range(date, date);
+    final football = await _lastGame(date);
+    final yesterday = await _lastGame(addDays(date, -1));
 
     final maxRounds = db.sessions.roundsDone.max();
     final record = await (db.selectOnly(db.sessions)
@@ -102,12 +126,15 @@ class DashboardRepository {
       targetRounds: view?.day.targetRounds,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
       sessionsToday: sessions.length,
+      footballToday: football,
+      hardFootballYesterday: yesterday != null && isHardGame(yesterday) ? yesterday : null,
       streak: await _streak(date),
       macros: Macros.sum(meals.map((m) => m.macros)),
       proteinMin: p.proteinMin,
       proteinMax: p.proteinMax,
       kcalTarget: p.kcalTarget,
       roundsRecord: record,
+      recordSuspect: record == null ? null : await _recordSuspect(record),
       measurement: measurementDue(
         today: date,
         lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
@@ -118,16 +145,40 @@ class DashboardRepository {
     );
   }
 
+  /// La sesión del récord, si el plan de ese día no era de circuito.
+  Future<RecordSuspect?> _recordSuspect(int record) async {
+    final rows = await (db.select(db.sessions)
+          ..where((t) => db.countedCircuitRounds & t.roundsDone.equals(record))
+          ..orderBy([(t) => OrderingTerm(expression: t.date)]))
+        .get();
+    for (final s in rows) {
+      final date = parseDay(s.date);
+      final planned = (await plan.dayFor(date))?.day.type;
+      if (planned != null && !planned.isCircuit) {
+        return RecordSuspect(sessionId: s.id, date: date, plannedType: planned);
+      }
+    }
+    return null;
+  }
+
+  Future<FootballGameRow?> _lastGame(DateTime day) => (db.select(db.footballGames)
+        ..where((t) => t.date.equals(dayKey(day)))
+        ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
+        ..limit(1))
+      .getSingleOrNull();
+
   String _summary(PlanDayDraft day) {
     final rounds = day.targetRounds == null ? null : '${day.targetRounds} rondas';
     final exercises = day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ');
     return [if (rounds != null) rounds, if (exercises.isNotEmpty) exercises].join(' · ');
   }
 
-  /// Días seguidos entrenando, sin que el descanso planificado los rompa.
+  /// Días seguidos entrenando, sin que el descanso planificado los rompa. Un
+  /// partido de fútbol cuenta como día entrenado.
   Future<int> _streak(DateTime today) async {
     final rows = await db.select(db.sessions).get();
-    final dates = rows.map((s) => s.date).toSet();
+    final games = await db.select(db.footballGames).get();
+    final dates = {...rows.map((s) => s.date), ...games.map((g) => g.date)};
     final versions = await plan.versions();
     if (versions.isEmpty) return dates.contains(dayKey(today)) ? 1 : 0;
 
@@ -153,3 +204,7 @@ class DashboardRepository {
     );
   }
 }
+
+/// Un partido que pide bajar la sesión del día siguiente: intensidad 8 o más,
+/// o terminó con golpe o molestia.
+bool isHardGame(FootballGameRow game) => (game.intensity ?? 0) >= 8 || game.knock == true;

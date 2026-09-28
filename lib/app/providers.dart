@@ -166,6 +166,7 @@ class TodayNotifier extends Notifier<DateTime> {
 final dashboardProvider = FutureProvider((ref) {
   final today = ref.watch(todayProvider);
   ref.watch(sessionsProvider);
+  ref.watch(footballProvider);
   ref.watch(planVersionsProvider);
   ref.watch(profileProvider);
   ref.watch(checkInsProvider);

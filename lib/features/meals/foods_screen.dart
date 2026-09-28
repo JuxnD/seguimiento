@@ -9,44 +9,81 @@ import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../ui/widgets.dart';
 
-/// Catálogo de alimentos frecuentes: se llena una vez desde las etiquetas.
-class FoodsScreen extends ConsumerWidget {
+enum _FoodFilter { todos, favoritos, personalizados }
+
+/// Catálogo de alimentos: lo sembrado desde las etiquetas y lo que el usuario
+/// fue creando (a mano o desde una entrada libre). Aquí se editan, renombran,
+/// borran, marcan como favoritos y se convierten en combo.
+class FoodsScreen extends ConsumerStatefulWidget {
   const FoodsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FoodsScreen> createState() => _FoodsScreenState();
+}
+
+class _FoodsScreenState extends ConsumerState<FoodsScreen> {
+  _FoodFilter _filter = _FoodFilter.todos;
+
+  bool _passes(FoodRow f) => switch (_filter) {
+        _FoodFilter.todos => true,
+        _FoodFilter.favoritos => f.favorite,
+        _FoodFilter.personalizados => f.isCustom,
+      };
+
+  @override
+  Widget build(BuildContext context) {
     final foods = ref.watch(foodsProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Catálogo de alimentos')),
       body: foods.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
-        data: (list) => list.isEmpty
-            ? const EmptyHint('Vacío. Añade huevo, atún, Klim, leche, arroz…')
-            : ListView.separated(
-                itemCount: list.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (_, i) {
-                  final f = list[i];
-                  return ListTile(
-                    title: Row(
-                      children: [
-                        Flexible(child: Text(f.name, overflow: TextOverflow.ellipsis)),
-                        const SizedBox(width: 8),
-                        _SourceBadge(source: f.source),
-                      ],
-                    ),
-                    subtitle: Text('${fmtInt(f.kcal)} kcal · P ${fmtDec(f.protein)} · C ${fmtDec(f.carbs)} · '
-                        'G ${fmtDec(f.fat)} ${f.basisLabel}'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      tooltip: 'Borrar',
-                      onPressed: () => _delete(context, ref, f),
-                    ),
-                    onTap: () => _edit(context, ref, f),
-                  );
-                },
+        data: (all) {
+          final list = [...all.where(_passes)]..sort((a, b) {
+              if (a.favorite != b.favorite) return a.favorite ? -1 : 1;
+              return 0;
+            });
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+                child: Wrap(
+                  spacing: 6,
+                  children: [
+                    for (final f in _FoodFilter.values)
+                      ChoiceChip(
+                        label: Text(switch (f) {
+                          _FoodFilter.todos => 'Todos',
+                          _FoodFilter.favoritos => 'Favoritos',
+                          _FoodFilter.personalizados => 'Personalizados',
+                        }),
+                        selected: _filter == f,
+                        onSelected: (_) => setState(() => _filter = f),
+                      ),
+                  ],
+                ),
               ),
+              Expanded(
+                child: all.isEmpty
+                    ? const EmptyHint('Vacío. Añade huevo, atún, Klim, leche, arroz…')
+                    : list.isEmpty
+                        ? EmptyHint(_filter == _FoodFilter.favoritos
+                            ? 'Sin favoritos. Toca la estrella de un alimento para que salga primero.'
+                            : 'Las entradas libres se guardan aquí solas al registrar una comida.')
+                        : ListView.separated(
+                            itemCount: list.length,
+                            separatorBuilder: (_, __) => const Divider(height: 1),
+                            itemBuilder: (_, i) => _FoodTile(
+                              food: list[i],
+                              onEdit: () => _edit(context, ref, list[i]),
+                              onDelete: () => _delete(context, ref, list[i]),
+                              onCombo: () => _asCombo(context, ref, list[i]),
+                            ),
+                          ),
+              ),
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _edit(context, ref, null),
@@ -54,6 +91,28 @@ class FoodsScreen extends ConsumerWidget {
         label: const Text('Alimento'),
       ),
     );
+  }
+
+  /// Un plato que se repite entero (almuerzo corriente) queda a un toque.
+  Future<void> _asCombo(BuildContext context, WidgetRef ref, FoodRow food) async {
+    final repo = ref.read(nutritionRepositoryProvider);
+    final taken = (await repo.templates()).any((t) => t.name == food.name.trim());
+    if (!context.mounted) return;
+    if (taken) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: Text('Ya hay un combo "${food.name}"'),
+          content: const Text('Se reemplaza por este alimento con su porción habitual.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+            FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Reemplazar')),
+          ],
+        ),
+      );
+      if (ok != true || !context.mounted) return;
+    }
+    await guarded(context, () => repo.templateFromFood(food), ok: 'Combo "${food.name}" listo en Comidas');
   }
 
   /// Borrar un alimento no toca el historial (los macros están copiados),
@@ -82,6 +141,52 @@ class FoodsScreen extends ConsumerWidget {
   Future<void> _edit(BuildContext context, WidgetRef ref, FoodRow? food) async {
     final data = await showDialog<FoodsCompanion>(context: context, builder: (_) => FoodDialog(food: food));
     if (data != null && context.mounted) await guarded(context, () => ref.read(nutritionRepositoryProvider).saveFood(data));
+  }
+}
+
+class _FoodTile extends ConsumerWidget {
+  const _FoodTile({required this.food, required this.onEdit, required this.onDelete, required this.onCombo});
+
+  final FoodRow food;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onCombo;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final f = food;
+    return ListTile(
+      leading: IconButton(
+        tooltip: f.favorite ? 'Quitar de favoritos' : 'Marcar como favorito',
+        icon: Icon(f.favorite ? Icons.star : Icons.star_border,
+            color: f.favorite ? Theme.of(context).colorScheme.primary : null),
+        onPressed: () => guarded(context, () => ref.read(nutritionRepositoryProvider).setFavorite(f.id, !f.favorite)),
+      ),
+      title: Row(
+        children: [
+          Flexible(child: Text(f.name, overflow: TextOverflow.ellipsis)),
+          const SizedBox(width: 8),
+          _SourceBadge(source: f.source),
+        ],
+      ),
+      subtitle: Text('${fmtInt(f.kcal)} kcal · P ${fmtDec(f.protein)} · C ${fmtDec(f.carbs)} · '
+          'G ${fmtDec(f.fat)} ${f.basisLabel}'
+          '${f.origin == FoodOrigin.entradaLibre ? ' · de una entrada libre' : ''}'),
+      trailing: PopupMenuButton<String>(
+        tooltip: 'Más',
+        onSelected: (v) => switch (v) {
+          'editar' => onEdit(),
+          'combo' => onCombo(),
+          _ => onDelete(),
+        },
+        itemBuilder: (_) => const [
+          PopupMenuItem(value: 'editar', child: Text('Editar o renombrar')),
+          PopupMenuItem(value: 'combo', child: Text('Usar como combo')),
+          PopupMenuItem(value: 'borrar', child: Text('Borrar')),
+        ],
+      ),
+      onTap: onEdit,
+    );
   }
 }
 
@@ -209,15 +314,17 @@ class _FoodDialogState extends State<FoodDialog> {
             const SizedBox(height: 12),
             SegmentedButton<MacroSource>(
               segments: const [
-                ButtonSegment(value: MacroSource.etiqueta, label: Text('De la etiqueta')),
-                ButtonSegment(value: MacroSource.referencia, label: Text('De referencia')),
+                ButtonSegment(value: MacroSource.etiqueta, label: Text('Etiqueta')),
+                ButtonSegment(value: MacroSource.referencia, label: Text('Referencia')),
+                ButtonSegment(value: MacroSource.estimado, label: Text('A ojo')),
               ],
               selected: {_source},
               onSelectionChanged: (s) => setState(() => _source = s.first),
             ),
             const Padding(
               padding: EdgeInsets.only(top: 6),
-              child: Text('"De referencia" son promedios: el informe los arrastra con esa incertidumbre.'),
+              child: Text('"Referencia" son promedios y "a ojo" estimaciones de un plato: el informe los '
+                  'arrastra con esa incertidumbre.'),
             ),
           ],
         ),

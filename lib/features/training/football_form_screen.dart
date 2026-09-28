@@ -8,22 +8,27 @@ import '../../domain/dates.dart';
 import '../../ui/widgets.dart';
 
 class FootballFormScreen extends ConsumerStatefulWidget {
-  const FootballFormScreen({super.key, this.existing});
+  const FootballFormScreen({super.key, this.existing, this.date});
 
   final FootballGameRow? existing;
+
+  /// Día del partido al crear uno; por defecto, hoy.
+  final DateTime? date;
 
   @override
   ConsumerState<FootballFormScreen> createState() => _FootballFormScreenState();
 }
 
 class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
-  late DateTime _date = widget.existing == null ? dateOnly(DateTime.now()) : parseDay(widget.existing!.date);
+  late DateTime _date =
+      widget.existing == null ? dateOnly(widget.date ?? DateTime.now()) : parseDay(widget.existing!.date);
   late int _format = widget.existing?.format ?? 5;
   late final _minutes = TextEditingController(text: widget.existing?.minutes.toString() ?? '');
   late final _steps = TextEditingController(text: widget.existing?.steps?.toString() ?? '');
   late final _notes = TextEditingController(text: widget.existing?.notes ?? '');
   late int? _intensity = widget.existing?.intensity;
   late int? _fatigue = widget.existing?.fatigueAfter;
+  late bool _knock = widget.existing?.knock ?? false;
 
   @override
   void dispose() {
@@ -47,6 +52,7 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
           steps: Value(int.tryParse(_steps.text)),
           intensity: Value(_intensity),
           fatigueAfter: Value(_fatigue),
+          knock: Value(_knock),
           notes: Value(_notes.text.trim().isEmpty ? null : _notes.text.trim()),
         )));
     if (ok && mounted) Navigator.pop(context, true);
@@ -102,7 +108,14 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
                   label: 'Intensidad percibida', value: _intensity, onChanged: (v) => setState(() => _intensity = v)),
               const SizedBox(height: 12),
               ScaleSelector(label: 'Fatiga posterior', value: _fatigue, onChanged: (v) => setState(() => _fatigue = v)),
-              const SizedBox(height: 12),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Hubo golpe o molestia'),
+                subtitle: const Text('Si fue intenso o hubo golpe, el lunes baja'),
+                value: _knock,
+                onChanged: (v) => setState(() => _knock = v),
+              ),
+              const SizedBox(height: 4),
               TextField(
                 controller: _notes,
                 decoration: const InputDecoration(labelText: 'Notas', border: OutlineInputBorder()),

@@ -52,12 +52,14 @@ class SeedFood {
       defaultQuantity: Value(isBulk ? servingGrams! : 1),
       servingGrams: Value(servingGrams),
       source: Value(source),
+      origin: const Value(FoodOrigin.semilla),
     );
   }
 }
 
 const _etiqueta = MacroSource.etiqueta;
 const _referencia = MacroSource.referencia;
+const _estimado = MacroSource.estimado;
 
 /// Catálogo inicial, en el orden en que se siembra.
 const initialFoods = <SeedFood>[
@@ -96,6 +98,11 @@ const initialFoods = <SeedFood>[
   SeedFood('Almuerzo corriente (arroz + grano + carne + jugo)', 'plato', null, 880, 38.0, 100.0, 34.0, _referencia),
   SeedFood('Peto sin maíz (vaso)', 'vaso', 250, 190, 7.0, 30.0, 5.0, _referencia),
   SeedFood('Salchichón de pollo', 'g', 100, 200, 13.0, 3.0, 15.0, _referencia),
+  // 27 sep 2026: el pan que se come de verdad, y platos que se repiten.
+  SeedFood('Pan Mipan (unidad 60 g)', 'unidad', 60, 199, 5.8, 35.0, 4.3, _etiqueta),
+  SeedFood('Avena bebida (vaso 350 g)', 'vaso', 350, 280, 7.0, 46.0, 6.0, _referencia),
+  SeedFood('Sopa de mondongo + arroz', 'plato', null, 650, 34.0, 80.0, 21.0, _estimado),
+  SeedFood('Pasta con queso y salchicha (plato grande)', 'plato', null, 1100, 49.0, 135.0, 40.0, _estimado),
   SeedFood('Yogur Colanta arequipe', 'vaso', 150, 139, 4.2, 21.0, 4.7, _etiqueta),
 ];
 

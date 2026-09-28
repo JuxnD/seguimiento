@@ -9,6 +9,7 @@ import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/reminders.dart';
 import 'catalog_updates.dart';
+import 'seed_foods.dart';
 import 'tables.dart';
 
 part 'database.g.dart';
@@ -36,6 +37,7 @@ const databaseFileName = 'seguimiento.sqlite';
   Reminders,
   ProgressPhotos,
   ClosedDays,
+  DailySteps,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -43,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -117,9 +119,10 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessionRounds, sessionRounds.restSec);
             await m.addColumn(sessionSets, sessionSets.loadKg);
             await m.createTable(closedDays);
-            // Datos que la siembra ya no puede llevar a una base existente.
+            // Datos que la siembra ya no puede llevar a una base existente. Los
+            // alimentos nuevos se añaden en el paso 10: sus filas ya llevan
+            // columnas que aquí aún no existen.
             await applyExerciseGuides(this);
-            await addMissingCatalog(this);
           }
           if (from >= 5 && from < 9) {
             // v9 (solo datos): los recordatorios vuelven una vez a los valores
@@ -127,6 +130,19 @@ class AppDatabase extends _$AppDatabase {
             // 8:00 p. m., comidas sin registrar 10:00 p. m.…). Al borrar las
             // filas, `ReminderRepository.ensureDefaults` las recrea al abrir.
             await delete(reminders).go();
+          }
+          if (from < 10) {
+            // v10: pasos diarios con su meta, golpe o molestia en el fútbol, y
+            // el catálogo distingue lo sembrado de lo creado por el usuario
+            // (las entradas libres se guardan solas y se pueden marcar).
+            await m.addColumn(profiles, profiles.stepsTarget);
+            await m.addColumn(footballGames, footballGames.knock);
+            await m.addColumn(foods, foods.origin);
+            await m.addColumn(foods, foods.favorite);
+            await m.createTable(dailySteps);
+            await (update(foods)..where((t) => t.name.isIn(initialFoods.map((f) => f.name))))
+                .write(const FoodsCompanion(origin: Value(FoodOrigin.semilla)));
+            await addMissingCatalog(this);
           }
         },
         beforeOpen: (details) async {

@@ -144,6 +144,15 @@ class _PlanHero extends StatelessWidget {
                   child: Text('• $e', style: text.bodyMedium),
                 ),
             ],
+            if (dashboard.hardFootballYesterday case final game? when dashboard.dayType.isTraining)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  'Ayer fútbol ${game.knock == true ? 'con golpe o molestia' : 'intenso (${game.intensity}/10)'}: '
+                  'hoy baja la carga, una ronda o una serie menos.',
+                  style: text.bodyMedium?.copyWith(color: style.color),
+                ),
+              ),
             if (dashboard.dayType == DayType.descanso)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -194,6 +203,14 @@ class _RingsCard extends StatelessWidget {
                 label: 'Rondas',
                 color: style.color,
               )
+            else if (d.footballToday case final game? when d.sessionsToday == 0)
+              ProgressRing(
+                progress: 1,
+                value: "${game.minutes}'",
+                sublabel: game.intensity == null ? 'fútbol ${game.format}' : 'intensidad ${game.intensity}',
+                label: 'Fútbol',
+                color: style.color,
+              )
             else
               ProgressRing(
                 progress: d.trained ? 1 : 0,
@@ -213,8 +230,46 @@ class _RingsCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
+          if (d.recordSuspect != null) _RecordSuspectTile(suspect: d.recordSuspect!),
         ],
       ],
+    );
+  }
+}
+
+/// El récord viene de un día que el plan no marca como circuito: casi siempre
+/// un día de bloques guardado como circuito. Corregir el tipo lo saca.
+class _RecordSuspectTile extends ConsumerWidget {
+  const _RecordSuspectTile({required this.suspect});
+
+  final RecordSuspect suspect;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final text = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, size: 18, color: Theme.of(context).colorScheme.error),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Sale del ${weekdayLong(suspect.date.weekday)} ${formatShort(suspect.date)}, '
+              'que en el plan era de ${suspect.plannedType.label.toLowerCase()}. '
+              'Si fue ${suspect.plannedType.label.toLowerCase()}, corrige el tipo y el récord se recalcula.',
+              style: text.bodySmall,
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              final draft = await ref.read(trainingRepositoryProvider).load(suspect.sessionId);
+              if (context.mounted) await openSessionForm(context, draft, celebrate: false);
+            },
+            child: const Text('Revisar'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -253,7 +308,7 @@ class _ActionsCard extends ConsumerWidget {
                 icon: Icons.sports_soccer,
                 label: 'Fútbol',
                 onPressed: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => FootballFormScreen(date: date))),
               ),
             ),
             const SizedBox(width: 8),

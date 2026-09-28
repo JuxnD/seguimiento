@@ -78,8 +78,11 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       );
       if (qty != null) updated = MealItemDraft.fromFood(food, qty);
     } else {
-      updated =
-          await showDialog<MealItemDraft>(context: context, builder: (_) => _FreeItemDialog(initial: item));
+      final foods = await ref.read(nutritionRepositoryProvider).foodsForSuggestions();
+      if (!mounted) return;
+      final entry = await showDialog<_FreeEntry>(
+          context: context, builder: (_) => _FreeItemDialog(initial: item, suggestions: foods));
+      if (entry != null) updated = await _rememberFree(entry);
     }
     if (updated != null) setState(() => d.items[index] = updated!);
   }
@@ -158,8 +161,61 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
   }
 
   Future<void> _addFree() async {
-    final item = await showDialog<MealItemDraft>(context: context, builder: (_) => const _FreeItemDialog());
-    if (item != null) setState(() => d.items.add(item));
+    final foods = await ref.read(nutritionRepositoryProvider).foodsForSuggestions();
+    if (!mounted) return;
+    final entry = await showDialog<_FreeEntry>(context: context, builder: (_) => _FreeItemDialog(suggestions: foods));
+    if (entry == null) return;
+    final item = await _rememberFree(entry);
+    if (item != null && mounted) setState(() => d.items.add(item));
+  }
+
+  /// Toda entrada libre queda en el catálogo para no volver a digitar las
+  /// mismas cifras. Si el nombre ya existe con otras cifras, se pregunta.
+  /// Devuelve null si el usuario cancela.
+  Future<MealItemDraft?> _rememberFree(_FreeEntry e) async {
+    final repo = ref.read(nutritionRepositoryProvider);
+    final existing = await repo.foodNamed(e.label);
+    if (existing != null && sameMacros(existing.portionMacros, e.perPortion)) {
+      return MealItemDraft.fromFood(existing, existing.defaultQuantity * e.multiplier);
+    }
+    if (!mounted) return null;
+
+    FoodRow? replacing;
+    var name = e.label;
+    if (existing != null) {
+      final choice = await showDialog<String>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: Text('«${existing.name}» ya está en el catálogo'),
+          content: Text('Guardado: ${_macroLine(existing.portionMacros)} '
+              '(${fmtDec(existing.defaultQuantity)} ${existing.unitLabel}).\n'
+              'Ahora: ${_macroLine(e.perPortion)} (1 porción).\n\n'
+              '¿Actualizo las cifras guardadas o lo guardo como otro alimento?'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, 'once'), child: const Text('Solo esta vez')),
+            TextButton(onPressed: () => Navigator.pop(c, 'new'), child: const Text('Guardar como nuevo')),
+            FilledButton(onPressed: () => Navigator.pop(c, 'update'), child: const Text('Actualizar')),
+          ],
+        ),
+      );
+      if (choice == null) return null;
+      if (choice == 'once') return e.toDraft();
+      if (choice == 'update') {
+        replacing = existing;
+      } else {
+        name = await repo.freeFoodName(e.label);
+      }
+    }
+    try {
+      final id = await repo.saveFreeEntryFood(name, e.perPortion, replacing: replacing);
+      final food = await repo.foodById(id);
+      if (food == null) return e.toDraft();
+      return MealItemDraft.fromFood(food, food.defaultQuantity * e.multiplier);
+    } on Object {
+      // Sin catálogo la comida se registra igual: el dato imperfecto vale más.
+      if (mounted) showSnack(context, 'No se pudo guardar en el catálogo; se registra solo en esta comida');
+      return e.toDraft();
+    }
   }
 
   Future<void> _save() async {
@@ -455,6 +511,11 @@ class _QuantityDialogState extends State<_QuantityDialog> {
             autofocus: true,
             onChanged: (_) => setState(() {}),
           ),
+          const SizedBox(height: 8),
+          _PortionChips(
+            selected: widget.food.defaultQuantity > 0 ? q / widget.food.defaultQuantity : null,
+            onSelected: (m) => setState(() => _qty.text = fmtDec(widget.food.defaultQuantity * m, decimals: 2)),
+          ),
           const SizedBox(height: 12),
           Text('${fmtInt(macros.kcal)} kcal · P ${fmtDec(macros.protein)} g'),
         ],
@@ -467,23 +528,72 @@ class _QuantityDialogState extends State<_QuantityDialog> {
   }
 }
 
-/// Plato de fuera: proteína y kcal a ojo, sin catálogo.
+/// Lo que devuelve la entrada libre: cifras de **una porción** y cuántas se
+/// comieron.
+class _FreeEntry {
+  const _FreeEntry(this.label, this.perPortion, this.multiplier);
+
+  final String label;
+  final Macros perPortion;
+  final double multiplier;
+
+  /// Ítem sin enlazar al catálogo (si no se pudo o no se quiso guardar).
+  MealItemDraft toDraft() => MealItemDraft(
+        label: label,
+        quantity: multiplier,
+        quantityUnit: 'porción',
+        macros: perPortion.scale(multiplier),
+      );
+}
+
+String _macroLine(Macros m) =>
+    '${fmtInt(m.kcal)} kcal · P ${fmtDec(m.protein)} · C ${fmtDec(m.carbs)} · G ${fmtDec(m.fat)}';
+
+/// ×0,5 · ×1 · ×1,5 · ×2.
+class _PortionChips extends StatelessWidget {
+  const _PortionChips({required this.selected, required this.onSelected});
+
+  final double? selected;
+  final ValueChanged<double> onSelected;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+        spacing: 6,
+        children: [
+          for (final m in portionMultipliers)
+            ChoiceChip(
+              label: Text('×${fmtDec(m)}'),
+              selected: selected != null && (selected! - m).abs() < 0.01,
+              onSelected: (_) => onSelected(m),
+            ),
+        ],
+      );
+}
+
+/// Plato de fuera: cifras a ojo. Al escribir sugiere lo que ya está en el
+/// catálogo (favoritos y personalizados primero) y rellena las cifras.
 class _FreeItemDialog extends StatefulWidget {
-  const _FreeItemDialog({this.initial});
+  const _FreeItemDialog({this.initial, this.suggestions = const []});
 
   /// Para corregir una entrada libre ya añadida.
   final MealItemDraft? initial;
+  final List<FoodRow> suggestions;
 
   @override
   State<_FreeItemDialog> createState() => _FreeItemDialogState();
 }
 
 class _FreeItemDialogState extends State<_FreeItemDialog> {
+  late final double _initialMult =
+      (widget.initial?.quantityUnit == 'porción' ? widget.initial?.quantity : null) ?? 1;
+  late final Macros? _portion = widget.initial?.macros.scale(1 / _initialMult);
+  late double _mult = _initialMult;
   late final _label = TextEditingController(text: widget.initial?.label ?? '');
-  late final _kcal = TextEditingController(text: _num(widget.initial?.macros.kcal));
-  late final _protein = TextEditingController(text: _num(widget.initial?.macros.protein));
-  late final _carbs = TextEditingController(text: _num(widget.initial?.macros.carbs));
-  late final _fat = TextEditingController(text: _num(widget.initial?.macros.fat));
+  late final _kcal = TextEditingController(text: _num(_portion?.kcal));
+  late final _protein = TextEditingController(text: _num(_portion?.protein));
+  late final _carbs = TextEditingController(text: _num(_portion?.carbs));
+  late final _fat = TextEditingController(text: _num(_portion?.fat));
+  final _focus = FocusNode();
 
   static String _num(double? v) => v == null || v == 0 ? '' : fmtDec(v);
 
@@ -492,31 +602,100 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
     for (final c in [_label, _kcal, _protein, _carbs, _fat]) {
       c.dispose();
     }
+    _focus.dispose();
     super.dispose();
   }
 
+  void _fill(FoodRow food) {
+    final m = food.portionMacros;
+    setState(() {
+      _kcal.text = _num(m.kcal);
+      _protein.text = _num(m.protein);
+      _carbs.text = _num(m.carbs);
+      _fat.text = _num(m.fat);
+    });
+  }
+
+  Macros get _perPortion => Macros(
+        kcal: parseNum(_kcal.text) ?? 0,
+        protein: parseNum(_protein.text) ?? 0,
+        carbs: parseNum(_carbs.text) ?? 0,
+        fat: parseNum(_fat.text) ?? 0,
+      );
+
   @override
   Widget build(BuildContext context) {
+    final total = _perPortion.scale(_mult);
+    final text = Theme.of(context).textTheme;
     return AlertDialog(
       title: const Text('Entrada libre'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _label,
-              autofocus: widget.initial == null,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                  labelText: 'Qué comiste', hintText: 'Bandeja paisa', border: OutlineInputBorder()),
+            RawAutocomplete<FoodRow>(
+              textEditingController: _label,
+              focusNode: _focus,
+              displayStringForOption: (f) => f.name,
+              optionsBuilder: (value) {
+                final q = value.text.trim();
+                if (q.length < 2) return const Iterable<FoodRow>.empty();
+                return widget.suggestions.where((f) => matchesQuery(f.name, q)).take(6);
+              },
+              onSelected: _fill,
+              fieldViewBuilder: (context, controller, focusNode, onSubmitted) => TextField(
+                controller: controller,
+                focusNode: focusNode,
+                autofocus: widget.initial == null,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: const InputDecoration(
+                    labelText: 'Qué comiste', hintText: 'Bandeja paisa', border: OutlineInputBorder()),
+              ),
+              optionsViewBuilder: (context, onSelected, options) => Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(12),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 260, maxWidth: 300),
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      children: [
+                        for (final f in options)
+                          ListTile(
+                            dense: true,
+                            leading: Icon(
+                                f.favorite ? Icons.star : (f.isCustom ? Icons.person_outline : Icons.restaurant),
+                                size: 18),
+                            title: Text(f.name),
+                            subtitle: Text('${_macroLine(f.portionMacros)} · '
+                                '${fmtDec(f.defaultQuantity)} ${f.unitLabel}'),
+                            onTap: () => onSelected(f),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 12),
+            Text('Cifras de una porción', style: text.labelLarge),
+            const SizedBox(height: 8),
             Row(
               children: [
-                Expanded(child: NumberField(controller: _kcal, label: 'kcal', decimal: true)),
+                Expanded(
+                    child: NumberField(
+                        controller: _kcal, label: 'kcal', decimal: true, onChanged: (_) => setState(() {}))),
                 const SizedBox(width: 8),
                 Expanded(
-                    child: NumberField(controller: _protein, label: 'Proteína', suffix: 'g', decimal: true)),
+                    child: NumberField(
+                        controller: _protein,
+                        label: 'Proteína',
+                        suffix: 'g',
+                        decimal: true,
+                        onChanged: (_) => setState(() {}))),
               ],
             ),
             const SizedBox(height: 8),
@@ -527,6 +706,11 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
                 Expanded(child: NumberField(controller: _fat, label: 'Grasa', suffix: 'g', decimal: true)),
               ],
             ),
+            const SizedBox(height: 12),
+            _PortionChips(selected: _mult, onSelected: (m) => setState(() => _mult = m)),
+            const SizedBox(height: 8),
+            Text('Total: ${fmtInt(total.kcal)} kcal · P ${fmtDec(total.protein)} g', style: text.bodyMedium),
+            Text('Se guarda en el catálogo para la próxima vez.', style: text.bodySmall),
           ],
         ),
       ),
@@ -535,28 +719,17 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
         FilledButton(
           onPressed: () {
             final label = _label.text.trim();
-            final kcal = parseNum(_kcal.text) ?? 0, protein = parseNum(_protein.text) ?? 0;
+            final portion = _perPortion;
             // Antes el botón no hacía nada sin decir por qué.
             if (label.isEmpty) {
               showSnack(context, 'Falta qué comiste');
               return;
             }
-            if (kcal <= 0 && protein <= 0) {
+            if (portion.kcal <= 0 && portion.protein <= 0) {
               showSnack(context, 'Pon al menos las kcal o la proteína, aunque sea a ojo');
               return;
             }
-            Navigator.pop(
-              context,
-              MealItemDraft(
-                label: label,
-                macros: Macros(
-                  kcal: kcal,
-                  protein: protein,
-                  carbs: parseNum(_carbs.text) ?? 0,
-                  fat: parseNum(_fat.text) ?? 0,
-                ),
-              ),
-            );
+            Navigator.pop(context, _FreeEntry(label, portion, _mult));
           },
           child: Text(widget.initial == null ? 'Añadir' : 'Guardar'),
         ),

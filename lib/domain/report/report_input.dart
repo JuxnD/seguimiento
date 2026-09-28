@@ -157,6 +157,7 @@ class FootballEntry {
     this.steps,
     this.intensity,
     this.fatigueAfter,
+    this.knock,
     this.notes,
   });
 
@@ -166,6 +167,9 @@ class FootballEntry {
   final int? steps;
   final int? intensity;
   final int? fatigueAfter;
+
+  /// Hubo golpe o molestia. null = no se registró.
+  final bool? knock;
   final String? notes;
 }
 

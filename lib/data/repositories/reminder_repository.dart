@@ -16,6 +16,7 @@ const defaultReminders = <ReminderKind, (bool, int?, int, int?)>{
   ReminderKind.descanso: (true, null, 0, null),
   ReminderKind.calorias: (true, 20, 0, 1800),
   ReminderKind.comidasSinRegistrar: (true, 22, 0, null),
+  ReminderKind.pasos: (true, 18, 0, 4000),
 };
 
 class ReminderRepository {
