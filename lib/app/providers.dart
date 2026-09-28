@@ -23,6 +23,7 @@ import '../data/repositories/nutrition_repository.dart';
 import '../data/repositories/photo_repository.dart';
 import '../data/repositories/plan_repository.dart';
 import '../data/repositories/profile_repository.dart';
+import '../data/health_connect.dart';
 import '../data/repositories/exercise_photo_repository.dart';
 import '../data/repositories/report_repository.dart';
 import '../data/repositories/steps_repository.dart';
@@ -73,6 +74,18 @@ final trainingRepositoryProvider =
 final nutritionRepositoryProvider = Provider((ref) => NutritionRepository(ref.watch(databaseProvider)));
 final bodyRepositoryProvider = Provider((ref) => BodyRepository(ref.watch(databaseProvider)));
 final stepsRepositoryProvider = Provider((ref) => StepsRepository(ref.watch(databaseProvider)));
+final healthConnectProvider = Provider((ref) => const HealthConnect());
+final stepsSyncProvider = Provider((ref) => StepsSync(
+      health: ref.watch(healthConnectProvider),
+      steps: ref.watch(stepsRepositoryProvider),
+      flags: ref.watch(localFlagsProvider),
+    ));
+
+/// Sincroniza los pasos si Health Connect está conectado. Una sola a la vez;
+/// nunca lanza.
+final syncStepsProvider = Provider<Future<void> Function()>((ref) => coalesce(() async {
+      await ref.read(stepsSyncProvider).run();
+    }));
 final reportRepositoryProvider =
     Provider((ref) => ReportRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));
 

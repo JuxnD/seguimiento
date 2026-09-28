@@ -14,8 +14,13 @@ import io.flutter.plugin.common.MethodChannel
 /// bajo optimización de batería y si "Pausar la actividad de la app si no se
 /// usa" está activo. Ambos pueden callar los recordatorios programados.
 class MainActivity : FlutterActivity() {
+    private var health: HealthConnectBridge? = null
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        val bridge = HealthConnectBridge(this).also { health = it }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "seguimiento/salud")
+            .setMethodCallHandler { call, result -> bridge.handle(call, result) }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "seguimiento/sistema").setMethodCallHandler { call, result ->
             when (call.method) {
                 "batteryOptimized" -> result.success(batteryOptimized())
@@ -28,6 +33,22 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    @Deprecated("FlutterActivity todavía entrega los resultados por aquí")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (health?.onActivityResult(requestCode, resultCode, data) == true) return
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (health?.onRequestPermissionsResult(requestCode) == true) return
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onDestroy() {
+        health?.dispose()
+        super.onDestroy()
     }
 
     /// true si Android puede diferir o recortar el trabajo de la app en reposo.

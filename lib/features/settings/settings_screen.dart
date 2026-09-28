@@ -18,6 +18,7 @@ import '../../domain/format.dart';
 import '../../ui/widgets.dart';
 import '../meals/foods_screen.dart';
 import '../plan/plan_screen.dart';
+import 'health_connect_card.dart';
 import 'reminders_screen.dart';
 import 'updates_card.dart';
 
@@ -38,6 +39,7 @@ class SettingsScreen extends ConsumerWidget {
             // La clave recrea la tarjeta al restaurar: si no, mostraría (y al
             // guardar escribiría) el perfil anterior.
             _ProfileCard(key: ValueKey(ref.watch(databaseGenerationProvider)), profile: p),
+            const HealthConnectCard(),
             AppCard(
               title: 'Catálogos',
               children: [

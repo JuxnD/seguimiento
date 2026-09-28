@@ -18,6 +18,12 @@ class StepsRepository {
 
   Future<void> clear(DateTime day) => (db.delete(db.dailySteps)..where((t) => t.date.equals(dayKey(day)))).go();
 
+  Future<DailyStepsRow?> row(DateTime day) =>
+      (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull();
+
+  Stream<DailyStepsRow?> watchRow(DateTime day) =>
+      (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(day)))).watchSingleOrNull();
+
   Future<int?> day(DateTime day) async =>
       (await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull())?.steps;
 

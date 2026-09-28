@@ -41,3 +41,17 @@ StepsSummary? summarizeSteps(Map<DateTime, int> byDay, int weekdayTarget) {
     weekdaysAtGoal: weekdays.values.where((s) => s >= weekdayTarget).length,
   );
 }
+
+/// Qué cifra queda en un día al traer los pasos de Health Connect, o null si
+/// no hay que tocar nada:
+/// - un día vacío toma lo sincronizado;
+/// - un día que ya venía de Health Connect se actualiza (el reloj sigue
+///   sumando durante el día);
+/// - un día anotado a mano solo cambia si lo sincronizado es mayor: si el
+///   usuario escribió más, es que contó pasos que el reloj no vio.
+int? mergeSyncedSteps({required int? current, required String? currentSource, required int synced}) {
+  if (synced <= 0) return null;
+  if (current == null) return synced;
+  if (currentSource == 'health_connect') return synced == current ? null : synced;
+  return synced > current ? synced : null;
+}

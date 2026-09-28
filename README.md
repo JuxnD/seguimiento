@@ -35,7 +35,7 @@ y algunas `pub` las deja instalar aunque luego no compilan (se probó el 23 sep
 [docs/adr/0001-drift-sqlite-local.md](docs/adr/0001-drift-sqlite-local.md).
 
 Android compila con Java 17 (Gradle 8.7, AGP 8.3.2, Kotlin 1.9.22,
-`minSdk` 21 por `sqlite3`). Al actualizar Flutter, revisar esas cuatro cosas
+`minSdk` 26 por Health Connect, ver [ADR 0007](docs/adr/0007-pasos-por-health-connect-nativo.md)). Al actualizar Flutter, revisar esas cuatro cosas
 junto con las dependencias fijadas.
 
 Tras cambiar `lib/data/tables.dart` o `lib/data/database.dart` hay que volver a

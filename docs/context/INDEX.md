@@ -49,10 +49,11 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 - El plan que se siembra en la primera apertura está en `lib/data/seed_plan.dart`
   (dos versiones: base y la que añade bloques de core, cuádriceps y hombro).
   Editarlo desde la app crea versiones nuevas; la siembra no vuelve a correr.
-- Los pasos se anotan a mano (leídos del reloj SW/46 o del teléfono): uno por
-  día, y anotar otra vez reemplaza. La meta (7.500) es solo entre semana.
-  Health Connect no está integrado. La app del reloj ofrece conectarse a
-  Health Connect (Yo → Health Connect); falta confirmar que los pasos llegan.
+- Pasos: la app del reloj (Innova S-Watch, *Yo → Health Connect*) los escribe
+  en Health Connect y esta app los trae al abrirse si se conectó en Ajustes
+  ([ADR 0007](../adr/0007-pasos-por-health-connect-nativo.md)). También se
+  anotan a mano; se queda la cifra mayor. La meta (7.500) es solo entre
+  semana.
 - Las figuras de técnica se generan con `python tool/figuras.py` (fuente
   única) en `assets/tecnica/figuras.json`; no se editan a mano.
 - Las entradas libres se guardan solas en el catálogo (`origin =

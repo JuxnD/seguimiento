@@ -53,4 +53,8 @@ abstract final class FlagKeys {
   static const notificationsAsked = 'notificationsAsked';
   static const lastUpdateCheck = 'lastUpdateCheck';
   static const lastAutoBackup = 'lastAutoBackup';
+
+  /// El usuario conectó Health Connect en Ajustes: los pasos se sincronizan.
+  static const healthConnectEnabled = 'healthConnectEnabled';
+  static const lastStepsSync = 'lastStepsSync';
 }

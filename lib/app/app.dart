@@ -51,6 +51,7 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _askNotificationsOnce();
       _autoBackup();
+      ref.read(syncStepsProvider)();
     });
   }
 
@@ -64,7 +65,11 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
   /// tienen que enterarse.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) ref.read(todayProvider.notifier).refresh();
+    if (state == AppLifecycleState.resumed) {
+      ref.read(todayProvider.notifier).refresh();
+      // Los pasos del reloj llegan a Health Connect mientras la app duerme.
+      ref.read(syncStepsProvider)();
+    }
   }
 
   /// Respaldo semanal en segundo plano, después de pintar: nunca frena el
