@@ -97,6 +97,21 @@ avisa una notificación programada con alarma exacta; si Android no la permite
 (14+ por defecto), el aviso puede llegar tarde y la app lo dice una vez. Detalle
 en [notificaciones.md](notificaciones.md).
 
+## Bloques: lados, aguantes y descansos
+
+Uso real del 28 sep: en el core no había cronómetro ni descanso, y "por lado"
+hacía pensar que cada lado iba dos veces.
+
+- **Por lado**: cada serie son dos pasos seguidos, *lado derecho* y *lado
+  izquierdo*, sin descanso entre ellos; el descanso va después de los dos.
+  La cabecera dice "Serie 1/2 · lado derecho".
+- **Por tiempo** (plancha, hollow): *Empezar* da 5 s para colocarse y cuenta
+  los segundos. Al llegar al mínimo vibra ("ya puedes soltar"); al máximo
+  suena y pasa solo. *Hecho* cierra antes. Se guardan los segundos
+  aguantados (el informe los muestra con "s").
+- **Descanso**: si el plan no lo fija, 60 s entre series del bloque, y 90 s de
+  transición al pasar del circuito (o del trabajo principal) al bloque.
+
 ## Bloque del día y versión ligera
 
 Hoy muestra el trabajo principal **y** los bloques extra (core A y B, que se

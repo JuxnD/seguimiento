@@ -119,6 +119,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   late int _index = widget.resume?.index ?? 0;
   late int? _reps = widget.resume?.reps;
+
+  /// Ejercicio por tiempo: cuándo se tocó "Empezar" (incluye los segundos
+  /// para colocarse). null = aún no arranca. No se guarda en la foto: si
+  /// Android cierra la app, ese aguante se vuelve a empezar.
+  DateTime? _holdStartedAt;
+  bool _holdMinAlerted = false;
+  static const _holdLeadInSec = 5;
   late GuidedPhase _phase = widget.resume?.phase ?? GuidedPhase.calentamiento;
   Timer? _ticker;
 
@@ -285,6 +292,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     return step.seconds - elapsed;
   }
 
+  int get _holdSinceStart => _holdStartedAt == null ? 0 : clock.now().difference(_holdStartedAt!).inSeconds;
+
+  /// Segundos que faltan para colocarse (0 si ya corre el aguante).
+  int get _holdLeadIn => _holdStartedAt == null ? 0 : (_holdLeadInSec - _holdSinceStart).clamp(0, _holdLeadInSec);
+
+  /// Segundos aguantados.
+  int get _holdElapsed => _holdStartedAt == null ? 0 : (_holdSinceStart - _holdLeadInSec).clamp(0, 1 << 30);
+
   void _tick() {
     final step = _current;
     if (step is RestStep && _restStartedAt != null && _restRemaining <= 0) {
@@ -292,8 +307,26 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       _advance();
       return;
     }
+    if (step is WorkStep && step.isHold && _holdStartedAt != null) {
+      final elapsed = _holdElapsed;
+      if (elapsed >= (step.holdSecMax ?? step.holdSec!)) {
+        _alertRestOver();
+        _completeWork();
+        return;
+      }
+      if (!_holdMinAlerted && elapsed >= step.holdSec!) {
+        _holdMinAlerted = true;
+        unawaited(HapticFeedback.heavyImpact());
+        unawaited(SystemSound.play(SystemSoundType.click));
+      }
+    }
     setState(() {});
   }
+
+  void _startHold() => setState(() {
+        _holdStartedAt = clock.now();
+        _holdMinAlerted = false;
+      });
 
   /// Sonido + vibración al cerrar el descanso. Con la app en segundo plano
   /// esto no suena: eso llega con las notificaciones locales.
@@ -337,6 +370,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final notifications = _notifications;
     if (step is WorkStep) {
       _reps = step.targetReps;
+      _holdStartedAt = null;
+      _holdMinAlerted = false;
       _restStartedAt = null;
       unawaited(notifications.cancelRestEnd());
     } else if (step is RestStep) {
@@ -366,7 +401,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   void _completeWork() {
     final step = _current as WorkStep;
-    _done.add(DoneStep(step.exercise, _reps ?? step.targetReps ?? 0, step.isRound, loadKg: _loadFor(step.exercise)));
+    final amount = step.isHold
+        ? (_holdStartedAt == null || _holdElapsed == 0 ? step.holdSec! : _holdElapsed)
+        : (_reps ?? step.targetReps ?? 0);
+    _done.add(DoneStep(step.exercise, amount, step.isRound, loadKg: _loadFor(step.exercise)));
 
     // Al cerrar la última parada de una ronda, queda la marca de la vuelta.
     if (step.isRound && _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
@@ -594,8 +632,11 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           textAlign: TextAlign.center,
           style: text.headlineMedium?.copyWith(color: scheme.primary, fontWeight: FontWeight.w800),
         ),
+        if (step.side != null)
+          Text('Lado ${step.side}',
+              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800, color: scheme.onSurface)),
         if (step.grip != null) Text('Agarre ${step.grip}', style: text.titleMedium),
-        _RepsSoFar(exercise: step.exercise, reps: _repsSoFar(step.exercise)),
+        _RepsSoFar(exercise: step.exercise, reps: _repsSoFar(step.exercise), seconds: step.isHold),
         if (_guides[step.exercise]?.hasGuide ?? false)
           TextButton.icon(
             onPressed: () => _showGuide(_guides[step.exercise]!),
@@ -633,8 +674,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
               ),
             ],
           )
+        else if (step.isHold)
+          _hold(step)
         else
-          Text(step.targetLabel,
+          Text(step.stepTarget,
               textAlign: TextAlign.center,
               style: text.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
         const Spacer(),
@@ -650,6 +693,44 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           child: _BigButton(label: 'Hecho', icon: Icons.check, onTap: _completeWork),
         ),
       ],
+    );
+  }
+
+  /// Aguante: "Empezar" da 5 s para colocarse, luego cuenta. Al llegar al
+  /// mínimo vibra; al máximo suena y pasa solo al siguiente paso.
+  Widget _hold(WorkStep step) {
+    final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+    final min = step.holdSec!;
+    final max = step.holdSecMax ?? min;
+    if (_holdStartedAt == null) {
+      return Column(
+        children: [
+          Text(step.stepTarget, textAlign: TextAlign.center, style: text.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(minimumSize: const Size(220, 56)),
+            onPressed: _startHold,
+            icon: const Icon(Icons.timer_outlined),
+            label: Text(step.side == null ? 'Empezar' : 'Empezar lado ${step.side}'),
+          ),
+        ],
+      );
+    }
+    final leadIn = _holdLeadIn;
+    final elapsed = _holdElapsed;
+    return ProgressRing(
+      progress: leadIn > 0 ? 1 - leadIn / _holdLeadInSec : elapsed / max,
+      value: leadIn > 0 ? '$leadIn' : '$elapsed s',
+      sublabel: leadIn > 0
+          ? 'colócate'
+          : elapsed < min
+              ? 'mínimo $min s'
+              : (min == max ? 'listo' : 'ya puedes soltar · máx $max s'),
+      label: '',
+      size: 200,
+      stroke: 14,
+      color: leadIn > 0 || elapsed < min ? scheme.primary.withOpacity(0.6) : scheme.primary,
     );
   }
 
@@ -844,7 +925,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   String? _nextWorkLabel() {
     for (var i = _index + 1; i < _steps.length; i++) {
       final s = _steps[i];
-      if (s is WorkStep) return '${s.exercise} · ${s.targetLabel}';
+      if (s is WorkStep) return '${s.exercise}${s.side == null ? '' : ' (lado ${s.side})'} · ${s.stepTarget}';
     }
     return null;
   }
@@ -938,16 +1019,21 @@ class _Stat extends StatelessWidget {
 /// "Llevas 36 reps de Flexiones": el acumulado del ejercicio en pantalla,
 /// sin contar la serie que se está haciendo.
 class _RepsSoFar extends StatelessWidget {
-  const _RepsSoFar({required this.exercise, required this.reps});
+  const _RepsSoFar({required this.exercise, required this.reps, this.seconds = false});
 
   final String exercise;
   final int reps;
+
+  /// Ejercicio por tiempo: lo acumulado son segundos, no repeticiones.
+  final bool seconds;
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.only(top: 6),
         child: Text(
-          reps == 0 ? 'Primera vez hoy con este ejercicio' : 'Llevas $reps reps de $exercise',
+          reps == 0
+              ? 'Primera vez hoy con este ejercicio'
+              : 'Llevas $reps ${seconds ? 's' : 'reps'} de $exercise',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),

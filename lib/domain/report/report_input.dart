@@ -251,6 +251,7 @@ class ReportInput {
     this.closedDays = const {},
     this.steps = const {},
     this.mobility = const [],
+    this.holdExercises = const {},
     this.previous,
     this.notes,
   });
@@ -297,6 +298,10 @@ class ReportInput {
   /// Sesiones de movilidad: opcionales, fuera de `sessions` para que no
   /// cuenten en adherencia, récords ni alertas.
   final List<MobilityEntry> mobility;
+
+  /// Ejercicios por tiempo (plancha, hollow): sus series guardan segundos, no
+  /// repeticiones, y así se muestran.
+  final Set<String> holdExercises;
 
   /// El rango anterior del mismo largo (la semana pasada), para comparar.
   /// null en el propio rango anterior: la comparación no se encadena.

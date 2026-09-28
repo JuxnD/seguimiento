@@ -257,4 +257,24 @@ void main() {
       expect(md, isNot(contains('| Movilidad |')));
     });
   });
+
+  group('aguantes en segundos (28 sep)', () {
+    test('el informe muestra la plancha en segundos, no en repeticiones', () async {
+      final v = PlanDraft.empty(d(9, 28));
+      v.days[0]
+        ..type = DayType.circuito
+        ..exercises.add(PlanExerciseDraft(name: 'Plancha lateral', sets: 2, holdSecMin: 30, holdSecMax: 40, perSide: true, block: 'core'));
+      await plan.saveAsNewVersion(v);
+      await training.save(SessionDraft(date: d(9, 28), type: SessionType.circuito, roundsDone: 5, rpe: 6, sets: [
+        SetDraft(exercise: 'Plancha lateral', reps: 35),
+        SetDraft(exercise: 'Plancha lateral', reps: 32),
+        SetDraft(exercise: 'Flexiones', reps: 10),
+      ]));
+      final report = ReportRepository(db, NutritionRepository(db));
+      final md = buildReport(await report.load(d(9, 28), d(10, 4), today: d(9, 28)));
+      expect(md, contains('- Plancha lateral: 35 s · 32 s'));
+      expect(md, contains('| Plancha lateral | 67 s |'));
+      expect(md, contains('| Flexiones | 10 |'));
+    });
+  });
 }

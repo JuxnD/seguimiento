@@ -165,7 +165,8 @@ void _sessions(StringBuffer b, ReportStats s) {
     }
     for (final e in byExercise.entries) {
       final sets = [...e.value]..sort((a, c) => a.setIndex.compareTo(c.setIndex));
-      b.writeln('- ${e.key}: ${sets.map(_setLabel).join(' · ')}');
+      final hold = s.input.holdExercises.contains(e.key);
+      b.writeln('- ${e.key}: ${sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
     }
     final extra = [
       if (x.limitingExercise != null && x.limitingExercise!.isNotEmpty) 'Limitante: ${x.limitingExercise}',
@@ -187,12 +188,13 @@ String _roundsCell(SessionEntry x) {
   return '$prefix${x.roundsDone}$target$estimated$unfinished';
 }
 
-String _setLabel(SetEntry e) {
+String _setLabel(SetEntry e, {bool seconds = false}) {
+  final amount = seconds ? '${e.reps} s' : '${e.reps}';
   var out = e.split && e.splitDetail != null && e.splitDetail!.trim().isNotEmpty
       ? '${e.splitDetail!.trim()} (partida)'
       : e.split
-          ? '${e.reps} (partida)'
-          : '${e.reps}';
+          ? '$amount (partida)'
+          : amount;
   if (e.loadKg != null) out += ' @ ${fmtDec(e.loadKg!)} kg';
   if (e.toFailure) out += ' (fallo)';
   return out;
@@ -204,18 +206,20 @@ void _volume(StringBuffer b, ReportStats s) {
   if (now.isEmpty) return;
   final before = s.previous?.volumeByExercise;
   b.writeln('## Volumen por ejercicio');
+  final holds = s.input.holdExercises;
+  String unit(String exercise, num v) => holds.contains(exercise) ? '$v s' : '$v';
   if (before == null) {
-    b.writeln('| Ejercicio | Reps |');
+    b.writeln('| Ejercicio | Reps o s |');
     b.writeln('|---|---|');
     for (final e in now.entries) {
-      b.writeln('| ${e.key} | ${e.value} |');
+      b.writeln('| ${e.key} | ${unit(e.key, e.value)} |');
     }
   } else {
-    b.writeln('| Ejercicio | Reps | Semana anterior | Δ |');
+    b.writeln('| Ejercicio | Reps o s | Semana anterior | Δ |');
     b.writeln('|---|---|---|---|');
     for (final e in now.entries) {
       final prev = before[e.key];
-      b.writeln('| ${e.key} | ${e.value} | ${prev ?? '—'} | '
+      b.writeln('| ${e.key} | ${unit(e.key, e.value)} | ${prev == null ? '—' : unit(e.key, prev)} | '
           '${prev == null ? 'nuevo' : fmtDelta(e.value - prev, decimals: 0)} |');
     }
   }

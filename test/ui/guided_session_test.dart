@@ -73,7 +73,7 @@ void main() {
   });
 
   /// Monta el cronómetro detrás de una ruta que recoge lo que devuelve.
-  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester) async {
+  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester, {PlanDayDraft? day}) async {
     // Alta para que quepa todo y ancha porque la fuente de prueba dibuja cada
     // letra como un cuadrado (ver app_smoke_test.dart).
     tester.view.physicalSize = const Size(1400, 3000);
@@ -95,7 +95,7 @@ void main() {
               child: FilledButton(
                 onPressed: () async => results.add(await Navigator.push<SessionDraft>(
                   context,
-                  MaterialPageRoute(builder: (_) => GuidedSessionScreen(day: _circuit(), date: DateTime(2026, 9, 24))),
+                  MaterialPageRoute(builder: (_) => GuidedSessionScreen(day: day ?? _circuit(), date: DateTime(2026, 9, 24))),
                 )),
                 child: const Text('abrir'),
               ),
@@ -215,5 +215,59 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.text('Salir'));
     await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('un aguante por lado: derecho, luego izquierdo, con cronómetro y descanso entre series', (tester) async {
+    final day = PlanDayDraft(weekday: 1, type: DayType.bloques, exercises: [
+      PlanExerciseDraft(name: 'Plancha lateral', sets: 2, holdSecMin: 10, holdSecMax: 15, perSide: true),
+    ]);
+    final results = await pumpGuided(tester, day: day);
+    await tester.tap(find.text('Empezar bloques'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.text('Empezar igual'));
+    await step(tester, const Duration(seconds: 1));
+
+    expect(find.text('SERIE 1/2 · LADO DERECHO'), findsOneWidget);
+    expect(find.text('Lado derecho'), findsOneWidget);
+    expect(find.text('10–15 s'), findsOneWidget, reason: 'sin "por lado": este paso ya es un lado');
+
+    // Colocarse 5 s y aguantar hasta el máximo: pasa solo al otro lado.
+    await tester.tap(find.text('Empezar lado derecho'));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('colócate'), findsOneWidget);
+    for (var i = 0; i < 21; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('SERIE 1/2 · LADO IZQUIERDO'), findsOneWidget, reason: 'sin descanso entre lados');
+
+    // El izquierdo se cierra a mano a los 12 s.
+    await tester.tap(find.text('Empezar lado izquierdo'));
+    for (var i = 0; i < 17; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(find.text('ya puedes soltar · máx 15 s'), findsOneWidget);
+    await tester.tap(find.text('Hecho'));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('DESCANSO'), findsOneWidget, reason: 'el plan no fija descanso: 60 s por defecto');
+    expect(find.textContaining('plan 60 s'), findsOneWidget);
+    await tester.tap(find.text('Saltar descanso'));
+    await step(tester, const Duration(seconds: 1));
+    expect(find.text('SERIE 2/2 · LADO DERECHO'), findsOneWidget);
+
+    await tester.tap(find.text('Terminar'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+    await step(tester, const Duration(seconds: 70));
+    await tester.tap(find.text('Terminar enfriamiento'));
+    await step(tester, const Duration(seconds: 2));
+    await tester.tap(find.text('Revisar y guardar'));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final draft = results.single!;
+    expect(draft.sets.map((s) => s.exercise), ['Plancha lateral', 'Plancha lateral']);
+    expect(draft.sets.first.reps, 15, reason: 'se guardan los segundos aguantados');
+    expect(draft.sets.last.reps, inInclusiveRange(11, 13));
   });
 }

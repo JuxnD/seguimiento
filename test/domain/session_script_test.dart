@@ -145,4 +145,39 @@ void main() {
           reason: 'las series de bloques nunca son rondas de circuito');
     });
   });
+
+  test('core del lunes: transición, lados por separado y descanso entre series', () {
+    final steps = buildScript(
+      const ScriptDay(
+        type: DayType.circuito,
+        targetRounds: 1,
+        exercises: [
+          ScriptExercise(name: 'Flexiones', repsMin: 10),
+          ScriptExercise(name: 'Elevación de piernas colgado', sets: 2, repsMin: 8, repsMax: 10, blockName: 'core'),
+          ScriptExercise(name: 'Plancha lateral', sets: 2, holdSecMin: 30, holdSecMax: 40, perSide: true, blockName: 'core'),
+        ],
+      ),
+    );
+    String label(ScriptStep s) => switch (s) {
+          WorkStep() => '${s.exercise} ${s.counterLabel}',
+          RestStep() => 'descanso ${s.seconds}',
+        };
+    expect(steps.map(label), [
+      'Flexiones Ronda 1/1',
+      'descanso 90',
+      'Elevación de piernas colgado Serie 1/2',
+      'descanso 60',
+      'Elevación de piernas colgado Serie 2/2',
+      'descanso 60',
+      'Plancha lateral Serie 1/2 · lado derecho',
+      'Plancha lateral Serie 1/2 · lado izquierdo',
+      'descanso 60',
+      'Plancha lateral Serie 2/2 · lado derecho',
+      'Plancha lateral Serie 2/2 · lado izquierdo',
+    ]);
+    final plank = steps.whereType<WorkStep>().last;
+    expect(plank.isHold, isTrue);
+    expect((plank.holdSec, plank.holdSecMax), (30, 40));
+    expect(plank.stepTarget, '30–40 s');
+  });
 }

@@ -18,11 +18,13 @@ class WorkStep extends ScriptStep {
     required this.targetLabel,
     this.targetReps,
     this.holdSec,
+    this.holdSecMax,
     required this.position,
     required this.total,
     required this.isRound,
     this.blockName,
     this.grip,
+    this.side,
   });
 
   final String exercise;
@@ -35,7 +37,17 @@ class WorkStep extends ScriptStep {
 
   /// Repeticiones objetivo para prellenar el registro (el mínimo del rango).
   final int? targetReps;
+
+  /// Ejercicio por tiempo: mínimo y máximo del rango (20–40 s). El cronómetro
+  /// avisa al llegar al mínimo y cierra solo en el máximo.
   final int? holdSec;
+  final int? holdSecMax;
+
+  /// 'derecho' o 'izquierdo' en los ejercicios por lado: cada lado es su
+  /// propio paso, uno detrás del otro, y los dos forman una serie.
+  final String? side;
+
+  bool get isHold => targetReps == null && holdSec != null;
 
   /// Ronda o serie actual, 1-based.
   final int position;
@@ -49,8 +61,18 @@ class WorkStep extends ScriptStep {
   /// Bloque extra al que pertenece ('core', 'hombro'), si aplica.
   final String? blockName;
 
-  String get counterLabel => isRound ? 'Ronda $position/$total' : 'Serie $position/$total';
+  String get counterLabel =>
+      isRound ? 'Ronda $position/$total' : 'Serie $position/$total${side == null ? '' : ' · lado $side'}';
+
+  /// Objetivo de este paso: en un paso por lado ya no dice "por lado".
+  String get stepTarget => side == null ? targetLabel : targetLabel.replaceAll(' · por lado', '');
 }
+
+/// Descanso entre series de un bloque cuando el plan no lo fija, y la
+/// transición del circuito a los bloques extra. Sin ellos el cronómetro
+/// pasaba de una serie a la siguiente sin respiro (uso real, 28 sep).
+const defaultBlockRestSec = 60;
+const blockTransitionRestSec = 90;
 
 /// Descanso con duración del plan. `maxSec` cuando el plan da un rango.
 class RestStep extends ScriptStep {
@@ -164,7 +186,11 @@ List<ScriptStep> buildScript(ScriptDay day, {int? rounds, String? coreVariant}) 
       .where((e) => e.variant == null || coreVariant == null || e.variant == coreVariant)
       .toList();
   for (final blockName in extras.map((e) => e.blockName!).toSet()) {
-    steps.addAll(_blockSteps(extras.where((e) => e.blockName == blockName).toList()));
+    final block = extras.where((e) => e.blockName == blockName).toList();
+    if (steps.isNotEmpty && steps.last is! RestStep) {
+      steps.add(RestStep(seconds: blockTransitionRestSec, nextLabel: 'Bloque $blockName: ${block.first.name}'));
+    }
+    steps.addAll(_blockSteps(block));
   }
   return steps;
 }
@@ -174,14 +200,21 @@ List<ScriptStep> _blockSteps(List<ScriptExercise> exercises) {
   for (var i = 0; i < exercises.length; i++) {
     final e = exercises[i];
     final sets = e.sets ?? 1;
+    // Sin descanso en el plan, uno por defecto: nadie encadena series de core.
+    final rest = e.restSec ?? defaultBlockRestSec;
     for (var set = 1; set <= sets; set++) {
-      steps.add(_work(e, position: set, total: sets, isRound: false));
+      if (e.perSide) {
+        steps.add(_work(e, position: set, total: sets, isRound: false, side: 'derecho'));
+        steps.add(_work(e, position: set, total: sets, isRound: false, side: 'izquierdo'));
+      } else {
+        steps.add(_work(e, position: set, total: sets, isRound: false));
+      }
       final isLastSetOfLastExercise = set == sets && i == exercises.length - 1;
-      if (!isLastSetOfLastExercise && (e.restSec ?? 0) > 0) {
+      if (!isLastSetOfLastExercise && rest > 0) {
         final next = set == sets ? exercises[i + 1].name : e.name;
         steps.add(RestStep(
-          seconds: e.restSec!,
-          maxSec: e.restSecMax,
+          seconds: rest,
+          maxSec: e.restSec == null ? null : e.restSecMax,
           nextLabel: set == sets ? 'Siguiente: $next' : '$next, serie ${set + 1}/$sets',
         ));
       }
@@ -190,17 +223,19 @@ List<ScriptStep> _blockSteps(List<ScriptExercise> exercises) {
   return steps;
 }
 
-WorkStep _work(ScriptExercise e, {required int position, required int total, required bool isRound}) =>
+WorkStep _work(ScriptExercise e, {required int position, required int total, required bool isRound, String? side}) =>
     WorkStep(
       exercise: e.name,
       grip: e.grip,
       targetLabel: e.targetLabel,
       targetReps: e.repsMin,
       holdSec: e.holdSecMin,
+      holdSecMax: e.holdSecMax ?? e.holdSecMin,
       position: position,
       total: total,
       isRound: isRound,
       blockName: e.blockName,
+      side: side,
     );
 
 /// Cuántas rondas o series de trabajo tiene el guion (sin contar descansos).

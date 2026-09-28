@@ -216,6 +216,10 @@ class ReportRepository {
       closedDays: {for (final c in closed) c.date},
       steps: {for (final s in steps) parseDay(s.date): s.steps},
       mobility: mobility,
+      holdExercises: {
+        for (final pe in await (db.select(db.planExercises)..where((x) => x.holdSecMin.isNotNull())).get())
+          if (names[pe.exerciseId] case final name?) name,
+      },
       previous: previous,
       notes: notes.length <= 1
           ? notes.firstOrNull?.body
