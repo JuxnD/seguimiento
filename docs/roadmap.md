@@ -48,7 +48,7 @@ Mejoras pedidas tras el primer uso real, en este orden:
 | 5 | Pulido tras uso real: tarjeta principal en todas las pestañas, enfriamiento como fase igual al calentamiento, medalla y frase de cierre con el dato real, insignia al cerrar ronda, selector de "qué costó más" con chips | Listo |
 | 6 | Auditoría del 23 sep 2026 ([auditoria-2026-09-23.md](auditoria-2026-09-23.md)): correcciones, retomar el cronómetro, respaldo automático, umbrales del perfil, menos toques, pruebas de pantalla y CI que compila | Listo |
 | 7 | Traspaso v2 del 25 sep ([handoff-v2-2026-09-25.md](handoff-v2-2026-09-25.md)): trabajo y descanso por ronda, técnica y carga en el cronómetro, RPE obligatorio, propuesta de progresión, días cerrados, volumen e interferencia en el informe, diagnóstico de avisos, logo | Publicado en la 1.8.x |
-| 8 | Adenda del 27 sep (mismo documento, §13–16): fútbol en Hoy y la racha, récord sospechoso señalado, entradas libres que se guardan solas con autocompletar y porciones, pan Mipan y platos repetidos, pasos diarios con meta y aviso, movilidad nocturna opcional | Listo en la rama `v2/uso-real-27sep`, sin publicar |
+| 8 | Adenda del 27 sep (mismo documento, §13–16): fútbol en Hoy y la racha, récord sospechoso señalado, entradas libres que se guardan solas con autocompletar y porciones, pan Mipan y platos repetidos, pasos diarios con meta y aviso, movilidad nocturna opcional | Publicado en la 1.9.0 (con figuras de técnica, foto de referencia y pasos desde Health Connect) |
 
 ## v2
 
@@ -57,8 +57,6 @@ Mejoras pedidas tras el primer uso real, en este orden:
   récords separados por carga, niveles de habilidades (L-sit, HSPU, dominada
   con pausa) y récords múltiples. La carga por serie (`session_sets.load_kg`)
   ya existe.
-- Pasos desde Health Connect en vez de a mano, si el reloj o el teléfono los
-  escriben ahí (ver la adenda del traspaso).
 
 - Respaldo que incluya las fotos (hoy exportar y las copias automáticas solo
   llevan la base de datos) y que pueda salir del teléfono sin acción manual.
