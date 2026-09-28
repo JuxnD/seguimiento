@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/health_connect.dart';
 import '../../data/local_flags.dart';
+import 'package:flutter/services.dart' show PlatformException;
+
 import '../../domain/dates.dart';
+import '../../domain/format.dart';
 import '../../ui/widgets.dart';
 
 /// Estado de la conexión, para la tarjeta. Se refresca con invalidate.
@@ -15,6 +18,8 @@ class HealthConnectState {
     required this.enabled,
     this.lastSync,
     this.sourcesToday = const [],
+    this.recentDays = const {},
+    this.readError,
   });
 
   final HealthConnectStatus status;
@@ -25,6 +30,13 @@ class HealthConnectState {
   /// Apps que escribieron pasos hoy: así se ve si llegan del reloj.
   final List<String> sourcesToday;
 
+  /// Pasos por día que Health Connect devuelve (últimos 7): así se ve si los
+  /// datos llegan aunque hoy todavía no haya nada.
+  final Map<String, int> recentDays;
+
+  /// Error al leer, si lo hubo: se muestra tal cual en vez de esconderlo.
+  final String? readError;
+
   bool get connected => status == HealthConnectStatus.disponible && permitted && enabled;
 }
 
@@ -34,12 +46,25 @@ final healthConnectStateProvider = FutureProvider.autoDispose<HealthConnectState
   final status = await health.status();
   final permitted = status == HealthConnectStatus.disponible && await _safe(health.hasPermission, false);
   final today = dateOnly(DateTime.now());
+  var sources = const <String>[];
+  var recent = const <String, int>{};
+  String? error;
+  if (permitted) {
+    try {
+      recent = await health.stepsByDay(addDays(today, -6), today);
+      sources = await health.sources(addDays(today, -6), today);
+    } on Object catch (e) {
+      error = e is PlatformException ? (e.message ?? e.code) : '$e';
+    }
+  }
   return HealthConnectState(
     status: status,
     permitted: permitted,
     enabled: sync.enabled,
     lastSync: sync.lastSync,
-    sourcesToday: permitted ? await _safe(() => health.sources(today, today), const <String>[]) : const [],
+    sourcesToday: sources,
+    recentDays: recent,
+    readError: error,
   );
 });
 
@@ -73,16 +98,31 @@ class HealthConnectCard extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(_describe(s), style: text.bodyMedium),
-              if (s.connected && s.sourcesToday.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text('Hoy escribieron pasos: ${s.sourcesToday.join(', ')}', style: text.bodySmall),
+              if (s.connected && s.readError != null) ...[
+                const SizedBox(height: 6),
+                Text('Health Connect respondió con un error: ${s.readError}',
+                    style: text.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error)),
               ],
-              if (s.connected && s.sourcesToday.isEmpty) ...[
-                const SizedBox(height: 4),
+              if (s.connected && s.readError == null) ...[
+                const SizedBox(height: 6),
                 Text(
-                  'Hoy todavía no hay pasos en Health Connect. Abre la app del reloj para que sincronice.',
+                  s.sourcesToday.isEmpty
+                      ? 'En los últimos 7 días nadie escribió pasos en Health Connect. Revisa en la app del reloj '
+                          '(Yo → Health Connect) que esté conectada y con permiso de escribir pasos, y abre la app '
+                          'del reloj para que sincronice.'
+                      : 'Escribieron pasos (7 días): ${s.sourcesToday.join(', ')}',
                   style: text.bodySmall,
                 ),
+                if (s.recentDays.values.any((v) => v > 0)) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    [
+                      for (final e in s.recentDays.entries.toList()..sort((a, b) => b.key.compareTo(a.key)))
+                        '${formatShort(parseDay(e.key))}: ${fmtInt(e.value)}',
+                    ].join(' · '),
+                    style: text.bodySmall,
+                  ),
+                ],
               ],
               const SizedBox(height: 12),
               ..._actions(context, ref, s),
