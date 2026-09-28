@@ -78,7 +78,10 @@ class TodayDashboard {
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
 
-  bool get trained => sessionsToday > 0 || footballToday != null;
+  /// Lo del día está hecho. Un partido lo cumple en días de fútbol o descanso;
+  /// en un día de entrenamiento no reemplaza la sesión del plan (la racha sí
+  /// lo cuenta).
+  bool get trained => sessionsToday > 0 || (footballToday != null && !dayType.isTraining);
   double get proteinProgress => goalProgress(macros.protein, proteinMin);
   double get kcalProgress => goalProgress(macros.kcal, kcalTarget);
   double get stepsProgress => stepsGoal == null ? ((stepsToday ?? 0) > 0 ? 1 : 0) : goalProgress(stepsToday ?? 0, stepsGoal!);

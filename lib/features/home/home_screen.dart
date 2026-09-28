@@ -275,27 +275,7 @@ String compactSteps(int steps) => steps < 1000 ? '$steps' : '${fmtDec(steps / 10
 
 /// Anotar los pasos de un día. Vacío borra la cifra.
 Future<void> editStepsDialog(BuildContext context, WidgetRef ref, DateTime date, int? current) async {
-  final controller = TextEditingController(text: current?.toString() ?? '');
-  final result = await showDialog<String>(
-    context: context,
-    builder: (c) => AlertDialog(
-      title: Text('Pasos del ${weekdayLong(date.weekday)} ${formatShort(date)}'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          NumberField(controller: controller, label: 'Pasos', autofocus: true),
-          const SizedBox(height: 8),
-          const Text('Léelos del reloj o del teléfono. Registrar otra vez reemplaza la cifra del día.'),
-        ],
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
-        FilledButton(onPressed: () => Navigator.pop(c, controller.text), child: const Text('Guardar')),
-      ],
-    ),
-  );
-  controller.dispose();
+  final result = await showDialog<String>(context: context, builder: (_) => _StepsDialog(date: date, current: current));
   if (result == null || !context.mounted) return;
   final repo = ref.read(stepsRepositoryProvider);
   final steps = int.tryParse(result.replaceAll(RegExp(r'[.\s]'), ''));
@@ -306,6 +286,46 @@ Future<void> editStepsDialog(BuildContext context, WidgetRef ref, DateTime date,
   } else {
     await guarded(context, () => repo.setSteps(date, steps));
   }
+}
+
+/// Dueño de su controller: se libera cuando el diálogo termina de cerrarse,
+/// no mientras todavía anima la salida.
+class _StepsDialog extends StatefulWidget {
+  const _StepsDialog({required this.date, this.current});
+
+  final DateTime date;
+  final int? current;
+
+  @override
+  State<_StepsDialog> createState() => _StepsDialogState();
+}
+
+class _StepsDialogState extends State<_StepsDialog> {
+  late final _controller = TextEditingController(text: widget.current?.toString() ?? '');
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: Text('Pasos del ${weekdayLong(widget.date.weekday).toLowerCase()} ${formatShort(widget.date)}'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            NumberField(controller: _controller, label: 'Pasos', autofocus: true),
+            const SizedBox(height: 8),
+            const Text('Léelos del reloj o del teléfono. Registrar otra vez reemplaza la cifra del día.'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(context, _controller.text), child: const Text('Guardar')),
+        ],
+      );
 }
 
 /// El récord viene de un día que el plan no marca como circuito: casi siempre

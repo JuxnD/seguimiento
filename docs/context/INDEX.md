@@ -71,8 +71,9 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   entran a promedios y alertas de nutrición.
 - **Movilidad**: sesión opcional fuera del plan. No cuenta para adherencia,
   racha, récords ni RPE; el informe la muestra aparte.
-- **Día entrenado** (Hoy y racha): con una sesión que no sea de movilidad, o
-  con un partido de fútbol.
+- **Día entrenado**: para la racha, un día con una sesión que no sea de
+  movilidad o con un partido. En Hoy, el ✓ del día pide la sesión del plan;
+  un partido solo lo cumple en días de fútbol o descanso.
 - **Ronda**: vuelta completa al circuito. **Vuelta/marca**: tiempo de una ronda
   registrado con el contador.
 - **Serie partida**: serie que no se completó de corrido (12+3).

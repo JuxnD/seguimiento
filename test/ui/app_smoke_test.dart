@@ -125,6 +125,22 @@ void main() {
     await tester.pump(const Duration(milliseconds: 10));
   }
 
+  testWidgets('anotar los pasos desde el anillo de Hoy', (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.text('Pasos'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), '1935');
+    await tester.tap(find.text('Guardar'));
+    // El diálogo anima su salida: su campo no puede quedar sin controller.
+    for (var i = 0; i < 12; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(tester.takeException(), isNull);
+    expect(find.text('1,9k'), findsOneWidget);
+    expect((await db.select(db.dailySteps).get()).single.steps, 1935);
+    await disposeApp(tester);
+  });
+
   testWidgets('arranca en Hoy y abre todas las pestañas', (tester) async {
     await pumpApp(tester);
     expect(find.text('Hoy'), findsWidgets);

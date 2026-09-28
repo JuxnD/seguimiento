@@ -71,6 +71,14 @@ void main() {
       expect(after.sessionsToday, 0, reason: 'el partido no se disfraza de sesión');
     });
 
+    test('en un día de circuito el partido no da por hecha la sesión, pero suma racha', () async {
+      await training.saveFootball(FootballGamesCompanion.insert(date: '2026-09-28', minutes: 90));
+      final monday = await dashboard.today(now: d(9, 28));
+      expect(monday.trained, isFalse);
+      expect(monday.footballToday, isNotNull);
+      expect(monday.streak, 1);
+    });
+
     test('la racha incluye los días de fútbol', () async {
       await training.save(SessionDraft(date: d(9, 25), type: SessionType.progresion, roundsDone: 8));
       await training.saveFootball(FootballGamesCompanion.insert(date: '2026-09-26', minutes: 60));
