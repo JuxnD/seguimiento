@@ -44,5 +44,6 @@ extension ProfileRowX on ProfileRow {
         minWarmupSec: minWarmupSec,
         measureIntervalDays: measureIntervalDays,
         lengthUnit: lengthUnit,
+        stepsTarget: stepsTarget,
       );
 }

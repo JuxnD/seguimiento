@@ -4,6 +4,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/progress.dart';
+import '../../domain/steps.dart';
 import '../database.dart';
 import 'nutrition_repository.dart';
 import 'plan_repository.dart';
@@ -28,6 +29,8 @@ class TodayDashboard {
     required this.proteinMin,
     required this.proteinMax,
     required this.kcalTarget,
+    this.stepsToday,
+    this.stepsGoal,
     required this.roundsRecord,
     this.recordSuspect,
     required this.measurement,
@@ -59,6 +62,12 @@ class TodayDashboard {
   final int proteinMax;
   final int kcalTarget;
 
+  /// Pasos anotados hoy; null si aún no.
+  final int? stepsToday;
+
+  /// Meta de pasos de hoy; null el fin de semana.
+  final int? stepsGoal;
+
   /// Mejor marca de rondas hasta hoy.
   final int? roundsRecord;
 
@@ -72,6 +81,7 @@ class TodayDashboard {
   bool get trained => sessionsToday > 0 || footballToday != null;
   double get proteinProgress => goalProgress(macros.protein, proteinMin);
   double get kcalProgress => goalProgress(macros.kcal, kcalTarget);
+  double get stepsProgress => stepsGoal == null ? ((stepsToday ?? 0) > 0 ? 1 : 0) : goalProgress(stepsToday ?? 0, stepsGoal!);
   double get roundsProgress => goalProgress(roundsDone ?? 0, targetRounds ?? 0);
 }
 
@@ -133,6 +143,8 @@ class DashboardRepository {
       proteinMin: p.proteinMin,
       proteinMax: p.proteinMax,
       kcalTarget: p.kcalTarget,
+      stepsToday: (await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(date)))).getSingleOrNull())?.steps,
+      stepsGoal: stepsGoalFor(date, p.stepsTarget),
       roundsRecord: record,
       recordSuspect: record == null ? null : await _recordSuspect(record),
       measurement: measurementDue(

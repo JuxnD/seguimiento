@@ -4,6 +4,8 @@ library;
 
 import 'dates.dart';
 import 'enums.dart';
+import 'format.dart';
+import 'steps.dart';
 
 /// Tipos de recordatorio. El nombre se persiste, así que no se renombran.
 enum ReminderKind {
@@ -117,6 +119,8 @@ class ReminderContext {
     this.kcalToday = 0,
     this.kcalTarget = 2400,
     this.missingMealsToday = const [],
+    this.stepsToday,
+    this.stepsTarget = 7500,
     this.lastMeasurement,
     this.measureIntervalDays = 21,
     this.nextMeasurementDate,
@@ -134,6 +138,10 @@ class ReminderContext {
 
   /// Comidas principales que faltan hoy; vacío si el día está cerrado.
   final List<MealSlot> missingMealsToday;
+
+  /// Pasos registrados hoy; null = aún no se anotan.
+  final int? stepsToday;
+  final int stepsTarget;
   final DateTime? lastMeasurement;
   final int measureIntervalDays;
   final DateTime? nextMeasurementDate;
@@ -153,6 +161,7 @@ List<PlannedNotification> planReminders(ReminderContext ctx) {
   out.addAll(_protein(ctx));
   out.addAll(_calories(ctx));
   out.addAll(_missingMeals(ctx));
+  out.addAll(_steps(ctx));
   out.addAll(_measurement(ctx));
 
   return out.where((n) => n.when.isAfter(ctx.now)).toList()
@@ -243,6 +252,25 @@ Iterable<PlannedNotification> _missingMeals(ReminderContext ctx) sync* {
     when: _at(ctx.now, s),
     title: 'Falta registrar: $list',
     body: 'Si no comiste más hoy, cierra el día en Comidas para que no cuente como incompleto.',
+  );
+}
+
+Iterable<PlannedNotification> _steps(ReminderContext ctx) sync* {
+  final s = ctx.setting(ReminderKind.pasos);
+  if (s == null || !s.enabled) return;
+  // Solo entre semana: sábado y domingo son de fútbol y no tienen meta.
+  if (stepsGoalFor(ctx.now, ctx.stepsTarget) == null) return;
+  final threshold = s.threshold ?? 4000;
+  final steps = ctx.stepsToday;
+  if (steps != null && steps >= threshold) return;
+  yield PlannedNotification(
+    kind: ReminderKind.pasos,
+    when: _at(ctx.now, s),
+    title: steps == null ? 'Pasos: sin anotar hoy' : 'Pasos: ${fmtInt(steps)}',
+    body: steps == null
+        ? 'Mira el reloj y anótalos en Hoy. La meta es ${fmtInt(ctx.stepsTarget)}; una caminata de 20 min son ~2.000.'
+        : 'Faltan ${fmtInt(ctx.stepsTarget - steps)} para ${fmtInt(ctx.stepsTarget)}. '
+            'Una caminata de 20 min son ~2.000.',
   );
 }
 

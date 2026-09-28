@@ -176,12 +176,15 @@ class _RingsCard extends StatelessWidget {
     final d = dashboard;
     final style = styleForDay(d.dayType);
     final showRounds = d.targetRounds != null;
+    // Cuatro anillos en un teléfono de 360 dp: más pequeños que los tres de antes.
+    const size = 74.0;
     return AppCard(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ProgressRing(
+              size: size,
               progress: d.proteinProgress,
               value: fmtInt(d.macros.protein),
               sublabel: 'de ${d.proteinMin}',
@@ -189,14 +192,17 @@ class _RingsCard extends StatelessWidget {
               color: AppColors.protein,
             ),
             ProgressRing(
+              size: size,
               progress: d.kcalProgress,
               value: fmtInt(d.macros.kcal),
               sublabel: 'de ${fmtInt(d.kcalTarget)}',
               label: 'kcal',
               color: AppColors.kcal,
             ),
+            _StepsRing(dashboard: d, size: size),
             if (showRounds)
               ProgressRing(
+                size: size,
                 progress: d.roundsProgress,
                 value: '${d.roundsDone ?? 0}',
                 sublabel: 'de ${d.targetRounds}',
@@ -205,6 +211,7 @@ class _RingsCard extends StatelessWidget {
               )
             else if (d.footballToday case final game? when d.sessionsToday == 0)
               ProgressRing(
+                size: size,
                 progress: 1,
                 value: "${game.minutes}'",
                 sublabel: game.intensity == null ? 'fútbol ${game.format}' : 'intensidad ${game.intensity}',
@@ -213,6 +220,7 @@ class _RingsCard extends StatelessWidget {
               )
             else
               ProgressRing(
+                size: size,
                 progress: d.trained ? 1 : 0,
                 value: d.trained ? '✓' : '—',
                 label: 'Sesión',
@@ -234,6 +242,69 @@ class _RingsCard extends StatelessWidget {
         ],
       ],
     );
+  }
+}
+
+/// Pasos de hoy. Tocarlo abre el registro: se leen del reloj y se anotan.
+class _StepsRing extends ConsumerWidget {
+  const _StepsRing({required this.dashboard, required this.size});
+
+  final TodayDashboard dashboard;
+  final double size;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final d = dashboard;
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => editStepsDialog(context, ref, d.date, d.stepsToday),
+      child: ProgressRing(
+        size: size,
+        progress: d.stepsProgress,
+        value: d.stepsToday == null ? '—' : compactSteps(d.stepsToday!),
+        sublabel: d.stepsGoal == null ? 'sin meta' : 'de ${compactSteps(d.stepsGoal!)}',
+        label: 'Pasos',
+        color: AppColors.steps,
+      ),
+    );
+  }
+}
+
+/// 7.500 → "7,5k"; 950 → "950". Cabe en el anillo pequeño.
+String compactSteps(int steps) => steps < 1000 ? '$steps' : '${fmtDec(steps / 1000)}k';
+
+/// Anotar los pasos de un día. Vacío borra la cifra.
+Future<void> editStepsDialog(BuildContext context, WidgetRef ref, DateTime date, int? current) async {
+  final controller = TextEditingController(text: current?.toString() ?? '');
+  final result = await showDialog<String>(
+    context: context,
+    builder: (c) => AlertDialog(
+      title: Text('Pasos del ${weekdayLong(date.weekday)} ${formatShort(date)}'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          NumberField(controller: controller, label: 'Pasos', autofocus: true),
+          const SizedBox(height: 8),
+          const Text('Léelos del reloj o del teléfono. Registrar otra vez reemplaza la cifra del día.'),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
+        FilledButton(onPressed: () => Navigator.pop(c, controller.text), child: const Text('Guardar')),
+      ],
+    ),
+  );
+  controller.dispose();
+  if (result == null || !context.mounted) return;
+  final repo = ref.read(stepsRepositoryProvider);
+  final steps = int.tryParse(result.replaceAll(RegExp(r'[.\s]'), ''));
+  if (result.trim().isEmpty) {
+    await guarded(context, () => repo.clear(date));
+  } else if (steps == null || steps < 0) {
+    showSnack(context, 'Escribe solo el número de pasos');
+  } else {
+    await guarded(context, () => repo.setSteps(date, steps));
   }
 }
 

@@ -119,6 +119,7 @@ class ReportRepository {
     final roundsBefore = await TrainingRepository(db, ExerciseRepository(db)).lastRoundsBefore(from);
 
     final football = await (db.select(db.footballGames)..where((x) => x.date.isBetweenValues(f, t))).get();
+    final steps = await (db.select(db.dailySteps)..where((x) => x.date.isBetweenValues(f, t))).get();
 
     final meals = await nutrition.range(from, to);
 
@@ -208,6 +209,7 @@ class ReportRepository {
       baselineMeasurements: baseline,
       measurementDatesBefore: datesBefore,
       closedDays: {for (final c in closed) c.date},
+      steps: {for (final s in steps) parseDay(s.date): s.steps},
       previous: previous,
       notes: notes.length <= 1
           ? notes.firstOrNull?.body

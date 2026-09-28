@@ -49,23 +49,31 @@ class ProgressRing extends StatelessWidget {
                 stroke: stroke,
               ),
               child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      value,
-                      // En anillos grandes (cronómetro) el número manda.
-                      style: (size >= 160
-                              ? Theme.of(context).textTheme.displayMedium
-                              : Theme.of(context).textTheme.titleLarge)
-                          ?.copyWith(fontWeight: FontWeight.w800, height: 1.1),
+                // En anillos pequeños (cuatro en Hoy) el texto se encoge en vez
+                // de desbordar el anillo.
+                child: Padding(
+                  padding: EdgeInsets.all(stroke + 4),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          value,
+                          // En anillos grandes (cronómetro) el número manda.
+                          style: (size >= 160
+                                  ? Theme.of(context).textTheme.displayMedium
+                                  : Theme.of(context).textTheme.titleLarge)
+                              ?.copyWith(fontWeight: FontWeight.w800, height: 1.1),
+                        ),
+                        if (sublabel != null)
+                          Text(sublabel!,
+                              style: size >= 160
+                                  ? Theme.of(context).textTheme.titleSmall
+                                  : Theme.of(context).textTheme.labelSmall),
+                      ],
                     ),
-                    if (sublabel != null)
-                      Text(sublabel!,
-                          style: size >= 160
-                              ? Theme.of(context).textTheme.titleSmall
-                              : Theme.of(context).textTheme.labelSmall),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -90,8 +98,7 @@ class _RingPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Offset(stroke / 2, stroke / 2) &
-        Size(size.width - stroke, size.height - stroke);
+    final rect = Offset(stroke / 2, stroke / 2) & Size(size.width - stroke, size.height - stroke);
     final base = Paint()
       ..color = track
       ..strokeWidth = stroke
@@ -113,8 +120,7 @@ class _RingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_RingPainter old) =>
-      old.progress != progress || old.color != color || old.track != track;
+  bool shouldRepaint(_RingPainter old) => old.progress != progress || old.color != color || old.track != track;
 }
 
 /// Barra fina para metas secundarias.

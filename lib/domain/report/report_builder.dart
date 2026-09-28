@@ -90,6 +90,19 @@ void _summary(StringBuffer b, ReportStats s) {
     b.writeln('- Días bajo ${fmtInt(t.kcalFloor)} kcal: ${s.daysBelowFloor.length}');
   }
 
+  final steps = s.steps;
+  if (steps != null) {
+    final n = steps.days;
+    final weekday = steps.weekdayAverage == null
+        ? ''
+        : ' · entre semana ${fmtInt(steps.weekdayAverage!)} (meta ${fmtInt(t.stepsTarget)}, '
+            '${steps.weekdaysAtGoal}/${steps.weekdayDays} ${steps.weekdayDays == 1 ? 'día' : 'días'} en meta)';
+    final before = s.previous?.steps?.average;
+    final vs = before == null ? '' : ' (${fmtDelta(steps.average - before, decimals: 0)} vs semana anterior)';
+    b.writeln('- Pasos: ${fmtInt(steps.average)}/día ($n ${n == 1 ? 'día registrado' : 'días registrados'})'
+        '$vs$weekday');
+  }
+
   final w = i.weightsInRange;
   if (w.isNotEmpty) {
     final fasted = w.where((x) => x.fasted).toList();

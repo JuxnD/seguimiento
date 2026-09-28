@@ -1,6 +1,7 @@
 import '../dates.dart';
 import '../enums.dart';
 import '../nutrition.dart';
+import '../steps.dart';
 import 'report_input.dart';
 
 /// Métricas derivadas del rango. Alertas e informe leen de aquí para que un
@@ -108,6 +109,8 @@ class ReportStats {
     }
     return (label, reference, free);
   }
+
+  late final StepsSummary? steps = summarizeSteps(input.steps, input.targets.stepsTarget);
 
   double? get avgKcal => closedDays.isEmpty ? null : _avg((m) => m.kcal);
   double? get avgProtein => closedDays.isEmpty ? null : _avg((m) => m.protein);

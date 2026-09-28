@@ -24,6 +24,7 @@ import '../data/repositories/photo_repository.dart';
 import '../data/repositories/plan_repository.dart';
 import '../data/repositories/profile_repository.dart';
 import '../data/repositories/report_repository.dart';
+import '../data/repositories/steps_repository.dart';
 import '../data/repositories/training_repository.dart';
 import '../domain/active_session.dart';
 import '../domain/dates.dart';
@@ -70,6 +71,7 @@ final trainingRepositoryProvider =
     Provider((ref) => TrainingRepository(ref.watch(databaseProvider), ref.watch(exerciseRepositoryProvider)));
 final nutritionRepositoryProvider = Provider((ref) => NutritionRepository(ref.watch(databaseProvider)));
 final bodyRepositoryProvider = Provider((ref) => BodyRepository(ref.watch(databaseProvider)));
+final stepsRepositoryProvider = Provider((ref) => StepsRepository(ref.watch(databaseProvider)));
 final reportRepositoryProvider =
     Provider((ref) => ReportRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));
 
@@ -94,6 +96,13 @@ final dashboardRepositoryProvider = Provider((ref) => DashboardRepository(
       ref.watch(nutritionRepositoryProvider),
       ref.watch(profileRepositoryProvider),
     ));
+
+/// Pasos de un día (`YYYY-MM-DD`); null si aún no se anotan.
+final stepsDayProvider =
+    StreamProvider.family<int?, String>((ref, day) => ref.watch(stepsRepositoryProvider).watchDay(parseDay(day)));
+
+/// Todos los días con pasos, del más reciente al más viejo.
+final stepsHistoryProvider = StreamProvider((ref) => ref.watch(stepsRepositoryProvider).watchAll());
 
 /// Directorio de documentos de la app, resuelto una sola vez.
 final documentsDirProvider = FutureProvider<Directory>((ref) => getApplicationDocumentsDirectory());
@@ -171,6 +180,7 @@ final dashboardProvider = FutureProvider((ref) {
   ref.watch(profileProvider);
   ref.watch(checkInsProvider);
   ref.watch(mealsForDayProvider(dayKey(today)));
+  ref.watch(stepsDayProvider(dayKey(today)));
   return ref.watch(dashboardRepositoryProvider).today(now: today);
 });
 
@@ -191,6 +201,7 @@ final reminderSyncProvider = Provider<void>((ref) {
   ref.listen(profileProvider, (_, __) => run());
   ref.listen(mealsForDayProvider(dayKey(today)), (_, __) => run());
   ref.listen(dayClosedProvider(dayKey(today)), (_, __) => run());
+  ref.listen(stepsDayProvider(dayKey(today)), (_, __) => run());
   ref.listen(reminderSchedulerProvider, (_, __) => run());
   run();
 });
@@ -246,6 +257,7 @@ final reportProvider = FutureProvider.family<String, (String, String)>((ref, ran
   // Dependencias explícitas: al cambiar cualquiera, el informe se regenera.
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
+  ref.watch(stepsHistoryProvider);
   ref.watch(weightsProvider);
   ref.watch(checkInsProvider);
   ref.watch(planVersionsProvider);

@@ -10,6 +10,7 @@ abstract final class AppColors {
   static const kcal = Color(0xFFFFB067);
   static const body = Color(0xFF7ED957);
   static const record = Color(0xFFFFC53D);
+  static const steps = Color(0xFF3DD6C6);
 }
 
 const _orange = Color(0xFFF08A34);

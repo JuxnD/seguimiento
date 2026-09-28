@@ -65,6 +65,7 @@ class ReminderScheduler {
     final missing = closed ? const <MealSlot>[] : missingMainMeals({for (final m in meals) m.meal.slot});
 
     final lastMeasurement = await body.lastCheckInBefore(addDays(today, 1));
+    final steps = await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(today)))).getSingleOrNull();
     final planned = planReminders(ReminderContext(
       now: moment,
       days: days,
@@ -74,6 +75,8 @@ class ReminderScheduler {
       kcalToday: totals.kcal,
       kcalTarget: p.kcalTarget,
       missingMealsToday: missing,
+      stepsToday: steps?.steps,
+      stepsTarget: p.stepsTarget,
       lastMeasurement: lastMeasurement,
       measureIntervalDays: p.measureIntervalDays,
       // Una fecha acordada ya cumplida no debe seguir avisando.

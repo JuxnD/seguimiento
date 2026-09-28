@@ -7,6 +7,7 @@ import 'package:seguimiento/data/repositories/nutrition_repository.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
 import 'package:seguimiento/data/repositories/profile_repository.dart';
 import 'package:seguimiento/data/repositories/report_repository.dart';
+import 'package:seguimiento/data/repositories/steps_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/data/seed_foods.dart';
@@ -199,6 +200,34 @@ void main() {
     test('dos cifras escritas a mano del mismo plato son la misma', () {
       expect(sameMacros(const Macros(kcal: 880, protein: 38), const Macros(kcal: 880.4, protein: 38)), isTrue);
       expect(sameMacros(const Macros(kcal: 880, protein: 38), const Macros(kcal: 900, protein: 38)), isFalse);
+    });
+  });
+
+  group('§14 pasos diarios', () {
+    test('anotar otra vez el mismo día reemplaza; Hoy muestra la cifra y la meta', () async {
+      final steps = StepsRepository(db);
+      await steps.setSteps(d(9, 29), 1935);
+      await steps.setSteps(d(9, 29), 4200);
+      expect(await steps.day(d(9, 29)), 4200);
+
+      final today = await dashboard.today(now: d(9, 29));
+      expect(today.stepsToday, 4200);
+      expect(today.stepsGoal, 7500);
+      expect(today.stepsProgress, closeTo(0.56, 0.01));
+      expect((await dashboard.today(now: d(9, 27))).stepsGoal, isNull, reason: 'domingo sin meta');
+    });
+
+    test('el informe trae el promedio semanal y lo compara con la semana anterior', () async {
+      final steps = StepsRepository(db);
+      await steps.setSteps(d(9, 17), 3000); // semana anterior
+      await steps.setSteps(d(9, 23), 1935);
+      await steps.setSteps(d(9, 24), 8000);
+      await steps.setSteps(d(9, 27), 12000);
+
+      final report = ReportRepository(db, NutritionRepository(db));
+      final md = buildReport(await report.load(d(9, 23), d(9, 29), today: d(9, 29)));
+      expect(md, contains('- Pasos: 7.312/día (3 días registrados) (+4.312 vs semana anterior) · '
+          'entre semana 4.968 (meta 7.500, 1/2 días en meta)'));
     });
   });
 }

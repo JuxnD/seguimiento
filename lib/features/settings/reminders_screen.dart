@@ -288,6 +288,13 @@ class _ReminderCard extends ConsumerWidget {
                   onPressed: () => _editThreshold(context, repo),
                 ),
               ],
+              if (row.kind == ReminderKind.pasos) ...[
+                const Spacer(),
+                TextButton(
+                  child: Text('Bajo ${row.threshold ?? 4000} pasos'),
+                  onPressed: () => _editThreshold(context, repo),
+                ),
+              ],
             ],
           ),
       ],
@@ -297,9 +304,11 @@ class _ReminderCard extends ConsumerWidget {
   Future<void> _editThreshold(BuildContext context, ReminderRepository repo) async {
     final value = await showDialog<int>(
       context: context,
-      builder: (_) => row.kind == ReminderKind.calorias
-          ? _ThresholdDialog(initial: row.threshold ?? 1800, label: 'Calorías', suffix: 'kcal')
-          : _ThresholdDialog(initial: row.threshold ?? 100),
+      builder: (_) => switch (row.kind) {
+        ReminderKind.calorias => _ThresholdDialog(initial: row.threshold ?? 1800, label: 'Calorías', suffix: 'kcal'),
+        ReminderKind.pasos => _ThresholdDialog(initial: row.threshold ?? 4000, label: 'Pasos', suffix: 'pasos'),
+        _ => _ThresholdDialog(initial: row.threshold ?? 100),
+      },
     );
     if (value != null && context.mounted) await guarded(context, () => repo.save(row.kind, threshold: value));
   }

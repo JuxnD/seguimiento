@@ -15,6 +15,7 @@ class Targets {
     this.minCooldownSec = minCooldownSecDefault,
     this.measureIntervalDays = 21,
     this.lengthUnit = LengthUnit.cm,
+    this.stepsTarget = 7500,
   });
 
   /// Por debajo de 1 min el enfriamiento no cuenta como tal. Es una
@@ -32,6 +33,9 @@ class Targets {
   final int minCooldownSec;
   final int measureIntervalDays;
   final LengthUnit lengthUnit;
+
+  /// Pasos diarios entre semana.
+  final int stepsTarget;
 }
 
 class PlanVersionInfo {
@@ -238,6 +242,7 @@ class ReportInput {
     this.baselineMeasurements = const {},
     this.measurementDatesBefore = const [],
     this.closedDays = const {},
+    this.steps = const {},
     this.previous,
     this.notes,
   });
@@ -277,6 +282,9 @@ class ReportInput {
   /// Días (`YYYY-MM-DD`) que el usuario cerró a mano aunque les falte una
   /// comida principal.
   final Set<String> closedDays;
+
+  /// Pasos registrados por día del rango. Un día ausente no es un día de 0.
+  final Map<DateTime, int> steps;
 
   /// El rango anterior del mismo largo (la semana pasada), para comparar.
   /// null en el propio rango anterior: la comparación no se encadena.

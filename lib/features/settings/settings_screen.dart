@@ -210,6 +210,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
   late final _interval = TextEditingController(text: '${p.measureIntervalDays}');
   late final _intervalMax = TextEditingController(text: '${p.measureIntervalMaxDays}');
   late final _cooldown = TextEditingController(text: formatDuration(p.cooldownTargetSec));
+  late final _steps = TextEditingController(text: '${p.stepsTarget}');
   late DateTime _start = p.programStart;
   late DateTime? _birth = p.birthDate == null ? null : parseDay(p.birthDate!);
   late DateTime? _nextMeasurement = p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!);
@@ -218,7 +219,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
 
   @override
   void dispose() {
-    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _warmup, _interval, _intervalMax, _cooldown]) {
+    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _warmup, _interval, _intervalMax, _cooldown, _steps]) {
       c.dispose();
     }
     super.dispose();
@@ -256,6 +257,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
           nextMeasurementDate: Value(_nextMeasurement == null ? null : dayKey(_nextMeasurement!)),
           cooldownTargetSec: Value(parseDuration(_cooldown.text) ?? p.cooldownTargetSec),
           neverToFailure: Value(_neverToFailure),
+          stepsTarget: Value(_positiveInt(_steps.text) ?? p.stepsTarget),
           lengthUnit: Value(_unit),
         )), ok: 'Perfil guardado');
   }
@@ -305,6 +307,8 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
             Expanded(child: NumberField(controller: _kcalFloor, label: 'Piso de alerta kcal')),
           ],
         ),
+        const SizedBox(height: 8),
+        NumberField(controller: _steps, label: 'Pasos diarios entre semana', suffix: 'pasos'),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -383,4 +387,9 @@ Future<void> _deleteOldExports(Directory dir, {required String keep}) async {
       // Tomado por otra app: se intenta la próxima vez.
     }
   }
+}
+
+int? _positiveInt(String text) {
+  final v = int.tryParse(text.trim());
+  return v == null || v <= 0 ? null : v;
 }
