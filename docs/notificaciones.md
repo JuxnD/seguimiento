@@ -87,6 +87,25 @@ repite al terminar.
 - La app usa desugaring de `java.time` (`coreLibraryDesugaring`), que el plugin
   exige para `minSdk` 21.
 
+## El APK de release (lo que no se ve en debug)
+
+De la 1.8.0 a la 1.9.0 **ningún aviso salió en el teléfono**, aunque en el
+emulador (siempre con APK debug) todo funcionaba. El release recorta los
+recursos que no ve usados y el ícono de la barra (`ic_stat_seguimiento`) se
+pide por nombre: desapareció del APK y `flutter_local_notifications` fallaba al
+iniciar con `invalid_icon`. La app lo tragaba y la prueba decía "revisa el
+permiso". Encontrado el 28 sep 2026 con la 1.9.0 publicada (log del arranque) y
+corregido en la 1.9.1:
+
+- `android/app/src/main/res/raw/keep.xml` conserva el ícono.
+- `android/app/proguard-rules.pro` guarda las clases que Gson usa para los
+  avisos programados (el plugin no trae reglas propias).
+- *Probar ahora* y *Probar en 1 min* muestran el error real.
+
+Verificación obligatoria antes de publicar algo que toque avisos: compilar
+**release**, instalarlo y correr las dos pruebas; y que
+`aapt dump resources` del APK liste `drawable/ic_stat_seguimiento`.
+
 ## Límites conocidos
 
 - El ahorro de batería agresivo de algunos fabricantes puede retrasar los avisos

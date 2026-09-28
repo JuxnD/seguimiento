@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
@@ -57,8 +58,10 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
     try {
       await ref.read(notificationServiceProvider).showTest();
       if (mounted) showSnack(context, 'Enviado. Si no aparece, revisa el permiso y el canal "Recordatorios".');
-    } on Object {
-      if (mounted) showSnack(context, 'No se pudo mostrar: revisa el permiso de notificaciones');
+    } on Object catch (e) {
+      // El error real: "revisa el permiso" escondió durante tres versiones que
+      // el ícono de la notificación no existía en el APK publicado.
+      if (mounted) showSnack(context, 'No se pudo mostrar: ${describeNotificationError(e)}');
     }
   }
 
@@ -72,8 +75,8 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                 ? 'Programado para dentro de 1 min. Cierra la app y apaga la pantalla.'
                 : 'Programado (inexacto: puede tardar unos minutos). Cierra la app y apaga la pantalla.');
       }
-    } on Object {
-      if (mounted) showSnack(context, 'No se pudo programar');
+    } on Object catch (e) {
+      if (mounted) showSnack(context, 'No se pudo programar: ${describeNotificationError(e)}');
     }
   }
 
@@ -386,4 +389,13 @@ String remindersSummary(List<ReminderRow> rows) {
     ..sort((a, b) => (a.hour! * 60 + a.minute).compareTo(b.hour! * 60 + b.minute));
   if (next.isEmpty) return '$active activos';
   return '$active activos · primero ${timeKey(next.first.hour!, next.first.minute)}';
+}
+
+/// Texto corto y útil para el error de una notificación.
+String describeNotificationError(Object e) {
+  if (e is PlatformException) {
+    if (e.code == 'invalid_icon') return 'falta el ícono de la notificación en esta versión (reporta el fallo)';
+    return '${e.code}${e.message == null ? '' : ': ${e.message}'}';
+  }
+  return '$e';
 }

@@ -76,6 +76,8 @@ android {
     buildTypes {
         release {
             signingConfig = hasKeystore ? signingConfigs.release : signingConfigs.debug
+            // Reglas propias además de las de Flutter: ver proguard-rules.pro.
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 }

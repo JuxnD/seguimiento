@@ -54,6 +54,10 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   ([ADR 0007](../adr/0007-pasos-por-health-connect-nativo.md)). También se
   anotan a mano; se queda la cifra mayor. La meta (7.500) es solo entre
   semana.
+- El emulador se prueba con APK debug, que no recorta recursos: lo que toque
+  avisos o recursos pedidos por nombre se verifica **con un APK release**
+  (de la 1.8.0 a la 1.9.0 los avisos no salían por eso; ver
+  notificaciones.md).
 - Las figuras de técnica se generan con `python tool/figuras.py` (fuente
   única) en `assets/tecnica/figuras.json`; no se editan a mano.
 - Las entradas libres se guardan solas en el catálogo (`origin =

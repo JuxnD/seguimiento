@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- El release recorta los recursos que no ve referenciados. El ícono de las
+     notificaciones se pide por nombre (flutter_local_notifications), así que
+     sin esto desaparece y ningún aviso sale (pasó de la 1.8.0 a la 1.9.0). -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_seguimiento" />
