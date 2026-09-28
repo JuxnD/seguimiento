@@ -10,7 +10,7 @@ Meta: una comida arbitraria en pocos toques, con la app sumando sola.
 | **Combo ajustado** | Mantener presionado el combo → *Ajustar cantidades* | Hoy fueron 3 huevos en vez de 4 |
 | **Repetir de ayer** | Comidas → Atajos → *Repetir de ayer* | Copia una comida del día anterior con la hora de ahora |
 | **Armar** | Botón *Comida* | Buscar alimentos, sumar varios; total en vivo |
-| **Entrada libre** | Dentro del formulario, icono de lápiz | Restaurante o domicilio: kcal y proteína a ojo, marcadas como *estimado* |
+| **Entrada libre** | Dentro del formulario, icono de lápiz | Restaurante o domicilio: kcal y proteína a ojo, marcadas como *estimado*. Se guarda sola en el catálogo |
 
 Dentro del formulario:
 
@@ -21,7 +21,32 @@ Dentro del formulario:
   la comida con su cantidad.
 - **Guardar como combo** (icono de marcador): los alimentos del catálogo de la
   comida quedan como combo de un toque. Si el nombre ya existe, se reemplaza.
-  Las entradas libres no entran, porque un combo es una receta del catálogo.
+  Las entradas libres ya guardadas en el catálogo entran; las de "solo esta
+  vez", no.
+- **Porción** ×0,5 · ×1 · ×1,5 · ×2 en la entrada libre y al elegir la
+  cantidad de cualquier alimento: "comí muchas pastas" es ×1,5, no un alimento
+  nuevo.
+
+## Entradas libres que se quedan
+
+Desde el 27 sep 2026 toda entrada libre se guarda en el catálogo como
+alimento **personalizado** de una porción (`origin = entradaLibre`, fuente
+*estimado*), para no volver a digitar el almuerzo corriente o el mondongo.
+
+- **Autocompletar**: al escribir en "Qué comiste" (2 letras o más) salen
+  hasta 6 coincidencias, sin importar tildes ni orden de las palabras:
+  favoritos primero, luego lo personalizado y al final lo sembrado; dentro de
+  cada grupo, lo más usado en 30 días. Elegir una rellena las cuatro cifras de
+  una porción.
+- **Sin duplicados**: el nombre se compara sin mayúsculas, tildes ni espacios
+  de sobra. Si ya existe con las mismas cifras (±0,5), se usa ese alimento. Si
+  existe con otras, pregunta: *Actualizar* (reescribe las cifras), *Guardar
+  como nuevo* ("Pasta (2)") o *Solo esta vez* (no toca el catálogo).
+- **En el informe sigue siendo estimado**: un alimento a ojo guardado no se
+  vuelve "referencia"; cuenta en la procedencia como entrada libre.
+- **Gestión** en Comidas → Catálogo: filtro *Personalizados* y *Favoritos*,
+  estrella para marcar, y menú con *Editar o renombrar*, *Usar como combo* y
+  *Borrar*.
 
 ## Día cerrado
 

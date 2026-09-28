@@ -20,7 +20,10 @@ Para ver una salida completa con datos de ejemplo:
    si el rango no ha terminado: `1/3 (quedan 2 en el plan)`), fútbol, récord de rondas frente
    al anterior, rondas contra la semana anterior, proteína y kcal promedio
    (solo **días cerrados**, con Δ contra la semana anterior), días bajo el piso,
-   peso promedio y Δ contra la línea base.
+   **pasos** (promedio de los días anotados, Δ contra la semana anterior, y
+   entre semana contra la meta con los días que la cumplieron), sesiones de
+   **movilidad** (opcionales, aparte: no cuentan como sesiones), peso promedio
+   y Δ contra la línea base.
 3. **Sesiones** — tabla (día, tipo, total, cal/enf, descanso, neto, rondas, RPE, series
    partidas, contexto) y detalle por sesión con **trabajo por ronda** (media
    y R1→Rn, el indicador de degradación), descansos entre rondas, series (con
@@ -30,7 +33,8 @@ Para ver una salida completa con datos de ejemplo:
    tipo se marca `⚠ fuera de plan` cuando no era lo que tocaba.
 4. **Volumen por ejercicio** — repeticiones de la semana por ejercicio y Δ
    contra la semana anterior.
-5. **Fútbol** — tabla aparte; el fútbol no es una sesión de circuito.
+5. **Fútbol** — tabla aparte (con golpe o molestia); el fútbol no es una sesión
+   de circuito. Hoy y la racha sí lo cuentan como día entrenado.
 6. **Nutrición** — kcal y proteína por comida y día (los días sin cerrar se
    marcan "(incompleto)"), promedio de macros de los días cerrados y detalle de
    qué se comió.

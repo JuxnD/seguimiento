@@ -14,6 +14,7 @@ los vuelve a calcular cada vez que cambia algo que los afecta.
 | Calorías | 8:00 p. m., solo si vas por debajo del umbral (1.800 kcal) | "Calorías: 1200 kcal — Faltan 1200 kcal para la meta de 2400" |
 | Comidas sin registrar | 10:00 p. m., si falta desayuno, almuerzo o cena y el día no se cerró a mano | "Falta registrar: desayuno y cena" |
 | Medición | La fecha acordada, o última toma + intervalo, a las 7:00 a. m. | En ayunas, antes de desayunar |
+| Pasos del día | 6:00 p. m., **solo entre semana**, si van menos de 4.000 o no se anotaron | "Pasos: 1.935 — Faltan 5.565 para 7.500" o "Pasos: sin anotar hoy" |
 | Fin del descanso | Al terminar la cuenta regresiva de la sesión | Qué viene después; suena y vibra con la app en segundo plano |
 
 Esos son los valores acordados con el usuario el 26 sep 2026; la 1.8.1 los

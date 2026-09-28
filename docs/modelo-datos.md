@@ -54,7 +54,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **9**. Al cambiar una tabla:
+`schemaVersion` vale **10**. Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -73,10 +73,11 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 7 | `sessions.rest_sec`: descansos sumados, aparte del trabajo neto (0 en sesiones anteriores) |
 | 8 | Ronda con trabajo y descanso; serie con carga; ejercicio con claves de técnica, enlace, progresión y carga; tabla `closed_days`. La migración también completa las guías de los ejercicios existentes y añade al catálogo el almuerzo corriente, el peto y el salchichón ([`catalog_updates.dart`](../lib/data/catalog_updates.dart)) sin pisar lo del usuario |
 | 9 | Solo datos: los recordatorios vuelven **una vez** a los valores acordados el 26 sep 2026 (se borran las filas y el arranque las recrea). Restaurar un respaldo también recrea las que falten |
+| 10 | Tabla `daily_steps` (pasos por día, uno por fecha, con `source`); `profiles.steps_target` (7.500); `football_games.knock` (golpe o molestia); `foods.origin` (`semilla` / `usuario` / `entradaLibre`) y `foods.favorite`; fuente `estimado` en `MacroSource`. La migración marca como `semilla` lo que coincide por nombre con la siembra, y el paso 10 (no el 8) añade al catálogo los alimentos nuevos: sus filas ya llevan columnas que en el 8 no existen |
 
-Los saltos 1 → 9, 2 → 9, 6 → 9, 7 → 9 y 8 → 9 están cubiertos por
+Los saltos 1 → 10, 2 → 10, 6 → 10, 7 → 10, 8 → 10 y 9 → 10 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-vieja con datos se abre, conserva lo registrado y queda en `user_version = 9`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 10`.
 El 6 → 8 se verificó además en el emulador (Android 15) con la base de la 1.6.1.
 
 **Récord de rondas.** Una sola definición en

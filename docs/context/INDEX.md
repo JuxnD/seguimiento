@@ -49,6 +49,13 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 - El plan que se siembra en la primera apertura está en `lib/data/seed_plan.dart`
   (dos versiones: base y la que añade bloques de core, cuádriceps y hombro).
   Editarlo desde la app crea versiones nuevas; la siembra no vuelve a correr.
+- Los pasos se anotan a mano (leídos del reloj SW/46 o del teléfono): uno por
+  día, y anotar otra vez reemplaza. La meta (7.500) es solo entre semana.
+  Health Connect no está integrado; queda pendiente comprobar si la app del
+  reloj escribe ahí.
+- Las entradas libres se guardan solas en el catálogo (`origin =
+  entradaLibre`). Un alimento "a ojo" sigue contando como estimado en el
+  informe aunque ya esté en el catálogo.
 - El informe de ejemplo (`docs/ejemplo-informe.md`) no se versiona: se genera en
   local con `dart run tool/sample_report.dart`.
 
@@ -62,6 +69,10 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   (degradación).
 - **Día cerrado**: con desayuno, almuerzo y cena, o cerrado a mano. Solo esos
   entran a promedios y alertas de nutrición.
+- **Movilidad**: sesión opcional fuera del plan. No cuenta para adherencia,
+  racha, récords ni RPE; el informe la muestra aparte.
+- **Día entrenado** (Hoy y racha): con una sesión que no sea de movilidad, o
+  con un partido de fútbol.
 - **Ronda**: vuelta completa al circuito. **Vuelta/marca**: tiempo de una ronda
   registrado con el contador.
 - **Serie partida**: serie que no se completó de corrido (12+3).

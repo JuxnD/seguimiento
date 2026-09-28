@@ -106,6 +106,21 @@ si no, la misma meta y qué criterio falló. Una condición sin registrar no
 cuenta como cumplida. La app no cambia la meta sola: "Usar N" la pone en el
 campo.
 
+## Movilidad nocturna (opcional)
+
+Desde Hoy o Entreno, *Movilidad nocturna · opcional*. Rutina fija de
+[`lib/domain/mobility.dart`](../lib/domain/mobility.dart): flexor de cadera
+(45 s por lado), 90/90 de cadera, rotación torácica y tobillo contra la pared
+(repeticiones por lado) y colgado pasivo (2 × 25 s). Unos 6–10 min.
+
+- Lo que va por tiempo da 5 s para colocarse, cuenta solo y al acabar suena,
+  vibra y pasa al siguiente. Lo que va por repeticiones se marca *Hecho*.
+- Las claves de técnica y el paso siguiente están siempre a la vista.
+- *Terminar* cierra antes; *Guardar* la registra como sesión **Movilidad**:
+  sin RPE, sin validaciones del plan, y fuera de adherencia, racha, récords,
+  avisos de sesión y alertas. El informe la muestra aparte.
+- No se retoma si Android cierra la app: es corta y no hay nada que perder.
+
 ## Sin plan para hoy
 
 Si el día no tiene ejercicios planificados, la app ofrece el **cronómetro
