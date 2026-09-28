@@ -96,5 +96,25 @@ void main() {
       expect(await repo.watch('Sentadilla búlgara').first, isNull);
       expect(ExercisePhotoRepository.fileIn(dir, row2).existsSync(), isFalse);
     });
+
+    test('una ruta fuera de la carpeta de fotos no se borra', () async {
+      final dir = Directory.systemTemp.createTempSync('seguimiento_foto_fuera');
+      addTearDown(() {
+        try {
+          dir.deleteSync(recursive: true);
+        } on FileSystemException {
+          // Windows puede tener el archivo tomado.
+        }
+      });
+      final db = openInMemoryDatabase();
+      addTearDown(db.close);
+      final victim = File('${dir.path}/seguimiento.sqlite')..writeAsBytesSync([9]);
+      await db.into(db.exercisePhotos).insert(
+            ExercisePhotosCompanion.insert(nameKey: 'flexiones', relativePath: '../seguimiento.sqlite'),
+          );
+      await ExercisePhotoRepository(db, () async => Directory('${dir.path}/app')).remove('Flexiones');
+      expect(victim.existsSync(), isTrue);
+      expect(await db.select(db.exercisePhotos).get(), isEmpty);
+    });
   });
 }

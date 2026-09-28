@@ -52,8 +52,12 @@ class ExercisePhotoRepository {
   static File fileIn(Directory base, ExercisePhotoRow row) => File(p.join(base.path, row.relativePath));
 
   void _deleteFile(Directory base, String relative) {
+    // La ruta sale de la base, que puede venir de un respaldo restaurado:
+    // solo se borra lo que está dentro de la carpeta de fotos de ejercicios.
+    final full = p.normalize(p.join(base.path, relative));
+    if (!p.isWithin(p.join(base.path, folder), full)) return;
     try {
-      final f = File(p.join(base.path, relative));
+      final f = File(full);
       if (f.existsSync()) f.deleteSync();
     } on FileSystemException {
       // Un archivo huérfano no rompe nada.
