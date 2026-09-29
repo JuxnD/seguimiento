@@ -25,7 +25,8 @@ o compileSdk 35, y `pub` puede resolverlos aunque luego no compilen.
   contrato solo funciona desde un `ComponentActivity` y `FlutterActivity` no lo
   es: por eso la bifurcación.
 - La sincronización es opt-in (*Ajustes → Pasos del reloj → Conectar*), corre
-  al abrir la app y al volver de segundo plano, trae 14 días y escribe en
+  al abrir la app, al volver de segundo plano, **cada 2 min mientras la app
+  está abierta** y al deslizar Hoy hacia abajo (desde la 1.10.0); trae 14 días y escribe en
   `daily_steps` con `source = health_connect`. Regla de fusión en
   `mergeSyncedSteps`: día vacío toma lo sincronizado; día que ya venía de
   Health Connect se actualiza; día anotado a mano solo cambia si lo
@@ -34,7 +35,12 @@ o compileSdk 35, y `pub` puede resolverlos aunque luego no compilen.
 ## Consecuencias
 
 - No hay sincronización en segundo plano: si la app no se abre, los pasos
-  llegan la próxima vez que se abra (el informe los tendrá igual).
+  llegan la próxima vez que se abra (el informe los tendrá igual). Leer en
+  segundo plano exige el permiso `READ_HEALTH_DATA_IN_BACKGROUND` y un
+  trabajo de Android propio; queda pendiente.
+- Los pasos solo llegan cuando la app del reloj (Innova) sincroniza con
+  Health Connect: si Innova no escribió, no hay nada nuevo que traer. Hoy
+  muestra "Pasos del reloj · actualizado HH:mm" para distinguirlo.
 - Health Connect deduplica entre fuentes con la prioridad que el usuario fije
   en él; si el teléfono también cuenta pasos, la cifra es la que Health
   Connect considera buena, no la suma.

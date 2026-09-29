@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,6 +46,16 @@ class HomeShell extends ConsumerStatefulWidget {
 class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserver {
   int _index = 0;
 
+  /// Mientras la app está abierta, los pasos del reloj se traen solos cada
+  /// tanto: Innova los escribe en Health Connect cuando sincroniza.
+  Timer? _stepsTimer;
+  static const _stepsEvery = Duration(minutes: 2);
+
+  void _startStepsTimer() {
+    _stepsTimer?.cancel();
+    _stepsTimer = Timer.periodic(_stepsEvery, (_) => ref.read(syncStepsProvider)());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,11 +64,13 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
       _askNotificationsOnce();
       _autoBackup();
       ref.read(syncStepsProvider)();
+      _startStepsTimer();
     });
   }
 
   @override
   void dispose() {
+    _stepsTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -69,6 +83,11 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
       ref.read(todayProvider.notifier).refresh();
       // Los pasos del reloj llegan a Health Connect mientras la app duerme.
       ref.read(syncStepsProvider)();
+      _startStepsTimer();
+    } else if (state == AppLifecycleState.paused) {
+      // En segundo plano no: Android no deja leer Health Connect sin permiso
+      // de fondo, y gastaría batería para nada.
+      _stepsTimer?.cancel();
     }
   }
 
@@ -113,9 +132,7 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
         destinations: const [
           NavigationDestination(icon: Icon(Icons.today_outlined), selectedIcon: Icon(Icons.today), label: 'Hoy'),
           NavigationDestination(
-              icon: Icon(Icons.fitness_center_outlined),
-              selectedIcon: Icon(Icons.fitness_center),
-              label: 'Entreno'),
+              icon: Icon(Icons.fitness_center_outlined), selectedIcon: Icon(Icons.fitness_center), label: 'Entreno'),
           NavigationDestination(
               icon: Icon(Icons.restaurant_outlined), selectedIcon: Icon(Icons.restaurant), label: 'Comidas'),
           NavigationDestination(

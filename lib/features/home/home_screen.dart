@@ -46,19 +46,28 @@ class HomeScreen extends ConsumerWidget {
       body: dashboard.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
-        data: (d) => ListView(
-          padding: const EdgeInsets.only(bottom: 24),
-          children: [
-            const ActiveSessionBanner(),
-            UpdateBanner(
-              onOpenSettings: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
-            ),
-            _PlanHero(dashboard: d),
-            _RingsCard(dashboard: d),
-            const TodayCustomRemindersCard(),
-            _ActionsCard(date: today, dayType: d.dayType, suggestLight: d.hardFootballYesterday != null),
-            if (d.measurement != null) _MeasurementCard(due: d.measurement!),
-          ],
+        data: (d) => RefreshIndicator(
+          // Deslizar hacia abajo trae los pasos del reloj al instante.
+          onRefresh: () async {
+            await ref.read(syncStepsProvider)();
+            ref.invalidate(dashboardProvider);
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 24),
+            children: [
+              const ActiveSessionBanner(),
+              UpdateBanner(
+                onOpenSettings: () =>
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+              ),
+              _PlanHero(dashboard: d),
+              _RingsCard(dashboard: d),
+              const TodayCustomRemindersCard(),
+              _ActionsCard(date: today, dayType: d.dayType, suggestLight: d.hardFootballYesterday != null),
+              if (d.measurement != null) _MeasurementCard(due: d.measurement!),
+            ],
+          ),
         ),
       ),
     );
@@ -254,7 +263,40 @@ class _RingsCard extends StatelessWidget {
           ),
           if (d.recordSuspect != null) _RecordSuspectTile(suspect: d.recordSuspect!),
         ],
+        const _StepsSourceLine(),
       ],
+    );
+  }
+}
+
+/// "Pasos del reloj · actualizado 16:42": que se vea que se traen solos y
+/// cuándo fue la última vez. Nada si Health Connect no está conectado.
+class _StepsSourceLine extends ConsumerWidget {
+  const _StepsSourceLine();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final info = ref.watch(stepsSyncInfoProvider);
+    if (!info.enabled) return const SizedBox.shrink();
+    final last = info.lastSync;
+    final today = dateOnly(DateTime.now());
+    final when = last == null
+        ? 'aún sin traer'
+        : dateOnly(last) == today
+            ? 'actualizado ${timeKey(last.hour, last.minute)}'
+            : 'actualizado el ${weekdayShort(last.weekday)} ${formatShort(last)}';
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Row(
+        children: [
+          const Icon(Icons.watch_outlined, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text('Pasos del reloj · $when · desliza hacia abajo para traerlos ya',
+                style: Theme.of(context).textTheme.bodySmall),
+          ),
+        ],
+      ),
     );
   }
 }

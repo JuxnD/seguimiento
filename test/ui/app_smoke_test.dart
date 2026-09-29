@@ -12,6 +12,8 @@ import 'package:seguimiento/data/auto_backup.dart';
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/local_flags.dart';
+import 'package:seguimiento/data/repositories/steps_repository.dart';
+import 'package:seguimiento/data/health_connect.dart';
 import 'package:seguimiento/data/notification_service.dart';
 import 'package:seguimiento/data/repositories/custom_reminder_repository.dart';
 import 'package:seguimiento/data/repositories/nutrition_repository.dart';
@@ -84,7 +86,7 @@ void main() {
     }
   }
 
-  Future<void> pumpApp(WidgetTester tester) async {
+  Future<void> pumpApp(WidgetTester tester, {List<Override> extra = const []}) async {
     // Pantalla alta (las listas solo construyen lo visible) y ancha: la fuente
     // de prueba dibuja cada letra como un cuadrado, así que a ancho de
     // teléfono daría desbordes que con la fuente real no existen.
@@ -111,6 +113,7 @@ void main() {
         autoBackupProvider.overrideWith(
           (ref) => AutoBackup(host: host, flags: flags, dir: Directory('${dir.path}/respaldos')),
         ),
+        ...extra,
       ],
       child: const SeguimientoApp(),
     ));
@@ -125,6 +128,25 @@ void main() {
     await db.close();
     await tester.pump(const Duration(milliseconds: 10));
   }
+
+  testWidgets('los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo', (tester) async {
+    final sync = _CountingSync(db);
+    await pumpApp(tester, extra: [stepsSyncProvider.overrideWithValue(sync)]);
+    expect(sync.runs, 1, reason: 'al abrir la app');
+    expect(find.textContaining('Pasos del reloj · actualizado'), findsOneWidget);
+
+    await tester.pump(const Duration(minutes: 2));
+    await settle(tester);
+    expect(sync.runs, 2, reason: 'a los 2 minutos, sin tocar nada');
+
+    // El umbral del gesto es proporcional al alto de la vista (6000 px aquí).
+    await tester.drag(find.byType(RefreshIndicator).first, const Offset(0, 2500));
+    for (var i = 0; i < 20; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(sync.runs, 3, reason: 'deslizar hacia abajo');
+    await disposeApp(tester);
+  });
 
   testWidgets('un recordatorio propio que toca hoy sale en Hoy y se marca hecho', (tester) async {
     await CustomReminderRepository(db).save(
@@ -209,4 +231,24 @@ void main() {
     expect(find.text('Copias automáticas'), findsOneWidget);
     await disposeApp(tester);
   });
+}
+
+/// StepsSync que solo cuenta cuántas veces corrió.
+class _CountingSync extends StepsSync {
+  _CountingSync(AppDatabase db)
+      : super(health: const HealthConnect(), steps: StepsRepository(db), flags: LocalFlags(File('no-se-usa.json')));
+
+  int runs = 0;
+
+  @override
+  bool get enabled => true;
+
+  @override
+  DateTime? get lastSync => DateTime.now();
+
+  @override
+  Future<StepsSyncResult> run({int days = 14, DateTime? now}) async {
+    runs++;
+    return const StepsSyncResult(StepsSyncOutcome.hecho);
+  }
 }

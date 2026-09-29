@@ -83,10 +83,18 @@ final stepsSyncProvider = Provider((ref) => StepsSync(
     ));
 
 /// Sincroniza los pasos si Health Connect está conectado. Una sola a la vez;
-/// nunca lanza.
+/// nunca lanza. Corre al abrir la app, al volver a ella, cada 2 min mientras
+/// está abierta y al deslizar hacia abajo en Hoy.
 final syncStepsProvider = Provider<Future<void> Function()>((ref) => coalesce(() async {
       await ref.read(stepsSyncProvider).run();
+      ref.invalidate(stepsSyncInfoProvider);
     }));
+
+/// Si los pasos vienen del reloj y cuándo se trajeron por última vez.
+final stepsSyncInfoProvider = Provider<({bool enabled, DateTime? lastSync})>((ref) {
+  final sync = ref.watch(stepsSyncProvider);
+  return (enabled: sync.enabled, lastSync: sync.lastSync);
+});
 final reportRepositoryProvider =
     Provider((ref) => ReportRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));
 
