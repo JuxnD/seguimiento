@@ -84,7 +84,7 @@ void main() {
         fullRange: true,
         recoveryOk: true,
       )!;
-      expect(p.rounds, 7);
+      expect(p.rounds, 8, reason: 'se mantiene la meta intentada, no lo que alcanzó (§16.9)');
       expect(p.unmet.single, 'no completó la meta de 8');
     });
   });

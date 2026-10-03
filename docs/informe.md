@@ -38,6 +38,20 @@ mismo `ReportInput` del informe; pruebas en
 El Markdown suma dos líneas al *Resumen*: movimiento (tiempo activo, pasos,
 km) y gasto aproximado por actividad.
 
+## Semana y comparaciones (§16.8, 1.13.0)
+
+- La semana del programa va de **lunes a domingo** (la 1 empieza el lunes de
+  la semana del inicio).
+- "Sesiones: 1/5 (quedan 4)": hoy cuenta como pendiente solo si no se
+  entrenó.
+- Las rondas se comparan **por tipo** de sesión.
+- En la semana en curso, el volumen se compara con los mismos días de la
+  semana anterior ("Anterior, mismo punto").
+- Rondas tras un descanso de 0:00 salen con ⚠, fuera de la media (§16.9).
+- Medidas: la línea base es la primera toma en ayunas; contra otras
+  condiciones el delta dice "condiciones distintas". Índice hombros ÷
+  cintura al final de la sección (§16.10).
+
 ## Secciones
 
 1. **Encabezado** — rango, número de semana desde el inicio y versión(es) del

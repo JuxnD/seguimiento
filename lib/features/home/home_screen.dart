@@ -234,7 +234,7 @@ class _PendingReviewCard extends ConsumerWidget {
                         Text(
                           [
                             '${s.type.label} ${weekdayShort(parseDay(s.date).weekday)} ${formatShort(parseDay(s.date))}',
-                            if (s.roundsDone != null) '${s.roundsDone} rondas',
+                            if (s.roundsDone case final n?) '$n ${n == 1 ? 'ronda' : 'rondas'}',
                             'falta RPE',
                           ].join(' · '),
                           style: text.bodySmall,
@@ -270,8 +270,8 @@ class _CorrectionsBanner extends ConsumerWidget {
     return AppCard(
       title: 'Correcciones del traspaso',
       children: [
-        Text('$pending ${pending == 1 ? 'registro' : 'registros'} de sesiones y comidas para corregir según el '
-            'traspaso (la sesión de 9 rondas del 2 oct, RPE, plancha, salchichón, tipos de comida, días cerrados, un duplicado).'),
+        Text('$pending ${pending == 1 ? 'corrección' : 'correcciones'} del traspaso por aplicar '
+            '(sesiones, comidas y medidas). Revísalas antes: solo se toca lo que coincide exacto.'),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -384,7 +384,7 @@ class _ProposalLine extends ConsumerWidget {
           Text(
             p.canProgress
                 ? 'Toca intentar ${p.rounds}: $last (${p.lastRounds}) cumplió la regla.'
-                : 'Se mantiene en ${p.rounds}: $last no cumplió ${p.unmet.join(', ')}.',
+                : 'Se mantiene en ${p.rounds} ($last: ${p.unmet.join(', ')}).',
             style: text.bodyMedium?.copyWith(color: p.canProgress ? color : null),
           ),
           if (missing && p.sessionId != null)

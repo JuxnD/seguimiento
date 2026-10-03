@@ -361,7 +361,7 @@ class _ProposalCard extends StatelessWidget {
           Text(
             p.canProgress
                 ? '$when (${p.lastRounds}) cumplió los 5 criterios de la regla.'
-                : '$when (${p.lastRounds}) no cumplió: ${p.unmet.join(', ')}.',
+                : '$when (${p.lastRounds}): ${p.unmet.join(', ')}.',
             style: text.bodySmall,
           ),
           Wrap(

@@ -90,10 +90,17 @@ ya contó el tiempo que la app estuvo cerrada (todo son marcas de reloj) y un
 descanso en curso vuelve a programar su aviso. El cronómetro libre funciona
 igual. La foto se borra al guardar o descartar la sesión.
 
-Si el cronómetro terminó pero se sale del formulario sin guardar, la foto se
-queda y Hoy muestra **"Sesión terminada sin guardar"** con Guardar (abre el
-cierre del cronómetro) y Descartar. Hasta la 1.10.0 la foto se borraba igual
-y la sesión se perdía (§16.9).
+Al terminar el enfriamiento la sesión **se guarda sola** como "sin revisar"
+(`sessions.pending_review`, esquema 14): cuenta en Hoy y en el informe desde
+ese momento, Hoy muestra la tarjeta **"Sesión sin revisar · falta RPE"** con
+Revisar, y una hora después llega el aviso "Te falta guardar la sesión de
+hoy". "Revisar y guardar" abre el formulario de esa misma sesión; guardarlo
+la marca como revisada. "Borrar sesión" en el resumen la elimina (con
+confirmación). La sesión récord del 2 oct se perdió así en la 1.10/1.11
+(§16.9); se recupera desde *Ajustes › Correcciones del traspaso*.
+
+Si no se pudo guardar en la base, queda la foto en disco y Hoy la ofrece como
+"Sesión terminada sin guardar".
 
 ## Toques accidentales
 
@@ -102,6 +109,12 @@ ronda y saltaba el descanso en 0:00; el descanso que de todos modos se tomaba
 quedaba dentro del trabajo de la ronda siguiente (§16.9). Desde la 1.11.0 el
 cronómetro ignora "Hecho" durante 0,8 s tras cambiar de paso, y "Saltar
 descanso" se habilita a los 3 s del descanso.
+
+Si aun así un descanso queda en menos de 5 s y la ronda siguiente dura más de
+1,4 veces la mediana, esa ronda se marca con ⚠: el formulario propone "Pasar
+30 s al descanso" (o lo que sobre sobre la mediana) y tiene *Corregir
+descansos* para editarlos a mano; el total no cambia y en el contexto queda
+la lista original. El informe deja esa ronda fuera de la media y del R1→Rn.
 
 ## Fin del descanso
 
@@ -151,6 +164,9 @@ ronda más si la última sesión de progresión completó su meta sin series
 partidas, sin fallo, con técnica buena, rango completo y recuperación normal;
 si no, la misma meta y qué criterio falló. Una condición sin registrar no
 cuenta como cumplida.
+
+Si la regla no deja subir, se mantiene la **meta intentada**, no lo que se
+alcanzó: una progresión cortada en la ronda 1 de 8 deja la meta en 8.
 
 La propuesta es la meta por defecto del campo de rondas y la de Hoy (anillo y
 "Meta: N rondas"); el número fijo del plan ya no manda ese día. Hasta la

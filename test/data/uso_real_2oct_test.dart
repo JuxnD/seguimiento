@@ -85,5 +85,13 @@ void main() {
       final monday = await dashboard.today(now: d(9, 28));
       expect(monday.proposal, isNull);
     });
+
+    test('una progresión cortada en la ronda 1 de 8 no baja la meta a 1', () async {
+      final id = await training
+          .save(SessionDraft(date: d(10, 2), type: SessionType.progresion, roundsDone: 1, plannedRounds: 8, incomplete: true));
+      await training.setProgressionCriteria(id, techniqueOk: true, fullRange: true, recoveryOk: true);
+      final friday = await dashboard.today(now: d(10, 9));
+      expect(friday.targetRounds, 8);
+    });
   });
 }

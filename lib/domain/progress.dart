@@ -267,8 +267,11 @@ ProgressionProposal? proposeProgression({
     if (anyFailure) 'fallo temprano',
     if (recoveryOk != true) check(recoveryOk, 'recuperación'),
   ];
+  // Si no se puede subir, se mantiene la meta que se intentó: una
+  // progresión cortada en la ronda 1 de 8 no baja la meta a 1.
+  final keep = lastPlanned != null && lastPlanned > lastRounds ? lastPlanned : lastRounds;
   return ProgressionProposal(
-    rounds: unmet.isEmpty ? lastRounds + 1 : lastRounds,
+    rounds: unmet.isEmpty ? lastRounds + 1 : keep,
     lastRounds: lastRounds,
     lastDate: lastDate,
     unmet: unmet,
