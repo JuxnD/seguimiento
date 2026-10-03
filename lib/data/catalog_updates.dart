@@ -114,7 +114,7 @@ const addedFoodNames = [
   'Almuerzo corriente (arroz + grano + carne + jugo)',
   'Peto sin maíz (vaso)',
   'Salchichón de pollo',
-  'Pan Mipan (unidad 60 g)',
+  'Pan Mipan',
   'Avena bebida (vaso 350 g)',
   'Sopa de mondongo + arroz',
   'Pasta con queso y salchicha (plato grande)',
@@ -137,6 +137,46 @@ Future<void> addMissingCatalog(AppDatabase db) async {
     if (templates.contains(name)) continue;
     await insertTemplate(db, name, slot, items, idsByName, position: position++);
   }
+}
+
+/// Pan por unidad que pasa a pesarse: nombre → gramos de una unidad.
+const _breadByUnit = {'Pan (unidad)': 75.0, 'Pan Mipan (unidad 60 g)': 60.0};
+
+/// Pan y salchichón por gramos (traspaso §16.3 y §17, 29 sep 2026). El pan
+/// por unidad (50 g de referencia, o la unidad Mipan de 60 g) se reemplaza
+/// por "Pan Mipan" por 100 g de etiqueta; los combos que lo usaban pasan a
+/// gramos (1 unidad → 75 g o 60 g) y las comidas ya registradas conservan sus
+/// macros (solo pierden el vínculo con el alimento borrado). El salchichón
+/// propone una rodaja (22 g) en vez de 100 g. Idempotente.
+Future<void> applyGramsCatalog(AppDatabase db) async {
+  final mipan = initialFoods.firstWhere((f) => f.name == 'Pan Mipan');
+  var mipanId = (await (db.select(db.foods)..where((t) => t.name.equals(mipan.name))).getSingleOrNull())?.id;
+  mipanId ??= await db.into(db.foods).insert(mipan.toCompanion());
+
+  for (final MapEntry(key: name, value: grams) in _breadByUnit.entries) {
+    final old = await (db.select(db.foods)..where((t) => t.name.equals(name) & t.basis.equalsValue(FoodBasis.unit)))
+        .getSingleOrNull();
+    if (old == null) continue;
+    for (final item in await (db.select(db.mealTemplateItems)..where((t) => t.foodId.equals(old.id))).get()) {
+      await (db.update(db.mealTemplateItems)..where((t) => t.id.equals(item.id))).write(MealTemplateItemsCompanion(
+        foodId: Value(mipanId),
+        quantity: Value(item.quantity * grams),
+      ));
+    }
+    await (db.update(db.mealItems)..where((t) => t.foodId.equals(old.id)))
+        .write(const MealItemsCompanion(foodId: Value(null)));
+    if (old.favorite) {
+      await (db.update(db.foods)..where((t) => t.id.equals(mipanId!))).write(const FoodsCompanion(favorite: Value(true)));
+    }
+    await (db.delete(db.foods)..where((t) => t.id.equals(old.id))).go();
+  }
+
+  await (db.update(db.foods)
+        ..where((t) =>
+            t.name.equals('Salchichón de pollo') &
+            t.basis.equalsValue(FoodBasis.per100) &
+            t.defaultQuantity.equals(100)))
+      .write(const FoodsCompanion(defaultQuantity: Value(22)));
 }
 
 /// Crea un combo con sus alimentos (por nombre). Los que no existan se omiten.

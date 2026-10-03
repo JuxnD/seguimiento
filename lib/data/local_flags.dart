@@ -57,4 +57,8 @@ abstract final class FlagKeys {
   /// El usuario conectó Health Connect en Ajustes: los pasos se sincronizan.
   static const healthConnectEnabled = 'healthConnectEnabled';
   static const lastStepsSync = 'lastStepsSync';
+
+  /// El usuario decidió no aplicar las correcciones del 29 sep: Hoy deja de
+  /// ofrecerlas (siguen en Ajustes).
+  static const corrections29SepDismissed = 'corrections29SepDismissed';
 }

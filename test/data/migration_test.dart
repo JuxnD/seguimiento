@@ -85,8 +85,15 @@ void main() {
   Future<void> buildOldSchema(int version, {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
-    if (version >= 12) {
+    if (version >= 13) {
       await rows?.call(db);
+      await db.close();
+      return;
+    }
+    if (version >= 12) {
+      // El 13 solo cambia datos: basta con marcar la versión.
+      await rows?.call(db);
+      await db.customStatement('pragma user_version = $version');
       await db.close();
       return;
     }
@@ -169,7 +176,7 @@ void main() {
   Future<int> userVersion(AppDatabase db) =>
       db.customSelect('pragma user_version').map((r) => r.data.values.first as int).getSingle();
 
-  test('una base del esquema 1 llega al 12 sin perder datos', () async {
+  test('una base del esquema 1 llega al 13 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -199,7 +206,7 @@ void main() {
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -219,7 +226,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 12 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 13 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -231,11 +238,11 @@ void main() {
     final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
     await migrated.close();
   });
 
-  test('una base del esquema 7 llega al 12 con guías, catálogo nuevo y rondas sin separar', () async {
+  test('una base del esquema 7 llega al 13 con guías, catálogo nuevo y rondas sin separar', () async {
     await buildOldSchema(7, rows: (old) async {
       await old.customStatement("insert into exercises (name) values ('Pike push-up'), ('Sentadilla búlgara')");
       await old.customStatement(
@@ -246,7 +253,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
 
     final pike = await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Pike push-up'))).getSingle();
     expect(pike.formCues, startsWith('Posición de V invertida'));
@@ -277,7 +284,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
     final repo = ReminderRepository(migrated);
     await repo.ensureDefaults(); // lo que hace el arranque
     final settings = await repo.settings();
@@ -293,7 +300,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 6 llega al 12: las sesiones viejas quedan con descanso 0', () async {
+  test('una base del esquema 6 llega al 13: las sesiones viejas quedan con descanso 0', () async {
     await buildOldSchema(6);
     final old = AppDatabase(NativeDatabase(file));
     await old.customStatement(
@@ -304,11 +311,11 @@ void main() {
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.totalSec, 1200);
     expect(session.restSec, 0);
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
     await migrated.close();
   });
 
-  test('una base del esquema 9 llega al 12: pasos, golpe en el fútbol y alimentos marcados', () async {
+  test('una base del esquema 9 llega al 13: pasos, golpe en el fútbol y alimentos marcados', () async {
     await buildOldSchema(9, rows: (db) async {
       await db.customStatement(
           "insert into foods (name, basis, unit_label, kcal, protein) values ('Pan (unidad)', 'unit', 'unidad', 140, 4.5)");
@@ -319,10 +326,11 @@ void main() {
 
     final migrated = AppDatabase(NativeDatabase(file));
     final foods = {for (final f in await migrated.select(migrated.foods).get()) f.name: f};
-    expect(foods['Pan (unidad)']!.origin, FoodOrigin.semilla, reason: 'lo sembrado se reconoce por nombre');
     expect(foods['Arepa de huevo']!.origin, FoodOrigin.usuario, reason: 'lo demás lo creó el usuario');
-    expect(foods['Pan Mipan (unidad 60 g)']!.kcal, 199);
-    expect(foods['Pan Mipan (unidad 60 g)']!.source, MacroSource.etiqueta);
+    expect(foods.containsKey('Pan (unidad)'), isFalse, reason: 'el 13 lo pasa a Pan Mipan por gramos');
+    expect(foods['Pan Mipan']!.kcal, 331);
+    expect(foods['Pan Mipan']!.source, MacroSource.etiqueta);
+    expect(foods['Salchichón de pollo']!.defaultQuantity, 22);
     expect(foods['Sopa de mondongo + arroz']!.source, MacroSource.estimado);
 
     final game = await migrated.select(migrated.footballGames).getSingle();
@@ -332,23 +340,67 @@ void main() {
     final profile = await migrated.select(migrated.profiles).getSingle();
     expect(profile.stepsTarget, 7500);
     expect(await migrated.select(migrated.dailySteps).get(), isEmpty);
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
     await migrated.close();
   });
 
-  test('una base del esquema 10 llega al 12 con la tabla de fotos de referencia', () async {
+  test('una base del esquema 10 llega al 13 con la tabla de fotos de referencia', () async {
     await buildOldSchema(10);
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await migrated.select(migrated.exercisePhotos).get(), isEmpty);
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
     await migrated.close();
   });
 
-  test('una base del esquema 11 llega al 12 con la tabla de recordatorios propios', () async {
+  test('una base del esquema 11 llega al 13 con la tabla de recordatorios propios', () async {
     await buildOldSchema(11);
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await migrated.select(migrated.customReminders).get(), isEmpty);
-    expect(await userVersion(migrated), 12);
+    expect(await userVersion(migrated), 13);
+    await migrated.close();
+  });
+
+  test('una base del esquema 12 llega al 13: pan y salchichón por gramos', () async {
+    late int panId;
+    await buildOldSchema(12, rows: (db) async {
+      panId = await db.into(db.foods).insert(FoodsCompanion.insert(
+          name: 'Pan (unidad)', basis: FoodBasis.unit, kcal: 140, protein: 4.5, favorite: const Value(true)));
+      final mipan60 = await db.into(db.foods).insert(
+          FoodsCompanion.insert(name: 'Pan Mipan (unidad 60 g)', basis: FoodBasis.unit, kcal: 199, protein: 5.8));
+      await db.into(db.foods).insert(FoodsCompanion.insert(
+          name: 'Salchichón de pollo',
+          basis: FoodBasis.per100,
+          unitLabel: const Value('g'),
+          kcal: 200,
+          protein: 13,
+          defaultQuantity: const Value(100)));
+      final combo = await db.into(db.mealTemplates).insert(MealTemplatesCompanion.insert(name: 'Huevos con pan'));
+      await db.into(db.mealTemplateItems)
+          .insert(MealTemplateItemsCompanion.insert(templateId: combo, foodId: panId, quantity: 2));
+      await db.into(db.mealTemplateItems)
+          .insert(MealTemplateItemsCompanion.insert(templateId: combo, foodId: mipan60, quantity: 1));
+      final meal = await db.into(db.meals).insert(MealsCompanion.insert(date: '2026-09-28', slot: MealSlot.desayuno));
+      await db.into(db.mealItems).insert(MealItemsCompanion.insert(
+          mealId: meal, foodId: Value(panId), label: 'Pan (unidad)', quantity: const Value(1), kcal: 140, protein: 4.5));
+    });
+
+    final migrated = AppDatabase(NativeDatabase(file));
+    final foods = {for (final f in await migrated.select(migrated.foods).get()) f.name: f};
+    expect(foods.keys, isNot(contains('Pan (unidad)')));
+    expect(foods.keys, isNot(contains('Pan Mipan (unidad 60 g)')));
+    final mipan = foods['Pan Mipan']!;
+    expect((mipan.basis, mipan.kcal, mipan.protein, mipan.defaultQuantity), (FoodBasis.per100, 331, 9.6, 75));
+    expect(mipan.favorite, isTrue, reason: 'hereda la marca del pan que reemplaza');
+    expect(foods['Salchichón de pollo']!.defaultQuantity, 22);
+
+    final items = await migrated.select(migrated.mealTemplateItems).get();
+    expect(items.map((i) => (i.foodId, i.quantity)), [(mipan.id, 150), (mipan.id, 60)],
+        reason: '2 panes de 75 g y una unidad Mipan de 60 g');
+
+    final logged = await migrated.select(migrated.mealItems).getSingle();
+    expect((logged.label, logged.kcal), ('Pan (unidad)', 140), reason: 'lo ya comido no cambia');
+    expect(logged.foodId, isNull, reason: 'solo pierde el vínculo con el alimento borrado');
+    expect(await userVersion(migrated), 13);
     await migrated.close();
   });
 }

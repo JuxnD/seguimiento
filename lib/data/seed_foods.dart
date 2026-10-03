@@ -19,8 +19,9 @@ class SeedFood {
     this.protein,
     this.carbs,
     this.fat,
-    this.source,
-  );
+    this.source, {
+    this.defaultQuantity,
+  });
 
   final String name;
 
@@ -36,6 +37,10 @@ class SeedFood {
   final double fat;
   final MacroSource source;
 
+  /// Cantidad que se propone al añadirlo, si no es la porción de los macros
+  /// (el pan se etiqueta por 100 g, pero una unidad pesa ≈ 75 g).
+  final double? defaultQuantity;
+
   bool get isBulk => unit == 'g' || unit == 'ml';
 
   /// Para g/ml se escala a 100; para el resto, los macros son de una unidad.
@@ -49,7 +54,7 @@ class SeedFood {
       protein: protein * factor,
       carbs: Value(carbs * factor),
       fat: Value(fat * factor),
-      defaultQuantity: Value(isBulk ? servingGrams! : 1),
+      defaultQuantity: Value(defaultQuantity ?? (isBulk ? servingGrams! : 1)),
       servingGrams: Value(servingGrams),
       source: Value(source),
       origin: const Value(FoodOrigin.semilla),
@@ -78,7 +83,8 @@ const initialFoods = <SeedFood>[
   SeedFood('Chicharrón', 'g', 100, 540, 25.0, 0, 48.0, _referencia),
   SeedFood('Chorizo', 'unidad', 70, 250, 12.0, 1.0, 22.0, _referencia),
   SeedFood('Pan tajado', 'rebanada', 28, 75, 2.6, 14.0, 1.0, _referencia),
-  SeedFood('Pan (unidad)', 'unidad', 50, 140, 4.5, 26.0, 1.8, _referencia),
+  // 29 sep 2026: el pan es Mipan y se pesa; la unidad real ronda 75 g.
+  SeedFood('Pan Mipan', 'g', 100, 331, 9.6, 58.0, 7.2, _etiqueta, defaultQuantity: 75),
   SeedFood('Bollo de maíz', 'unidad', 120, 170, 3.5, 36.0, 1.5, _referencia),
   SeedFood('Patacón / tajada de plátano frito', 'unidad', 40, 110, 0.7, 16.0, 5.0, _referencia),
   SeedFood('Yuca frita', 'g', 100, 280, 1.5, 38.0, 13.0, _referencia),
@@ -97,9 +103,9 @@ const initialFoods = <SeedFood>[
   // plato entero estimado, no sus partes: así se registra de un toque.
   SeedFood('Almuerzo corriente (arroz + grano + carne + jugo)', 'plato', null, 880, 38.0, 100.0, 34.0, _referencia),
   SeedFood('Peto sin maíz (vaso)', 'vaso', 250, 190, 7.0, 30.0, 5.0, _referencia),
-  SeedFood('Salchichón de pollo', 'g', 100, 200, 13.0, 3.0, 15.0, _referencia),
+  // Por gramos: una rodaja típica pesa ≈ 22 g.
+  SeedFood('Salchichón de pollo', 'g', 100, 200, 13.0, 3.0, 15.0, _referencia, defaultQuantity: 22),
   // 27 sep 2026: el pan que se come de verdad, y platos que se repiten.
-  SeedFood('Pan Mipan (unidad 60 g)', 'unidad', 60, 199, 5.8, 35.0, 4.3, _etiqueta),
   SeedFood('Avena bebida (vaso 350 g)', 'vaso', 350, 280, 7.0, 46.0, 6.0, _referencia),
   SeedFood('Sopa de mondongo + arroz', 'plato', null, 650, 34.0, 80.0, 21.0, _estimado),
   SeedFood('Pasta con queso y salchicha (plato grande)', 'plato', null, 1100, 49.0, 135.0, 40.0, _estimado),

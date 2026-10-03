@@ -19,9 +19,11 @@ import 'package:seguimiento/data/repositories/custom_reminder_repository.dart';
 import 'package:seguimiento/data/repositories/nutrition_repository.dart';
 import 'package:seguimiento/data/repositories/reminder_repository.dart';
 import 'package:seguimiento/data/update_service.dart';
+import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/nutrition.dart';
 import 'package:seguimiento/domain/reminders.dart';
+import 'package:seguimiento/features/meals/meal_form_screen.dart';
 
 import '../support/sqlite_host.dart';
 
@@ -206,6 +208,78 @@ void main() {
     await settle(tester);
 
     expect(find.textContaining('Huevo'), findsWidgets);
+    await disposeApp(tester);
+  });
+
+  testWidgets('Comidas: tocar lo de ayer no lo repite y "Repetir hoy" avisa si ya hay uno', (tester) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final repo = NutritionRepository(db);
+    await repo.saveMeal(MealDraft(date: today.subtract(const Duration(days: 1)), slot: MealSlot.desayuno, time: '08:00')
+      ..items.add(MealItemDraft(label: 'Huevos de ayer', macros: const Macros(kcal: 400, protein: 30))));
+    await repo.saveMeal(MealDraft(date: today, slot: MealSlot.desayuno, time: '07:30')
+      ..items.add(MealItemDraft(label: 'Avena', macros: const Macros(kcal: 300, protein: 10))));
+    // Tarjetas de desayuno de hoy ("Desayuno · 07:30"); la de ayer dice "Desayuno de ayer".
+    int breakfastsToday() => find.textContaining(RegExp(r'^Desayuno · ')).evaluate().length;
+
+    await pumpApp(tester);
+    await tester.tap(find.text('Comidas').last);
+    await settle(tester);
+
+    // Tocar la fila abre la comida de ayer para corregirla: no la duplica
+    // (fue el accidente del 29 sep, §16.7).
+    expect(breakfastsToday(), 1);
+    await tester.tap(find.textContaining('Desayuno de ayer'));
+    await settle(tester);
+    await settle(tester);
+    expect(find.byType(MealFormScreen), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await settle(tester);
+    expect(breakfastsToday(), 1);
+
+    Future<void> waitDb() async {
+      await settle(tester);
+      await settle(tester);
+    }
+
+    Future<void> repeat() async {
+      await tester.tap(find.text('Repetir hoy'));
+      await waitDb();
+      // Fuera de la franja del desayuno pregunta antes (§9).
+      if (find.text('Dejar desayuno').evaluate().isNotEmpty) {
+        await tester.tap(find.text('Dejar desayuno'));
+        await waitDb();
+      }
+    }
+
+    await repeat();
+    expect(find.text('Ya tienes un desayuno hoy'), findsOneWidget);
+    await tester.tap(find.text('Cancelar'));
+    await settle(tester);
+    expect(breakfastsToday(), 1, reason: 'cancelar no registra nada');
+
+    await repeat();
+    await tester.tap(find.text('Añadir otro'));
+    await waitDb();
+    expect(find.text('Añadido a hoy'), findsOneWidget);
+    expect(breakfastsToday(), 2);
+    await disposeApp(tester);
+  });
+
+  testWidgets('Comidas muestra la fecha en las tarjetas de otro día', (tester) async {
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day).subtract(const Duration(days: 1));
+    await NutritionRepository(db).saveMeal(MealDraft(date: yesterday, slot: MealSlot.cena, time: '20:00')
+      ..items.add(MealItemDraft(label: 'Pasta', macros: const Macros(kcal: 900, protein: 30))));
+    await pumpApp(tester);
+    await tester.tap(find.text('Comidas').last);
+    await settle(tester);
+    await tester.tap(find.byTooltip('Día anterior'));
+    await settle(tester);
+
+    expect(find.text('Cena · 20:00 · ${weekdayShort(yesterday.weekday)} ${formatShort(yesterday)}'), findsOneWidget);
+    expect(find.text('Volver a hoy'), findsOneWidget);
+    expect(find.text('Repetir hoy'), findsNothing, reason: '"de ayer" solo se ofrece mirando hoy');
     await disposeApp(tester);
   });
 

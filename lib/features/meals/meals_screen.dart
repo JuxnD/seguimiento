@@ -96,6 +96,14 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                   ),
                 ],
               ),
+              if (_day != today)
+                Center(
+                  child: TextButton.icon(
+                    onPressed: () => setState(() => _day = today),
+                    icon: const Icon(Icons.today, size: 18),
+                    label: const Text('Volver a hoy'),
+                  ),
+                ),
               const SizedBox(height: 12),
               meals.when(
                 loading: () => const LinearProgressIndicator(),
@@ -161,7 +169,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                   ])
                 : Column(
                     children: [
-                      for (final m in list) _MealCard(meal: m, onChanged: () => setState(() {})),
+                      for (final m in list) _MealCard(meal: m, today: today, onChanged: () => setState(() {})),
                     ],
                   ),
           ),
@@ -188,17 +196,23 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
 }
 
 class _MealCard extends ConsumerWidget {
-  const _MealCard({required this.meal, required this.onChanged});
+  const _MealCard({required this.meal, required this.today, required this.onChanged});
 
   final MealWithItems meal;
+  final DateTime today;
   final VoidCallback onChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final m = meal.macros;
+    final date = parseDay(meal.meal.date);
+    // La fecha va en la tarjeta si no es de hoy: así nunca hay duda de a qué
+    // día pertenece (§16.7).
+    final when = date == today ? '' : ' · ${weekdayShort(date.weekday)} ${formatShort(date)}';
     return AppCard(
-      title: '${meal.meal.slot.label}${meal.meal.time == null ? '' : ' · ${meal.meal.time}'}',
+      title: '${meal.meal.slot.label}${meal.meal.time == null ? '' : ' · ${meal.meal.time}'}$when',
       trailing: PopupMenuButton<String>(
+        tooltip: 'Opciones',
         onSelected: (v) async {
           final repo = ref.read(nutritionRepositoryProvider);
           if (v == 'editar') {
@@ -206,9 +220,15 @@ class _MealCard extends ConsumerWidget {
             if (context.mounted) {
               await Navigator.push(context, MaterialPageRoute(builder: (_) => MealFormScreen(draft: draft)));
             }
+          } else if (v == 'tipo') {
+            final slot = await _pickSlot(context, meal.meal.slot);
+            if (slot != null && slot != meal.meal.slot && context.mounted) {
+              await guarded(context, () => repo.updateMealHeader(meal.meal.id, slot: slot), ok: 'Ahora es ${slot.label}');
+            }
+          } else if (v == 'fecha') {
+            await _moveMeal(context, ref, meal);
           } else if (v == 'hoy') {
-            await guarded(context, () => repo.copyMeal(meal.meal.id, dateOnly(DateTime.now())),
-                ok: 'Copiada a hoy');
+            await addMealCopyToDay(context, ref, meal, today);
           } else if (v == 'borrar') {
             // Sin diálogo: se borra y se puede deshacer. Corregir debe costar
             // un toque, no dos.
@@ -225,8 +245,10 @@ class _MealCard extends ConsumerWidget {
         },
         itemBuilder: (_) => const [
           PopupMenuItem(value: 'editar', child: Text('Editar')),
-          PopupMenuItem(value: 'hoy', child: Text('Copiar a hoy')),
-          PopupMenuItem(value: 'borrar', child: Text('Borrar')),
+          PopupMenuItem(value: 'tipo', child: Text('Cambiar tipo')),
+          PopupMenuItem(value: 'fecha', child: Text('Cambiar fecha/hora')),
+          PopupMenuItem(value: 'hoy', child: Text('Duplicar en hoy')),
+          PopupMenuItem(value: 'borrar', child: Text('Eliminar')),
         ],
       ),
       children: [
@@ -252,7 +274,10 @@ class _Shortcuts extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final templates = ref.watch(mealTemplatesProvider);
-    final yesterday = ref.watch(mealsForDayProvider(dayKey(addDays(day, -1))));
+    final today = ref.watch(todayProvider);
+    // "De ayer" solo tiene sentido mirando hoy: mirando otro día, "repetir"
+    // registraría en una fecha que no es la que el usuario cree.
+    final yesterday = ref.watch(mealsForDayProvider(dayKey(addDays(today, -1))));
     return AppCard(
       title: 'Atajos',
       children: [
@@ -287,23 +312,34 @@ class _Shortcuts extends ConsumerWidget {
         yesterday.when(
           loading: () => const SizedBox.shrink(),
           error: (e, _) => const SizedBox.shrink(),
-          data: (meals) => meals.isEmpty
+          data: (meals) => meals.isEmpty || day != today
               ? const SizedBox.shrink()
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 12),
-                    Text('Repetir de ayer', style: Theme.of(context).textTheme.labelLarge),
+                    Text('De ayer', style: Theme.of(context).textTheme.labelLarge),
+                    Text('Toca para ver o corregir; "Repetir hoy" la registra otra vez hoy.',
+                        style: Theme.of(context).textTheme.bodySmall),
                     const SizedBox(height: 6),
                     for (final m in meals)
-                      TypedTile(
-                        icon: Icons.replay,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        title: '${m.meal.slot.label} de ayer',
-                        subtitle: m.items.map((i) => i.label).join(', '),
-                        value: fmtInt(m.macros.kcal),
-                        valueLabel: 'kcal',
-                        onTap: () => _repeat(context, ref, m),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TypedTile(
+                              icon: Icons.history,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              title: '${m.meal.slot.label} de ayer${m.meal.time == null ? '' : ' · ${m.meal.time}'}',
+                              subtitle: '${m.items.map((i) => i.label).join(', ')} · ${fmtInt(m.macros.kcal)} kcal',
+                              onTap: () => _edit(context, ref, m),
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: () => addMealCopyToDay(context, ref, m, today),
+                            icon: const Icon(Icons.replay, size: 18),
+                            label: const Text('Repetir hoy'),
+                          ),
+                        ],
                       ),
                   ],
                 ),
@@ -312,31 +348,32 @@ class _Shortcuts extends ConsumerWidget {
     );
   }
 
-  String _now() => timeKey(DateTime.now().hour, DateTime.now().minute);
-
   Future<void> _logTemplate(BuildContext context, WidgetRef ref, MealTemplate template) async {
     final repo = ref.read(nutritionRepositoryProvider);
     final now = DateTime.now();
-    final id = await repo.logTemplate(
-      template,
-      day,
+    final slot = await confirmOneTapMeal(
+      context,
+      ref,
+      day: day,
       slot: template.row.slot ?? slotForTime(now.hour, now.minute),
       time: _now(),
     );
+    if (slot == null || !context.mounted) return;
+    final id = await repo.logTemplate(template, day, slot: slot, time: _now());
     if (!context.mounted) return;
     showUndoSnack(
         context,
         '${template.name}: ${fmtInt(template.macros.kcal)} kcal · '
         'P ${fmtInt(template.macros.protein)} g',
-        () => repo.deleteMeal(id));
+        () => repo.deleteMeal(id),
+        duration: const Duration(seconds: 5));
   }
 
-  /// Copia una comida de ayer al día mostrado, con la hora de ahora.
-  Future<void> _repeat(BuildContext context, WidgetRef ref, MealWithItems meal) async {
-    final repo = ref.read(nutritionRepositoryProvider);
-    final id = await repo.copyMeal(meal.meal.id, day, time: _now());
-    if (!context.mounted) return;
-    showUndoSnack(context, '${meal.meal.slot.label} de ayer repetido', () => repo.deleteMeal(id));
+  Future<void> _edit(BuildContext context, WidgetRef ref, MealWithItems meal) async {
+    final draft = await ref.read(nutritionRepositoryProvider).loadMeal(meal.meal.id);
+    if (context.mounted) {
+      await Navigator.push(context, MaterialPageRoute(builder: (_) => MealFormScreen(draft: draft)));
+    }
   }
 
   Future<void> _templateMenu(BuildContext context, WidgetRef ref, MealTemplate template) async {
@@ -400,6 +437,145 @@ class _Shortcuts extends ConsumerWidget {
       }
     }
   }
+}
+
+String _now() => timeKey(DateTime.now().hour, DateTime.now().minute);
+
+/// Copia una comida a `day` con la hora de ahora, después de los avisos de
+/// hora y de duplicado. "Añadido a hoy · Deshacer" durante 5 s.
+Future<void> addMealCopyToDay(BuildContext context, WidgetRef ref, MealWithItems meal, DateTime day) async {
+  final repo = ref.read(nutritionRepositoryProvider);
+  final time = _now();
+  final slot = await confirmOneTapMeal(context, ref, day: day, slot: meal.meal.slot, time: time);
+  if (slot == null || !context.mounted) return;
+  late int id;
+  final ok = await guarded(context, () async {
+    id = await repo.copyMeal(meal.meal.id, day, time: time);
+    if (slot != meal.meal.slot) await repo.updateMealHeader(id, slot: slot);
+  });
+  if (!ok || !context.mounted) return;
+  final isToday = day == dateOnly(DateTime.now());
+  showUndoSnack(context, isToday ? 'Añadido a hoy' : 'Añadido al ${formatShort(day)}', () => repo.deleteMeal(id),
+      duration: const Duration(seconds: 5));
+}
+
+/// Avisos de los registros de un toque (repetir, duplicar, combo): si la hora
+/// no cuadra con el tipo (§9) y si ya hay una comida principal de ese tipo en
+/// el día (§16.7). Devuelve el tipo con el que registrar, o null si se canceló.
+Future<MealSlot?> confirmOneTapMeal(
+  BuildContext context,
+  WidgetRef ref, {
+  required DateTime day,
+  required MealSlot slot,
+  required String time,
+}) async {
+  var chosen = slot;
+  final fits = slotMismatch(slot, time);
+  if (fits != null) {
+    final pick = await showDialog<MealSlot>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('¿${slot.label} a las $time?'),
+        content: Text('A esta hora suele ser ${fits.label.toLowerCase()}.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
+          TextButton(onPressed: () => Navigator.pop(c, slot), child: Text('Dejar ${slot.label.toLowerCase()}')),
+          FilledButton(onPressed: () => Navigator.pop(c, fits), child: Text('Como ${fits.label.toLowerCase()}')),
+        ],
+      ),
+    );
+    if (pick == null || !context.mounted) return null;
+    chosen = pick;
+  }
+
+  const main = {MealSlot.desayuno, MealSlot.almuerzo, MealSlot.cena};
+  if (main.contains(chosen)) {
+    final existing = (await ref.read(nutritionRepositoryProvider).range(day, day))
+        .where((m) => m.meal.slot == chosen)
+        .toList();
+    if (existing.isNotEmpty && context.mounted) {
+      final isToday = day == dateOnly(DateTime.now());
+      final kcal = existing.fold(0.0, (a, m) => a + m.macros.kcal);
+      final more = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: Text('Ya tienes ${_article(chosen)} ${chosen.label.toLowerCase()} ${isToday ? 'hoy' : 'ese día'}'),
+          content: Text('${fmtInt(kcal)} kcal registradas'
+              '${existing.first.meal.time == null ? '' : ' a las ${existing.first.meal.time}'}. ¿Añadir ${_other(chosen)}?'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+            FilledButton(onPressed: () => Navigator.pop(c, true), child: Text('Añadir ${_other(chosen)}')),
+          ],
+        ),
+      );
+      if (more != true) return null;
+    }
+  }
+  return chosen;
+}
+
+String _article(MealSlot slot) => slot == MealSlot.cena ? 'una' : 'un';
+String _other(MealSlot slot) => slot == MealSlot.cena ? 'otra' : 'otro';
+
+Future<MealSlot?> _pickSlot(BuildContext context, MealSlot current) => showDialog<MealSlot>(
+      context: context,
+      builder: (c) => SimpleDialog(
+        title: const Text('Tipo de comida'),
+        children: [
+          for (final s in MealSlot.values)
+            RadioListTile<MealSlot>(
+              value: s,
+              groupValue: current,
+              title: Text(s.label),
+              onChanged: (v) => Navigator.pop(c, v),
+            ),
+        ],
+      ),
+    );
+
+/// Cambia la fecha y la hora de una comida (para lo registrado en el día
+/// equivocado). Avisa si la hora no cuadra con el tipo.
+Future<void> _moveMeal(BuildContext context, WidgetRef ref, MealWithItems meal) async {
+  final current = parseDay(meal.meal.date);
+  final date = await showDatePicker(
+    context: context,
+    initialDate: current,
+    firstDate: DateTime(2020),
+    lastDate: DateTime(2100),
+    helpText: 'Fecha de la comida',
+  );
+  if (date == null || !context.mounted) return;
+  final parts = (meal.meal.time ?? '12:00').split(':');
+  final picked = await showTimePicker(
+    context: context,
+    initialTime: TimeOfDay(hour: int.tryParse(parts.first) ?? 12, minute: int.tryParse(parts.last) ?? 0),
+    helpText: 'Hora de la comida',
+  );
+  if (!context.mounted) return;
+  final time = picked == null ? meal.meal.time : timeKey(picked.hour, picked.minute);
+  var slot = meal.meal.slot;
+  final fits = slotMismatch(slot, time);
+  if (fits != null) {
+    final change = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('¿${slot.label} a las $time?'),
+        content: Text('A esa hora suele ser ${fits.label.toLowerCase()}.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text('Dejar ${slot.label.toLowerCase()}')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text('Cambiar a ${fits.label.toLowerCase()}')),
+        ],
+      ),
+    );
+    if (!context.mounted) return;
+    if (change == true) slot = fits;
+  }
+  await guarded(
+    context,
+    () => ref.read(nutritionRepositoryProvider).updateMealHeader(meal.meal.id,
+        date: dateOnly(date), time: time, slot: slot == meal.meal.slot ? null : slot),
+    ok: 'Movida al ${weekdayShort(date.weekday)} ${formatShort(date)}${time == null ? '' : ' a las $time'}',
+  );
 }
 
 /// Si el día cuenta para promedios y alertas: con desayuno, almuerzo y cena,

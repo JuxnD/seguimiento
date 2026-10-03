@@ -47,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -153,6 +153,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 12) {
             // v12: recordatorios que crea el usuario.
             await m.createTable(customReminders);
+          }
+          if (from < 13) {
+            // v13 (solo datos): pan y salchichón por gramos (§16.3, §17).
+            await applyGramsCatalog(this);
           }
         },
         beforeOpen: (details) async {

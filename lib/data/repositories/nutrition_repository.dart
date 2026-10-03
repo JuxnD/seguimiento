@@ -468,6 +468,14 @@ class NutritionRepository {
   }
 
   /// Copia una comida a otra fecha (tus desayunos se repiten).
+  /// Cambia el tipo, la fecha o la hora de una comida sin tocar lo que comió.
+  Future<void> updateMealHeader(int id, {MealSlot? slot, DateTime? date, String? time}) =>
+      (db.update(db.meals)..where((t) => t.id.equals(id))).write(MealsCompanion(
+        slot: slot == null ? const Value.absent() : Value(slot),
+        date: date == null ? const Value.absent() : Value(dayKey(date)),
+        time: time == null ? const Value.absent() : Value(time),
+      ));
+
   Future<int> copyMeal(int id, DateTime toDate, {String? time}) async {
     final d = await loadMeal(id);
     d

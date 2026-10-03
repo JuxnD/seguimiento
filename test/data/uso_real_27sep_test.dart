@@ -147,9 +147,12 @@ void main() {
     });
 
     test('el pan Mipan y los platos que se repiten vienen sembrados', () async {
-      final mipan = (await nutrition.foodNamed('pan mipan (unidad 60 g)'))!;
-      expect(mipan.kcal, 199);
+      // Desde el 29 sep el pan se pesa: 331 kcal por 100 g, 75 g la unidad.
+      final mipan = (await nutrition.foodNamed('pan mipan'))!;
+      expect(mipan.kcal, 331);
+      expect(mipan.defaultQuantity, 75);
       expect(mipan.source, MacroSource.etiqueta);
+      expect((await nutrition.foodNamed('salchichón de pollo'))!.defaultQuantity, 22);
       expect((await nutrition.foodNamed('Avena bebida (vaso 350 g)'))!.portionMacros.kcal, 280);
       expect((await nutrition.foodNamed('Sopa de mondongo + arroz'))!.origin, FoodOrigin.semilla);
     });

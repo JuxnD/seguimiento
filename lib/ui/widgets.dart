@@ -338,12 +338,14 @@ Future<bool> guarded(BuildContext context, Future<void> Function() action,
 
 /// Aviso con "Deshacer": para borrados de un toque, en lugar de un diálogo
 /// de confirmación que frena cada corrección.
-void showUndoSnack(BuildContext context, String message, Future<void> Function() undo) {
+void showUndoSnack(BuildContext context, String message, Future<void> Function() undo,
+    {Duration duration = const Duration(seconds: 4)}) {
   final messenger = ScaffoldMessenger.of(context);
   messenger
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(
       content: Text(message),
+      duration: duration,
       action: SnackBarAction(label: 'Deshacer', onPressed: () => undo()),
     ));
 }

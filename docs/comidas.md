@@ -8,7 +8,7 @@ Meta: una comida arbitraria en pocos toques, con la app sumando sola.
 |---|---|---|
 | **Combo** (un toque) | Comidas → Atajos | Lo que se repite: batido, cena base. Registra tal cual, con deshacer |
 | **Combo ajustado** | Mantener presionado el combo → *Ajustar cantidades* | Hoy fueron 3 huevos en vez de 4 |
-| **Repetir de ayer** | Comidas → Atajos → *Repetir de ayer* | Copia una comida del día anterior con la hora de ahora |
+| **Repetir hoy** | Comidas → Atajos → *De ayer* → botón *Repetir hoy* | Copia una comida de ayer a hoy con la hora de ahora ("Añadido a hoy · Deshacer", 5 s). Tocar la fila **no** repite: abre esa comida para verla o corregirla. Solo aparece mirando hoy |
 | **Armar** | Botón *Comida* | Buscar alimentos, sumar varios; total en vivo |
 | **Entrada libre** | Dentro del formulario, icono de lápiz | Restaurante o domicilio: kcal y proteína a ojo, marcadas como *estimado*. Se guarda sola en el catálogo |
 
@@ -26,6 +26,36 @@ Dentro del formulario:
 - **Porción** ×0,5 · ×1 · ×1,5 · ×2 en la entrada libre y al elegir la
   cantidad de cualquier alimento: "comí muchas pastas" es ×1,5, no un alimento
   nuevo.
+
+## Navegar y corregir (§16.7)
+
+El 29 sep el usuario quiso corregir el desayuno del lunes y, al tocar la fila
+de "Repetir de ayer", lo duplicó en el martes (+1.140 kcal falsas). Desde la
+1.12.0:
+
+- Cabecera con ‹ día › y calendario al tocar la fecha; *Volver a hoy* cuando
+  se mira otro día. Cada tarjeta que no es de hoy lleva la fecha ("Cena ·
+  20:00 · vie 2 oct").
+- Menú ⋮ de cada comida: **Editar · Cambiar tipo · Cambiar fecha/hora ·
+  Duplicar en hoy · Eliminar** (eliminar se deshace desde el aviso).
+- Los registros de un toque (combo, *Repetir hoy*, *Duplicar en hoy*)
+  preguntan antes si la hora no cuadra con el tipo (un desayuno a las 15:51:
+  "Dejar desayuno" o "Como almuerzo") y si ya hay un desayuno, almuerzo o
+  cena ese día ("Ya tienes un desayuno hoy · ¿Añadir otro?"). Meriendas y
+  "otro" pueden repetirse sin aviso.
+
+## Correcciones del 29 sep (§17)
+
+*Ajustes › Correcciones del 29 sep* (y una tarjeta en Hoy mientras queden
+pendientes) lista las correcciones de datos del traspaso: RPE de las sesiones
+del 23, 24 y 25, notas del 25, plancha del 28 a 40 s por lado, salchichón del
+desayuno del 28 a 110 g (960 kcal), tipos de las comidas del 25 y 28, la cena
+del 27 separada en almuerzo y cena, días 24–28 cerrados (los que tienen
+comidas) y el desayuno duplicado del 29. Cada una se aplica **solo si el
+registro sigue tal cual lo describe el traspaso**; lo que ya se corrigió a
+mano o no existe no se toca. Antes de aplicar se guarda un respaldo
+automático. Lógica y pruebas: [`corrections_29sep.dart`](../lib/data/corrections_29sep.dart),
+[`corrections_29sep_test.dart`](../test/data/corrections_29sep_test.dart).
 
 ## Entradas libres que se quedan
 

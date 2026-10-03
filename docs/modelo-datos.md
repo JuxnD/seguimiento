@@ -54,7 +54,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **12**. Al cambiar una tabla:
+`schemaVersion` vale **13**. Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -76,10 +76,11 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 10 | Tabla `daily_steps` (pasos por día, uno por fecha, con `source`); `profiles.steps_target` (7.500); `football_games.knock` (golpe o molestia); `foods.origin` (`semilla` / `usuario` / `entradaLibre`) y `foods.favorite`; fuente `estimado` en `MacroSource`. La migración marca como `semilla` lo que coincide por nombre con la siembra, y el paso 10 (no el 8) añade al catálogo los alimentos nuevos: sus filas ya llevan columnas que en el 8 no existen |
 | 11 | Tabla `exercise_photos`: foto de referencia por ejercicio (clave = nombre sin mayúsculas ni tildes, ruta relativa en `fotos/ejercicios/`). Como las fotos de progreso, no entra en los respaldos |
 | 12 | Tabla `custom_reminders`: recordatorios del usuario (título, nota, cada N días, hora, inicio y última vez hecho) |
+| 13 | Solo datos: el pan por unidad (`Pan (unidad)` y `Pan Mipan (unidad 60 g)`) pasa a `Pan Mipan` por 100 g de etiqueta (331 kcal, 75 g por defecto); los combos que lo usaban pasan a gramos (×75 o ×60) y las comidas ya registradas conservan sus macros (solo pierden el vínculo). El salchichón propone 22 g (una rodaja) |
 
-Los saltos 1 → 12, 2 → 12, 6 → 12, 7 → 12, 8 → 12, 9 → 12, 10 → 12 y 11 → 12 están cubiertos por
+Los saltos 1, 2, 6, 7, 8, 9, 10, 11 y 12 → 13 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-vieja con datos se abre, conserva lo registrado y queda en `user_version = 12`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 13`.
 El 6 → 8 se verificó además en el emulador (Android 15) con la base de la 1.6.1.
 
 **Récord de rondas.** Una sola definición en
@@ -100,7 +101,7 @@ En la primera apertura:
 
 - [`seed_plan.dart`](../lib/data/seed_plan.dart) crea las dos versiones del plan
   y fija las metas del perfil.
-- [`seed_foods.dart`](../lib/data/seed_foods.dart) crea el catálogo (33
+- [`seed_foods.dart`](../lib/data/seed_foods.dart) crea el catálogo (36
   alimentos) y los combos frecuentes.
 - [`catalog_updates.dart`](../lib/data/catalog_updates.dart) completa las guías
   de técnica de los ejercicios del plan.

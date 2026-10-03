@@ -25,9 +25,9 @@ void main() {
       (await db.select(db.foods).get()).firstWhere((f) => f.name == name);
 
   test('siembra el catálogo completo una sola vez', () async {
-    expect((await db.select(db.foods).get()).length, 37);
+    expect((await db.select(db.foods).get()).length, 36);
     expect(await seedFoodsIfEmpty(db), isFalse);
-    expect((await db.select(db.foods).get()).length, 37);
+    expect((await db.select(db.foods).get()).length, 36);
   });
 
   test('lo que se mide en unidades guarda los macros de una unidad', () async {
@@ -141,13 +141,13 @@ void main() {
     test('guardar un combo nuevo y registrarlo en un toque', () async {
       await nutrition.saveTemplate('Cena con pan', MealSlot.cena, [
         (await foodId('Huevo (unidad)'), 4),
-        (await foodId('Pan (unidad)'), 1),
+        (await foodId('Pan Mipan'), 75),
         (await foodId('Atún en lata (escurrido)'), 1),
       ]);
       final combo = (await nutrition.templates()).firstWhere((t) => t.name == 'Cena con pan');
-      // 4 huevos (280) + pan (140) + atún (120).
-      expect(combo.macros.kcal, closeTo(540, 0.5));
-      expect(combo.macros.protein, closeTo(24 + 4.5 + 25, 0.1));
+      // 4 huevos (280) + 75 g de pan Mipan (248) + atún (120).
+      expect(combo.macros.kcal, closeTo(280 + 331 * 0.75 + 120, 0.5));
+      expect(combo.macros.protein, closeTo(24 + 9.6 * 0.75 + 25, 0.1));
 
       await nutrition.logTemplate(combo, DateTime(2026, 9, 24));
       final meal = (await nutrition.watchDay(DateTime(2026, 9, 24)).first).single;

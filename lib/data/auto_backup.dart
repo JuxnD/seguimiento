@@ -42,11 +42,17 @@ class AutoBackup {
   /// Hace el respaldo si ya toca. Devuelve el archivo creado o null. Nunca
   /// lanza: un respaldo fallido no puede impedir usar la app.
   Future<File?> runIfDue({DateTime? now}) async {
+    final today = dateOnly(now ?? DateTime.now());
+    final last = flags.getDate(FlagKeys.lastAutoBackup);
+    if (last != null && daysBetween(last, today) < everyDays) return null;
+    return runNow(now: today);
+  }
+
+  /// Respaldo ya, aunque no toque: antes de cambiar datos en bloque. Nunca
+  /// lanza; null si no se pudo.
+  Future<File?> runNow({DateTime? now}) async {
     try {
       final today = dateOnly(now ?? DateTime.now());
-      final last = flags.getDate(FlagKeys.lastAutoBackup);
-      if (last != null && daysBetween(last, today) < everyDays) return null;
-
       await dir.create(recursive: true);
       final file = await host.exportTo(p.join(dir.path, 'respaldo-${dayKey(today)}.sqlite'));
       await flags.set(FlagKeys.lastAutoBackup, today);

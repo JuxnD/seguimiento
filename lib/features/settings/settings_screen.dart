@@ -15,6 +15,7 @@ import '../../data/repositories/profile_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import 'corrections_screen.dart';
 import '../../ui/widgets.dart';
 import '../meals/foods_screen.dart';
 import '../plan/plan_screen.dart';
@@ -56,6 +57,14 @@ class SettingsScreen extends ConsumerWidget {
                   title: const Text('Plan semanal'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlanScreen())),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.fact_check_outlined),
+                  title: const Text('Correcciones del 29 sep'),
+                  subtitle: const Text('Datos que el traspaso pidió corregir'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => openCorrections(context),
                 ),
               ],
             ),

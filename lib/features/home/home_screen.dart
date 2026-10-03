@@ -16,6 +16,8 @@ import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../meals/meal_form_screen.dart';
 import '../report/summary_screen.dart';
+import '../../data/local_flags.dart';
+import '../settings/corrections_screen.dart';
 import '../settings/custom_reminders.dart';
 import '../settings/settings_screen.dart';
 import '../settings/updates_card.dart';
@@ -65,6 +67,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
+              const _CorrectionsBanner(),
               const TodayCustomRemindersCard(),
               _WeekGlanceCard(today: today),
               _ActionsCard(date: today, dayType: d.dayType, suggestLight: d.hardFootballYesterday != null),
@@ -190,6 +193,39 @@ class _PlanHero extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Mientras haya correcciones del traspaso sin aplicar (y el usuario no haya
+/// dicho que no), Hoy las ofrece una vez.
+class _CorrectionsBanner extends ConsumerWidget {
+  const _CorrectionsBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pending = ref.watch(pendingCorrectionsProvider);
+    if (pending == 0) return const SizedBox.shrink();
+    return AppCard(
+      title: 'Correcciones del 29 sep',
+      children: [
+        Text('$pending ${pending == 1 ? 'registro' : 'registros'} de sesiones y comidas para corregir según el '
+            'traspaso (RPE, plancha, salchichón, tipos de comida, días cerrados, un duplicado).'),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            TextButton(
+              onPressed: () async {
+                await ref.read(localFlagsProvider).set(FlagKeys.corrections29SepDismissed, true);
+                ref.invalidate(pendingCorrectionsProvider);
+              },
+              child: const Text('No aplicar'),
+            ),
+            const Spacer(),
+            FilledButton(onPressed: () => openCorrections(context), child: const Text('Revisar')),
+          ],
+        ),
+      ],
     );
   }
 }
