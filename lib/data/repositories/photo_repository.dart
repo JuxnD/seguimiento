@@ -46,7 +46,9 @@ class PhotoRepository {
     bool fasted = true,
   }) async {
     final dir = await _dir();
-    final name = '${dayKey(date)}-${angle.name}${p.extension(source.path)}';
+    // Nombre único: una foto que se reclasifica conserva su archivo, y otra
+    // del mismo día y ángulo no debe pisarlo.
+    final name = '${dayKey(date)}-${angle.name}-${DateTime.now().millisecondsSinceEpoch}${p.extension(source.path)}';
     final target = File(p.join(dir.path, name));
     await source.copy(target.path);
 
@@ -77,6 +79,40 @@ class PhotoRepository {
     }
     final keys = byDate.keys.toList()..sort((a, b) => b.compareTo(a));
     return [for (final k in keys) PhotoCheckIn(parseDay(k), byDate[k]!)];
+  }
+
+  /// La foto que ya ocupa ese día y ángulo (otra que no sea `except`).
+  Future<ProgressPhotoRow?> occupant(DateTime date, PhotoAngle angle, {int? except}) async {
+    final rows = await (db.select(db.progressPhotos)
+          ..where((t) => t.date.equals(dayKey(date)) & t.angle.equalsValue(angle)))
+        .get();
+    return rows.where((r) => r.id != except).firstOrNull;
+  }
+
+  /// Reclasifica una foto: otro tipo u otra fecha (§16.11). Si ya había una
+  /// foto en ese lugar, se reemplaza (y su archivo se borra).
+  Future<void> reclassify(ProgressPhotoRow row, {PhotoAngle? angle, DateTime? date}) => db.transaction(() async {
+        final newAngle = angle ?? row.angle;
+        final newDate = date == null ? row.date : dayKey(date);
+        final taken = await occupant(parseDay(newDate), newAngle, except: row.id);
+        if (taken != null) await delete(taken);
+        await (db.update(db.progressPhotos)..where((t) => t.id.equals(row.id))).write(ProgressPhotosCompanion(
+          angle: Value(newAngle),
+          date: Value(newDate),
+        ));
+      });
+
+  /// Quita la foto de la lista sin borrar el archivo: así se puede deshacer.
+  /// El archivo se borra después con [purgeFile].
+  Future<void> remove(ProgressPhotoRow row) => (db.delete(db.progressPhotos)..where((t) => t.id.equals(row.id))).go();
+
+  /// Vuelve a poner una foto quitada con [remove].
+  Future<void> restore(ProgressPhotoRow row) => db.into(db.progressPhotos).insert(row.toCompanion(true));
+
+  /// Borra el archivo de una foto ya quitada de la lista.
+  Future<void> purgeFile(ProgressPhotoRow row) async {
+    final file = await fileOf(row);
+    if (file.existsSync()) file.deleteSync();
   }
 
   Future<void> delete(ProgressPhotoRow row, {bool keepFile = false}) async {

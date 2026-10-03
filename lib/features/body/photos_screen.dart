@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -155,9 +156,14 @@ class _ComparatorState extends ConsumerState<_Comparator> {
     }
   }
 
-  ProgressPhotoRow? _photo(DateTime date) => widget.checkIns
-      .firstWhere((c) => dayKey(c.date) == dayKey(date), orElse: () => widget.checkIns.first)
-      .byAngle[widget.angle];
+  /// La foto de ese ángulo en esa fecha, o null: nunca se muestra otra en
+  /// su lugar (§16.11).
+  ProgressPhotoRow? _photo(DateTime date) {
+    for (final c in widget.checkIns) {
+      if (dayKey(c.date) == dayKey(date)) return c.byAngle[widget.angle];
+    }
+    return null;
+  }
 
   bool _exists(DateTime date) => widget.checkIns.any((c) => dayKey(c.date) == dayKey(date));
 
@@ -206,8 +212,14 @@ class _ComparatorState extends ConsumerState<_Comparator> {
         AspectRatio(
           aspectRatio: 3 / 4,
           child: photo == null
-              ? const ColoredBox(color: Colors.black26)
-              : _PhotoView(row: photo),
+              ? ColoredBox(
+                  color: Colors.black26,
+                  child: Center(
+                    child: Text('Sin foto de ${widget.angle.label.toLowerCase()} ese día',
+                        textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+                  ),
+                )
+              : GestureDetector(onTap: () => openPhoto(context, photo), child: _PhotoView(row: photo)),
         ),
       ],
     );
@@ -238,15 +250,11 @@ class _CheckInRow extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: GestureDetector(
-                        onLongPress: () async {
-                          if (await confirmDelete(context, 'la foto de ${angle.label.toLowerCase()}') && context.mounted) {
-                            await guarded(context, () => ref.read(photoRepositoryProvider).delete(checkIn.byAngle[angle]!),
-                                failure: 'No se pudo borrar');
-                          }
-                        },
+                        onTap: () => openPhoto(context, checkIn.byAngle[angle]!),
+                        onLongPress: () => openPhoto(context, checkIn.byAngle[angle]!),
                         child: Semantics(
                           label: 'Foto de ${angle.label.toLowerCase()} del ${formatLong(checkIn.date)}. '
-                              'Mantén presionado para borrarla.',
+                              'Tócala para verla, borrarla o cambiar su tipo o fecha.',
                           image: true,
                           child: AspectRatio(
                             aspectRatio: 3 / 4,
@@ -261,6 +269,139 @@ class _CheckInRow extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+Future<void> openPhoto(BuildContext context, ProgressPhotoRow row) =>
+    Navigator.push(context, MaterialPageRoute(builder: (_) => _PhotoScreen(row: row)));
+
+/// Una foto en grande, con su menú: eliminar, cambiar tipo, cambiar fecha
+/// (§16.11). Caso real: una espalda subida como perfil arruinaba la
+/// comparación de perfil.
+class _PhotoScreen extends ConsumerWidget {
+  const _PhotoScreen({required this.row});
+
+  final ProgressPhotoRow row;
+
+  String get _what => '${row.angle.label} del ${formatShort(parseDay(row.date))}';
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_what),
+        actions: [
+          PopupMenuButton<String>(
+            tooltip: 'Opciones',
+            onSelected: (v) => switch (v) {
+              'tipo' => _changeAngle(context, ref),
+              'fecha' => _changeDate(context, ref),
+              _ => _delete(context, ref),
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: 'tipo', child: Text('Cambiar tipo')),
+              PopupMenuItem(value: 'fecha', child: Text('Cambiar fecha')),
+              PopupMenuItem(value: 'eliminar', child: Text('Eliminar')),
+            ],
+          ),
+        ],
+      ),
+      body: Center(child: InteractiveViewer(child: _PhotoView(row: row))),
+    );
+  }
+
+  /// Si el destino ya tiene foto, pregunta antes de reemplazarla.
+  Future<bool> _confirmReplace(BuildContext context, WidgetRef ref, PhotoAngle angle, DateTime date) async {
+    final taken = await ref.read(photoRepositoryProvider).occupant(date, angle, except: row.id);
+    if (taken == null || !context.mounted) return taken == null;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('Ya hay foto de ${angle.label.toLowerCase()} el ${formatShort(date)}'),
+        content: const Text('Si sigues, esta la reemplaza y la otra se borra.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Reemplazar')),
+        ],
+      ),
+    );
+    return ok == true;
+  }
+
+  Future<void> _changeAngle(BuildContext context, WidgetRef ref) async {
+    final angle = await showDialog<PhotoAngle>(
+      context: context,
+      builder: (c) => SimpleDialog(
+        title: const Text('Tipo de foto'),
+        children: [
+          for (final a in PhotoAngle.values)
+            RadioListTile<PhotoAngle>(
+              value: a,
+              groupValue: row.angle,
+              title: Text(a.label),
+              onChanged: (v) => Navigator.pop(c, v),
+            ),
+        ],
+      ),
+    );
+    if (angle == null || angle == row.angle || !context.mounted) return;
+    final replace = await _confirmReplace(context, ref, angle, parseDay(row.date));
+    if (!replace || !context.mounted) return;
+    final ok = await guarded(context, () => ref.read(photoRepositoryProvider).reclassify(row, angle: angle),
+        ok: 'Ahora es de ${angle.label.toLowerCase()}');
+    if (ok && context.mounted) Navigator.pop(context);
+  }
+
+  Future<void> _changeDate(BuildContext context, WidgetRef ref) async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: parseDay(row.date),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      helpText: 'Fecha de la foto',
+    );
+    if (date == null || dayKey(date) == row.date || !context.mounted) return;
+    final replace = await _confirmReplace(context, ref, row.angle, date);
+    if (!replace || !context.mounted) return;
+    final ok = await guarded(context, () => ref.read(photoRepositoryProvider).reclassify(row, date: dateOnly(date)),
+        ok: 'Movida al ${formatShort(date)}');
+    if (ok && context.mounted) Navigator.pop(context);
+  }
+
+  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('¿Eliminar foto de $_what?'),
+        content: const Text('Se puede deshacer durante 5 segundos.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Eliminar')),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    final repo = ref.read(photoRepositoryProvider);
+    final messenger = ScaffoldMessenger.of(context);
+    final removed = await guarded(context, () => repo.remove(row), failure: 'No se pudo borrar');
+    if (!removed || !context.mounted) return;
+    Navigator.pop(context);
+    var undone = false;
+    // El archivo se borra cuando el aviso se va sin "Deshacer".
+    messenger.hideCurrentSnackBar();
+    unawaited(messenger.showSnackBar(SnackBar(
+        content: Text('Foto de $_what eliminada'),
+        duration: const Duration(seconds: 5),
+        action: SnackBarAction(
+          label: 'Deshacer',
+          onPressed: () {
+            undone = true;
+            repo.restore(row);
+          },
+        ),
+      )).closed.then((_) {
+        if (!undone) repo.purgeFile(row);
+      }));
   }
 }
 
