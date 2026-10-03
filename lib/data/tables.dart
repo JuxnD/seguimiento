@@ -308,6 +308,10 @@ class Measurements extends Table {
   TextColumn get site => textEnum<MeasureSite>()();
   RealColumn get valueCm => real()();
 
+  /// Hora de la toma (`HH:mm`): en ayunas a las 7:00 no es lo mismo que
+  /// después de cenar (§16.10). null en tomas anteriores al esquema 14.
+  TextColumn get time => text().nullable()();
+
   @override
   List<Set<Column>> get uniqueKeys => [
         {date, site},

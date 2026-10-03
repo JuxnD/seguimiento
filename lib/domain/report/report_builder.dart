@@ -376,9 +376,27 @@ void _body(StringBuffer b, ReportStats s) {
       b.writeln('| ${site.label} | ${fmtDec(cur)} (línea base) | ${fmtDec(cur)} | — |');
     } else {
       final baseV = fromCm(base.valueCm, unit);
+      // Ayunas contra después de comer: el delta se da, pero no se lee como
+      // progreso (§16.10).
+      final mismatch = base.fasted != current.fasted ? ' (condiciones distintas)' : '';
       b.writeln('| ${site.label} | ${fmtDec(baseV)} (${formatShort(base.date)}) | ${fmtDec(cur)} | '
-          '${fmtDelta(cur - baseV)} |');
+          '${fmtDelta(cur - baseV)}$mismatch |');
     }
+  }
+  // Proporción en V: hombros ÷ cintura de la última toma que tenga ambas.
+  final byDate = <String, Map<MeasureSite, double>>{};
+  for (final m in i.measurementsInRange) {
+    byDate.putIfAbsent(dayKey(m.date), () => {})[m.site] = m.valueCm;
+  }
+  final withBoth = (byDate.entries
+          .where((e) => e.value.containsKey(MeasureSite.hombros) && e.value.containsKey(MeasureSite.cinturaEstrecha))
+          .toList()
+        ..sort((a, c) => a.key.compareTo(c.key)))
+      .lastOrNull;
+  if (withBoth != null) {
+    final ratio = withBoth.value[MeasureSite.hombros]! / withBoth.value[MeasureSite.cinturaEstrecha]!;
+    b.writeln();
+    b.writeln('Índice hombros ÷ cintura: ${fmtDec(ratio, decimals: 2)} (referencia estética ≈ 1,6)');
   }
   b.writeln();
 }

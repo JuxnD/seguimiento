@@ -138,7 +138,14 @@ class ReportRepository {
     final measures = await (db.select(db.measurements)..where((x) => x.date.isBetweenValues(f, t))).get();
     // Línea base: la primera toma de cada sitio, en una sola consulta.
     final baseline = <MeasureSite, MeasurementEntry>{};
-    for (final m in await (db.select(db.measurements)..orderBy([(x) => OrderingTerm(expression: x.date)])).get()) {
+    // La línea base es la primera toma **en ayunas** de cada sitio (§16.10):
+    // una tomada después de cenar no es comparable. Sin ninguna en ayunas,
+    // la primera que haya.
+    final allMeasures = await (db.select(db.measurements)..orderBy([(x) => OrderingTerm(expression: x.date)])).get();
+    for (final m in allMeasures.where((m) => m.fasted)) {
+      baseline.putIfAbsent(m.site, () => _measure(m));
+    }
+    for (final m in allMeasures) {
       baseline.putIfAbsent(m.site, () => _measure(m));
     }
     final datesBefore = await (db.selectOnly(db.measurements, distinct: true)

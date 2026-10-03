@@ -318,7 +318,8 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
             children: [
               if (widget.template == null) ...[
                 DateTile(date: d.date, onChanged: (v) => setState(() => d.date = v)),
-                TimeTile(time: d.time, onChanged: (v) => setState(() => d.time = v)),
+                // La hora en que se comió, no la de registrarla (§16.8).
+                TimeTile(time: d.time, label: 'Hora en que comiste', onChanged: (v) => setState(() => d.time = v)),
                 const SizedBox(height: 8),
               ],
               Wrap(

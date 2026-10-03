@@ -167,6 +167,40 @@ final corrections29Sep = <DataCorrection>[
     apply: _recover2Oct,
   ),
   DataCorrection(
+    id: 'medidas-18sep',
+    date: 'vie 18 sep',
+    title: 'Medición de línea base',
+    change: 'en ayunas → después de cenar (no comparable con las de ayunas)',
+    check: (db) async {
+      final rows = await (db.select(db.measurements)..where((t) => t.date.equals('2026-09-18'))).get();
+      if (rows.isEmpty) return CorrectionState.missing;
+      return rows.every((r) => !r.fasted) ? CorrectionState.done : CorrectionState.pending;
+    },
+    apply: (db) => (db.update(db.measurements)..where((t) => t.date.equals('2026-09-18')))
+        .write(const MeasurementsCompanion(fasted: Value(false))),
+  ),
+  DataCorrection(
+    id: 'medidas-3oct',
+    date: 'sáb 3 oct',
+    title: 'Medición en ayunas (nueva línea base)',
+    change: 'se crea si no está: abdomen 36", cintura 35", cadera 40", brazo 34,0 / 36,8 cm, '
+        'cuádriceps 55,9 cm, pantorrilla 40,6 cm, pecho 40", hombros 49"',
+    check: (db) async {
+      final rows = await (db.select(db.measurements)..where((t) => t.date.equals('2026-10-03'))).get();
+      return rows.isEmpty ? CorrectionState.pending : CorrectionState.done;
+    },
+    apply: (db) async {
+      for (final e in _baseline3Oct.entries) {
+        await db.into(db.measurements).insert(MeasurementsCompanion.insert(
+              date: '2026-10-03',
+              site: e.key,
+              valueCm: e.value,
+              fasted: const Value(true),
+            ));
+      }
+    },
+  ),
+  DataCorrection(
     id: 'duplicado-29',
     date: 'mar 29 sep',
     title: 'Desayuno 15:51 (1.140 kcal)',
@@ -214,6 +248,20 @@ Future<void> _recover2Oct(AppDatabase db) async {
     }
   }
 }
+
+/// Medición del sáb 3 oct en ayunas (§16.10), en cm. Las pulgadas se
+/// convierten a 2,54 cm; cadera y brazo tensionado son la segunda toma.
+const _baseline3Oct = {
+  MeasureSite.abdomen: 36 * 2.54,
+  MeasureSite.cinturaEstrecha: 35 * 2.54,
+  MeasureSite.cadera: 40 * 2.54,
+  MeasureSite.brazoRelajado: 34.0,
+  MeasureSite.brazoTensionado: 36.8,
+  MeasureSite.cuadriceps: 55.9,
+  MeasureSite.pantorrilla: 40.6,
+  MeasureSite.pecho: 40 * 2.54,
+  MeasureSite.hombros: 124.5,
+};
 
 const _notes25 = 'Flexiones y dominadas fáciles hasta R8, técnica constante';
 const _closeDays = ['2026-09-24', '2026-09-25', '2026-09-26', '2026-09-27', '2026-09-28'];

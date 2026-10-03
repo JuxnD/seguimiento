@@ -91,6 +91,7 @@ void main() {
       return;
     }
     await db.customStatement('alter table sessions drop column pending_review');
+    await db.customStatement('alter table measurements drop column time');
     if (version >= 13) {
       await rows?.call(db);
       await db.customStatement('pragma user_version = $version');

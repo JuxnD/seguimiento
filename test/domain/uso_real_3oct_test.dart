@@ -81,4 +81,24 @@ void main() {
     expect(md, contains('Anterior, mismo punto'));
     expect(md, contains('| Flexiones | 30 | 30 | 0 |'));
   });
+
+  test('medidas: después de comer contra ayunas se marca, y sale el índice hombros ÷ cintura (§16.10)', () {
+    MeasurementEntry m(int month, int day, MeasureSite site, double cm, {bool fasted = true}) =>
+        MeasurementEntry(date: DateTime(2026, month, day), site: site, valueCm: cm, fasted: fasted);
+    final md = buildReport(ReportInput(
+      programStart: DateTime(2026, 8, 26),
+      rangeStart: DateTime(2026, 9, 28),
+      rangeEnd: DateTime(2026, 10, 4),
+      today: DateTime(2026, 10, 4),
+      measurementsInRange: [
+        m(10, 3, MeasureSite.abdomen, 91.44),
+        m(10, 3, MeasureSite.cinturaEstrecha, 88.9),
+        m(10, 3, MeasureSite.hombros, 124.5),
+      ],
+      // Única referencia previa: la del 18 sep, después de cenar.
+      baselineMeasurements: {MeasureSite.abdomen: m(9, 18, MeasureSite.abdomen, 92.0, fasted: false)},
+    ));
+    expect(md, contains('(condiciones distintas)'));
+    expect(md, contains('Índice hombros ÷ cintura: 1,4 (referencia estética ≈ 1,6)'));
+  });
 }

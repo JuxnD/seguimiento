@@ -159,8 +159,10 @@ class AppDatabase extends _$AppDatabase {
             await applyGramsCatalog(this);
           }
           if (from < 14) {
-            // v14: sesiones guardadas solas al terminar el cronómetro.
+            // v14: sesiones guardadas solas al terminar el cronómetro y hora
+            // de cada toma de medidas.
             await m.addColumn(sessions, sessions.pendingReview);
+            await m.addColumn(measurements, measurements.time);
           }
         },
         beforeOpen: (details) async {

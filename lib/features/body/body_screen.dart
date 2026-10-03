@@ -109,8 +109,13 @@ class BodyScreen extends ConsumerWidget {
                             TypedTile(
                               icon: Icons.straighten,
                               color: _bodyColor,
-                              title: '${formatLong(c.date)} · ${c.fasted ? 'ayunas' : 'sin ayunas'}',
-                              subtitle: _summary(c, unit),
+                              title: '${formatLong(c.date)}${c.time == null ? '' : ' ${c.time}'} · '
+                                  '${c.fasted ? 'ayunas' : 'después de comer'}',
+                              subtitle: [
+                                _summary(c, unit),
+                                if (c.shoulderWaistRatio case final r?)
+                                  'Hombros ÷ cintura ${fmtDec(r, decimals: 2)} (referencia ≈ 1,6)',
+                              ].join('\n'),
                               value: '${c.valuesCm.length}',
                               valueLabel: 'medidas',
                               onTap: () => _openMeasurement(context, ref, c),

@@ -22,6 +22,7 @@ class MeasurementFormScreen extends ConsumerStatefulWidget {
 class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
   late DateTime _date = widget.existing?.date ?? dateOnly(DateTime.now());
   late bool _fasted = widget.existing?.fasted ?? true;
+  late String? _time = widget.existing?.time ?? timeKey(DateTime.now().hour, DateTime.now().minute);
   late LengthUnit _unit = ref.read(profileProvider).value?.lengthUnit ?? LengthUnit.cm;
   late final Map<MeasureSite, TextEditingController> _fields = {
     for (final site in MeasureSite.values)
@@ -32,16 +33,21 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
       ),
   };
 
+  /// Segunda toma opcional: se guarda el promedio de las dos (§16.10).
+  late final Map<MeasureSite, TextEditingController> _second = {
+    for (final site in MeasureSite.values) site: TextEditingController(),
+  };
+
   @override
   void dispose() {
-    for (final c in _fields.values) {
+    for (final c in [..._fields.values, ..._second.values]) {
       c.dispose();
     }
     super.dispose();
   }
 
   void _convertFields(LengthUnit from, LengthUnit to) {
-    for (final c in _fields.values) {
+    for (final c in [..._fields.values, ..._second.values]) {
       final v = parseNum(c.text);
       if (v == null) continue;
       c.text = fmtDec(fromCm(toCm(v, from), to), decimals: 2);
@@ -52,7 +58,10 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     final values = <MeasureSite, double>{};
     for (final e in _fields.entries) {
       final v = parseNum(e.value.text);
-      if (v != null && v > 0) values[e.key] = toCm(v, _unit);
+      if (v == null || v <= 0) continue;
+      final v2 = parseNum(_second[e.key]!.text);
+      final avg = v2 != null && v2 > 0 ? (v + v2) / 2 : v;
+      values[e.key] = toCm(avg, _unit);
     }
     if (values.isEmpty) {
       showSnack(context, 'No hay ninguna medida');
@@ -80,7 +89,7 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     if (!mounted) return;
     final ok = await guarded(
       context,
-      () => repo.saveCheckIn(_date, _fasted, values, replacing: widget.existing?.date),
+      () => repo.saveCheckIn(_date, _fasted, values, replacing: widget.existing?.date, time: _time),
     );
     if (ok && mounted) Navigator.pop(context, true);
   }
@@ -110,9 +119,13 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
           AppCard(
             children: [
               DateTile(date: _date, onChanged: (v) => setState(() => _date = v)),
+              TimeTile(time: _time, onChanged: (v) => setState(() => _time = v)),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('En ayunas'),
+                subtitle: Text(_fasted
+                    ? 'Recién levantado, antes de comer o beber'
+                    : 'Después de comer: no se compara con las de ayunas'),
                 value: _fasted,
                 onChanged: (v) => setState(() => _fasted = v),
               ),
@@ -137,14 +150,33 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
           AppCard(
             title: 'Medidas (${_unit.label})',
             children: [
+              const Text('Si mides dos veces el mismo punto, escribe la segunda toma: se guarda el promedio.'),
+              const SizedBox(height: 4),
               for (final site in MeasureSite.values)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: NumberField(
-                    controller: _fields[site]!,
-                    label: site.label,
-                    suffix: _unit.label,
-                    decimal: true,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: NumberField(
+                          controller: _fields[site]!,
+                          label: site.label,
+                          suffix: _unit.label,
+                          decimal: true,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 2,
+                        child: NumberField(
+                          controller: _second[site]!,
+                          label: '2.ª toma',
+                          suffix: _unit.label,
+                          decimal: true,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],

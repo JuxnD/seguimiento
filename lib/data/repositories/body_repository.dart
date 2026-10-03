@@ -6,11 +6,21 @@ import '../database.dart';
 
 /// Una toma de medidas: todas las del mismo día.
 class MeasurementCheckIn {
-  MeasurementCheckIn(this.date, this.fasted, this.valuesCm);
+  MeasurementCheckIn(this.date, this.fasted, this.valuesCm, {this.time});
 
   final DateTime date;
   final bool fasted;
   final Map<MeasureSite, double> valuesCm;
+
+  /// Hora de la toma, si se anotó.
+  final String? time;
+
+  /// Hombros ÷ cintura estrecha: la proporción en V (referencia estética
+  /// ≈ 1,6). null si falta alguna de las dos.
+  double? get shoulderWaistRatio {
+    final s = valuesCm[MeasureSite.hombros], w = valuesCm[MeasureSite.cinturaEstrecha];
+    return s == null || w == null || w == 0 ? null : s / w;
+  }
 }
 
 class BodyRepository {
@@ -61,6 +71,7 @@ class BodyRepository {
               parseDay(e.key),
               e.value.every((r) => r.fasted),
               {for (final r in e.value) r.site: r.valueCm},
+              time: e.value.map((r) => r.time).whereType<String>().firstOrNull,
             ))
         .toList();
   }
@@ -69,7 +80,8 @@ class BodyRepository {
   ///
   /// `replacing`: fecha original al editar una toma. Si la fecha cambió, la
   /// toma vieja se borra en la misma transacción (si no, quedaría duplicada).
-  Future<void> saveCheckIn(DateTime date, bool fasted, Map<MeasureSite, double> valuesCm, {DateTime? replacing}) =>
+  Future<void> saveCheckIn(DateTime date, bool fasted, Map<MeasureSite, double> valuesCm,
+          {DateTime? replacing, String? time}) =>
       db.transaction(() async {
         if (replacing != null && dayKey(replacing) != dayKey(date)) await deleteCheckIn(replacing);
         await deleteCheckIn(date);
@@ -79,6 +91,7 @@ class BodyRepository {
                 fasted: Value(fasted),
                 site: e.key,
                 valueCm: e.value,
+                time: Value(time),
               ));
         }
       });

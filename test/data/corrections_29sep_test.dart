@@ -63,6 +63,9 @@ void main() {
     await nutrition.saveMeal(MealDraft(date: d(9, 28), slot: MealSlot.merienda, time: '16:10', items: [
       item('Pasta', 900, 35),
     ]));
+    // Medición del 18 sep, guardada como en ayunas (fue después de cenar).
+    await db.into(db.measurements).insert(
+        MeasurementsCompanion.insert(date: '2026-09-18', site: MeasureSite.abdomen, valueCm: 91.44));
     // Duplicado accidental del 29.
     await nutrition.saveMeal(MealDraft(date: d(9, 29), slot: MealSlot.desayuno, time: '15:51', items: [
       item('Desayuno 1', 1140, 75),
@@ -122,6 +125,14 @@ void main() {
     int reps(String e) => oct2.sets.where((s) => s.exercise == e).fold(0, (a, s) => a + s.reps);
     expect((reps('Dominadas'), reps('Flexiones'), reps('Sentadillas')), (45, 90, 135));
 
+    // Medidas: el 18 sep deja de contar como ayunas y el 3 oct es la base.
+    final measures = await db.select(db.measurements).get();
+    expect(measures.where((m) => m.date == '2026-09-18').every((m) => !m.fasted), isTrue);
+    final oct3 = {for (final m in measures.where((m) => m.date == '2026-10-03')) m.site: m.valueCm};
+    expect(oct3.length, 9);
+    expect(oct3[MeasureSite.abdomen], closeTo(91.44, 0.01));
+    expect(oct3[MeasureSite.hombros]! / oct3[MeasureSite.cinturaEstrecha]!, closeTo(1.40, 0.01));
+
     final again = await checkCorrections(db);
     expect(again.values.toSet(), {CorrectionState.done}, reason: '$again');
     expect(await applyPendingCorrections(db), 0, reason: 'aplicar dos veces no cambia nada');
@@ -151,6 +162,7 @@ void main() {
     expect(states['desayuno-28'], CorrectionState.missing);
     expect(states['cerrar-24-28'], CorrectionState.missing, reason: 'sin comidas no hay días que cerrar');
     expect(states['sesion-2oct'], CorrectionState.pending, reason: 'no hay sesión el 2 oct: se recupera');
-    expect(await applyPendingCorrections(db), 1);
+    expect(states['medidas-3oct'], CorrectionState.pending, reason: 'no hay medición el 3 oct: se carga');
+    expect(await applyPendingCorrections(db), 2);
   });
 }
