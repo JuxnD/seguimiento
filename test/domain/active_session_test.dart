@@ -23,6 +23,8 @@ void main() {
       reps: 12,
       done: const [DoneStep('Flexiones', 12, true), DoneStep('Dominadas', 5, true)],
       roundMarks: const [150, 310],
+      techniqueOk: true,
+      recoveryOk: false,
     );
     final back = ActiveSession.fromJson(jsonDecode(jsonEncode(snap.toJson()))) as GuidedSnapshot;
 
@@ -41,6 +43,8 @@ void main() {
     expect(back.restAccumSec, 90);
     expect(back.done.map((d) => (d.exercise, d.reps, d.isRound)), [('Flexiones', 12, true), ('Dominadas', 5, true)]);
     expect(back.roundMarks, [150, 310]);
+    expect((back.techniqueOk, back.fullRange, back.recoveryOk), (true, null, false),
+        reason: 'los criterios del cierre sobreviven a una sesión terminada sin guardar');
   });
 
   test('el libre vuelve igual tras pasar por JSON', () {

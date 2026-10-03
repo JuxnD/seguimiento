@@ -90,6 +90,19 @@ ya contó el tiempo que la app estuvo cerrada (todo son marcas de reloj) y un
 descanso en curso vuelve a programar su aviso. El cronómetro libre funciona
 igual. La foto se borra al guardar o descartar la sesión.
 
+Si el cronómetro terminó pero se sale del formulario sin guardar, la foto se
+queda y Hoy muestra **"Sesión terminada sin guardar"** con Guardar (abre el
+cierre del cronómetro) y Descartar. Hasta la 1.10.0 la foto se borraba igual
+y la sesión se perdía (§16.9).
+
+## Toques accidentales
+
+"Hecho" y "Saltar descanso" ocupan el mismo sitio. Un doble toque cerraba la
+ronda y saltaba el descanso en 0:00; el descanso que de todos modos se tomaba
+quedaba dentro del trabajo de la ronda siguiente (§16.9). Desde la 1.11.0 el
+cronómetro ignora "Hecho" durante 0,8 s tras cambiar de paso, y "Saltar
+descanso" se habilita a los 3 s del descanso.
+
 ## Fin del descanso
 
 En primer plano suena el sonido del sistema y vibra. Con la pantalla apagada
@@ -137,8 +150,17 @@ Antes de empezar, el día de progresión muestra la propuesta de la regla: una
 ronda más si la última sesión de progresión completó su meta sin series
 partidas, sin fallo, con técnica buena, rango completo y recuperación normal;
 si no, la misma meta y qué criterio falló. Una condición sin registrar no
-cuenta como cumplida. La app no cambia la meta sola: "Usar N" la pone en el
-campo.
+cuenta como cumplida.
+
+La propuesta es la meta por defecto del campo de rondas y la de Hoy (anillo y
+"Meta: N rondas"); el número fijo del plan ya no manda ese día. Hasta la
+1.10.0 el campo arrancaba con el número del plan y nada pedía técnica, rango
+ni recuperación, así que la meta del viernes no avanzaba (§16.9). Ahora:
+
+- El cierre del cronómetro de circuito pregunta "¿Cómo salió?" con los tres
+  criterios (Sí / No / sin marcar).
+- Si a la última sesión de progresión le falta alguno, Hoy y el arranque
+  muestran **"Anotar cómo fue"**, que lo guarda en esa sesión y recalcula.
 
 ## Técnica: figuras y foto de referencia
 

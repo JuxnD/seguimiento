@@ -194,6 +194,67 @@ void main() {
     expect(draft.roundWorkSec![1], inInclusiveRange(9, 12));
   });
 
+  testWidgets('un doble toque en "Hecho" no salta el descanso ni la parada siguiente', (tester) async {
+    final results = await pumpGuided(tester);
+    await startNow(tester);
+
+    // Doble toque en Flexiones: el segundo cae sobre Sentadillas recién
+    // aparecida y no debe darla por hecha.
+    await tester.tap(find.text('Hecho'));
+    await tester.pump(const Duration(milliseconds: 300));
+    // En plena transición hay dos "Hecho": el de encima es el del paso nuevo.
+    await tester.tap(find.text('Hecho').last);
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Sentadillas'), findsWidgets);
+    expect(find.text('DESCANSO'), findsNothing);
+
+    // Cerrar la ronda y tocar otra vez en el mismo sitio: cae sobre "Saltar
+    // descanso", que aún no responde. Era el 0:00 que inflaba la ronda (§16.9).
+    await step(tester);
+    await tester.tap(find.text('Hecho'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('Saltar descanso'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('DESCANSO'), findsOneWidget, reason: 'el descanso sigue');
+
+    await step(tester, const Duration(seconds: 30));
+    await tester.tap(find.text('Terminar'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+    await step(tester, const Duration(seconds: 70));
+    await tester.tap(find.text('Terminar enfriamiento'));
+    await step(tester, const Duration(seconds: 2));
+    await tester.tap(find.text('Revisar y guardar'));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final draft = results.single!;
+    expect(draft.roundRestSec.first, greaterThanOrEqualTo(28), reason: 'el descanso se midió entero');
+  });
+
+  testWidgets('el cierre de un circuito pide técnica, rango y recuperación', (tester) async {
+    final results = await pumpGuided(tester);
+    await startNow(tester);
+    await tester.tap(find.text('Hecho'));
+    await step(tester);
+    await tester.tap(find.text('Terminar'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+    await step(tester, const Duration(seconds: 70));
+    await tester.tap(find.text('Terminar enfriamiento'));
+    await step(tester, const Duration(seconds: 2));
+
+    expect(find.text('¿Cómo salió?'), findsOneWidget);
+    await tester.tap(find.text('Sí').at(0));
+    await tester.tap(find.text('Sí').at(1));
+    await tester.tap(find.text('No').at(2));
+    await tester.pump();
+    await tester.tap(find.text('Revisar y guardar'));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final draft = results.single!;
+    expect((draft.techniqueOk, draft.fullRange, draft.recoveryOk), (true, true, false));
+  });
+
   testWidgets('el acumulado de reps es por ejercicio', (tester) async {
     await pumpGuided(tester);
     await startNow(tester);
@@ -252,6 +313,8 @@ void main() {
 
     expect(find.text('DESCANSO'), findsOneWidget, reason: 'el plan no fija descanso: 60 s por defecto');
     expect(find.textContaining('plan 60 s'), findsOneWidget);
+    // "Saltar" se habilita a los 3 s: antes sería un doble toque de "Hecho".
+    await tester.pump(const Duration(seconds: 3));
     await tester.tap(find.text('Saltar descanso'));
     await step(tester, const Duration(seconds: 1));
     expect(find.text('SERIE 2/2 · LADO DERECHO'), findsOneWidget);

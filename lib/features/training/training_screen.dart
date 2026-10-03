@@ -73,29 +73,21 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
   final variants = planDay.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
   // El día de progresión propone la meta según la regla; no la sube solo.
-  ProgressionProposal? proposal;
-  if (planDay.type == DayType.progresion) {
-    final last = await ref.read(trainingRepositoryProvider).lastOfType(SessionType.progresion, day);
-    if (last != null) {
-      proposal = proposeProgression(
-        lastRounds: last.roundsDone,
-        lastPlanned: last.plannedRounds,
-        lastDate: last.date,
-        anySplit: last.sets.any((s) => s.split),
-        anyFailure: last.sets.any((s) => s.toFailure),
-        techniqueOk: last.techniqueOk,
-        fullRange: last.fullRange,
-        recoveryOk: last.recoveryOk,
-        incomplete: last.incomplete,
-      );
-    }
-  }
+  final proposal = planDay.type == DayType.progresion
+      ? await ref.read(trainingRepositoryProvider).progressionProposal(day)
+      : null;
   if (!context.mounted) return;
   final suggestLight = light ?? await ref.read(dashboardRepositoryProvider).hardGameBefore(day);
   if (!context.mounted) return;
   final setup = await showDialog<_SessionSetup>(
     context: context,
-    builder: (_) => _SetupDialog(day: planDay, variants: variants, proposal: proposal, light: suggestLight),
+    builder: (_) => _SetupDialog(
+      day: planDay,
+      variants: variants,
+      proposal: proposal,
+      light: suggestLight,
+      onRecordCriteria: (p) => recordProgressionCriteria(context, ref, p, day),
+    ),
   );
   if (setup == null || !context.mounted) return;
 
@@ -112,18 +104,27 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   );
 }
 
-/// Cronómetro guiado → formulario. Al terminar (guardada o descartada) se
-/// borra la foto de la sesión en curso: ya no hay nada que retomar.
+/// Cronómetro guiado → formulario. La foto de la sesión en curso se borra
+/// solo cuando se guarda o se descarta: si se sale del formulario sin
+/// guardar, la sesión terminada queda pendiente en Hoy (§16.9). Antes se
+/// borraba siempre y la sesión se perdía.
 Future<void> _runGuided(BuildContext context, GuidedSessionScreen screen) async {
   final container = ProviderScope.containerOf(context, listen: false);
-  try {
-    final draft = await Navigator.push<SessionDraft>(context, MaterialPageRoute(builder: (_) => screen));
-    if (draft == null || !context.mounted) return;
-    // El cierre del cronómetro ya celebró: el formulario no lo repite.
-    await openSessionForm(context, draft, celebrate: false);
-  } finally {
+  final draft = await Navigator.push<SessionDraft>(context, MaterialPageRoute(builder: (_) => screen));
+  if (draft == null) {
+    // Descartada desde el cronómetro.
     await _clearActive(container);
+    return;
   }
+  if (!context.mounted) return;
+  // El cierre del cronómetro ya celebró: el formulario no lo repite.
+  final saved = await openSessionForm(context, draft, celebrate: false);
+  if (saved == true) {
+    await _clearActive(container);
+    return;
+  }
+  container.invalidate(activeSessionProvider);
+  if (context.mounted) showSnack(context, 'La sesión quedó pendiente en Hoy: guárdala o descártala desde ahí.');
 }
 
 Future<void> _clearActive(ProviderContainer container) async {
@@ -200,11 +201,20 @@ class _SessionSetup {
 }
 
 class _SetupDialog extends StatefulWidget {
-  const _SetupDialog({required this.day, required this.variants, this.proposal, this.light = false});
+  const _SetupDialog({
+    required this.day,
+    required this.variants,
+    this.proposal,
+    this.light = false,
+    this.onRecordCriteria,
+  });
 
   final PlanDayDraft day;
   final List<String> variants;
   final ProgressionProposal? proposal;
+
+  /// Anota los criterios que faltan y devuelve la propuesta recalculada.
+  final Future<ProgressionProposal?> Function(ProgressionProposal)? onRecordCriteria;
 
   /// Empieza con la versión ligera marcada.
   final bool light;
@@ -215,12 +225,29 @@ class _SetupDialog extends StatefulWidget {
 
 class _SetupDialogState extends State<_SetupDialog> {
   late bool _light = widget.light;
+  late ProgressionProposal? _proposal = widget.proposal;
   late final _rounds = TextEditingController(text: _roundsFor(_light));
   late String? _variant = widget.variants.isEmpty ? null : widget.variants.first;
 
   PlanDayDraft get _day => _light ? lightVersion(widget.day) : widget.day;
 
-  String _roundsFor(bool light) => (light ? lightVersion(widget.day) : widget.day).targetRounds?.toString() ?? '';
+  /// Meta por defecto: la que propone la regla si es día de progresión (el
+  /// plan tiene un número fijo que no avanza); si no, la del plan. La versión
+  /// ligera quita una ronda.
+  String _roundsFor(bool light) {
+    final proposed = _proposal?.rounds;
+    if (proposed != null) return '${light && proposed > 1 ? proposed - 1 : proposed}';
+    return (light ? lightVersion(widget.day) : widget.day).targetRounds?.toString() ?? '';
+  }
+
+  Future<void> _recordCriteria(ProgressionProposal p) async {
+    final updated = await widget.onRecordCriteria?.call(p);
+    if (updated == null || !mounted) return;
+    setState(() {
+      _proposal = updated;
+      _rounds.text = _roundsFor(_light);
+    });
+  }
 
   @override
   void dispose() {
@@ -264,7 +291,12 @@ class _SetupDialogState extends State<_SetupDialog> {
             ),
             if (isCircuit) ...[
               const SizedBox(height: 12),
-              if (widget.proposal case final p?) _ProposalCard(proposal: p, onUse: (r) => _rounds.text = '$r'),
+              if (_proposal case final p?)
+                _ProposalCard(
+                  proposal: p,
+                  onUse: (r) => _rounds.text = '$r',
+                  onRecord: widget.onRecordCriteria == null || p.sessionId == null ? null : () => _recordCriteria(p),
+                ),
               NumberField(controller: _rounds, label: 'Rondas objetivo'),
               const Padding(
                 padding: EdgeInsets.only(top: 6),
@@ -301,10 +333,13 @@ class _SetupDialogState extends State<_SetupDialog> {
 
 /// Qué propone la regla de progresión y por qué.
 class _ProposalCard extends StatelessWidget {
-  const _ProposalCard({required this.proposal, required this.onUse});
+  const _ProposalCard({required this.proposal, required this.onUse, this.onRecord});
 
   final ProgressionProposal proposal;
   final ValueChanged<int> onUse;
+
+  /// Anotar los criterios que quedaron sin registrar.
+  final VoidCallback? onRecord;
 
   @override
   Widget build(BuildContext context) {
@@ -324,12 +359,92 @@ class _ProposalCard extends StatelessWidget {
                 : '$when (${p.lastRounds}) no cumplió: ${p.unmet.join(', ')}.',
             style: text.bodySmall,
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(onPressed: () => onUse(p.rounds), child: Text('Usar ${p.rounds}')),
+          Wrap(
+            spacing: 4,
+            children: [
+              TextButton(onPressed: () => onUse(p.rounds), child: Text('Usar ${p.rounds}')),
+              if (onRecord != null && p.unmet.any((u) => u.endsWith('sin registrar')))
+                TextButton.icon(
+                  onPressed: onRecord,
+                  icon: const Icon(Icons.fact_check_outlined, size: 18),
+                  label: const Text('Anotar cómo fue'),
+                ),
+            ],
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Anota técnica, rango y recuperación de la sesión de la que sale la
+/// propuesta y devuelve la propuesta recalculada (null si se canceló). Sin
+/// estos tres datos la regla nunca deja subir: la meta del viernes se
+/// quedaba fija (§16.9).
+Future<ProgressionProposal?> recordProgressionCriteria(
+    BuildContext context, WidgetRef ref, ProgressionProposal proposal, DateTime day) async {
+  final id = proposal.sessionId;
+  if (id == null) return null;
+  final repo = ref.read(trainingRepositoryProvider);
+  final last = await repo.load(id);
+  if (!context.mounted) return null;
+  final result = await showDialog<(bool?, bool?, bool?)>(
+    context: context,
+    builder: (_) => _CriteriaDialog(
+      date: proposal.lastDate,
+      rounds: proposal.lastRounds,
+      initial: (last.techniqueOk, last.fullRange, last.recoveryOk),
+    ),
+  );
+  if (result == null) return null;
+  await repo.setProgressionCriteria(id, techniqueOk: result.$1, fullRange: result.$2, recoveryOk: result.$3);
+  ref.invalidate(dashboardProvider);
+  return repo.progressionProposal(day);
+}
+
+class _CriteriaDialog extends StatefulWidget {
+  const _CriteriaDialog({required this.date, required this.rounds, required this.initial});
+
+  final DateTime? date;
+  final int rounds;
+  final (bool?, bool?, bool?) initial;
+
+  @override
+  State<_CriteriaDialog> createState() => _CriteriaDialogState();
+}
+
+class _CriteriaDialogState extends State<_CriteriaDialog> {
+  late bool? _technique = widget.initial.$1;
+  late bool? _range = widget.initial.$2;
+  late bool? _recovery = widget.initial.$3;
+
+  @override
+  Widget build(BuildContext context) {
+    final date = widget.date;
+    final when = date == null ? 'la última sesión' : 'el ${weekdayShort(date.weekday)} ${formatShort(date)}';
+    return AlertDialog(
+      title: const Text('¿Cómo fue?'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Las ${widget.rounds} rondas de $when. Con las tres en "Sí" la regla propone subir una.'),
+            const SizedBox(height: 8),
+            TriToggle(
+                label: 'Técnica buena en la última ronda',
+                value: _technique,
+                onChanged: (v) => setState(() => _technique = v)),
+            TriToggle(label: 'Rango completo', value: _range, onChanged: (v) => setState(() => _range = v)),
+            TriToggle(label: 'Recuperación normal', value: _recovery, onChanged: (v) => setState(() => _recovery = v)),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        FilledButton(
+            onPressed: () => Navigator.pop(context, (_technique, _range, _recovery)), child: const Text('Guardar')),
+      ],
     );
   }
 }
@@ -367,8 +482,9 @@ Future<void> _runCounter(BuildContext context,
   }
 }
 
-Future<void> openSessionForm(BuildContext context, SessionDraft draft, {bool celebrate = true}) =>
-    Navigator.push(context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
+/// true si se guardó (o se borró) la sesión; null si se salió sin guardar.
+Future<bool?> openSessionForm(BuildContext context, SessionDraft draft, {bool celebrate = true}) =>
+    Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
 
 class TrainingScreen extends ConsumerWidget {
   const TrainingScreen({super.key});

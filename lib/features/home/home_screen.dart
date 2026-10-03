@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/repositories/dashboard_repository.dart';
 import '../../data/repositories/nutrition_repository.dart';
+import '../../data/repositories/profile_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
@@ -14,6 +15,7 @@ import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../meals/meal_form_screen.dart';
+import '../report/summary_screen.dart';
 import '../settings/custom_reminders.dart';
 import '../settings/settings_screen.dart';
 import '../settings/updates_card.dart';
@@ -64,6 +66,7 @@ class HomeScreen extends ConsumerWidget {
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
               const TodayCustomRemindersCard(),
+              _WeekGlanceCard(today: today),
               _ActionsCard(date: today, dayType: d.dayType, suggestLight: d.hardFootballYesterday != null),
               if (d.measurement != null) _MeasurementCard(due: d.measurement!),
             ],
@@ -177,6 +180,8 @@ class _PlanHero extends StatelessWidget {
                   style: text.bodyMedium?.copyWith(color: style.color),
                 ),
               ),
+            if (dashboard.proposal case final p? when !dashboard.trained)
+              _ProposalLine(proposal: p, date: dashboard.date, color: style.color),
             if (dashboard.dayType == DayType.descanso)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -184,6 +189,115 @@ class _PlanHero extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// La semana del programa en tres números, con entrada al resumen completo.
+class _WeekGlanceCard extends ConsumerWidget {
+  const _WeekGlanceCard({required this.today});
+
+  final DateTime today;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final start = ref.watch(profileProvider).valueOrNull?.programStart;
+    if (start == null) return const SizedBox.shrink();
+    final week = weekContaining(start, today);
+    final s = ref.watch(periodSummaryProvider((dayKey(week.start), dayKey(week.end)))).valueOrNull;
+    if (s == null || s.isEmpty) return const SizedBox.shrink();
+    final text = Theme.of(context).textTheme;
+    final top = s.exercises.where((e) => !e.isHold).take(3).toList();
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SummaryScreen())),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('ESTA SEMANA', style: text.labelSmall?.copyWith(letterSpacing: 1)),
+                  const Spacer(),
+                  Text('Ver más', style: text.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
+                  Icon(Icons.chevron_right, size: 18, color: Theme.of(context).colorScheme.primary),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 18,
+                runSpacing: 8,
+                children: [
+                  for (final e in top) _GlanceNumber(value: fmtInt(e.amount), label: e.name.toLowerCase()),
+                  if (s.stepsTotal > 0) _GlanceNumber(value: fmtInt(s.stepsTotal), label: 'pasos'),
+                  if (s.kcalBurned case final k?) _GlanceNumber(value: '≈ ${fmtInt(k)}', label: 'kcal moviéndote'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlanceNumber extends StatelessWidget {
+  const _GlanceNumber({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(value, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+        Text(label, style: text.bodySmall),
+      ],
+    );
+  }
+}
+
+/// Día de progresión: de dónde sale la meta. Si la regla no deja subir solo
+/// porque faltó anotar cómo fue la última, se anota aquí mismo.
+class _ProposalLine extends ConsumerWidget {
+  const _ProposalLine({required this.proposal, required this.date, required this.color});
+
+  final ProgressionProposal proposal;
+  final DateTime date;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = proposal;
+    final text = Theme.of(context).textTheme;
+    final last = p.lastDate == null ? 'la última' : 'la del ${formatShort(p.lastDate!)}';
+    final missing = p.unmet.any((u) => u.endsWith('sin registrar'));
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            p.canProgress
+                ? 'Toca intentar ${p.rounds}: $last (${p.lastRounds}) cumplió la regla.'
+                : 'Se mantiene en ${p.rounds}: $last no cumplió ${p.unmet.join(', ')}.',
+            style: text.bodyMedium?.copyWith(color: p.canProgress ? color : null),
+          ),
+          if (missing && p.sessionId != null)
+            TextButton.icon(
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              onPressed: () => recordProgressionCriteria(context, ref, p, date),
+              icon: const Icon(Icons.fact_check_outlined, size: 18),
+              label: const Text('Anotar cómo fue'),
+            ),
+        ],
       ),
     );
   }

@@ -129,6 +129,35 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   late GuidedPhase _phase = widget.resume?.phase ?? GuidedPhase.calentamiento;
   Timer? _ticker;
 
+  /// Cuándo apareció el paso en pantalla. "Hecho" y "Saltar descanso" ocupan
+  /// el mismo sitio: un doble toque cerraba la ronda y saltaba el descanso en
+  /// 0:00, y el descanso que igual se tomaba inflaba la ronda siguiente
+  /// (§16.9). Los toques justo después de cambiar de paso se ignoran.
+  DateTime _stepShownAt = clock.now();
+  static const _doneGuard = Duration(milliseconds: 800);
+  static const _skipRestGuardSec = 3;
+
+  bool get _doneReady => clock.now().difference(_stepShownAt) >= _doneGuard;
+
+  bool get _canSkipRest =>
+      _restStartedAt != null && clock.now().difference(_restStartedAt!).inSeconds >= _skipRestGuardSec;
+
+  void _tapDone() {
+    if (!_doneReady) return;
+    _completeWork();
+  }
+
+  /// Criterios de la regla de progresión, anotados en el cierre. Sin ellos
+  /// la propuesta del viernes nunca sube (§16.9).
+  late bool? _techniqueOk = widget.resume?.techniqueOk;
+  late bool? _fullRange = widget.resume?.fullRange;
+  late bool? _recoveryOk = widget.resume?.recoveryOk;
+
+  void _setCriteria(void Function() change) {
+    setState(change);
+    _persist();
+  }
+
   /// Se toma al iniciar: en `dispose` Riverpod ya no deja usar `ref`, y ahí
   /// hay que cancelar el aviso de fin de descanso.
   late final NotificationService _notifications;
@@ -172,6 +201,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         done: List.of(_done),
         roundMarks: List.of(_roundMarks),
         roundRests: List.of(_roundRests),
+        techniqueOk: _techniqueOk,
+        fullRange: _fullRange,
+        recoveryOk: _recoveryOk,
       )));
 
   /// Claves de técnica y última carga usada de cada ejercicio del guion.
@@ -366,6 +398,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 
   void _prepareStep() {
+    _stepShownAt = clock.now();
     final step = _current;
     final notifications = _notifications;
     if (step is WorkStep) {
@@ -510,6 +543,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       roundMarksSec: List.of(_roundMarks),
       roundRestSec: _roundRests.length == _roundMarks.length ? List.of(_roundRests) : null,
       context: widget.light ? 'Versión ligera (venía cargado del día anterior)' : null,
+      techniqueOk: isCircuit ? _techniqueOk : null,
+      fullRange: isCircuit ? _fullRange : null,
+      recoveryOk: isCircuit ? _recoveryOk : null,
       sets: [for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg)],
     );
   }
@@ -690,7 +726,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         const SizedBox(height: 12),
         SizedBox(
           height: 110,
-          child: _BigButton(label: 'Hecho', icon: Icons.check, onTap: _completeWork),
+          child: _BigButton(label: 'Hecho', icon: Icons.check, onTap: _tapDone),
         ),
       ],
     );
@@ -822,7 +858,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           width: double.infinity,
           height: 56,
           child: OutlinedButton.icon(
-            onPressed: _skipRest,
+            onPressed: _canSkipRest ? _skipRest : null,
             icon: const Icon(Icons.skip_next),
             label: const Text('Saltar descanso'),
           ),
@@ -970,6 +1006,30 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             ),
           ),
         ),
+        if (widget.day.type.isCircuit) ...[
+          const SizedBox(height: 12),
+          Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('¿Cómo salió?', style: Theme.of(context).textTheme.titleSmall),
+                  const Text('Con las tres en "Sí" (y sin series partidas) la regla propone subir una ronda.'),
+                  const SizedBox(height: 4),
+                  TriToggle(
+                      label: 'Técnica buena en la última ronda',
+                      value: _techniqueOk,
+                      onChanged: (v) => _setCriteria(() => _techniqueOk = v)),
+                  TriToggle(label: 'Rango completo', value: _fullRange, onChanged: (v) => _setCriteria(() => _fullRange = v)),
+                  TriToggle(
+                      label: 'Recuperación normal', value: _recoveryOk, onChanged: (v) => _setCriteria(() => _recoveryOk = v)),
+                ],
+              ),
+            ),
+          ),
+        ],
         const SizedBox(height: 12),
         FilledButton.icon(
           onPressed: () => Navigator.pop(context, draft),

@@ -212,7 +212,13 @@ String rpeMeaning(int rpe) => switch (rpe) {
 /// Propuesta de rondas para el próximo intento de progresión. La app no sube
 /// la meta sola: propone y dice qué criterio falló si no se puede subir.
 class ProgressionProposal {
-  const ProgressionProposal({required this.rounds, required this.lastRounds, required this.unmet, this.lastDate});
+  const ProgressionProposal({
+    required this.rounds,
+    required this.lastRounds,
+    required this.unmet,
+    this.lastDate,
+    this.sessionId,
+  });
 
   /// Rondas que se proponen.
   final int rounds;
@@ -224,7 +230,14 @@ class ProgressionProposal {
   /// Criterios de la regla que no se cumplieron (vacío = se puede subir).
   final List<String> unmet;
 
+  /// Sesión de la que sale la propuesta, para anotar lo que le falte.
+  final int? sessionId;
+
   bool get canProgress => unmet.isEmpty;
+
+  /// Lo único que frena es no haber anotado algún criterio: se arregla
+  /// marcando cómo fue, no entrenando distinto.
+  bool get blockedOnlyByMissing => unmet.isNotEmpty && unmet.every((u) => u.endsWith('sin registrar'));
 }
 
 /// Regla de progresión: se sube una ronda solo si la última sesión de
@@ -236,6 +249,7 @@ ProgressionProposal? proposeProgression({
   required int? lastRounds,
   int? lastPlanned,
   DateTime? lastDate,
+  int? sessionId,
   required bool anySplit,
   required bool anyFailure,
   bool? techniqueOk,
@@ -258,5 +272,6 @@ ProgressionProposal? proposeProgression({
     lastRounds: lastRounds,
     lastDate: lastDate,
     unmet: unmet,
+    sessionId: sessionId,
   );
 }

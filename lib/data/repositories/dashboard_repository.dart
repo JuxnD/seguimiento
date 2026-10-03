@@ -6,9 +6,11 @@ import '../../domain/nutrition.dart';
 import '../../domain/progress.dart';
 import '../../domain/steps.dart';
 import '../database.dart';
+import 'exercise_repository.dart';
 import 'nutrition_repository.dart';
 import 'plan_repository.dart';
 import 'profile_repository.dart';
+import 'training_repository.dart';
 
 /// Todo lo que la pantalla Hoy necesita, resuelto de una vez.
 class TodayDashboard {
@@ -35,6 +37,7 @@ class TodayDashboard {
     required this.roundsRecord,
     this.recordSuspect,
     required this.measurement,
+    this.proposal,
   });
 
   final DateTime date;
@@ -83,6 +86,10 @@ class TodayDashboard {
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
 
+  /// Día de progresión: lo que propone la regla. La meta del viernes sale de
+  /// aquí y no del plan, que tiene un número fijo y no avanzaba (§16.9).
+  final ProgressionProposal? proposal;
+
   /// Lo del día está hecho. Un partido lo cumple en días de fútbol o descanso;
   /// en un día de entrenamiento no reemplaza la sesión del plan (la racha sí
   /// lo cuenta).
@@ -114,6 +121,9 @@ class DashboardRepository {
     final p = await profile.get();
     final view = await plan.dayFor(date);
     final type = view?.day.type ?? DayType.descanso;
+    final proposal = type == DayType.progresion
+        ? await TrainingRepository(db, ExerciseRepository(db)).progressionProposal(date)
+        : null;
 
     final sessions = await (db.select(db.sessions)
           ..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions))
@@ -144,7 +154,8 @@ class DashboardRepository {
           ? const []
           : view.day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).toList(),
       blockExercises: view == null ? const [] : blockLines(view.day),
-      targetRounds: view?.day.targetRounds,
+      targetRounds: proposal?.rounds ?? view?.day.targetRounds,
+      proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
       sessionsToday: sessions.length,
       footballToday: football,

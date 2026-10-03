@@ -4,6 +4,7 @@ import '../format.dart';
 import '../nutrition.dart';
 import '../session_math.dart';
 import 'alerts.dart';
+import 'period_summary.dart';
 import 'report_input.dart';
 import 'report_stats.dart';
 
@@ -106,6 +107,17 @@ void _summary(StringBuffer b, ReportStats s) {
     final vs = before == null ? '' : ' (${fmtDelta(steps.average - before, decimals: 0)} vs semana anterior)';
     b.writeln('- Pasos: ${fmtInt(steps.average)}/día ($n ${n == 1 ? 'día registrado' : 'días registrados'})'
         '$vs$weekday');
+  }
+
+  // Totales del rango: lo que el promedio no dice.
+  final p = summarizePeriod(i);
+  if (p.activeSec > 0 || p.stepsTotal > 0) {
+    b.writeln('- Movimiento: ${formatDuration(p.activeSec)} activo · ${fmtInt(p.stepsTotal)} pasos '
+        '(≈ ${fmtDec(p.distanceKm)} km)');
+  }
+  if (p.kcalBurned case final k? when k > 0) {
+    b.writeln('- Gasto aprox. por actividad: ≈ ${fmtInt(k)} kcal (entrenamiento ${fmtInt(p.kcalTraining ?? 0)} · '
+        'fútbol ${fmtInt(p.kcalFootball ?? 0)} · caminar ${fmtInt(p.kcalSteps ?? 0)}; con ${fmtDec(p.weightKg!)} kg, ±30 %)');
   }
 
   final w = i.weightsInRange;

@@ -33,6 +33,10 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   errores). Ambas se restauran desde Ajustes. Las fotos no van en ninguna.
 - Fuera de la base viven `flags.json` (permisos ya pedidos, fechas de copia) y
   `sesion-en-curso.json` (cronómetro a medias). Restaurar no los toca.
+- En este equipo, desde el 2 oct 2026 `C:lutter` es Flutter 3.47 (lo
+  actualizó otro proyecto); el 3.22 de este repo está en
+  `C:lutter-3.22-oldin`. Con 3.47 el análisis falla (`CardTheme`) y `pub`
+  reescribe `pubspec.lock`: anteponer esa ruta al `PATH` antes de compilar.
 - Flutter está fijado en 3.22: `pub` resuelve versiones de `fl_chart` y
   `share_plus` que luego no compilan. Compilar el APK y correr las pruebas de
   pantalla es la verificación real de cualquier cambio de dependencias.

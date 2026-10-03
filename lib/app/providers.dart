@@ -32,7 +32,9 @@ import '../data/repositories/training_repository.dart';
 import '../domain/active_session.dart';
 import '../domain/dates.dart';
 import '../domain/enums.dart';
+import '../domain/report/period_summary.dart';
 import '../domain/report/report_builder.dart';
+import '../domain/report/report_input.dart';
 
 /// Se sobreescribe en `main` con la base ya abierta.
 final databaseHostProvider = Provider<DatabaseHost>((ref) => throw UnimplementedError());
@@ -280,8 +282,9 @@ final planDayProvider = StreamProvider.family(
 final weekNoteProvider =
     StreamProvider.family((ref, int week) => ref.watch(profileRepositoryProvider).watchWeekNote(week));
 
-/// Informe de un rango. Se recalcula cuando cambia cualquier dato de entrada.
-final reportProvider = FutureProvider.family<String, (String, String)>((ref, range) async {
+/// Entrada del informe de un rango (con el rango anterior para comparar).
+/// Se recarga cuando cambia cualquier dato de entrada.
+final reportInputProvider = FutureProvider.family<ReportInput, (String, String)>((ref, range) async {
   // Dependencias explícitas: al cambiar cualquiera, el informe se regenera.
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
@@ -293,8 +296,18 @@ final reportProvider = FutureProvider.family<String, (String, String)>((ref, ran
   final from = parseDay(range.$1), to = parseDay(range.$2);
   ref.watch(mealsRangeRefreshProvider((range.$1, range.$2)));
   ref.watch(closedDaysRangeProvider((range.$1, range.$2)));
-  final input = await ref.watch(reportRepositoryProvider).load(from, to);
-  return buildReport(input);
+  return ref.watch(reportRepositoryProvider).load(from, to);
+});
+
+/// Informe de un rango, en Markdown.
+final reportProvider = FutureProvider.family<String, (String, String)>(
+    (ref, range) async => buildReport(await ref.watch(reportInputProvider(range).future)));
+
+/// Resumen en números de un rango: semana, mes o desde el inicio.
+final periodSummaryProvider = FutureProvider.family<PeriodSummary, (String, String)>((ref, range) async {
+  final input = await ref.watch(reportInputProvider(range).future);
+  final height = ref.watch(profileProvider).valueOrNull?.heightCm;
+  return summarizePeriod(input, heightCm: height);
 });
 
 /// Stream auxiliar: hace que el informe reaccione a cambios de comidas.

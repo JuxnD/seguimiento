@@ -405,3 +405,36 @@ String measurementLabel(MeasurementDue due) {
       ? 'Hoy toca medir (fecha acordada). En ayunas.'
       : 'Toca medir: estás en la ventana hasta el ${formatShort(due.windowEnd)}. En ayunas.';
 }
+
+/// Sí / No / sin registrar. El null importa: no es lo mismo "no lo anoté" que
+/// "la técnica falló".
+class TriToggle extends StatelessWidget {
+  const TriToggle({super.key, required this.label, required this.value, required this.onChanged});
+
+  final String label;
+  final bool? value;
+  final ValueChanged<bool?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(child: Text(label)),
+          ChoiceChip(
+            label: const Text('Sí'),
+            selected: value == true,
+            onSelected: (sel) => onChanged(sel ? true : null),
+          ),
+          const SizedBox(width: 6),
+          ChoiceChip(
+            label: const Text('No'),
+            selected: value == false,
+            onSelected: (sel) => onChanged(sel ? false : null),
+          ),
+        ],
+      ),
+    );
+  }
+}

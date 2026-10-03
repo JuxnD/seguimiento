@@ -12,6 +12,32 @@ Pruebas: [`test/domain/report_test.dart`](../test/domain/report_test.dart).
 Para ver una salida completa con datos de ejemplo:
 `dart run tool/sample_report.dart > docs/ejemplo-informe.md` (no se versiona).
 
+## Resumen en números (pantalla *Tu progreso*)
+
+Desde *Informe* (icono de gráfica o "Semana y mes") y desde la tarjeta "Esta
+semana" de Hoy. Semana del programa, mes calendario o desde el inicio, con
+flechas para ir atrás. Lógica pura en
+[`period_summary.dart`](../lib/domain/report/period_summary.dart) sobre el
+mismo `ReportInput` del informe; pruebas en
+[`period_summary_test.dart`](../test/domain/period_summary_test.dart).
+
+- Sesiones hechas / planificadas, partidos, tiempo activo (sesiones,
+  movilidad y fútbol) y trabajo neto.
+- Repeticiones por ejercicio con series y cambio contra el periodo anterior;
+  los aguantes en segundos, aparte.
+- Pasos: total, promedio por día registrado, km (zancada = 41,5 % de la
+  estatura del perfil, o 0,75 m), mejor día y días entre semana en meta.
+- Gasto aproximado **por actividad** (no el del día): MET por fase en las
+  sesiones, 7 MET en el fútbol y 0,5 kcal·kg⁻¹·km⁻¹ al caminar (ecuación de
+  marcha del ACSM, lo que suma sobre el reposo). El día de partido los pasos
+  no se suman para no contar dos veces. Peso: el último del rango o el
+  primero registrado; sin peso no hay número.
+- Comida: promedio de kcal y proteína de los días cerrados y cuántos llegaron
+  a la proteína mínima.
+
+El Markdown suma dos líneas al *Resumen*: movimiento (tiempo activo, pasos,
+km) y gasto aproximado por actividad.
+
 ## Secciones
 
 1. **Encabezado** — rango, número de semana desde el inicio y versión(es) del

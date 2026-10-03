@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
 import '../database.dart';
 import 'exercise_repository.dart';
@@ -317,6 +318,34 @@ class TrainingRepository {
         .getSingleOrNull();
     return row == null ? null : load(row.id);
   }
+
+  /// Propuesta de la regla de progresión para el intento de `date`, a partir
+  /// de la última sesión de progresión anterior. Hoy y el cronómetro leen de
+  /// aquí para que la meta sea la misma en las dos pantallas.
+  Future<ProgressionProposal?> progressionProposal(DateTime date) async {
+    final last = await lastOfType(SessionType.progresion, date);
+    if (last == null) return null;
+    return proposeProgression(
+      lastRounds: last.roundsDone,
+      lastPlanned: last.plannedRounds,
+      lastDate: last.date,
+      sessionId: last.id,
+      anySplit: last.sets.any((s) => s.split),
+      anyFailure: last.sets.any((s) => s.toFailure),
+      techniqueOk: last.techniqueOk,
+      fullRange: last.fullRange,
+      recoveryOk: last.recoveryOk,
+      incomplete: last.incomplete,
+    );
+  }
+
+  /// Anota los tres criterios de calidad de una sesión ya guardada.
+  Future<void> setProgressionCriteria(int id, {bool? techniqueOk, bool? fullRange, bool? recoveryOk}) =>
+      (db.update(db.sessions)..where((t) => t.id.equals(id))).write(SessionsCompanion(
+        techniqueOk: Value(techniqueOk),
+        fullRange: Value(fullRange),
+        recoveryOk: Value(recoveryOk),
+      ));
 
   /// Última carga externa usada en un ejercicio, para proponerla de nuevo.
   Future<double?> lastLoad(String exercise) async {

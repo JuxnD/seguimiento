@@ -147,17 +147,25 @@ class TrendChart extends StatelessWidget {
 
 /// Barras por día: proteína o kcal de la semana, con la meta marcada.
 class DailyBarsChart extends StatelessWidget {
-  const DailyBarsChart({super.key, required this.points, required this.color, this.goal, this.unit = ''});
+  const DailyBarsChart({
+    super.key,
+    required this.points,
+    required this.color,
+    this.goal,
+    this.unit = '',
+    this.emptyText = 'Sin comidas registradas en el rango.',
+  });
 
   final List<SeriesPoint> points;
   final Color color;
   final double? goal;
   final String unit;
+  final String emptyText;
 
   @override
   Widget build(BuildContext context) {
     if (points.every((p) => p.value == 0)) {
-      return const EmptyHint('Sin comidas registradas en el rango.');
+      return EmptyHint(emptyText);
     }
     final scheme = Theme.of(context).colorScheme;
     final maxValue = seriesMax(points);

@@ -75,6 +75,9 @@ class GuidedSnapshot extends ActiveSession {
     this.done = const [],
     this.roundMarks = const [],
     this.roundRests = const [],
+    this.techniqueOk,
+    this.fullRange,
+    this.recoveryOk,
   });
 
   /// El día del plan se relee por id: las versiones del plan son inmutables,
@@ -104,6 +107,12 @@ class GuidedSnapshot extends ActiveSession {
   /// fotos anteriores al esquema 8: sin él no se separa el trabajo por ronda.
   final List<int> roundRests;
 
+  /// Criterios de la regla anotados en el cierre: una sesión terminada sin
+  /// guardar los conserva al retomarla.
+  final bool? techniqueOk;
+  final bool? fullRange;
+  final bool? recoveryOk;
+
   @override
   Map<String, Object?> toJson() => {
         'kind': 'guided',
@@ -125,6 +134,9 @@ class GuidedSnapshot extends ActiveSession {
         'done': [for (final d in done) d.toJson()],
         'roundMarks': roundMarks,
         'roundRests': roundRests,
+        'techniqueOk': techniqueOk,
+        'fullRange': fullRange,
+        'recoveryOk': recoveryOk,
       };
 
   static GuidedSnapshot _fromJson(Map<String, Object?> j) => GuidedSnapshot(
@@ -146,6 +158,9 @@ class GuidedSnapshot extends ActiveSession {
         done: [for (final d in j['done']! as List) DoneStep.fromJson((d as Map).cast<String, Object?>())],
         roundMarks: [for (final m in j['roundMarks']! as List) (m as num).toInt()],
         roundRests: [for (final m in (j['roundRests'] as List?) ?? const []) (m as num).toInt()],
+        techniqueOk: j['techniqueOk'] as bool?,
+        fullRange: j['fullRange'] as bool?,
+        recoveryOk: j['recoveryOk'] as bool?,
       );
 }
 

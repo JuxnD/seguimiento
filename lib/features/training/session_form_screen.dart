@@ -401,17 +401,17 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             children: [
               const Text('Solo se sube de ronda con las tres en verde, sin series partidas y sin fallo.'),
               const SizedBox(height: 8),
-              _TriToggle(
+              TriToggle(
                 label: 'Técnica buena',
                 value: d.techniqueOk,
                 onChanged: (v) => setState(() => d.techniqueOk = v),
               ),
-              _TriToggle(
+              TriToggle(
                 label: 'Rango completo',
                 value: d.fullRange,
                 onChanged: (v) => setState(() => d.fullRange = v),
               ),
-              _TriToggle(
+              TriToggle(
                 label: 'Recuperación normal',
                 value: d.recoveryOk,
                 onChanged: (v) => setState(() => d.recoveryOk = v),
@@ -456,39 +456,6 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         onPressed: _saving ? null : _save,
         icon: const Icon(Icons.save),
         label: const Text('Guardar'),
-      ),
-    );
-  }
-}
-
-/// Sí / No / sin registrar. El null importa: no es lo mismo "no lo anoté" que
-/// "la técnica falló".
-class _TriToggle extends StatelessWidget {
-  const _TriToggle({required this.label, required this.value, required this.onChanged});
-
-  final String label;
-  final bool? value;
-  final ValueChanged<bool?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(child: Text(label)),
-          ChoiceChip(
-            label: const Text('Sí'),
-            selected: value == true,
-            onSelected: (sel) => onChanged(sel ? true : null),
-          ),
-          const SizedBox(width: 6),
-          ChoiceChip(
-            label: const Text('No'),
-            selected: value == false,
-            onSelected: (sel) => onChanged(sel ? false : null),
-          ),
-        ],
       ),
     );
   }

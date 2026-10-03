@@ -6,9 +6,12 @@ import 'package:share_plus/share_plus.dart';
 import '../../app/providers.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../domain/dates.dart';
+import '../../domain/format.dart';
+import '../../domain/report/period_summary.dart';
 import '../../ui/widgets.dart';
 import '../../ui/hero.dart';
 import 'charts_section.dart';
+import 'summary_screen.dart';
 
 /// El informe es el producto: se genera, se copia y se pega en el chat.
 class ReportScreen extends ConsumerStatefulWidget {
@@ -42,6 +45,12 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
           appBar: AppBar(
             title: const Text('Informe'),
             actions: [
+              IconButton(
+                tooltip: 'Tu progreso en números',
+                icon: const Icon(Icons.insights),
+                onPressed: () =>
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SummaryScreen())),
+              ),
               IconButton(
                 tooltip: 'Rango personalizado',
                 icon: const Icon(Icons.date_range),
@@ -118,6 +127,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     ),
                 ],
               ),
+              _SummaryLink(range: key),
               ChartsSection(range: key),
               if (_customRange == null) _WeekNotes(weekIndex: week),
               AppCard(
@@ -156,6 +166,42 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Los números grandes del rango y la entrada al resumen por semana o mes.
+class _SummaryLink extends ConsumerWidget {
+  const _SummaryLink({required this.range});
+
+  final (String, String) range;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(periodSummaryProvider(range)).valueOrNull;
+    final text = Theme.of(context).textTheme;
+    final top = s == null ? const <ExerciseTotal>[] : s.exercises.where((e) => !e.isHold).take(3).toList();
+    return AppCard(
+      title: 'En números',
+      trailing: TextButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SummaryScreen())),
+        child: const Text('Semana y mes'),
+      ),
+      children: [
+        if (s == null)
+          const LinearProgressIndicator()
+        else if (s.isEmpty)
+          Text('Nada registrado en este rango todavía.', style: text.bodyLarge)
+        else
+          Text(
+            [
+              for (final e in top) '${fmtInt(e.amount)} ${e.name.toLowerCase()}',
+              if (s.stepsTotal > 0) '${fmtInt(s.stepsTotal)} pasos',
+              if (s.kcalBurned case final k?) '≈ ${fmtInt(k)} kcal en actividad',
+            ].join(' · '),
+            style: text.bodyLarge,
+          ),
+      ],
     );
   }
 }
