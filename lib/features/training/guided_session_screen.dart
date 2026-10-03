@@ -155,7 +155,40 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   void _setCriteria(void Function() change) {
     setState(change);
-    _persist();
+    final id = _savedId;
+    if (id == null) {
+      _persist();
+      return;
+    }
+    // Ya guardada: los criterios van directo a la sesión.
+    unawaited(ref
+        .read(trainingRepositoryProvider)
+        .setProgressionCriteria(id, techniqueOk: _techniqueOk, fullRange: _fullRange, recoveryOk: _recoveryOk)
+        .catchError((Object _) {}));
+  }
+
+  /// Sesión guardada sola al terminar el enfriamiento (pendiente de revisar).
+  /// Desde ese momento cuenta en Hoy y en el informe aunque nunca se toque
+  /// "Revisar y guardar" (§16.9).
+  int? _savedId;
+
+  Future<void> _saveAsPending() async {
+    try {
+      final draft = _buildDraft()..pendingReview = true;
+      final id = await ref.read(trainingRepositoryProvider).save(draft);
+      _savedId = id;
+      await ref.read(activeSessionStoreProvider).clear();
+      final rounds = draft.roundsDone == null ? '' : '${draft.roundsDone} rondas · ';
+      unawaited(_notifications.scheduleReviewReminder(
+        after: const Duration(hours: 1),
+        body: '${_sessionType.label}: ${rounds}falta el RPE y las notas.',
+      ));
+      if (mounted) setState(() {});
+    } on Object {
+      // Sin base (o si falla), la foto en disco la conserva: Hoy la ofrece
+      // como "terminada sin guardar".
+      _persist();
+    }
   }
 
   /// Se toma al iniciar: en `dispose` Riverpod ya no deja usar `ref`, y ahí
@@ -491,8 +524,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       _endedAt = clock.now();
       _phase = GuidedPhase.terminado;
     });
-    _persist();
     unawaited(HapticFeedback.heavyImpact());
+    await _saveAsPending();
   }
 
   void _skipRest() {
@@ -529,6 +562,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final isCircuit = widget.day.type.isCircuit;
     final rounds = isCircuit ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound) : null;
     return SessionDraft(
+      id: _savedId,
+      pendingReview: _savedId != null,
       date: widget.date,
       startTime: timeKey(_startedAt.hour, _startedAt.minute),
       type: _sessionType,
@@ -560,7 +595,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
         final navigator = Navigator.of(context);
-        if (_done.isEmpty || await _confirmExit()) navigator.pop();
+        // Ya guardada como pendiente: salir no pierde nada.
+        if (_done.isEmpty || _savedId != null || await _confirmExit()) navigator.pop();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -1036,13 +1072,36 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           icon: const Icon(Icons.save),
           label: const Text('Revisar y guardar'),
         ),
+        if (_savedId != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'Ya quedó guardada y cuenta en Hoy. Falta el RPE: revísala ahora o más tarde desde Hoy.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
         const SizedBox(height: 8),
         OutlinedButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Descartar'),
+          onPressed: _discard,
+          child: Text(_savedId == null ? 'Descartar' : 'Borrar sesión'),
         ),
       ],
     );
+  }
+
+  Future<void> _discard() async {
+    final id = _savedId;
+    if (id == null) {
+      Navigator.pop(context);
+      return;
+    }
+    if (!await confirmDelete(context, 'la sesión que acabas de terminar')) return;
+    if (!mounted) return;
+    final ok = await guarded(context, () => ref.read(trainingRepositoryProvider).delete(id), failure: 'No se pudo borrar');
+    if (!ok || !mounted) return;
+    unawaited(_notifications.cancelReviewReminder());
+    Navigator.pop(context);
   }
 
   Future<bool> _confirmExit() async {

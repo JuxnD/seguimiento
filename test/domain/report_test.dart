@@ -367,7 +367,7 @@ void main() {
       expect(md, startsWith('# Informe semanal — 16 sep a 22 sep 2026\n'
           'Semana 4 desde inicio (26 ago) · Plan v1 (desde 26 ago) → v2 (desde 20 sep)'));
       expect(md, contains('- Sesiones: 3/3 · Fútbol: 1/2'));
-      expect(md, contains('- Récord de rondas: 8 (anterior: 7)'));
+      expect(md, contains('- 🏆 **Récord nuevo: 8 rondas** (anterior: 7)'));
       expect(md, contains('- Días bajo 2.000 kcal: 2'));
       expect(md, contains('| vie 18 sep 15:10 | Circuito | 20:00 | 9:00 / 3:00 | — | 8:00 | 8 | 8 | 1 | Oficina \\| fútbol intenso ayer |'));
       expect(md, contains('| mié 16 sep 07:00 | Circuito | 18:20 | 5:00 / 2:00 | — | 11:20 | ~6 (est.) |'));

@@ -115,6 +115,13 @@ void main() {
     final closed = {for (final c in await db.select(db.closedDays).get()) c.date};
     expect(closed, {'2026-09-25', '2026-09-27', '2026-09-28'}, reason: 'solo los días con comidas');
 
+    // La progresión del 2 oct, recuperada y sin revisar.
+    final oct2 = await training.load((await session('2026-10-02')).id);
+    expect((oct2.type, oct2.roundsDone, oct2.pendingReview, oct2.rpe), (SessionType.progresion, 9, true, null));
+    expect((oct2.totalSec, oct2.warmupSec, oct2.cooldownSec, oct2.restSec, oct2.netSec), (1332, 450, 180, 240, 462));
+    int reps(String e) => oct2.sets.where((s) => s.exercise == e).fold(0, (a, s) => a + s.reps);
+    expect((reps('Dominadas'), reps('Flexiones'), reps('Sentadillas')), (45, 90, 135));
+
     final again = await checkCorrections(db);
     expect(again.values.toSet(), {CorrectionState.done}, reason: '$again');
     expect(await applyPendingCorrections(db), 0, reason: 'aplicar dos veces no cambia nada');
@@ -143,6 +150,7 @@ void main() {
     expect(states['rpe-23'], CorrectionState.missing);
     expect(states['desayuno-28'], CorrectionState.missing);
     expect(states['cerrar-24-28'], CorrectionState.missing, reason: 'sin comidas no hay días que cerrar');
-    expect(await applyPendingCorrections(db), 0);
+    expect(states['sesion-2oct'], CorrectionState.pending, reason: 'no hay sesión el 2 oct: se recupera');
+    expect(await applyPendingCorrections(db), 1);
   });
 }

@@ -47,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -157,6 +157,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 13) {
             // v13 (solo datos): pan y salchichón por gramos (§16.3, §17).
             await applyGramsCatalog(this);
+          }
+          if (from < 14) {
+            // v14: sesiones guardadas solas al terminar el cronómetro.
+            await m.addColumn(sessions, sessions.pendingReview);
           }
         },
         beforeOpen: (details) async {

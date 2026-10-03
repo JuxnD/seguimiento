@@ -67,6 +67,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
+              const _PendingReviewCard(),
               const _CorrectionsBanner(),
               const TodayCustomRemindersCard(),
               _WeekGlanceCard(today: today),
@@ -197,6 +198,66 @@ class _PlanHero extends StatelessWidget {
   }
 }
 
+/// Sesiones guardadas solas al terminar el cronómetro y todavía sin revisar:
+/// ya cuentan, pero les falta el RPE (§16.9). No se pierden por no tocar un
+/// botón.
+class _PendingReviewCard extends ConsumerWidget {
+  const _PendingReviewCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pending = ref.watch(pendingReviewProvider).valueOrNull ?? const [];
+    if (pending.isEmpty) return const SizedBox.shrink();
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: scheme.primary, width: 1.5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final s in pending)
+              Row(
+                children: [
+                  Icon(Icons.pending_actions, color: scheme.primary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Sesión sin revisar', style: text.titleSmall),
+                        Text(
+                          [
+                            '${s.type.label} ${weekdayShort(parseDay(s.date).weekday)} ${formatShort(parseDay(s.date))}',
+                            if (s.roundsDone != null) '${s.roundsDone} rondas',
+                            'falta RPE',
+                          ].join(' · '),
+                          style: text.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  FilledButton(
+                    onPressed: () async {
+                      final draft = await ref.read(trainingRepositoryProvider).load(s.id);
+                      if (context.mounted) await openSessionForm(context, draft);
+                    },
+                    child: const Text('Revisar'),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Mientras haya correcciones del traspaso sin aplicar (y el usuario no haya
 /// dicho que no), Hoy las ofrece una vez.
 class _CorrectionsBanner extends ConsumerWidget {
@@ -207,10 +268,10 @@ class _CorrectionsBanner extends ConsumerWidget {
     final pending = ref.watch(pendingCorrectionsProvider);
     if (pending == 0) return const SizedBox.shrink();
     return AppCard(
-      title: 'Correcciones del 29 sep',
+      title: 'Correcciones del traspaso',
       children: [
         Text('$pending ${pending == 1 ? 'registro' : 'registros'} de sesiones y comidas para corregir según el '
-            'traspaso (RPE, plancha, salchichón, tipos de comida, días cerrados, un duplicado).'),
+            'traspaso (la sesión de 9 rondas del 2 oct, RPE, plancha, salchichón, tipos de comida, días cerrados, un duplicado).'),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -406,9 +467,21 @@ class _RingsCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.emoji_events_outlined, size: 18),
+              Icon(d.recentRecord ? Icons.emoji_events : Icons.emoji_events_outlined,
+                  size: 18, color: d.recentRecord ? AppColors.record : null),
               const SizedBox(width: 8),
-              Text('Récord de rondas: ${d.roundsRecord}', style: Theme.of(context).textTheme.bodyMedium),
+              Expanded(
+                child: Text(
+                  d.recentRecord
+                      ? '¡Récord nuevo! ${d.roundsRecord} rondas el '
+                          '${weekdayShort(d.recordDate!.weekday)} ${formatShort(d.recordDate!)}'
+                      : 'Récord de rondas: ${d.roundsRecord}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: d.recentRecord ? AppColors.record : null,
+                        fontWeight: d.recentRecord ? FontWeight.w700 : null,
+                      ),
+                ),
+              ),
             ],
           ),
           if (d.recordSuspect != null) _RecordSuspectTile(suspect: d.recordSuspect!),

@@ -45,6 +45,10 @@ class NotificationService implements NotificationSink {
   /// Aviso de prueba programado: reprogramar los recordatorios no lo toca.
   static const testNotificationId = 90002;
 
+  /// "Te falta guardar la sesión de hoy": una hora después de terminarla sin
+  /// revisar (§16.9).
+  static const reviewNotificationId = 90003;
+
   /// Ícono monocromo de la barra de estado (el del lanzador sale como un
   /// cuadro gris).
   static const _statusIcon = '@drawable/ic_stat_seguimiento';
@@ -127,7 +131,9 @@ class NotificationService implements NotificationSink {
   Future<void> cancelScheduled() async {
     final pending = await _plugin.pendingNotificationRequests();
     for (final p in pending) {
-      if (p.id != restNotificationId && p.id != testNotificationId) await _plugin.cancel(p.id);
+      if (p.id != restNotificationId && p.id != testNotificationId && p.id != reviewNotificationId) {
+        await _plugin.cancel(p.id);
+      }
     }
   }
 
@@ -234,6 +240,39 @@ class NotificationService implements NotificationSink {
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
     return exact;
+  }
+
+  /// Recuerda revisar una sesión guardada sola. Nunca lanza.
+  Future<void> scheduleReviewReminder({required Duration after, required String body}) async {
+    try {
+      await init();
+      await _plugin.zonedSchedule(
+        reviewNotificationId,
+        'Te falta guardar la sesión de hoy',
+        body,
+        tz.TZDateTime.now(tz.local).add(after),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _reminderChannel.id,
+            _reminderChannel.name,
+            channelDescription: _reminderChannel.description,
+          ),
+          iOS: const DarwinNotificationDetails(),
+        ),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    } on Object {
+      // Sin aviso la sesión igual queda en Hoy como "sin revisar".
+    }
+  }
+
+  Future<void> cancelReviewReminder() async {
+    try {
+      await _plugin.cancel(reviewNotificationId);
+    } on Object {
+      // Nada programado.
+    }
   }
 
   Future<void> cancelRestEnd() async {

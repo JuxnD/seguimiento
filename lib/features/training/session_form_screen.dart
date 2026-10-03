@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -88,6 +90,48 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         _rounds.text = '$result';
       });
     }
+  }
+
+  /// Pasa `sec` del trabajo de la ronda siguiente al descanso `gap` (entre la
+  /// ronda gap+1 y la gap+2). El total no cambia: solo se reparte distinto.
+  void _shiftRest(int gap, int sec) {
+    final before = List.of(d.roundRestSec);
+    d.roundRestSec[gap] += sec;
+    d.restSec += sec;
+    _rest.text = formatDuration(d.restSec);
+    _audit(before);
+  }
+
+  /// Deja constancia de los descansos originales: el informe se audita.
+  void _audit(List<int> before) {
+    if ((d.context ?? '').contains('Descansos corregidos a mano')) return;
+    final original = before.take(before.length - 1).map(formatDuration).join(' · ');
+    final note = 'Descansos corregidos a mano (antes: $original)';
+    _context.text = _context.text.trim().isEmpty ? note : '${_context.text.trim()}. $note';
+    d.context = _context.text;
+  }
+
+  Future<void> _editRests() async {
+    final gaps = d.roundRestSec.length - 1;
+    if (gaps < 1) return;
+    final laps = lapDurations(d.roundMarksSec);
+    final result = await showDialog<List<int>>(
+      context: context,
+      builder: (_) => _RestsDialog(rests: d.roundRestSec.take(gaps).toList(), laps: laps),
+    );
+    if (result == null) return;
+    setState(() {
+      final before = List.of(d.roundRestSec);
+      var delta = 0;
+      for (var i = 0; i < gaps; i++) {
+        delta += result[i] - d.roundRestSec[i];
+        d.roundRestSec[i] = result[i];
+      }
+      if (delta == 0) return;
+      d.restSec += delta;
+      _rest.text = formatDuration(d.restSec);
+      _audit(before);
+    });
   }
 
   Future<void> _addExercise() async {
@@ -199,12 +243,14 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       ..roundsDone = int.tryParse(_rounds.text)
       ..context = _context.text
       ..notes = _notes.text
-      ..limitingExercise = _limiting.text;
+      ..limitingExercise = _limiting.text
+      ..pendingReview = false;
     if (!mounted) return;
     setState(() => _saving = true);
     try {
       final repo = ref.read(trainingRepositoryProvider);
       if (!await guarded(context, () => repo.save(d))) return;
+      unawaited(ref.read(notificationServiceProvider).cancelReviewReminder());
       if (widget.celebrate) await _celebrateIfRecord(repo);
       if (mounted) Navigator.pop(context, true);
     } finally {
@@ -335,6 +381,23 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
+              if (d.roundWorkSec case final work? when work.length > 1) ...[
+                for (final k in suspectRounds(work, d.roundRestSec))
+                  _SuspectRound(
+                    round: k,
+                    work: work,
+                    rests: d.roundRestSec,
+                    onReassign: (sec) => setState(() => _shiftRest(k - 1, sec)),
+                  ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: _editRests,
+                    icon: const Icon(Icons.tune, size: 18),
+                    label: const Text('Corregir descansos'),
+                  ),
+                ),
+              ],
             ],
           ),
           AppCard(
@@ -457,6 +520,125 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         icon: const Icon(Icons.save),
         label: const Text('Guardar'),
       ),
+    );
+  }
+}
+
+/// ⚠ de una ronda que se comió el descanso previo, con la propuesta de
+/// devolvérselo (§16.9).
+class _SuspectRound extends StatelessWidget {
+  const _SuspectRound({required this.round, required this.work, required this.rests, required this.onReassign});
+
+  final int round;
+  final List<int> work;
+  final List<int> rests;
+  final ValueChanged<int> onReassign;
+
+  @override
+  Widget build(BuildContext context) {
+    final sec = reassignableSec(work, round);
+    final text = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          const Icon(Icons.warning_amber, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'R${round + 1}: ${formatDuration(work[round])} de trabajo tras un descanso de '
+              '${formatDuration(rests[round - 1])}. Seguramente el descanso se contó como trabajo.',
+              style: text.bodySmall,
+            ),
+          ),
+          if (sec > 0)
+            TextButton(onPressed: () => onReassign(sec), child: Text('Pasar $sec s al descanso')),
+        ],
+      ),
+    );
+  }
+}
+
+/// Descansos entre rondas, editables. Cambiar un descanso mueve ese tiempo
+/// desde (o hacia) el trabajo de la ronda siguiente: el total no cambia.
+class _RestsDialog extends StatefulWidget {
+  const _RestsDialog({required this.rests, required this.laps});
+
+  final List<int> rests;
+  final List<int> laps;
+
+  @override
+  State<_RestsDialog> createState() => _RestsDialogState();
+}
+
+class _RestsDialogState extends State<_RestsDialog> {
+  late final _fields = [for (final r in widget.rests) TextEditingController(text: '$r')];
+
+  @override
+  void dispose() {
+    for (final c in _fields) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  /// Trabajo que le queda a la ronda siguiente con el descanso escrito.
+  String _workLabel(int i) {
+    final v = int.tryParse(_fields[i].text.trim());
+    return v == null ? '' : 'R${i + 2} ${formatDuration(widget.laps[i + 1] - v)}';
+  }
+
+  List<int>? get _values {
+    final out = <int>[];
+    for (var i = 0; i < _fields.length; i++) {
+      final v = int.tryParse(_fields[i].text.trim());
+      // El descanso no puede comerse toda la vuelta siguiente.
+      if (v == null || v < 0 || v >= widget.laps[i + 1]) return null;
+      out.add(v);
+    }
+    return out;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final values = _values;
+    return AlertDialog(
+      title: const Text('Descansos entre rondas'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('En segundos. Lo que sumes a un descanso sale del trabajo de la ronda siguiente.'),
+            const SizedBox(height: 8),
+            for (var i = 0; i < _fields.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  children: [
+                    SizedBox(width: 90, child: Text('R${i + 1} → R${i + 2}')),
+                    Expanded(
+                      child: TextField(
+                        controller: _fields[i],
+                        keyboardType: TextInputType.number,
+                        onChanged: (_) => setState(() {}),
+                        decoration: const InputDecoration(suffixText: 's', isDense: true),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 80,
+                      child: Text(_workLabel(i), style: Theme.of(context).textTheme.bodySmall),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        FilledButton(onPressed: values == null ? null : () => Navigator.pop(context, values), child: const Text('Usar')),
+      ],
     );
   }
 }

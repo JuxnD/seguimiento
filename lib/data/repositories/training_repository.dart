@@ -50,6 +50,7 @@ class SessionDraft {
     this.outOfPlan = false,
     this.incomplete = false,
     this.plannedRounds,
+    this.pendingReview = false,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
     List<int>? roundRestSec,
@@ -86,6 +87,9 @@ class SessionDraft {
   bool? techniqueOk;
   bool? fullRange;
   bool? recoveryOk;
+
+  /// Guardada sola al terminar el cronómetro; falta revisarla (RPE).
+  bool pendingReview;
 
   /// En orden de ejecución; el índice de serie se calcula por ejercicio.
   final List<SetDraft> sets;
@@ -165,6 +169,7 @@ class TrainingRepository {
           techniqueOk: Value(d.techniqueOk),
           fullRange: Value(d.fullRange),
           recoveryOk: Value(d.recoveryOk),
+          pendingReview: Value(d.pendingReview),
         );
         final int id;
         if (d.id == null) {
@@ -238,6 +243,7 @@ class TrainingRepository {
       techniqueOk: r.techniqueOk,
       fullRange: r.fullRange,
       recoveryOk: r.recoveryOk,
+      pendingReview: r.pendingReview,
       sets: [
         for (final s in sets)
           SetDraft(
@@ -338,6 +344,13 @@ class TrainingRepository {
       incomplete: last.incomplete,
     );
   }
+
+  /// Sesiones que se guardaron solas al terminar el cronómetro y aún no se
+  /// revisan (falta el RPE). Las más recientes primero.
+  Stream<List<SessionRow>> watchPendingReview() => (db.select(db.sessions)
+        ..where((t) => t.pendingReview.equals(true))
+        ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)]))
+      .watch();
 
   /// Anota los tres criterios de calidad de una sesión ya guardada.
   Future<void> setProgressionCriteria(int id, {bool? techniqueOk, bool? fullRange, bool? recoveryOk}) =>

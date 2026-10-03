@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
 import 'package:seguimiento/data/active_session_store.dart';
+import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/data/repositories/exercise_repository.dart';
 import 'package:seguimiento/data/notification_service.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
@@ -15,6 +18,8 @@ import 'package:seguimiento/domain/reminders.dart';
 import 'package:seguimiento/features/training/guided_session_screen.dart';
 import 'package:wakelock_plus/wakelock_plus.dart' as wakelock;
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
+
+import '../support/sqlite_host.dart';
 
 /// La pantalla no apaga nada de verdad en una prueba.
 class _NoWakelock extends WakelockPlusPlatformInterface {
@@ -56,6 +61,8 @@ PlanDayDraft _circuit() => PlanDayDraft(
 void main() {
   late Directory dir;
 
+  setUpAll(useHostSqlite);
+
   setUp(() {
     dir = Directory.systemTemp.createTempSync('seguimiento_guiado');
     wakelock.wakelockPlusPlatformInstance = _NoWakelock();
@@ -73,7 +80,7 @@ void main() {
   });
 
   /// Monta el cronómetro detrás de una ruta que recoge lo que devuelve.
-  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester, {PlanDayDraft? day}) async {
+  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester, {PlanDayDraft? day, TrainingRepository? training}) async {
     // Alta para que quepa todo y ancha porque la fuente de prueba dibuja cada
     // letra como un cuadrado (ver app_smoke_test.dart).
     tester.view.physicalSize = const Size(1400, 3000);
@@ -86,7 +93,7 @@ void main() {
         activeSessionStoreProvider.overrideWithValue(ActiveSessionStore(File('${dir.path}/sesion.json'))),
         latestWeightProvider.overrideWithValue(70),
         profileProvider.overrideWith((ref) => const Stream.empty()),
-        trainingRepositoryProvider.overrideWith((ref) => throw UnimplementedError('no se usa')),
+        trainingRepositoryProvider.overrideWith((ref) => training ?? (throw UnimplementedError('no se usa'))),
       ],
       child: MaterialApp(
         home: Builder(
@@ -253,6 +260,52 @@ void main() {
 
     final draft = results.single!;
     expect((draft.techniqueOk, draft.fullRange, draft.recoveryOk), (true, true, false));
+  });
+
+  testWidgets('al terminar el enfriamiento la sesión queda guardada sin revisar (§16.9)', (tester) async {
+    final db = openInMemoryDatabase();
+    final training = TrainingRepository(db, ExerciseRepository(db));
+    // La base corre sobre el reloj falso de la prueba: hay que bombear
+    // mientras se espera una consulta.
+    Future<T> wait<T>(Future<T> f) async {
+      var done = false;
+      late T value;
+      unawaited(f.then((v) {
+        value = v;
+        done = true;
+      }));
+      for (var i = 0; i < 200 && !done; i++) {
+        await tester.pump(const Duration(milliseconds: 10));
+      }
+      expect(done, isTrue, reason: 'la consulta no terminó');
+      return value;
+    }
+
+    final results = await pumpGuided(tester, training: training);
+    await startNow(tester);
+    await tester.tap(find.text('Hecho'));
+    await step(tester);
+    await tester.tap(find.text('Hecho'));
+    await step(tester);
+    await tester.tap(find.text('Terminar'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+    await step(tester, const Duration(seconds: 70));
+    await tester.tap(find.text('Terminar enfriamiento'));
+    await step(tester, const Duration(seconds: 2));
+
+    final saved = await wait(db.select(db.sessions).getSingle());
+    expect(saved.pendingReview, isTrue);
+    expect(saved.roundsDone, 1);
+    expect(find.textContaining('Ya quedó guardada'), findsOneWidget);
+    expect(File('${dir.path}/sesion.json').existsSync(), isFalse, reason: 'la foto ya no hace falta');
+
+    // Salir del resumen sin "Revisar y guardar" no la pierde.
+    await tester.pageBack();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(results.single, isNull);
+    expect((await wait(db.select(db.sessions).getSingle())).pendingReview, isTrue);
+    await wait(db.close());
   });
 
   testWidgets('el acumulado de reps es por ejercicio', (tester) async {

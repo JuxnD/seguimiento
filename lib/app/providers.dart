@@ -282,6 +282,9 @@ final planDayProvider = StreamProvider.family(
 final weekNoteProvider =
     StreamProvider.family((ref, int week) => ref.watch(profileRepositoryProvider).watchWeekNote(week));
 
+/// Sesiones guardadas solas al terminar el cronómetro, sin revisar (§16.9).
+final pendingReviewProvider = StreamProvider((ref) => ref.watch(trainingRepositoryProvider).watchPendingReview());
+
 /// Entrada del informe de un rango (con el rango anterior para comparar).
 /// Se recarga cuando cambia cualquier dato de entrada.
 final reportInputProvider = FutureProvider.family<ReportInput, (String, String)>((ref, range) async {

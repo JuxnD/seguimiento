@@ -68,7 +68,7 @@ void _summary(StringBuffer b, ReportStats s) {
     if (prev == null) {
       b.writeln('- Récord de rondas: $max (primer registro)');
     } else if (max > prev) {
-      b.writeln('- Récord de rondas: $max (anterior: $prev)');
+      b.writeln('- 🏆 **Récord nuevo: $max rondas** (anterior: $prev)');
     } else {
       b.writeln('- Máximo de rondas: $max (récord vigente: $prev)');
     }
@@ -152,7 +152,7 @@ void _sessions(StringBuffer b, ReportStats s) {
         '${formatDuration(x.totalSec)} | '
         '${formatDuration(x.warmupSec)} / ${formatDuration(x.cooldownSec)} | '
         '${x.restSec == 0 ? '—' : formatDuration(x.restSec)} | ${formatDuration(net)} | $rounds | '
-        '${x.rpe ?? '—'} | ${splits == 0 ? '—' : splits} | ${mdCell(x.context)} |');
+        '${x.rpe ?? (x.pendingReview ? '⚠ sin revisar' : '—')} | ${splits == 0 ? '—' : splits} | ${mdCell(x.context)} |');
   }
   b.writeln();
 
@@ -160,12 +160,28 @@ void _sessions(StringBuffer b, ReportStats s) {
   for (final x in list) {
     b.writeln('**${_dayLabel(x.date, x.startTime)} · ${x.type.label}**');
     if (x.roundWorkSec.isNotEmpty) {
-      final delta = firstToLastDelta(x.roundWorkSec);
-      b.writeln('- Trabajo por ronda: ${x.roundWorkSec.map(formatDuration).join(' · ')} '
-          '(media ${formatDuration(meanSec(x.roundWorkSec)!)}'
+      // Una ronda tras un descanso de 0:00 casi siempre se comió ese
+      // descanso: va marcada y fuera de la media y del R1→Rn (§16.9).
+      final suspects = suspectRounds(x.roundWorkSec, x.roundRestSec).toSet();
+      final valid = [
+        for (var i = 0; i < x.roundWorkSec.length; i++)
+          if (!suspects.contains(i)) x.roundWorkSec[i],
+      ];
+      final delta = firstToLastDelta(valid);
+      final laps = [
+        for (var i = 0; i < x.roundWorkSec.length; i++)
+          '${formatDuration(x.roundWorkSec[i])}${suspects.contains(i) ? ' ⚠' : ''}',
+      ];
+      b.writeln('- Trabajo por ronda: ${laps.join(' · ')} '
+          '(media ${valid.isEmpty ? '—' : formatDuration(meanSec(valid)!)}'
           '${delta == null ? '' : ' · R1→R${x.roundWorkSec.length} ${fmtDelta(delta, decimals: 0)} s'})');
       final rests = x.roundRestSec.take(x.roundRestSec.length - 1).toList();
       if (rests.isNotEmpty) b.writeln('- Descanso entre rondas: ${rests.map(formatDuration).join(' · ')}');
+      if (suspects.isNotEmpty) {
+        b.writeln('- ⚠ ${suspects.map((i) => 'R${i + 1}').join(', ')} fuera de la media: el descanso previo fue de '
+            'menos de 5 s y la ronda duró mucho más que las demás (probable descanso contado como trabajo). '
+            'Se corrige en la sesión, "Pasar 30 s al descanso".');
+      }
     } else if (x.lapsSec.isNotEmpty) {
       // Sin descansos medidos cada vuelta lleva dentro el descanso previo.
       b.writeln('- Vueltas (con descanso): ${x.lapsSec.map(formatDuration).join(' · ')} '

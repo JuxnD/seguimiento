@@ -93,6 +93,7 @@ class ReportRepository {
         outOfPlan: s.outOfPlan,
         incomplete: s.incomplete,
         plannedRounds: s.plannedRounds,
+        pendingReview: s.pendingReview,
         techniqueOk: s.techniqueOk,
         fullRange: s.fullRange,
         recoveryOk: s.recoveryOk,

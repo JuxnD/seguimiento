@@ -124,7 +124,12 @@ Future<void> _runGuided(BuildContext context, GuidedSessionScreen screen) async 
     return;
   }
   container.invalidate(activeSessionProvider);
-  if (context.mounted) showSnack(context, 'La sesión quedó pendiente en Hoy: guárdala o descártala desde ahí.');
+  if (!context.mounted) return;
+  showSnack(
+      context,
+      draft.id != null
+          ? 'Quedó guardada sin revisar: falta el RPE. Está en Hoy.'
+          : 'La sesión quedó pendiente en Hoy: guárdala o descártala desde ahí.');
 }
 
 Future<void> _clearActive(ProviderContainer container) async {
@@ -624,6 +629,7 @@ class _SessionTile extends ConsumerWidget {
     final net =
         circuitNetSec(totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec, restSec: s.restSec);
     final flags = [
+      if (s.pendingReview) '⚠ sin revisar: falta RPE',
       if (s.outOfPlan) 'fuera de plan',
       if (s.incomplete) 'incompleta',
       if (summary.splitSets > 0) '${summary.splitSets} partidas',

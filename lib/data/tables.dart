@@ -158,6 +158,10 @@ class Sessions extends Table {
   BoolColumn get techniqueOk => boolean().nullable()();
   BoolColumn get fullRange => boolean().nullable()();
   BoolColumn get recoveryOk => boolean().nullable()();
+
+  /// Guardada sola al terminar el cronómetro, sin pasar por el formulario
+  /// (falta el RPE). Cuenta en Hoy y en el informe desde ya (§16.9).
+  BoolColumn get pendingReview => boolean().withDefault(const Constant(false))();
 }
 
 /// Marcas del contador: segundos desde el inicio del circuito al cerrar cada ronda.

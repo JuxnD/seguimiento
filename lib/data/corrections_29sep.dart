@@ -155,6 +155,18 @@ final corrections29Sep = <DataCorrection>[
     },
   ),
   DataCorrection(
+    id: 'sesion-2oct',
+    date: 'vie 2 oct',
+    title: 'Progresión de 9 rondas que no se guardó',
+    change: 'se crea: 9/9 rondas, total 22:12, neto ≈ 7:42, 45 dominadas · 90 flexiones · 135 sentadillas; '
+        'queda sin revisar para anotar el RPE',
+    check: (db) async {
+      final rows = await (db.select(db.sessions)..where((t) => t.date.equals('2026-10-02'))).get();
+      return rows.any((s) => s.type.isTraining) ? CorrectionState.done : CorrectionState.pending;
+    },
+    apply: _recover2Oct,
+  ),
+  DataCorrection(
     id: 'duplicado-29',
     date: 'mar 29 sep',
     title: 'Desayuno 15:51 (1.140 kcal)',
@@ -166,6 +178,42 @@ final corrections29Sep = <DataCorrection>[
     },
   ),
 ];
+
+/// La sesión récord del viernes 2 oct (§16.9): terminó en el cronómetro y se
+/// perdió al salir del resumen. Se crea con los tiempos del traspaso, ya con
+/// el descanso corregido (3:30 registrado → ≈ 4:00: R3 se comió 30 s), y
+/// queda "sin revisar" para que el usuario anote RPE y criterios.
+Future<void> _recover2Oct(AppDatabase db) async {
+  final id = await db.into(db.sessions).insert(SessionsCompanion.insert(
+        date: '2026-10-02',
+        type: SessionType.progresion,
+        totalSec: const Value(22 * 60 + 12),
+        warmupSec: const Value(7 * 60 + 30),
+        cooldownSec: const Value(3 * 60),
+        restSec: const Value(4 * 60),
+        roundsDone: const Value(9),
+        plannedRounds: const Value(9),
+        pendingReview: const Value(true),
+        context: const Value('Recuperada del traspaso del 3 oct: no se guardó al salir del resumen. '
+            'Descanso registrado 3:30, corregido a ≈ 4:00 (el de R2 quedó en 0:00).'),
+      ));
+  final ids = <String, int>{};
+  for (final name in ['Dominadas', 'Flexiones', 'Sentadillas']) {
+    final row = await (db.select(db.exercises)..where((t) => t.name.equals(name))).getSingleOrNull();
+    ids[name] = row?.id ?? await db.into(db.exercises).insert(ExercisesCompanion.insert(name: name));
+  }
+  const reps = {'Dominadas': 5, 'Flexiones': 10, 'Sentadillas': 15};
+  for (var round = 1; round <= 9; round++) {
+    for (final e in reps.entries) {
+      await db.into(db.sessionSets).insert(SessionSetsCompanion.insert(
+            sessionId: id,
+            exerciseId: ids[e.key]!,
+            setIndex: round,
+            reps: e.value,
+          ));
+    }
+  }
+}
 
 const _notes25 = 'Flexiones y dominadas fáciles hasta R8, técnica constante';
 const _closeDays = ['2026-09-24', '2026-09-25', '2026-09-26', '2026-09-27', '2026-09-28'];

@@ -99,6 +99,7 @@ class SessionEntry {
     this.outOfPlan = false,
     this.incomplete = false,
     this.plannedRounds,
+    this.pendingReview = false,
   });
 
   final DateTime date;
@@ -137,6 +138,9 @@ class SessionEntry {
 
   /// Rondas (o series) que pedía el plan.
   final int? plannedRounds;
+
+  /// Guardada sola al terminar el cronómetro y sin revisar (falta el RPE).
+  final bool pendingReview;
 
   // Condiciones de la regla de progresión; null = no registrado.
   final bool? techniqueOk;

@@ -53,5 +53,28 @@ List<int>? roundWork(List<int> cumulativeSec, List<int> restAfterSec) {
 /// última fue más lenta). Indicador de degradación; null con menos de 2.
 int? firstToLastDelta(List<int> workSec) => workSec.length < 2 ? null : workSec.last - workSec.first;
 
+/// Rondas sospechosas (índices desde 0): el descanso anterior casi no existe
+/// (< 5 s) y la ronda dura más de 1,4 veces la mediana. Casi siempre es un
+/// descanso que se saltó sin querer y se contó como trabajo (§16.9: R3 de
+/// 1:28 tras un descanso de 0:00, con el resto en 0:46–0:54).
+List<int> suspectRounds(List<int> workSec, List<int> restAfterSec) {
+  if (workSec.length < 3 || restAfterSec.length < workSec.length - 1) return const [];
+  final sorted = [...workSec]..sort();
+  final median = sorted[sorted.length ~/ 2];
+  return [
+    for (var k = 1; k < workSec.length; k++)
+      if (restAfterSec[k - 1] < 5 && workSec[k] > median * 1.4) k,
+  ];
+}
+
+/// Cuánto pasar del trabajo de la ronda `k` al descanso que la precede: lo
+/// que pide el plan (o 30 s), sin dejar la ronda por debajo de la mediana.
+int reassignableSec(List<int> workSec, int k, {int planRestSec = 30}) {
+  final sorted = [...workSec]..sort();
+  final median = sorted[sorted.length ~/ 2];
+  final excess = workSec[k] - median;
+  return excess <= 0 ? 0 : (excess < planRestSec ? excess : planRestSec);
+}
+
 int? meanSec(List<int> values) =>
     values.isEmpty ? null : (values.reduce((a, b) => a + b) / values.length).round();

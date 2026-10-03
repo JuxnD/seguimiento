@@ -61,7 +61,7 @@ class SettingsScreen extends ConsumerWidget {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.fact_check_outlined),
-                  title: const Text('Correcciones del 29 sep'),
+                  title: const Text('Correcciones del traspaso'),
                   subtitle: const Text('Datos que el traspaso pidió corregir'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => openCorrections(context),

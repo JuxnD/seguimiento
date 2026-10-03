@@ -179,7 +179,7 @@ void main() {
     expect(md, contains('# Informe semanal — 16 sep a 22 sep 2026'));
     expect(md, contains('Semana 4 desde inicio (26 ago) · Plan v1'));
     expect(md, contains('- Sesiones: 1/3 · Fútbol: 1/1'));
-    expect(md, contains('- Récord de rondas: 8 (anterior: 7)'));
+    expect(md, contains('- 🏆 **Récord nuevo: 8 rondas** (anterior: 7)'));
     expect(md, contains('- Flexiones: 12+3 (partida)'));
     expect(md, contains('| mar 22 sep | 7 | 60 |'));
     expect(md, contains('- Peso promedio: 71,4 kg (en ayunas, 1 pesaje) · Δ vs línea base: -0,9 kg'));

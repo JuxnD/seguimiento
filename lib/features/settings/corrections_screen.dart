@@ -31,7 +31,7 @@ class CorrectionsScreen extends ConsumerWidget {
     final states = ref.watch(correctionsProvider);
     final text = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Correcciones del 29 sep')),
+      appBar: AppBar(title: const Text('Correcciones del traspaso')),
       body: states.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),

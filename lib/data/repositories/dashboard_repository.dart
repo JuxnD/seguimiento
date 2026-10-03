@@ -36,6 +36,7 @@ class TodayDashboard {
     this.stepsGoal,
     required this.roundsRecord,
     this.recordSuspect,
+    this.recordDate,
     required this.measurement,
     this.proposal,
   });
@@ -82,6 +83,12 @@ class TodayDashboard {
   /// Sesión que da el récord pero cayó en un día que el plan no marca como
   /// circuito: casi siempre un día de bloques guardado como circuito.
   final RecordSuspect? recordSuspect;
+
+  /// Primer día en que se hizo el récord vigente: si es reciente, Hoy lo
+  /// celebra (§16.9).
+  final DateTime? recordDate;
+
+  bool get recentRecord => recordDate != null && daysBetween(recordDate!, date) <= 6;
 
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
@@ -169,6 +176,7 @@ class DashboardRepository {
       stepsGoal: stepsGoalFor(date, p.stepsTarget),
       roundsRecord: record,
       recordSuspect: record == null ? null : await _recordSuspect(record),
+      recordDate: record == null ? null : await _recordDate(record),
       measurement: measurementDue(
         today: date,
         lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
@@ -180,6 +188,15 @@ class DashboardRepository {
   }
 
   /// La sesión del récord, si el plan de ese día no era de circuito.
+  Future<DateTime?> _recordDate(int record) async {
+    final row = await (db.select(db.sessions)
+          ..where((t) => db.countedCircuitRounds & t.roundsDone.equals(record))
+          ..orderBy([(t) => OrderingTerm(expression: t.date)])
+          ..limit(1))
+        .getSingleOrNull();
+    return row == null ? null : parseDay(row.date);
+  }
+
   Future<RecordSuspect?> _recordSuspect(int record) async {
     final rows = await (db.select(db.sessions)
           ..where((t) => db.countedCircuitRounds & t.roundsDone.equals(record))
