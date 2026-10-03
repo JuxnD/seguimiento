@@ -37,10 +37,16 @@ class WeekRange {
   List<DateTime> get days => [for (var i = 0; i <= daysBetween(start, end); i++) addDays(start, i)];
 }
 
-int weekIndexFor(DateTime programStart, DateTime date) => (daysBetween(programStart, date) / 7).floor() + 1;
+/// Lunes de la semana del inicio del programa. Las semanas van de lunes a
+/// domingo, como el plan y el fútbol (§16.8): con el inicio un miércoles, la
+/// semana 1 empieza el lunes anterior.
+DateTime weekAnchor(DateTime programStart) => addDays(dateOnly(programStart), -(programStart.weekday - 1));
+
+int weekIndexFor(DateTime programStart, DateTime date) =>
+    (daysBetween(weekAnchor(programStart), date) / 7).floor() + 1;
 
 WeekRange weekRange(DateTime programStart, int index) {
-  final start = addDays(programStart, (index - 1) * 7);
+  final start = addDays(weekAnchor(programStart), (index - 1) * 7);
   return WeekRange(index, start, addDays(start, 6));
 }
 

@@ -7,7 +7,9 @@ import 'package:seguimiento/domain/report/report_builder.dart';
 import 'package:seguimiento/domain/report/report_input.dart';
 import 'package:seguimiento/domain/report/report_stats.dart';
 
-/// Semana 4 (mié 16 sep – mar 22 sep 2026) con un caso realista.
+/// Rango mié 16 sep – mar 22 sep 2026 con un caso realista. Es un rango
+/// fijo, no una semana del programa: desde el §16.8 las semanas van de lunes
+/// a domingo (ver la prueba de encabezado semanal más abajo).
 /// Los días con comidas se dan por cerrados a mano (así los promedios los
 /// cuentan aunque falte una comida principal); `closedDays` lo cambia.
 ReportInput weekFour({
@@ -19,7 +21,7 @@ ReportInput weekFour({
   List<SessionEntry>? sessions,
 }) {
   final start = DateTime(2026, 8, 26);
-  final w = weekRange(start, 4);
+  final w = WeekRange(4, DateTime(2026, 9, 16), DateTime(2026, 9, 22));
   DateTime d(int day) => DateTime(2026, 9, day);
 
   // Plan v1: lun-vie circuito salvo mar/jue fútbol. v2 desde el 20 sep cambia vie a bloques.
@@ -315,7 +317,7 @@ void main() {
   group('semana en curso', () {
     ReportInput midWeek({required int todayDay, List<SessionEntry> sessions = const []}) {
       final start = DateTime(2026, 8, 26);
-      final w = weekRange(start, 4);
+      final w = WeekRange(4, DateTime(2026, 9, 16), DateTime(2026, 9, 22));
       return ReportInput(
         programStart: start,
         rangeStart: w.start,
@@ -362,10 +364,43 @@ void main() {
   });
 
   group('informe markdown', () {
+    test('una semana del programa va de lunes a domingo y se titula como semana (§16.8)', () {
+      final w = weekRange(DateTime(2026, 8, 26), 6);
+      final md = buildReport(ReportInput(
+        programStart: DateTime(2026, 8, 26),
+        rangeStart: w.start,
+        rangeEnd: w.end,
+        today: DateTime(2026, 10, 3),
+      ));
+      expect(md, startsWith('# Informe semanal — 28 sep a 4 oct 2026\nSemana 6 desde inicio'));
+    });
+
+    test('con 1 de 5 hecha hoy quedan 4, no 5 (§16.8)', () {
+      final w = weekRange(DateTime(2026, 8, 26), 6);
+      final plan = PlanVersionInfo(number: 2, validFrom: DateTime(2026, 8, 26), dayTypes: const {
+        1: DayType.circuito,
+        2: DayType.bloques,
+        3: DayType.circuitoLigero,
+        4: DayType.bloques,
+        5: DayType.progresion,
+        6: DayType.futbol,
+        7: DayType.futbol,
+      });
+      final md = buildReport(ReportInput(
+        programStart: DateTime(2026, 8, 26),
+        rangeStart: w.start,
+        rangeEnd: w.end,
+        today: DateTime(2026, 9, 28),
+        planVersions: [plan],
+        sessions: [SessionEntry(date: DateTime(2026, 9, 28), type: SessionType.circuito, roundsDone: 6)],
+      ));
+      expect(md, contains('- Sesiones: 1/5 (quedan 4 en el plan)'));
+    });
+
     test('encabezado, resumen y secciones', () {
       final md = buildReport(weekFour(notes: 'Semana pesada en la oficina'));
-      expect(md, startsWith('# Informe semanal — 16 sep a 22 sep 2026\n'
-          'Semana 4 desde inicio (26 ago) · Plan v1 (desde 26 ago) → v2 (desde 20 sep)'));
+      expect(md, startsWith('# Informe — 16 sep a 22 sep 2026\n'
+          'Semanas 4–5 desde inicio (26 ago) · Plan v1 (desde 26 ago) → v2 (desde 20 sep)'));
       expect(md, contains('- Sesiones: 3/3 · Fútbol: 1/2'));
       expect(md, contains('- 🏆 **Récord nuevo: 8 rondas** (anterior: 7)'));
       expect(md, contains('- Días bajo 2.000 kcal: 2'));
@@ -393,7 +428,7 @@ void main() {
 
     test('el descanso va en su columna y no cuenta como trabajo neto', () {
       final start = DateTime(2026, 8, 26);
-      final w = weekRange(start, 4);
+      final w = WeekRange(4, DateTime(2026, 9, 16), DateTime(2026, 9, 22));
       final md = buildReport(ReportInput(
         programStart: start,
         rangeStart: w.start,
@@ -504,7 +539,17 @@ void main() {
       final md = buildReport(weekFour(previous: prevWithSets));
       expect(md, contains('## Volumen por ejercicio'));
       expect(md, matches(RegExp(r'\| Flexiones \| \d+ \| 70 \| [+-]?\d+ \|')));
-      expect(md, contains('- Rondas vs semana anterior: 7 → 8 (+1)'));
+      expect(md, isNot(contains('Rondas vs semana anterior')),
+          reason: 'la progresión de la semana pasada no se compara con un circuito (§16.8)');
+      final sameType = ReportInput(
+        programStart: prevWithSets.programStart,
+        rangeStart: prevWithSets.rangeStart,
+        rangeEnd: prevWithSets.rangeEnd,
+        today: prevWithSets.today,
+        sessions: [SessionEntry(date: DateTime(2026, 9, 11), type: SessionType.circuito, roundsDone: 7)],
+      );
+      expect(buildReport(weekFour(previous: sameType)),
+          contains('- Rondas vs semana anterior, por tipo: Circuito 7 → 8 (+1)'));
     });
 
     test('flexiones peores el viernes tras una semana con pike push-ups sugiere bajar a 2 series', () {

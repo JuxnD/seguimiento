@@ -23,8 +23,10 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 ## Hechos que no se deducen del código
 
 - La fecha de inicio del programa (la que el usuario fija en Perfil) ancla las
-  semanas del informe. No es la semana calendario: la semana N va del inicio +
-  (N−1)·7 días a +6.
+  semanas del informe, que van de **lunes a domingo** como el plan y el fútbol
+  (§16.8, desde la 1.13.0): la semana 1 empieza el lunes de la semana del
+  inicio (con inicio el mié 26 ago, el lun 24 ago). Antes iban de miércoles a
+  martes.
 - El informe se pega en un chat para que un tercero lo audite. Por eso incluye
   detalle crudo (vueltas, series partidas, contexto) y no solo promedios.
 - Los datos viven únicamente en el dispositivo. No hay backend ni sincronización.

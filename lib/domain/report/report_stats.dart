@@ -70,8 +70,55 @@ class ReportStats {
   int expectedTrainingClosed = 0;
   int expectedFootball = 0;
 
-  /// Sesiones del plan que aún quedan por delante en el rango (hoy incluido).
-  int get expectedTrainingAhead => expectedTraining - expectedTrainingClosed;
+  /// Sesiones del plan que aún quedan por delante en el rango: hoy cuenta
+  /// solo si todavía no se entrenó (con 1 de 5 hecha hoy, quedan 4; §16.8).
+  int get expectedTrainingAhead {
+    final today = dateOnly(input.today);
+    final trainedToday = input.sessions.any((x) => dayKey(x.date) == dayKey(today));
+    var ahead = 0;
+    for (final d in days) {
+      if (d.isBefore(today)) continue;
+      final t = planFor(d)?.typeFor(d.weekday);
+      if (t == null || !t.isTraining) continue;
+      if (dayKey(d) == dayKey(today) && trainedToday) continue;
+      ahead++;
+    }
+    return ahead;
+  }
+
+  /// El rango llega hasta hoy o más allá: la semana está en curso.
+  bool get inProgress {
+    final today = dateOnly(input.today);
+    return !today.isBefore(dateOnly(input.rangeStart)) && !today.isAfter(dateOnly(input.rangeEnd));
+  }
+
+  /// Días del rango ya vividos (hoy incluido), para comparar a la par.
+  int get elapsedCount => elapsedDays.length;
+
+  /// Máximo de rondas contadas por tipo de sesión (ligero con ligero,
+  /// progresión con progresión).
+  Map<SessionType, int> get maxRoundsByType {
+    final out = <SessionType, int>{};
+    for (final x in input.sessions) {
+      if (!x.type.isCircuit || x.roundsDone == null || x.roundsEstimated) continue;
+      final r = x.roundsDone!;
+      if ((out[x.type] ?? -1) < r) out[x.type] = r;
+    }
+    return out;
+  }
+
+  /// Volumen por ejercicio de los primeros `days` días del rango: para
+  /// comparar una semana en curso contra el mismo punto de la anterior.
+  Map<String, int> volumeFirstDays(int days) {
+    final limit = addDays(dateOnly(input.rangeStart), days - 1);
+    final out = <String, int>{};
+    for (final x in input.sessions.where((x) => !x.date.isAfter(limit))) {
+      for (final set in x.sets) {
+        out[set.exercise] = (out[set.exercise] ?? 0) + set.reps;
+      }
+    }
+    return out;
+  }
 
   PlanVersionInfo? planFor(DateTime day) {
     PlanVersionInfo? found;

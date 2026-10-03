@@ -9,20 +9,24 @@ void main() {
   final start = DateTime(2026, 8, 26); // miércoles
 
   group('semana anclada al inicio', () {
-    test('el día de inicio es semana 1 y la semana va de mié a mar', () {
+    test('las semanas van de lunes a domingo; la 1 empieza el lunes del inicio (§16.8)', () {
+      expect(dayKey(weekAnchor(start)), '2026-08-24');
       expect(weekIndexFor(start, start), 1);
-      expect(weekIndexFor(start, DateTime(2026, 9, 1)), 1);
-      expect(weekIndexFor(start, DateTime(2026, 9, 2)), 2);
+      expect(weekIndexFor(start, DateTime(2026, 8, 30)), 1, reason: 'domingo de la semana 1');
+      expect(weekIndexFor(start, DateTime(2026, 8, 31)), 2, reason: 'el lunes empieza la 2');
       final w4 = weekRange(start, 4);
-      expect(dayKey(w4.start), '2026-09-16');
-      expect(dayKey(w4.end), '2026-09-22');
+      expect(dayKey(w4.start), '2026-09-14');
+      expect(dayKey(w4.end), '2026-09-20');
       expect(w4.days.length, 7);
+      expect(w4.start.weekday, DateTime.monday);
+      // El 25 sep (viernes de las 8 rondas) sigue en la semana 5.
+      expect(weekIndexFor(start, DateTime(2026, 9, 25)), 5);
     });
 
     test('fechas previas al inicio dan semana ≤ 0 sin error', () {
-      expect(weekIndexFor(start, DateTime(2026, 8, 25)), 0);
-      expect(weekIndexFor(start, DateTime(2026, 8, 19)), 0);
-      expect(weekIndexFor(start, DateTime(2026, 8, 18)), -1);
+      expect(weekIndexFor(start, DateTime(2026, 8, 23)), 0);
+      expect(weekIndexFor(start, DateTime(2026, 8, 17)), 0);
+      expect(weekIndexFor(start, DateTime(2026, 8, 16)), -1);
     });
   });
 

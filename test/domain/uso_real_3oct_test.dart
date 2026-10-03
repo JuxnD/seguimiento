@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/report/report_builder.dart';
 import 'package:seguimiento/domain/report/report_input.dart';
+import 'package:seguimiento/domain/report/report_stats.dart';
 import 'package:seguimiento/domain/session_math.dart';
 
 /// Lo que salió del traspaso del 3 oct (§16.9).
@@ -53,5 +54,31 @@ void main() {
     expect(md, contains('media 0:51'));
     expect(md, contains('⚠ R3 fuera de la media'));
     expect(md, contains('⚠ sin revisar'), reason: 'la sesión sin RPE se ve en la tabla');
+  });
+
+  test('semana en curso: el volumen se compara con el mismo punto de la anterior (§16.8)', () {
+    SessionEntry pushups(DateTime d, int reps) => SessionEntry(
+        date: d, type: SessionType.circuito, sets: [SetEntry(exercise: 'Flexiones', setIndex: 1, reps: reps)]);
+    final previous = ReportInput(
+      programStart: DateTime(2026, 8, 26),
+      rangeStart: DateTime(2026, 9, 21),
+      rangeEnd: DateTime(2026, 9, 27),
+      today: DateTime(2026, 10, 3),
+      sessions: [pushups(DateTime(2026, 9, 21), 30), pushups(DateTime(2026, 9, 25), 80)],
+    );
+    final week = ReportInput(
+      programStart: DateTime(2026, 8, 26),
+      rangeStart: DateTime(2026, 9, 28),
+      rangeEnd: DateTime(2026, 10, 4),
+      today: DateTime(2026, 9, 28),
+      sessions: [pushups(DateTime(2026, 9, 28), 30)],
+      previous: previous,
+    );
+    final s = ReportStats(week);
+    expect(s.inProgress, isTrue);
+    expect(s.previous!.volumeFirstDays(s.elapsedCount), {'Flexiones': 30}, reason: 'solo el lunes anterior');
+    final md = buildReport(week);
+    expect(md, contains('Anterior, mismo punto'));
+    expect(md, contains('| Flexiones | 30 | 30 | 0 |'));
   });
 }

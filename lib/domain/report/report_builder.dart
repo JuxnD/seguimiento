@@ -73,10 +73,16 @@ void _summary(StringBuffer b, ReportStats s) {
       b.writeln('- Máximo de rondas: $max (récord vigente: $prev)');
     }
   }
-  final prevMax = s.previous?.maxRoundsInRange;
-  if (max != null && prevMax != null) {
-    b.writeln('- Rondas vs semana anterior: $prevMax → $max (${fmtDelta(max - prevMax, decimals: 0)})');
-  }
+  // Por tipo: comparar un circuito ligero con el día de progresión no dice
+  // nada (§16.8).
+  final byType = s.maxRoundsByType;
+  final prevByType = s.previous?.maxRoundsByType ?? const <SessionType, int>{};
+  final compared = [
+    for (final e in byType.entries)
+      if (prevByType[e.key] case final before?)
+        '${e.key.label} $before → ${e.value} (${fmtDelta(e.value - before, decimals: 0)})',
+  ];
+  if (compared.isNotEmpty) b.writeln('- Rondas vs semana anterior, por tipo: ${compared.join(' · ')}');
 
   final logged = s.loggedDays.length;
   final elapsed = s.elapsedDays.length;
@@ -232,8 +238,16 @@ String _setLabel(SetEntry e, {bool seconds = false}) {
 void _volume(StringBuffer b, ReportStats s) {
   final now = s.volumeByExercise;
   if (now.isEmpty) return;
-  final before = s.previous?.volumeByExercise;
+  // Semana en curso: contra el mismo punto de la anterior, no contra la
+  // semana entera (1 día hecho contra 7 siempre "baja"; §16.8).
+  final partial = s.inProgress && s.previous != null;
+  final before = partial ? s.previous!.volumeFirstDays(s.elapsedCount) : s.previous?.volumeByExercise;
   b.writeln('## Volumen por ejercicio');
+  if (partial) {
+    b.writeln('Semana en curso (${s.elapsedCount} de ${s.days.length} días): se compara con los mismos '
+        '${s.elapsedCount} primeros días de la anterior.');
+    b.writeln();
+  }
   final holds = s.input.holdExercises;
   String unit(String exercise, num v) => holds.contains(exercise) ? '$v s' : '$v';
   if (before == null) {
@@ -243,7 +257,7 @@ void _volume(StringBuffer b, ReportStats s) {
       b.writeln('| ${e.key} | ${unit(e.key, e.value)} |');
     }
   } else {
-    b.writeln('| Ejercicio | Reps o s | Semana anterior | Δ |');
+    b.writeln('| Ejercicio | Reps o s | ${partial ? 'Anterior, mismo punto' : 'Semana anterior'} | Δ |');
     b.writeln('|---|---|---|---|');
     for (final e in now.entries) {
       final prev = before[e.key];

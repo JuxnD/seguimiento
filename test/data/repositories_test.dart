@@ -173,11 +173,10 @@ void main() {
     // La semana 4 depende del inicio del programa: se fija aquí.
     const start = '2026-08-26';
     await ProfileRepository(db).save(const ProfilesCompanion(startDate: Value(start)));
-    final w = weekRange(parseDay(start), 4);
-    final md = buildReport(await report.load(w.start, w.end, today: d(9, 22)));
+    final md = buildReport(await report.load(d(9, 16), d(9, 22), today: d(9, 22)));
 
-    expect(md, contains('# Informe semanal — 16 sep a 22 sep 2026'));
-    expect(md, contains('Semana 4 desde inicio (26 ago) · Plan v1'));
+    expect(md, contains('# Informe — 16 sep a 22 sep 2026'));
+    expect(md, contains('Semanas 4–5 desde inicio (26 ago) · Plan v1'));
     expect(md, contains('- Sesiones: 1/3 · Fútbol: 1/1'));
     expect(md, contains('- 🏆 **Récord nuevo: 8 rondas** (anterior: 7)'));
     expect(md, contains('- Flexiones: 12+3 (partida)'));

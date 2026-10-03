@@ -202,6 +202,19 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       );
       if (!ok) return false;
     }
+    // Día ligero que se pasó de la meta o salió exigente: es para recuperar
+    // (§16.8). Con RPE 9–10 ya se preguntó arriba.
+    final overRounds = d.plannedRounds != null && (int.tryParse(_rounds.text) ?? 0) > d.plannedRounds!;
+    final rpe = d.rpe ?? 0;
+    if (d.type == SessionType.circuitoLigero && (overRounds || (rpe >= 7 && rpe < 9))) {
+      final ok = await _confirm(
+        'Día de recuperación',
+        '${overRounds ? 'Hiciste ${_rounds.text} rondas y la meta era ${d.plannedRounds}' : 'RPE $rpe'} en el '
+            'circuito ligero. Guarda energía para el viernes: el ligero debería salir cómodo (RPE 5–6).',
+        keep: 'Entendido, guardar',
+      );
+      if (!ok) return false;
+    }
     const minPhaseSec = 60;
     final shortPhases = [
       if (d.totalSec > 0 && d.warmupSec < minPhaseSec) 'calentamiento de ${formatDuration(d.warmupSec)}',
