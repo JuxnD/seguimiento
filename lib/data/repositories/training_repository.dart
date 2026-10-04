@@ -15,6 +15,7 @@ class SetDraft {
     this.splitDetail,
     this.toFailure = false,
     this.loadKg,
+    this.variant,
   });
 
   String exercise;
@@ -25,6 +26,9 @@ class SetDraft {
 
   /// Carga externa (mochila, garrafas). null = peso corporal.
   double? loadKg;
+
+  /// Variante de la progresión ("arquero", "pies elevados"). null = la del plan.
+  String? variant;
 }
 
 class SessionDraft {
@@ -51,6 +55,8 @@ class SessionDraft {
     this.incomplete = false,
     this.plannedRounds,
     this.pendingReview = false,
+    this.mode,
+    this.extraReps,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
     List<int>? roundRestSec,
@@ -90,6 +96,12 @@ class SessionDraft {
 
   /// Guardada sola al terminar el cronómetro; falta revisarla (RPE).
   bool pendingReview;
+
+  /// Resistencia v3: 'cindy', 'tabata' o 'porTiempo'.
+  String? mode;
+
+  /// AMRAP: repeticiones de la ronda que quedó a medias.
+  int? extraReps;
 
   /// En orden de ejecución; el índice de serie se calcula por ejercicio.
   final List<SetDraft> sets;
@@ -170,6 +182,8 @@ class TrainingRepository {
           fullRange: Value(d.fullRange),
           recoveryOk: Value(d.recoveryOk),
           pendingReview: Value(d.pendingReview),
+          mode: Value(d.mode),
+          extraReps: Value(d.extraReps),
         );
         final int id;
         if (d.id == null) {
@@ -194,6 +208,7 @@ class TrainingRepository {
                 splitDetail: Value(s.split ? _blankToNull(s.splitDetail) : null),
                 toFailure: Value(s.toFailure),
                 loadKg: Value(s.loadKg),
+                variant: Value(_blankToNull(s.variant)),
               ));
         }
         final work = d.roundWorkSec;
@@ -244,6 +259,8 @@ class TrainingRepository {
       fullRange: r.fullRange,
       recoveryOk: r.recoveryOk,
       pendingReview: r.pendingReview,
+      mode: r.mode,
+      extraReps: r.extraReps,
       sets: [
         for (final s in sets)
           SetDraft(
@@ -253,6 +270,7 @@ class TrainingRepository {
             splitDetail: s.splitDetail,
             toFailure: s.toFailure,
             loadKg: s.loadKg,
+            variant: s.variant,
           ),
       ],
       roundMarksSec: rounds.map((x) => x.elapsedSec).toList(),
@@ -351,6 +369,16 @@ class TrainingRepository {
         ..where((t) => t.pendingReview.equals(true))
         ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)]))
       .watch();
+
+  /// La sesión de ese tipo en ese día (la última si hay varias), o null.
+  Future<int?> sessionsOn(DateTime date, SessionType type) async {
+    final row = await (db.select(db.sessions)
+          ..where((t) => t.date.equals(dayKey(date)) & t.type.equalsValue(type))
+          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
+          ..limit(1))
+        .getSingleOrNull();
+    return row?.id;
+  }
 
   /// Anota los tres criterios de calidad de una sesión ya guardada.
   Future<void> setProgressionCriteria(int id, {bool? techniqueOk, bool? fullRange, bool? recoveryOk}) =>

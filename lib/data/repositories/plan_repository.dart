@@ -22,6 +22,7 @@ class PlanExerciseDraft {
     this.rirMin,
     this.rirMax,
     this.notes,
+    this.supersetGroup,
   });
 
   String name;
@@ -44,7 +45,29 @@ class PlanExerciseDraft {
   int? rirMax;
   String? notes;
 
+  /// Superserie: los del mismo grupo se alternan serie a serie (§18.9).
+  String? supersetGroup;
+
   bool get isHold => holdSecMin != null;
+
+  PlanExerciseDraft copyWith({int? sets}) => PlanExerciseDraft(
+        name: name,
+        sets: sets ?? this.sets,
+        repsMin: repsMin,
+        repsMax: repsMax,
+        restSec: restSec,
+        restSecMax: restSecMax,
+        grip: grip,
+        block: block,
+        variant: variant,
+        holdSecMin: holdSecMin,
+        holdSecMax: holdSecMax,
+        perSide: perSide,
+        rirMin: rirMin,
+        rirMax: rirMax,
+        notes: notes,
+        supersetGroup: supersetGroup,
+      );
 
   /// '(A) ' cuando el bloque alterna variantes.
   String get variantPrefix => variant == null ? '' : '($variant) ';
@@ -143,6 +166,7 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
         rirMin: e.rirMin,
         rirMax: e.rirMax,
         notes: e.notes,
+        supersetGroup: e.supersetGroup,
       );
 
   final circuit = day.type.isCircuit;
@@ -159,8 +183,23 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
   );
 }
 
+/// Descarga del Plan v3 (§18.6): una serie menos en cada ejercicio de series
+/// (mínimo 1), sin tocar las rondas del circuito ni los tiempos. El lastre se
+/// quita a mano: el cronómetro lo recuerda.
+PlanDayDraft deloadVersion(PlanDayDraft day) => PlanDayDraft(
+      weekday: day.weekday,
+      type: day.type,
+      targetRounds: day.targetRounds,
+      restBetweenRoundsSec: day.restBetweenRoundsSec,
+      notes: day.notes,
+      exercises: [
+        for (final e in day.exercises)
+          if (e.sets == null || (day.type.isCircuit && e.block == null)) e else e.copyWith(sets: e.sets! > 1 ? e.sets! - 1 : 1),
+      ],
+    );
+
 class PlanDraft {
-  PlanDraft({required this.validFrom, this.notes, required this.days});
+  PlanDraft({required this.validFrom, this.notes, required this.days, this.scheme});
 
   factory PlanDraft.empty(DateTime validFrom) =>
       PlanDraft(validFrom: validFrom, days: [for (var w = 1; w <= 7; w++) PlanDayDraft(weekday: w)]);
@@ -168,17 +207,31 @@ class PlanDraft {
   DateTime validFrom;
   String? notes;
 
+  /// Periodización ('v3'); null = todas las semanas iguales.
+  String? scheme;
+
   /// Siempre 7 elementos, lunes → domingo.
   final List<PlanDayDraft> days;
 }
 
 /// Día del plan vigente para una fecha, con su versión.
 class PlanDayView {
-  PlanDayView({required this.versionNumber, required this.dayId, required this.day});
+  PlanDayView({
+    required this.versionNumber,
+    required this.dayId,
+    required this.day,
+    this.validFrom,
+    this.scheme,
+  });
 
   final int versionNumber;
   final int dayId;
   final PlanDayDraft day;
+
+  /// Desde cuándo rige la versión y su periodización: con 'v3', la semana del
+  /// bloque sale de aquí.
+  final DateTime? validFrom;
+  final String? scheme;
 }
 
 /// Primer problema que impide guardar el plan, o null. Valida lo que el
@@ -230,6 +283,27 @@ class PlanRepository {
         ..limit(1))
       .getSingleOrNull();
 
+  /// Desde cuándo cuenta la periodización de una versión: la primera versión
+  /// seguida con el mismo esquema. Editar el v3 a mitad de bloque crea otra
+  /// versión, pero las semanas siguen contando desde el inicio del bloque.
+  Future<DateTime> schemeStart(PlanVersionRow v) async {
+    if (v.scheme == null) return parseDay(v.validFrom);
+    final all = await (db.select(db.planVersions)
+          ..where((t) => t.validFrom.isSmallerOrEqualValue(v.validFrom))
+          ..orderBy([(t) => OrderingTerm(expression: t.validFrom, mode: OrderingMode.desc)]))
+        .get();
+    var start = parseDay(v.validFrom);
+    for (final x in all) {
+      if (x.scheme != v.scheme) break;
+      start = parseDay(x.validFrom);
+    }
+    return start;
+  }
+
+  /// ¿Ya hay una versión con este esquema (el v3)?
+  Future<bool> hasScheme(String scheme) async =>
+      (await (db.select(db.planVersions)..where((t) => t.scheme.equals(scheme))).get()).isNotEmpty;
+
   Future<int> versionNumber(int versionId) async {
     final all = await versions();
     return all.indexWhere((v) => v.id == versionId) + 1;
@@ -239,7 +313,9 @@ class PlanRepository {
     final v = await (db.select(db.planVersions)..where((t) => t.id.equals(versionId))).getSingle();
     final days = await (db.select(db.planDays)..where((t) => t.planVersionId.equals(versionId))).get();
     final names = await exercises.namesById();
-    final draft = PlanDraft.empty(parseDay(v.validFrom))..notes = v.notes;
+    final draft = PlanDraft.empty(parseDay(v.validFrom))
+      ..notes = v.notes
+      ..scheme = v.scheme;
     for (final d in days) {
       final target = draft.days[d.weekday - 1]
         ..type = d.type
@@ -266,6 +342,7 @@ class PlanRepository {
             rirMin: e.rirMin,
             rirMax: e.rirMax,
             notes: e.notes,
+            supersetGroup: e.supersetGroup,
           )));
     }
     return draft;
@@ -276,6 +353,7 @@ class PlanRepository {
         final versionId = await db.into(db.planVersions).insert(PlanVersionsCompanion.insert(
               validFrom: dayKey(draft.validFrom),
               notes: Value(_blankToNull(draft.notes)),
+              scheme: Value(draft.scheme),
             ));
         for (final d in draft.days) {
           final dayId = await db.into(db.planDays).insert(PlanDaysCompanion.insert(
@@ -307,6 +385,7 @@ class PlanRepository {
                   rirMin: Value(e.rirMin),
                   rirMax: Value(e.rirMax),
                   notes: Value(_blankToNull(e.notes)),
+                  supersetGroup: Value(_blankToNull(e.supersetGroup)),
                 ));
           }
         }
@@ -321,7 +400,13 @@ class PlanRepository {
         .getSingleOrNull();
     if (row == null) return null;
     final draft = await load(v.id);
-    return PlanDayView(versionNumber: await versionNumber(v.id), dayId: row.id, day: draft.days[date.weekday - 1]);
+    return PlanDayView(
+      versionNumber: await versionNumber(v.id),
+      dayId: row.id,
+      day: draft.days[date.weekday - 1],
+      validFrom: await schemeStart(v),
+      scheme: draft.scheme,
+    );
   }
 
   /// Un día concreto del plan por su id (para retomar una sesión: las
@@ -330,10 +415,13 @@ class PlanRepository {
     final row = await (db.select(db.planDays)..where((t) => t.id.equals(planDayId))).getSingleOrNull();
     if (row == null) return null;
     final draft = await load(row.planVersionId);
+    final version = await (db.select(db.planVersions)..where((t) => t.id.equals(row.planVersionId))).getSingle();
     return PlanDayView(
       versionNumber: await versionNumber(row.planVersionId),
       dayId: row.id,
       day: draft.days[row.weekday - 1],
+      validFrom: await schemeStart(version),
+      scheme: draft.scheme,
     );
   }
 

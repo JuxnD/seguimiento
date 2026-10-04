@@ -102,6 +102,7 @@ class ScriptExercise {
     this.blockName,
     this.variant,
     this.grip,
+    this.supersetGroup,
   });
 
   final String name;
@@ -116,6 +117,9 @@ class ScriptExercise {
   final bool perSide;
   final String? blockName;
   final String? variant;
+
+  /// Superserie: se alterna serie a serie con el siguiente del mismo grupo.
+  final String? supersetGroup;
 
   String get targetLabel {
     final reps = repsMin == null
@@ -195,27 +199,54 @@ List<ScriptStep> buildScript(ScriptDay day, {int? rounds, String? coreVariant}) 
   return steps;
 }
 
+/// Ejercicios seguidos que van juntos: uno solo, o los de una superserie
+/// (mismo `supersetGroup`, uno tras otro en el plan).
+List<List<ScriptExercise>> _units(List<ScriptExercise> exercises) {
+  final units = <List<ScriptExercise>>[];
+  for (final e in exercises) {
+    final last = units.isEmpty ? null : units.last;
+    if (e.supersetGroup != null && last != null && last.last.supersetGroup == e.supersetGroup) {
+      last.add(e);
+    } else {
+      units.add([e]);
+    }
+  }
+  return units;
+}
+
 List<ScriptStep> _blockSteps(List<ScriptExercise> exercises) {
   final steps = <ScriptStep>[];
-  for (var i = 0; i < exercises.length; i++) {
-    final e = exercises[i];
-    final sets = e.sets ?? 1;
+  final units = _units(exercises);
+  for (var u = 0; u < units.length; u++) {
+    final unit = units[u];
+    final superset = unit.length > 1;
+    // En superserie se alterna A1 → B1 → descanso → A2 → B2…: las series del
+    // grupo son las del que más tenga.
+    final sets = unit.map((e) => e.sets ?? 1).reduce((a, b) => a > b ? a : b);
+    final last = unit.last;
     // Sin descanso en el plan, uno por defecto: nadie encadena series de core.
-    final rest = e.restSec ?? defaultBlockRestSec;
+    final rest = last.restSec ?? defaultBlockRestSec;
     for (var set = 1; set <= sets; set++) {
-      if (e.perSide) {
-        steps.add(_work(e, position: set, total: sets, isRound: false, side: 'derecho'));
-        steps.add(_work(e, position: set, total: sets, isRound: false, side: 'izquierdo'));
-      } else {
-        steps.add(_work(e, position: set, total: sets, isRound: false));
+      for (final e in unit) {
+        if (set > (e.sets ?? 1)) continue;
+        final total = e.sets ?? 1;
+        if (e.perSide) {
+          steps.add(_work(e, position: set, total: total, isRound: false, side: 'derecho'));
+          steps.add(_work(e, position: set, total: total, isRound: false, side: 'izquierdo'));
+        } else {
+          steps.add(_work(e, position: set, total: total, isRound: false));
+        }
       }
-      final isLastSetOfLastExercise = set == sets && i == exercises.length - 1;
-      if (!isLastSetOfLastExercise && rest > 0) {
-        final next = set == sets ? exercises[i + 1].name : e.name;
+      final isLastOfAll = set == sets && u == units.length - 1;
+      if (!isLastOfAll && rest > 0) {
+        final nextUnit = set == sets ? units[u + 1] : unit;
+        final next = nextUnit.map((e) => e.name).join(' + ');
         steps.add(RestStep(
           seconds: rest,
-          maxSec: e.restSec == null ? null : e.restSecMax,
-          nextLabel: set == sets ? 'Siguiente: $next' : '$next, serie ${set + 1}/$sets',
+          maxSec: last.restSec == null ? null : last.restSecMax,
+          nextLabel: set == sets
+              ? 'Siguiente: $next'
+              : '${superset ? 'Superserie ' : ''}$next, serie ${set + 1}/$sets',
         ));
       }
     }

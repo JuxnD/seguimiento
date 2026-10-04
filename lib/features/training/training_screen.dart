@@ -7,12 +7,14 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
 import '../../ui/hero.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../../data/repositories/plan_repository.dart';
+import '../../data/seed_plan.dart';
 import '../plan/plan_screen.dart';
 import 'active_session_banner.dart';
 import 'football_form_screen.dart';
@@ -20,6 +22,7 @@ import 'guided_session_screen.dart';
 import 'mobility_screen.dart';
 import 'round_counter_screen.dart';
 import 'session_form_screen.dart';
+import 'v3_timers.dart';
 
 /// Arranca el cronómetro con el plan del día ya cargado: si toca circuito
 /// cuenta rondas, si tocan bloques cuenta series. Sin plan, cae al cronómetro
@@ -70,8 +73,16 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   }
 
   if (!context.mounted) return;
+  // Plan v3: lo que toca depende de la semana del bloque (§18.6).
+  final v3 = view.scheme == v3Scheme && view.validFrom != null ? v3Day(view.validFrom!, day) : null;
+  if (planDay.type == DayType.resistencia) {
+    await _startResistance(context, ref, day, view, v3?.resistance ?? ResistanceMode.cindy);
+    return;
+  }
+  final (adjusted, note) = _v3Adjust(planDay, v3);
+
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
-  final variants = planDay.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
+  final variants = adjusted.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
   // El día de progresión propone la meta según la regla; no la sube solo.
   final proposal = planDay.type == DayType.progresion
       ? await ref.read(trainingRepositoryProvider).progressionProposal(day)
@@ -82,7 +93,7 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   final setup = await showDialog<_SessionSetup>(
     context: context,
     builder: (_) => _SetupDialog(
-      day: planDay,
+      day: adjusted,
       variants: variants,
       proposal: proposal,
       light: suggestLight,
@@ -94,14 +105,111 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   await _runGuided(
     context,
     GuidedSessionScreen(
-      day: setup.light ? lightVersion(planDay) : planDay,
+      day: setup.light ? lightVersion(adjusted) : adjusted,
       date: day,
       planDayId: view.dayId,
       coreVariant: setup.variant,
       roundsOverride: setup.rounds,
       light: setup.light,
+      note: note,
     ),
   );
+}
+
+/// Semana de descarga del v3 (y lunes a miércoles de la semana del test):
+/// una serie menos y sin lastre, anotado en la sesión.
+(PlanDayDraft, String?) _v3Adjust(PlanDayDraft day, V3Day? v3) {
+  if (v3 == null || !v3.reducedVolume) return (day, null);
+  return (
+    deloadVersion(day),
+    v3.phase == V3Phase.descarga
+        ? 'Semana ${v3.week} del v3: descarga (una serie menos, sin lastre)'
+        : 'Semana ${v3.week} del v3: volumen −30 % antes del test'
+  );
+}
+
+/// Miércoles de resistencia del v3: Cindy, Tabata o 10 rondas por tiempo.
+/// Se propone lo de la semana y se puede cambiar.
+Future<void> _startResistance(
+    BuildContext context, WidgetRef ref, DateTime day, PlanDayView view, ResistanceMode suggested) async {
+  final mode = await showDialog<ResistanceMode>(
+    context: context,
+    builder: (c) => SimpleDialog(
+      title: const Text('Resistencia'),
+      children: [
+        for (final m in [suggested, ...ResistanceMode.values.where((m) => m != suggested)])
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(c, m),
+            child: Text(m == suggested ? '${m.label} · toca esta semana' : m.label,
+                style: m == suggested ? const TextStyle(fontWeight: FontWeight.w700) : null),
+          ),
+      ],
+    ),
+  );
+  if (mode == null || !context.mounted) return;
+  switch (mode) {
+    case ResistanceMode.cindy:
+      final draft = await Navigator.push<SessionDraft>(context, MaterialPageRoute(builder: (_) => AmrapScreen(date: day)));
+      if (draft != null && context.mounted) await _saveThenReview(context, ref, draft);
+    case ResistanceMode.tabata:
+      final names = [for (final e in view.day.exercises) if (e.block == 'tabata') e.name];
+      final draft = await Navigator.push<SessionDraft>(
+        context,
+        MaterialPageRoute(builder: (_) => TabataScreen(date: day, exercises: names.isEmpty ? tabataExercises : names)),
+      );
+      if (draft != null && context.mounted) await _saveThenReview(context, ref, draft);
+    case ResistanceMode.porTiempo:
+      await _runGuided(
+        context,
+        GuidedSessionScreen(
+          day: PlanDayDraft(
+            weekday: view.day.weekday,
+            type: DayType.circuito,
+            targetRounds: 10,
+            restBetweenRoundsSec: 30,
+            exercises: view.day.main,
+          ),
+          date: day,
+          sessionType: SessionType.resistencia,
+          mode: 'porTiempo',
+          note: '10 rondas por tiempo: la métrica es el trabajo neto (bajarlo)',
+        ),
+      );
+  }
+}
+
+/// Guarda primero (sin revisar) y luego abre el formulario: si se sale sin
+/// guardar, la sesión no se pierde (§16.9).
+Future<void> _saveThenReview(BuildContext context, WidgetRef ref, SessionDraft draft) async {
+  final repo = ref.read(trainingRepositoryProvider);
+  draft.pendingReview = true;
+  final ok = await guarded(context, () => repo.save(draft));
+  if (!ok || !context.mounted) return;
+  final stored = await repo.load(draft.id!);
+  if (!context.mounted) return;
+  final saved = await openSessionForm(context, stored, celebrate: false);
+  if (saved != true && context.mounted) showSnack(context, 'Quedó guardada sin revisar: falta el RPE. Está en Hoy.');
+}
+
+/// EMOM de burpees del viernes (§18.10): se suma a la sesión de densidad del
+/// día (o crea una si no hay).
+Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day, int minutes, int reps) async {
+  final result = await Navigator.push<EmomResult>(
+    context,
+    MaterialPageRoute(builder: (_) => EmomScreen(minutes: minutes, reps: reps)),
+  );
+  if (result == null || !context.mounted) return;
+  final repo = ref.read(trainingRepositoryProvider);
+  final note = 'EMOM $minutes × $reps burpees: ${result.completeMinutes}/$minutes minutos completos';
+  await guarded(context, () async {
+    final existing = await repo.sessionsOn(day, SessionType.densidad);
+    final draft = existing == null
+        ? SessionDraft(date: day, type: SessionType.densidad, pendingReview: true)
+        : await repo.load(existing);
+    draft.sets.addAll([for (final r in result.perMinute) SetDraft(exercise: 'Burpees', reps: r)]);
+    draft.context = [if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(), note].join('. ');
+    await repo.save(draft);
+  }, ok: note);
 }
 
 /// Cronómetro guiado → formulario. La foto de la sesión en curso se borra
@@ -179,10 +287,16 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         await _clearActive(ProviderScope.containerOf(context, listen: false));
         return;
       }
+      final (adjusted, note) = _v3Adjust(
+        view.day,
+        view.scheme == v3Scheme && view.validFrom != null ? v3Day(view.validFrom!, parseDay(s.date)) : null,
+      );
+      if (!context.mounted) return;
       await _runGuided(
         context,
         GuidedSessionScreen(
-          day: s.light ? lightVersion(view.day) : view.day,
+          day: s.light ? lightVersion(adjusted) : adjusted,
+          note: note,
           date: parseDay(s.date),
           planDayId: s.planDayId,
           sessionType: s.sessionType,

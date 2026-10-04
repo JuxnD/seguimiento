@@ -56,6 +56,10 @@ class Exercises extends Table {
 
   /// Progresa con carga externa (mochila, garrafas): el cronómetro pide kg.
   BoolColumn get tracksLoad => boolean().withDefault(const Constant(false))();
+
+  /// Cómo se ancla la banda elástica: 'alto', 'medio', 'bajo' o 'manos'
+  /// (§18.7). null = no usa banda.
+  TextColumn get anchor => text().nullable()();
 }
 
 /// Versión inmutable del plan. Editar = crear versión nueva.
@@ -64,6 +68,10 @@ class PlanVersions extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get validFrom => text()();
   TextColumn get notes => text().nullable()();
+
+  /// Esquema de periodización: 'v3' aplica descargas, Cindy/Tabata y
+  /// burpees por semana (§18.6). null = plan plano, igual todas las semanas.
+  TextColumn get scheme => text().nullable()();
 }
 
 @DataClassName('PlanDayRow')
@@ -119,6 +127,10 @@ class PlanExercises extends Table {
 
   /// Cómo progresa y qué hacer si algo se resiente.
   TextColumn get notes => text().nullable()();
+
+  /// Superserie: los ejercicios del mismo grupo se alternan serie a serie y
+  /// el descanso va después del último (§18.9).
+  TextColumn get supersetGroup => text().nullable()();
 }
 
 @DataClassName('SessionRow')
@@ -162,6 +174,14 @@ class Sessions extends Table {
   /// Guardada sola al terminar el cronómetro, sin pasar por el formulario
   /// (falta el RPE). Cuenta en Hoy y en el informe desde ya (§16.9).
   BoolColumn get pendingReview => boolean().withDefault(const Constant(false))();
+
+  /// Formato de una sesión de resistencia (v3): 'cindy', 'tabata' o
+  /// 'porTiempo'. null en el resto.
+  TextColumn get mode => text().nullable()();
+
+  /// AMRAP: repeticiones sueltas de la ronda que quedó a medias (Cindy
+  /// "12 + 7"). null si no aplica.
+  IntColumn get extraReps => integer().nullable()();
 }
 
 /// Marcas del contador: segundos desde el inicio del circuito al cerrar cada ronda.
@@ -196,6 +216,10 @@ class SessionSets extends Table {
 
   /// Carga externa en kg (mochila, garrafas). null = peso corporal.
   RealColumn get loadKg => real().nullable()();
+
+  /// Variante de la progresión usada en la serie ("arquero", "pies
+  /// elevados"; §18.4). null = la del plan.
+  TextColumn get variant => text().nullable()();
 }
 
 @DataClassName('FootballGameRow')

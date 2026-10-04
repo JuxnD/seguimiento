@@ -17,6 +17,7 @@ class ExerciseGuide {
     this.formCues = const [],
     this.progressionNote,
     this.tracksLoad = false,
+    this.anchor,
   });
 
   final String name;
@@ -24,6 +25,9 @@ class ExerciseGuide {
   final List<String> formCues;
   final String? progressionNote;
   final bool tracksLoad;
+
+  /// Anclaje de la banda: 'alto', 'medio', 'bajo' o 'manos' (§18.7).
+  final String? anchor;
 }
 
 const exerciseGuides = <ExerciseGuide>[
@@ -86,6 +90,196 @@ const exerciseGuides = <ExerciseGuide>[
     ],
     progressionNote: 'rodillas apoyadas → pies apoyados → con peso',
   ),
+  // Plan v3 (§18.8). `anchor`: cómo se ancla la banda (§18.7).
+  ExerciseGuide(
+    name: 'Separaciones con banda',
+    anchor: 'manos',
+    formCues: [
+      'Brazos rectos al frente, banda a la altura del pecho.',
+      'Abre los brazos hasta que la banda toque el pecho.',
+      'Junta las escápulas al final; vuelve lento.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Fondos en barra',
+    formCues: [
+      'Hombros abajo, lejos de las orejas.',
+      'Torso un poco inclinado adelante.',
+      'Baja hasta que el hombro quede a la altura del codo.',
+      'Sin rebote abajo.',
+    ],
+    progressionNote: 'peso corporal → pausa de 1 s abajo → lastre',
+    tracksLoad: true,
+  ),
+  ExerciseGuide(
+    name: 'Remo invertido (mesa)',
+    formCues: [
+      'Debajo de una mesa firme, agarra el borde con los brazos extendidos.',
+      'Cuerpo recto de talones a cabeza, glúteo apretado.',
+      'Lleva el pecho al borde juntando las escápulas.',
+      'Si la mesa se mueve, no lo hagas ahí.',
+    ],
+    progressionNote: 'rodillas dobladas → piernas rectas → pies elevados → pausa de 2 s arriba',
+  ),
+  ExerciseGuide(
+    name: 'Elevaciones laterales con banda',
+    anchor: 'bajo',
+    formCues: [
+      'Pisa la banda, un extremo en cada mano.',
+      'Codos apenas flexionados; sube hasta la altura del hombro.',
+      'Guía con los codos, no con las manos.',
+      'Baja en 2 segundos.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Peso muerto a una pierna con mochila',
+    formCues: [
+      'Mochila en la mano contraria a la pierna de apoyo.',
+      'Rodilla de apoyo un poco flexionada.',
+      'Lleva la cadera atrás; la pierna libre sube en línea con el torso.',
+      'Espalda recta; baja hasta sentir el isquio.',
+    ],
+    progressionNote: 'peso corporal → mochila 5 kg → 8 kg → 10 kg',
+    tracksLoad: true,
+  ),
+  ExerciseGuide(
+    name: 'Puente de glúteo a una pierna',
+    formCues: [
+      'Boca arriba, un pie apoyado cerca del glúteo.',
+      'Empuja con el talón y sube la cadera.',
+      'Aprieta el glúteo 1 s arriba.',
+      'Sin arquear la zona lumbar.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Gemelos a una pierna en escalón',
+    formCues: [
+      'Punta del pie en el borde de un escalón.',
+      'Baja el talón todo lo posible.',
+      'Sube hasta la punta y pausa 1 s.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Pallof press con banda',
+    anchor: 'medio',
+    formCues: [
+      'De lado al anclaje, banda en el pecho con ambas manos.',
+      'Extiende los brazos al frente sin dejar que el torso gire.',
+      'Aguanta 2 s y vuelve.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Flexión arquero',
+    formCues: [
+      'Manos mucho más abiertas que en la flexión normal.',
+      'Baja hacia una mano; el otro brazo queda casi recto.',
+      'Cadera cuadrada al suelo, sin girar.',
+    ],
+    progressionNote: 'arquero → una mano con mano elevada → una mano pies abiertos → una mano estricta',
+  ),
+  ExerciseGuide(
+    name: 'Flexión a una mano',
+    formCues: [
+      'Pies bien abiertos, mano bajo el hombro.',
+      'Cadera y hombros paralelos al suelo.',
+      'Codo pegado al cuerpo al bajar.',
+      'Si la cadera gira, vuelve a la versión con mano elevada.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Flexiones diamante',
+    formCues: [
+      'Índices y pulgares juntos formando un rombo bajo el pecho.',
+      'Codos pegados al cuerpo.',
+      'Pecho hasta tocar las manos.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Remo con banda',
+    anchor: 'medio',
+    formCues: [
+      'De frente al anclaje, brazos extendidos.',
+      'Lleva los codos atrás pegados al cuerpo.',
+      'Junta las escápulas 1 s.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Curl con banda',
+    anchor: 'bajo',
+    formCues: [
+      'Pisa la banda; codos fijos a los lados.',
+      'Sube sin balancear el cuerpo.',
+      'Baja en 2 segundos.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Extensión de tríceps sobre la cabeza con banda',
+    anchor: 'bajo',
+    formCues: [
+      'Pisa la banda detrás de ti; manos detrás de la cabeza.',
+      'Codos apuntando al techo, quietos.',
+      'Extiende los brazos por completo.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Face pull con banda',
+    anchor: 'alto',
+    formCues: [
+      'Tira de la banda hacia la frente, separando las manos.',
+      'Codos altos, a la altura de los hombros.',
+      'Al final, pulgares apuntando atrás.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'L-sit',
+    formCues: [
+      'En la barra o con las manos en el suelo junto a la cadera.',
+      'Hombros abajo, brazos bloqueados.',
+      'Empieza con rodillas recogidas; extiende cuando aguantes 20 s.',
+    ],
+    progressionNote: 'tuck (rodillas recogidas) → una pierna extendida → L-sit completo',
+  ),
+  ExerciseGuide(
+    name: 'Toes-to-bar',
+    formCues: [
+      'Colgado con hombros activos.',
+      'Sube las piernas rectas hasta tocar la barra con los pies.',
+      'Sin balanceo; baja controlado.',
+    ],
+    progressionNote: 'rodillas → piernas rectas → toes-to-bar',
+  ),
+  ExerciseGuide(
+    name: 'Burpees',
+    formCues: [
+      'Pecho al suelo.',
+      'Salta con extensión completa de cadera.',
+      'Aterriza suave, rodillas flexionadas.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Escaladores',
+    formCues: [
+      'Manos bajo los hombros, cuerpo en plancha.',
+      'Lleva las rodillas al pecho alternando, rápido.',
+      'La cadera no sube.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Sentadilla con salto',
+    formCues: [
+      'Baja a sentadilla completa.',
+      'Salta con todo y aterriza suave.',
+      'Rodillas en línea con los pies.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Rodillas arriba',
+    formCues: [
+      'Trote en el sitio subiendo las rodillas a la cadera.',
+      'Brazos activos, torso erguido.',
+      'Apoya la punta del pie, no el talón.',
+    ],
+  ),
   // Los del circuito ya se dominan: basta un recordatorio.
   ExerciseGuide(name: 'Dominadas', formCues: ['Recorrido completo: brazos extendidos abajo, barbilla sobre la barra.']),
   ExerciseGuide(name: 'Flexiones', formCues: ['Cuerpo en bloque: pecho casi al suelo, sin hundir la cadera.']),
@@ -105,6 +299,7 @@ Future<void> applyExerciseGuides(AppDatabase db) async {
       progressionNote:
           row.progressionNote == null && g.progressionNote != null ? Value(g.progressionNote) : const Value.absent(),
       tracksLoad: g.tracksLoad && !row.tracksLoad ? const Value(true) : const Value.absent(),
+      anchor: row.anchor == null && g.anchor != null ? Value(g.anchor) : const Value.absent(),
     ));
   }
 }

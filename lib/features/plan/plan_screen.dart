@@ -5,8 +5,53 @@ import '../../app/providers.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/plan_v3.dart';
 import '../../ui/widgets.dart';
 import 'plan_edit_screen.dart';
+import 'v3_activation.dart';
+
+/// Activar el Plan v3 a mano: la app lo propone en Hoy tras 10 rondas
+/// limpias, pero el arranque también se puede elegir aquí (§18: si el 9 oct no
+/// salen, arranca el lunes después de la primera sesión de 10 limpias).
+class _V3ActivationCard extends ConsumerWidget {
+  const _V3ActivationCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final monday = nextMonday(addDays(dateOnly(DateTime.now()), 1));
+    return AppCard(
+      title: 'Plan v3 · Cierre de año',
+      children: [
+        const Text('Tren superior A y B, piernas, resistencia (Cindy o Tabata) y densidad con burpees; 10 semanas '
+            'con descargas en la 4 y la 8 y test final. Arranca un lunes.'),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          children: [
+            FilledButton(
+              onPressed: () => activateV3(context, ref, monday),
+              child: Text('Activar desde el ${formatShort(monday)}'),
+            ),
+            OutlinedButton(
+              onPressed: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: monday,
+                  firstDate: dateOnly(DateTime.now()),
+                  lastDate: DateTime(2027, 12, 31),
+                  selectableDayPredicate: (d) => d.weekday == DateTime.monday,
+                  helpText: 'Lunes de inicio',
+                );
+                if (picked != null && context.mounted) await activateV3(context, ref, dateOnly(picked));
+              },
+              child: const Text('Otro lunes'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
 
 /// Historial de versiones del plan. Las versiones no se editan: se crean.
 class PlanScreen extends ConsumerWidget {
@@ -24,9 +69,11 @@ class PlanScreen extends ConsumerWidget {
           if (list.isEmpty) {
             return const AppCard(children: [EmptyHint('Sin plan. Crea la versión 1.')]);
           }
+          final hasV3 = list.any((v) => v.scheme == v3Scheme);
           return ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
+              if (!hasV3) const _V3ActivationCard(),
               for (var i = list.length - 1; i >= 0; i--)
                 _VersionCard(versionId: list[i].id, number: i + 1, validFrom: parseDay(list[i].validFrom), notes: list[i].notes),
             ],

@@ -47,6 +47,7 @@ ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
             blockName: e.block,
             variant: e.variant,
             grip: e.grip,
+            supersetGroup: e.supersetGroup,
           ),
       ],
     );
@@ -68,6 +69,8 @@ class GuidedSessionScreen extends ConsumerStatefulWidget {
     this.roundsOverride,
     this.light = false,
     this.resume,
+    this.note,
+    this.mode,
   });
 
   final PlanDayDraft day;
@@ -83,6 +86,12 @@ class GuidedSessionScreen extends ConsumerStatefulWidget {
 
   /// Sesión que Android cerró a mitad: se retoma donde iba.
   final GuidedSnapshot? resume;
+
+  /// Nota que va al contexto de la sesión (semana de descarga del v3…).
+  final String? note;
+
+  /// Formato de resistencia v3 ('porTiempo'); se guarda en la sesión.
+  final String? mode;
 
   @override
   ConsumerState<GuidedSessionScreen> createState() => _GuidedSessionScreenState();
@@ -558,6 +567,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     _persist();
   }
 
+  /// Versión ligera y nota del v3, juntas en el contexto de la sesión.
+  String? _contextNote() {
+    final parts = [
+      if (widget.light) 'Versión ligera (venía cargado del día anterior)',
+      if (widget.note != null) widget.note!,
+    ];
+    return parts.isEmpty ? null : parts.join('. ');
+  }
+
   SessionDraft _buildDraft() {
     final isCircuit = widget.day.type.isCircuit;
     final rounds = isCircuit ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound) : null;
@@ -577,7 +595,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       incomplete: _index < _steps.length,
       roundMarksSec: List.of(_roundMarks),
       roundRestSec: _roundRests.length == _roundMarks.length ? List.of(_roundRests) : null,
-      context: widget.light ? 'Versión ligera (venía cargado del día anterior)' : null,
+      context: _contextNote(),
+      mode: widget.mode,
       techniqueOk: isCircuit ? _techniqueOk : null,
       fullRange: isCircuit ? _fullRange : null,
       recoveryOk: isCircuit ? _recoveryOk : null,

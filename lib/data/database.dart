@@ -47,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -163,6 +163,17 @@ class AppDatabase extends _$AppDatabase {
             // de cada toma de medidas.
             await m.addColumn(sessions, sessions.pendingReview);
             await m.addColumn(measurements, measurements.time);
+          }
+          if (from < 15) {
+            // v15: Plan v3 (§18): periodización por versión, superseries,
+            // anclaje de la banda, variante por serie y formato de las
+            // sesiones de resistencia (Cindy, Tabata, por tiempo).
+            await m.addColumn(planVersions, planVersions.scheme);
+            await m.addColumn(planExercises, planExercises.supersetGroup);
+            await m.addColumn(exercises, exercises.anchor);
+            await m.addColumn(sessionSets, sessionSets.variant);
+            await m.addColumn(sessions, sessions.mode);
+            await m.addColumn(sessions, sessions.extraReps);
           }
         },
         beforeOpen: (details) async {

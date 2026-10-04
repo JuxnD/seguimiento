@@ -11,6 +11,8 @@ import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
+import '../../domain/plan_v3.dart';
+import '../plan/v3_activation.dart';
 import '../../domain/progress.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
@@ -75,7 +77,13 @@ class HomeScreen extends ConsumerWidget {
               const _CorrectionsBanner(),
               const TodayCustomRemindersCard(),
               _WeekGlanceCard(today: today),
-              _ActionsCard(date: today, dayType: d.dayType, suggestLight: d.hardFootballYesterday != null),
+              if (d.v3Suggestion != null) _V3SuggestionCard(monday: d.v3Suggestion!),
+              _ActionsCard(
+                date: today,
+                dayType: d.dayType,
+                suggestLight: d.hardFootballYesterday != null,
+                burpees: d.dayType == DayType.densidad ? d.v3?.burpees : null,
+              ),
               if (d.measurement != null) _MeasurementCard(due: d.measurement!),
             ],
           ),
@@ -190,6 +198,7 @@ class _PlanHero extends StatelessWidget {
               ),
             if (dashboard.proposal case final p? when !dashboard.trained)
               _ProposalLine(proposal: p, date: dashboard.date, color: style.color),
+            if (dashboard.v3 case final v3?) _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
             if (dashboard.dayType == DayType.descanso)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -651,10 +660,13 @@ class _RecordSuspectTile extends ConsumerWidget {
 }
 
 class _ActionsCard extends ConsumerStatefulWidget {
-  const _ActionsCard({required this.date, required this.dayType, this.suggestLight = false});
+  const _ActionsCard({required this.date, required this.dayType, this.suggestLight = false, this.burpees});
 
   final DateTime date;
   final DayType dayType;
+
+  /// Viernes del v3: EMOM de burpees (minutos, burpees por minuto).
+  final (int, int)? burpees;
 
   /// Ayer hubo un partido intenso o con golpe: se ofrece la versión ligera.
   final bool suggestLight;
@@ -706,6 +718,14 @@ class _ActionsCardState extends ConsumerState<_ActionsCard> {
           icon: Icon(widget.dayType.isTraining ? Icons.play_arrow : Icons.timer),
           label: Text(widget.dayType.isTraining ? 'Empezar ${widget.dayType.label.toLowerCase()}' : 'Empezar sesión'),
         ),
+        if (widget.burpees case (final minutes, final reps)) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => startBurpeesEmom(context, ref, widget.date, minutes, reps),
+            icon: const Icon(Icons.local_fire_department),
+            label: Text('Finisher: EMOM $minutes min · $reps burpees'),
+          ),
+        ],
         if (widget.suggestLight && widget.dayType.isTraining) ...[
           const SizedBox(height: 8),
           OutlinedButton.icon(
@@ -788,6 +808,67 @@ class _ActionsCardState extends ConsumerState<_ActionsCard> {
               label: const Text('Movilidad nocturna · opcional'),
             ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Plan v3 en Hoy: semana y fase del bloque, qué toca el miércoles, aviso de
+/// descarga y cuenta atrás al test final (§18.6, §18.9).
+class _V3Strip extends StatelessWidget {
+  const _V3Strip({required this.v3, required this.dashboard, required this.color});
+
+  final V3Day v3;
+  final TodayDashboard dashboard;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final daysToTest = daysBetween(dashboard.date, v3.testDate);
+    final week = v3.week > v3Weeks ? 'después del test' : 'semana ${v3.week} de $v3Weeks';
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Cierre de año · $week · ${v3.phase.label}', style: text.labelLarge?.copyWith(color: color)),
+          if (v3.reducedVolume) Text(v3.phase.hint, style: text.bodyMedium),
+          if (dashboard.dayType == DayType.resistencia) Text('Esta semana: ${v3.resistance.label}', style: text.bodyMedium),
+          if (dashboard.dayType == DayType.densidad && v3.burpees == null && !v3.reducedVolume)
+            Text('Sin burpees esta semana.', style: text.bodySmall),
+          if (daysToTest > 0)
+            Text('Faltan $daysToTest días para el test final (${weekdayShort(v3.testDate.weekday)} '
+                '${formatShort(v3.testDate)})', style: text.bodySmall)
+          else if (daysToTest == 0)
+            Text('Hoy es el test final: medidas en ayunas, dominadas y flexiones máximas, flexión a una mano y L-sit.',
+                style: text.bodyMedium?.copyWith(color: color)),
+        ],
+      ),
+    );
+  }
+}
+
+/// La última progresión fue de 10 rondas limpias: toca el Plan v3 (§18).
+class _V3SuggestionCard extends ConsumerWidget {
+  const _V3SuggestionCard({required this.monday});
+
+  final DateTime monday;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final text = Theme.of(context).textTheme;
+    return AppCard(
+      title: '¡10 rondas limpias!',
+      children: [
+        Text('Toca el Plan v3 "Cierre de año": tren superior, piernas, Cindy y Tabata, densidad. '
+            '10 semanas hasta el test del ${formatShort(v3TestDate(monday))}.', style: text.bodyMedium),
+        const SizedBox(height: 8),
+        FilledButton.icon(
+          onPressed: () => activateV3(context, ref, monday),
+          icon: const Icon(Icons.rocket_launch),
+          label: Text('Activar desde el ${weekdayShort(monday.weekday)} ${formatShort(monday)}'),
         ),
       ],
     );

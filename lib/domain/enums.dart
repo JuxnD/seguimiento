@@ -2,7 +2,11 @@
 /// renombrar un valor exige migración. Añadir valores al final es seguro.
 library;
 
-enum DayType { circuito, bloques, futbol, descanso, circuitoLigero, progresion }
+/// Los cuatro últimos llegan con el Plan v3 (§18): tren superior y piernas
+/// van por series como "bloques"; resistencia es Cindy, Tabata o 10 rondas
+/// por tiempo según la semana; densidad es el circuito ligero del viernes con
+/// core avanzado y burpees.
+enum DayType { circuito, bloques, futbol, descanso, circuitoLigero, progresion, trenSuperior, piernas, resistencia, densidad }
 
 extension DayTypeLabel on DayType {
   String get label => switch (this) {
@@ -12,6 +16,10 @@ extension DayTypeLabel on DayType {
         DayType.bloques => 'Bloques',
         DayType.futbol => 'Fútbol',
         DayType.descanso => 'Descanso',
+        DayType.trenSuperior => 'Tren superior',
+        DayType.piernas => 'Piernas',
+        DayType.resistencia => 'Resistencia',
+        DayType.densidad => 'Densidad',
       };
 
   /// Días que cuentan como sesión de entrenamiento esperada.
@@ -19,7 +27,10 @@ extension DayTypeLabel on DayType {
 
   /// Días que se registran contando rondas.
   bool get isCircuit =>
-      this == DayType.circuito || this == DayType.circuitoLigero || this == DayType.progresion;
+      this == DayType.circuito ||
+      this == DayType.circuitoLigero ||
+      this == DayType.progresion ||
+      this == DayType.densidad;
 
   /// Tipo de sesión que corresponde a entrenar este día. Fútbol y descanso no
   /// son sesiones: si se entrena igual, queda como "Otro".
@@ -28,6 +39,10 @@ extension DayTypeLabel on DayType {
         DayType.circuitoLigero => SessionType.circuitoLigero,
         DayType.progresion => SessionType.progresion,
         DayType.bloques => SessionType.bloques,
+        DayType.trenSuperior => SessionType.trenSuperior,
+        DayType.piernas => SessionType.piernas,
+        DayType.resistencia => SessionType.resistencia,
+        DayType.densidad => SessionType.densidad,
         DayType.futbol || DayType.descanso => SessionType.otro,
       };
 }
@@ -35,7 +50,7 @@ extension DayTypeLabel on DayType {
 /// Tipo de una sesión registrada. El fútbol va aparte (FootballGames).
 /// `movilidad` es opcional y fuera del plan: no cuenta para adherencia,
 /// récords, racha ni RPE.
-enum SessionType { circuito, bloques, otro, circuitoLigero, progresion, movilidad }
+enum SessionType { circuito, bloques, otro, circuitoLigero, progresion, movilidad, trenSuperior, piernas, resistencia, densidad }
 
 extension SessionTypeLabel on SessionType {
   String get label => switch (this) {
@@ -45,16 +60,22 @@ extension SessionTypeLabel on SessionType {
         SessionType.bloques => 'Bloques',
         SessionType.otro => 'Otro',
         SessionType.movilidad => 'Movilidad',
+        SessionType.trenSuperior => 'Tren superior',
+        SessionType.piernas => 'Piernas',
+        SessionType.resistencia => 'Resistencia',
+        SessionType.densidad => 'Densidad',
       };
 
   /// Cuenta como entrenamiento del plan (adherencia, racha, avisos de sesión).
   bool get isTraining => this != SessionType.movilidad;
 
-  /// Las sesiones de circuito son las que cuentan rondas y récords.
+  /// Las sesiones de circuito son las que cuentan rondas y récords. La
+  /// densidad del viernes (v3) abre con 6 rondas de circuito ligero.
   bool get isCircuit =>
       this == SessionType.circuito ||
       this == SessionType.circuitoLigero ||
-      this == SessionType.progresion;
+      this == SessionType.progresion ||
+      this == SessionType.densidad;
 
   DayType get asDayType => switch (this) {
         SessionType.circuito => DayType.circuito,
@@ -63,6 +84,10 @@ extension SessionTypeLabel on SessionType {
         SessionType.bloques => DayType.bloques,
         SessionType.otro => DayType.bloques,
         SessionType.movilidad => DayType.descanso,
+        SessionType.trenSuperior => DayType.trenSuperior,
+        SessionType.piernas => DayType.piernas,
+        SessionType.resistencia => DayType.resistencia,
+        SessionType.densidad => DayType.densidad,
       };
 }
 

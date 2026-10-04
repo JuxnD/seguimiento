@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/nutrition.dart';
+import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/steps.dart';
 import '../database.dart';
@@ -37,6 +38,8 @@ class TodayDashboard {
     required this.roundsRecord,
     this.recordSuspect,
     this.recordDate,
+    this.v3,
+    this.v3Suggestion,
     required this.measurement,
     this.proposal,
   });
@@ -90,6 +93,13 @@ class TodayDashboard {
 
   bool get recentRecord => recordDate != null && daysBetween(recordDate!, date) <= 6;
 
+  /// Día dentro del Plan v3 (semana, fase, descarga). null fuera del v3.
+  final V3Day? v3;
+
+  /// Lunes desde el que conviene activar el v3: la última progresión fue de
+  /// 10 rondas limpias y todavía no hay v3 (§18). null si no toca.
+  final DateTime? v3Suggestion;
+
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
 
@@ -128,6 +138,7 @@ class DashboardRepository {
     final p = await profile.get();
     final view = await plan.dayFor(date);
     final type = view?.day.type ?? DayType.descanso;
+    final v3 = view != null && view.scheme == v3Scheme && view.validFrom != null ? v3Day(view.validFrom!, date) : null;
     final proposal = type == DayType.progresion
         ? await TrainingRepository(db, ExerciseRepository(db)).progressionProposal(date)
         : null;
@@ -177,6 +188,8 @@ class DashboardRepository {
       roundsRecord: record,
       recordSuspect: record == null ? null : await _recordSuspect(record),
       recordDate: record == null ? null : await _recordDate(record),
+      v3: v3,
+      v3Suggestion: v3 == null ? await _v3Suggestion(date) : null,
       measurement: measurementDue(
         today: date,
         lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
@@ -188,6 +201,17 @@ class DashboardRepository {
   }
 
   /// La sesión del récord, si el plan de ese día no era de circuito.
+  /// 10 rondas limpias en la última progresión y sin v3 todavía: se propone
+  /// el lunes siguiente a esa sesión (o el próximo, si ya pasó).
+  Future<DateTime?> _v3Suggestion(DateTime today) async {
+    if (await plan.hasScheme(v3Scheme)) return null;
+    final p = await TrainingRepository(db, ExerciseRepository(db)).progressionProposal(addDays(today, 1));
+    if (p == null || !p.canProgress || p.lastRounds < 10 || p.lastDate == null) return null;
+    final afterSession = nextMonday(addDays(p.lastDate!, 1));
+    final upcoming = nextMonday(today);
+    return afterSession.isBefore(upcoming) ? upcoming : afterSession;
+  }
+
   Future<DateTime?> _recordDate(int record) async {
     final row = await (db.select(db.sessions)
           ..where((t) => db.countedCircuitRounds & t.roundsDone.equals(record))

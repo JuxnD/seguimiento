@@ -22,6 +22,11 @@ double workMet(SessionType type) => switch (type) {
       SessionType.circuitoLigero => 5.0,
       SessionType.bloques || SessionType.otro => 5.0,
       SessionType.movilidad => cooldownMet,
+      // Fuerza por series con RIR 1–2 (02050, "vigorous effort"): 6,0.
+      SessionType.trenSuperior || SessionType.piernas => 6.0,
+      // Cindy y Tabata: circuito vigoroso sin descanso.
+      SessionType.resistencia => 8.0,
+      SessionType.densidad => 5.0,
     };
 
 const warmupMet = 3.5;
