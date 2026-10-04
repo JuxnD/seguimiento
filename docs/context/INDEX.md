@@ -80,7 +80,8 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 - **Trabajo por ronda**: de que arranca la ronda a su última repetición, sin
   el descanso previo. **R1→Rn**: trabajo de la última menos el de la primera
   (degradación).
-- **Día cerrado**: con desayuno, almuerzo y cena, o cerrado a mano. Solo esos
+- **Día cerrado**: con desayuno, almuerzo y cena, con 3 comidas o 1.800 kcal
+  registradas (regla alternativa, §16.6.3), o cerrado a mano. Solo esos
   entran a promedios y alertas de nutrición.
 - **Movilidad**: sesión opcional fuera del plan. No cuenta para adherencia,
   racha, récords ni RPE; el informe la muestra aparte.

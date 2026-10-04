@@ -283,6 +283,20 @@ void main() {
     await disposeApp(tester);
   });
 
+  testWidgets('Registrar en "Ayer" abre el formulario con la fecha de ayer (§16.12)', (tester) async {
+    await pumpApp(tester);
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day).subtract(const Duration(days: 1));
+    await tester.ensureVisible(find.text('Ayer'));
+    await tester.tap(find.text('Ayer'));
+    await settle(tester);
+    expect(find.textContaining('Se anota el'), findsOneWidget);
+    await tester.tap(find.text('Fútbol').last);
+    await settle(tester);
+    expect(find.textContaining(formatLong(yesterday)), findsWidgets);
+    await disposeApp(tester);
+  });
+
   testWidgets('el informe se genera con lo registrado', (tester) async {
     await NutritionRepository(db).saveMeal(
       MealDraft(date: DateTime.now(), slot: MealSlot.almuerzo)

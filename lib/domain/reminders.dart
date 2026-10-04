@@ -266,8 +266,8 @@ Iterable<PlannedNotification> _missingMeals(ReminderContext ctx) sync* {
   yield PlannedNotification(
     kind: ReminderKind.comidasSinRegistrar,
     when: _at(ctx.now, s),
-    title: 'Falta registrar: $list',
-    body: 'Si no comiste más hoy, cierra el día en Comidas para que no cuente como incompleto.',
+    title: '¿Cerraste el día? ${fmtInt(ctx.kcalToday)} kcal · ${fmtInt(ctx.proteinToday)} g',
+    body: 'Falta registrar: $list. Si no comiste más hoy, ciérralo en Hoy o en Comidas para que cuente.',
   );
 }
 

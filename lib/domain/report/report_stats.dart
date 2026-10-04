@@ -19,13 +19,20 @@ class ReportStats {
       dayMacros[k] = (dayMacros[k] ?? Macros.zero) + m.macros;
     }
     final slotsByDay = <String, Set<MealSlot>>{};
+    final countByDay = <String, int>{};
     for (final m in input.meals) {
       slotsByDay.putIfAbsent(dayKey(m.date), () => {}).add(m.slot);
+      countByDay[dayKey(m.date)] = (countByDay[dayKey(m.date)] ?? 0) + 1;
     }
     loggedDays = days.where((d) => dayMacros.containsKey(dayKey(d))).toList();
     unloggedDays = elapsedDays.where((d) => !dayMacros.containsKey(dayKey(d))).toList();
     closedDays = loggedDays
-        .where((d) => isDayClosed(slotsByDay[dayKey(d)] ?? const {}, manuallyClosed: input.closedDays.contains(dayKey(d))))
+        .where((d) => isDayClosed(
+              slotsByDay[dayKey(d)] ?? const {},
+              manuallyClosed: input.closedDays.contains(dayKey(d)),
+              mealCount: countByDay[dayKey(d)] ?? 0,
+              kcal: dayMacros[dayKey(d)]?.kcal ?? 0,
+            ))
         .toList();
     incompleteDays = loggedDays.where((d) => !closedDays.contains(d)).toList();
     daysBelowFloor = closedDays.where((d) => dayMacros[dayKey(d)]!.kcal < input.targets.kcalFloor).toList();

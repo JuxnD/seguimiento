@@ -103,7 +103,8 @@ void main() {
           .where((x) => x.kind == ReminderKind.comidasSinRegistrar)
           .single;
       expect(n.when, DateTime(2026, 9, 25, 22));
-      expect(n.title, 'Falta registrar: desayuno y cena');
+      expect(n.title, startsWith('¿Cerraste el día? '), reason: 'dice cuánto lleva (§16.6.3)');
+      expect(n.body, startsWith('Falta registrar: desayuno y cena'));
       expect(planReminders(_ctx()).where((x) => x.kind == ReminderKind.comidasSinRegistrar), isEmpty,
           reason: 'día completo o cerrado a mano: no hay nada que recordar');
     });

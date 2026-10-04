@@ -240,14 +240,24 @@ class _BodyHero extends StatelessWidget {
     final latest = weights.isEmpty ? null : weights.first;
     final first = firstWeight;
     final delta = latest == null || first == null || latest.id == first.id ? null : latest.kg - first.kg;
+    // El peso sube y baja día a día: lo que dice algo es el promedio de la
+    // semana y su tendencia (§18.10).
+    final weeks = weeklyWeightAverages([for (final w in weights) (parseDay(w.date), w.kg, w.fasted)]);
+    final week = weeks.isEmpty ? null : weeks.last;
+    final prevWeek = weeks.length < 2 ? null : weeks[weeks.length - 2];
 
     return HeroCard(
       color: _bodyColor,
       overline: 'Cuerpo',
-      title: latest == null ? 'Sin pesajes' : '${fmtDec(latest.kg)} kg',
-      subtitle: delta == null
-          ? (latest == null ? 'Registra tu primer peso' : 'Último pesaje')
-          : '${fmtDelta(delta)} kg desde ${formatShort(parseDay(first!.date))}',
+      title: week == null ? 'Sin pesajes' : '${fmtDec(week.kg)} kg',
+      subtitle: week == null
+          ? 'Registra tu primer peso'
+          : [
+              'Promedio de la semana del ${formatShort(week.monday)} '
+                  '(${week.count} ${week.count == 1 ? 'pesaje' : 'pesajes'})',
+              if (prevWeek != null) '${fmtDelta(week.kg - prevWeek.kg)} kg vs la anterior',
+              if (delta != null && prevWeek == null) '${fmtDelta(delta)} kg desde ${formatShort(parseDay(first!.date))}',
+            ].join(' · '),
       icon: Icons.accessibility_new,
       pills: [
         StatPill(

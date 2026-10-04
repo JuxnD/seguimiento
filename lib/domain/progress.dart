@@ -77,6 +77,39 @@ List<SeriesPoint> fillDays(List<SeriesPoint> points, DateTime from, DateTime to)
 double seriesMax(List<SeriesPoint> points, {double atLeast = 1}) =>
     points.isEmpty ? atLeast : points.map((p) => p.value).reduce((a, b) => a > b ? a : b).clamp(atLeast, double.infinity);
 
+/// Promedio de peso de una semana (lunes a domingo).
+class WeekAverage {
+  const WeekAverage(this.monday, this.kg, this.count);
+
+  final DateTime monday;
+  final double kg;
+
+  /// Pesajes que entraron en el promedio.
+  final int count;
+}
+
+/// Promedios semanales de peso, de la semana más vieja a la más nueva
+/// (§18.10: pesajes en ayunas mar · jue · sáb; se mira el promedio, no cada
+/// pesaje). Una semana con pesajes en ayunas promedia solo esos; si no tiene
+/// ninguno, promedia los que haya.
+List<WeekAverage> weeklyWeightAverages(Iterable<(DateTime date, double kg, bool fasted)> weighIns) {
+  final byWeek = <String, List<(double, bool)>>{};
+  for (final (date, kg, fasted) in weighIns) {
+    final monday = addDays(dateOnly(date), -(date.weekday - 1));
+    byWeek.putIfAbsent(dayKey(monday), () => []).add((kg, fasted));
+  }
+  final keys = byWeek.keys.toList()..sort();
+  return [
+    for (final k in keys)
+      () {
+        final all = byWeek[k]!;
+        final fasted = all.where((w) => w.$2).toList();
+        final used = fasted.isEmpty ? all : fasted;
+        return WeekAverage(parseDay(k), used.fold(0.0, (a, w) => a + w.$1) / used.length, used.length);
+      }(),
+  ];
+}
+
 /// Comparación con la sesión anterior del mismo tipo, para el cierre.
 class SessionComparison {
   const SessionComparison({

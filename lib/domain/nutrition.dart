@@ -45,10 +45,16 @@ double fromCm(double cm, LengthUnit unit) => unit == LengthUnit.cm ? cm : cm / c
 /// Comidas principales: con las tres registradas el día se da por cerrado.
 const mainMealSlots = {MealSlot.desayuno, MealSlot.almuerzo, MealSlot.cena};
 
+/// Regla alternativa de cierre (§16.6.3): con tantas comidas, o tantas kcal,
+/// el día cuenta aunque falte un tipo (el almuerzo guardado como merienda).
+const closeByMealCount = 3;
+const closeByKcal = 1800;
+
 /// Un día cuenta para promedios y alertas si tiene desayuno, almuerzo y cena,
-/// o si el usuario lo cerró a mano (no desayunó, comió dos veces…).
-bool isDayClosed(Set<MealSlot> slots, {bool manuallyClosed = false}) =>
-    manuallyClosed || mainMealSlots.every(slots.contains);
+/// si tiene 3 comidas o 1.800 kcal registradas, o si el usuario lo cerró a
+/// mano (no desayunó, comió dos veces…).
+bool isDayClosed(Set<MealSlot> slots, {bool manuallyClosed = false, int mealCount = 0, double kcal = 0}) =>
+    manuallyClosed || mainMealSlots.every(slots.contains) || mealCount >= closeByMealCount || kcal >= closeByKcal;
 
 /// Comidas principales que faltan en un día.
 List<MealSlot> missingMainMeals(Set<MealSlot> slots) =>

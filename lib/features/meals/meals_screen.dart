@@ -139,7 +139,12 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                       Text('Carbos ${fmtInt(total.carbs)} g · Grasa ${fmtInt(total.fat)} g',
                           style: Theme.of(context).textTheme.bodySmall),
                       if (!_day.isAfter(today) && list.isNotEmpty)
-                        _DayStatus(day: _day, slots: {for (final m in list) m.meal.slot}),
+                        _DayStatus(
+                          day: _day,
+                          slots: {for (final m in list) m.meal.slot},
+                          mealCount: list.length,
+                          kcal: total.kcal,
+                        ),
                       const SizedBox(height: 14),
                       FilledButton.icon(
                         onPressed: _newMeal,
@@ -581,10 +586,12 @@ Future<void> _moveMeal(BuildContext context, WidgetRef ref, MealWithItems meal) 
 /// Si el día cuenta para promedios y alertas: con desayuno, almuerzo y cena,
 /// o cerrado a mano. Cerrar es decir "hoy no hubo más", no inventar comidas.
 class _DayStatus extends ConsumerWidget {
-  const _DayStatus({required this.day, required this.slots});
+  const _DayStatus({required this.day, required this.slots, required this.mealCount, required this.kcal});
 
   final DateTime day;
   final Set<MealSlot> slots;
+  final int mealCount;
+  final double kcal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -600,6 +607,17 @@ class _DayStatus extends ConsumerWidget {
     }
     final labels = missing.map((m) => m.label.toLowerCase()).toList();
     final names = labels.length == 1 ? labels.first : '${labels.take(labels.length - 1).join(', ')} y ${labels.last}';
+    // Regla alternativa (§16.6.3): 3 comidas o 1.800 kcal cierran el día.
+    if (!manual && isDayClosed(slots, mealCount: mealCount, kcal: kcal)) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Text(
+          'Cuenta para los promedios: ${mealCount >= closeByMealCount ? '$mealCount comidas' : '${fmtInt(kcal)} kcal'} '
+          '(aunque falte $names)',
+          style: text.bodySmall,
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(

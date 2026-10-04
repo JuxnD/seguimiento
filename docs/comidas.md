@@ -27,6 +27,18 @@ Dentro del formulario:
   cantidad de cualquier alimento: "comí muchas pastas" es ×1,5, no un alimento
   nuevo.
 
+## Registrar en días pasados (§16.12)
+
+En Hoy, *Registrar → Anotar en*: Hoy · Ayer · Otro día (hasta 7 atrás). Sesión,
+Fútbol, Comida y Medición abren con esa fecha y lo registrado cuenta en ese
+día, en la racha y en el informe. El cronómetro siempre es de hoy. Todos los
+formularios conservan además su propio campo de fecha.
+
+Al día siguiente, si ayer quedó abierto o con menos de 1.200 kcal, Hoy
+pregunta **"¿Te faltó registrar algo de ayer?"** con *Comida de ayer*,
+*Fútbol de ayer*, *Cerrar ayer así* y *Está bien así* (no vuelve a preguntar
+por ese día).
+
 ## Navegar y corregir (§16.7)
 
 El 29 sep el usuario quiso corregir el desayuno del lunes y, al tocar la fila

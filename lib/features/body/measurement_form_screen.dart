@@ -11,16 +11,19 @@ import '../../ui/widgets.dart';
 
 /// Toma de medidas. Se escribe en la unidad elegida y se guarda siempre en cm.
 class MeasurementFormScreen extends ConsumerStatefulWidget {
-  const MeasurementFormScreen({super.key, this.existing});
+  const MeasurementFormScreen({super.key, this.existing, this.initialDate});
 
   final MeasurementCheckIn? existing;
+
+  /// Fecha con la que abre una toma nueva (Registrar en Hoy elige el día).
+  final DateTime? initialDate;
 
   @override
   ConsumerState<MeasurementFormScreen> createState() => _MeasurementFormScreenState();
 }
 
 class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
-  late DateTime _date = widget.existing?.date ?? dateOnly(DateTime.now());
+  late DateTime _date = widget.existing?.date ?? widget.initialDate ?? dateOnly(DateTime.now());
   late bool _fasted = widget.existing?.fasted ?? true;
   late String? _time = widget.existing?.time ?? timeKey(DateTime.now().hour, DateTime.now().minute);
   late LengthUnit _unit = ref.read(profileProvider).value?.lengthUnit ?? LengthUnit.cm;

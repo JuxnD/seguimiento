@@ -64,8 +64,10 @@ class ReminderScheduler {
 
     final meals = await nutrition.range(today, today);
     final totals = Macros.sum(meals.map((m) => m.macros));
-    final closed = await nutrition.isClosed(today);
-    final missing = closed ? const <MealSlot>[] : missingMainMeals({for (final m in meals) m.meal.slot});
+    final slots = {for (final m in meals) m.meal.slot};
+    final closed = isDayClosed(slots,
+        manuallyClosed: await nutrition.isClosed(today), mealCount: meals.length, kcal: totals.kcal);
+    final missing = closed ? const <MealSlot>[] : missingMainMeals(slots);
 
     final lastMeasurement = await body.lastCheckInBefore(addDays(today, 1));
     final steps = await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(today)))).getSingleOrNull();

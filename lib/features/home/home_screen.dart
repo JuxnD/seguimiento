@@ -10,11 +10,14 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
+import '../../domain/nutrition.dart';
 import '../../domain/progress.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
+import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
+import 'walk_screen.dart';
 import '../report/summary_screen.dart';
 import '../../data/local_flags.dart';
 import '../settings/corrections_screen.dart';
@@ -68,6 +71,7 @@ class HomeScreen extends ConsumerWidget {
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
               const _PendingReviewCard(),
+              _YesterdayCheckCard(today: today),
               const _CorrectionsBanner(),
               const TodayCustomRemindersCard(),
               _WeekGlanceCard(today: today),
@@ -486,7 +490,9 @@ class _RingsCard extends StatelessWidget {
           ),
           if (d.recordSuspect != null) _RecordSuspectTile(suspect: d.recordSuspect!),
         ],
+        _WalksLine(dashboard: d),
         const _StepsSourceLine(),
+        _CloseDayLine(dashboard: d),
       ],
     );
   }
@@ -644,7 +650,7 @@ class _RecordSuspectTile extends ConsumerWidget {
   }
 }
 
-class _ActionsCard extends ConsumerWidget {
+class _ActionsCard extends ConsumerStatefulWidget {
   const _ActionsCard({required this.date, required this.dayType, this.suggestLight = false});
 
   final DateTime date;
@@ -654,18 +660,53 @@ class _ActionsCard extends ConsumerWidget {
   final bool suggestLight;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final style = styleForDay(dayType);
+  ConsumerState<_ActionsCard> createState() => _ActionsCardState();
+}
+
+/// Registrar: el cronómetro es siempre para hoy; sesión, fútbol, comida y
+/// medición se pueden anotar en cualquiera de los últimos 7 días (§16.12:
+/// el 4 oct no se pudo registrar la cena ni el fútbol del sábado).
+class _ActionsCardState extends ConsumerState<_ActionsCard> {
+  late DateTime _target = widget.date;
+
+  @override
+  void didUpdateWidget(_ActionsCard old) {
+    super.didUpdateWidget(old);
+    // Pasó la medianoche: "hoy" es otro día.
+    if (old.date != widget.date && _target == old.date) _target = widget.date;
+  }
+
+  DateTime get _today => widget.date;
+  DateTime get _yesterday => addDays(_today, -1);
+
+  Future<void> _pickOther() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _target,
+      firstDate: addDays(_today, -7),
+      lastDate: _today,
+      helpText: 'Registrar en…',
+    );
+    if (picked != null) setState(() => _target = dateOnly(picked));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final style = styleForDay(widget.dayType);
+    final text = Theme.of(context).textTheme;
+    final isToday = _target == _today;
+    final other = !isToday && _target != _yesterday;
+    final targetLabel = isToday ? 'hoy' : '${weekdayShort(_target.weekday)} ${formatShort(_target)}';
     return AppCard(
       title: 'Registrar',
       children: [
         FilledButton.icon(
           onPressed: () => startGuidedSession(context, ref),
           style: FilledButton.styleFrom(backgroundColor: style.color),
-          icon: Icon(dayType.isTraining ? Icons.play_arrow : Icons.timer),
-          label: Text(dayType.isTraining ? 'Empezar ${dayType.label.toLowerCase()}' : 'Empezar sesión'),
+          icon: Icon(widget.dayType.isTraining ? Icons.play_arrow : Icons.timer),
+          label: Text(widget.dayType.isTraining ? 'Empezar ${widget.dayType.label.toLowerCase()}' : 'Empezar sesión'),
         ),
-        if (suggestLight && dayType.isTraining) ...[
+        if (widget.suggestLight && widget.dayType.isTraining) ...[
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => startGuidedSession(context, ref, light: true),
@@ -673,6 +714,26 @@ class _ActionsCard extends ConsumerWidget {
             label: const Text('Aplicar versión ligera'),
           ),
         ],
+        const SizedBox(height: 12),
+        Text('Anotar en', style: text.labelLarge),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 6,
+          children: [
+            ChoiceChip(label: const Text('Hoy'), selected: isToday, onSelected: (_) => setState(() => _target = _today)),
+            ChoiceChip(
+              label: const Text('Ayer'),
+              selected: _target == _yesterday,
+              onSelected: (_) => setState(() => _target = _yesterday),
+            ),
+            ChoiceChip(
+              avatar: const Icon(Icons.calendar_month, size: 16),
+              label: Text(other ? '${weekdayShort(_target.weekday)} ${formatShort(_target)}' : 'Otro día'),
+              selected: other,
+              onSelected: (_) => _pickOther(),
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -680,7 +741,7 @@ class _ActionsCard extends ConsumerWidget {
               child: ActionButton(
                 icon: Icons.edit_note,
                 label: 'Sesión',
-                onPressed: () => openSessionForm(context, SessionDraft(date: date)),
+                onPressed: () => openSessionForm(context, SessionDraft(date: _target)),
               ),
             ),
             const SizedBox(width: 8),
@@ -689,7 +750,7 @@ class _ActionsCard extends ConsumerWidget {
                 icon: Icons.sports_soccer,
                 label: 'Fútbol',
                 onPressed: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => FootballFormScreen(date: date))),
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => FootballFormScreen(date: _target))),
               ),
             ),
             const SizedBox(width: 8),
@@ -699,26 +760,188 @@ class _ActionsCard extends ConsumerWidget {
                 label: 'Comida',
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => MealFormScreen(
-                      draft: _mealNow(date),
-                    ),
-                  ),
+                  MaterialPageRoute(builder: (_) => MealFormScreen(draft: _mealNow(_target))),
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 4),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton.icon(
-            onPressed: () => startMobility(context, ref),
-            icon: const Icon(Icons.self_improvement),
-            label: const Text('Movilidad nocturna · opcional'),
+        if (!isToday)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text('Se anota el $targetLabel: cuenta en ese día, en la racha y en el informe.',
+                style: text.bodySmall),
           ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 4,
+          children: [
+            TextButton.icon(
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => MeasurementFormScreen(initialDate: _target))),
+              icon: const Icon(Icons.straighten),
+              label: const Text('Medición'),
+            ),
+            TextButton.icon(
+              onPressed: () => startMobility(context, ref),
+              icon: const Icon(Icons.self_improvement),
+              label: const Text('Movilidad nocturna · opcional'),
+            ),
+          ],
         ),
       ],
+    );
+  }
+}
+
+/// Desde las 20:00, si el día no está cerrado: cerrarlo de un toque con lo
+/// que se lleva (§16.6.3).
+class _CloseDayLine extends ConsumerWidget {
+  const _CloseDayLine({required this.dashboard});
+
+  final TodayDashboard dashboard;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final d = dashboard;
+    if (DateTime.now().hour < 20) return const SizedBox.shrink();
+    final meals = ref.watch(mealsForDayProvider(dayKey(d.date))).valueOrNull ?? const [];
+    final manual = ref.watch(dayClosedProvider(dayKey(d.date))).valueOrNull ?? false;
+    final closed = isDayClosed({for (final m in meals) m.meal.slot},
+        manuallyClosed: manual, mealCount: meals.length, kcal: d.macros.kcal);
+    if (closed) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          const Icon(Icons.nightlight_round, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text('¿Ya no comes más? ${fmtInt(d.macros.kcal)} kcal · ${fmtInt(d.macros.protein)} g',
+                style: Theme.of(context).textTheme.bodyMedium),
+          ),
+          TextButton(
+            onPressed: () => guarded(context, () => ref.read(nutritionRepositoryProvider).setClosed(d.date, true),
+                ok: 'Día cerrado: cuenta en los promedios'),
+            child: const Text('Cerrar el día'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Día por el que ya se respondió "está bien así".
+final _yesterdayDismissedProvider =
+    Provider<String?>((ref) => ref.watch(localFlagsProvider).get<String>(FlagKeys.yesterdayCheckDismissed));
+
+/// Al día siguiente, si ayer quedó abierto o con muy pocas kcal: "¿Te faltó
+/// registrar algo de ayer?" con acceso directo (§16.12, §16.6.3).
+class _YesterdayCheckCard extends ConsumerWidget {
+  const _YesterdayCheckCard({required this.today});
+
+  final DateTime today;
+
+  static const _lowKcal = 1200;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final yesterday = addDays(today, -1);
+    final key = dayKey(yesterday);
+    if (ref.watch(_yesterdayDismissedProvider) == key) return const SizedBox.shrink();
+    // Antes del inicio del programa no hay nada que reclamar (instalación nueva).
+    final start = ref.watch(profileProvider).valueOrNull?.programStart;
+    if (start == null || yesterday.isBefore(dateOnly(start))) return const SizedBox.shrink();
+    final mealsAsync = ref.watch(mealsForDayProvider(key));
+    final manualAsync = ref.watch(dayClosedProvider(key));
+    if (!mealsAsync.hasValue || !manualAsync.hasValue) return const SizedBox.shrink();
+    final meals = mealsAsync.value!;
+    final kcal = meals.fold(0.0, (a, m) => a + m.macros.kcal);
+    final closed = isDayClosed({for (final m in meals) m.meal.slot},
+        manuallyClosed: manualAsync.value ?? false, mealCount: meals.length, kcal: kcal);
+    if (closed && kcal >= _lowKcal) return const SizedBox.shrink();
+    final missing = missingMainMeals({for (final m in meals) m.meal.slot}).map((s) => s.label.toLowerCase());
+    final text = Theme.of(context).textTheme;
+    final repo = ref.read(nutritionRepositoryProvider);
+    return AppCard(
+      title: '¿Te faltó registrar algo de ayer?',
+      children: [
+        Text(
+          meals.isEmpty
+              ? 'Ayer (${weekdayShort(yesterday.weekday)} ${formatShort(yesterday)}) no tiene comidas.'
+              : 'Ayer: ${fmtInt(kcal)} kcal en ${meals.length} ${meals.length == 1 ? 'comida' : 'comidas'}'
+                  '${missing.isEmpty ? '' : ' · sin ${missing.join(', ')}'}.',
+          style: text.bodyMedium,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          children: [
+            FilledButton.tonalIcon(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MealFormScreen(draft: MealDraft(date: yesterday, slot: MealSlot.cena)),
+                ),
+              ),
+              icon: const Icon(Icons.restaurant, size: 18),
+              label: const Text('Comida de ayer'),
+            ),
+            OutlinedButton.icon(
+              onPressed: () =>
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => FootballFormScreen(date: yesterday))),
+              icon: const Icon(Icons.sports_soccer, size: 18),
+              label: const Text('Fútbol de ayer'),
+            ),
+            if (!closed && meals.isNotEmpty)
+              TextButton(
+                onPressed: () => guarded(context, () => repo.setClosed(yesterday, true), ok: 'Ayer quedó cerrado'),
+                child: const Text('Cerrar ayer así'),
+              ),
+            TextButton(
+              onPressed: () async {
+                await ref.read(localFlagsProvider).set(FlagKeys.yesterdayCheckDismissed, key);
+                ref.invalidate(_yesterdayDismissedProvider);
+              },
+              child: const Text('Está bien así'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Pasos que faltan en caminatas de 10 min, con el botón para hacer una
+/// (§18.10: "Te faltan 3 caminatas de 10 min").
+class _WalksLine extends StatelessWidget {
+  const _WalksLine({required this.dashboard});
+
+  final TodayDashboard dashboard;
+
+  @override
+  Widget build(BuildContext context) {
+    final goal = dashboard.stepsGoal;
+    if (goal == null) return const SizedBox.shrink();
+    final left = walksLeft(dashboard.stepsToday ?? 0, goal);
+    if (left == 0) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Row(
+        children: [
+          const Icon(Icons.directions_walk, size: 18, color: AppColors.steps),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text('Te ${left == 1 ? 'falta 1 caminata' : 'faltan $left caminatas'} de 10 min',
+                style: Theme.of(context).textTheme.bodyMedium),
+          ),
+          FilledButton.tonal(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalkScreen())),
+            child: const Text('Caminata 10 min'),
+          ),
+        ],
+      ),
     );
   }
 }
