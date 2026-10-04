@@ -94,6 +94,8 @@ class ReportRepository {
         incomplete: s.incomplete,
         plannedRounds: s.plannedRounds,
         pendingReview: s.pendingReview,
+        mode: s.mode,
+        extraReps: s.extraReps,
         techniqueOk: s.techniqueOk,
         fullRange: s.fullRange,
         recoveryOk: s.recoveryOk,
@@ -110,6 +112,7 @@ class ReportRepository {
               splitDetail: x.splitDetail,
               toFailure: x.toFailure,
               loadKg: x.loadKg,
+              variant: x.variant,
             ),
         ],
       ));

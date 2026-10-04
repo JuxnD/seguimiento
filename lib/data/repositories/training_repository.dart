@@ -388,6 +388,18 @@ class TrainingRepository {
         recoveryOk: Value(recoveryOk),
       ));
 
+  /// Última variante usada en un ejercicio, para proponerla de nuevo.
+  Future<String?> lastVariant(String exercise) async {
+    final exId = await exercises.idOf(exercise);
+    if (exId == null) return null;
+    final row = await (db.select(db.sessionSets)
+          ..where((t) => t.exerciseId.equals(exId) & t.variant.isNotNull())
+          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
+          ..limit(1))
+        .getSingleOrNull();
+    return row?.variant;
+  }
+
   /// Última carga externa usada en un ejercicio, para proponerla de nuevo.
   Future<double?> lastLoad(String exercise) async {
     final exId = await exercises.idOf(exercise);

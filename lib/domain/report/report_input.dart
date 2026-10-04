@@ -61,6 +61,7 @@ class SetEntry {
     this.splitDetail,
     this.toFailure = false,
     this.loadKg,
+    this.variant,
   });
 
   final String exercise;
@@ -72,6 +73,9 @@ class SetEntry {
 
   /// Carga externa (kg). null = peso corporal.
   final double? loadKg;
+
+  /// Variante de la progresión usada (§18.4).
+  final String? variant;
 }
 
 class SessionEntry {
@@ -100,6 +104,8 @@ class SessionEntry {
     this.incomplete = false,
     this.plannedRounds,
     this.pendingReview = false,
+    this.mode,
+    this.extraReps,
   });
 
   final DateTime date;
@@ -141,6 +147,20 @@ class SessionEntry {
 
   /// Guardada sola al terminar el cronómetro y sin revisar (falta el RPE).
   final bool pendingReview;
+
+  /// Resistencia v3: 'cindy', 'tabata' o 'porTiempo'.
+  final String? mode;
+
+  /// Cindy: reps de la ronda a medias.
+  final int? extraReps;
+
+  /// "Resistencia (Cindy)" en vez de solo "Resistencia".
+  String get typeLabel => switch (mode) {
+        'cindy' => '${type.label} (Cindy)',
+        'tabata' => '${type.label} (Tabata)',
+        'porTiempo' => '${type.label} (10 rondas por tiempo)',
+        _ => type.label,
+      };
 
   // Condiciones de la regla de progresión; null = no registrado.
   final bool? techniqueOk;

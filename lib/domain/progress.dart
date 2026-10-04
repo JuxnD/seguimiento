@@ -77,6 +77,13 @@ List<SeriesPoint> fillDays(List<SeriesPoint> points, DateTime from, DateTime to)
 double seriesMax(List<SeriesPoint> points, {double atLeast = 1}) =>
     points.isEmpty ? atLeast : points.map((p) => p.value).reduce((a, b) => a > b ? a : b).clamp(atLeast, double.infinity);
 
+/// Escalones de una cadena de progresión ("pike → pies elevados → HSPU
+/// asistido → HSPU"). Vacío si la nota no es una cadena.
+List<String> progressionSteps(String? note) {
+  if (note == null || !note.contains('→')) return const [];
+  return [for (final s in note.split('→')) if (s.trim().isNotEmpty) s.trim()];
+}
+
 /// Promedio de peso de una semana (lunes a domingo).
 class WeekAverage {
   const WeekAverage(this.monday, this.kg, this.count);

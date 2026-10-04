@@ -154,7 +154,7 @@ void _sessions(StringBuffer b, ReportStats s) {
         circuitNetSec(totalSec: x.totalSec, warmupSec: x.warmupSec, cooldownSec: x.cooldownSec, restSec: x.restSec);
     final rounds = _roundsCell(x);
     final splits = x.sets.where((e) => e.split).length;
-    b.writeln('| ${_dayLabel(x.date, x.startTime)} | ${x.type.label}${x.outOfPlan ? ' ⚠ fuera de plan' : ''} | '
+    b.writeln('| ${_dayLabel(x.date, x.startTime)} | ${x.typeLabel}${x.outOfPlan ? ' ⚠ fuera de plan' : ''} | '
         '${formatDuration(x.totalSec)} | '
         '${formatDuration(x.warmupSec)} / ${formatDuration(x.cooldownSec)} | '
         '${x.restSec == 0 ? '—' : formatDuration(x.restSec)} | ${formatDuration(net)} | $rounds | '
@@ -164,7 +164,10 @@ void _sessions(StringBuffer b, ReportStats s) {
 
   b.writeln('### Detalle por sesión');
   for (final x in list) {
-    b.writeln('**${_dayLabel(x.date, x.startTime)} · ${x.type.label}**');
+    b.writeln('**${_dayLabel(x.date, x.startTime)} · ${x.typeLabel}**');
+    if (x.mode == 'cindy' && x.roundsDone != null) {
+      b.writeln('- Cindy: ${x.roundsDone} rondas + ${x.extraReps ?? 0} reps en 20 min');
+    }
     if (x.roundWorkSec.isNotEmpty) {
       // Una ronda tras un descanso de 0:00 casi siempre se comió ese
       // descanso: va marcada y fuera de la media y del R1→Rn (§16.9).
@@ -230,6 +233,7 @@ String _setLabel(SetEntry e, {bool seconds = false}) {
           ? '$amount (partida)'
           : amount;
   if (e.loadKg != null) out += ' @ ${fmtDec(e.loadKg!)} kg';
+  if (e.variant != null) out += ' (${e.variant})';
   if (e.toFailure) out += ' (fallo)';
   return out;
 }

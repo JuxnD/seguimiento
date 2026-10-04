@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/providers.dart';
 import '../../data/repositories/exercise_photo_repository.dart';
+import '../../domain/band_guide.dart';
 import '../../ui/exercise_figure.dart';
 import '../../ui/widgets.dart';
 
@@ -19,6 +20,7 @@ Future<void> showTechniqueSheet(
   List<String> cues = const [],
   String? progressionNote,
   String? mediaUrl,
+  String? anchor,
 }) =>
     showModalBottomSheet<void>(
       context: context,
@@ -34,6 +36,7 @@ Future<void> showTechniqueSheet(
           cues: cues,
           progressionNote: progressionNote,
           mediaUrl: mediaUrl,
+          anchor: anchor,
           controller: controller,
         ),
       ),
@@ -47,6 +50,7 @@ class TechniqueContent extends StatelessWidget {
     this.progressionNote,
     this.mediaUrl,
     this.controller,
+    this.anchor,
   });
 
   final String exercise;
@@ -54,6 +58,9 @@ class TechniqueContent extends StatelessWidget {
   final String? progressionNote;
   final String? mediaUrl;
   final ScrollController? controller;
+
+  /// Anclaje de la banda ('alto', 'medio', 'bajo', 'manos'); null sin banda.
+  final String? anchor;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +91,19 @@ class TechniqueContent extends StatelessWidget {
             Text('Progresión', style: text.labelLarge),
             Text(progressionNote!, style: text.bodyMedium),
           ],
+          if (bandAnchors[anchor] case (final title, final how)) ...[
+            const SizedBox(height: 12),
+            Text('Banda: $title', style: text.labelLarge),
+            Text(how, style: text.bodyMedium),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => showBandGuide(context),
+                icon: const Icon(Icons.info_outline, size: 18),
+                label: const Text('Guía completa de la banda'),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           ExerciseReferencePhoto(exercise: exercise),
           if (url != null) ...[
@@ -99,6 +119,37 @@ class TechniqueContent extends StatelessWidget {
     );
   }
 }
+
+/// Guía de la banda elástica (§18.7): los tres anclajes, la tensión y la
+/// seguridad.
+Future<void> showBandGuide(BuildContext context) => showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) {
+        final text = Theme.of(context).textTheme;
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            children: [
+              Text('La banda elástica', style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 8),
+              for (final (title, how) in bandAnchors.values) ...[
+                Text(title, style: text.titleSmall),
+                Text(how, style: text.bodyMedium),
+                const SizedBox(height: 10),
+              ],
+              Text('Tensión', style: text.titleSmall),
+              Text(bandTension, style: text.bodyMedium),
+              const SizedBox(height: 10),
+              Text('Seguridad', style: text.titleSmall),
+              for (final s in bandSafety) Text('• $s', style: text.bodyMedium),
+            ],
+          ),
+        );
+      },
+    );
 
 /// Foto de referencia de un ejercicio (null si no hay).
 final exercisePhotoProvider = StreamProvider.family(

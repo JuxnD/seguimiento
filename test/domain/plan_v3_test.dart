@@ -4,6 +4,9 @@ import 'package:seguimiento/data/seed_plan.dart';
 import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/plan_v3.dart';
+import 'package:seguimiento/domain/progress.dart';
+import 'package:seguimiento/domain/report/report_builder.dart';
+import 'package:seguimiento/domain/report/report_input.dart';
 import 'package:seguimiento/domain/session_script.dart';
 import 'package:seguimiento/features/training/guided_session_screen.dart' show scriptDayFrom;
 import 'package:seguimiento/features/training/v3_timers.dart';
@@ -146,5 +149,30 @@ void main() {
   test('PlanExerciseDraft.copyWith conserva la superserie', () {
     final e = PlanExerciseDraft(name: 'Curl con banda', sets: 3, supersetGroup: 'brazos');
     expect(e.copyWith(sets: 2).supersetGroup, 'brazos');
+  });
+
+  test('variantes: la cadena de progresión se parte en escalones (§18.4)', () {
+    expect(progressionSteps('pike → pies elevados → HSPU asistido → HSPU'),
+        ['pike', 'pies elevados', 'HSPU asistido', 'HSPU']);
+    expect(progressionSteps('Progresa con carga, no con más repeticiones.'), isEmpty);
+    expect(progressionSteps(null), isEmpty);
+  });
+
+  test('el informe nombra el formato de resistencia y la variante de cada serie', () {
+    final md = buildReport(ReportInput(
+      programStart: DateTime(2026, 8, 26),
+      rangeStart: DateTime(2026, 10, 12),
+      rangeEnd: DateTime(2026, 10, 18),
+      today: DateTime(2026, 10, 18),
+      sessions: [
+        SessionEntry(date: DateTime(2026, 10, 14), type: SessionType.resistencia, mode: 'cindy', roundsDone: 12, extraReps: 7),
+        SessionEntry(date: DateTime(2026, 10, 15), type: SessionType.trenSuperior, sets: const [
+          SetEntry(exercise: 'Flexión arquero', setIndex: 1, reps: 4, variant: 'arquero'),
+        ]),
+      ],
+    ));
+    expect(md, contains('Resistencia (Cindy)'));
+    expect(md, contains('- Cindy: 12 rondas + 7 reps en 20 min'));
+    expect(md, contains('4 (arquero)'));
   });
 }

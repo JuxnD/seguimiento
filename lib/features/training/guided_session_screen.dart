@@ -258,11 +258,22 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       for (final g in guides.values.where((g) => g.tracksLoad)) {
         loads[g.name] = await training.lastLoad(g.name) ?? 0;
       }
+      // Variante: la última usada, o el primer escalón de la cadena.
+      final variants = <String, String>{};
+      for (final g in guides.values) {
+        final steps = progressionSteps(g.progressionNote);
+        if (steps.isEmpty) continue;
+        final last = await training.lastVariant(g.name);
+        variants[g.name] = last != null && steps.contains(last) ? last : steps.first;
+      }
       if (!mounted) return;
       setState(() {
         _guides = guides;
         for (final e in loads.entries) {
           _loads.putIfAbsent(e.key, () => e.value);
+        }
+        for (final e in variants.entries) {
+          _variants.putIfAbsent(e.key, () => e.value);
         }
       });
     } on Object {
@@ -479,7 +490,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final amount = step.isHold
         ? (_holdStartedAt == null || _holdElapsed == 0 ? step.holdSec! : _holdElapsed)
         : (_reps ?? step.targetReps ?? 0);
-    _done.add(DoneStep(step.exercise, amount, step.isRound, loadKg: _loadFor(step.exercise)));
+    _done.add(DoneStep(step.exercise, amount, step.isRound,
+        loadKg: _loadFor(step.exercise), variant: _variants[step.exercise]));
 
     // Al cerrar la última parada de una ronda, queda la marca de la vuelta.
     if (step.isRound && _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
@@ -600,7 +612,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       techniqueOk: isCircuit ? _techniqueOk : null,
       fullRange: isCircuit ? _fullRange : null,
       recoveryOk: isCircuit ? _recoveryOk : null,
-      sets: [for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg)],
+      sets: [
+        for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg, variant: d.variant),
+      ],
     );
   }
 
@@ -735,6 +749,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             label: const Text('Técnica'),
           ),
         if (_guides[step.exercise]?.tracksLoad ?? false) _loadRow(step.exercise),
+        if (progressionSteps(_guides[step.exercise]?.progressionNote).isNotEmpty) _variantRow(step.exercise),
         const Spacer(),
         // El anillo se llena al llegar al objetivo: ajustar reps se ve.
         if (target != null)
@@ -825,6 +840,28 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     );
   }
 
+  /// Variante elegida por ejercicio (escalón de su cadena de progresión).
+  final _variants = <String, String>{};
+
+  /// Variante de la progresión: se elige de la cadena del catálogo y se
+  /// guarda en cada serie (§18.4).
+  Widget _variantRow(String exercise) {
+    final steps = progressionSteps(_guides[exercise]?.progressionNote);
+    final current = _variants[exercise] ?? steps.first;
+    return Center(
+      child: PopupMenuButton<String>(
+        tooltip: 'Variante',
+        initialValue: current,
+        onSelected: (v) => setState(() => _variants[exercise] = v),
+        itemBuilder: (_) => [for (final s in steps) PopupMenuItem(value: s, child: Text(s))],
+        child: Chip(
+          avatar: const Icon(Icons.swap_vert, size: 18),
+          label: Text('Variante: $current'),
+        ),
+      ),
+    );
+  }
+
   double? _loadFor(String exercise) {
     final kg = _loads[exercise];
     return kg == null || kg == 0 ? null : kg;
@@ -857,6 +894,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   /// Claves de técnica en el momento de hacerlo, con el enlace al video.
   Future<void> _showGuide(ExerciseRow guide) => showTechniqueSheet(
+        anchor: guide.anchor,
         context,
         exercise: guide.name,
         cues: guide.cues,

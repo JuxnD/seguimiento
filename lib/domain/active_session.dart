@@ -33,7 +33,7 @@ sealed class ActiveSession {
 
 /// Una serie o parada ya hecha en el cronómetro guiado.
 class DoneStep {
-  const DoneStep(this.exercise, this.reps, this.isRound, {this.loadKg});
+  const DoneStep(this.exercise, this.reps, this.isRound, {this.loadKg, this.variant});
 
   final String exercise;
   final int reps;
@@ -42,13 +42,23 @@ class DoneStep {
   /// Carga externa de la serie (kg). null = peso corporal.
   final double? loadKg;
 
-  Map<String, Object?> toJson() => {'e': exercise, 'r': reps, 'round': isRound, if (loadKg != null) 'kg': loadKg};
+  /// Variante de la progresión usada ("arquero", "pies elevados").
+  final String? variant;
+
+  Map<String, Object?> toJson() => {
+        'e': exercise,
+        'r': reps,
+        'round': isRound,
+        if (loadKg != null) 'kg': loadKg,
+        if (variant != null) 'v': variant,
+      };
 
   static DoneStep fromJson(Map<String, Object?> j) => DoneStep(
         j['e']! as String,
         (j['r']! as num).toInt(),
         j['round']! as bool,
         loadKg: (j['kg'] as num?)?.toDouble(),
+        variant: j['v'] as String?,
       );
 }
 
