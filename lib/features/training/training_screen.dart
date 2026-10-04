@@ -147,17 +147,21 @@ Future<void> _startResistance(
     ),
   );
   if (mode == null || !context.mounted) return;
+  // Al guardar, Hoy se recarga y el widget que lanzó esto puede desmontarse:
+  // el navegador, el aviso y el repositorio se toman antes.
+  final nav = Navigator.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final repo = ref.read(trainingRepositoryProvider);
   switch (mode) {
     case ResistanceMode.cindy:
-      final draft = await Navigator.push<SessionDraft>(context, MaterialPageRoute(builder: (_) => AmrapScreen(date: day)));
-      if (draft != null && context.mounted) await _saveThenReview(context, ref, draft);
+      final draft = await nav.push<SessionDraft>(MaterialPageRoute(builder: (_) => AmrapScreen(date: day)));
+      if (draft != null) await _saveThenReview(nav, messenger, repo, draft);
     case ResistanceMode.tabata:
       final names = [for (final e in view.day.exercises) if (e.block == 'tabata') e.name];
-      final draft = await Navigator.push<SessionDraft>(
-        context,
+      final draft = await nav.push<SessionDraft>(
         MaterialPageRoute(builder: (_) => TabataScreen(date: day, exercises: names.isEmpty ? tabataExercises : names)),
       );
-      if (draft != null && context.mounted) await _saveThenReview(context, ref, draft);
+      if (draft != null) await _saveThenReview(nav, messenger, repo, draft);
     case ResistanceMode.porTiempo:
       await _runGuided(
         context,
@@ -180,28 +184,37 @@ Future<void> _startResistance(
 
 /// Guarda primero (sin revisar) y luego abre el formulario: si se sale sin
 /// guardar, la sesión no se pierde (§16.9).
-Future<void> _saveThenReview(BuildContext context, WidgetRef ref, SessionDraft draft) async {
-  final repo = ref.read(trainingRepositoryProvider);
+Future<void> _saveThenReview(
+    NavigatorState nav, ScaffoldMessengerState messenger, TrainingRepository repo, SessionDraft draft) async {
   draft.pendingReview = true;
-  final ok = await guarded(context, () => repo.save(draft));
-  if (!ok || !context.mounted) return;
+  try {
+    await repo.save(draft);
+  } on Object catch (e) {
+    messenger.showSnackBar(SnackBar(content: Text('No se pudo guardar: $e')));
+    return;
+  }
   final stored = await repo.load(draft.id!);
-  if (!context.mounted) return;
-  final saved = await openSessionForm(context, stored, celebrate: false);
-  if (saved != true && context.mounted) showSnack(context, 'Quedó guardada sin revisar: falta el RPE. Está en Hoy.');
+  if (!nav.mounted) return;
+  final saved = await nav.push<bool>(
+    MaterialPageRoute(builder: (_) => SessionFormScreen(draft: stored, celebrate: false)),
+  );
+  if (saved != true) {
+    messenger.showSnackBar(const SnackBar(content: Text('Quedó guardada sin revisar: falta el RPE. Está en Hoy.')));
+  }
 }
 
 /// EMOM de burpees del viernes (§18.10): se suma a la sesión de densidad del
 /// día (o crea una si no hay).
 Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day, int minutes, int reps) async {
+  final messenger = ScaffoldMessenger.of(context);
+  final repo = ref.read(trainingRepositoryProvider);
   final result = await Navigator.push<EmomResult>(
     context,
     MaterialPageRoute(builder: (_) => EmomScreen(minutes: minutes, reps: reps)),
   );
-  if (result == null || !context.mounted) return;
-  final repo = ref.read(trainingRepositoryProvider);
+  if (result == null) return;
   final note = 'EMOM $minutes × $reps burpees: ${result.completeMinutes}/$minutes minutos completos';
-  await guarded(context, () async {
+  try {
     final existing = await repo.sessionsOn(day, SessionType.densidad);
     final draft = existing == null
         ? SessionDraft(date: day, type: SessionType.densidad, pendingReview: true)
@@ -209,7 +222,10 @@ Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day,
     draft.sets.addAll([for (final r in result.perMinute) SetDraft(exercise: 'Burpees', reps: r)]);
     draft.context = [if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(), note].join('. ');
     await repo.save(draft);
-  }, ok: note);
+    messenger.showSnackBar(SnackBar(content: Text(note)));
+  } on Object catch (e) {
+    messenger.showSnackBar(SnackBar(content: Text('No se pudo guardar el EMOM: $e')));
+  }
 }
 
 /// Cronómetro guiado → formulario. La foto de la sesión en curso se borra
@@ -218,26 +234,31 @@ Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day,
 /// borraba siempre y la sesión se perdía.
 Future<void> _runGuided(BuildContext context, GuidedSessionScreen screen) async {
   final container = ProviderScope.containerOf(context, listen: false);
-  final draft = await Navigator.push<SessionDraft>(context, MaterialPageRoute(builder: (_) => screen));
+  // La sesión se guarda sola al terminar y Hoy se recarga: el widget que
+  // lanzó esto puede desmontarse. Navegador y aviso se toman antes.
+  final nav = Navigator.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final draft = await nav.push<SessionDraft>(MaterialPageRoute(builder: (_) => screen));
   if (draft == null) {
     // Descartada desde el cronómetro.
     await _clearActive(container);
     return;
   }
-  if (!context.mounted) return;
+  if (!nav.mounted) return;
   // El cierre del cronómetro ya celebró: el formulario no lo repite.
-  final saved = await openSessionForm(context, draft, celebrate: false);
+  final saved = await nav.push<bool>(
+    MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: false)),
+  );
   if (saved == true) {
     await _clearActive(container);
     return;
   }
   container.invalidate(activeSessionProvider);
-  if (!context.mounted) return;
-  showSnack(
-      context,
-      draft.id != null
-          ? 'Quedó guardada sin revisar: falta el RPE. Está en Hoy.'
-          : 'La sesión quedó pendiente en Hoy: guárdala o descártala desde ahí.');
+  messenger.showSnackBar(SnackBar(
+    content: Text(draft.id != null
+        ? 'Quedó guardada sin revisar: falta el RPE. Está en Hoy.'
+        : 'La sesión quedó pendiente en Hoy: guárdala o descártala desde ahí.'),
+  ));
 }
 
 Future<void> _clearActive(ProviderContainer container) async {

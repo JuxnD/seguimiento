@@ -11,6 +11,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Diseño y motivación | [../diseno.md](../diseno.md) | Cambia la paleta, un anillo, una gráfica o las fotos |
 | Notificaciones | [../notificaciones.md](../notificaciones.md) | Cambia un aviso, su hora o el permiso |
 | Cronómetro guiado | [../cronometro.md](../cronometro.md) | Cambia cómo se recorre la sesión o los descansos |
+| Plan v3 "Cierre de año" | [../plan-v3.md](../plan-v3.md) | Cambia la semana tipo, la periodización o un cronómetro del v3 |
 | Datos e invariantes | [../modelo-datos.md](../modelo-datos.md) | Cambia una tabla, una unidad o el esquema |
 | Producto del informe | [../informe.md](../informe.md) | Cambia una sección, una métrica o una alerta |
 | Desviaciones de la planeación | [../auditoria-planeacion.md](../auditoria-planeacion.md) | Se acepta o rechaza un cambio al plan original |

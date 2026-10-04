@@ -219,7 +219,11 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
       appBar: AppBar(title: const Text('Cindy · AMRAP')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: switch (_phase) {
+        // Ancho completo: sin esto la columna se encoge a su hijo más ancho
+        // y todo queda cargado a la izquierda.
+        child: SizedBox(
+          width: double.infinity,
+          child: switch (_phase) {
           _Phase.calentamiento => _PhasePanel(
               title: 'Calentamiento',
               elapsed: warmupSec,
@@ -269,7 +273,8 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
                 Navigator.pop(context, _draft());
               },
             ),
-        },
+          },
+        ),
       ),
     );
   }
@@ -435,7 +440,11 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
       appBar: AppBar(title: const Text('Tabata')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: switch (_phase) {
+        // Ancho completo: sin esto la columna se encoge a su hijo más ancho
+        // y todo queda cargado a la izquierda.
+        child: SizedBox(
+          width: double.infinity,
+          child: switch (_phase) {
           _Phase.calentamiento => _PhasePanel(
               title: 'Calentamiento',
               elapsed: warmupSec,
@@ -494,7 +503,8 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
                 Navigator.pop(context, _draft());
               },
             ),
-        },
+          },
+        ),
       ),
     );
   }

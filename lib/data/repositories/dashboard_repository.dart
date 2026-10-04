@@ -168,10 +168,8 @@ class DashboardRepository {
       dayType: type,
       planVersion: view?.versionNumber,
       planSummary: view == null ? null : _summary(view.day),
-      mainExercises: view == null
-          ? const []
-          : view.day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).toList(),
-      blockExercises: view == null ? const [] : blockLines(view.day),
+      mainExercises: view == null ? const [] : _mainLines(view.day, v3),
+      blockExercises: view == null || view.day.type == DayType.resistencia ? const [] : blockLines(view.day),
       targetRounds: proposal?.rounds ?? view?.day.targetRounds,
       proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
@@ -201,6 +199,15 @@ class DashboardRepository {
   }
 
   /// La sesión del récord, si el plan de ese día no era de circuito.
+  /// Lo principal del día. El miércoles de resistencia muestra solo lo de la
+  /// semana: la ronda de Cindy (o de las 10 por tiempo) o los 4 del Tabata.
+  static List<String> _mainLines(PlanDayDraft day, V3Day? v3) {
+    if (day.type == DayType.resistencia && v3?.resistance == ResistanceMode.tabata) {
+      return [for (final e in day.exercises) if (e.block == 'tabata') '${e.name} 8 × 20 s a tope'];
+    }
+    return day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).toList();
+  }
+
   /// 10 rondas limpias en la última progresión y sin v3 todavía: se propone
   /// el lunes siguiente a esa sesión (o el próximo, si ya pasó).
   Future<DateTime?> _v3Suggestion(DateTime today) async {

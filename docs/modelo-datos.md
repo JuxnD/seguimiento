@@ -54,7 +54,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **14**. Al cambiar una tabla:
+`schemaVersion` vale **15**. Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -78,10 +78,11 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 12 | Tabla `custom_reminders`: recordatorios del usuario (título, nota, cada N días, hora, inicio y última vez hecho) |
 | 13 | Solo datos: el pan por unidad (`Pan (unidad)` y `Pan Mipan (unidad 60 g)`) pasa a `Pan Mipan` por 100 g de etiqueta (331 kcal, 75 g por defecto); los combos que lo usaban pasan a gramos (×75 o ×60) y las comidas ya registradas conservan sus macros (solo pierden el vínculo). El salchichón propone 22 g (una rodaja) |
 | 14 | `sessions.pending_review`: sesión guardada sola al terminar el cronómetro, sin revisar (falta RPE); `measurements.time`: hora de la toma |
+| 15 | Plan v3: `plan_versions.scheme` ('v3' = periodización por semana), `plan_exercises.superset_group`, `exercises.anchor` (banda), `session_sets.variant` (variante de la progresión), `sessions.mode` ('cindy', 'tabata', 'porTiempo') y `sessions.extra_reps` (reps sueltas del AMRAP). Tipos nuevos en `DayType` y `SessionType`: `trenSuperior`, `piernas`, `resistencia`, `densidad` (se guardan por nombre) |
 
-Los saltos 1, 2, 6, 7, 8, 9, 10, 11, 12 y 13 → 14 están cubiertos por
+Los saltos 1, 2, 6, 7, 8, 9, 10, 11, 12, 13 y 14 → 15 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-vieja con datos se abre, conserva lo registrado y queda en `user_version = 14`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 15`.
 El 6 → 8 se verificó además en el emulador (Android 15) con la base de la 1.6.1.
 
 **Récord de rondas.** Una sola definición en
