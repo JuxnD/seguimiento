@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/repositories/photo_repository.dart';
@@ -57,5 +59,14 @@ void main() {
     await repo.restore(p);
     final back = await db.select(db.progressPhotos).getSingle();
     expect((back.id, back.date, back.angle, back.relativePath), (p.id, p.date, p.angle, p.relativePath));
+  });
+
+  test('una ruta que sale de la carpeta de fotos no se borra', () {
+    final base = Directory.systemTemp.createTempSync('seguimiento_fotos');
+    expect(PhotoRepository.confinedPath(base, 'fotos/2026-10-03-perfil-1.jpg'), isNotNull);
+    expect(PhotoRepository.confinedPath(base, '../fuera.txt'), isNull);
+    expect(PhotoRepository.confinedPath(base, 'fotos/../seguimiento.sqlite'), isNull);
+    expect(PhotoRepository.confinedPath(base, 'otra/carpeta.jpg'), isNull);
+    base.deleteSync(recursive: true);
   });
 }

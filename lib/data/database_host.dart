@@ -41,6 +41,7 @@ class DatabaseHost {
   /// falla al reabrir, deja la base anterior tal como estaba.
   Future<void> restoreFrom(File backup) async {
     await _validate(backup);
+    await _trialOpen(backup);
 
     // Copia consistente hecha por SQLite con la conexión aún abierta: no
     // depende de que no haya una escritura a medias en ese instante.
@@ -53,8 +54,9 @@ class DatabaseHost {
       _deleteSidecars();
       await backup.copy(file.path);
       _db = opener(file);
-      // Consulta real: si el archivo no sirve, falla aquí y no en la UI.
-      await _db.customSelect('select count(*) as n from profiles').getSingle();
+      // Consulta real a cada tabla: si el archivo no sirve, falla aquí y no
+      // en la UI, y la copia previa todavía existe para volver atrás.
+      await checkComplete(_db);
       // Un respaldo viejo puede llegar sin recordatorios (anterior al esquema 5,
       // o reiniciados por la migración al 9): se recrean con sus valores.
       await ReminderRepository(_db).ensureDefaults();
@@ -62,6 +64,51 @@ class DatabaseHost {
     } on Object catch (e) {
       await _rollback(safetyCopy);
       throw RestoreException('No se pudo restaurar: $e. Se dejó la base anterior sin cambios.');
+    }
+  }
+
+  /// Abre una copia del respaldo con la app (corre las migraciones) y
+  /// consulta todas las tablas. Un respaldo de esquema 16 al que le falte
+  /// `foods` pasaba la validación por tablas mínimas, se daba por bueno y se
+  /// borraba la copia anterior (auditoría del 5 oct).
+  Future<void> _trialOpen(File backup) async {
+    final trial = File('${file.path}.restore-check');
+    void clean() {
+      for (final suffix in ['', '-wal', '-shm', '-journal']) {
+        final f = File('${trial.path}$suffix');
+        if (f.existsSync()) f.deleteSync();
+      }
+    }
+
+    clean();
+    await backup.copy(trial.path);
+    AppDatabase? db;
+    try {
+      db = opener(trial);
+      await checkComplete(db);
+    } on RestoreException {
+      rethrow;
+    } on Object catch (e) {
+      throw RestoreException('El respaldo está incompleto o dañado: $e');
+    } finally {
+      await db?.close();
+      clean();
+    }
+  }
+
+  /// Consulta cada tabla del esquema actual. Lanza [RestoreException] con las
+  /// que falten.
+  static Future<void> checkComplete(AppDatabase db) async {
+    final missing = <String>[];
+    for (final table in db.allTables) {
+      try {
+        await db.customSelect('select count(*) as n from "${table.actualTableName}"').getSingle();
+      } on Object {
+        missing.add(table.actualTableName);
+      }
+    }
+    if (missing.isNotEmpty) {
+      throw RestoreException('El respaldo está incompleto (faltan tablas: ${missing.join(', ')}).');
     }
   }
 

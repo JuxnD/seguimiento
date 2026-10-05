@@ -110,16 +110,31 @@ class PhotoRepository {
   Future<void> restore(ProgressPhotoRow row) => db.into(db.progressPhotos).insert(row.toCompanion(true));
 
   /// Borra el archivo de una foto ya quitada de la lista.
-  Future<void> purgeFile(ProgressPhotoRow row) async {
-    final file = await fileOf(row);
-    if (file.existsSync()) file.deleteSync();
-  }
+  Future<void> purgeFile(ProgressPhotoRow row) async => _deleteFile(await getApplicationDocumentsDirectory(), row);
 
   Future<void> delete(ProgressPhotoRow row, {bool keepFile = false}) async {
-    if (!keepFile) {
-      final file = await fileOf(row);
-      if (file.existsSync()) file.deleteSync();
-    }
+    if (!keepFile) _deleteFile(await getApplicationDocumentsDirectory(), row);
     await (db.delete(db.progressPhotos)..where((t) => t.id.equals(row.id))).go();
+  }
+
+  /// La ruta sale de la base, que puede venir de un respaldo restaurado: solo
+  /// se borra lo que está dentro de la carpeta de fotos. Una ruta con `..`
+  /// podía borrar otro archivo de la app.
+  static void _deleteFile(Directory base, ProgressPhotoRow row) {
+    final full = confinedPath(base, row.relativePath);
+    if (full == null) return;
+    try {
+      final f = File(full);
+      if (f.existsSync()) f.deleteSync();
+    } on FileSystemException {
+      // Un archivo que ya no está no rompe nada.
+    }
+  }
+
+  /// Ruta absoluta si `relative` cae dentro de la carpeta de fotos; si no,
+  /// null.
+  static String? confinedPath(Directory base, String relative) {
+    final full = p.normalize(p.join(base.path, relative));
+    return p.isWithin(p.join(base.path, folder), full) ? full : null;
   }
 }

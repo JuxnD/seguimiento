@@ -97,10 +97,11 @@ void main() {
     final backup = await exportBackup('respaldo.sqlite');
     await BodyRepository(host.db).addWeight(DateTime(2026, 9, 20), 70.9);
 
-    // La primera reapertura (la del respaldo) falla; la del rollback no.
+    // La primera reapertura del archivo de la app (la del respaldo) falla; la
+    // del rollback no. La copia de prueba del respaldo sí abre.
     var fail = true;
     final failing = DatabaseHost(host.file, (f) {
-      if (fail) {
+      if (fail && f.path == host.file.path) {
         fail = false;
         throw StateError('no abre');
       }
@@ -120,5 +121,25 @@ void main() {
       host.restoreFrom(File('${dir.path}/no-existe.sqlite')),
       throwsA(predicate((e) => e is RestoreException && e.message.contains('no existe'))),
     );
+  });
+
+  test('un respaldo al que le falta una tabla se rechaza y conserva la base actual', () async {
+    await BodyRepository(host.db).addWeight(DateTime(2026, 9, 18), 71.4);
+    final backup = await exportBackup('incompleto.sqlite');
+    // Mismo esquema (16), pero sin el catálogo de alimentos.
+    final broken = AppDatabase(NativeDatabase(backup));
+    await broken.customStatement('drop table meal_template_items');
+    await broken.customStatement('drop table foods');
+    await broken.close();
+
+    await BodyRepository(host.db).addWeight(DateTime(2026, 9, 20), 70.9);
+    await expectLater(
+      host.restoreFrom(backup),
+      throwsA(predicate((e) => e is RestoreException && e.message.contains('foods'))),
+    );
+
+    final weights = await BodyRepository(host.db).watchWeights().first;
+    expect(weights.map((w) => w.kg), [70.9, 71.4], reason: 'lo registrado después del respaldo sigue ahí');
+    expect(File('${host.file.path}.restore-check').existsSync(), isFalse, reason: 'la copia de prueba se limpia');
   });
 }
