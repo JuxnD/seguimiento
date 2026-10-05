@@ -34,11 +34,15 @@ El orden importa y por eso está así:
    tener las tablas `profiles`, `sessions`, `meals` y `measurements`, y un
    `user_version` (esquema) que esta app entienda. Un respaldo de una versión
    más nueva se rechaza con ese mensaje, en vez de corromper datos.
+   Además, una **copia de prueba** del respaldo se abre con la app (corre las
+   migraciones) y se consulta cada tabla del esquema: un respaldo de esquema
+   16 sin `foods` pasaba la validación por tablas mínimas, borraba la copia
+   previa y fallaba después (auditoría del 5 oct, 1.17.0).
 2. **Copia de seguridad** de la base actual en `seguimiento.sqlite.pre-restore`,
    hecha con `VACUUM INTO` antes de cerrar la conexión.
 3. Cerrar la conexión, **borrar `-wal` y `-shm`** (pertenecen al archivo viejo;
    mezclarlos con la base restaurada la corrompe) y copiar el respaldo encima.
-4. Reabrir y hacer una consulta real. Si algo falla, **rollback**: vuelve la
+4. Reabrir y consultar cada tabla. Si algo falla, **rollback**: vuelve la
    base anterior y el error se muestra tal cual.
 5. Al terminar bien, se borra la copia de seguridad.
 
@@ -49,7 +53,8 @@ cerrada. La tarjeta de Perfil también se recrea.
 
 Pruebas: [`test/data/restore_test.dart`](../test/data/restore_test.dart) cubre
 restaurar, descartar lo posterior, archivo basura, base ajena, inexistente y
-el rollback cuando la base restaurada no abre;
+el rollback cuando la base restaurada no abre y el respaldo al que le falta
+una tabla;
 [`test/data/auto_backup_test.dart`](../test/data/auto_backup_test.dart) cubre la
 frecuencia, la rotación y que una copia automática se pueda restaurar.
 

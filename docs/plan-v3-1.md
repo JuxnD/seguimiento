@@ -121,12 +121,19 @@ unidades no son repeticiones (metros, saltos, sprints) y se muestran así.
 
   Sin pesajes recientes, pide pesarse.
 
+## Retomar Cindy y Tabata (1.17.0)
+
+Cindy y Tabata guardan una foto (`TimerSnapshot`, marcas de reloj) en cada
+cambio. Si Android cierra la app, Hoy ofrece retomarlos donde iban; si el
+AMRAP terminó con la app cerrada, pide la ronda a medias. Cortados antes de
+tiempo quedan incompletos (desde la 1.16.0).
+
 ## Pendiente
 
-- Figuras de los ejercicios nuevos. Hay un mockup 3D (maniquí con volumen,
-  animado y que se gira) a la espera de que el usuario elija.
+- Figuras de los ejercicios nuevos: maniquí 3D en desarrollo (tres momentos
+  grandes, vista lateral primero, giro opcional), validando primero con 3
+  ejercicios.
 - Récord propio de Cindy y su gráfica.
-- Retomar Cindy o Tabata si Android cierra la app a mitad.
 - Una pantalla propia para las pruebas del 11 dic.
 - Los ejercicios unilaterales siguen registrándose por lado como entradas
   sueltas (§16.6.2).
