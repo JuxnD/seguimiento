@@ -9,7 +9,7 @@ import '../../app/providers.dart';
 import '../../data/exercise_details.dart';
 import '../../data/repositories/exercise_photo_repository.dart';
 import '../../domain/band_guide.dart';
-import '../../ui/exercise_figure.dart';
+import '../../ui/exercise_figure_3d_view.dart';
 import '../../ui/widgets.dart';
 
 /// Técnica de un ejercicio en el momento de hacerlo: la figura con los
@@ -79,7 +79,7 @@ class TechniqueContent extends StatelessWidget {
           Text(exercise, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
           if (detail != null) Text(detail.muscles, style: text.bodyMedium),
           const SizedBox(height: 14),
-          ExerciseArtView(exercise: exercise),
+          ExerciseFigureView(exercise: exercise),
           const SizedBox(height: 16),
           if (detail != null) Text('Cómo hacerlo', style: text.titleSmall),
           if (detail != null) const SizedBox(height: 6),

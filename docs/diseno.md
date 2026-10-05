@@ -101,3 +101,61 @@ Las fotos se copian al directorio de la app y la base guarda la ruta relativa
 
 **Las fotos no van en el respaldo**: el archivo exportado es la base de datos.
 Ver [roadmap](roadmap.md).
+
+## Figuras de técnica en 3D (iteración 1)
+
+Primera iteración de un **maniquí compartido** en 3D, validado en tres
+ejercicios antes de llevarlo al catálogo: *Pino pecho a la pared*, *Nórdico
+(isquios)* y *Dominadas* (la del lunes, con mochila). El resto sigue con las
+figuras planas; la hoja de técnica elige sola.
+
+**Cómo funciona.** [`tool/figuras3d.py`](../tool/figuras3d.py) reutiliza la
+cinemática de perfil de `tool/figuras.py` (mismos largos de segmento, misma
+IK) y exporta a `assets/tecnica/figuras3d.json` la postura de cada momento
+clave: cadera, ángulo del torso, ángulos de cada extremidad, apoyos (mano en
+la barra, en el suelo), orientación de pies y manos, zonas musculares, props
+y la vista inicial. La app ([`lib/ui/exercise_figure_3d.dart`](../lib/ui/exercise_figure_3d.dart))
+sube esa postura a 3D (lado cercano en z = +ancho, lejano en z = −ancho; los
+codos con IK 3D hacia afuera), interpola entre momentos (ángulos por el camino
+corto, apoyos sujetos con IK, la cadera del nórdico girando sobre las
+rodillas) y pinta con Canvas en orden de profundidad. Sin dependencias nuevas.
+
+**Qué hace reconocible al maniquí** (la crítica de la primera maqueta):
+
+| Pedido | Cómo se resolvió |
+|---|---|
+| Cabeza y hacia dónde mira | Esfera con nariz, ojo y oreja visibles solo del lado de la cámara, y pelo oscuro en nuca y coronilla |
+| Pecho y espalda | La espalda es un tono más oscura que el pecho; glúteos y pecho marcan el perfil; línea del esternón cuando el frente da a la cámara |
+| Pelvis | Pantaloneta azul en cadera y arranque del muslo |
+| Manos y pies | Mitones con pulgar (o puño cerrado sobre la barra) y zapatos en cuña con suela clara: se ve hacia dónde apuntan los dedos |
+| Lado cercano y lejano | El lejano más oscuro y apagado, con contorno más fino |
+| Naranja = un músculo | Una cara del segmento, no el cilindro: isquios (atrás del muslo), deltoides (casquete del hombro) y tríceps, dorsal (triángulo de la axila a la cintura) |
+| Apoyos | Sombras de contacto bajo manos, rodillas y pies; el sofá se pinta en corte sobre los pies, con una marca turquesa donde empuja el talón |
+
+**Presentación.** En la hoja de técnica, tres momentos grandes (inicio,
+medio, final) que se pasan de lado, casi a todo el ancho y 260 dp de alto,
+con su pie debajo. *Ver movimiento* los anima en el mismo cuadro (va y
+vuelve, con una pausa en cada momento). Tocar un momento lo abre en pantalla
+completa: ahí arrastrar gira la figura (±60°) y *De perfil* o un doble toque
+la devuelven a la vista inicial. La vista inicial es de perfil con una leve
+inclinación; el pino arranca 15° desde atrás (para ver la pared de frente y
+que la nuca da a la sala) y la dominada 14° desde adelante (de perfil exacto
+la barra se ve de punta).
+
+**Agregar un ejercicio.** Copiar una entrada de `EXERCISES` en
+`tool/figuras3d.py` con el mismo nombre del catálogo (se busca sin tildes ni
+mayúsculas), tres momentos y sus pies (`Inicio: …`, `Medio: …`, `Final: …`),
+`regions` con la cara del músculo, los `props` y, si algo se esconde de
+perfil, `view`. Correr `python tool/figuras3d.py` (avisa si algo queda bajo
+el suelo o un apoyo no se alcanza) y revisar a ojo con
+`FIG3D_OUT=<carpeta> flutter test test/ui/exercise_figure_3d_render_test.dart`,
+que escribe los PNG de cada momento, girados y la hoja completa.
+
+**Límites conocidos.** Es un maniquí de cápsulas: no hay manos con dedos ni
+músculos con volumen propio. El orden de pintado es por pieza, así que en
+giros extremos una pieza puede tapar mal a otra. Las posturas son de perfil:
+lo que pasa en el plano frontal (codos abiertos de la dominada) se aproxima
+con la IK 3D de los codos. El bíceps de la dominada no se resalta porque casi
+nunca da a la cámara. En la caja de 260 dp las figuras altas (pino,
+dominada) quedan más chicas; la pantalla completa lo compensa.
+

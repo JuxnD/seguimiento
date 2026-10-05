@@ -70,6 +70,11 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   notificaciones.md).
 - Las figuras de técnica se generan con `python tool/figuras.py` (fuente
   única) en `assets/tecnica/figuras.json`; no se editan a mano.
+- El maniquí 3D (por ahora pino, nórdico y dominadas) sale de
+  `python tool/figuras3d.py`, que importa `figuras.py`, en
+  `assets/tecnica/figuras3d.json`. Se revisa a ojo con
+  `FIG3D_OUT=<carpeta> flutter test test/ui/exercise_figure_3d_render_test.dart`
+  (sin esa variable la prueba se salta). Ver [diseno.md](../diseno.md).
 - Las entradas libres se guardan solas en el catálogo (`origin =
   entradaLibre`). Un alimento "a ojo" sigue contando como estimado en el
   informe aunque ya esté en el catálogo.
