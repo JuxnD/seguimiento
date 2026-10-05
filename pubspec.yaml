@@ -47,3 +47,5 @@ flutter:
   assets:
     # Ilustraciones de técnica; se regeneran con `python tool/figuras.py`.
     - assets/tecnica/figuras.json
+    # Maniquí 3D (por ahora tres ejercicios); `python tool/figuras3d.py`.
+    - assets/tecnica/figuras3d.json

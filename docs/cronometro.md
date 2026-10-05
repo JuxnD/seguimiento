@@ -201,6 +201,11 @@ del plan (circuito, core, búlgara, pike) y los de movilidad; un ejercicio sin
 figura muestra la hoja sin ella. La movilidad usa las mismas figuras y la
 misma foto dentro de su tarjeta de técnica.
 
+Para *Pino pecho a la pared*, *Nórdico (isquios)* y *Dominadas* la hoja
+muestra en su lugar el maniquí 3D: tres momentos grandes que se pasan de
+lado, *Ver movimiento* y pantalla completa con giro. Ver
+[diseno.md](diseno.md#figuras-de-técnica-en-3d-iteración-1).
+
 ## Movilidad nocturna (opcional)
 
 Desde Hoy o Entreno, *Movilidad nocturna · opcional*. Rutina fija de
