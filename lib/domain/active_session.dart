@@ -23,6 +23,7 @@ sealed class ActiveSession {
       return switch (json['kind']) {
         'guided' => GuidedSnapshot._fromJson(json),
         'counter' => CounterSnapshot._fromJson(json),
+        'timer' => TimerSnapshot._fromJson(json),
         _ => null,
       };
     } on Object {
@@ -221,6 +222,71 @@ class CounterSnapshot extends ActiveSession {
         circuitStart: _date(j['circuitStart']),
         circuitEnd: _date(j['circuitEnd']),
         marks: [for (final m in j['marks']! as List) (m as num).toInt()],
+      );
+}
+
+/// Cindy o Tabata a mitad (cronómetros del v3). Como el resto, solo marcas
+/// de reloj: al volver, el tiempo transcurrido con la app muerta cuenta.
+class TimerSnapshot extends ActiveSession {
+  const TimerSnapshot({
+    required super.date,
+    required super.startedAt,
+    required this.mode,
+    required this.phase,
+    this.workStartedAt,
+    this.workEndedAt,
+    this.roundMarks = const [],
+    this.partial,
+    this.worst = const {},
+    this.exercises = const [],
+  });
+
+  /// 'cindy' o 'tabata'.
+  final String mode;
+
+  /// 'calentamiento', 'trabajo' o 'enfriamiento'.
+  final String phase;
+  final DateTime? workStartedAt;
+  final DateTime? workEndedAt;
+
+  /// Cindy: segundos de trabajo al cerrar cada ronda, y reps de la ronda a
+  /// medias.
+  final List<int> roundMarks;
+  final int? partial;
+
+  /// Tabata: reps del peor intervalo por bloque, y los ejercicios en orden.
+  final Map<int, int> worst;
+  final List<String> exercises;
+
+  @override
+  Map<String, Object?> toJson() => {
+        'kind': 'timer',
+        'date': date,
+        'startedAt': startedAt.toIso8601String(),
+        'mode': mode,
+        'phase': phase,
+        'workStartedAt': workStartedAt?.toIso8601String(),
+        'workEndedAt': workEndedAt?.toIso8601String(),
+        'roundMarks': roundMarks,
+        'partial': partial,
+        'worst': {for (final e in worst.entries) '${e.key}': e.value},
+        'exercises': exercises,
+      };
+
+  static TimerSnapshot _fromJson(Map<String, Object?> j) => TimerSnapshot(
+        date: j['date']! as String,
+        startedAt: DateTime.parse(j['startedAt']! as String),
+        mode: j['mode']! as String,
+        phase: j['phase']! as String,
+        workStartedAt: _date(j['workStartedAt']),
+        workEndedAt: _date(j['workEndedAt']),
+        roundMarks: [for (final m in (j['roundMarks'] as List?) ?? const []) (m as num).toInt()],
+        partial: (j['partial'] as num?)?.toInt(),
+        worst: {
+          for (final e in ((j['worst'] as Map?) ?? const {}).entries)
+            int.parse(e.key as String): (e.value as num).toInt(),
+        },
+        exercises: [for (final e in (j['exercises'] as List?) ?? const []) e as String],
       );
 }
 

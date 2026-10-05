@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -149,24 +151,12 @@ Future<void> _startResistance(
   if (mode == null || !context.mounted) return;
   // Al guardar, Hoy se recarga y el widget que lanzó esto puede desmontarse:
   // el navegador, el aviso y el repositorio se toman antes.
-  final nav = Navigator.of(context);
-  final messenger = ScaffoldMessenger.of(context);
-  final repo = ref.read(trainingRepositoryProvider);
   switch (mode) {
     case ResistanceMode.cindy:
-      final draft = await nav.push<SessionDraft>(MaterialPageRoute(builder: (_) => AmrapScreen(date: day)));
-      // Cindy de prueba (línea base o la de cada 4 semanas): queda anotado.
-      if (draft != null && cindyTest && mode == suggested) {
-        draft.context = [if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(), 'Cindy de prueba']
-            .join('. ');
-      }
-      if (draft != null) await _saveThenReview(nav, messenger, repo, draft);
+      await _runTimer(context, ref, date: day, mode: 'cindy', cindyTest: cindyTest && mode == suggested);
     case ResistanceMode.tabata:
       final names = [for (final e in view.day.exercises) if (e.block == tabataBlock) e.name];
-      final draft = await nav.push<SessionDraft>(
-        MaterialPageRoute(builder: (_) => TabataScreen(date: day, exercises: names.isEmpty ? tabataExercises : names)),
-      );
-      if (draft != null) await _saveThenReview(nav, messenger, repo, draft);
+      await _runTimer(context, ref, date: day, mode: 'tabata', exercises: names.isEmpty ? tabataExercises : names);
     case ResistanceMode.porTiempo:
       await _runGuided(
         context,
@@ -185,6 +175,40 @@ Future<void> _startResistance(
         ),
       );
   }
+}
+
+/// Cindy o Tabata con foto en disco: si Android cierra la app a mitad, Hoy
+/// ofrece retomarlo donde iba. Al terminar se guarda (sin revisar) y se abre
+/// el formulario.
+Future<void> _runTimer(
+  BuildContext context,
+  WidgetRef ref, {
+  required DateTime date,
+  required String mode,
+  List<String> exercises = const [],
+  bool cindyTest = false,
+  TimerSnapshot? resume,
+}) async {
+  // Al guardar, Hoy se recarga y el widget que lanzó esto puede desmontarse:
+  // el navegador, el aviso y los repositorios se toman antes.
+  final nav = Navigator.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final repo = ref.read(trainingRepositoryProvider);
+  final container = ProviderScope.containerOf(context, listen: false);
+  final store = ref.read(activeSessionStoreProvider);
+  void save(TimerSnapshot s) => unawaited(store.save(s));
+  final draft = await nav.push<SessionDraft>(MaterialPageRoute(
+    builder: (_) => mode == 'cindy'
+        ? AmrapScreen(date: date, resume: resume, onSnapshot: save)
+        : TabataScreen(date: date, exercises: exercises, resume: resume, onSnapshot: save),
+  ));
+  await _clearActive(container);
+  if (draft == null) return;
+  // Cindy de prueba (línea base o la de cada 4 semanas): queda anotado.
+  if (cindyTest) {
+    draft.context = [if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(), 'Cindy de prueba'].join('. ');
+  }
+  await _saveThenReview(nav, messenger, repo, draft);
 }
 
 /// Guarda primero (sin revisar) y luego abre el formulario: si se sale sin
@@ -332,6 +356,16 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       );
     case final CounterSnapshot s:
       await _runCounter(context, date: parseDay(s.date), outOfPlan: s.outOfPlan, resume: s);
+    case final TimerSnapshot s:
+      final date = parseDay(s.date);
+      final v3 = await ref.read(trainingRepositoryProvider).blockDay(await ref.read(planRepositoryProvider).dayFor(date), date);
+      if (!context.mounted) return;
+      await _runTimer(context, ref,
+          date: date,
+          mode: s.mode,
+          exercises: s.exercises.isEmpty ? tabataExercises : s.exercises,
+          cindyTest: s.mode == 'cindy' && (v3?.cindyTest ?? false),
+          resume: s);
   }
 }
 

@@ -83,7 +83,6 @@ class HomeScreen extends ConsumerWidget {
               _ActionsCard(
                 date: today,
                 dayType: d.dayType,
-                suggestLight: d.hardFootballYesterday != null,
                 burpees: d.dayType == DayType.densidad ? d.v3?.burpees : null,
               ),
               if (d.measurement != null) _MeasurementCard(due: d.measurement!),
@@ -209,9 +208,48 @@ class _PlanHero extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text('Día de descanso. La racha no se rompe.', style: text.bodyMedium),
               ),
+            // Lo de todos los días, a la vista: con el v3.1 el día tiene 8–12
+            // ejercicios y "Empezar" quedaba debajo de varias tarjetas.
+            if (dashboard.dayType.isTraining) ...[
+              const SizedBox(height: 14),
+              _StartButtons(dashboard: dashboard, color: style.color),
+            ],
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Empezar la sesión del día (y la versión ligera si ayer hubo partido
+/// intenso), dentro de la tarjeta principal.
+class _StartButtons extends ConsumerWidget {
+  const _StartButtons({required this.dashboard, required this.color});
+
+  final TodayDashboard dashboard;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final d = dashboard;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        FilledButton.icon(
+          onPressed: () => startGuidedSession(context, ref),
+          style: FilledButton.styleFrom(backgroundColor: color, minimumSize: const Size.fromHeight(52)),
+          icon: Icon(d.trained ? Icons.replay : Icons.play_arrow),
+          label: Text('${d.trained ? 'Otra sesión de' : 'Empezar'} ${d.dayType.label.toLowerCase()}'),
+        ),
+        if (d.hardFootballYesterday != null && !d.trained) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => startGuidedSession(context, ref, light: true),
+            icon: const Icon(Icons.battery_charging_full),
+            label: const Text('Aplicar versión ligera'),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -730,7 +768,7 @@ class _RecordSuspectTile extends ConsumerWidget {
 }
 
 class _ActionsCard extends ConsumerStatefulWidget {
-  const _ActionsCard({required this.date, required this.dayType, this.suggestLight = false, this.burpees});
+  const _ActionsCard({required this.date, required this.dayType, this.burpees});
 
   final DateTime date;
   final DayType dayType;
@@ -738,8 +776,6 @@ class _ActionsCard extends ConsumerStatefulWidget {
   /// Viernes del v3: EMOM de burpees (minutos, burpees por minuto).
   final (int, int)? burpees;
 
-  /// Ayer hubo un partido intenso o con golpe: se ofrece la versión ligera.
-  final bool suggestLight;
 
   @override
   ConsumerState<_ActionsCard> createState() => _ActionsCardState();
@@ -782,26 +818,21 @@ class _ActionsCardState extends ConsumerState<_ActionsCard> {
     return AppCard(
       title: 'Registrar',
       children: [
-        FilledButton.icon(
-          onPressed: () => startGuidedSession(context, ref),
-          style: FilledButton.styleFrom(backgroundColor: style.color),
-          icon: Icon(widget.dayType.isTraining ? Icons.play_arrow : Icons.timer),
-          label: Text(widget.dayType.isTraining ? 'Empezar ${widget.dayType.label.toLowerCase()}' : 'Empezar sesión'),
-        ),
+        // En días de entrenamiento "Empezar" está en la tarjeta principal; aquí
+        // queda el cronómetro para entrenar igual un día de fútbol o descanso.
+        if (!widget.dayType.isTraining)
+          FilledButton.icon(
+            onPressed: () => startGuidedSession(context, ref),
+            style: FilledButton.styleFrom(backgroundColor: style.color),
+            icon: const Icon(Icons.timer),
+            label: const Text('Empezar sesión'),
+          ),
         if (widget.burpees case (final minutes, final reps)) ...[
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => startBurpeesEmom(context, ref, widget.date, minutes, reps),
             icon: const Icon(Icons.local_fire_department),
             label: Text('Finisher: EMOM $minutes min · $reps burpees'),
-          ),
-        ],
-        if (widget.suggestLight && widget.dayType.isTraining) ...[
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => startGuidedSession(context, ref, light: true),
-            icon: const Icon(Icons.battery_charging_full),
-            label: const Text('Aplicar versión ligera'),
           ),
         ],
         const SizedBox(height: 12),

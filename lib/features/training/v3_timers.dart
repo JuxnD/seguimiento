@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../data/repositories/training_repository.dart';
+import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../ui/progress_ring.dart';
@@ -43,7 +44,9 @@ enum _Phase { calentamiento, trabajo, enfriamiento }
 
 mixin _Ticking<T extends StatefulWidget> on State<T> {
   Timer? _ticker;
-  final DateTime startedAt = clock.now();
+
+  /// Se reemplaza al retomar una sesión que Android cerró.
+  DateTime startedAt = clock.now();
   DateTime? workStartedAt;
   DateTime? workEndedAt;
   DateTime? endedAt;
@@ -115,11 +118,24 @@ class _PhasePanel extends StatelessWidget {
 
 /// Cindy: AMRAP de 20 min de la ronda del circuito. Métrica: rondas + reps.
 class AmrapScreen extends StatefulWidget {
-  const AmrapScreen({super.key, required this.date, this.minutes = 20, this.warmupGoalSec = 480});
+  const AmrapScreen({
+    super.key,
+    required this.date,
+    this.minutes = 20,
+    this.warmupGoalSec = 480,
+    this.resume,
+    this.onSnapshot,
+  });
 
   final DateTime date;
   final int minutes;
   final int warmupGoalSec;
+
+  /// Cindy a mitad que Android cerró: se retoma donde iba.
+  final TimerSnapshot? resume;
+
+  /// Foto del estado en cada cambio, para poder retomar.
+  final ValueChanged<TimerSnapshot>? onSnapshot;
 
   @override
   State<AmrapScreen> createState() => _AmrapScreenState();
@@ -137,8 +153,31 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
   @override
   void initState() {
     super.initState();
+    if (widget.resume case final r?) {
+      startedAt = r.startedAt;
+      workStartedAt = r.workStartedAt;
+      workEndedAt = r.workEndedAt;
+      _phase = _Phase.values.byName(r.phase);
+      _roundMarks.addAll(r.roundMarks);
+      _partial = r.partial;
+      // Terminó el tiempo con la app cerrada y nunca se anotó la ronda a medias.
+      if (_phase == _Phase.trabajo && workEndedAt != null && _partial == null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_askPartial()));
+      }
+    }
     startTicking();
   }
+
+  void _snapshot() => widget.onSnapshot?.call(TimerSnapshot(
+        date: dayKey(widget.date),
+        startedAt: startedAt,
+        mode: 'cindy',
+        phase: _phase.name,
+        workStartedAt: workStartedAt,
+        workEndedAt: workEndedAt,
+        roundMarks: List.of(_roundMarks),
+        partial: _partial,
+      ));
 
   @override
   void dispose() {
@@ -159,12 +198,14 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
     workStartedAt = clock.now();
     _phase = _Phase.trabajo;
     _beep();
+    _snapshot();
   }
 
   void _round() {
     if (workEndedAt != null) return;
     _roundMarks.add(_workElapsed);
     unawaited(HapticFeedback.mediumImpact());
+    _snapshot();
   }
 
   Future<void> _askPartial() async {
@@ -182,6 +223,7 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
       _partial = reps ?? 0;
       _phase = _Phase.enfriamiento;
     });
+    _snapshot();
   }
 
   Future<void> _finishEarly() async {
@@ -299,10 +341,18 @@ class TabataScreen extends StatefulWidget {
     this.restSec = 10,
     this.intervals = 8,
     this.betweenBlocksSec = 60,
+    this.resume,
+    this.onSnapshot,
   });
 
   final DateTime date;
   final List<String> exercises;
+
+  /// Tabata a mitad que Android cerró: se retoma donde iba.
+  final TimerSnapshot? resume;
+
+  /// Foto del estado en cada cambio, para poder retomar.
+  final ValueChanged<TimerSnapshot>? onSnapshot;
   final int warmupGoalSec;
   final int workSec;
   final int restSec;
@@ -387,8 +437,29 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
   @override
   void initState() {
     super.initState();
+    if (widget.resume case final r?) {
+      startedAt = r.startedAt;
+      workStartedAt = r.workStartedAt;
+      workEndedAt = r.workEndedAt;
+      _phase = _Phase.values.byName(r.phase);
+      _worst.addAll(r.worst);
+      // Sigue desde el tramo en que va: sin pitar ni preguntar por los que
+      // pasaron con la app cerrada.
+      if (workStartedAt != null) _lastSegment = _position.$1;
+    }
     startTicking();
   }
+
+  void _snapshot() => widget.onSnapshot?.call(TimerSnapshot(
+        date: dayKey(widget.date),
+        startedAt: startedAt,
+        mode: 'tabata',
+        phase: _phase.name,
+        workStartedAt: workStartedAt,
+        workEndedAt: workEndedAt,
+        worst: Map.of(_worst),
+        exercises: widget.exercises,
+      ));
 
   @override
   void dispose() {
@@ -412,6 +483,7 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
       if (index >= _timeline.length) {
         workEndedAt = workStartedAt!.add(Duration(seconds: _totalWorkSec));
         _beep(strong: true);
+        _snapshot();
       } else {
         _beep(strong: _timeline[index].kind == 'trabajo');
       }
@@ -432,6 +504,7 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
     _asking = false;
     if (reps != null) _worst[block] = reps;
     if (mounted && workEndedAt != null) setState(() => _phase = _Phase.enfriamiento);
+    _snapshot();
   }
 
   SessionDraft _draft() {
@@ -479,10 +552,13 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
               hint: '4 bloques de 8 × (20 s a tope / 10 s pausa), 1 min entre bloques: '
                   '${widget.exercises.join(' · ')}. Suena al cambiar de tramo.',
               button: 'Empezar Tabata',
-              onPressed: () => setState(() {
-                workStartedAt = clock.now();
-                _phase = _Phase.trabajo;
-              }),
+              onPressed: () {
+                setState(() {
+                  workStartedAt = clock.now();
+                  _phase = _Phase.trabajo;
+                });
+                _snapshot();
+              },
             ),
           _Phase.trabajo => seg == null
               ? const Center(child: CircularProgressIndicator())
@@ -513,6 +589,7 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
                       onPressed: () {
                         workEndedAt = clock.now();
                         setState(() => _phase = _Phase.enfriamiento);
+                        _snapshot();
                       },
                       child: const Text('Terminar antes'),
                     ),
