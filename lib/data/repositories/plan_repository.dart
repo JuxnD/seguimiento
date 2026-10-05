@@ -2,7 +2,9 @@ import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/format.dart';
 import '../database.dart';
+import '../exercise_details.dart';
 import 'exercise_repository.dart';
 
 class PlanExerciseDraft {
@@ -78,22 +80,23 @@ class PlanExerciseDraft {
         : (repsMax == null || repsMax == repsMin)
             ? '$repsMin'
             : '$repsMin–$repsMax';
-    final hold = holdSecMin == null
-        ? null
-        : (holdSecMax == null || holdSecMax == holdSecMin)
-            ? '${holdSecMin}s'
-            : '$holdSecMin–${holdSecMax}s';
+    final hold = holdLabel(holdSecMin, holdSecMax, compact: true);
     // Un descanso de 0 (dentro de la ronda del circuito) no se anuncia.
     final rest = restSec == null || restSec == 0
         ? null
         : (restSecMax == null || restSecMax == restSec)
             ? formatDuration(restSec!)
             : '${formatDuration(restSec!)}–${formatDuration(restSecMax!)}';
+    // Metros, saltos o sprints en lugar de repeticiones (guía v3.1).
+    final unit = repsUnit(name);
+    final per = unit == 'reps' ? '' : ' $unit';
     final parts = [
-      if (sets != null && hold != null)
+      if (sets == 1 && hold != null)
+        hold
+      else if (sets != null && hold != null)
         '$sets×$hold'
       else if (sets != null && reps != null)
-        '$sets×$reps'
+        '$sets×$reps$per'
       else if (hold != null)
         hold
       else if (reps != null)

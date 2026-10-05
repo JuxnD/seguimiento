@@ -70,6 +70,12 @@ void main() {
       expect(r.action, KcalAction.mantener);
     });
 
+    test('pesajes viejos: pide pesarse de nuevo', () {
+      final r = twoWeekRule(weeks: weeks([80, 79.5, 79]), abdomen: const [], today: d(11, 20));
+      expect(r.action, KcalAction.faltanDatos);
+      expect(r.message, contains('No hay pesajes recientes'));
+    });
+
     test('la semana en curso no cuenta y sin la de 2 semanas antes faltan datos', () {
       expect(twoWeekRule(weeks: weeks([80]), abdomen: const [], today: d(10, 8)).action, KcalAction.faltanDatos);
       expect(twoWeekRule(weeks: weeks([80, 79.5]), abdomen: const [], today: today).action, KcalAction.faltanDatos);

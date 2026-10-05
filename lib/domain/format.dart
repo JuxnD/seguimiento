@@ -31,3 +31,15 @@ String fmtDelta(num value, {int decimals = 1}) {
 /// Escapa texto libre para una celda de tabla Markdown.
 String mdCell(String? s) =>
     (s == null || s.trim().isEmpty) ? '—' : s.trim().replaceAll('|', r'\|').replaceAll(RegExp(r'\s*\n\s*'), ' / ');
+
+/// "20–40 s", o en minutos si son minutos justos ("5 min", "5–10 min"): la
+/// práctica de pino no es "300 s". `compact` pega la "s" ("20–40s").
+String? holdLabel(int? min, int? max, {bool compact = false}) {
+  if (min == null) return null;
+  final hi = max == null || max == min ? null : max;
+  if (min >= 120 && min % 60 == 0 && (hi == null || hi % 60 == 0)) {
+    return hi == null ? '${min ~/ 60} min' : '${min ~/ 60}–${hi ~/ 60} min';
+  }
+  final s = compact ? 's' : ' s';
+  return hi == null ? '$min$s' : '$min–$hi$s';
+}

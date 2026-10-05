@@ -10,7 +10,7 @@ import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
-import '../../domain/session_script.dart' show tabataBlock;
+import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
 import '../../ui/hero.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
@@ -402,10 +402,29 @@ class _SetupDialogState extends State<_SetupDialog> {
   Widget build(BuildContext context) {
     final isCircuit = widget.day.type.isCircuit;
     final day = _day;
-    final block = [
-      for (final e in day.exercises)
-        if (e.block != null && (e.variant == null || e.variant == _variant)) e,
-    ];
+    // Bloques que recorre el cronómetro, agrupados: el pino va antes, el
+    // calentamiento del día se hace en la fase de calentamiento y el Tabata
+    // tiene su cronómetro.
+    final groups = <String, List<PlanExerciseDraft>>{};
+    for (final e in day.exercises) {
+      if (e.block == null || e.block == tabataBlock || !(e.variant == null || e.variant == _variant)) continue;
+      groups.putIfAbsent(e.block!, () => []).add(e);
+    }
+    String title(String block) => block == warmupBlock
+        ? 'Para calentar:'
+        : preBlocks.contains(block)
+            ? 'Antes, sin fatiga:'
+            : 'Después, $block:';
+    Widget group(String block) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            Text(title(block), style: Theme.of(context).textTheme.labelLarge),
+            for (final e in groups[block]!) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
+          ],
+        );
+    final before = groups.keys.where((b) => b == warmupBlock || preBlocks.contains(b)).toList();
+    final after = groups.keys.where((b) => !before.contains(b)).toList();
     return AlertDialog(
       title: Text(widget.day.type.label),
       content: SingleChildScrollView(
@@ -413,19 +432,19 @@ class _SetupDialogState extends State<_SetupDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            for (final b in before) group(b),
+            if (before.isNotEmpty) const SizedBox(height: 8),
             for (final e in day.main) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
-            if (block.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text('Después, ${block.first.block}:', style: Theme.of(context).textTheme.labelLarge),
-              for (final e in block) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
-            ],
+            for (final b in after) group(b),
             const SizedBox(height: 8),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('Versión ligera'),
               subtitle: Text(widget.light
                   ? 'Sugerida: ayer hubo un partido intenso o con golpe'
-                  : 'Una ronda menos y el bloque con una serie menos'),
+                  : isCircuit
+                      ? 'Una ronda menos y el bloque con una serie menos'
+                      : 'Una serie menos en lo que tenga 3 o más, y el rango recortado arriba'),
               value: _light,
               onChanged: (v) => setState(() {
                 _light = v;

@@ -871,12 +871,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final elapsed = _holdElapsed;
     return ProgressRing(
       progress: leadIn > 0 ? 1 - leadIn / _holdLeadInSec : elapsed / max,
-      value: leadIn > 0 ? '$leadIn' : '$elapsed s',
+      // La práctica de pino va en minutos: "300 s" no se lee.
+      value: leadIn > 0 ? '$leadIn' : (max >= 120 ? formatDuration(elapsed) : '$elapsed s'),
       sublabel: leadIn > 0
           ? 'colócate'
           : elapsed < min
-              ? 'mínimo $min s'
-              : (min == max ? 'listo' : 'ya puedes soltar · máx $max s'),
+              ? 'mínimo ${holdLabel(min, null)}'
+              : (min == max ? 'listo' : 'ya puedes soltar · máx ${holdLabel(max, null)}'),
       label: '',
       size: 200,
       stroke: 14,

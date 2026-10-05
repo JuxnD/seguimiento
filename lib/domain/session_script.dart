@@ -6,6 +6,7 @@
 library;
 
 import 'enums.dart';
+import 'format.dart';
 
 sealed class ScriptStep {
   const ScriptStep();
@@ -137,11 +138,7 @@ class ScriptExercise {
         : (repsMax == null || repsMax == repsMin)
             ? '$repsMin'
             : '$repsMin–$repsMax';
-    final hold = holdSecMin == null
-        ? null
-        : (holdSecMax == null || holdSecMax == holdSecMin)
-            ? '$holdSecMin s'
-            : '$holdSecMin–$holdSecMax s';
+    final hold = holdLabel(holdSecMin, holdSecMax);
     return [
       if (reps != null) reps else if (hold != null) hold else '—',
       if (perSide) 'por lado',

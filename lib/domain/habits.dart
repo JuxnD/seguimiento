@@ -115,6 +115,13 @@ DecisionReading twoWeekRule({
         'Hace falta una semana completa de pesajes en ayunas (mínimo martes, jueves y sábado).');
   }
   final last = complete.last;
+  // Pesajes de hace un mes no dicen nada de hoy.
+  if (daysBetween(last.monday, dateOnly(today)) > 14) {
+    return DecisionReading(KcalAction.faltanDatos,
+        'No hay pesajes recientes (el último promedio es de la semana del ${formatShort(last.monday)}). '
+        'Pésate en ayunas martes, jueves y sábado.',
+        lastWeek: last.monday);
+  }
   final before = complete.where((w) => daysBetween(w.monday, last.monday) == 14).firstOrNull;
   if (before == null) {
     return DecisionReading(KcalAction.faltanDatos,
