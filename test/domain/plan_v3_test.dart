@@ -175,4 +175,28 @@ void main() {
     expect(md, contains('- Cindy: 12 rondas + 7 reps en 20 min'));
     expect(md, contains('4 (arquero)'));
   });
+
+  test('una Cindy cortada dice lo que duró y que no es marca', () {
+    final md = buildReport(ReportInput(
+      programStart: DateTime(2026, 8, 26),
+      rangeStart: DateTime(2026, 10, 12),
+      rangeEnd: DateTime(2026, 10, 18),
+      today: DateTime(2026, 10, 18),
+      sessions: [
+        SessionEntry(
+          date: DateTime(2026, 10, 16),
+          type: SessionType.resistencia,
+          mode: 'cindy',
+          roundsDone: 1,
+          extraReps: 3,
+          totalSec: 600 + 120 + 180,
+          warmupSec: 600,
+          cooldownSec: 180,
+          incomplete: true,
+        ),
+      ],
+    ));
+    expect(md, contains('- Cindy: 1 ronda + 3 reps en 2:00 (cortada antes de los 20 min: no es marca)'));
+    expect(md, isNot(contains('en 20 min')));
+  });
 }

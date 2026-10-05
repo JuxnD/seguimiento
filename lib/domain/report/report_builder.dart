@@ -175,7 +175,11 @@ void _sessions(StringBuffer b, ReportStats s) {
   for (final x in list) {
     b.writeln('**${_dayLabel(x.date, x.startTime)} · ${x.typeLabel}**');
     if (x.mode == 'cindy' && x.roundsDone != null) {
-      b.writeln('- Cindy: ${x.roundsDone} rondas + ${x.extraReps ?? 0} reps en 20 min');
+      // Cortada antes de tiempo dice lo que duró: "en 20 min" la hacía pasar
+      // por una marca comparable (auditoría del 5 oct).
+      final work = x.totalSec - x.warmupSec - x.cooldownSec;
+      b.writeln('- Cindy: ${x.roundsDone} ${x.roundsDone == 1 ? 'ronda' : 'rondas'} + ${x.extraReps ?? 0} reps '
+          '${x.incomplete ? 'en ${formatDuration(work)} (cortada antes de los 20 min: no es marca)' : 'en 20 min'}');
     }
     if (x.roundWorkSec.isNotEmpty) {
       // Una ronda tras un descanso de 0:00 casi siempre se comió ese
