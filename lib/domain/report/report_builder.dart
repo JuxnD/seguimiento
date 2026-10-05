@@ -1,6 +1,7 @@
 import '../dates.dart';
 import '../enums.dart';
 import '../format.dart';
+import '../habits.dart';
 import '../nutrition.dart';
 import '../session_math.dart';
 import 'alerts.dart';
@@ -115,6 +116,12 @@ void _summary(StringBuffer b, ReportStats s) {
     final vs = before == null ? '' : ' (${fmtDelta(steps.average - before, decimals: 0)} vs semana anterior)';
     b.writeln('- Pasos: ${fmtInt(steps.average)}/día ($n ${n == 1 ? 'día registrado' : 'días registrados'})'
         '$vs$weekday');
+  }
+
+  // Sueño (§19.3): horas en cama, meta 8 h.
+  if (sleepSummary(i.sleep.values) case final sl?) {
+    b.writeln('- Sueño: ${fmtDec(sl.average)} h en cama de promedio · '
+        '${sl.nightsAtGoal}/${sl.nights} ${sl.nights == 1 ? 'noche' : 'noches'} con ${fmtInt(sleepGoalHours)} h o más');
   }
 
   // Totales del rango: lo que el promedio no dice.
@@ -236,6 +243,7 @@ String _setLabel(SetEntry e, {bool seconds = false}) {
           : amount;
   if (e.loadKg != null) out += ' @ ${fmtDec(e.loadKg!)} kg';
   if (e.variant != null) out += ' (${e.variant})';
+  if (e.rir != null) out += ' RIR ${e.rir}';
   if (e.toFailure) out += ' (fallo)';
   return out;
 }

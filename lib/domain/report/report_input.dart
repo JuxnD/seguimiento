@@ -66,6 +66,7 @@ class SetEntry {
     this.toFailure = false,
     this.loadKg,
     this.variant,
+    this.rir,
   });
 
   final String exercise;
@@ -80,6 +81,9 @@ class SetEntry {
 
   /// Variante de la progresión usada (§18.4).
   final String? variant;
+
+  /// Repeticiones en reserva (§19.2). null = no se anotó.
+  final int? rir;
 }
 
 class SessionEntry {
@@ -278,6 +282,7 @@ class ReportInput {
     this.measurementDatesBefore = const [],
     this.closedDays = const {},
     this.steps = const {},
+    this.sleep = const {},
     this.mobility = const [],
     this.holdExercises = const {},
     this.previous,
@@ -315,6 +320,9 @@ class ReportInput {
 
   /// Fechas de medición anteriores al rango (para la alerta de intervalo).
   final List<DateTime> measurementDatesBefore;
+
+  /// Horas en cama por mañana (§19.3).
+  final Map<DateTime, double> sleep;
 
   /// Días (`YYYY-MM-DD`) que el usuario cerró a mano aunque les falte una
   /// comida principal.

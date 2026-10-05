@@ -9,6 +9,7 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import '../../domain/habits.dart';
 import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
@@ -179,7 +180,10 @@ class _PlanHero extends StatelessWidget {
             if (dashboard.blockExercises.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
-                dashboard.blockExercises.length > 1 ? 'Después, una variante (se alternan):' : 'Después:',
+                dashboard.blockExercises.any((l) => l.contains(' A:')) &&
+                        dashboard.blockExercises.any((l) => l.contains(' B:'))
+                    ? 'Además (A y B se alternan por semana):'
+                    : 'Además:',
                 style: text.labelLarge,
               ),
               for (final line in dashboard.blockExercises)
@@ -502,8 +506,105 @@ class _RingsCard extends StatelessWidget {
         ],
         _WalksLine(dashboard: d),
         const StepsSourceLine(),
+        _SleepLine(date: d.date),
+        _EggsLine(date: d.date),
         _CloseDayLine(dashboard: d),
       ],
+    );
+  }
+}
+
+/// Sueño (§19.3): por la mañana, si no se anotó, las horas en cama de un
+/// toque; después, la cifra (tocarla la cambia).
+class _SleepLine extends ConsumerWidget {
+  const _SleepLine({required this.date});
+
+  final DateTime date;
+
+  static const _options = [6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0];
+
+  Future<void> _set(WidgetRef ref, double hours) => ref.read(sleepRepositoryProvider).set(date, hours);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hours = ref.watch(sleepDayProvider(dayKey(date))).valueOrNull;
+    final text = Theme.of(context).textTheme;
+    if (hours != null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: InkWell(
+          onTap: () => ref.read(sleepRepositoryProvider).remove(date),
+          child: Row(
+            children: [
+              Icon(Icons.bedtime_outlined, size: 18, color: hours >= sleepGoalHours ? AppColors.protein : null),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                    'Anoche: ${fmtDec(hours)} h en cama${hours >= sleepGoalHours ? '' : ' · meta ${fmtInt(sleepGoalHours)} h'}',
+                    style: text.bodyMedium),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (DateTime.now().hour >= 14 && dateOnly(DateTime.now()) == date) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            const Icon(Icons.bedtime_outlined, size: 18),
+            const SizedBox(width: 8),
+            Text('¿Cuántas horas en cama anoche?', style: text.bodyMedium),
+          ]),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children: [
+              for (final h in _options)
+                ActionChip(label: Text(fmtDec(h)), onPressed: () => _set(ref, h)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Huevos enteros del día (§19.6): la meta es 2–3 más claras; a partir de 5
+/// avisa.
+class _EggsLine extends ConsumerWidget {
+  const _EggsLine({required this.date});
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meals = ref.watch(mealsForDayProvider(dayKey(date))).valueOrNull ?? const [];
+    final eggs = wholeEggs([
+      for (final m in meals)
+        for (final i in m.items) (label: i.label, quantity: i.quantity, unit: i.quantityUnit),
+    ]);
+    if (eggs < 1) return const SizedBox.shrink();
+    final warn = eggs >= eggWarnAt;
+    final text = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Icon(Icons.egg_outlined, size: 18, color: warn ? AppColors.kcal : null),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Huevos enteros hoy: ${fmtDec(eggs)}${warn ? ' · la meta es 2–3 y el resto claras' : ''}',
+              style: text.bodyMedium?.copyWith(color: warn ? AppColors.kcal : null),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

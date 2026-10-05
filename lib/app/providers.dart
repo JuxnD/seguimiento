@@ -27,6 +27,7 @@ import '../data/health_connect.dart';
 import '../data/repositories/custom_reminder_repository.dart';
 import '../data/repositories/exercise_photo_repository.dart';
 import '../data/repositories/report_repository.dart';
+import '../data/repositories/sleep_repository.dart';
 import '../data/repositories/steps_repository.dart';
 import '../data/repositories/training_repository.dart';
 import '../domain/active_session.dart';
@@ -78,6 +79,11 @@ final trainingRepositoryProvider =
 final nutritionRepositoryProvider = Provider((ref) => NutritionRepository(ref.watch(databaseProvider)));
 final bodyRepositoryProvider = Provider((ref) => BodyRepository(ref.watch(databaseProvider)));
 final stepsRepositoryProvider = Provider((ref) => StepsRepository(ref.watch(databaseProvider)));
+final sleepRepositoryProvider = Provider((ref) => SleepRepository(ref.watch(databaseProvider)));
+
+/// Horas en cama anotadas la mañana de ese día (`YYYY-MM-DD`).
+final sleepDayProvider =
+    StreamProvider.family((ref, String day) => ref.watch(sleepRepositoryProvider).watchDay(parseDay(day)));
 final healthConnectProvider = Provider((ref) => const HealthConnect());
 final stepsSyncProvider = Provider((ref) => StepsSync(
       health: ref.watch(healthConnectProvider),

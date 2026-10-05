@@ -113,6 +113,7 @@ class ReportRepository {
               toFailure: x.toFailure,
               loadKg: x.loadKg,
               variant: x.variant,
+              rir: x.rir,
             ),
         ],
       ));
@@ -129,6 +130,7 @@ class ReportRepository {
 
     final football = await (db.select(db.footballGames)..where((x) => x.date.isBetweenValues(f, t))).get();
     final steps = await (db.select(db.dailySteps)..where((x) => x.date.isBetweenValues(f, t))).get();
+    final sleep = await (db.select(db.sleepLogs)..where((x) => x.date.isBetweenValues(f, t))).get();
 
     final meals = await nutrition.range(from, to);
 
@@ -226,6 +228,7 @@ class ReportRepository {
       measurementDatesBefore: datesBefore,
       closedDays: {for (final c in closed) c.date},
       steps: {for (final s in steps) parseDay(s.date): s.steps},
+      sleep: {for (final s in sleep) parseDay(s.date): s.hours},
       mobility: mobility,
       holdExercises: {
         for (final pe in await (db.select(db.planExercises)..where((x) => x.holdSecMin.isNotNull())).get())

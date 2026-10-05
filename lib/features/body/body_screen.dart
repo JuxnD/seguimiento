@@ -6,6 +6,7 @@ import '../../data/repositories/body_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import '../../domain/habits.dart';
 import '../../domain/progress.dart';
 import '../../domain/nutrition.dart';
 import '../../data/database.dart';
@@ -46,6 +47,7 @@ class BodyScreen extends ConsumerWidget {
             onWeight: () => _addWeight(context, ref),
             onMeasure: () => _openMeasurement(context, ref, null),
           ),
+          _DecisionCard(weights: weights.value ?? const [], checkIns: checkIns.value ?? const []),
           AppCard(
             title: 'Peso',
             trailing: IconButton(
@@ -156,6 +158,51 @@ class BodyScreen extends ConsumerWidget {
     );
     if (result == null || !context.mounted) return;
     await guarded(context, () => ref.read(bodyRepositoryProvider).addWeight(result.$1, result.$2, fasted: result.$3));
+  }
+}
+
+/// Regla de cada 2 semanas (§19.3): el promedio semanal de peso y el
+/// abdomen dicen si tocar las kcal. La báscula decide, no la sensación.
+class _DecisionCard extends ConsumerWidget {
+  const _DecisionCard({required this.weights, required this.checkIns});
+
+  final List<BodyWeightRow> weights;
+  final List<MeasurementCheckIn> checkIns;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (weights.isEmpty) return const SizedBox.shrink();
+    final reading = twoWeekRule(
+      weeks: weeklyWeightAverages([for (final w in weights) (parseDay(w.date), w.kg, w.fasted)]),
+      abdomen: [
+        for (final c in checkIns)
+          if (c.fasted && c.valuesCm[MeasureSite.abdomen] != null) (c.date, c.valuesCm[MeasureSite.abdomen]!),
+      ],
+      today: ref.watch(todayProvider),
+    );
+    final text = Theme.of(context).textTheme;
+    final (icon, color) = switch (reading.action) {
+      KcalAction.subir => (Icons.arrow_upward, AppColors.kcal),
+      KcalAction.bajar => (Icons.arrow_downward, AppColors.kcal),
+      KcalAction.mantener => (Icons.check_circle_outline, AppColors.protein),
+      KcalAction.faltanDatos => (Icons.hourglass_empty, null),
+    };
+    return AppCard(
+      title: 'Regla de las 2 semanas',
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color),
+            const SizedBox(width: 10),
+            Expanded(child: Text(reading.message, style: text.bodyLarge)),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text('Compara el promedio semanal en ayunas con el de 2 semanas antes. Si caen las repeticiones, '
+            'también se suben 150–200 kcal.', style: text.bodySmall),
+      ],
+    );
   }
 }
 
