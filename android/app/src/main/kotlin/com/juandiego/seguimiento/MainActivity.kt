@@ -30,6 +30,7 @@ class MainActivity : FlutterActivity() {
                 )
                 "openUnusedAppSettings" -> result.success(openUnusedAppSettings())
                 "openAppDetails" -> result.success(openAppDetails())
+                "openApkDownload" -> openApkDownload(call.argument<String>("url"), result)
                 else -> result.notImplemented()
             }
         }
@@ -49,6 +50,21 @@ class MainActivity : FlutterActivity() {
     override fun onDestroy() {
         health?.dispose()
         super.onDestroy()
+    }
+
+    /// Abre la descarga del APK en su propia tarea y cierra la de la app
+    /// (§16.13). Si el navegador y luego el instalador se quedaban dentro de la
+    /// tarea de la app, al terminar "Abrir" creaba otra y en recientes quedaban
+    /// dos "Seguimiento" (una en Ajustes, otra en Hoy). El proceso muere igual
+    /// al instalar encima: no se pierde nada que no estuviera guardado ya.
+    private fun openApkDownload(url: String?, result: MethodChannel.Result) {
+        if (url == null) {
+            result.success(false)
+            return
+        }
+        val opened = open(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        result.success(opened)
+        if (opened) finishAndRemoveTask()
     }
 
     /// true si Android puede diferir o recortar el trabajo de la app en reposo.
@@ -76,6 +92,8 @@ class MainActivity : FlutterActivity() {
     private fun openAppDetails(): Boolean =
         open(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)))
 
+    /// Siempre en una tarea nueva: lo que se abre (ajustes, navegador) no debe
+    /// quedar apilado dentro de la tarea de la app.
     private fun open(intent: Intent): Boolean = try {
         startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         true

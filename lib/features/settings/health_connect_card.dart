@@ -113,6 +113,15 @@ class HealthConnectCard extends ConsumerWidget {
                       : 'Escribieron pasos (7 días): ${s.sourcesToday.join(', ')}',
                   style: text.bodySmall,
                 ),
+                if (s.sourcesToday.length > 1) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Hay más de una app escribiendo pasos. Cuando dos cuentan el mismo rato, Health Connect se '
+                    'queda con la primera de su prioridad. Para que mande el reloj, pon INNOVA S-WATCH de primera '
+                    'en Health Connect → Datos y acceso → Actividad → Pasos → Prioridad de apps.',
+                    style: text.bodySmall,
+                  ),
+                ],
                 if (s.recentDays.values.any((v) => v > 0)) ...[
                   const SizedBox(height: 4),
                   Text(
@@ -234,6 +243,8 @@ class HealthConnectCard extends ConsumerWidget {
   Future<void> _syncNow(BuildContext context, WidgetRef ref) async {
     final result = await ref.read(stepsSyncProvider).run();
     ref.invalidate(healthConnectStateProvider);
+    // La línea de Hoy (último registro del reloj) también cambió.
+    ref.invalidate(stepsSyncInfoProvider);
     if (!context.mounted) return;
     showSnack(context, switch (result.outcome) {
       StepsSyncOutcome.hecho => result.updatedDays == 0

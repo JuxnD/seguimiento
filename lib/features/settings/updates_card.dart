@@ -46,7 +46,9 @@ class UpdatesCard extends ConsumerWidget {
                   ),
                 const SizedBox(height: 8),
                 FilledButton.icon(
-                  onPressed: () => _open(context, release.apkUrl ?? release.pageUrl),
+                  onPressed: () => release.apkUrl == null
+                      ? _open(context, release.pageUrl)
+                      : _download(context, release.apkUrl!),
                   icon: const Icon(Icons.download),
                   label: Text(release.apkUrl == null ? 'Ver la versión en GitHub' : 'Descargar APK'),
                 ),
@@ -54,6 +56,11 @@ class UpdatesCard extends ConsumerWidget {
                   padding: EdgeInsets.only(top: 8),
                   child: Text('Al instalar encima, los datos se conservan. Aun así, exporta un respaldo antes.'),
                 ),
+                if (release.apkUrl != null)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Text('Al descargar, Seguimiento se cierra; cuando termine de instalar, ábrela de nuevo.'),
+                  ),
               ],
             );
           },
@@ -65,6 +72,14 @@ class UpdatesCard extends ConsumerWidget {
           ),
       ],
     );
+  }
+
+  /// La descarga va en su propia tarea y la app se cierra: así, tras instalar,
+  /// en recientes queda un solo "Seguimiento" (§16.13). Si el canal nativo no
+  /// pudo, se abre como antes para no dejar al usuario sin actualizar.
+  Future<void> _download(BuildContext context, Uri url) async {
+    if (await const UpdateLauncher().openApkDownload(url)) return;
+    if (context.mounted) await _open(context, url);
   }
 
   Future<void> _open(BuildContext context, Uri url) async {

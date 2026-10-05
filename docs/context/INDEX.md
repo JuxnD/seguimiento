@@ -60,7 +60,9 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   en Health Connect y esta app los trae al abrirse si se conectó en Ajustes
   ([ADR 0007](../adr/0007-pasos-por-health-connect-nativo.md)). También se
   anotan a mano; se queda la cifra mayor. La meta (7.500) es solo entre
-  semana.
+  semana. Innova escribe por lotes al sincronizar, con esa hora: Hoy muestra
+  quién escribió el último registro y cuándo, y pide abrir la app del reloj
+  si pasaron más de 6 h (§16.14).
 - El emulador se prueba con APK debug, que no recorta recursos: lo que toque
   avisos o recursos pedidos por nombre se verifica **con un APK release**
   (de la 1.8.0 a la 1.9.0 los avisos no salían por eso; ver

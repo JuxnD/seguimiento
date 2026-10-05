@@ -35,6 +35,7 @@ import '../domain/enums.dart';
 import '../domain/report/period_summary.dart';
 import '../domain/report/report_builder.dart';
 import '../domain/report/report_input.dart';
+import '../domain/steps.dart';
 
 /// Se sobreescribe en `main` con la base ya abierta.
 final databaseHostProvider = Provider<DatabaseHost>((ref) => throw UnimplementedError());
@@ -92,10 +93,11 @@ final syncStepsProvider = Provider<Future<void> Function()>((ref) => coalesce(()
       ref.invalidate(stepsSyncInfoProvider);
     }));
 
-/// Si los pasos vienen del reloj y cuándo se trajeron por última vez.
-final stepsSyncInfoProvider = Provider<({bool enabled, DateTime? lastSync})>((ref) {
+/// Si los pasos vienen del reloj, cuándo se trajeron por última vez y quién
+/// escribió el último registro (y a qué hora) en Health Connect.
+final stepsSyncInfoProvider = Provider<({bool enabled, DateTime? lastSync, StepsOrigin? origin})>((ref) {
   final sync = ref.watch(stepsSyncProvider);
-  return (enabled: sync.enabled, lastSync: sync.lastSync);
+  return (enabled: sync.enabled, lastSync: sync.lastSync, origin: sync.lastOrigin);
 });
 final reportRepositoryProvider =
     Provider((ref) => ReportRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));

@@ -40,6 +40,16 @@ class HealthConnect {
   Future<List<String>> sources(DateTime from, DateTime to) async =>
       await _channel.invokeListMethod<String>('sources', {'from': dayKey(from), 'to': dayKey(to)}) ?? const [];
 
+  /// El registro de pasos más reciente (últimos 3 días): hora, paquete y
+  /// nombre de la app que lo escribió. null si no hay o no hay Android debajo.
+  Future<StepsOrigin?> lastStepsRecord() async {
+    try {
+      return parseStepsOrigin(await _channel.invokeMapMethod<String, Object?>('lastStepsSync'));
+    } on MissingPluginException {
+      return null;
+    }
+  }
+
   Future<bool> openSettings() async => await _call<bool>('openSettings') ?? false;
   Future<bool> installProvider() async => await _call<bool>('installProvider') ?? false;
 
@@ -51,6 +61,18 @@ class HealthConnect {
       return null;
     }
   }
+}
+
+/// Lo que devuelve `lastStepsSync` en Kotlin: `at` en epoch ms.
+StepsOrigin? parseStepsOrigin(Map<String, Object?>? raw) {
+  if (raw == null) return null;
+  final at = raw['at'], pkg = raw['package'], label = raw['label'];
+  if (at is! int || pkg is! String) return null;
+  return StepsOrigin(
+    at: DateTime.fromMillisecondsSinceEpoch(at),
+    package: pkg,
+    label: label is String ? label : pkg,
+  );
 }
 
 enum StepsSyncOutcome { apagado, noDisponible, sinPermiso, hecho, error }
@@ -77,6 +99,9 @@ class StepsSync {
   bool get enabled => flags.get<bool>(FlagKeys.healthConnectEnabled) == true;
   DateTime? get lastSync => flags.getDate(FlagKeys.lastStepsSync);
 
+  /// Último registro conocido en Health Connect: cuándo sincronizó el reloj.
+  StepsOrigin? get lastOrigin => StepsOrigin.fromJson(flags.get<Object>(FlagKeys.lastStepsOrigin));
+
   Future<StepsSyncResult> run({int days = 14, DateTime? now}) async {
     if (!enabled) return const StepsSyncResult(StepsSyncOutcome.apagado);
     try {
@@ -95,6 +120,7 @@ class StepsSync {
         await steps.setSteps(day, value, source: source);
         updated++;
       }
+      await _saveOrigin();
       await flags.set(FlagKeys.lastStepsSync, now ?? DateTime.now());
       return StepsSyncResult(StepsSyncOutcome.hecho, updatedDays: updated);
     } on PlatformException catch (e) {
@@ -102,6 +128,17 @@ class StepsSync {
       return StepsSyncResult(StepsSyncOutcome.error, message: e.message);
     } on Object catch (e) {
       return StepsSyncResult(StepsSyncOutcome.error, message: '$e');
+    }
+  }
+
+  /// Secundario: si falla, los pasos ya quedaron guardados y se conserva el
+  /// último origen conocido.
+  Future<void> _saveOrigin() async {
+    try {
+      final origin = await health.lastStepsRecord();
+      if (origin != null) await flags.set(FlagKeys.lastStepsOrigin, origin.toJson());
+    } on Object {
+      // Nada: la línea de Hoy seguirá mostrando el último dato bueno.
     }
   }
 }

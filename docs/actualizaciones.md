@@ -69,6 +69,25 @@ abrir la descarga del APK. **No instala nada sola**: la instalación la haces t�
 Si el repositorio no está configurado o la consulta falla, la tarjeta lo dice y
 la app sigue funcionando: el chequeo nunca bloquea nada.
 
+### Una sola "Seguimiento" en recientes (§16.13, 5 oct 2026)
+
+Al actualizar desde *Ajustes → Descargar APK* quedaban dos tarjetas de la app
+en recientes (una en Ajustes, otra en Hoy): el navegador y luego el
+instalador se abrían dentro de la tarea de la app, y el "Abrir" del final
+creaba otra porque `MainActivity` tenía `taskAffinity=""`. Ahora:
+
+- *Descargar APK* va por el canal `seguimiento/sistema`
+  (`openApkDownload`, en `MainActivity.kt`): abre la descarga con
+  `FLAG_ACTIVITY_NEW_TASK` y cierra la tarea de la app con
+  `finishAndRemoveTask()`. La tarjeta avisa que la app se cierra. Si el canal
+  falla, se abre con url_launcher como antes. La app sigue sin instalar nada
+  (ADR 0006): no hay `REQUEST_INSTALL_PACKAGES` ni FileProvider.
+- `MainActivity` es `singleTask` y con la afinidad por defecto: launcher,
+  avisos y el "Abrir" del instalador reutilizan la misma tarea. Lo que llegue
+  con la app abierta entra por `onNewIntent`.
+- Guarda: `test/app/android_manifest_test.dart`. El flujo completo (descargar,
+  instalar, "Abrir", mirar recientes) solo se comprueba en un teléfono.
+
 ## La firma: lo único que no se puede improvisar
 
 Android **solo deja actualizar una app si el APK nuevo está firmado con la misma

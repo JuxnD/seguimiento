@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../config.dart';
@@ -105,4 +106,27 @@ AppRelease? parseRelease(String body) {
     apkUrl: apk,
     pageUrl: Uri.parse(page),
   );
+}
+
+/// Abre la descarga del APK y cierra la app (§16.13). Lo hace `MainActivity.kt`
+/// por el canal `seguimiento/sistema`: url_launcher abre el navegador dentro de
+/// la tarea de la app, y entonces el instalador y su "Abrir" dejaban dos
+/// "Seguimiento" en recientes. El instalador lo sigue abriendo el usuario
+/// desde la descarga: la app no instala nada (ADR 0006).
+class UpdateLauncher {
+  const UpdateLauncher();
+
+  static const _channel = MethodChannel('seguimiento/sistema');
+
+  /// true si se abrió; entonces la tarea de la app ya se está cerrando. false
+  /// si no hubo con qué abrirlo o no hay Android debajo: quien llama decide.
+  Future<bool> openApkDownload(Uri url) async {
+    try {
+      return await _channel.invokeMethod<bool>('openApkDownload', {'url': '$url'}) ?? false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
 }

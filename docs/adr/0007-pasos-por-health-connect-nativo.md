@@ -40,9 +40,37 @@ o compileSdk 35, y `pub` puede resolverlos aunque luego no compilen.
   trabajo de Android propio; queda pendiente.
 - Los pasos solo llegan cuando la app del reloj (Innova) sincroniza con
   Health Connect: si Innova no escribió, no hay nada nuevo que traer. Hoy
-  muestra "Pasos del reloj · actualizado HH:mm" para distinguirlo.
+  muestra quién escribió el último registro y a qué hora (ver la adenda).
 - Health Connect deduplica entre fuentes con la prioridad que el usuario fije
   en él; si el teléfono también cuenta pasos, la cifra es la que Health
   Connect considera buena, no la suma.
 - Actualizar Flutter permitiría cambiar a una versión estable de
   `connect-client`; revisar al subir compileSdk a 35.
+
+## Adenda del 5 oct 2026 (§16.14): la fuente real
+
+Hecho observado: Innova (`com.moyoung.innov`) escribe **por lotes al
+sincronizar**, con la hora de la sincronización: una caminata de 2.028 pasos
+llegó como un solo registro de 3:05 a 3:06 p. m. Por eso:
+
+- El total del día sigue siendo el **agregado** `COUNT_TOTAL` por día local
+  (`aggregateGroupByPeriod`), no la suma de registros: respeta la prioridad
+  de fuentes y no cuenta dos veces teléfono y reloj. Nada filtra registros
+  cortos: el lote de un minuto cuenta completo.
+- `lastStepsSync` (Kotlin) devuelve el registro más reciente de los últimos
+  3 días: hora de fin, paquete y nombre visible (con `<queries>` para Innova;
+  si Android no lo deja ver, Dart usa "INNOVA S-WATCH" o el paquete). Cada
+  sincronización lo guarda en `flags.json` (`lastStepsOrigin`).
+- Hoy (`lib/features/home/steps_source_line.dart`) muestra "INNOVA S-WATCH ·
+  3:06 p. m." y, si ese registro tiene más de 6 h, "Abre la app del reloj
+  para sincronizar". La hora en que esta app leyó dejó de mostrarse: lee cada
+  2 min y no dice si los pasos están al día.
+- Al volver a la app se sincroniza **sin limitar**: quien abre Innova para
+  sincronizar y vuelve en un minuto debe ver los pasos ya; `coalesce` evita
+  corridas simultáneas y el temporizador de 2 min sigue igual.
+- Ajustes sugiere poner INNOVA S-WATCH de primera en *Health Connect → Datos
+  y acceso → Actividad → Pasos → Prioridad de apps* cuando escribe más de una
+  app.
+- Límite: si el teléfono también escribe pasos, el "último registro" puede ser
+  suyo y entonces el aviso de 6 h no salta aunque el reloj no haya
+  sincronizado; la línea muestra el nombre de esa app, así que se nota.
