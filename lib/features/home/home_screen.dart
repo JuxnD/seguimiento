@@ -19,6 +19,7 @@ import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
+import 'steps_source_line.dart';
 import 'walk_screen.dart';
 import '../report/summary_screen.dart';
 import '../../data/local_flags.dart';
@@ -500,41 +501,9 @@ class _RingsCard extends StatelessWidget {
           if (d.recordSuspect != null) _RecordSuspectTile(suspect: d.recordSuspect!),
         ],
         _WalksLine(dashboard: d),
-        const _StepsSourceLine(),
+        const StepsSourceLine(),
         _CloseDayLine(dashboard: d),
       ],
-    );
-  }
-}
-
-/// "Pasos del reloj · actualizado 16:42": que se vea que se traen solos y
-/// cuándo fue la última vez. Nada si Health Connect no está conectado.
-class _StepsSourceLine extends ConsumerWidget {
-  const _StepsSourceLine();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final info = ref.watch(stepsSyncInfoProvider);
-    if (!info.enabled) return const SizedBox.shrink();
-    final last = info.lastSync;
-    final today = dateOnly(DateTime.now());
-    final when = last == null
-        ? 'aún sin traer'
-        : dateOnly(last) == today
-            ? 'actualizado ${timeKey(last.hour, last.minute)}'
-            : 'actualizado el ${weekdayShort(last.weekday)} ${formatShort(last)}';
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Row(
-        children: [
-          const Icon(Icons.watch_outlined, size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text('Pasos del reloj · $when · desliza hacia abajo para traerlos ya',
-                style: Theme.of(context).textTheme.bodySmall),
-          ),
-        ],
-      ),
     );
   }
 }

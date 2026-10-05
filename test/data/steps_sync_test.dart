@@ -30,9 +30,19 @@ class _FakeHealth extends HealthConnect {
     if (throwOnRead != null) throw throwOnRead!;
     return byDay;
   }
+
+  StepsOrigin? origin;
+  Object? throwOnOrigin;
+
+  @override
+  Future<StepsOrigin?> lastStepsRecord() async {
+    if (throwOnOrigin != null) throw throwOnOrigin!;
+    return origin;
+  }
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(useHostSqlite);
 
   group('qué cifra queda en un día', () {
@@ -43,6 +53,34 @@ void main() {
       expect(mergeSyncedSteps(current: 1935, currentSource: 'manual', synced: 5400), 5400);
       expect(mergeSyncedSteps(current: 9000, currentSource: 'manual', synced: 5400), isNull);
       expect(mergeSyncedSteps(current: null, currentSource: null, synced: 0), isNull, reason: 'día sin datos');
+    });
+  });
+
+  group('último registro por el canal', () {
+    const channel = MethodChannel('seguimiento/salud');
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    tearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+    test('lee hora (epoch ms), paquete y nombre', () async {
+      final at = DateTime(2026, 10, 3, 15, 6);
+      String? asked;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        asked = call.method;
+        return {'at': at.millisecondsSinceEpoch, 'package': 'com.moyoung.innov', 'label': 'INNOVA S-WATCH'};
+      });
+      final origin = await const HealthConnect().lastStepsRecord();
+      expect(asked, 'lastStepsSync');
+      expect(origin?.at, at);
+      expect(origin?.label, 'INNOVA S-WATCH');
+    });
+
+    test('sin registros o sin Android devuelve null', () async {
+      messenger.setMockMethodCallHandler(channel, (call) async => null);
+      expect(await const HealthConnect().lastStepsRecord(), isNull);
+      messenger.setMockMethodCallHandler(channel, null);
+      expect(await const HealthConnect().lastStepsRecord(), isNull, reason: 'MissingPluginException');
+      expect(parseStepsOrigin({'at': 'ayer', 'package': 'x'}), isNull);
+      expect(parseStepsOrigin({'at': 0, 'package': 'x'})?.label, 'x', reason: 'sin nombre, el paquete');
     });
   });
 
@@ -91,6 +129,31 @@ void main() {
       expect((await steps.row(DateTime(2026, 9, 28)))!.source, StepsSync.source);
       expect(await steps.day(DateTime(2026, 9, 25)), isNull);
       expect(sync.lastSync, DateTime(2026, 9, 28, 20));
+    });
+
+    test('guarda quién escribió el último registro y a qué hora (§16.14)', () async {
+      await flags.set(FlagKeys.healthConnectEnabled, true);
+      // La caminata de 2.028 pasos llegó como un solo registro de un minuto.
+      final walk = StepsOrigin(at: DateTime(2026, 10, 3, 15, 6), package: 'com.moyoung.innov', label: 'INNOVA S-WATCH');
+      final health = _FakeHealth({'2026-10-03': 2028})..origin = walk;
+      final sync = StepsSync(health: health, steps: steps, flags: flags);
+      expect((await sync.run(now: DateTime(2026, 10, 3, 16))).outcome, StepsSyncOutcome.hecho);
+      expect(await steps.day(DateTime(2026, 10, 3)), 2028, reason: 'el lote de un minuto cuenta completo');
+      expect(sync.lastOrigin?.at, walk.at);
+      expect(sync.lastOrigin?.package, 'com.moyoung.innov');
+      expect(sync.lastOrigin?.label, 'INNOVA S-WATCH');
+
+      // Sin registros nuevos se conserva el último conocido; si esa consulta
+      // falla, los pasos se guardan igual.
+      health.origin = null;
+      await sync.run(now: DateTime(2026, 10, 3, 17));
+      expect(sync.lastOrigin?.at, walk.at);
+      health
+        ..throwOnOrigin = PlatformException(code: 'health_connect')
+        ..byDay['2026-10-03'] = 3000;
+      expect((await sync.run(now: DateTime(2026, 10, 3, 18))).outcome, StepsSyncOutcome.hecho);
+      expect(await steps.day(DateTime(2026, 10, 3)), 3000);
+      expect(sync.lastOrigin?.at, walk.at);
     });
 
     test('sin permiso o sin Health Connect lo dice y no lanza', () async {

@@ -55,3 +55,59 @@ int? mergeSyncedSteps({required int? current, required String? currentSource, re
   if (currentSource == 'health_connect') return synced == current ? null : synced;
   return synced > current ? synced : null;
 }
+
+/// Quién escribió el último registro de pasos en Health Connect y cuándo
+/// termina. La app del reloj (INNOVA S-WATCH, `com.moyoung.innov`) escribe por
+/// lotes al sincronizar, con la hora de la sincronización: una caminata de
+/// 2.028 pasos llegó como un solo registro de 3:05 a 3:06 p. m. (§16.14).
+class StepsOrigin {
+  const StepsOrigin({required this.at, required this.package, required this.label});
+
+  final DateTime at;
+  final String package;
+
+  /// Nombre visible de la app; el paquete si Android no lo dejó ver.
+  final String label;
+
+  Map<String, Object?> toJson() => {'at': at.toIso8601String(), 'package': package, 'label': label};
+
+  static StepsOrigin? fromJson(Object? json) {
+    if (json is! Map) return null;
+    final at = json['at'], pkg = json['package'], label = json['label'];
+    if (at is! String || pkg is! String) return null;
+    final when = DateTime.tryParse(at);
+    if (when == null) return null;
+    return StepsOrigin(at: when, package: pkg, label: label is String ? label : pkg);
+  }
+}
+
+/// Paquetes conocidos, por si Android no deja leer el nombre visible.
+const _knownStepsApps = {'com.moyoung.innov': 'INNOVA S-WATCH'};
+
+/// Nombre para mostrar: el visible si Android lo dio; si no, uno conocido; si
+/// no, el paquete tal cual.
+String stepsAppName(StepsOrigin o) {
+  final label = o.label.trim();
+  if (label.isNotEmpty && label != o.package) return label;
+  return _knownStepsApps[o.package] ?? o.package;
+}
+
+/// Sin registros del reloj en tanto tiempo, lo más probable es que su app no
+/// haya sincronizado: los pasos están en el reloj, no en el teléfono.
+const watchSyncStaleAfter = Duration(hours: 6);
+
+/// true si hay que pedir abrir la app del reloj: sin registro conocido o con
+/// el último más viejo que [watchSyncStaleAfter].
+bool watchSyncStale(DateTime? lastRecord, DateTime now) =>
+    lastRecord == null || now.difference(lastRecord) > watchSyncStaleAfter;
+
+/// "INNOVA S-WATCH · 3:06 p. m."; "· ayer 3:06 p. m."; "· jue 2 oct 3:06 p. m.".
+String stepsOriginLine(StepsOrigin o, DateTime now) {
+  final days = daysBetween(o.at, now);
+  final day = switch (days) {
+    0 => '',
+    1 => 'ayer ',
+    _ => '${weekdayShort(o.at.weekday)} ${formatShort(o.at)} ',
+  };
+  return '${stepsAppName(o)} · $day${formatTime12(o.at)}';
+}

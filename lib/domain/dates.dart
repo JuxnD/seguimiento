@@ -21,6 +21,13 @@ int daysBetween(DateTime from, DateTime to) =>
 
 String timeKey(int hour, int minute) => '${pad2(hour)}:${pad2(minute)}';
 
+/// `3:06 p. m.`, `12:00 a. m.`: hora de 12 horas como se dice en Colombia,
+/// para mostrar (lo guardado sigue en `HH:mm`).
+String formatTime12(DateTime d) {
+  final h = d.hour % 12 == 0 ? 12 : d.hour % 12;
+  return '$h:${pad2(d.minute)} ${d.hour < 12 ? 'a. m.' : 'p. m.'}';
+}
+
 /// Semana anclada a la fecha de inicio del perfil, no a la semana calendario.
 /// Semana 1 = [inicio, inicio + 6].
 class WeekRange {

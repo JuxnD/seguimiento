@@ -14,6 +14,8 @@ import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.Period
 import kotlinx.coroutines.MainScope
@@ -41,6 +43,7 @@ class HealthConnectBridge(private val activity: Activity) {
             "requestPermission" -> requestPermission(result)
             "stepsByDay" -> launch(result) { stepsByDay(day(call, "from"), day(call, "to")) }
             "sources" -> launch(result) { sources(day(call, "from"), day(call, "to")) }
+            "lastStepsSync" -> launch(result) { lastStepsSync() }
             "openSettings" -> result.success(openSettings())
             "installProvider" -> result.success(installProvider())
             else -> result.notImplemented()
@@ -107,8 +110,12 @@ class HealthConnectBridge(private val activity: Activity) {
         return true
     }
 
-    /// Pasos por día local ("YYYY-MM-DD" → pasos). Health Connect ya
-    /// descarta los duplicados entre fuentes según la prioridad del usuario.
+    /// Pasos por día local ("YYYY-MM-DD" → pasos). Es el agregado de Health
+    /// Connect (COUNT_TOTAL), no la suma de registros: respeta la prioridad de
+    /// fuentes del usuario, así que teléfono y reloj en la misma ventana no se
+    /// cuentan dos veces. Tampoco filtra registros cortos: Innova escribe una
+    /// caminata entera como un solo registro de un minuto, a la hora en que
+    /// sincroniza, y debe contar completa (§16.14).
     private suspend fun stepsByDay(from: LocalDate, to: LocalDate): Map<String, Int> {
         val request = AggregateGroupByPeriodRequest(
             metrics = setOf(StepsRecord.COUNT_TOTAL),
@@ -131,6 +138,24 @@ class HealthConnectBridge(private val activity: Activity) {
             .map { it.metadata.dataOrigin.packageName }
             .distinct()
             .map { label(it) }
+    }
+
+    /// El registro de pasos más reciente de los últimos 3 días: cuándo termina
+    /// (epoch ms), qué app lo escribió y su nombre visible. Innova escribe por
+    /// lotes al sincronizar, así que esa hora dice cuándo sincronizó el reloj
+    /// por última vez. null si no hay registros (§16.14).
+    private suspend fun lastStepsSync(): Map<String, Any>? {
+        val request = ReadRecordsRequest(
+            recordType = StepsRecord::class,
+            timeRangeFilter = TimeRangeFilter.after(Instant.now().minus(Duration.ofDays(3))),
+            ascendingOrder = false,
+            pageSize = 50,
+        )
+        // Se ordena por inicio; se toma el que termina más tarde por si hay
+        // registros solapados de varias fuentes.
+        val last = client().readRecords(request).records.maxByOrNull { it.endTime } ?: return null
+        val pkg = last.metadata.dataOrigin.packageName
+        return mapOf("at" to last.endTime.toEpochMilli(), "package" to pkg, "label" to label(pkg))
     }
 
     private fun label(pkg: String): String = try {

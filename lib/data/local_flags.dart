@@ -58,6 +58,10 @@ abstract final class FlagKeys {
   static const healthConnectEnabled = 'healthConnectEnabled';
   static const lastStepsSync = 'lastStepsSync';
 
+  /// Último registro de pasos en Health Connect (hora, paquete y nombre de la
+  /// app): dice cuándo sincronizó el reloj, no cuándo leyó esta app (§16.14).
+  static const lastStepsOrigin = 'lastStepsOrigin';
+
   /// El usuario decidió no aplicar las correcciones del 29 sep: Hoy deja de
   /// ofrecerlas (siguen en Ajustes).
   static const corrections29SepDismissed = 'corrections29SepDismissed';

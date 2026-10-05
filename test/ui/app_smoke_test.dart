@@ -23,6 +23,7 @@ import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/nutrition.dart';
 import 'package:seguimiento/domain/reminders.dart';
+import 'package:seguimiento/domain/steps.dart';
 import 'package:seguimiento/features/meals/meal_form_screen.dart';
 
 import '../support/sqlite_host.dart';
@@ -135,7 +136,8 @@ void main() {
     final sync = _CountingSync(db);
     await pumpApp(tester, extra: [stepsSyncProvider.overrideWithValue(sync)]);
     expect(sync.runs, 1, reason: 'al abrir la app');
-    expect(find.textContaining('Pasos del reloj · actualizado'), findsOneWidget);
+    expect(find.textContaining('INNOVA S-WATCH · '), findsOneWidget);
+    expect(find.text('Abre la app del reloj para sincronizar'), findsNothing);
 
     await tester.pump(const Duration(minutes: 2));
     await settle(tester);
@@ -333,6 +335,10 @@ class _CountingSync extends StepsSync {
 
   @override
   DateTime? get lastSync => DateTime.now();
+
+  @override
+  StepsOrigin? get lastOrigin =>
+      StepsOrigin(at: DateTime.now(), package: 'com.moyoung.innov', label: 'INNOVA S-WATCH');
 
   @override
   Future<StepsSyncResult> run({int days = 14, DateTime? now}) async {
