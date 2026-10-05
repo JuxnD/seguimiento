@@ -12,6 +12,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Notificaciones | [../notificaciones.md](../notificaciones.md) | Cambia un aviso, su hora o el permiso |
 | Cronómetro guiado | [../cronometro.md](../cronometro.md) | Cambia cómo se recorre la sesión o los descansos |
 | Plan v3 "Cierre de año" | [../plan-v3.md](../plan-v3.md) | Cambia la semana tipo, la periodización o un cronómetro del v3 |
+| Plan v3.1 (vigente desde el 12 oct) | [../plan-v3-1.md](../plan-v3-1.md) | Cambia la semana, el viernes, el RIR, la doble progresión, las metas por día o los hábitos (sueño, huevos, hidratación, regla de 2 semanas) |
 | Datos e invariantes | [../modelo-datos.md](../modelo-datos.md) | Cambia una tabla, una unidad o el esquema |
 | Producto del informe | [../informe.md](../informe.md) | Cambia una sección, una métrica o una alerta |
 | Desviaciones de la planeación | [../auditoria-planeacion.md](../auditoria-planeacion.md) | Se acepta o rechaza un cambio al plan original |

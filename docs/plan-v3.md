@@ -1,5 +1,8 @@
 # Plan v3 "Cierre de año"
 
+> Reemplazado por el [Plan v3.1](plan-v3-1.md) (§19, 5 oct) en la semana tipo,
+> el calendario, la nutrición y el EMOM de burpees.
+
 Traspaso §18 (3–4 oct 2026). Diez semanas desde un lunes hasta el test final
 (viernes de la semana 10: 18 dic si se empieza el 12 oct). Objetivo: físico
 proporcionado (espalda en V, hombro, brazos, abdomen) manteniendo la
