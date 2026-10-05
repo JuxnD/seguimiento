@@ -78,7 +78,7 @@ class ReminderScheduler {
       proteinToday: totals.protein,
       proteinMin: p.proteinMin,
       kcalToday: totals.kcal,
-      kcalTarget: p.kcalTarget,
+      kcalTarget: dailyKcalTarget(day: today, weekdayTarget: p.kcalTarget, footballTarget: p.kcalTargetFootball),
       missingMealsToday: missing,
       stepsToday: steps?.steps,
       stepsTarget: p.stepsTarget,

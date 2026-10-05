@@ -2,10 +2,12 @@ import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
 import '../database.dart';
 import 'exercise_repository.dart';
+import 'plan_repository.dart';
 
 class SetDraft {
   SetDraft({
@@ -16,6 +18,7 @@ class SetDraft {
     this.toFailure = false,
     this.loadKg,
     this.variant,
+    this.rir,
   });
 
   String exercise;
@@ -29,6 +32,9 @@ class SetDraft {
 
   /// Variante de la progresión ("arquero", "pies elevados"). null = la del plan.
   String? variant;
+
+  /// Repeticiones en reserva (0–5). null = no se anotó.
+  int? rir;
 }
 
 class SessionDraft {
@@ -209,6 +215,7 @@ class TrainingRepository {
                 toFailure: Value(s.toFailure),
                 loadKg: Value(s.loadKg),
                 variant: Value(_blankToNull(s.variant)),
+                rir: Value(s.rir),
               ));
         }
         final work = d.roundWorkSec;
@@ -271,6 +278,7 @@ class TrainingRepository {
             toFailure: s.toFailure,
             loadKg: s.loadKg,
             variant: s.variant,
+            rir: s.rir,
           ),
       ],
       roundMarksSec: rounds.map((x) => x.elapsedSec).toList(),
@@ -361,6 +369,71 @@ class TrainingRepository {
       recoveryOk: last.recoveryOk,
       incomplete: last.incomplete,
     );
+  }
+
+  /// Fecha de la primera progresión de 10 rondas o más que cumplió la regla
+  /// de calidad, antes de `before`. Desde el viernes siguiente, el viernes del
+  /// v3.1 deja el circuito y alterna Cindy y Tabata (§19.1).
+  Future<DateTime?> firstCleanTen({DateTime? before}) async {
+    final rows = await (db.select(db.sessions)
+          ..where((t) =>
+              t.type.equalsValue(SessionType.progresion) &
+              t.roundsDone.isBiggerOrEqualValue(10) &
+              (before == null ? const Constant(true) : t.date.isSmallerThanValue(dayKey(before))))
+          ..orderBy([(t) => OrderingTerm(expression: t.date)]))
+        .get();
+    for (final r in rows) {
+      final s = await load(r.id);
+      final p = proposeProgression(
+        lastRounds: s.roundsDone,
+        lastPlanned: s.plannedRounds,
+        anySplit: s.sets.any((x) => x.split),
+        anyFailure: s.sets.any((x) => x.toFailure),
+        techniqueOk: s.techniqueOk,
+        fullRange: s.fullRange,
+        recoveryOk: s.recoveryOk,
+        incomplete: s.incomplete,
+      );
+      if (p != null && p.canProgress) return s.date;
+    }
+    return null;
+  }
+
+  /// Día del bloque (v3 o v3.1) para el día del plan `view`. El viernes del
+  /// v3.1 depende de si ya salieron 10 rondas limpias. null fuera del bloque.
+  Future<V3Day?> blockDay(PlanDayView? view, DateTime date) async {
+    if (view == null || !isBlockScheme(view.scheme) || view.validFrom == null) return null;
+    final cleanTen =
+        view.scheme == v31Scheme && date.weekday == DateTime.friday ? await firstCleanTen(before: date) : null;
+    return v3Day(view.validFrom!, date, scheme: view.scheme!, cleanTen: cleanTen);
+  }
+
+  /// Series del ejercicio en la última sesión de fuerza del mismo día de la
+  /// semana antes de `date` (el lunes se compara con el lunes: las dominadas
+  /// del lunes van con mochila y las del jueves son supinas). Vacío si no hay.
+  Future<List<SetDraft>> lastStrengthSets(String exercise, DateTime date) async {
+    final exId = await exercises.idOf(exercise);
+    if (exId == null) return const [];
+    final circuit = SessionType.values.where((t) => t.isCircuit || t == SessionType.resistencia).map((t) => t.name);
+    final rows = await (db.select(db.sessions)
+          ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.isNotIn(circuit))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+            (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
+          ])
+          ..limit(40))
+        .get();
+    for (final r in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
+      final sets = await (db.select(db.sessionSets)
+            ..where((t) => t.sessionId.equals(r.id) & t.exerciseId.equals(exId))
+            ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+          .get();
+      if (sets.isEmpty) continue;
+      return [
+        for (final s in sets) SetDraft(exercise: exercise, reps: s.reps, loadKg: s.loadKg, variant: s.variant, rir: s.rir),
+      ];
+    }
+    return const [];
   }
 
   /// Sesiones que se guardaron solas al terminar el cronómetro y aún no se

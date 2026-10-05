@@ -827,22 +827,39 @@ class _V3Strip extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final daysToTest = daysBetween(dashboard.date, v3.testDate);
-    final week = v3.week > v3Weeks ? 'después del test' : 'semana ${v3.week} de $v3Weeks';
+    final total = v3.totalWeeks;
+    final week = v3.week > total ? 'después del test' : 'semana ${v3.week} de $total';
+    final resistance = v3.resistance;
+    final fridayCircuit = v3.isV31 && dashboard.dayType == DayType.progresion;
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Cierre de año · $week · ${v3.phase.label}', style: text.labelLarge?.copyWith(color: color)),
-          if (v3.reducedVolume) Text(v3.phase.hint, style: text.bodyMedium),
-          if (dashboard.dayType == DayType.resistencia) Text('Esta semana: ${v3.resistance.label}', style: text.bodyMedium),
+          Text('${v3.title} · $week · ${v3.phase.label}', style: text.labelLarge?.copyWith(color: color)),
+          if (v3.reducedVolume || (v3.isV31 && v3.week == 1)) Text(v3.hint, style: text.bodyMedium),
+          if (dashboard.dayType == DayType.resistencia && resistance != null)
+            Text(
+                '${v3.isV31 ? 'Hoy' : 'Esta semana'}: ${resistance.label}'
+                '${v3.cindyTest && resistance == ResistanceMode.cindy ? ' · de prueba' : ''}',
+                style: text.bodyMedium),
+          if (fridayCircuit)
+            Text('Circuito hasta cerrar 10 rondas limpias; después, Cindy y Tabata en semanas alternas.',
+                style: text.bodySmall),
+          if (dashboard.midweekGame)
+            Text('Hubo partido entre semana: reemplaza la sesión metabólica de hoy. Pino, habilidades y movilidad.',
+                style: text.bodyMedium?.copyWith(color: color)),
           if (dashboard.dayType == DayType.densidad && v3.burpees == null && !v3.reducedVolume)
             Text('Sin burpees esta semana.', style: text.bodySmall),
           if (daysToTest > 0)
-            Text('Faltan $daysToTest días para el test final (${weekdayShort(v3.testDate.weekday)} '
-                '${formatShort(v3.testDate)})', style: text.bodySmall)
+            Text('Faltan $daysToTest días para ${v3.isV31 ? 'las pruebas' : 'el test final'} '
+                '(${weekdayShort(v3.testDate.weekday)} ${formatShort(v3.testDate)})', style: text.bodySmall)
           else if (daysToTest == 0)
-            Text('Hoy es el test final: medidas en ayunas, dominadas y flexiones máximas, flexión a una mano y L-sit.',
+            Text(
+                v3.isV31
+                    ? 'Hoy son las pruebas: Cindy, máximo de dominadas estrictas y L-sit máximo. '
+                        'Mañana, medidas finales en ayunas antes del fútbol.'
+                    : 'Hoy es el test final: medidas en ayunas, dominadas y flexiones máximas, flexión a una mano y L-sit.',
                 style: text.bodyMedium?.copyWith(color: color)),
         ],
       ),
@@ -850,7 +867,7 @@ class _V3Strip extends StatelessWidget {
   }
 }
 
-/// La última progresión fue de 10 rondas limpias: toca el Plan v3 (§18).
+/// El Plan v3.1 está listo para el próximo lunes (§19).
 class _V3SuggestionCard extends ConsumerWidget {
   const _V3SuggestionCard({required this.monday});
 
@@ -860,13 +877,14 @@ class _V3SuggestionCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
     return AppCard(
-      title: '¡10 rondas limpias!',
+      title: 'Plan v3.1 listo',
       children: [
-        Text('Toca el Plan v3 "Cierre de año": tren superior, piernas, Cindy y Tabata, densidad. '
-            '10 semanas hasta el test del ${formatShort(v3TestDate(monday))}.', style: text.bodyMedium),
+        Text('Tirón + hombro, empuje + brazos, piernas el miércoles, torso B y el viernes de referencia. '
+            'Series a RIR 0–3 con doble progresión. 9 semanas hasta las pruebas del '
+            '${formatShort(v31TestDate(monday))}.', style: text.bodyMedium),
         const SizedBox(height: 8),
         FilledButton.icon(
-          onPressed: () => activateV3(context, ref, monday),
+          onPressed: () => activateV31(context, ref, monday),
           icon: const Icon(Icons.rocket_launch),
           label: Text('Activar desde el ${weekdayShort(monday.weekday)} ${formatShort(monday)}'),
         ),

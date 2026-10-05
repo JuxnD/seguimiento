@@ -68,6 +68,16 @@ class WorkStep extends ScriptStep {
   String get stepTarget => side == null ? targetLabel : targetLabel.replaceAll(' · por lado', '');
 }
 
+/// Bloques del plan que no son pasos del cronómetro guiado: el calentamiento
+/// del día (FIFA 11+ el miércoles del v3.1) se hace en la fase de
+/// calentamiento, y el Tabata tiene su propio cronómetro.
+const warmupBlock = 'calentamiento';
+const tabataBlock = 'tabata';
+
+/// Bloques que van antes del trabajo principal, sin fatiga: la práctica de
+/// pino del v3.1 (§19.1).
+const preBlocks = {'pino'};
+
 /// Descanso entre series de un bloque cuando el plan no lo fija, y la
 /// transición del circuito a los bloques extra. Sin ellos el cronómetro
 /// pasaba de una serie a la siguiente sin respiro (uso real, 28 sep).
@@ -154,7 +164,11 @@ class ScriptDay {
   final int? restBetweenRoundsSec;
 
   List<ScriptExercise> get main => exercises.where((e) => e.blockName == null).toList();
-  List<ScriptExercise> get blockExercises => exercises.where((e) => e.blockName != null).toList();
+
+  /// Bloques extra que recorre el cronómetro (sin calentamiento ni Tabata).
+  List<ScriptExercise> get blockExercises => exercises
+      .where((e) => e.blockName != null && e.blockName != warmupBlock && e.blockName != tabataBlock)
+      .toList();
 }
 
 /// Arma el guion. `rounds` permite pasar un objetivo distinto al del plan
@@ -168,6 +182,16 @@ class ScriptDay {
 List<ScriptStep> buildScript(ScriptDay day, {int? rounds, String? coreVariant}) {
   final steps = <ScriptStep>[];
   final main = day.main;
+
+  // La práctica de pino va primero, sin fatiga.
+  final pre = day.blockExercises.where((e) => preBlocks.contains(e.blockName)).toList();
+  if (pre.isNotEmpty) {
+    steps.addAll(_blockSteps(pre));
+    final first = main.isNotEmpty ? main.first.name : null;
+    if (first != null) {
+      steps.add(RestStep(seconds: defaultBlockRestSec, nextLabel: day.type.isCircuit ? 'Ronda 1: $first' : first));
+    }
+  }
 
   if (day.type.isCircuit && main.isNotEmpty) {
     final total = rounds ?? day.targetRounds ?? 1;
@@ -187,6 +211,7 @@ List<ScriptStep> buildScript(ScriptDay day, {int? rounds, String? coreVariant}) 
 
   // Bloques extra (core, cuádriceps, hombro), filtrando la variante elegida.
   final extras = day.blockExercises
+      .where((e) => !preBlocks.contains(e.blockName))
       .where((e) => e.variant == null || coreVariant == null || e.variant == coreVariant)
       .toList();
   for (final blockName in extras.map((e) => e.blockName!).toSet()) {

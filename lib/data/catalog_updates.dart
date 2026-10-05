@@ -280,8 +280,169 @@ const exerciseGuides = <ExerciseGuide>[
       'Apoya la punta del pie, no el talón.',
     ],
   ),
-  // Los del circuito ya se dominan: basta un recordatorio.
-  ExerciseGuide(name: 'Dominadas', formCues: ['Recorrido completo: brazos extendidos abajo, barbilla sobre la barra.']),
+  // Plan v3.1 (§19.5, §18.10): ejercicios nuevos. El paso a paso, los
+  // errores y las variantes están en `exercise_details.dart`.
+  ExerciseGuide(
+    name: 'Pino pecho a la pared',
+    formCues: [
+      'Pies en la pared, camina con las manos hacia ella hasta quedar casi vertical.',
+      'Manos a 10–20 cm de la pared, brazos bloqueados, empuja el suelo.',
+      'Abdomen y glúteo apretados, cuerpo en línea.',
+      'Baja caminando con las manos; nunca te dejes caer de cabeza.',
+    ],
+    progressionNote: 'L con pies en la pared → pecho a la pared → separar un pie',
+  ),
+  ExerciseGuide(
+    name: 'Nórdico (isquios)',
+    formCues: [
+      'De rodillas sobre un cojín, talones trabados bajo un sofá o con alguien sujetando.',
+      'Cuerpo recto de rodillas a cabeza, glúteo apretado.',
+      'Déjate caer adelante lo más lento posible (3–5 s).',
+      'Frena con las manos al final y empújate para volver.',
+    ],
+    progressionNote: 'rango corto con manos → bajada completa → bajada + empuje mínimo con manos',
+  ),
+  ExerciseGuide(
+    name: 'Rollout con toalla',
+    formCues: [
+      'De rodillas, manos sobre una toalla en baldosa lisa.',
+      'Desliza las manos adelante con el abdomen apretado y la pelvis metida.',
+      'Llega solo hasta donde la zona lumbar no se hunda.',
+      'Vuelve tirando con el abdomen, no con la cadera.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Colgarse de la barra',
+    formCues: [
+      'Agarre completo, brazos rectos.',
+      'Hombros activos: ligeramente lejos de las orejas.',
+      'Respira normal; acumula el tiempo en series.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Flexiones con pies elevados',
+    formCues: [
+      'Pies en una silla o cama, manos al ancho de hombros.',
+      'Cuerpo recto; sin hundir la cadera.',
+      'Baja hasta casi tocar con el pecho; más alto = más difícil.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Salto vertical',
+    formCues: [
+      'Pies al ancho de cadera, braceo atrás y sentadilla corta.',
+      'Salta lo más alto posible extendiendo cadera, rodillas y tobillos.',
+      'Aterriza suave, rodillas alineadas con la punta de los pies.',
+      'Descansa entre saltos: calidad, no cansancio.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Salto largo',
+    formCues: [
+      'Desde parado, braceo y salto hacia adelante.',
+      'Aterriza con los dos pies a la vez, absorbiendo con cadera y rodillas.',
+      'Aguanta el aterrizaje 1 s antes del siguiente.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Salto de patinador',
+    formCues: [
+      'Salta de lado de un pie al otro.',
+      'Aterriza en una pierna con la rodilla sobre el pie, sin que se vaya hacia dentro.',
+      'Pausa 1 s en cada aterrizaje.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Aceleración 10–20 m',
+    formCues: [
+      'Salida inclinado hacia adelante, pasos cortos y potentes.',
+      'Brazos fuertes de cadera a mejilla.',
+      'Descanso completo entre repeticiones.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Carga de maleta con mochila',
+    tracksLoad: true,
+    formCues: [
+      'Mochila pesada en una mano.',
+      'Camina erguido sin inclinarte hacia el lado del peso.',
+      'Abdomen apretado; cambia de mano a mitad.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Carga abrazada al pecho',
+    tracksLoad: true,
+    formCues: [
+      'Mochila abrazada contra el pecho.',
+      'Camina con pasos cortos, espalda recta, sin echarte atrás.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Calentamiento tipo FIFA 11+',
+    formCues: [
+      'Trote suave con apertura y cierre de cadera, desplazamientos laterales y contactos de hombro.',
+      'Plancha frontal y lateral, nórdico suave y sentadilla a una pierna.',
+      'Saltos verticales y laterales cortos.',
+      'Termina con aceleraciones progresivas y cambios de dirección.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Progresión de pistol',
+    formCues: [
+      'Empieza sentándote a un banco o cama con una pierna.',
+      'La otra pierna estirada al frente; talón de apoyo pegado al suelo.',
+      'Baja controlado y sube sin impulso.',
+    ],
+    progressionNote: 'banco alto → banco bajo → pistol completo',
+  ),
+  ExerciseGuide(
+    name: 'Hollow rocks',
+    formCues: [
+      'Posición hollow: zona lumbar pegada al suelo, brazos y piernas extendidos.',
+      'Mécete como una barca sin perder la forma.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Elevaciones en pike sentado',
+    formCues: [
+      'Sentado con piernas juntas y estiradas, manos al lado de las rodillas.',
+      'Levanta ambas piernas sin inclinarte atrás.',
+      'Si no despegan, empieza con una pierna.',
+    ],
+    progressionNote: 'una pierna → las dos → pausa de 2 s arriba',
+  ),
+  ExerciseGuide(
+    name: 'Elevaciones en straddle',
+    formCues: [
+      'Piernas abiertas, manos entre ellas.',
+      'Levanta las dos piernas a la vez.',
+      'Rodillas estiradas.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Barca / V-sit',
+    formCues: [
+      'Equilibrio sobre los glúteos.',
+      'Piernas y brazos estirados, espalda recta.',
+      'Respira; no aguantes el aire.',
+    ],
+    progressionNote: 'rodillas recogidas → piernas estiradas → brazos arriba',
+  ),
+  ExerciseGuide(
+    name: 'Plancha inversa con patada',
+    formCues: [
+      'Manos detrás, cadera arriba en línea.',
+      'Patada alterna sin dejar caer la cadera.',
+    ],
+  ),
+  // Los del circuito ya se dominan: basta un recordatorio. Las dominadas del
+  // lunes del v3.1 van con mochila: el cronómetro pide kg en las series (no en
+  // las rondas del circuito).
+  ExerciseGuide(
+    name: 'Dominadas',
+    formCues: ['Recorrido completo: brazos extendidos abajo, barbilla sobre la barra.'],
+    tracksLoad: true,
+  ),
   ExerciseGuide(name: 'Flexiones', formCues: ['Cuerpo en bloque: pecho casi al suelo, sin hundir la cadera.']),
   ExerciseGuide(name: 'Sentadillas', formCues: ['Cadera por debajo de las rodillas, talones apoyados.']),
 ];

@@ -10,6 +10,7 @@ import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
+import '../../domain/session_script.dart' show tabataBlock;
 import '../../ui/hero.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
@@ -73,10 +74,13 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   }
 
   if (!context.mounted) return;
-  // Plan v3: lo que toca depende de la semana del bloque (§18.6).
-  final v3 = view.scheme == v3Scheme && view.validFrom != null ? v3Day(view.validFrom!, day) : null;
-  if (planDay.type == DayType.resistencia) {
-    await _startResistance(context, ref, day, view, v3?.resistance ?? ResistanceMode.cindy);
+  // Plan v3 / v3.1: lo que toca depende de la semana del bloque (§18.6,
+  // §19.4). El viernes del v3.1 pasa a Cindy o Tabata tras 10 limpias.
+  final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, day);
+  if (!context.mounted) return;
+  if (planDay.type == DayType.resistencia || (v3 != null && v3.isV31 && v3.resistance != null)) {
+    await _startResistance(context, ref, day, view, v3?.resistance ?? ResistanceMode.cindy,
+        cindyTest: v3?.cindyTest ?? false);
     return;
   }
   final (adjusted, note) = _v3Adjust(planDay, v3);
@@ -120,18 +124,14 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
 /// una serie menos y sin lastre, anotado en la sesión.
 (PlanDayDraft, String?) _v3Adjust(PlanDayDraft day, V3Day? v3) {
   if (v3 == null || !v3.reducedVolume) return (day, null);
-  return (
-    deloadVersion(day),
-    v3.phase == V3Phase.descarga
-        ? 'Semana ${v3.week} del v3: descarga (una serie menos, sin lastre)'
-        : 'Semana ${v3.week} del v3: volumen −30 % antes del test'
-  );
+  return (deloadVersion(day, half: v3.isV31), v3.deloadNote);
 }
 
 /// Miércoles de resistencia del v3: Cindy, Tabata o 10 rondas por tiempo.
 /// Se propone lo de la semana y se puede cambiar.
 Future<void> _startResistance(
-    BuildContext context, WidgetRef ref, DateTime day, PlanDayView view, ResistanceMode suggested) async {
+    BuildContext context, WidgetRef ref, DateTime day, PlanDayView view, ResistanceMode suggested,
+    {bool cindyTest = false}) async {
   final mode = await showDialog<ResistanceMode>(
     context: context,
     builder: (c) => SimpleDialog(
@@ -155,9 +155,14 @@ Future<void> _startResistance(
   switch (mode) {
     case ResistanceMode.cindy:
       final draft = await nav.push<SessionDraft>(MaterialPageRoute(builder: (_) => AmrapScreen(date: day)));
+      // Cindy de prueba (línea base o la de cada 4 semanas): queda anotado.
+      if (draft != null && cindyTest && mode == suggested) {
+        draft.context = [if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(), 'Cindy de prueba']
+            .join('. ');
+      }
       if (draft != null) await _saveThenReview(nav, messenger, repo, draft);
     case ResistanceMode.tabata:
-      final names = [for (final e in view.day.exercises) if (e.block == 'tabata') e.name];
+      final names = [for (final e in view.day.exercises) if (e.block == tabataBlock) e.name];
       final draft = await nav.push<SessionDraft>(
         MaterialPageRoute(builder: (_) => TabataScreen(date: day, exercises: names.isEmpty ? tabataExercises : names)),
       );
@@ -308,10 +313,8 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         await _clearActive(ProviderScope.containerOf(context, listen: false));
         return;
       }
-      final (adjusted, note) = _v3Adjust(
-        view.day,
-        view.scheme == v3Scheme && view.validFrom != null ? v3Day(view.validFrom!, parseDay(s.date)) : null,
-      );
+      final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, parseDay(s.date));
+      final (adjusted, note) = _v3Adjust(view.day, v3);
       if (!context.mounted) return;
       await _runGuided(
         context,

@@ -34,19 +34,12 @@ void main() {
 
   tearDown(() => db.close());
 
-  test('10 rondas limpias el viernes 9 oct → Hoy propone el v3 desde el lunes 12', () async {
-    final id = await training
-        .save(SessionDraft(date: d(10, 9), type: SessionType.progresion, roundsDone: 10, plannedRounds: 10));
-    expect((await dashboard.today(now: d(10, 10))).v3Suggestion, isNull, reason: 'faltan los criterios');
-    await training.setProgressionCriteria(id, techniqueOk: true, fullRange: true, recoveryOk: true);
-    expect((await dashboard.today(now: d(10, 10))).v3Suggestion, d(10, 12));
-  });
-
-  test('9 rondas no proponen el v3', () async {
+  test('Hoy propone el v3.1 desde el próximo lunes, sin esperar a las 10 limpias (§19)', () async {
     final id = await training
         .save(SessionDraft(date: d(10, 9), type: SessionType.progresion, roundsDone: 9, plannedRounds: 9));
     await training.setProgressionCriteria(id, techniqueOk: true, fullRange: true, recoveryOk: true);
-    expect((await dashboard.today(now: d(10, 10))).v3Suggestion, isNull);
+    expect((await dashboard.today(now: d(10, 10))).v3Suggestion, d(10, 12));
+    expect((await dashboard.today(now: d(10, 5))).v3Suggestion, d(10, 12), reason: 'un lunes propone el siguiente');
   });
 
   test('activarlo: el v2 sigue hasta el domingo, el lunes 12 es tren superior A en semana 1', () async {
@@ -58,7 +51,7 @@ void main() {
     final monday = await dashboard.today(now: d(10, 12));
     expect(monday.dayType, DayType.trenSuperior);
     expect((monday.v3!.week, monday.v3!.phase), (1, V3Phase.acumulacion));
-    expect(monday.v3Suggestion, isNull, reason: 'ya hay v3');
+    expect(monday.v3Suggestion, d(10, 19), reason: 'con el v3 viejo, el v3.1 se sigue proponiendo');
 
     final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
     expect(profile.nextMeasurementDate, '2026-11-06');

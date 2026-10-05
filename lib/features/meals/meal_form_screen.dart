@@ -807,7 +807,8 @@ class _DayTotals extends ConsumerWidget {
     final profile = ref.watch(profileProvider).value;
     final others = Macros.sum(meals.where((m) => m.meal.id != draft.id).map((m) => m.macros));
     final day = others + draft.macros;
-    final kcalTarget = profile?.kcalTarget ?? 2400;
+    final kcalTarget = dailyKcalTarget(
+        day: draft.date, weekdayTarget: profile?.kcalTarget ?? 2400, footballTarget: profile?.kcalTargetFootball);
     final proteinMin = profile?.proteinMin ?? 130;
     final text = Theme.of(context).textTheme;
     String left(double have, num goal, String unit) {

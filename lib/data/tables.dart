@@ -35,6 +35,10 @@ class Profiles extends Table {
   /// Meta de pasos diarios entre semana.
   IntColumn get stepsTarget => integer().withDefault(const Constant(7500))();
 
+  /// Meta de kcal de los días de fútbol (sábado y domingo, §19.3). null =
+  /// la misma de entre semana (`kcalTarget`).
+  IntColumn get kcalTargetFootball => integer().nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -220,6 +224,10 @@ class SessionSets extends Table {
   /// Variante de la progresión usada en la serie ("arquero", "pies
   /// elevados"; §18.4). null = la del plan.
   TextColumn get variant => text().nullable()();
+
+  /// Repeticiones en reserva al terminar la serie (0 = no salía otra; §19.2).
+  /// null = no se anotó.
+  IntColumn get rir => integer().nullable().check(rir.isBetweenValues(0, 5))();
 }
 
 @DataClassName('FootballGameRow')
@@ -235,6 +243,12 @@ class FootballGames extends Table {
   /// Hubo golpe o molestia. null = no se registró. Decide si el lunes baja.
   BoolColumn get knock => boolean().nullable()();
   TextColumn get notes => text().nullable()();
+
+  /// Hidratación (§19.3): peso antes y después del partido y lo que se bebió
+  /// durante. Con eso sale la tasa de sudor y cuánto reponer.
+  RealColumn get weightBeforeKg => real().nullable()();
+  RealColumn get weightAfterKg => real().nullable()();
+  IntColumn get fluidMl => integer().nullable()();
 }
 
 /// Macros por 1 unidad (`unit`) o por 100 g/ml (`per100`).
@@ -418,6 +432,17 @@ class CustomReminders extends Table {
   TextColumn get startDate => text()();
   TextColumn get lastDone => text().nullable()();
   BoolColumn get enabled => boolean().withDefault(const Constant(true))();
+}
+
+/// Horas en cama de la noche que termina en `date` (§19.3: ≥ 8 h). Una por
+/// día; registrar otra vez reemplaza.
+@DataClassName('SleepLogRow')
+class SleepLogs extends Table {
+  TextColumn get date => text()();
+  RealColumn get hours => real().check(hours.isBetweenValues(0, 16))();
+
+  @override
+  Set<Column> get primaryKey => {date};
 }
 
 /// Notas libres por semana (índice anclado a la fecha de inicio).

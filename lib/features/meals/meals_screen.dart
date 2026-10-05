@@ -110,7 +110,8 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                 error: (e, _) => Text('Error: $e'),
                 data: (list) {
                   final total = Macros.sum(list.map((m) => m.macros));
-                  final kcalTarget = profile?.kcalTarget ?? 2400;
+                  final kcalTarget = dailyKcalTarget(
+                      day: _day, weekdayTarget: profile?.kcalTarget ?? 2400, footballTarget: profile?.kcalTargetFootball);
                   final proteinMin = profile?.proteinMin ?? 130;
                   return Column(
                     children: [

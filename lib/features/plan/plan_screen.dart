@@ -20,16 +20,17 @@ class _V3ActivationCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final monday = nextMonday(addDays(dateOnly(DateTime.now()), 1));
     return AppCard(
-      title: 'Plan v3 · Cierre de año',
+      title: 'Plan v3.1',
       children: [
-        const Text('Tren superior A y B, piernas, resistencia (Cindy o Tabata) y densidad con burpees; 10 semanas '
-            'con descargas en la 4 y la 8 y test final. Arranca un lunes.'),
+        const Text('Tirón + hombro, empuje + brazos, piernas + potencia el miércoles, torso B y el viernes de '
+            'referencia (circuito hasta las 10 limpias; luego Cindy y Tabata). 9 semanas: bloque 1 de 5, '
+            'descarga, bloque 2 de 3 y pruebas. Arranca un lunes.'),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
           children: [
             FilledButton(
-              onPressed: () => activateV3(context, ref, monday),
+              onPressed: () => activateV31(context, ref, monday),
               child: Text('Activar desde el ${formatShort(monday)}'),
             ),
             OutlinedButton(
@@ -42,7 +43,7 @@ class _V3ActivationCard extends ConsumerWidget {
                   selectableDayPredicate: (d) => d.weekday == DateTime.monday,
                   helpText: 'Lunes de inicio',
                 );
-                if (picked != null && context.mounted) await activateV3(context, ref, dateOnly(picked));
+                if (picked != null && context.mounted) await activateV31(context, ref, dateOnly(picked));
               },
               child: const Text('Otro lunes'),
             ),
@@ -69,7 +70,7 @@ class PlanScreen extends ConsumerWidget {
           if (list.isEmpty) {
             return const AppCard(children: [EmptyHint('Sin plan. Crea la versión 1.')]);
           }
-          final hasV3 = list.any((v) => v.scheme == v3Scheme);
+          final hasV3 = list.any((v) => v.scheme == v31Scheme);
           return ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [

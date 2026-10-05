@@ -10,6 +10,7 @@ class Targets {
     this.proteinMin = 130,
     this.proteinMax = 160,
     this.kcalTarget = 2400,
+    this.kcalTargetFootball,
     this.kcalFloor = 2000,
     this.minWarmupSec = 360,
     this.minCooldownSec = minCooldownSecDefault,
@@ -26,6 +27,9 @@ class Targets {
   final int proteinMin;
   final int proteinMax;
   final int kcalTarget;
+
+  /// Meta de los días de fútbol (sábado y domingo); null = la misma.
+  final int? kcalTargetFootball;
   final int kcalFloor;
   final int minWarmupSec;
 

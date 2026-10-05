@@ -217,6 +217,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
   late final _proteinMax = TextEditingController(text: '${p.proteinMax}');
   late final _kcal = TextEditingController(text: '${p.kcalTarget}');
   late final _kcalFloor = TextEditingController(text: '${p.kcalFloor}');
+  late final _kcalFootball = TextEditingController(text: p.kcalTargetFootball == null ? '' : '${p.kcalTargetFootball}');
   late final _warmup = TextEditingController(text: formatDuration(p.minWarmupSec));
   late final _interval = TextEditingController(text: '${p.measureIntervalDays}');
   late final _intervalMax = TextEditingController(text: '${p.measureIntervalMaxDays}');
@@ -230,7 +231,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
 
   @override
   void dispose() {
-    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _warmup, _interval, _intervalMax, _cooldown, _steps]) {
+    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _kcalFootball, _warmup, _interval, _intervalMax, _cooldown, _steps]) {
       c.dispose();
     }
     super.dispose();
@@ -262,6 +263,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
           proteinMax: Value(proteinMax),
           kcalTarget: Value(kcal),
           kcalFloor: Value(kcalFloor),
+          kcalTargetFootball: Value(_positiveInt(_kcalFootball.text)),
           minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
           measureIntervalDays: Value(interval),
           measureIntervalMaxDays: Value(intervalMax),
@@ -318,6 +320,8 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
             Expanded(child: NumberField(controller: _kcalFloor, label: 'Piso de alerta kcal')),
           ],
         ),
+        const SizedBox(height: 8),
+        NumberField(controller: _kcalFootball, label: 'kcal en días de fútbol (sáb y dom; vacío = la misma)'),
         const SizedBox(height: 8),
         NumberField(controller: _steps, label: 'Pasos diarios entre semana', suffix: 'pasos'),
         const SizedBox(height: 8),

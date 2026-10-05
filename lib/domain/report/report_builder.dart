@@ -97,7 +97,9 @@ void _summary(StringBuffer b, ReportStats s) {
     String vs(double now, double? before) => before == null ? '' : ' (${fmtDelta(now - before, decimals: 0)} vs semana anterior)';
     b.writeln('- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta ${t.proteinMin}–${t.proteinMax})'
         '${vs(s.avgProtein!, prev?.avgProtein)} · '
-        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${fmtInt(t.kcalTarget)})${vs(s.avgKcal!, prev?.avgKcal)} · '
+        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${fmtInt(t.kcalTarget)}'
+        '${t.kcalTargetFootball == null ? '' : ' entre semana, ${fmtInt(t.kcalTargetFootball!)} fútbol'})'
+        '${vs(s.avgKcal!, prev?.avgKcal)} · '
         'días cerrados: $closed/$elapsed');
     b.writeln('- Días bajo ${fmtInt(t.kcalFloor)} kcal: ${s.daysBelowFloor.length}');
   }

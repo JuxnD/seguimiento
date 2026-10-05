@@ -40,6 +40,7 @@ const databaseFileName = 'seguimiento.sqlite';
   DailySteps,
   ExercisePhotos,
   CustomReminders,
+  SleepLogs,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -47,7 +48,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -174,6 +175,16 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessionSets, sessionSets.variant);
             await m.addColumn(sessions, sessions.mode);
             await m.addColumn(sessions, sessions.extraReps);
+          }
+          if (from < 16) {
+            // v16: Plan v3.1 (§19): RIR por serie, meta de kcal de los días de
+            // fútbol, hidratación del partido y horas de sueño.
+            await m.addColumn(sessionSets, sessionSets.rir);
+            await m.addColumn(profiles, profiles.kcalTargetFootball);
+            await m.addColumn(footballGames, footballGames.weightBeforeKg);
+            await m.addColumn(footballGames, footballGames.weightAfterKg);
+            await m.addColumn(footballGames, footballGames.fluidMl);
+            await m.createTable(sleepLogs);
           }
         },
         beforeOpen: (details) async {

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../data/repositories/body_repository.dart';
+import '../../data/seed_plan.dart';
+import '../../domain/plan_v3.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
@@ -73,7 +75,12 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     final repo = ref.read(bodyRepositoryProvider);
     final previous = await repo.lastCheckInBefore(_date);
     final minDays = ref.read(profileProvider).value?.measureIntervalDays ?? 21;
-    if (previous != null && daysBetween(previous, _date) < minDays && mounted) {
+    // Las fechas del calendario del v3.1 (abdomen cada 2 semanas) no son
+    // "antes de tiempo".
+    final db = ref.read(databaseProvider);
+    final start = await v31Start(db);
+    final planned = start != null && v31MeasurementDates(start).contains(dateOnly(_date));
+    if (previous != null && !planned && daysBetween(previous, _date) < minDays && mounted) {
       final gap = daysBetween(previous, _date);
       final ok = await showDialog<bool>(
         context: context,
@@ -92,8 +99,12 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     if (!mounted) return;
     final ok = await guarded(
       context,
-      () => repo.saveCheckIn(_date, _fasted, values, replacing: widget.existing?.date, time: _time),
+      () async {
+        await repo.saveCheckIn(_date, _fasted, values, replacing: widget.existing?.date, time: _time);
+        await advanceV31Measurement(db, _date);
+      },
     );
+    ref.invalidate(profileProvider);
     if (ok && mounted) Navigator.pop(context, true);
   }
 

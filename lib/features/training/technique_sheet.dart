@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/providers.dart';
+import '../../data/exercise_details.dart';
 import '../../data/repositories/exercise_photo_repository.dart';
 import '../../domain/band_guide.dart';
 import '../../ui/exercise_figure.dart';
@@ -66,16 +67,23 @@ class TechniqueContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final url = mediaUrl == null ? null : Uri.tryParse(mediaUrl!);
+    // La guía v3.1 trae el paso a paso completo; si no hay, las claves del
+    // catálogo.
+    final detail = exerciseDetail(exercise);
+    final steps = detail?.steps ?? cues;
     return SafeArea(
       child: ListView(
         controller: controller,
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
         children: [
           Text(exercise, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+          if (detail != null) Text(detail.muscles, style: text.bodyMedium),
           const SizedBox(height: 14),
           ExerciseArtView(exercise: exercise),
           const SizedBox(height: 16),
-          for (final (i, cue) in cues.indexed)
+          if (detail != null) Text('Cómo hacerlo', style: text.titleSmall),
+          if (detail != null) const SizedBox(height: 6),
+          for (final (i, cue) in steps.indexed)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Row(
@@ -86,8 +94,30 @@ class TechniqueContent extends StatelessWidget {
                 ],
               ),
             ),
-          if (progressionNote != null) ...[
+          if (detail?.note case final note?) ...[
             const SizedBox(height: 4),
+            Text(note, style: text.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
+          ],
+          if (detail != null && detail.mistakes.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text('Errores comunes', style: text.titleSmall),
+            for (final m in detail.mistakes) Text('• $m', style: text.bodyMedium),
+          ],
+          if (detail?.easier != null || detail?.harder != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (detail?.easier case final easy?)
+                  Expanded(child: _Scale(title: 'Más fácil', body: easy, icon: Icons.south)),
+                if (detail?.easier != null && detail?.harder != null) const SizedBox(width: 12),
+                if (detail?.harder case final hard?)
+                  Expanded(child: _Scale(title: 'Más difícil', body: hard, icon: Icons.north)),
+              ],
+            ),
+          ],
+          if (progressionNote != null) ...[
+            const SizedBox(height: 12),
             Text('Progresión', style: text.labelLarge),
             Text(progressionNote!, style: text.bodyMedium),
           ],
@@ -114,6 +144,35 @@ class TechniqueContent extends StatelessWidget {
               label: const Text('Ver video de referencia'),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// "Más fácil" / "Más difícil" de la guía v3.1.
+class _Scale extends StatelessWidget {
+  const _Scale({required this.title, required this.body, required this.icon});
+
+  final String title;
+  final String body;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [Icon(icon, size: 16), const SizedBox(width: 4), Text(title, style: text.labelLarge)]),
+          const SizedBox(height: 4),
+          Text(body, style: text.bodySmall),
         ],
       ),
     );

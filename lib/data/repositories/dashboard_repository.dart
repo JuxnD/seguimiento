@@ -5,6 +5,7 @@ import '../../domain/enums.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
+import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
 import '../../domain/steps.dart';
 import '../database.dart';
 import 'exercise_repository.dart';
@@ -42,6 +43,7 @@ class TodayDashboard {
     this.v3Suggestion,
     required this.measurement,
     this.proposal,
+    this.midweekGame = false,
   });
 
   final DateTime date;
@@ -96,9 +98,13 @@ class TodayDashboard {
   /// Día dentro del Plan v3 (semana, fase, descarga). null fuera del v3.
   final V3Day? v3;
 
-  /// Lunes desde el que conviene activar el v3: la última progresión fue de
-  /// 10 rondas limpias y todavía no hay v3 (§18). null si no toca.
+  /// Lunes desde el que conviene activar el v3.1 (§19): el próximo, mientras
+  /// no haya v3.1. null si no toca.
   final DateTime? v3Suggestion;
+
+  /// Viernes metabólico del v3.1 con un partido entre semana: el partido lo
+  /// reemplaza (§19.1).
+  final bool midweekGame;
 
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
@@ -137,11 +143,13 @@ class DashboardRepository {
     final date = dateOnly(now ?? DateTime.now());
     final p = await profile.get();
     final view = await plan.dayFor(date);
-    final type = view?.day.type ?? DayType.descanso;
-    final v3 = view != null && view.scheme == v3Scheme && view.validFrom != null ? v3Day(view.validFrom!, date) : null;
-    final proposal = type == DayType.progresion
-        ? await TrainingRepository(db, ExerciseRepository(db)).progressionProposal(date)
-        : null;
+    final training = TrainingRepository(db, ExerciseRepository(db));
+    final v3 = await training.blockDay(view, date);
+    // El viernes del v3.1 deja de ser circuito cuando ya salieron 10 limpias.
+    final type = v3 != null && v3.isV31 && v3.resistance != null
+        ? DayType.resistencia
+        : view?.day.type ?? DayType.descanso;
+    final proposal = type == DayType.progresion ? await training.progressionProposal(date) : null;
 
     final sessions = await (db.select(db.sessions)
           ..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions))
@@ -170,6 +178,7 @@ class DashboardRepository {
       planSummary: view == null ? null : _summary(view.day),
       mainExercises: view == null ? const [] : _mainLines(view.day, v3),
       blockExercises: view == null || view.day.type == DayType.resistencia ? const [] : blockLines(view.day),
+      midweekGame: type == DayType.resistencia && (v3?.isV31 ?? false) && await _gameThisWeekBefore(date),
       targetRounds: proposal?.rounds ?? view?.day.targetRounds,
       proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
@@ -180,14 +189,14 @@ class DashboardRepository {
       macros: Macros.sum(meals.map((m) => m.macros)),
       proteinMin: p.proteinMin,
       proteinMax: p.proteinMax,
-      kcalTarget: p.kcalTarget,
+      kcalTarget: dailyKcalTarget(day: date, weekdayTarget: p.kcalTarget, footballTarget: p.kcalTargetFootball),
       stepsToday: (await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(date)))).getSingleOrNull())?.steps,
       stepsGoal: stepsGoalFor(date, p.stepsTarget),
       roundsRecord: record,
       recordSuspect: record == null ? null : await _recordSuspect(record),
       recordDate: record == null ? null : await _recordDate(record),
       v3: v3,
-      v3Suggestion: v3 == null ? await _v3Suggestion(date) : null,
+      v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
       measurement: measurementDue(
         today: date,
         lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
@@ -202,21 +211,31 @@ class DashboardRepository {
   /// Lo principal del día. El miércoles de resistencia muestra solo lo de la
   /// semana: la ronda de Cindy (o de las 10 por tiempo) o los 4 del Tabata.
   static List<String> _mainLines(PlanDayDraft day, V3Day? v3) {
-    if (day.type == DayType.resistencia && v3?.resistance == ResistanceMode.tabata) {
-      return [for (final e in day.exercises) if (e.block == 'tabata') '${e.name} 8 × 20 s a tope'];
+    final resistance = day.type == DayType.resistencia || (v3 != null && v3.isV31 && v3.resistance != null);
+    if (resistance && v3?.resistance == ResistanceMode.tabata) {
+      return [for (final e in day.exercises) if (e.block == tabataBlock) '${e.name} 8 × 20 s a tope'];
+    }
+    if (resistance && v3?.resistance == ResistanceMode.cindy) {
+      return ['20 min: ${day.main.map((e) => '${e.repsMin ?? ''} ${e.name.toLowerCase()}'.trim()).join(' + ')}'];
     }
     return day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).toList();
   }
 
-  /// 10 rondas limpias en la última progresión y sin v3 todavía: se propone
-  /// el lunes siguiente a esa sesión (o el próximo, si ya pasó).
+  /// Mientras no haya v3.1, se propone desde el próximo lunes (§19: arranca
+  /// el lunes 12 oct). Ya no espera a las 10 rondas limpias: el viernes del
+  /// v3.1 sigue siendo el circuito hasta lograrlas.
   Future<DateTime?> _v3Suggestion(DateTime today) async {
-    if (await plan.hasScheme(v3Scheme)) return null;
-    final p = await TrainingRepository(db, ExerciseRepository(db)).progressionProposal(addDays(today, 1));
-    if (p == null || !p.canProgress || p.lastRounds < 10 || p.lastDate == null) return null;
-    final afterSession = nextMonday(addDays(p.lastDate!, 1));
-    final upcoming = nextMonday(today);
-    return afterSession.isBefore(upcoming) ? upcoming : afterSession;
+    if (await plan.hasScheme(v31Scheme)) return null;
+    return nextMonday(addDays(today, 1));
+  }
+
+  /// ¿Hubo partido de lunes a jueves de la semana de `friday`?
+  Future<bool> _gameThisWeekBefore(DateTime friday) async {
+    final monday = addDays(friday, -(friday.weekday - 1));
+    final rows = await (db.select(db.footballGames)
+          ..where((t) => t.date.isBetweenValues(dayKey(monday), dayKey(addDays(friday, -1)))))
+        .get();
+    return rows.isNotEmpty;
   }
 
   Future<DateTime?> _recordDate(int record) async {
@@ -298,12 +317,17 @@ class DashboardRepository {
 bool isHardGame(FootballGameRow game) => (game.intensity ?? 0) >= 8 || game.knock == true;
 
 /// Una línea por bloque y variante: "Core A: Elevación de piernas colgado
-/// 3×8–12 · Hollow body hold 2×20–40 s".
+/// 3×8–12 · Hollow body hold 2×20–40 s". El Tabata no va (tiene su propia
+/// línea cuando toca); el calentamiento y el pino dicen que van antes.
 List<String> blockLines(PlanDayDraft day) {
   final groups = <String, List<PlanExerciseDraft>>{};
-  for (final e in day.exercises.where((e) => e.block != null)) {
-    final block = e.block![0].toUpperCase() + e.block!.substring(1);
-    groups.putIfAbsent(e.variant == null ? block : '$block ${e.variant}', () => []).add(e);
+  for (final e in day.exercises.where((e) => e.block != null && e.block != tabataBlock)) {
+    final name = e.block == warmupBlock
+        ? 'Para calentar'
+        : preBlocks.contains(e.block)
+            ? 'Antes, sin fatiga'
+            : e.block![0].toUpperCase() + e.block!.substring(1);
+    groups.putIfAbsent(e.variant == null ? name : '$name ${e.variant}', () => []).add(e);
   }
   return [
     for (final g in groups.entries) '${g.key}: ${g.value.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ')}',

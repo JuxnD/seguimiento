@@ -185,8 +185,9 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
 
 /// Descarga del Plan v3 (§18.6): una serie menos en cada ejercicio de series
 /// (mínimo 1), sin tocar las rondas del circuito ni los tiempos. El lastre se
-/// quita a mano: el cronómetro lo recuerda.
-PlanDayDraft deloadVersion(PlanDayDraft day) => PlanDayDraft(
+/// quita a mano: el cronómetro lo recuerda. `half`: la del v3.1 (§19.4), la
+/// mitad de las series redondeando hacia arriba (4 → 2, 3 → 2, 2 → 1).
+PlanDayDraft deloadVersion(PlanDayDraft day, {bool half = false}) => PlanDayDraft(
       weekday: day.weekday,
       type: day.type,
       targetRounds: day.targetRounds,
@@ -194,7 +195,10 @@ PlanDayDraft deloadVersion(PlanDayDraft day) => PlanDayDraft(
       notes: day.notes,
       exercises: [
         for (final e in day.exercises)
-          if (e.sets == null || (day.type.isCircuit && e.block == null)) e else e.copyWith(sets: e.sets! > 1 ? e.sets! - 1 : 1),
+          if (e.sets == null || (day.type.isCircuit && e.block == null))
+            e
+          else
+            e.copyWith(sets: half ? (e.sets! + 1) ~/ 2 : (e.sets! > 1 ? e.sets! - 1 : 1)),
       ],
     );
 

@@ -1,5 +1,10 @@
 import 'enums.dart';
 
+/// Meta de kcal del día (§19.3): los días de fútbol (sábado y domingo)
+/// tienen la suya; sin ella, la de entre semana.
+int dailyKcalTarget({required DateTime day, required int weekdayTarget, int? footballTarget}) =>
+    footballTarget != null && day.weekday >= DateTime.saturday ? footballTarget : weekdayTarget;
+
 class Macros {
   const Macros({this.kcal = 0, this.protein = 0, this.carbs = 0, this.fat = 0});
 

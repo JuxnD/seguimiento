@@ -8,6 +8,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../app/providers.dart';
 import '../../data/database.dart' show ExerciseRow;
+import '../../data/exercise_details.dart';
 import '../../data/notification_service.dart';
 import '../../data/repositories/exercise_repository.dart';
 import '../../data/repositories/plan_repository.dart';
@@ -125,6 +126,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   /// Carga externa (kg) por ejercicio: arranca en la última usada.
   final _loads = <String, double>{};
+
+  /// Qué subir hoy por ejercicio (doble progresión), si toca.
+  Map<String, String> _upHints = const {};
+
+  /// Calentamiento propio del día (FIFA 11+ el miércoles del v3.1): se hace
+  /// en la fase de calentamiento, no como paso del cronómetro.
+  late final _warmupExercises = [for (final e in widget.day.exercises) if (e.block == warmupBlock) e];
+
+  /// Anota el RIR de una serie ya hecha (se elige durante el descanso).
+  void _setRir(int doneIndex, int? rir) {
+    setState(() => _done[doneIndex] = _done[doneIndex].withRir(rir));
+    _persist();
+  }
 
   late int _index = widget.resume?.index ?? 0;
   late int? _reps = widget.resume?.reps;
@@ -250,10 +264,30 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   /// Claves de técnica y última carga usada de cada ejercicio del guion.
   Future<void> _loadGuides() async {
-    final names = {for (final st in _steps) if (st is WorkStep) st.exercise};
+    final names = {
+      for (final st in _steps) if (st is WorkStep) st.exercise,
+      for (final e in _warmupExercises) e.name,
+    };
     try {
       final guides = await ref.read(exerciseRepositoryProvider).byNames(names);
       final training = ref.read(trainingRepositoryProvider);
+      // Doble progresión: lo que toca subir hoy según la última vez (§19.2).
+      final hints = <String, String>{};
+      for (final e in widget.day.exercises) {
+        if (e.repsMax == null || e.sets == null || hints.containsKey(e.name)) continue;
+        if (widget.day.type.isCircuit && e.block == null) continue;
+        final last = await training.lastStrengthSets(e.name, widget.date);
+        final hint = doubleProgressionHint(
+          repsMin: e.repsMin,
+          repsMax: e.repsMax,
+          plannedSets: e.perSide ? e.sets! * 2 : e.sets,
+          lastSets: [for (final s in last) (reps: s.reps, rir: s.rir)],
+          tracksLoad: guides[e.name]?.tracksLoad ?? false,
+          chain: progressionSteps(guides[e.name]?.progressionNote),
+          lastVariant: last.isEmpty ? null : last.last.variant,
+        );
+        if (hint != null) hints[e.name] = hint;
+      }
       final loads = <String, double>{};
       for (final g in guides.values.where((g) => g.tracksLoad)) {
         loads[g.name] = await training.lastLoad(g.name) ?? 0;
@@ -269,6 +303,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       if (!mounted) return;
       setState(() {
         _guides = guides;
+        _upHints = hints;
         for (final e in loads.entries) {
           _loads.putIfAbsent(e.key, () => e.value);
         }
@@ -613,7 +648,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       fullRange: isCircuit ? _fullRange : null,
       recoveryOk: isCircuit ? _recoveryOk : null,
       sets: [
-        for (final d in _done) SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg, variant: d.variant),
+        for (final d in _done)
+          SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg, variant: d.variant, rir: d.rir),
       ],
     );
   }
@@ -748,7 +784,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             icon: const Icon(Icons.menu_book_outlined),
             label: const Text('Técnica'),
           ),
-        if (_guides[step.exercise]?.tracksLoad ?? false) _loadRow(step.exercise),
+        if (_upHints[step.exercise] case final up? when !step.isRound)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Chip(
+              avatar: const Icon(Icons.trending_up, size: 18),
+              label: Text('Toca subir: $up'),
+            ),
+          ),
+        if (!step.isRound && (_guides[step.exercise]?.tracksLoad ?? false)) _loadRow(step.exercise),
         if (progressionSteps(_guides[step.exercise]?.progressionNote).isNotEmpty) _variantRow(step.exercise),
         const Spacer(),
         // El anillo se llena al llegar al objetivo: ajustar reps se ve.
@@ -766,7 +810,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                 child: ProgressRing(
                   progress: target == 0 ? 1 : (_reps ?? 0) / target,
                   value: '${_reps ?? 0}',
-                  sublabel: 'de $target reps',
+                  sublabel: 'de $target ${repsUnit(step.exercise)}',
                   label: '',
                   size: 200,
                   stroke: 14,
@@ -922,6 +966,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             child: _RoundBadge(round: closedRound, lapSec: laps.isEmpty ? null : laps.last),
           ),
         Text('DESCANSO', style: Theme.of(context).textTheme.titleMedium?.copyWith(letterSpacing: 2)),
+        if (prev is WorkStep && !prev.isRound && !prev.isHold && _done.isNotEmpty)
+          _RirPicker(
+            exercise: prev.exercise,
+            value: _done.last.rir,
+            onChanged: (v) => _setRir(_done.length - 1, v),
+          ),
         const SizedBox(height: 16),
         ProgressRing(
           progress: left,
@@ -997,6 +1047,20 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       margin: EdgeInsets.zero,
       title: isCircuit && rounds != null ? 'Lo que viene · $rounds ${rounds == 1 ? 'ronda' : 'rondas'}' : 'Lo que viene',
       children: [
+        for (final w in _warmupExercises)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text('Calienta con: ${w.name}${w.holdSecMin == null ? '' : ' (${w.holdSecMin! ~/ 60} min)'}',
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                if (_guides[w.name] case final g?)
+                  TextButton(onPressed: () => _showGuide(g), child: const Text('Cómo')),
+              ],
+            ),
+          ),
         for (final l in lines)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
@@ -1011,10 +1075,17 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final isCircuit = widget.day.type.isCircuit;
     final rounds = isCircuit ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound) : null;
     final reps = _done.fold<int>(0, (a, d) => a + d.reps);
+    final lastWork = _steps.take(_index).whereType<WorkStep>().lastOrNull;
     return AppCard(
       margin: EdgeInsets.zero,
       title: 'Ya hiciste',
       children: [
+        if (lastWork != null && !lastWork.isRound && !lastWork.isHold && _done.isNotEmpty)
+          _RirPicker(
+            exercise: lastWork.exercise,
+            value: _done.last.rir,
+            onChanged: (v) => _setRir(_done.length - 1, v),
+          ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -1174,6 +1245,42 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       ),
     );
     return ok ?? false;
+  }
+}
+
+/// "¿Cuántas te quedaban?": RIR de la serie que acaba de cerrar (§19.2).
+/// Tocar el mismo valor lo borra.
+class _RirPicker extends StatelessWidget {
+  const _RirPicker({required this.exercise, required this.value, required this.onChanged});
+
+  final String exercise;
+  final int? value;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 4),
+      child: Column(
+        children: [
+          Text('$exercise: ¿cuántas te quedaban? (RIR)', textAlign: TextAlign.center, style: text.bodyMedium),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 6,
+            alignment: WrapAlignment.center,
+            children: [
+              for (var v = 0; v <= 4; v++)
+                ChoiceChip(
+                  label: Text(v == 4 ? '4+' : '$v'),
+                  selected: value == v,
+                  onSelected: (_) => onChanged(value == v ? null : v),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 

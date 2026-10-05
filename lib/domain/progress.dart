@@ -84,6 +84,30 @@ List<String> progressionSteps(String? note) {
   return [for (final s in note.split('→')) if (s.trim().isNotEmpty) s.trim()];
 }
 
+/// Doble progresión (§19.2): si la última vez todas las series llegaron al
+/// tope del rango sin ir al fallo (RIR ≥ 1; una serie sin RIR anotado no
+/// frena), toca subir la dificultad y volver al piso del rango. Con lastre,
+/// +2–5 kg; si no, la siguiente variante de la cadena; si no hay cadena, más
+/// banda o una pausa. null si no toca o no hay con qué comparar.
+String? doubleProgressionHint({
+  required int? repsMin,
+  required int? repsMax,
+  required int? plannedSets,
+  required List<({int reps, int? rir})> lastSets,
+  bool tracksLoad = false,
+  List<String> chain = const [],
+  String? lastVariant,
+}) {
+  if (repsMin == null || repsMax == null || repsMax <= repsMin || lastSets.isEmpty) return null;
+  if (plannedSets != null && lastSets.length < plannedSets) return null;
+  if (lastSets.any((s) => s.reps < repsMax || s.rir == 0)) return null;
+  final back = 'y vuelve a $repsMin';
+  if (tracksLoad) return '+2–5 kg de mochila $back';
+  final current = lastVariant == null ? 0 : chain.indexOf(lastVariant);
+  if (chain.isNotEmpty && current >= 0 && current + 1 < chain.length) return '${chain[current + 1]} $back';
+  return 'más banda o pausa arriba $back';
+}
+
 /// Promedio de peso de una semana (lunes a domingo).
 class WeekAverage {
   const WeekAverage(this.monday, this.kg, this.count);

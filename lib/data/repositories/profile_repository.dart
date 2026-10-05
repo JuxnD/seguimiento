@@ -40,6 +40,7 @@ extension ProfileRowX on ProfileRow {
         proteinMin: proteinMin,
         proteinMax: proteinMax,
         kcalTarget: kcalTarget,
+        kcalTargetFootball: kcalTargetFootball,
         kcalFloor: kcalFloor,
         minWarmupSec: minWarmupSec,
         measureIntervalDays: measureIntervalDays,
