@@ -8,6 +8,7 @@ import 'package:seguimiento/domain/plan_v3.dart';
 import 'package:seguimiento/domain/progress.dart';
 import 'package:seguimiento/domain/session_script.dart';
 import 'package:seguimiento/features/training/guided_session_screen.dart' show scriptDayFrom;
+import 'package:seguimiento/features/training/v3_timers.dart' show tabataTimeSplit, tabataTimeline;
 
 /// Plan v3.1 (§19, 5 oct).
 void main() {
@@ -181,6 +182,14 @@ void main() {
       expect(doubleProgressionHint(repsMin: 5, repsMax: 8, plannedSets: 2, lastSets: sets([8, 8], null)), isNotNull,
           reason: 'sin RIR anotado no frena');
     });
+  });
+
+  test('Tabata cortado: solo cuentan las pausas que llegaron', () {
+    final timeline = tabataTimeline();
+    expect(tabataTimeSplit(timeline, 20), (work: 20, rest: 0), reason: 'a los 20 s no hubo descanso');
+    expect(tabataTimeSplit(timeline, 35), (work: 25, rest: 10));
+    final all = tabataTimeline().fold(0, (a, s) => a + s.seconds);
+    expect(tabataTimeSplit(timeline, all), (work: 640, rest: all - 640));
   });
 
   test('meta de kcal: sábado y domingo usan la de fútbol (§19.3)', () {

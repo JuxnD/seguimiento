@@ -429,6 +429,10 @@ Future<int> activatePlanV31(AppDatabase db, PlanRepository plan, DateTime start)
     kcalTargetFootball: const Value(v31KcalFootball),
     proteinMin: const Value(v31ProteinMin),
     proteinMax: const Value(v31ProteinMax),
+    // El abdomen va cada 2 semanas: el aviso de "medición antes de tiempo" y
+    // la alerta del informe usan este mínimo.
+    measureIntervalDays: const Value(14),
+    measureIntervalMaxDays: const Value(21),
   ));
   return id;
 }

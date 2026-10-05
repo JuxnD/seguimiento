@@ -192,6 +192,8 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
   SessionDraft _draft() {
     final rounds = _roundMarks.length;
     final partial = _partial ?? 0;
+    // Cortado antes de los 20 min: no es una marca comparable.
+    final cut = _workElapsed < _capSec;
     return SessionDraft(
       date: widget.date,
       startTime: timeKey(startedAt.hour, startedAt.minute),
@@ -202,8 +204,11 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
       cooldownSec: cooldownSec,
       roundsDone: rounds,
       extraReps: partial,
+      incomplete: cut,
       roundMarksSec: List.of(_roundMarks),
-      context: 'Cindy: $rounds rondas + $partial reps en ${widget.minutes} min',
+      context: cut
+          ? 'Cindy cortada: $rounds rondas + $partial reps en ${formatDuration(_workElapsed)} de ${widget.minutes} min'
+          : 'Cindy: $rounds rondas + $partial reps en ${widget.minutes} min',
       sets: [
         for (var r = 0; r < rounds; r++)
           for (final (name, reps) in cindyRound) SetDraft(exercise: name, reps: reps),
@@ -335,6 +340,24 @@ List<TabataSegment> tabataTimeline({int blocks = 4, int intervals = 8, int work 
   return out;
 }
 
+/// Trabajo y pausas hechos hasta `elapsed` segundos del Tabata. Si se corta
+/// antes, las pausas que no llegaron no cuentan como descanso (antes se
+/// descontaba el Tabata entero y el neto quedaba en 0).
+({int work, int rest}) tabataTimeSplit(List<TabataSegment> timeline, int elapsed) {
+  var work = 0, rest = 0, t = 0;
+  for (final s in timeline) {
+    if (t >= elapsed) break;
+    final done = (elapsed - t).clamp(0, s.seconds);
+    if (s.kind == 'trabajo') {
+      work += done;
+    } else {
+      rest += done;
+    }
+    t += s.seconds;
+  }
+  return (work: work, rest: rest);
+}
+
 class _TabataScreenState extends State<TabataScreen> with _Ticking {
   _Phase _phase = _Phase.calentamiento;
   late final _timeline = tabataTimeline(
@@ -412,7 +435,9 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
   }
 
   SessionDraft _draft() {
-    final work = widget.exercises.length * widget.intervals * widget.workSec;
+    final done = _elapsed.clamp(0, _totalWorkSec);
+    final split = tabataTimeSplit(_timeline, done);
+    final cut = done < _totalWorkSec;
     return SessionDraft(
       date: widget.date,
       startTime: timeKey(startedAt.hour, startedAt.minute),
@@ -421,8 +446,10 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
       totalSec: totalSec,
       warmupSec: warmupSec,
       cooldownSec: cooldownSec,
-      restSec: (_totalWorkSec - work).clamp(0, _totalWorkSec),
-      context: 'Tabata · peor intervalo: '
+      restSec: split.rest,
+      incomplete: cut,
+      context: '${cut ? 'Tabata cortado a los ${formatDuration(done)} de ${formatDuration(_totalWorkSec)}' : 'Tabata'}'
+          ' · peor intervalo: '
           '${[for (var b = 0; b < widget.exercises.length; b++) '${widget.exercises[b]} ${_worst[b] ?? '—'}'].join(' · ')}',
       sets: [
         for (var b = 0; b < widget.exercises.length; b++)

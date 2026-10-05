@@ -284,7 +284,10 @@ void main() {
 
   test('una base del esquema 7 llega al 16 con guías, catálogo nuevo y rondas sin separar', () async {
     await buildOldSchema(7, rows: (old) async {
-      await old.customStatement("insert into exercises (name) values ('Pike push-up'), ('Sentadilla búlgara')");
+      // 'Separaciones con banda' lleva anclaje: antes la guía se escribía en
+      // el paso 8, cuando `exercises.anchor` (paso 15) aún no existía.
+      await old.customStatement(
+          "insert into exercises (name) values ('Pike push-up'), ('Sentadilla búlgara'), ('Separaciones con banda')");
       await old.customStatement(
           "insert into foods (name, basis, unit_label, kcal, protein) values ('Peto sin maíz (vaso)', 'unit', 'vaso', 180, 6)");
       await old.customStatement(
@@ -302,6 +305,9 @@ void main() {
     final bulgara =
         await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Sentadilla búlgara'))).getSingle();
     expect(bulgara.tracksLoad, isTrue, reason: 'la búlgara progresa con carga');
+    final band =
+        await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Separaciones con banda'))).getSingle();
+    expect(band.anchor, 'manos');
 
     final foods = {for (final f in await migrated.select(migrated.foods).get()) f.name: f};
     expect(foods['Peto sin maíz (vaso)']!.kcal, 180, reason: 'lo que el usuario ya tenía no se pisa');

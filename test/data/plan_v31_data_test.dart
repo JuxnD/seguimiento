@@ -56,6 +56,8 @@ void main() {
     final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
     expect((profile.proteinMin, profile.proteinMax, profile.kcalTargetFootball), (160, 170, 2400));
     expect(profile.nextMeasurementDate, '2026-10-17');
+    expect((profile.measureIntervalDays, profile.measureIntervalMaxDays), (14, 21),
+        reason: 'el abdomen cada 2 semanas no es "antes de tiempo" ni alerta en el informe');
 
     final nordic = await (db.select(db.exercises)..where((t) => t.name.equals('Nórdico (isquios)'))).getSingle();
     expect(nordic.formCues, isNotNull, reason: 'los ejercicios nuevos traen sus claves');

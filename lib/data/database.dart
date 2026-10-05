@@ -122,10 +122,8 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessionRounds, sessionRounds.restSec);
             await m.addColumn(sessionSets, sessionSets.loadKg);
             await m.createTable(closedDays);
-            // Datos que la siembra ya no puede llevar a una base existente. Los
-            // alimentos nuevos se añaden en el paso 10: sus filas ya llevan
-            // columnas que aquí aún no existen.
-            await applyExerciseGuides(this);
+            // Las guías se completan al final (paso 16): escriben columnas
+            // que llegan después (`exercises.anchor`, esquema 15).
           }
           if (from >= 5 && from < 9) {
             // v9 (solo datos): los recordatorios vuelven una vez a los valores
@@ -185,6 +183,12 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(footballGames, footballGames.weightAfterKg);
             await m.addColumn(footballGames, footballGames.fluidMl);
             await m.createTable(sleepLogs);
+          }
+          if (from < 16) {
+            // Guías del catálogo con todas las columnas ya creadas: las de
+            // antes del 8 y las del v3.1 (dominadas con carga, ejercicios
+            // nuevos). Solo llena campos vacíos.
+            await applyExerciseGuides(this);
           }
         },
         beforeOpen: (details) async {
