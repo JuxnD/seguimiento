@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -8,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 import '../domain/nutrition.dart';
 import 'repositories/nutrition_repository.dart';
-import 'weekly_ai.dart';
+import 'ai_gateway.dart';
 
 /// Reencodifica los píxeles: elimina EXIF/ubicación y limita resolución/peso.
 /// No conserva el original ni crea un archivo en la carpeta de respaldos.
@@ -90,20 +89,16 @@ class MealPhotoAi {
       throw const AiError('La foto supera el tamaño permitido. Elige otra.');
     }
     try {
-      final response = await client
-          .post(endpoint,
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: jsonEncode({
-                'hwid': hwid,
-                'license_key': license,
-                'mime': 'image/png',
-                'photo_base64': base64Encode(photo)
-              }))
-          .timeout(timeout);
-      if (response.bodyBytes.length > 32000) throw const FormatException();
+      final response = await postAiJson(
+          client,
+          endpoint,
+          {
+            'hwid': hwid,
+            'license_key': license,
+            'mime': 'image/png',
+            'photo_base64': base64Encode(photo)
+          },
+          timeout: timeout);
       if (response.statusCode != 200) {
         throw AiError(switch (response.statusCode) {
           401 ||
@@ -120,13 +115,6 @@ class MealPhotoAi {
         });
       }
       return parse(response.body);
-    } on TimeoutException {
-      client.close();
-      throw const AiError(
-          'El análisis tardó demasiado. No se guardó ninguna comida.');
-    } on http.ClientException {
-      throw const AiError(
-          'No se pudo conectar. El registro manual sigue disponible.');
     } on FormatException {
       throw const AiError(
           'La propuesta no pasó la validación. No se guardó ninguna comida.');
@@ -147,7 +135,9 @@ class MealPhotoAi {
       throw const FormatException();
     }
     String text(dynamic value, int max) {
-      if (value is! String || value.trim().isEmpty || value.length > max) {
+      if (value is! String ||
+          value.trim().isEmpty ||
+          value.runes.length > max) {
         throw const FormatException();
       }
       return value.trim();

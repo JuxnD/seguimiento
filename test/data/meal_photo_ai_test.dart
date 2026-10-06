@@ -118,6 +118,19 @@ void main() {
             })),
         throwsFormatException);
   });
+  test('limita strings por puntos Unicode y acepta texto con emojis válido',
+      () {
+    final valid =
+        jsonDecode(jsonEncode(fictionalMeal())) as Map<String, dynamic>;
+    final meal = valid['meal'] as Map<String, dynamic>;
+    final first = (meal['items'] as List).first as Map<String, dynamic>;
+    first['label'] = '😀' * 80;
+    first['portion'] = '😀' * 180;
+    meal['uncertainties'] = ['😀' * 300];
+    expect(MealPhotoAi.parse(jsonEncode(valid)).items.first.label, '😀' * 80);
+    first['label'] = '😀' * 81;
+    expect(() => MealPhotoAi.parse(jsonEncode(valid)), throwsFormatException);
+  });
   test('fallo de proveedor no filtra cuerpo ni reintenta; timeout acotado',
       () async {
     var calls = 0;

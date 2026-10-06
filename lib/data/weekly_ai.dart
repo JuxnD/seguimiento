@@ -1,7 +1,9 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'ai_gateway.dart';
+
+export 'ai_gateway.dart' show AiError, AiQuota;
 
 class AiNote {
   const AiNote(this.kind, this.text, this.quote);
@@ -34,39 +36,22 @@ class WeeklyAi {
           'El informe está vacío o es demasiado largo. Elige un rango menor.');
     }
     try {
-      final response = await client
-          .post(
-            endpoint,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: jsonEncode(
-                {'hwid': hwid, 'license_key': license, 'report': report}),
-          )
-          .timeout(timeout);
-      if (response.bodyBytes.length > 32000) {
-        throw const AiError('La respuesta excede el tamaño permitido.');
-      }
+      final response = await postAiJson(client, endpoint,
+          {'hwid': hwid, 'license_key': license, 'report': report},
+          timeout: timeout);
       if (response.statusCode != 200) {
         throw AiError(switch (response.statusCode) {
           401 ||
           403 =>
             'La licencia no está activa para este teléfono. Revisa la activación en Control360i.',
           429 => 'Se alcanzó el límite de consultas. Inténtalo mañana.',
-          503 => 'El servicio de IA aún no está habilitado en Control360i.',
+          503 =>
+            'El servicio de IA no está disponible ahora. Puedes continuar sin IA.',
           _ =>
             'El servicio no pudo completar la consulta. Tu informe sigue disponible.',
         });
       }
       return parse(response.body, report);
-    } on TimeoutException {
-      client.close();
-      throw const AiError(
-          'La consulta tardó demasiado. No se cambió ningún registro.');
-    } on http.ClientException {
-      throw const AiError(
-          'No se pudo conectar. Tu informe sigue disponible sin internet.');
     } on FormatException {
       throw const AiError(
           'La respuesta no pudo verificarse contra tu informe.');
@@ -94,23 +79,16 @@ class WeeklyAi {
           quote = n['quote'] as String;
       if (!['observation', 'missing', 'question'].contains(kind) ||
           text.trim().isEmpty ||
-          text.length > 350 ||
+          text.runes.length > 350 ||
           RegExp(r'\d').hasMatch(text) ||
           quote.trim().isEmpty ||
-          quote.length > 500 ||
+          quote.runes.length > 500 ||
           !report.contains(quote)) {
         throw const FormatException();
       }
       return AiNote(kind, text, quote);
     }).toList();
   }
-}
-
-class AiError implements Exception {
-  const AiError(this.message);
-  final String message;
-  @override
-  String toString() => message;
 }
 
 /// La licencia revocable se cifra con Android Keystore y no entra al respaldo.
