@@ -427,9 +427,10 @@ class _FoodDialogState extends State<FoodDialog> {
                 ButtonSegment(
                     value: FoodBasis.per100, label: Text('Por 100 g/ml')),
               ],
-              emptySelectionAllowed: true,
+              emptySelectionAllowed: _basis == null,
               selected: _basis == null ? <FoodBasis>{} : {_basis!},
               onSelectionChanged: (s) => setState(() {
+                if (s.isEmpty) return;
                 _basis = s.first;
                 if (_basis == FoodBasis.per100) {
                   _qty.text = '100';
@@ -538,11 +539,11 @@ class _FoodDialogState extends State<FoodDialog> {
             final unit = _unit.text.trim();
             final importingLabel = widget.labelDraft != null;
             if (name.isEmpty ||
+                _basis == null ||
                 kcal == null ||
                 protein == null ||
                 (importingLabel &&
-                    (_basis == null ||
-                        unit.isEmpty ||
+                    (unit.isEmpty ||
                         carbs == null ||
                         fat == null ||
                         quantity == null ||

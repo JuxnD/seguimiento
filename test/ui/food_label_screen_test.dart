@@ -1,16 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/meal_assistant.dart';
 import 'package:seguimiento/data/weekly_ai.dart';
+import 'package:seguimiento/app/providers.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/features/meals/food_label_screen.dart';
 import 'package:seguimiento/features/meals/foods_screen.dart';
 
 import '../support/meal_photo_fixture.dart';
+import '../support/sqlite_host.dart';
 import '../support/test_fonts.dart';
 
 class _Activation extends AiActivation {
@@ -44,6 +49,8 @@ Future<void> _choosePhoto(WidgetTester tester) async {
 }
 
 void main() {
+  setUpAll(useHostSqlite);
+
   testWidgets(
       'porción 30 g se convierte localmente y el borrador mantiene lectura original',
       (tester) async {
@@ -276,5 +283,198 @@ void main() {
     expect(result!.defaultQuantity.value, 100);
     expect(result!.source.value, MacroSource.estimado);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'repetir base manual o importada no vacía la selección y cancelar no devuelve cambios',
+      (tester) async {
+    await loadTestFonts(tester);
+    const food = FoodRow(
+      id: 1,
+      name: 'Avena',
+      basis: FoodBasis.unit,
+      unitLabel: 'taza',
+      kcal: 150,
+      protein: 5,
+      carbs: 27,
+      fat: 3,
+      defaultQuantity: 1,
+      source: MacroSource.referencia,
+      origin: FoodOrigin.semilla,
+      favorite: false,
+    );
+    const snapshot = FoodLabelProposal(
+      name: 'Yogur',
+      basis: null,
+      unit: 'g',
+      servingQuantity: null,
+      kcal: 80,
+      protein: 4,
+      carbs: 10,
+      fat: 2,
+      uncertainties: [],
+    );
+    const draft = FoodLabelDraft(
+      name: 'Yogur',
+      basis: null,
+      unitLabel: 'g',
+      defaultQuantity: null,
+      kcal: 80,
+      protein: 4,
+      carbs: 10,
+      fat: 2,
+      uncertainties: [],
+      sourceSnapshot: snapshot,
+      convertedToPer100: false,
+      portionNeedsConfirmation: false,
+    );
+    FoodsCompanion? manualResult;
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+            builder: (context) => Scaffold(
+                  body: TextButton(
+                    child: const Text('Editar alimento'),
+                    onPressed: () async {
+                      manualResult = await showDialog<FoodsCompanion>(
+                          context: context,
+                          builder: (_) => const FoodDialog(food: food));
+                    },
+                  ),
+                ))));
+    await tester.tap(find.text('Editar alimento'));
+    await tester.pumpAndSettle();
+    final unit = find.text('Por unidad');
+    expect(
+        tester
+            .widget<SegmentedButton<FoodBasis>>(
+                find.byType(SegmentedButton<FoodBasis>))
+            .selected,
+        {FoodBasis.unit});
+    await tester.tap(unit);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(
+        tester
+            .widget<SegmentedButton<FoodBasis>>(
+                find.byType(SegmentedButton<FoodBasis>))
+            .selected,
+        {FoodBasis.unit});
+    await tester.tap(find.text('Cancelar'));
+    await tester.pumpAndSettle();
+    expect(manualResult, isNull);
+
+    FoodsCompanion? importedResult;
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+            builder: (context) => Scaffold(
+                  body: TextButton(
+                    child: const Text('Revisar etiqueta'),
+                    onPressed: () async {
+                      importedResult = await showDialog<FoodsCompanion>(
+                          context: context,
+                          builder: (_) => const FoodDialog(labelDraft: draft));
+                    },
+                  ),
+                ))));
+    await tester.tap(find.text('Revisar etiqueta'));
+    await tester.pumpAndSettle();
+    final per100 = find.text('Por 100 g/ml');
+    await tester.tap(per100);
+    await tester.pumpAndSettle();
+    expect(
+        tester
+            .widget<SegmentedButton<FoodBasis>>(
+                find.byType(SegmentedButton<FoodBasis>))
+            .selected,
+        {FoodBasis.per100});
+    await tester.tap(per100);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(
+        tester
+            .widget<SegmentedButton<FoodBasis>>(
+                find.byType(SegmentedButton<FoodBasis>))
+            .selected,
+        {FoodBasis.per100});
+    await tester.tap(find.text('Guardar'));
+    await tester.pumpAndSettle();
+    expect(importedResult, isNotNull);
+    expect(importedResult!.basis.value, FoodBasis.per100);
+    expect(importedResult!.defaultQuantity.value, 100);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('cancelar alimento manual o importado no escribe en catálogo',
+      (tester) async {
+    await loadTestFonts(tester);
+    final db = openInMemoryDatabase();
+    final host = DatabaseHost(
+        File('unused.sqlite'), (_) => openInMemoryDatabase(),
+        initial: db);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [databaseHostProvider.overrideWithValue(host)],
+      child: MaterialApp(
+        home: FoodsScreen(
+          labelScreenBuilder: () => FoodLabelScreen(
+            activation: _Activation(),
+            pickPhoto: (_) async => fictionalPhoto(),
+            clientFactory: () => MockClient((request) async {
+              final task = (jsonDecode(request.body) as Map)['task'];
+              if (task == 'status') return _reply('status', {'enabled': true});
+              return _reply('food_label', {
+                'name': 'Yogur de prueba',
+                'basis': 'per100',
+                'unit': 'g',
+                'serving_quantity': 100,
+                'kcal': 80,
+                'protein': 4,
+                'carbs': 10,
+                'fat': 2,
+                'uncertainties': [],
+              });
+            }),
+          ),
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Alimento'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Por unidad'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Cancelar').last);
+    await tester.pumpAndSettle();
+    expect(await db.select(db.foods).get(), isEmpty);
+
+    await tester.tap(find.text('Leer etiqueta · IA'));
+    await tester.pumpAndSettle();
+    await _choosePhoto(tester);
+    final consent = find.byType(CheckboxListTile);
+    await tester.ensureVisible(consent);
+    await tester.pumpAndSettle();
+    await tester.tap(consent);
+    await tester.pumpAndSettle();
+    final read = find.text('Leer etiqueta');
+    await tester.ensureVisible(read);
+    await tester.pumpAndSettle();
+    await tester.tap(read);
+    await tester.pumpAndSettle();
+    final review = find.text('Revisar y completar alimento');
+    await tester.scrollUntilVisible(review, 130,
+        scrollable: find.byType(Scrollable).first);
+    await tester.pumpAndSettle();
+    await tester.tap(review);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancelar').last);
+    await tester.pumpAndSettle();
+    expect(await db.select(db.foods).get(), isEmpty);
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 10));
+    await db.close();
+    await tester.pump(const Duration(milliseconds: 10));
   });
 }
