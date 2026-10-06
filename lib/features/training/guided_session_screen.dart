@@ -780,7 +780,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         _RepsSoFar(exercise: step.exercise, reps: _repsSoFar(step.exercise), seconds: step.isHold),
         if (_guides[step.exercise]?.hasGuide ?? false)
           TextButton.icon(
-            onPressed: () => _showGuide(_guides[step.exercise]!),
+            onPressed: () => _showGuide(_guides[step.exercise]!, step: step),
             icon: const Icon(Icons.menu_book_outlined),
             label: const Text('Técnica'),
           ),
@@ -937,14 +937,18 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     );
   }
 
-  /// Claves de técnica en el momento de hacerlo, con el enlace al video.
-  Future<void> _showGuide(ExerciseRow guide) => showTechniqueSheet(
+  /// Claves de técnica en el momento de hacerlo, con el enlace al video. Con
+  /// el paso, la hoja sabe la variante: agarre del plan y si va con carga
+  /// (en el circuito no se registra carga: va sin mochila).
+  Future<void> _showGuide(ExerciseRow guide, {WorkStep? step}) => showTechniqueSheet(
         anchor: guide.anchor,
         context,
         exercise: guide.name,
         cues: guide.cues,
         progressionNote: guide.progressionNote,
         mediaUrl: guide.mediaUrl,
+        grip: step?.grip,
+        loaded: step == null ? null : !step.isRound && guide.tracksLoad && _loadFor(step.exercise) != null,
       );
 
   Widget _rest(RestStep step) {
@@ -991,7 +995,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
         if (_nextGuide case final guide?)
           TextButton.icon(
-            onPressed: () => _showGuide(guide),
+            onPressed: () => _showGuide(guide, step: _nextWorkStep),
             icon: const Icon(Icons.menu_book_outlined),
             label: Text('Técnica: ${guide.name}'),
           ),
@@ -1110,16 +1114,20 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     return out;
   }
 
-  /// Guía del próximo ejercicio: el descanso es el momento de repasarla.
-  ExerciseRow? get _nextGuide {
+  /// Próximo paso de trabajo, o null si no queda.
+  WorkStep? get _nextWorkStep {
     for (var i = _index + 1; i < _steps.length; i++) {
-      final st = _steps[i];
-      if (st is WorkStep) {
-        final g = _guides[st.exercise];
-        return g != null && g.hasGuide ? g : null;
-      }
+      if (_steps[i] case final WorkStep st) return st;
     }
     return null;
+  }
+
+  /// Guía del próximo ejercicio: el descanso es el momento de repasarla.
+  ExerciseRow? get _nextGuide {
+    final st = _nextWorkStep;
+    if (st == null) return null;
+    final g = _guides[st.exercise];
+    return g != null && g.hasGuide ? g : null;
   }
 
   /// Lo que viene después del paso actual, para no tener que pensar.

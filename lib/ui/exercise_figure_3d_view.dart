@@ -71,12 +71,18 @@ double loopProgress(double t, int keys, {double hold = 0.6, double move = 1.2}) 
   return 0;
 }
 
-/// Figura de técnica: el maniquí 3D si el ejercicio lo tiene; si no, las
-/// figuras planas de siempre.
+/// Figura de técnica: el maniquí 3D si el ejercicio lo tiene y enseña la
+/// variante que pide la sesión; si no, las figuras planas de siempre.
 class ExerciseFigureView extends ConsumerWidget {
-  const ExerciseFigureView({super.key, required this.exercise});
+  const ExerciseFigureView({super.key, required this.exercise, this.grip, this.loaded});
 
   final String exercise;
+
+  /// Agarre y carga externa que pide la sesión; null = sin contexto. La
+  /// dominada 3D es prona con mochila: en supina o sin carga mostrarla
+  /// enseñaría otra cosa.
+  final String? grip;
+  final bool? loaded;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -84,7 +90,7 @@ class ExerciseFigureView extends ConsumerWidget {
     // Mientras carga no se muestra la 2D: evita un parpadeo de figura a figura.
     if (catalog.isLoading && !catalog.hasValue) return const SizedBox.shrink();
     final fig = catalog.valueOrNull?.forExercise(exercise);
-    if (fig == null) return ExerciseArtView(exercise: exercise);
+    if (fig == null || !fig.matches(grip: grip, loaded: loaded)) return ExerciseArtView(exercise: exercise);
     return Figure3DMoments(figure: fig);
   }
 }
@@ -113,10 +119,35 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
   int get _n => fig.frames.length;
   double _keyProgress(int i) => _n < 2 ? 0 : i / (_n - 1);
 
+  /// Punto del recorrido que se ve ahora en la animación.
+  double get _loopProgress => loopProgress((_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6, _n);
+
+  String _pageCaption(int i) => '${i + 1}/$_n · ${fig.frames[i].caption}';
+
   @override
   void initState() {
     super.initState();
     _ticker = AnimationController(vsync: this, duration: const Duration(hours: 1));
+  }
+
+  /// Alto del pie más alto con el ancho y la escala de texto reales: con
+  /// texto grande el pie ocupa más líneas y el cuadro crece en vez de
+  /// desbordar. Se mide en el ancho de una página (el más angosto).
+  double _captionHeight(BuildContext context, double width, TextStyle? style) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final effective = DefaultTextStyle.of(context).style.merge(style);
+    var h = 0.0;
+    for (var i = 0; i < _n; i++) {
+      final painter = TextPainter(
+        text: TextSpan(text: _pageCaption(i), style: effective),
+        textAlign: TextAlign.center,
+        textDirection: Directionality.of(context),
+        textScaler: scaler,
+      )..layout(maxWidth: math.max(0, width * _pages.viewportFraction - 8));
+      h = math.max(h, painter.height);
+      painter.dispose();
+    }
+    return h.ceilToDouble() + 2;
   }
 
   @override
@@ -162,8 +193,7 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
       stage = AnimatedBuilder(
         animation: _ticker,
         builder: (context, _) {
-          final secs = (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6;
-          final p = loopProgress(secs, _n);
+          final p = _loopProgress;
           final key = (p * (_n - 1)).round();
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -195,12 +225,7 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
                 child: frame(_keyProgress(i), fig.frames[i].caption, ValueKey('figura3d-$i')),
               ),
               const SizedBox(height: 8),
-              Text(
-                '${i + 1}/$_n · ${fig.frames[i].caption}',
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: captionStyle,
-              ),
+              Text(_pageCaption(i), textAlign: TextAlign.center, style: captionStyle),
             ],
           ),
         ),
@@ -210,7 +235,12 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(height: figure3dHeight + 52, child: stage),
+        LayoutBuilder(
+          builder: (context, c) => SizedBox(
+            height: figure3dHeight + 8 + _captionHeight(context, c.maxWidth, captionStyle),
+            child: stage,
+          ),
+        ),
         Row(
           children: [
             const SizedBox(width: 4),
@@ -240,7 +270,8 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
             IconButton(
               tooltip: 'Ampliar y girar',
               icon: const Icon(Icons.open_in_full),
-              onPressed: () => _open(_playing ? 0 : _keyProgress(_page)),
+              // Animando, se amplía la pose que se ve, no el inicio.
+              onPressed: () => _open(_playing ? _loopProgress : _keyProgress(_page)),
             ),
           ],
         ),

@@ -42,7 +42,7 @@ void main() {
       shots.add(('$slug-x-frente', 0.5, 90, 5, const Size(344, 260)));
       shots.add(('$slug-x-perfil', 0.5, 0, 0, const Size(344, 260)));
       shots.add(('$slug-z-giro-60', 1, -60, 18, const Size(344, 260)));
-      for (final (k, t) in const [0.25, 0.75].indexed) {
+      for (final (k, t) in const [0.25, 0.6, 0.75, 0.9].indexed) {
         shots.add(('$slug-y-anim$k', t, null, null, const Size(344, 260)));
       }
     }

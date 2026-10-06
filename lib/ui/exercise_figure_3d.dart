@@ -202,6 +202,8 @@ class Figure3D {
     this.dims = const BodyDims(),
     this.initialYaw = 0,
     this.initialPitch = defaultPitch,
+    this.variantGrip,
+    this.variantLoaded,
   });
 
   factory Figure3D.fromJson(Map<String, Object?> j, BodyDims dims) => Figure3D(
@@ -221,6 +223,8 @@ class Figure3D {
         dims: dims,
         initialYaw: _num((j['view'] as Map<String, Object?>?)?['yaw'], 0),
         initialPitch: _num((j['view'] as Map<String, Object?>?)?['pitch'], defaultPitch),
+        variantGrip: (j['variant'] as Map<String, Object?>?)?['grip'] as String?,
+        variantLoaded: (j['variant'] as Map<String, Object?>?)?['loaded'] as bool?,
       );
 
   final String name;
@@ -246,21 +250,113 @@ class Figure3D {
   /// se esconde (la barra se ve de punta, la pared de canto).
   final double initialYaw, initialPitch;
 
+  /// Variante que dibuja la figura: agarre ('prona') y si lleva lastre
+  /// (mochila). null = vale para cualquiera.
+  final String? variantGrip;
+  final bool? variantLoaded;
+
+  /// ¿La figura enseña la variante que pide la sesión? Sin contexto (null),
+  /// sí: desde el catálogo se muestra la figura tal cual.
+  bool matches({String? grip, bool? loaded}) {
+    if (variantGrip case final g? when grip != null && gripKey(grip) != gripKey(g)) return false;
+    if (variantLoaded case final l? when loaded != null && loaded != l) return false;
+    return true;
+  }
+
   late final List<Skeleton2D> _keys = [for (final f in frames) solveKeyPose(f, dims)];
+
+  /// Cara de la pared (x) y de qué lado está el cuerpo (+1 si a la derecha).
+  late final (double, double)? _wall = () {
+    for (final p in props) {
+      if (p['type'] == 'wall') {
+        final x = _num(p['x']);
+        return (x, _keys.first.joints['hip']!.dx >= x ? 1.0 : -1.0);
+      }
+    }
+    return null;
+  }();
 
   /// Esqueleto en un punto del recorrido: 0 = primer momento, 1 = último.
   Skeleton2D skeletonAt(double progress) {
-    if (frames.length == 1) return _keys.first.grounded();
+    if (frames.length == 1) return _clearOfWall(_keys.first.grounded());
     final x = progress.clamp(0.0, 1.0) * (frames.length - 1);
     final i = math.min(x.floor(), frames.length - 2);
     final u = x - i;
-    var s = solveKeyPose(lerpPose(this, frames[i], frames[i + 1], u), dims);
+    var s = _keepWallContact(solveKeyPose(lerpPose(this, frames[i], frames[i + 1], u), dims), i, u);
     // Si los dos momentos apoyan en el suelo, el intermedio también: la
     // interpolación no lo despega ni lo hunde. Con pivote (rodillas fijas)
     // el apoyo ya está resuelto.
     final la = _keys[i].lowest, lb = _keys[i + 1].lowest;
     if (pivot == null && la > -3 && lb > -3) s = s.shiftedY(_lerp(la, lb, u) - s.lowest);
-    return s.grounded();
+    return _clearOfWall(s.grounded());
+  }
+
+  /// Distancia (hacia el cuerpo) a la que un pie cuenta como apoyado en la
+  /// pared: ~10 cm.
+  static const wallContact = 3.0;
+
+  /// Pies contra la pared entre dos momentos que los tienen apoyados: la
+  /// punta se desliza por la pared en vez de seguir los ángulos
+  /// interpolados, que la harían atravesarla (del pino en L al vertical la
+  /// pierna gira alrededor de la cadera). Se conserva el largo cadera–tobillo
+  /// (pierna recta si lo estaba) y el ángulo del pie; la rodilla sale con IK.
+  Skeleton2D _keepWallContact(Skeleton2D s, int i, double u) {
+    final wall = _wall;
+    if (wall == null || u <= 0 || u >= 1) return s;
+    final (wx, side) = wall;
+    double gap(Offset p) => (p.dx - wx) * side;
+    final a = _keys[i], b = _keys[i + 1];
+    final j = Map.of(s.joints);
+    final hip = j['hip']!;
+    for (final sd in const ['near', 'far']) {
+      final ta = a.joints['${sd}Toe'], tb = b.joints['${sd}Toe'];
+      final ankle0 = j['${sd}Ankle'], knee0 = j['${sd}Knee'], foot = s.ends['${sd}Leg'];
+      if (ta == null || tb == null || ankle0 == null || knee0 == null || foot == null) continue;
+      if (gap(ta) > wallContact || gap(tb) > wallContact) continue;
+      final fd = _dir(foot);
+      // La punta toca la pared; el tobillo queda donde el pie lo deja, nunca
+      // más cerca de la pared que en los momentos clave.
+      final minAnkle = math.min(gap(a.joints['${sd}Ankle']!), gap(b.joints['${sd}Ankle']!));
+      final ankleGap = math.max(_lerp(gap(ta), gap(tb), u) - fd.dx * side * dims.foot, minAnkle);
+      final ax = wx + side * ankleGap;
+      final len = (ankle0 - hip).distance;
+      final dx = ax - hip.dx;
+      final Offset target;
+      if (dx.abs() >= len) {
+        // No alcanza: la pierna queda estirada hacia la pared, sin tocarla.
+        target = Offset(hip.dx + dx.sign * len, hip.dy);
+      } else {
+        // Del mismo lado de la cadera (arriba o abajo) que la interpolación.
+        final dyNow = ankle0.dy - hip.dy;
+        final dyB = b.joints['${sd}Ankle']!.dy - b.joints['hip']!.dy;
+        final sign = dyNow.abs() > 1e-6 ? dyNow.sign : (dyB >= 0 ? 1.0 : -1.0);
+        target = Offset(ax, hip.dy + sign * math.sqrt(len * len - dx * dx));
+      }
+      // La rodilla dobla hacia el mismo lado que en la interpolación; recta,
+      // hacia el frente del muslo (opuesto a la cara flexora).
+      final v = ankle0 - hip, w = knee0 - hip;
+      final cross = v.dx * w.dy - v.dy * w.dx;
+      final bend = cross.abs() > 1e-6 ? cross.sign.toInt() : -(flex['${sd}Leg'] ?? 1);
+      final (knee, ankle) = twoLink(hip, target, dims.thigh, dims.shin, bend);
+      j['${sd}Knee'] = knee;
+      j['${sd}Ankle'] = ankle;
+      j['${sd}Toe'] = ankle + fd * dims.foot;
+    }
+    return Skeleton2D(joints: j, torso: s.torso, gaze: s.gaze, ends: s.ends, grips: s.grips);
+  }
+
+  /// Nada atraviesa la pared, como nada atraviesa el suelo: si algo la
+  /// cruza (con su volumen), todo el cuerpo se aparta. Con los apoyos de
+  /// [_keepWallContact] no debería pasar; es la red de seguridad.
+  Skeleton2D _clearOfWall(Skeleton2D s) {
+    final wall = _wall;
+    if (wall == null) return s;
+    final (wx, side) = wall;
+    var worst = 0.0;
+    s.joints.forEach((k, p) {
+      worst = math.min(worst, (p.dx - wx) * side - jointPad(k, dims));
+    });
+    return worst < -0.05 ? s.shiftedX(-worst * side) : s;
   }
 
   /// Recuadro común (x0, y0, x1, y1) de todos los momentos y los props: la
@@ -345,6 +441,29 @@ class Figure3DCatalog {
   return (mid, mid + e / n * b);
 }
 
+/// Volumen alrededor del centro de una articulación (zapato, mitón, rodilla,
+/// cabeza): lo que no debe entrar en la pared.
+double jointPad(String joint, BodyDims d) => joint == 'head'
+    ? d.headRadius
+    : joint.endsWith('Toe')
+        ? 0.6
+        : joint.endsWith('Ankle')
+            ? 0.9
+            : joint.endsWith('Hand')
+                ? 0.5
+                : joint.endsWith('Knee')
+                    ? 1.3
+                    : 0.0;
+
+/// Agarre normalizado: 'prono' y 'Prona' son el mismo.
+String gripKey(String grip) {
+  final k = nameKey(grip);
+  for (final g in const ['prona', 'supina', 'neutra', 'mixta']) {
+    if (k.startsWith(g.substring(0, g.length - 1))) return g;
+  }
+  return k;
+}
+
 /// Postura de perfil resuelta: articulaciones y orientación de pies y manos.
 class Skeleton2D {
   Skeleton2D({required this.joints, required this.torso, required this.gaze, required this.ends, required this.grips});
@@ -374,15 +493,17 @@ class Skeleton2D {
     return m;
   }
 
-  Skeleton2D shiftedY(double dy) => dy == 0
-      ? this
-      : Skeleton2D(
-          joints: {for (final e in joints.entries) e.key: e.value.translate(0, dy)},
-          torso: torso,
-          gaze: gaze,
-          ends: ends,
-          grips: grips,
-        );
+  Skeleton2D shiftedY(double dy) => dy == 0 ? this : _shifted(Offset(0, dy));
+
+  Skeleton2D shiftedX(double dx) => dx == 0 ? this : _shifted(Offset(dx, 0));
+
+  Skeleton2D _shifted(Offset d) => Skeleton2D(
+        joints: {for (final e in joints.entries) e.key: e.value + d},
+        torso: torso,
+        gaze: gaze,
+        ends: ends,
+        grips: grips,
+      );
 
   /// Nada bajo el suelo: si algo lo atraviesa, todo sube.
   Skeleton2D grounded() {

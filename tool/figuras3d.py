@@ -105,6 +105,9 @@ EXERCISES = [
         'regions': [{'part': 'torso', 'face': 'lats', 'from': 0.28, 'to': 0.9}],
         'props': [{'type': 'bar', 'x': 4, 'y': -68, 'half': 16},
                   {'type': 'backpack'}],
+        # Variante que dibuja: la app la muestra solo si la sesión pide esto
+        # (o si se abre sin contexto); si no, la figura plana.
+        'variant': {'grip': 'prona', 'loaded': True},
         'gripZ': 7.0,
         # De perfil exacto la barra se ve de punta: un poco desde adelante se
         # ve la barra, los puños que la envuelven y la barbilla por encima.
@@ -228,6 +231,7 @@ def build(ex):
         'view': {'yaw': 0, 'pitch': 12, **ex.get('view', {})},
         'pivot': list(ex['pivot']) if ex.get('pivot') else None,
         'flex': flex_signs(ex, frames),
+        **({'variant': ex['variant']} if ex.get('variant') else {}),
         'frames': frames,
     }, check(ex, solved)
 

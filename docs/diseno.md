@@ -118,7 +118,9 @@ y la vista inicial. La app ([`lib/ui/exercise_figure_3d.dart`](../lib/ui/exercis
 sube esa postura a 3D (lado cercano en z = +ancho, lejano en z = −ancho; los
 codos con IK 3D hacia afuera), interpola entre momentos (ángulos por el camino
 corto, apoyos sujetos con IK, la cadera del nórdico girando sobre las
-rodillas) y pinta con Canvas en orden de profundidad. Sin dependencias nuevas.
+rodillas, los pies del pino deslizándose por la pared en vez de atravesarla
+y, como con el suelo, nada cruza una pared) y pinta con Canvas en orden de
+profundidad. Sin dependencias nuevas.
 
 **Qué hace reconocible al maniquí** (la crítica de la primera maqueta):
 
@@ -137,10 +139,18 @@ medio, final) que se pasan de lado, casi a todo el ancho y 260 dp de alto,
 con su pie debajo. *Ver movimiento* los anima en el mismo cuadro (va y
 vuelve, con una pausa en cada momento). Tocar un momento lo abre en pantalla
 completa: ahí arrastrar gira la figura (±60°) y *De perfil* o un doble toque
-la devuelven a la vista inicial. La vista inicial es de perfil con una leve
+la devuelven a la vista inicial; ampliar mientras se anima abre la pose que se
+estaba viendo. El pie de cada momento crece con el texto del sistema (se mide,
+no se reserva un alto fijo). La vista inicial es de perfil con una leve
 inclinación; el pino arranca 15° desde atrás (para ver la pared de frente y
 que la nuca da a la sala) y la dominada 14° desde adelante (de perfil exacto
 la barra se ve de punta).
+
+**Variante.** Una figura puede declarar la variante que dibuja (`variant` en
+`tool/figuras3d.py`: la dominada es prona con mochila). El cronómetro pasa a la
+hoja el agarre del paso y si va con carga; si no coincide (jueves supina,
+circuito sin mochila) se muestra la figura plana, y el paso de la mochila de
+la guía escrita se omite. Desde el catálogo, sin contexto, se ve la 3D.
 
 **Agregar un ejercicio.** Copiar una entrada de `EXERCISES` en
 `tool/figuras3d.py` con el mismo nombre del catálogo (se busca sin tildes ni

@@ -22,6 +22,8 @@ Future<void> showTechniqueSheet(
   String? progressionNote,
   String? mediaUrl,
   String? anchor,
+  String? grip,
+  bool? loaded,
 }) =>
     showModalBottomSheet<void>(
       context: context,
@@ -38,6 +40,8 @@ Future<void> showTechniqueSheet(
           progressionNote: progressionNote,
           mediaUrl: mediaUrl,
           anchor: anchor,
+          grip: grip,
+          loaded: loaded,
           controller: controller,
         ),
       ),
@@ -52,6 +56,8 @@ class TechniqueContent extends StatelessWidget {
     this.mediaUrl,
     this.controller,
     this.anchor,
+    this.grip,
+    this.loaded,
   });
 
   final String exercise;
@@ -63,6 +69,11 @@ class TechniqueContent extends StatelessWidget {
   /// Anclaje de la banda ('alto', 'medio', 'bajo', 'manos'); null sin banda.
   final String? anchor;
 
+  /// Variante que pide la sesión: agarre ('supina') y si lleva carga
+  /// externa. null = sin contexto (desde el catálogo): la guía completa.
+  final String? grip;
+  final bool? loaded;
+
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
@@ -70,7 +81,8 @@ class TechniqueContent extends StatelessWidget {
     // La guía v3.1 trae el paso a paso completo; si no hay, las claves del
     // catálogo.
     final detail = exerciseDetail(exercise);
-    final steps = detail?.steps ?? cues;
+    final steps = detail?.stepsFor(loaded: loaded) ?? cues;
+    final easier = detail?.easierFor(loaded: loaded);
     return SafeArea(
       child: ListView(
         controller: controller,
@@ -79,7 +91,7 @@ class TechniqueContent extends StatelessWidget {
           Text(exercise, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
           if (detail != null) Text(detail.muscles, style: text.bodyMedium),
           const SizedBox(height: 14),
-          ExerciseFigureView(exercise: exercise),
+          ExerciseFigureView(exercise: exercise, grip: grip, loaded: loaded),
           const SizedBox(height: 16),
           if (detail != null) Text('Cómo hacerlo', style: text.titleSmall),
           if (detail != null) const SizedBox(height: 6),
@@ -103,14 +115,14 @@ class TechniqueContent extends StatelessWidget {
             Text('Errores comunes', style: text.titleSmall),
             for (final m in detail.mistakes) Text('• $m', style: text.bodyMedium),
           ],
-          if (detail?.easier != null || detail?.harder != null) ...[
+          if (easier != null || detail?.harder != null) ...[
             const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (detail?.easier case final easy?)
+                if (easier case final easy?)
                   Expanded(child: _Scale(title: 'Más fácil', body: easy, icon: Icons.south)),
-                if (detail?.easier != null && detail?.harder != null) const SizedBox(width: 12),
+                if (easier != null && detail?.harder != null) const SizedBox(width: 12),
                 if (detail?.harder case final hard?)
                   Expanded(child: _Scale(title: 'Más difícil', body: hard, icon: Icons.north)),
               ],

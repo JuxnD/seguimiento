@@ -16,6 +16,8 @@ class ExerciseDetail {
     this.harder,
     this.note,
     this.unit,
+    this.loadedSteps = const [],
+    this.easierUnloaded,
   });
 
   /// Qué trabaja ("Dorsal, bíceps, espalda alta").
@@ -31,6 +33,20 @@ class ExerciseDetail {
   /// Qué cuenta una repetición cuando no es una repetición: 'm' (metros),
   /// 'saltos', 'sprints'. null = repeticiones.
   final String? unit;
+
+  /// Pasos que solo valen con lastre ("Si va con mochila: …"): van antes de
+  /// [steps], salvo que la sesión vaya sin carga.
+  final List<String> loadedSteps;
+
+  /// "Más fácil" cuando la sesión va sin carga: [easier] da por hecha la
+  /// mochila.
+  final String? easierUnloaded;
+
+  /// Pasos para la sesión: `loaded` false = sin carga; null = sin contexto
+  /// (catálogo), se muestran todos.
+  List<String> stepsFor({bool? loaded}) => [if (loaded != false) ...loadedSteps, ...steps];
+
+  String? easierFor({bool? loaded}) => loaded == false ? easierUnloaded ?? easier : easier;
 }
 
 /// El detalle de un ejercicio por nombre (sin mayúsculas ni tildes), o null.
@@ -58,14 +74,18 @@ const exerciseDetails = <String, ExerciseDetail>{
   ),
   'Dominadas': ExerciseDetail(
     muscles: 'Dorsal, bíceps, espalda alta',
+    // El lunes va prona con mochila; el jueves, supina; en el circuito, sin
+    // carga: la mochila es condicional.
+    loadedSteps: ['Si va con mochila: correas ajustadas y el peso envuelto en una toalla para que no se mueva.'],
     steps: [
-      'Con mochila: correas ajustadas y el peso envuelto en una toalla para que no se mueva.',
-      'Cuélgate con los brazos estirados y los hombros activos (prono: un poco más ancho que los hombros).',
+      'Cuélgate con los brazos estirados y los hombros activos (prono: un poco más ancho que los hombros; '
+          'supino: al ancho de los hombros).',
       'Sube llevando los codos hacia las costillas hasta pasar la barbilla sobre la barra.',
       'Baja en 2 segundos hasta estirar los brazos por completo.',
     ],
     mistakes: ['Medias repeticiones arriba o abajo.', 'Balancear las piernas para ayudarte.', 'Encoger los hombros hacia las orejas.'],
     easier: 'Sin mochila, o con 2,5 kg.',
+    easierUnloaded: 'Solo la bajada lenta (negativos de 3–4 s).',
     harder: 'Sube 2–5 kg cuando completes todas las series al tope con RIR 1–2.',
   ),
   'Remo invertido (mesa)': ExerciseDetail(
