@@ -5,7 +5,7 @@ pero solo podía verlos; escribir comidas manualmente le resulta incómodo.
 La captura demuestra uso del copiloto, no exactitud de sus conclusiones ni
 el número de versión instalado.
 
-## Candidato 1.20.0+28
+## Publicado en 1.20.0+28
 
 - Comentarios: seleccionar texto, copiar la respuesta o un comentario con su
   cita, compartir mediante el selector del sistema. No exporta licencia,
@@ -25,13 +25,14 @@ el número de versión instalado.
   implican exactitud nutricional.
 
 El owner autorizó todas las oportunidades de esta tabla para 1.20 después de
-Improve. Están integradas: [frase y etiqueta](ia-comidas.md),
+Improve. Están publicadas: [frase y etiqueta](ia-comidas.md),
 [preguntas, guías e historial](ia-informes.md), [decisión común](adr/0012-asistente-por-tareas-y-fuentes-locales.md).
 El gateway está publicado y leyó los valores impresos de dos etiquetas
-sintéticas, una mayor de 1 MB. Falta cerrar publicación/verificación del APK
-y piloto en el teléfono. Las pruebas sintéticas no validan reconocer una comida real.
+sintéticas, una mayor de 1 MB. El APK público firmado pasó actualización en QA
+sin perder registros ([recibo](context/sessions/2026-10-06-entrega-120.md)). Falta
+piloto en el teléfono. Las pruebas sintéticas no validan reconocer una comida real.
 
-## Funciones incluidas en la candidata 1.20
+## Funciones incluidas en 1.20
 
 | Prioridad | Función propuesta | Valor y condición de aceptación |
 |---|---|---|

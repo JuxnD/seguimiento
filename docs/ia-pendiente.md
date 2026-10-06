@@ -36,7 +36,7 @@ Controles locales de validación, consentimiento, cancelación y errores; 16 con
 
 Caso: evitar copiar informe al chat. Adoptante: owner que usa la app diariamente. Baseline de tiempo/utilidad sin medir; no se declara ahorro ni ROI. Propuesta de aceptación: dos semanas comparando utilidad/correcciones con el flujo anterior, sin fecha comprometida. Informe local disponible sin internet.
 
-## Candidato 1.20: acciones y foto de comida
+## 1.20 publicada: asistente por tareas
 
 Copiar/compartir cada comentario o respuesta completa, conservando citas, y
 selección de texto. La exportación no contiene licencia, HWID ni informe completo.
@@ -48,13 +48,15 @@ misma autorización/cuota. Propuesta estimada → revisión → borrador → Gua
 no se crean registros automáticamente. No conserva imagen ni cambia el backup.
 [Especificación y oportunidades](ia-oportunidades.md), [ADR](adr/0011-comidas-foto-como-borrador-estimado.md).
 
-Todas las oportunidades están integradas en la candidata 1.20. El gateway
+Todas las oportunidades están publicadas en 1.20.0+28. El gateway
 publicado leyó dos etiquetas ficticias, una mayor de 1 MB; Android comprobó
 preparación de foto, envío y lectura contra el proveedor real. La licencia QA
 se revocó de nuevo y status devolvió 403. No se afirma exactitud con comidas reales.
+[APK, firma y conservación de datos verificados](context/sessions/2026-10-06-entrega-120.md).
 El 6 oct el owner autorizó todas las oportunidades propuestas, incluidas las
 que estaban diferidas, y su publicación en una nueva versión. También está
 vigente su autorización explícita de despliegue en Control360i/canal
 `bondo-estacion`. Se ejecutó Improve antes de implementar; el alcance y los
 controles de entrega están en [plans](../plans/120-improve-audit.md). Esta
-autorización no equivale a afirmar que el candidato ya esté publicado.
+autorización se ejecutó y quedó verificada en la publicación 1.20.0+28,
+como consta en el recibo de entrega.

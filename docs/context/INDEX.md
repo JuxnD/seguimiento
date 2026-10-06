@@ -3,16 +3,17 @@
 Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
-**Entrega vigente:** [1.19.0+27 publicada y verificada](sessions/2026-10-06-entrega-119.md).
-Fuente ce68981, APK público y gateway comprobados. La captura del owner del
-6 oct confirma uso del copiloto en el teléfono; versión instalada no inspeccionada.
-Aceptación visual y proveedor externo de respaldos siguen pendientes.
-**Candidato siguiente:** [asistente por tareas con revisión](../ia-oportunidades.md),
-1.20.0+28 en `C:/My Projects/seguimiento-120-release`, rama `JuxnD/120-release`.
+**Entrega vigente:** [1.20.0+28 publicada y verificada](sessions/2026-10-06-entrega-120.md).
+Tag v1.20.0/fuente c7972c7, CI y release exitosos. APK público firmado con la
+llave histórica, instalado sobre 1.19 en QA y SQLite17→18 sin perder registros.
+Gateway f107763a verificado con datos ficticios; QA revocada. Instalación en el
+teléfono del owner, utilidad y precisión con comidas reales siguen pendientes.
+**Alcance entregado:** [asistente por tareas con revisión](../ia-oportunidades.md),
+integrado en `C:/My Projects/seguimiento-120-release`, rama `JuxnD/120-release`.
 [Improve y alcance autorizado](../../plans/120-improve-audit.md),
 [integración y gates](sessions/2026-10-06-integracion-120.md).
 El candidato inicial de foto queda como [evidencia histórica](sessions/2026-10-06-candidato-120-ia.md).
-No sustituye la release publicada.
+La evidencia de [1.19](sessions/2026-10-06-entrega-119.md) se conserva como histórica.
 
 | Tema | Documento | Cuándo se actualiza |
 |---|---|---|

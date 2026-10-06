@@ -19,10 +19,10 @@ sincronización. El copiloto opcional usa un gateway de Control360i con licencia
 por dispositivo; la clave de OpenAI permanece en el servidor. Cada consulta
 requiere revisar y aceptar los datos que se enviarán.
 
-La candidata 1.20 reúne copiar/compartir comentarios, comidas por foto o frase,
+La 1.20 publicada reúne copiar/compartir comentarios, comidas por foto o frase,
 lectura de etiquetas revisada, historial local, preguntas con citas sobre el
 informe o una guía y accesos para completar registros con su fecha.
-[Alcance y gates de entrega](docs/context/sessions/2026-10-06-integracion-120.md).
+[Entrega verificada y gates de uso real](docs/context/sessions/2026-10-06-entrega-120.md).
 
 Detalle y pendientes: [docs/roadmap.md](docs/roadmap.md).
 

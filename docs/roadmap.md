@@ -64,7 +64,7 @@ Mejoras pedidas tras el primer uso real, en este orden:
   Se conservan los campos de agarre/variante y bloque ya editables; A/B y
   agrupación de superseries se preservan al guardar.
 
-## Próxima actualización — candidato 1.20
+## 1.20.0 — publicado y verificado
 
 Alcance completo autorizado después de Improve: seleccionar/copiar/compartir
 comentarios, comidas por foto y por frase, lectura de etiquetas con revisión,
@@ -72,8 +72,10 @@ historial local, preguntas sobre informes y comparación elegida, consultas sobr
 la guía real de un ejercicio y accesos fechados a datos faltantes. Comparten
 activación, transporte y cuota; la IA no guarda registros por sí sola.
 Gateway publicado y etiquetas sintéticas verificadas, incluida foto >1 MB.
-La candidata está integrada; publicación del APK y aceptación en el teléfono
-siguen como gates separados. [Recibo de integración](context/sessions/2026-10-06-integracion-120.md),
+APK público firmado e instalado sobre 1.19 en QA, sin perder registros.
+La aceptación en el teléfono diario y la precisión con comidas reales siguen
+como gates separados. [Entrega](context/sessions/2026-10-06-entrega-120.md),
+[recibo de integración](context/sessions/2026-10-06-integracion-120.md),
 [detalle y límites](ia-oportunidades.md).
 
 ## Fuera de alcance

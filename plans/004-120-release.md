@@ -1,5 +1,11 @@
 # Plan004: integrar y publicar la versión completa autorizada
 
+Estado: DONE. v1.20.0+28 publicada, CI y release del SHA c7972c7 exitosos.
+APK público descargado, firma histórica/código28 verificados e instalado sobre
+1.19 pública en QA; SQLite17→18 con todos los registros originales preservados.
+Gateway final f107763a releído y operativo con datos ficticios, QA revocada.
+[Recibo y límites de aceptación](../docs/context/sessions/2026-10-06-entrega-120.md).
+
 P1/L/MED, depende001/002/003 aprobados. Fuente inicial app0e3855c y server9f1981cf.
 No publicar la app hasta cerrar sus criterios. El gateway compatible con 1.19
 puede desplegarse y probarse con datos ficticios tras aprobar 001, mientras
