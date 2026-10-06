@@ -9,6 +9,7 @@ import '../../app/providers.dart';
 import '../../data/exercise_details.dart';
 import '../../data/repositories/exercise_photo_repository.dart';
 import '../../domain/band_guide.dart';
+import '../../domain/search.dart';
 import '../../ui/exercise_figure_3d_view.dart';
 import '../../ui/widgets.dart';
 
@@ -78,17 +79,20 @@ class TechniqueContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final url = mediaUrl == null ? null : Uri.tryParse(mediaUrl!);
-    // La guía v3.1 trae el paso a paso completo; si no hay, las claves del
-    // catálogo.
+    // La guía fija y las claves personales se complementan. No se oculta
+    // lo que conserva el catálogo, ni se repite una clave idéntica.
     final detail = exerciseDetail(exercise);
-    final steps = detail?.stepsFor(loaded: loaded) ?? cues;
+    final steps = _uniqueCues(detail?.stepsFor(loaded: loaded) ?? cues);
+    final personal =
+        detail == null ? const <String>[] : _uniqueCues(cues, excluding: steps);
     final easier = detail?.easierFor(loaded: loaded);
     return SafeArea(
       child: ListView(
         controller: controller,
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
         children: [
-          Text(exercise, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+          Text(exercise,
+              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
           if (detail != null) Text(detail.muscles, style: text.bodyMedium),
           const SizedBox(height: 14),
           ExerciseFigureView(exercise: exercise, grip: grip, loaded: loaded),
@@ -101,32 +105,41 @@ class TechniqueContent extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(width: 24, child: Text('${i + 1}.', style: text.titleMedium)),
+                  SizedBox(
+                      width: 24,
+                      child: Text('${i + 1}.', style: text.titleMedium)),
                   Expanded(child: Text(cue, style: text.bodyLarge)),
                 ],
               ),
             ),
+          if (personal.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text('Claves personales', style: text.titleSmall),
+            const SizedBox(height: 6),
+            for (final cue in personal)
+              Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(cue, style: text.bodyLarge)),
+          ],
           if (detail?.note case final note?) ...[
             const SizedBox(height: 4),
-            Text(note, style: text.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
+            Text(note,
+                style: text.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
           ],
           if (detail != null && detail.mistakes.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text('Errores comunes', style: text.titleSmall),
-            for (final m in detail.mistakes) Text('• $m', style: text.bodyMedium),
+            for (final m in detail.mistakes)
+              Text('• $m', style: text.bodyMedium),
           ],
           if (easier != null || detail?.harder != null) ...[
             const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (easier case final easy?)
-                  Expanded(child: _Scale(title: 'Más fácil', body: easy, icon: Icons.south)),
-                if (easier != null && detail?.harder != null) const SizedBox(width: 12),
-                if (detail?.harder case final hard?)
-                  Expanded(child: _Scale(title: 'Más difícil', body: hard, icon: Icons.north)),
-              ],
-            ),
+            if (easier case final easy?)
+              _Scale(title: 'Más fácil', body: easy, icon: Icons.south),
+            if (easier != null && detail?.harder != null)
+              const SizedBox(height: 8),
+            if (detail?.harder case final hard?)
+              _Scale(title: 'Más difícil', body: hard, icon: Icons.north),
           ],
           if (progressionNote != null) ...[
             const SizedBox(height: 12),
@@ -151,15 +164,29 @@ class TechniqueContent extends StatelessWidget {
           if (url != null) ...[
             const SizedBox(height: 16),
             OutlinedButton.icon(
-              onPressed: () => launchUrl(url, mode: LaunchMode.externalApplication),
+              onPressed: () =>
+                  launchUrl(url, mode: LaunchMode.externalApplication),
               icon: const Icon(Icons.play_circle_outline),
-              label: const Text('Ver video de referencia'),
+              label: Text(url.queryParameters.containsKey('search_query') ||
+                      url.path == '/search'
+                  ? 'Buscar demostración'
+                  : 'Ver video de referencia'),
             ),
           ],
         ],
       ),
     );
   }
+}
+
+List<String> _uniqueCues(List<String> cues,
+    {List<String> excluding = const []}) {
+  String key(String cue) => nameKey(cue.trim().replaceAll(RegExp(r'\s+'), ' '));
+  final seen = excluding.map(key).toSet();
+  return [
+    for (final cue in cues)
+      if (cue.trim().isNotEmpty && seen.add(key(cue))) cue.trim()
+  ];
 }
 
 /// "Más fácil" / "Más difícil" de la guía v3.1.
@@ -182,7 +209,11 @@ class _Scale extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [Icon(icon, size: 16), const SizedBox(width: 4), Text(title, style: text.labelLarge)]),
+          Row(children: [
+            Icon(icon, size: 16),
+            const SizedBox(width: 4),
+            Expanded(child: Text(title, style: text.labelLarge))
+          ]),
           const SizedBox(height: 4),
           Text(body, style: text.bodySmall),
         ],

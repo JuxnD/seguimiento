@@ -123,11 +123,15 @@ class _PlanHero extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Text('${weekdayLong(dashboard.date.weekday)} ${formatShort(dashboard.date)}'.toUpperCase(),
+                Text(
+                    '${weekdayLong(dashboard.date.weekday)} ${formatShort(dashboard.date)}'
+                        .toUpperCase(),
                     style: text.labelSmall?.copyWith(letterSpacing: 1)),
-                const Spacer(),
                 _Chip(
                   icon: Icons.local_fire_department,
                   label: dashboard.streak == 0
@@ -135,8 +139,9 @@ class _PlanHero extends StatelessWidget {
                       : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
                   color: dashboard.streak >= 3 ? style.color : null,
                 ),
-                const SizedBox(width: 6),
-                _Chip(icon: Icons.calendar_today_outlined, label: 'Sem ${dashboard.weekIndex}'),
+                _Chip(
+                    icon: Icons.calendar_today_outlined,
+                    label: 'Sem ${dashboard.weekIndex}'),
               ],
             ),
             const SizedBox(height: 12),
@@ -164,38 +169,26 @@ class _PlanHero extends StatelessWidget {
                         ),
                       ),
                       if (dashboard.targetRounds != null)
-                        Text('Meta: ${dashboard.targetRounds} rondas', style: text.titleSmall),
-                      if (dashboard.planVersion != null) Text('Plan v${dashboard.planVersion}', style: text.bodySmall),
+                        Text('Meta: ${dashboard.targetRounds} rondas',
+                            style: text.titleSmall),
+                      if (dashboard.planVersion != null)
+                        Text('Plan v${dashboard.planVersion}',
+                            style: text.bodySmall),
                     ],
                   ),
                 ),
-                if (dashboard.trained) Icon(Icons.check_circle, color: style.color, size: 28),
+                if (dashboard.trained)
+                  Icon(Icons.check_circle, color: style.color, size: 28),
               ],
             ),
-            if (dashboard.mainExercises.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              for (final e in dashboard.mainExercises)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text('• $e', style: text.bodyMedium),
-                ),
+            // Lo de todos los días, a la vista: con el v3.1 el día tiene 8–12
+            // ejercicios y "Empezar" quedaba debajo de varias tarjetas.
+            if (dashboard.dayType.isTraining) ...[
+              const SizedBox(height: 14),
+              _StartButtons(dashboard: dashboard, color: style.color),
             ],
-            if (dashboard.blockExercises.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                dashboard.blockExercises.any((l) => l.contains(' A:')) &&
-                        dashboard.blockExercises.any((l) => l.contains(' B:'))
-                    ? 'Además (A y B se alternan por semana):'
-                    : 'Además:',
-                style: text.labelLarge,
-              ),
-              for (final line in dashboard.blockExercises)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text('• $line', style: text.bodyMedium),
-                ),
-            ],
-            if (dashboard.hardFootballYesterday case final game? when dashboard.dayType.isTraining)
+            if (dashboard.hardFootballYesterday case final game?
+                when dashboard.dayType.isTraining)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
@@ -205,12 +198,15 @@ class _PlanHero extends StatelessWidget {
                 ),
               ),
             if (dashboard.proposal case final p? when !dashboard.trained)
-              _ProposalLine(proposal: p, date: dashboard.date, color: style.color),
-            if (dashboard.v3 case final v3?) _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
+              _ProposalLine(
+                  proposal: p, date: dashboard.date, color: style.color),
+            if (dashboard.v3 case final v3?)
+              _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
             if (dashboard.restingHrWarning case final hr?)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text(hr, style: text.bodyMedium?.copyWith(color: style.color)),
+                child: Text(hr,
+                    style: text.bodyMedium?.copyWith(color: style.color)),
               ),
             if (dashboard.soreZones.isNotEmpty)
               Padding(
@@ -223,17 +219,61 @@ class _PlanHero extends StatelessWidget {
             if (dashboard.dayType == DayType.descanso)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text('Día de descanso. La racha no se rompe.', style: text.bodyMedium),
+                child: Text('Día de descanso. La racha no se rompe.',
+                    style: text.bodyMedium),
               ),
-            // Lo de todos los días, a la vista: con el v3.1 el día tiene 8–12
-            // ejercicios y "Empezar" quedaba debajo de varias tarjetas.
-            if (dashboard.dayType.isTraining) ...[
-              const SizedBox(height: 14),
-              _StartButtons(dashboard: dashboard, color: style.color),
-            ],
+            if (dashboard.mainExercises.isNotEmpty ||
+                dashboard.blockExercises.isNotEmpty)
+              _RoutineDetails(dashboard: dashboard),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// La rutina completa sigue disponible sin desplazar la acción principal.
+class _RoutineDetails extends StatelessWidget {
+  const _RoutineDetails({required this.dashboard});
+
+  final TodayDashboard dashboard;
+
+  @override
+  Widget build(BuildContext context) {
+    final d = dashboard;
+    return ExpansionTile(
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      title: const Text('Ver rutina'),
+      children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (d.mainExercises.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            for (final e in d.mainExercises)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child:
+                    Text('• $e', style: Theme.of(context).textTheme.bodyMedium),
+              ),
+          ],
+          if (d.blockExercises.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              d.blockExercises.any((l) => l.contains(' A:')) &&
+                      d.blockExercises.any((l) => l.contains(' B:'))
+                  ? 'Además (A y B se alternan por semana):'
+                  : 'Además:',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            for (final line in d.blockExercises)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Text('• $line',
+                    style: Theme.of(context).textTheme.bodyMedium),
+              ),
+          ],
+        ]),
+      ],
     );
   }
 }
@@ -741,7 +781,7 @@ class _SleepLine extends ConsumerWidget {
           Row(children: [
             const Icon(Icons.bedtime_outlined, size: 18),
             const SizedBox(width: 8),
-            Text('¿Cuántas horas en cama anoche?', style: text.bodyMedium),
+            Expanded(child: Text('¿Cuántas horas en cama anoche?', style: text.bodyMedium)),
           ]),
           const SizedBox(height: 4),
           Wrap(
