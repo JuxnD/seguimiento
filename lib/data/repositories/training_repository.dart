@@ -6,6 +6,7 @@ import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
 import '../database.dart';
+import '../seed_plan.dart' show plancheBlock;
 import 'exercise_repository.dart';
 import 'plan_repository.dart';
 
@@ -434,6 +435,44 @@ class TrainingRepository {
       ];
     }
     return const [];
+  }
+
+  /// ¿La última inclinación de planche llegó a 3 × 30 s? Entonces entra el
+  /// tuck (§19.7).
+  Future<bool> plancheTuckReady(DateTime before) async {
+    final exId = await exercises.idOf('Inclinación de planche');
+    if (exId == null) return false;
+    final last = await (db.select(db.sessionSets).join([
+      innerJoin(db.sessions, db.sessions.id.equalsExp(db.sessionSets.sessionId)),
+    ])
+          ..where(db.sessionSets.exerciseId.equals(exId) & db.sessions.date.isSmallerThanValue(dayKey(before)))
+          ..orderBy([OrderingTerm(expression: db.sessions.date, mode: OrderingMode.desc)]))
+        .get();
+    if (last.isEmpty) return false;
+    final sessionId = last.first.readTable(db.sessions).id;
+    final sets = [for (final r in last) if (r.readTable(db.sessions).id == sessionId) r.readTable(db.sessionSets)];
+    return sets.where((s) => s.reps >= 30).length >= 3;
+  }
+
+  /// El día con el bloque de planche al inicio, si toca (v3.1, mini
+  /// paralelas, martes/jueves/viernes). Igual para empezar y para retomar: el
+  /// guion tiene que ser el mismo.
+  Future<PlanDayDraft> withPlanche(PlanDayDraft day, DateTime date, V3Day? v3, {required bool enabled}) async {
+    if (!enabled || v3 == null || !v3.isV31) return day;
+    final block = plancheBlock(
+      weekday: date.weekday,
+      deload: v3.reducedVolume,
+      tuckReady: await plancheTuckReady(date),
+    );
+    if (block.isEmpty) return day;
+    return PlanDayDraft(
+      weekday: day.weekday,
+      type: day.type,
+      targetRounds: day.targetRounds,
+      restBetweenRoundsSec: day.restBetweenRoundsSec,
+      notes: day.notes,
+      exercises: [...block, ...day.exercises],
+    );
   }
 
   /// Sesiones que se guardaron solas al terminar el cronómetro y aún no se

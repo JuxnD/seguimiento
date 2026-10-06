@@ -158,7 +158,8 @@ class DashboardRepository {
   final NutritionRepository nutrition;
   final ProfileRepository profile;
 
-  Future<TodayDashboard> today({DateTime? now}) async {
+  /// `planche`: llegaron las mini paralelas (§19.7).
+  Future<TodayDashboard> today({DateTime? now, bool planche = false}) async {
     final date = dateOnly(now ?? DateTime.now());
     final p = await profile.get();
     final view = await plan.dayFor(date);
@@ -212,7 +213,9 @@ class DashboardRepository {
       planVersion: view?.versionNumber,
       planSummary: view == null ? null : _summary(view.day),
       mainExercises: view == null ? const [] : _mainLines(view.day, v3),
-      blockExercises: view == null || view.day.type == DayType.resistencia ? const [] : blockLines(view.day),
+      blockExercises: view == null || view.day.type == DayType.resistencia
+          ? const []
+          : blockLines(await training.withPlanche(view.day, date, v3, enabled: planche)),
       midweekGame: type == DayType.resistencia && (v3?.isV31 ?? false) && await _gameThisWeekBefore(date),
       load: load,
       restingHrWarning: restingHrWarning(await recovery.restingHrRange(date), date),

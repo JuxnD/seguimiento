@@ -77,7 +77,7 @@ const tabataBlock = 'tabata';
 
 /// Bloques que van antes del trabajo principal, sin fatiga: la práctica de
 /// pino del v3.1 (§19.1).
-const preBlocks = {'pino'};
+const preBlocks = {'planche', 'pino'};
 
 /// Descanso entre series de un bloque cuando el plan no lo fija, y la
 /// transición del circuito a los bloques extra. Sin ellos el cronómetro

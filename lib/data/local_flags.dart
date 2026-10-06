@@ -67,6 +67,10 @@ abstract final class FlagKeys {
   static const corrections29SepDismissed = 'corrections29SepDismissed';
   static const corrections5OctDismissed = 'corrections5OctDismissed';
 
+  /// Llegaron las mini paralelas: martes, jueves y viernes del v3.1 empiezan
+  /// con el bloque de planche (§19.7).
+  static const hasParallettes = 'hasParallettes';
+
   /// Día (`YYYY-MM-DD`) en que se respondió "está bien así" a "¿Te faltó
   /// registrar algo de ayer?": no se vuelve a preguntar por ese día.
   static const yesterdayCheckDismissed = 'yesterdayCheckDismissed';

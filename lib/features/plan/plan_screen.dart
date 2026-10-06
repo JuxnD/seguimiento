@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
+import '../../data/catalog_updates.dart' show applyExerciseGuides;
+import '../../data/local_flags.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
@@ -54,6 +56,41 @@ class _V3ActivationCard extends ConsumerWidget {
   }
 }
 
+/// Bloque de planche (§19.7): empieza cuando lleguen las mini paralelas.
+class _PlancheCard extends ConsumerStatefulWidget {
+  const _PlancheCard();
+
+  @override
+  ConsumerState<_PlancheCard> createState() => _PlancheCardState();
+}
+
+class _PlancheCardState extends ConsumerState<_PlancheCard> {
+  late bool _on = ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      title: 'Bloque de planche',
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Tengo las mini paralelas'),
+          subtitle: const Text('Martes, jueves y viernes, ~10 min al inicio: muñecas, inclinación de planche y, el '
+              'martes, flexiones pseudo-planche. El tuck entra con 3 × 30 s de inclinación. En descarga, solo '
+              'inclinaciones. Con dolor de muñeca o codo, una semana solo inclinaciones suaves.'),
+          value: _on,
+          onChanged: (v) async {
+            setState(() => _on = v);
+            await ref.read(localFlagsProvider).set(FlagKeys.hasParallettes, v);
+            if (v) await applyExerciseGuides(ref.read(databaseProvider));
+            ref.invalidate(dashboardProvider);
+          },
+        ),
+      ],
+    );
+  }
+}
+
 /// Historial de versiones del plan. Las versiones no se editan: se crean.
 class PlanScreen extends ConsumerWidget {
   const PlanScreen({super.key});
@@ -75,6 +112,7 @@ class PlanScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 96),
             children: [
               if (!hasV3) const _V3ActivationCard(),
+              if (hasV3) const _PlancheCard(),
               for (var i = list.length - 1; i >= 0; i--)
                 _VersionCard(versionId: list[i].id, number: i + 1, validFrom: parseDay(list[i].validFrom), notes: list[i].notes),
             ],

@@ -407,6 +407,39 @@ PlanDraft planV31(DateTime start) {
   return draft;
 }
 
+/// Bloque de planche (§19.7): martes, jueves y viernes, al inicio, ~10 min.
+/// Muñecas, inclinación y, el martes, flexiones pseudo-planche; el tuck entra
+/// cuando la inclinación llega a 3 × 30 s. En descarga, solo inclinaciones.
+const plancheDays = {DateTime.tuesday, DateTime.thursday, DateTime.friday};
+
+List<PlanExerciseDraft> plancheBlock({required int weekday, required bool deload, required bool tuckReady}) {
+  if (!plancheDays.contains(weekday)) return const [];
+  PlanExerciseDraft p(String name, int sets,
+          {int? reps, int? repsMax, int? hold, int? holdMax, int? rest, int? rir, String? notes}) =>
+      PlanExerciseDraft(
+        name: name,
+        sets: sets,
+        repsMin: reps,
+        repsMax: repsMax ?? reps,
+        holdSecMin: hold,
+        holdSecMax: holdMax ?? hold,
+        restSec: rest,
+        rirMin: rir,
+        rirMax: rir,
+        block: 'planche',
+        notes: notes,
+      );
+  return [
+    if (!deload) p('Muñecas (planche)', 1, hold: 120, notes: 'Círculos, balanceo en cuatro apoyos y palmas al revés.'),
+    p('Inclinación de planche', 3, hold: 15, holdMax: 30, rest: 60,
+        notes: 'Hombros por delante de las manos. Meta: 3 × 30 s.'),
+    if (!deload && weekday == DateTime.tuesday)
+      p('Flexión pseudo-planche', 3, reps: 5, repsMax: 8, rir: 2, rest: 90),
+    if (!deload && tuckReady)
+      p('Tuck planche', 6, hold: 5, holdMax: 10, rest: 60, notes: 'Meta: 10 s. Sin dolor de muñeca o codo.'),
+  ];
+}
+
 /// Metas del v3.1 (§19.3): 2.100 kcal entre semana y 2.400 en días de
 /// fútbol (los rangos son 2.100–2.200 y 2.400–2.500), proteína 160–170 g
 /// todos los días. Son el punto de partida: la báscula decide cada 2 semanas.

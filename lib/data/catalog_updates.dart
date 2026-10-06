@@ -435,6 +435,43 @@ const exerciseGuides = <ExerciseGuide>[
       'Patada alterna sin dejar caer la cadera.',
     ],
   ),
+  // Bloque de planche (§19.7).
+  ExerciseGuide(
+    name: 'Muñecas (planche)',
+    formCues: [
+      'Círculos de muñeca en ambos sentidos.',
+      'En cuatro apoyos, balancéate adelante y atrás.',
+      'Palmas al revés (dedos hacia las rodillas), suave.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Inclinación de planche',
+    formCues: [
+      'En plancha alta sobre las paralelas, brazos bloqueados.',
+      'Empuja el suelo y redondea un poco la espalda alta (protracción).',
+      'Lleva los hombros por delante de las manos inclinándote hacia adelante.',
+      'Glúteo y abdomen apretados, cuerpo en línea.',
+    ],
+    progressionNote: 'inclinación 3 × 30 s → tuck 10 s → tuck avanzada 10 s → straddle → full',
+  ),
+  ExerciseGuide(
+    name: 'Flexión pseudo-planche',
+    formCues: [
+      'Manos a la altura de la cadera, dedos hacia fuera o atrás.',
+      'Hombros por delante de las manos todo el recorrido.',
+      'Baja con los codos pegados y sube manteniendo la inclinación.',
+    ],
+  ),
+  ExerciseGuide(
+    name: 'Tuck planche',
+    formCues: [
+      'Desde cuclillas sobre las paralelas, brazos bloqueados.',
+      'Inclínate adelante hasta que los pies despeguen, rodillas al pecho.',
+      'Espalda redondeada, hombros por delante de las manos.',
+      'Cadera a la altura de los hombros o más arriba.',
+    ],
+    progressionNote: 'tuck → tuck avanzada → straddle → full',
+  ),
   // Los del circuito ya se dominan: basta un recordatorio. Las dominadas del
   // lunes del v3.1 van con mochila: el cronómetro pide kg en las series (no en
   // las rondas del circuito).

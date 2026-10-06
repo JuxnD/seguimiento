@@ -15,6 +15,7 @@ import '../../ui/hero.dart';
 import '../../ui/widgets.dart';
 import 'measurement_form_screen.dart';
 import 'photos_screen.dart';
+import 'skills_screen.dart';
 import '../../ui/theme.dart';
 
 class BodyScreen extends ConsumerWidget {
@@ -49,6 +50,7 @@ class BodyScreen extends ConsumerWidget {
             onMeasure: () => _openMeasurement(context, ref, null),
           ),
           _DecisionCard(weights: weights.value ?? const [], checkIns: checkIns.value ?? const []),
+          const _SkillsCard(),
           AppCard(
             title: 'Peso',
             trailing: IconButton(
@@ -218,6 +220,28 @@ class _DecisionCard extends ConsumerWidget {
         const SizedBox(height: 6),
         Text('Compara el promedio semanal en ayunas con el de 2 semanas antes. Si caen las repeticiones, '
             'también se suben 150–200 kcal.', style: text.bodySmall),
+      ],
+    );
+  }
+}
+
+/// Hoja de ruta de habilidades (§19.8): cuántas van y la próxima.
+class _SkillsCard extends ConsumerWidget {
+  const _SkillsCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final done = ref.watch(skillsProvider).valueOrNull ?? const {};
+    final next = skillRoadmap.where((s) => !done.containsKey(s.id)).take(2).toList();
+    return AppCard(
+      title: 'Habilidades',
+      trailing: TextButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SkillsScreen())),
+        child: const Text('Ver todas'),
+      ),
+      children: [
+        Text('${done.length} de ${skillRoadmap.length} logradas'
+            '${next.isEmpty ? '' : ' · próximas: ${next.map((s) => '${s.name} (${s.criterion})').join(', ')}'}'),
       ],
     );
   }

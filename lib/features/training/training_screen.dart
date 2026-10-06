@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../data/database.dart';
+import '../../data/local_flags.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
@@ -86,7 +87,11 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
         cindyTest: v3?.cindyTest ?? false);
     return;
   }
-  final (adjusted, note) = _v3Adjust(planDay, v3);
+  final (deloaded, note) = _v3Adjust(planDay, v3);
+  final adjusted = await ref
+      .read(trainingRepositoryProvider)
+      .withPlanche(deloaded, day, v3, enabled: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
+  if (!context.mounted) return;
 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
   final variants = adjusted.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
@@ -373,7 +378,9 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         return;
       }
       final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, parseDay(s.date));
-      final (adjusted, note) = _v3Adjust(view.day, v3);
+      final (deloaded, note) = _v3Adjust(view.day, v3);
+      final adjusted = await ref.read(trainingRepositoryProvider).withPlanche(deloaded, parseDay(s.date), v3,
+          enabled: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
       if (!context.mounted) return;
       await _runGuided(
         context,

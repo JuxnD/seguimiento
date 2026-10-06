@@ -233,7 +233,9 @@ final dashboardProvider = FutureProvider((ref) {
   ref.watch(checkInsProvider);
   ref.watch(mealsForDayProvider(dayKey(today)));
   ref.watch(stepsDayProvider(dayKey(today)));
-  return ref.watch(dashboardRepositoryProvider).today(now: today);
+  return ref
+      .watch(dashboardRepositoryProvider)
+      .today(now: today, planche: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
 });
 
 /// Reprograma los avisos cuando cambia algo que los afecta: una sesión, una
