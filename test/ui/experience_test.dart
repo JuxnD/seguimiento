@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:clock/clock.dart';
 
 import 'package:flutter/rendering.dart';
 
@@ -350,78 +351,94 @@ void main() {
 
   testWidgets(
       'Hoy muestra CTA antes de la rutina larga y conserva expansión y día completo',
-      (tester) async {
-    final dir = Directory.systemTemp.createTempSync('seguimiento_experiencia');
-    final db = openInMemoryDatabase();
-    final flags = LocalFlags(File('${dir.path}/flags.json'));
-    final date = DateTime(2026, 10, 12);
-    TodayDashboard dashboard({int sessions = 0, bool planB = false}) =>
-        TodayDashboard(
-          date: date,
-          weekIndex: 7,
-          dayType: DayType.trenSuperior,
-          planVersion: 3,
-          planSummary: null,
-          mainExercises: [for (var i = 1; i <= 12; i++) 'Ejercicio $i'],
-          blockExercises: const ['Core A: mantener', 'Core B: alternar'],
-          targetRounds: null,
-          roundsDone: null,
-          sessionsToday: sessions,
-          streak: 14,
-          macros: const Macros(),
-          proteinMin: 130,
-          proteinMax: 160,
-          kcalTarget: 2100,
-          roundsRecord: null,
-          measurement: null,
-          planB: planB,
-        );
-    Future<void> home({int sessions = 0, bool planB = false}) =>
-        mount(tester, const HomeScreen(), overrides: [
-          databaseProvider.overrideWithValue(db),
-          localFlagsProvider.overrideWithValue(flags),
-          todayProvider.overrideWith(_FixedToday.new),
-          dashboardProvider.overrideWith(
-              (ref) => dashboard(sessions: sessions, planB: planB)),
-          activeSessionProvider.overrideWith((ref) => null),
-          updateCheckProvider.overrideWith(
-              (ref) => const UpdateCheck(currentVersion: '1.19.0')),
-          morningDoneProvider.overrideWith((ref, _) => false),
-        ]);
-    await home();
-    expect(find.text('Empezar tren superior').hitTestable(), findsOneWidget);
-    await shot(tester, 'hoy-inicio');
-    expect(find.text('• Ejercicio 12'), findsNothing);
-    final morning =
-        find.text('Registro de la mañana: peso, pulso, sueño y molestias');
-    await tester.scrollUntilVisible(morning, 120,
-        scrollable: find.byType(Scrollable).first);
-    expect(morning.hitTestable(), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Ver rutina'), -120,
-        scrollable: find.byType(Scrollable).first);
-    await tester.tap(find.text('Ver rutina'));
-    await settle(tester);
-    await tester.scrollUntilVisible(find.text('• Ejercicio 12'), 180,
-        scrollable: find.byType(Scrollable).first);
-    expect(find.text('• Ejercicio 12'), findsOneWidget);
-    expect(find.text('Además (A y B se alternan por semana):'), findsOneWidget);
-    await shot(tester, 'hoy-rutina');
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-    await home(sessions: 1);
-    expect(find.text('Día completo').hitTestable(), findsOneWidget);
-    expect(find.text('Empezar tren superior'), findsNothing);
-    expect(find.text('Otra sesión'), findsOneWidget);
-    await shot(tester, 'hoy-completo');
-    await tester.pumpWidget(const SizedBox());
-    await home(planB: true);
-    expect(find.text('Plan B: solo torso'), findsOneWidget);
-    expect(find.text('Empezar plan B'), findsOneWidget);
-    await shot(tester, 'hoy-planb');
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-    await tester.pump(const Duration(milliseconds: 10));
-    await db.close();
-    await tester.runAsync(() => dir.delete(recursive: true));
-  });
+      (tester) => withClock(Clock.fixed(DateTime(2026, 10, 12, 8)), () async {
+            final dir =
+                Directory.systemTemp.createTempSync('seguimiento_experiencia');
+            final db = openInMemoryDatabase();
+            final flags = LocalFlags(File('${dir.path}/flags.json'));
+            final date = DateTime(2026, 10, 12);
+            TodayDashboard dashboard({int sessions = 0, bool planB = false}) =>
+                TodayDashboard(
+                  date: date,
+                  weekIndex: 7,
+                  dayType: DayType.trenSuperior,
+                  planVersion: 3,
+                  planSummary: null,
+                  mainExercises: [for (var i = 1; i <= 12; i++) 'Ejercicio $i'],
+                  blockExercises: const [
+                    'Core A: mantener',
+                    'Core B: alternar'
+                  ],
+                  targetRounds: null,
+                  roundsDone: null,
+                  sessionsToday: sessions,
+                  streak: 14,
+                  macros: const Macros(),
+                  proteinMin: 130,
+                  proteinMax: 160,
+                  kcalTarget: 2100,
+                  roundsRecord: null,
+                  measurement: null,
+                  planB: planB,
+                );
+            Future<void> home({int sessions = 0, bool planB = false}) =>
+                mount(tester, const HomeScreen(), overrides: [
+                  databaseProvider.overrideWithValue(db),
+                  localFlagsProvider.overrideWithValue(flags),
+                  todayProvider.overrideWith(_FixedToday.new),
+                  dashboardProvider.overrideWith(
+                      (ref) => dashboard(sessions: sessions, planB: planB)),
+                  activeSessionProvider.overrideWith((ref) => null),
+                  updateCheckProvider.overrideWith(
+                      (ref) => const UpdateCheck(currentVersion: '1.19.0')),
+                  morningDoneProvider.overrideWith((ref, _) => false),
+                ]);
+            await home();
+            expect(find.text('Empezar tren superior').hitTestable(),
+                findsOneWidget);
+            await shot(tester, 'hoy-inicio');
+            expect(find.text('• Ejercicio 12'), findsNothing);
+            final morning = find
+                .text('Registro de la mañana: peso, pulso, sueño y molestias');
+            await tester.scrollUntilVisible(morning, 120,
+                scrollable: find.byType(Scrollable).first);
+            expect(morning.hitTestable(), findsOneWidget);
+            await tester.scrollUntilVisible(find.text('Ver rutina'), -120,
+                scrollable: find.byType(Scrollable).first);
+            await tester.tap(find.text('Ver rutina'));
+            await settle(tester);
+            await tester.scrollUntilVisible(find.text('• Ejercicio 12'), 180,
+                scrollable: find.byType(Scrollable).first);
+            expect(find.text('• Ejercicio 12'), findsOneWidget);
+            expect(find.text('Además (A y B se alternan por semana):'),
+                findsOneWidget);
+            await shot(tester, 'hoy-rutina');
+            expect(tester.takeException(), isNull);
+            await tester.pumpWidget(const SizedBox());
+            await home(sessions: 1);
+            expect(find.text('Día completo').hitTestable(), findsOneWidget);
+            expect(find.text('Empezar tren superior'), findsNothing);
+            expect(find.text('Otra sesión'), findsOneWidget);
+            await shot(tester, 'hoy-completo');
+            await tester.pumpWidget(const SizedBox());
+            await home(planB: true);
+            expect(find.text('Plan B: solo torso'), findsOneWidget);
+            expect(find.text('Empezar plan B'), findsOneWidget);
+            await shot(tester, 'hoy-planb');
+            expect(tester.takeException(), isNull);
+            await tester.pumpWidget(const SizedBox());
+            await withClock(Clock.fixed(DateTime(2026, 10, 12, 16)), () async {
+              await home();
+              await tester.scrollUntilVisible(
+                  find.text('¿Cuántas horas en cama anoche?'), 120,
+                  scrollable: find.byType(Scrollable).first);
+              expect(morning, findsNothing,
+                  reason:
+                      'después de las 14 se conserva la regla de ocultarlo');
+            });
+            await tester.pumpWidget(const SizedBox());
+            await tester.pump(const Duration(milliseconds: 10));
+            await db.close();
+            await tester.runAsync(() => dir.delete(recursive: true));
+          }));
 }

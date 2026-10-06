@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
@@ -808,7 +809,7 @@ class _MorningPrompt extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final done = ref.watch(morningDoneProvider(dayKey(date))).valueOrNull ?? true;
-    if (done || DateTime.now().hour >= 14) return const SizedBox.shrink();
+    if (done || clock.now().hour >= 14) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: OutlinedButton.icon(
