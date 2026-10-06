@@ -45,6 +45,19 @@ void main() {
     expect(() => WeeklyAi.parse('{"model":"gpt-6-luna","notes":[]}', report),
         throwsFormatException);
   });
+  test('mide texto y cita en puntos Unicode, incluidos emojis', () {
+    final unicodeReport = '😀' * 501;
+    final valid = note()
+      ..['text'] = '😀' * 350
+      ..['quote'] = '😀' * 500;
+    expect(WeeklyAi.parse(response(valid), unicodeReport), hasLength(1));
+    final tooLongText = note()..['text'] = '😀' * 351;
+    expect(() => WeeklyAi.parse(response(tooLongText), unicodeReport),
+        throwsFormatException);
+    final tooLongQuote = note()..['quote'] = '😀' * 501;
+    expect(() => WeeklyAi.parse(response(tooLongQuote), unicodeReport),
+        throwsFormatException);
+  });
   test('errores no filtran respuesta remota ni licencia', () async {
     for (final code in [401, 403, 429, 503, 500]) {
       final client = MockClient((_) async =>

@@ -7,12 +7,17 @@ import '../../app/providers.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/format.dart';
+import '../../domain/ai_context.dart';
+import '../../domain/ai_report_sources.dart';
 import '../../domain/report/period_summary.dart';
 import '../../ui/widgets.dart';
 import '../../ui/hero.dart';
 import 'charts_section.dart';
 import 'summary_screen.dart';
 import 'weekly_ai_screen.dart';
+import '../ai/ai_conversation_screen.dart';
+import '../ai/ai_history_screen.dart';
+import 'missing_data_actions_card.dart';
 
 /// El informe es el producto: se genera, se copia y se pega en el chat.
 class ReportScreen extends ConsumerStatefulWidget {
@@ -67,6 +72,12 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                   );
                   if (picked != null) setState(() => _customRange = picked);
                 },
+              ),
+              IconButton(
+                tooltip: 'Historial de IA',
+                icon: const Icon(Icons.history),
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const AiHistoryScreen())),
               ),
             ],
           ),
@@ -139,6 +150,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 ],
               ),
               _SummaryLink(range: key),
+              MissingDataActionsCard(range: key),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: OutlinedButton.icon(
@@ -149,8 +161,24 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                       : () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) =>
-                                  WeeklyAiScreen(report: report.value!))),
+                              builder: (_) => WeeklyAiScreen(
+                                    report: report.value!,
+                                    repository: ref
+                                        .read(aiConversationRepositoryProvider),
+                                    rangeStart: range.start,
+                                    rangeEnd: range.end,
+                                  ))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.question_answer_outlined),
+                  label: const Text('Preguntar sobre este informe'),
+                  onPressed: report.value == null
+                      ? null
+                      : () => _askAboutReport(
+                          context, ref, key, range.start, range.end),
                 ),
               ),
               ChartsSection(range: key),
@@ -201,6 +229,74 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         );
       },
     );
+  }
+
+  Future<void> _askAboutReport(
+    BuildContext context,
+    WidgetRef ref,
+    (String, String) rangeKey,
+    DateTime from,
+    DateTime to,
+  ) async {
+    try {
+      final input = await ref.read(reportInputProvider(rangeKey).future);
+      final reportText = await ref.read(reportProvider(rangeKey).future);
+      if (!context.mounted) return;
+      var includePrevious = false;
+      if (input.previous != null) {
+        final choice = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('¿Incluir comparación anterior?'),
+            content: const Text(
+                'Puedes enviar el informe actual solo o añadir una comparación calculada localmente con el periodo anterior.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Solo informe actual'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('Añadir comparación'),
+              ),
+            ],
+          ),
+        );
+        if (choice == null) return;
+        includePrevious = choice;
+      }
+      if (!context.mounted) return;
+      final sources = reportQuestionSources(
+        input: input,
+        report: reportText,
+        includePrevious: includePrevious,
+      );
+      final snapshot = AiConversationSnapshot(
+        kind: AiConversationKind.reportQuestion,
+        title: 'Informe · ${dayKey(from)} – ${dayKey(to)}',
+        rangeStart: from,
+        rangeEnd: to,
+        sources: sources,
+        model: aiQuestionModel,
+        contractVersion: aiQuestionContractVersion,
+      );
+      if (!context.mounted) return;
+      await Navigator.push<void>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AiConversationScreen.forQuestion(
+            snapshot: snapshot,
+            repository: ref.read(aiConversationRepositoryProvider),
+          ),
+        ),
+      );
+    } on FormatException catch (e) {
+      if (context.mounted) showSnack(context, e.message);
+    } on Object {
+      if (context.mounted) {
+        showSnack(context, 'No se pudo preparar el contexto del informe.');
+      }
+    }
   }
 }
 

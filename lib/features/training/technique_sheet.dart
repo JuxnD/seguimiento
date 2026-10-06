@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/providers.dart';
+import '../../domain/ai_context.dart';
+import '../ai/ai_conversation_screen.dart';
 import '../../data/exercise_details.dart';
 import '../../data/repositories/exercise_photo_repository.dart';
 import '../../domain/band_guide.dart';
@@ -160,6 +162,66 @@ class TechniqueContent extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 16),
+          Consumer(builder: (context, ref, _) {
+            final guideText = _guideSnapshotText(
+              exercise: exercise,
+              muscles: detail?.muscles,
+              steps: steps,
+              personal: personal,
+              note: detail?.note,
+              mistakes: detail?.mistakes ?? const [],
+              easier: easier,
+              harder: detail?.harder,
+              progression: progressionNote,
+              anchor: anchor,
+              grip: grip,
+              loaded: loaded,
+            );
+            return OutlinedButton.icon(
+              onPressed: () {
+                late final AiConversationSnapshot snapshot;
+                try {
+                  snapshot = AiConversationSnapshot(
+                    kind: AiConversationKind.exerciseQuestion,
+                    title: 'Guía · $exercise',
+                    sources: [
+                      AiContextSource(
+                          id: 'exercise_guide:${nameKey(exercise)}',
+                          title: 'Guía seleccionada · $exercise',
+                          text: guideText)
+                    ],
+                    model: aiQuestionModel,
+                    contractVersion: aiQuestionContractVersion,
+                    guideContext: AiGuideContext(
+                      exercise: exercise,
+                      cues: cues,
+                      progressionNote: progressionNote,
+                      anchor: anchor,
+                      grip: grip,
+                      loaded: loaded,
+                    ),
+                  );
+                } on FormatException {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text(
+                          'Esta guía supera el límite de consulta. Puedes seguir usando la guía sin IA.')));
+                  return;
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AiConversationScreen.forQuestion(
+                      repository: ref.read(aiConversationRepositoryProvider),
+                      snapshot: snapshot,
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.question_answer_outlined),
+              label: const Text('Preguntar sobre esta guía'),
+            );
+          }),
+          const SizedBox(height: 16),
           ExerciseReferencePhoto(exercise: exercise),
           if (url != null) ...[
             const SizedBox(height: 16),
@@ -178,6 +240,37 @@ class TechniqueContent extends StatelessWidget {
     );
   }
 }
+
+String _guideSnapshotText({
+  required String exercise,
+  required String? muscles,
+  required List<String> steps,
+  required List<String> personal,
+  required String? note,
+  required List<String> mistakes,
+  required String? easier,
+  required String? harder,
+  required String? progression,
+  required String? anchor,
+  required String? grip,
+  required bool? loaded,
+}) =>
+    [
+      'Ejercicio: $exercise.',
+      if (muscles != null) 'Músculos: $muscles.',
+      'Figura: $exercise${grip == null ? '' : ', agarre $grip'}${loaded == null ? '' : loaded ? ', con carga' : ', sin carga'}.',
+      if (steps.isNotEmpty)
+        'Cómo hacerlo:\n${steps.indexed.map((entry) => '${entry.$1 + 1}. ${entry.$2}').join('\n')}',
+      if (personal.isNotEmpty) 'Claves personales:\n${personal.join('\n')}',
+      if (note != null) 'Nota: $note',
+      if (mistakes.isNotEmpty)
+        'Errores comunes:\n${mistakes.map((text) => '• $text').join('\n')}',
+      if (easier != null) 'Más fácil: $easier',
+      if (harder != null) 'Más difícil: $harder',
+      if (progression != null) 'Progresión: $progression',
+      if (bandAnchors[anchor] case (final title, final how))
+        'Banda: $title. $how',
+    ].join('\n\n');
 
 List<String> _uniqueCues(List<String> cues,
     {List<String> excluding = const []}) {
@@ -235,7 +328,9 @@ Future<void> showBandGuide(BuildContext context) => showModalBottomSheet<void>(
             shrinkWrap: true,
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
             children: [
-              Text('La banda elástica', style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+              Text('La banda elástica',
+                  style:
+                      text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               for (final (title, how) in bandAnchors.values) ...[
                 Text(title, style: text.titleSmall),
@@ -255,7 +350,8 @@ Future<void> showBandGuide(BuildContext context) => showModalBottomSheet<void>(
 
 /// Foto de referencia de un ejercicio (null si no hay).
 final exercisePhotoProvider = StreamProvider.family(
-  (ref, String exercise) => ref.watch(exercisePhotoRepositoryProvider).watch(exercise),
+  (ref, String exercise) =>
+      ref.watch(exercisePhotoRepositoryProvider).watch(exercise),
 );
 
 /// La foto que el usuario guardó para este ejercicio, o el botón para
@@ -271,20 +367,30 @@ class ExerciseReferencePhoto extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     final row = ref.watch(exercisePhotoProvider(exercise)).valueOrNull;
     final base = ref.watch(documentsDirProvider).valueOrNull;
-    final file = row == null || base == null ? null : ExercisePhotoRepository.fileIn(base, row);
+    final file = row == null || base == null
+        ? null
+        : ExercisePhotoRepository.fileIn(base, row);
 
     final header = Row(
       children: [
-        Expanded(child: Text('TU FOTO DE REFERENCIA', style: text.labelMedium?.copyWith(letterSpacing: 0.6))),
+        Expanded(
+            child: Text('TU FOTO DE REFERENCIA',
+                style: text.labelMedium?.copyWith(letterSpacing: 0.6))),
         if (file != null) ...[
-          TextButton(onPressed: () => _pick(context, ref), child: const Text('Cambiar')),
+          TextButton(
+              onPressed: () => _pick(context, ref),
+              child: const Text('Cambiar')),
           IconButton(
             tooltip: 'Quitar foto',
             icon: const Icon(Icons.delete_outline),
             onPressed: () async {
               if (await confirmDelete(context, 'la foto de referencia')) {
                 if (!context.mounted) return;
-                await guarded(context, () => ref.read(exercisePhotoRepositoryProvider).remove(exercise));
+                await guarded(
+                    context,
+                    () => ref
+                        .read(exercisePhotoRepositoryProvider)
+                        .remove(exercise));
               }
             },
           ),
@@ -301,7 +407,8 @@ class ExerciseReferencePhoto extends ConsumerWidget {
           OutlinedButton(
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
               alignment: Alignment.centerLeft,
             ),
             onPressed: () => _pick(context, ref),
@@ -314,7 +421,8 @@ class ExerciseReferencePhoto extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Añadir foto', style: text.titleSmall),
-                      Text('Una captura de un video o una foto tuya bien hecha', style: text.bodySmall),
+                      Text('Una captura de un video o una foto tuya bien hecha',
+                          style: text.bodySmall),
                     ],
                   ),
                 ),
@@ -364,7 +472,8 @@ class ExerciseReferencePhoto extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Elegir de la galería (una captura de video sirve)'),
+              title: const Text(
+                  'Elegir de la galería (una captura de video sirve)'),
               onTap: () => Navigator.pop(c, ImageSource.gallery),
             ),
           ],
@@ -374,16 +483,21 @@ class ExerciseReferencePhoto extends ConsumerWidget {
     if (source == null) return;
     final XFile? picked;
     try {
-      picked = await ImagePicker().pickImage(source: source, maxWidth: 1600, imageQuality: 85);
+      picked = await ImagePicker()
+          .pickImage(source: source, maxWidth: 1600, imageQuality: 85);
     } on Object catch (e) {
       // Permiso negado o sin cámara: se dice, no se revienta.
-      if (context.mounted) showSnack(context, 'No se pudo abrir la cámara o la galería: $e');
+      if (context.mounted) {
+        showSnack(context, 'No se pudo abrir la cámara o la galería: $e');
+      }
       return;
     }
     if (picked == null || !context.mounted) return;
     await guarded(
       context,
-      () => ref.read(exercisePhotoRepositoryProvider).save(exercise, File(picked!.path)),
+      () => ref
+          .read(exercisePhotoRepositoryProvider)
+          .save(exercise, File(picked!.path)),
       ok: 'Foto guardada',
     );
   }
@@ -394,7 +508,9 @@ class ExerciseReferencePhoto extends ConsumerWidget {
           backgroundColor: Colors.black,
           child: Stack(
             children: [
-              Positioned.fill(child: InteractiveViewer(maxScale: 5, child: Center(child: Image.file(file)))),
+              Positioned.fill(
+                  child: InteractiveViewer(
+                      maxScale: 5, child: Center(child: Image.file(file)))),
               Positioned(
                 top: 8,
                 right: 8,

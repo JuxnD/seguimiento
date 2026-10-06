@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +30,7 @@ import '../data/repositories/exercise_photo_repository.dart';
 import '../data/repositories/report_repository.dart';
 import '../data/repositories/recovery_repository.dart';
 import '../data/repositories/sleep_repository.dart';
+import '../data/repositories/ai_conversation_repository.dart';
 import '../data/repositories/steps_repository.dart';
 import '../data/repositories/training_repository.dart';
 import '../domain/active_session.dart';
@@ -81,6 +83,10 @@ final nutritionRepositoryProvider = Provider((ref) => NutritionRepository(ref.wa
 final bodyRepositoryProvider = Provider((ref) => BodyRepository(ref.watch(databaseProvider)));
 final stepsRepositoryProvider = Provider((ref) => StepsRepository(ref.watch(databaseProvider)));
 final sleepRepositoryProvider = Provider((ref) => SleepRepository(ref.watch(databaseProvider)));
+final aiConversationRepositoryProvider = Provider((ref) => AiConversationRepository(ref.watch(databaseProvider)));
+final aiConversationsProvider = StreamProvider.family((ref, (int, int) page) =>
+    ref.watch(aiConversationRepositoryProvider).watchRecent(limit: page.$1, offset: page.$2));
+final aiConversationCountProvider = StreamProvider((ref) => ref.watch(aiConversationRepositoryProvider).watchCount());
 final recoveryRepositoryProvider = Provider((ref) => RecoveryRepository(ref.watch(databaseProvider)));
 
 /// ¿Ya se hizo el registro de la mañana ese día (`YYYY-MM-DD`)? Basta el
@@ -88,7 +94,9 @@ final recoveryRepositoryProvider = Provider((ref) => RecoveryRepository(ref.watc
 final morningDoneProvider = FutureProvider.family<bool, String>((ref, day) async {
   ref.watch(dashboardProvider);
   final date = parseDay(day);
-  if (await ref.watch(recoveryRepositoryProvider).restingHrOn(date) != null) return true;
+  if (await ref.watch(recoveryRepositoryProvider).restingHrOn(date) != null) {
+    return true;
+  }
   final weights = await ref.watch(bodyRepositoryProvider).weightsOn(date);
   return weights.any((w) => w.fasted);
 });
@@ -317,14 +325,18 @@ final reportInputProvider = FutureProvider.family<ReportInput, (String, String)>
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
   ref.watch(stepsHistoryProvider);
+  final today = ref.watch(todayProvider);
   ref.watch(weightsProvider);
   ref.watch(checkInsProvider);
   ref.watch(planVersionsProvider);
   ref.watch(profileProvider);
   final from = parseDay(range.$1), to = parseDay(range.$2);
-  ref.watch(mealsRangeRefreshProvider((range.$1, range.$2)));
-  ref.watch(closedDaysRangeProvider((range.$1, range.$2)));
-  return ref.watch(reportRepositoryProvider).load(from, to);
+  final span = daysBetween(from, to) + 1;
+  final comparedRange = (dayKey(addDays(from, -span)), range.$2);
+  ref.watch(sleepRangeRefreshProvider(comparedRange));
+  ref.watch(mealsRangeRefreshProvider(comparedRange));
+  ref.watch(closedDaysRangeProvider(comparedRange));
+  return ref.watch(reportRepositoryProvider).load(from, to, today: today);
 });
 
 /// Informe de un rango, en Markdown.
@@ -343,7 +355,31 @@ final mealsRangeRefreshProvider = StreamProvider.family(
     (ref, (String, String) range) => ref
         .watch(nutritionRepositoryProvider)
         .watchRange(parseDay(range.$1), parseDay(range.$2))
-        .map((meals) => meals.map((m) => '${m.meal.id}:${m.items.length}:${m.macros.kcal}').join(',')));
+        .map((meals) => jsonEncode([
+              for (final meal in meals)
+                {
+                  'id': meal.meal.id,
+                  'date': meal.meal.date,
+                  'time': meal.meal.time,
+                  'slot': meal.meal.slot.name,
+                  'notes': meal.meal.notes,
+                  'items': [
+                    for (final item in meal.items)
+                      {
+                        'id': item.id,
+                        'food_id': item.foodId,
+                        'label': item.label,
+                        'quantity': item.quantity,
+                        'quantity_unit': item.quantityUnit,
+                        'kcal': item.kcal,
+                        'protein': item.protein,
+                        'carbs': item.carbs,
+                        'fat': item.fat,
+                        'source_verified': item.sourceVerified,
+                      }
+                  ],
+                }
+            ])));
 
 /// Días cerrados a mano en un rango: cerrar o reabrir uno cambia promedios y
 /// alertas del informe.
@@ -351,6 +387,12 @@ final closedDaysRangeProvider = StreamProvider.family(
     (ref, (String, String) range) => ref
         .watch(nutritionRepositoryProvider)
         .watchClosedRange(parseDay(range.$1), parseDay(range.$2)));
+
+/// Cambios del rango informado y del rango anterior que se compara.
+final sleepRangeRefreshProvider = StreamProvider.family(
+    (ref, (String, String) range) => ref
+        .watch(sleepRepositoryProvider)
+        .watchRange(parseDay(range.$1), parseDay(range.$2)));
 
 /// Versión instalada, leída del propio paquete.
 final appVersionProvider = FutureProvider<String>((ref) async {
