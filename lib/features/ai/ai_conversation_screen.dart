@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
@@ -15,6 +16,7 @@ import '../../domain/search.dart';
 import 'ai_activation_screen.dart';
 import 'ai_budget.dart';
 import '../training/technique_sheet.dart';
+import '../report/missing_data_actions_card.dart';
 
 class AiConversationScreen extends StatefulWidget {
   const AiConversationScreen.forQuestion({
@@ -481,6 +483,17 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
                 const SizedBox(height: 8),
                 const Text(
                     'La respuesta usa únicamente las fuentes visibles. No modifica registros ni hace diagnósticos.'),
+                if (snapshot.rangeStart != null &&
+                    snapshot.rangeEnd != null &&
+                    !snapshot.rangeEnd!.isBefore(snapshot.rangeStart!))
+                  Consumer(
+                    builder: (context, ref, _) => MissingDataActionsCard(
+                      range: (
+                        dayKey(snapshot.rangeStart!),
+                        dayKey(snapshot.rangeEnd!),
+                      ),
+                    ),
+                  ),
                 ExpansionTile(
                   tilePadding: EdgeInsets.zero,
                   title: const Text('Vista previa exacta de lo que se enviará'),

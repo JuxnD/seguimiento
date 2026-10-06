@@ -10,9 +10,6 @@ import '../../domain/format.dart';
 import '../../domain/ai_context.dart';
 import '../../domain/ai_report_sources.dart';
 import '../../domain/report/period_summary.dart';
-import '../../domain/report/missing_data_actions.dart';
-import '../../domain/enums.dart';
-import '../../data/repositories/nutrition_repository.dart';
 import '../../ui/widgets.dart';
 import '../../ui/hero.dart';
 import 'charts_section.dart';
@@ -20,9 +17,7 @@ import 'summary_screen.dart';
 import 'weekly_ai_screen.dart';
 import '../ai/ai_conversation_screen.dart';
 import '../ai/ai_history_screen.dart';
-import '../body/body_screen.dart' show addWeightDialog;
-import '../home/home_screen.dart' show editStepsDialog;
-import '../meals/meal_form_screen.dart';
+import 'missing_data_actions_card.dart';
 
 /// El informe es el producto: se genera, se copia y se pega en el chat.
 class ReportScreen extends ConsumerStatefulWidget {
@@ -155,7 +150,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 ],
               ),
               _SummaryLink(range: key),
-              _MissingActionsCard(range: key),
+              MissingDataActionsCard(range: key),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: OutlinedButton.icon(
@@ -342,77 +337,6 @@ class _SummaryLink extends ConsumerWidget {
             style: text.bodyLarge,
           ),
       ],
-    );
-  }
-}
-
-class _MissingActionsCard extends ConsumerWidget {
-  const _MissingActionsCard({required this.range});
-
-  final (String, String) range;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final input = ref.watch(reportInputProvider(range));
-    return input.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-      data: (value) {
-        final actions = missingDataActions(value);
-        if (actions.isEmpty) return const SizedBox.shrink();
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Registros que puedes completar',
-                  style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 4),
-              for (final action in actions)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: () async {
-                      switch (action.kind) {
-                        case ReportActionKind.weighIn:
-                          await addWeightDialog(context, ref,
-                              date: action.date);
-                        case ReportActionKind.stepsForDay:
-                          await editStepsDialog(
-                              context, ref, action.date, null);
-                        case ReportActionKind.mealForDay:
-                          final slot = action.mealSlot ?? MealSlot.desayuno;
-                          await Navigator.push<void>(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => MealFormScreen(
-                                    draft: MealDraft(
-                                        date: action.date, slot: slot))),
-                          );
-                      }
-                    },
-                    icon: Icon(switch (action.kind) {
-                      ReportActionKind.weighIn => Icons.monitor_weight_outlined,
-                      ReportActionKind.mealForDay => Icons.restaurant_outlined,
-                      ReportActionKind.stepsForDay =>
-                        Icons.directions_walk_outlined,
-                    }),
-                    label: Text(switch (action.kind) {
-                      ReportActionKind.weighIn =>
-                        'Registrar pesaje · ${formatLong(action.date)}',
-                      ReportActionKind.mealForDay =>
-                        'Registrar ${action.mealSlot!.name} · ${formatLong(action.date)}',
-                      ReportActionKind.stepsForDay =>
-                        'Registrar pasos · ${formatLong(action.date)}',
-                    }),
-                  ),
-                ),
-              const Text(
-                  'Abrir una acción no guarda nada; revisa el día y confirma en el formulario.'),
-            ],
-          ),
-        );
-      },
     );
   }
 }

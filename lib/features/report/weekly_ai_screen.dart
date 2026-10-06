@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,6 +15,7 @@ import '../ai/ai_conversation_screen.dart';
 import '../ai/ai_history_screen.dart';
 import '../ai/ai_budget.dart';
 import '../ai/ai_activation_screen.dart';
+import 'missing_data_actions_card.dart';
 
 class WeeklyAiScreen extends StatefulWidget {
   const WeeklyAiScreen(
@@ -326,6 +328,17 @@ class _WeeklyAiScreenState extends State<WeeklyAiScreen> {
                 child: Text(_error!)),
           if (_notes != null) ...[
             const Text('Comentarios de IA · verifica la evidencia'),
+            if (widget.rangeStart != null &&
+                widget.rangeEnd != null &&
+                !widget.rangeEnd!.isBefore(widget.rangeStart!))
+              Consumer(
+                builder: (context, ref, _) => MissingDataActionsCard(
+                  range: (
+                    dayKey(widget.rangeStart!),
+                    dayKey(widget.rangeEnd!),
+                  ),
+                ),
+              ),
             if (_savedConversationId != null && widget.repository != null)
               OutlinedButton.icon(
                 onPressed: () => Navigator.push(
