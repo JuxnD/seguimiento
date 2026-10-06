@@ -11,6 +11,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
+import '../../domain/recovery.dart' show planBTorso;
 import '../../domain/session_math.dart';
 import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
 import '../../ui/hero.dart';
@@ -118,6 +119,40 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
       roundsOverride: setup.rounds,
       light: setup.light,
       note: note,
+    ),
+  );
+}
+
+/// Plan B de solo torso (§16.15): con 3 días intensos seguidos o molestia en
+/// la pierna, el día de hoy sin pierna. Todo a RIR 2; queda anotado.
+Future<void> startPlanB(BuildContext context, WidgetRef ref) async {
+  final canStart = await _noPendingSession(context, ref);
+  if (!canStart || !context.mounted) return;
+  final day = dateOnly(DateTime.now());
+  await _runGuided(
+    context,
+    GuidedSessionScreen(
+      day: PlanDayDraft(
+        weekday: day.weekday,
+        type: DayType.trenSuperior,
+        exercises: [
+          for (final (name, sets, min, max, hold, perSide) in planBTorso)
+            PlanExerciseDraft(
+              name: name,
+              sets: sets,
+              repsMin: min,
+              repsMax: max,
+              holdSecMin: hold,
+              perSide: perSide,
+              rirMin: hold == null ? 2 : null,
+              restSec: 90,
+              grip: name == 'Dominadas' ? 'supina' : null,
+            ),
+        ],
+      ),
+      date: day,
+      sessionType: SessionType.trenSuperior,
+      note: 'Plan B (solo torso): carga alta o molestia en la pierna; piernas hasta 48 h después',
     ),
   );
 }

@@ -374,15 +374,58 @@ Future<MealRow?> _duplicate29(AppDatabase db) async {
   return (_kcal(await _items(db, meal.id)) - 1140).abs() < 1 ? meal : null;
 }
 
+/// Datos del 5 oct (§18.10) que no tenían dónde anotarse: tres pesajes que no
+/// son en ayunas (quedan como referencia) y los pasos del reloj, que Health
+/// Connect no trajo completos (§16.14.6).
+final corrections5Oct = <DataCorrection>[
+  _weight5Oct('peso-5-desayuno', 80.50, 'otro', '09:00', 'después de desayunar'),
+  _weight5Oct('peso-5-cena', 79.95, 'otro', '19:30', 'antes de cenar'),
+  _weight5Oct('peso-5-dormir', 79.50, 'antesDormir', '22:30', 'antes de dormir'),
+  DataCorrection(
+    id: 'pasos-5',
+    date: 'lun 5 oct',
+    title: 'Pasos del reloj',
+    change: '→ 8.514 (anotado a mano: Health Connect solo trajo una parte)',
+    check: (db) async {
+      final row = await (db.select(db.dailySteps)..where((t) => t.date.equals('2026-10-05'))).getSingleOrNull();
+      return row != null && row.steps >= 8514 ? CorrectionState.done : CorrectionState.pending;
+    },
+    apply: (db) => db.into(db.dailySteps).insertOnConflictUpdate(
+          DailyStepsCompanion.insert(date: '2026-10-05', steps: 8514, source: const Value('manual')),
+        ),
+  ),
+];
+
+DataCorrection _weight5Oct(String id, double kg, String moment, String time, String label) => DataCorrection(
+      id: id,
+      date: 'lun 5 oct',
+      title: 'Peso $label',
+      change: '→ ${kg.toStringAsFixed(2).replaceAll('.', ',')} kg (referencia, no entra en el promedio)',
+      check: (db) async {
+        final rows = await (db.select(db.bodyWeights)..where((t) => t.date.equals('2026-10-05'))).get();
+        return rows.any((w) => (w.kg - kg).abs() < 0.001) ? CorrectionState.done : CorrectionState.pending;
+      },
+      apply: (db) => db.into(db.bodyWeights).insert(BodyWeightsCompanion.insert(
+            date: '2026-10-05',
+            kg: kg,
+            fasted: const Value(false),
+            moment: Value(moment),
+            time: Value(time),
+          )),
+    );
+
+/// Todas las correcciones de los traspasos, en orden.
+List<DataCorrection> get allCorrections => [...corrections29Sep, ...corrections5Oct];
+
 /// Estado de cada corrección.
 Future<Map<String, CorrectionState>> checkCorrections(AppDatabase db, [List<DataCorrection>? list]) async => {
-      for (final c in list ?? corrections29Sep) c.id: await c.check(db),
+      for (final c in list ?? allCorrections) c.id: await c.check(db),
     };
 
 /// Aplica las pendientes en una sola transacción. Devuelve cuántas aplicó.
 Future<int> applyPendingCorrections(AppDatabase db, [List<DataCorrection>? list]) => db.transaction(() async {
       var n = 0;
-      for (final c in list ?? corrections29Sep) {
+      for (final c in list ?? allCorrections) {
         if (await c.check(db) != CorrectionState.pending) continue;
         await c.apply(db);
         n++;

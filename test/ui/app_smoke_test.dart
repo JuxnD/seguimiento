@@ -173,7 +173,8 @@ void main() {
 
   testWidgets('anotar los pasos desde el anillo de Hoy', (tester) async {
     await pumpApp(tester);
-    await tester.tap(find.text('Pasos'));
+    // El anillo (el primero); Registrar también tiene "Pasos".
+    await tester.tap(find.text('Pasos').first);
     await settle(tester);
     await tester.enterText(find.byType(TextField), '1935');
     await tester.tap(find.text('Guardar'));

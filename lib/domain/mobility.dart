@@ -132,3 +132,53 @@ const mobilityLeadInSec = 5;
 /// Las repeticiones de movilidad son lentas: ~3 s cada una.
 int estimatedMobilitySec(List<MobilityStep> steps) => steps.fold(
     0, (total, s) => total + (s.timed ? s.exercise.durationSec! + mobilityLeadInSec : s.exercise.reps! * 3 + 5));
+
+/// Recuperación de piernas (§19.9): las noches de fútbol, después de piernas
+/// o con agujetas. 10–12 min a tensión 3/10, unos 30 min después de comer.
+/// Para relajarse y dormir mejor, no para ganar flexibilidad.
+const legRecovery = MobilityRoutine(
+  id: 'leg_recovery',
+  name: 'Recuperación de piernas',
+  exercises: [
+    MobilityExercise(
+      name: 'Rodillas al pecho',
+      durationSec: 60,
+      formCues: ['Boca arriba, abraza las rodillas y balancéate suave.', 'Respira lento; deja que la espalda baja se relaje.'],
+    ),
+    MobilityExercise(
+      name: 'Isquios con banda',
+      durationSec: 40,
+      perSide: true,
+      formCues: ['Pierna estirada hacia arriba con la banda en la planta.', 'Tensión suave (3/10); suelta un poco al exhalar.'],
+    ),
+    MobilityExercise(
+      name: 'Glúteo en figura 4',
+      durationSec: 40,
+      perSide: true,
+      formCues: ['Tobillo sobre la rodilla contraria.', 'Acerca la pierna de apoyo al pecho sin levantar la cadera.'],
+    ),
+    MobilityExercise(
+      name: 'Flexor de cadera de rodillas',
+      durationSec: 40,
+      perSide: true,
+      formCues: ['Rodilla de atrás en un cojín, glúteo apretado.', 'Cadera adelante sin arquear la espalda.'],
+    ),
+    MobilityExercise(
+      name: 'Cuádriceps',
+      durationSec: 40,
+      perSide: true,
+      formCues: ['De lado o de pie: talón al glúteo.', 'Rodilla apuntando al suelo, sin abrirla hacia el lado.'],
+    ),
+    MobilityExercise(
+      name: 'Gemelo contra la pared',
+      durationSec: 30,
+      perSide: true,
+      formCues: ['Pierna de atrás estirada, talón en el suelo.', 'Inclínate hacia la pared; luego dobla un poco la rodilla.'],
+    ),
+    MobilityExercise(
+      name: 'Piernas en la pared',
+      durationSec: 120,
+      formCues: ['Glúteo cerca de la pared, piernas apoyadas en ella.', 'Respira 4 s inhalando y 6 s exhalando.'],
+    ),
+  ],
+);

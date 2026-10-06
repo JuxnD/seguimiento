@@ -9,6 +9,7 @@ import '../../domain/format.dart';
 import '../../domain/habits.dart';
 import '../../domain/progress.dart';
 import '../../domain/nutrition.dart';
+import '../../domain/recovery.dart';
 import '../../data/database.dart';
 import '../../ui/hero.dart';
 import '../../ui/widgets.dart';
@@ -71,7 +72,10 @@ class BodyScreen extends ConsumerWidget {
                               icon: Icons.monitor_weight_outlined,
                               color: _bodyColor,
                               title: formatLong(parseDay(w.date)),
-                              subtitle: w.fasted ? 'en ayunas' : 'sin ayunas',
+                              subtitle: [
+                                weighMomentOf(w.moment, fasted: w.fasted).label.toLowerCase(),
+                                if (w.time != null) w.time!,
+                              ].join(' · '),
                               value: fmtDec(w.kg),
                               valueLabel: 'kg',
                               onLongPress: () async {
@@ -80,7 +84,8 @@ class BodyScreen extends ConsumerWidget {
                                     await guarded(context, () => repo.deleteWeight(w.id), failure: 'No se pudo borrar');
                                 if (ok && context.mounted) {
                                   showUndoSnack(context, 'Pesaje borrado',
-                                      () => repo.addWeight(parseDay(w.date), w.kg, fasted: w.fasted));
+                                      () => repo.addWeight(parseDay(w.date), w.kg,
+                                          moment: weighMomentOf(w.moment, fasted: w.fasted), time: w.time));
                                 }
                               },
                             ),
@@ -151,14 +156,26 @@ class BodyScreen extends ConsumerWidget {
   Future<void> _openMeasurement(BuildContext context, WidgetRef ref, MeasurementCheckIn? existing) =>
       Navigator.push(context, MaterialPageRoute(builder: (_) => MeasurementFormScreen(existing: existing)));
 
-  Future<void> _addWeight(BuildContext context, WidgetRef ref) async {
-    final result = await showDialog<(DateTime, double, bool)>(
-      context: context,
-      builder: (_) => _WeightDialog(today: ref.read(todayProvider)),
-    );
-    if (result == null || !context.mounted) return;
-    await guarded(context, () => ref.read(bodyRepositoryProvider).addWeight(result.$1, result.$2, fasted: result.$3));
-  }
+  Future<void> _addWeight(BuildContext context, WidgetRef ref) => addWeightDialog(context, ref);
+}
+
+/// Anotar un pesaje con su momento (§18.10). `date`: el día propuesto (hoy
+/// si no se da).
+Future<void> addWeightDialog(BuildContext context, WidgetRef ref, {DateTime? date}) async {
+  final result = await showDialog<(DateTime, double, WeighMoment)>(
+    context: context,
+    builder: (_) => _WeightDialog(today: date ?? ref.read(todayProvider)),
+  );
+  if (result == null || !context.mounted) return;
+  final now = TimeOfDay.now();
+  await guarded(
+    context,
+    () => ref
+        .read(bodyRepositoryProvider)
+        .addWeight(result.$1, result.$2, moment: result.$3, time: timeKey(now.hour, now.minute)),
+    ok: result.$3 == WeighMoment.ayunas ? 'Peso en ayunas guardado' : 'Peso guardado como referencia (${result.$3.label.toLowerCase()})',
+  );
+  ref.invalidate(dashboardProvider);
 }
 
 /// Regla de cada 2 semanas (§19.3): el promedio semanal de peso y el
@@ -217,7 +234,7 @@ class _WeightDialog extends StatefulWidget {
 
 class _WeightDialogState extends State<_WeightDialog> {
   final _kg = TextEditingController();
-  bool _fasted = true;
+  WeighMoment _moment = WeighMoment.ayunas;
   late DateTime _date = widget.today;
 
   @override
@@ -235,11 +252,20 @@ class _WeightDialogState extends State<_WeightDialog> {
         children: [
           NumberField(controller: _kg, label: 'Peso', suffix: 'kg', decimal: true, autofocus: true),
           DateTile(date: _date, onChanged: (v) => setState(() => _date = v)),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('En ayunas'),
-            value: _fasted,
-            onChanged: (v) => setState(() => _fasted = v),
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children: [
+              for (final m in WeighMoment.values)
+                ChoiceChip(label: Text(m.label), selected: _moment == m, onSelected: (_) => setState(() => _moment = m)),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _moment == WeighMoment.ayunas
+                ? 'Entra en el promedio semanal.'
+                : 'Queda como referencia: solo en ayunas entra en el promedio.',
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),
@@ -249,7 +275,7 @@ class _WeightDialogState extends State<_WeightDialog> {
           onPressed: () {
             final kg = parseNum(_kg.text);
             if (kg == null || kg <= 0) return;
-            Navigator.pop(context, (_date, kg, _fasted));
+            Navigator.pop(context, (_date, kg, _moment));
           },
           child: const Text('Guardar'),
         ),

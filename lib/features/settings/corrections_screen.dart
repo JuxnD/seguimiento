@@ -11,11 +11,16 @@ import '../../ui/widgets.dart';
 final correctionsProvider = FutureProvider<Map<String, CorrectionState>>(
     (ref) => checkCorrections(ref.watch(databaseProvider)));
 
-/// Cuántas faltan por aplicar (0 si el usuario dijo que no las quiere).
+/// Cuántas faltan por aplicar, sin contar los grupos que el usuario dijo que
+/// no quiere.
 final pendingCorrectionsProvider = Provider<int>((ref) {
-  if (ref.watch(localFlagsProvider).get<bool>(FlagKeys.corrections29SepDismissed) == true) return 0;
+  final flags = ref.watch(localFlagsProvider);
   final states = ref.watch(correctionsProvider).valueOrNull ?? const {};
-  return states.values.where((s) => s == CorrectionState.pending).length;
+  int pending(List<DataCorrection> list, String dismissedKey) => flags.get<bool>(dismissedKey) == true
+      ? 0
+      : list.where((c) => states[c.id] == CorrectionState.pending).length;
+  return pending(corrections29Sep, FlagKeys.corrections29SepDismissed) +
+      pending(corrections5Oct, FlagKeys.corrections5OctDismissed);
 });
 
 Future<void> openCorrections(BuildContext context) =>
@@ -54,7 +59,7 @@ class CorrectionsScreen extends ConsumerWidget {
               ),
               AppCard(
                 children: [
-                  for (final c in corrections29Sep)
+                  for (final c in allCorrections)
                     _CorrectionTile(correction: c, state: map[c.id] ?? CorrectionState.missing),
                 ],
               ),
@@ -80,7 +85,7 @@ class CorrectionsScreen extends ConsumerWidget {
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('¿Aplicar las correcciones?'),
-        content: Text('Se cambian $pending ${pending == 1 ? 'registro' : 'registros'} de sesiones y comidas. '
+        content: Text('Se cambian $pending ${pending == 1 ? 'registro' : 'registros'} de sesiones, comidas, peso y pasos. '
             'Antes se guarda un respaldo para poder volver atrás.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),

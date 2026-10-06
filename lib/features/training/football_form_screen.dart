@@ -7,6 +7,7 @@ import '../../data/database.dart';
 import '../../domain/dates.dart';
 import '../../domain/format.dart';
 import '../../domain/habits.dart';
+import '../../domain/recovery.dart';
 import '../../ui/widgets.dart';
 
 class FootballFormScreen extends ConsumerStatefulWidget {
@@ -38,6 +39,28 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
   late final _after = TextEditingController(
       text: widget.existing?.weightAfterKg == null ? '' : fmtDec(widget.existing!.weightAfterKg!));
   late final _fluid = TextEditingController(text: widget.existing?.fluidMl?.toString() ?? '');
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existing == null) _prefillWeights();
+  }
+
+  /// Si ya se anotaron los pesajes de antes y después del fútbol ese día
+  /// (Peso → momento), se traen solos.
+  Future<void> _prefillWeights() async {
+    final weights = await ref.read(bodyRepositoryProvider).weightsOn(_date);
+    if (!mounted) return;
+    String? kgOf(WeighMoment m) {
+      final w = weights.where((w) => weighMomentOf(w.moment, fasted: w.fasted) == m).firstOrNull;
+      return w == null ? null : fmtDec(w.kg);
+    }
+
+    setState(() {
+      if (_before.text.isEmpty) _before.text = kgOf(WeighMoment.antesFutbol) ?? '';
+      if (_after.text.isEmpty) _after.text = kgOf(WeighMoment.despuesFutbol) ?? '';
+    });
+  }
 
   @override
   void dispose() {

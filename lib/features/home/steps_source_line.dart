@@ -11,10 +11,13 @@ import '../../domain/steps.dart';
 /// pide abrir la app del reloj (§16.14). Nada si Health Connect no está
 /// conectado.
 class StepsSourceLine extends ConsumerWidget {
-  const StepsSourceLine({super.key, this.now});
+  const StepsSourceLine({super.key, this.now, this.activityToday = false});
 
   /// Solo para pruebas.
   final DateTime? now;
+
+  /// Hubo sesión o partido hoy: los pasos del reloj se vuelven viejos antes.
+  final bool activityToday;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +44,7 @@ class StepsSourceLine extends ConsumerWidget {
               ),
             ],
           ),
-          if (watchSyncStale(origin?.at, now))
+          if (watchSyncStale(origin?.at, now, activityToday: activityToday))
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Row(

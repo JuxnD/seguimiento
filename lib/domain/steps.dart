@@ -98,8 +98,14 @@ const watchSyncStaleAfter = Duration(hours: 6);
 
 /// true si hay que pedir abrir la app del reloj: sin registro conocido o con
 /// el último más viejo que [watchSyncStaleAfter].
-bool watchSyncStale(DateTime? lastRecord, DateTime now) =>
-    lastRecord == null || now.difference(lastRecord) > watchSyncStaleAfter;
+///
+/// Con actividad registrada hoy (sesión o partido), basta 1 h: el 5 oct el
+/// anillo decía 3k (INNOVA, 7:05 p. m.) y el reloj marcaba 8.514 después del
+/// partido (§16.15).
+bool watchSyncStale(DateTime? lastRecord, DateTime now, {bool activityToday = false}) =>
+    lastRecord == null ||
+    now.difference(lastRecord) > watchSyncStaleAfter ||
+    (activityToday && now.difference(lastRecord) > const Duration(hours: 1));
 
 /// "INNOVA S-WATCH · 3:06 p. m."; "· ayer 3:06 p. m."; "· jue 2 oct 3:06 p. m.".
 String stepsOriginLine(StepsOrigin o, DateTime now) {

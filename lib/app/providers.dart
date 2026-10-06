@@ -27,6 +27,7 @@ import '../data/health_connect.dart';
 import '../data/repositories/custom_reminder_repository.dart';
 import '../data/repositories/exercise_photo_repository.dart';
 import '../data/repositories/report_repository.dart';
+import '../data/repositories/recovery_repository.dart';
 import '../data/repositories/sleep_repository.dart';
 import '../data/repositories/steps_repository.dart';
 import '../data/repositories/training_repository.dart';
@@ -80,6 +81,20 @@ final nutritionRepositoryProvider = Provider((ref) => NutritionRepository(ref.wa
 final bodyRepositoryProvider = Provider((ref) => BodyRepository(ref.watch(databaseProvider)));
 final stepsRepositoryProvider = Provider((ref) => StepsRepository(ref.watch(databaseProvider)));
 final sleepRepositoryProvider = Provider((ref) => SleepRepository(ref.watch(databaseProvider)));
+final recoveryRepositoryProvider = Provider((ref) => RecoveryRepository(ref.watch(databaseProvider)));
+
+/// ¿Ya se hizo el registro de la mañana ese día (`YYYY-MM-DD`)? Basta el
+/// pulso o el peso en ayunas.
+final morningDoneProvider = FutureProvider.family<bool, String>((ref, day) async {
+  ref.watch(dashboardProvider);
+  final date = parseDay(day);
+  if (await ref.watch(recoveryRepositoryProvider).restingHrOn(date) != null) return true;
+  final weights = await ref.watch(bodyRepositoryProvider).weightsOn(date);
+  return weights.any((w) => w.fasted);
+});
+
+/// Habilidades logradas de la hoja de ruta (§19.8): id → fecha.
+final skillsProvider = StreamProvider((ref) => ref.watch(recoveryRepositoryProvider).watchSkills());
 
 /// Horas en cama anotadas la mañana de ese día (`YYYY-MM-DD`).
 final sleepDayProvider =

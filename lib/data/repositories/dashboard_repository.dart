@@ -5,6 +5,7 @@ import '../../domain/enums.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
+import '../../domain/recovery.dart';
 import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
 import '../../domain/steps.dart';
 import '../database.dart';
@@ -12,6 +13,7 @@ import 'exercise_repository.dart';
 import 'nutrition_repository.dart';
 import 'plan_repository.dart';
 import 'profile_repository.dart';
+import 'recovery_repository.dart';
 import 'training_repository.dart';
 
 /// Todo lo que la pantalla Hoy necesita, resuelto de una vez.
@@ -44,6 +46,10 @@ class TodayDashboard {
     required this.measurement,
     this.proposal,
     this.midweekGame = false,
+    this.load = const LoadReading(todayLoad: 0, todayCount: 0, intenseStreak: 0),
+    this.restingHrWarning,
+    this.soreZones = const [],
+    this.planB = false,
   });
 
   final DateTime date;
@@ -106,6 +112,19 @@ class TodayDashboard {
   /// reemplaza (§19.1).
   final bool midweekGame;
 
+  /// Carga de hoy y días intensos seguidos (§16.15).
+  final LoadReading load;
+
+  /// Pulso en reposo alto 3 días seguidos (§19.6).
+  final String? restingHrWarning;
+
+  /// Zonas con una molestia que no baja en 3 días o sube (§16.15).
+  final List<String> soreZones;
+
+  /// Hoy conviene el plan B de solo torso: 3 días intensos seguidos o
+  /// molestia en la pierna, y el día trae pierna (§16.15).
+  final bool planB;
+
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
 
@@ -165,6 +184,22 @@ class DashboardRepository {
         .map((r) => r.read(maxRounds))
         .getSingle();
 
+    // Carga de la última semana: sesiones (RPE × min) y partidos.
+    final weekAgo = dayKey(addDays(date, -7));
+    final recentSessions = await (db.select(db.sessions)
+          ..where((t) => t.date.isBiggerOrEqualValue(weekAgo) & db.trainingSessions))
+        .get();
+    final recentGames = await (db.select(db.footballGames)..where((t) => t.date.isBiggerOrEqualValue(weekAgo))).get();
+    final load = loadReading([
+      for (final s in recentSessions)
+        LoadItem(date: parseDay(s.date), minutes: (s.totalSec - s.warmupSec - s.cooldownSec) ~/ 60, effort: s.rpe),
+      for (final g in recentGames) LoadItem(date: parseDay(g.date), minutes: g.minutes, effort: g.intensity, isFootball: true),
+    ], date);
+    final recovery = RecoveryRepository(db);
+    final soreness = await recovery.sorenessRange(date);
+    final dayHasLegs = view != null &&
+        (view.day.type == DayType.piernas || view.day.exercises.any((e) => legExercises.contains(e.name)));
+
     final lastMeasurement = await (db.select(db.measurements)
           ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)])
           ..limit(1))
@@ -179,6 +214,10 @@ class DashboardRepository {
       mainExercises: view == null ? const [] : _mainLines(view.day, v3),
       blockExercises: view == null || view.day.type == DayType.resistencia ? const [] : blockLines(view.day),
       midweekGame: type == DayType.resistencia && (v3?.isV31 ?? false) && await _gameThisWeekBefore(date),
+      load: load,
+      restingHrWarning: restingHrWarning(await recovery.restingHrRange(date), date),
+      soreZones: persistentSoreness(soreness, date),
+      planB: sessions.isEmpty && suggestPlanB(dayHasLegs: dayHasLegs, load: load, soreness: soreness, today: date),
       targetRounds: proposal?.rounds ?? view?.day.targetRounds,
       proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,

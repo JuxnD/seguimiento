@@ -65,6 +65,7 @@ abstract final class FlagKeys {
   /// El usuario decidió no aplicar las correcciones del 29 sep: Hoy deja de
   /// ofrecerlas (siguen en Ajustes).
   static const corrections29SepDismissed = 'corrections29SepDismissed';
+  static const corrections5OctDismissed = 'corrections5OctDismissed';
 
   /// Día (`YYYY-MM-DD`) en que se respondió "está bien así" a "¿Te faltó
   /// registrar algo de ayer?": no se vuelve a preguntar por ese día.

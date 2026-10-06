@@ -16,11 +16,14 @@ import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../plan/v3_activation.dart';
 import '../../domain/progress.dart';
+import '../../domain/mobility.dart' show legRecovery;
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
+import '../body/body_screen.dart' show addWeightDialog;
 import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
+import 'morning_check_screen.dart';
 import 'steps_source_line.dart';
 import 'walk_screen.dart';
 import '../report/summary_screen.dart';
@@ -204,6 +207,19 @@ class _PlanHero extends StatelessWidget {
             if (dashboard.proposal case final p? when !dashboard.trained)
               _ProposalLine(proposal: p, date: dashboard.date, color: style.color),
             if (dashboard.v3 case final v3?) _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
+            if (dashboard.restingHrWarning case final hr?)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(hr, style: text.bodyMedium?.copyWith(color: style.color)),
+              ),
+            if (dashboard.soreZones.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                    'Molestia en ${dashboard.soreZones.join(', ').toLowerCase()} sin bajar en 3 días: aplaza piernas '
+                    'o el intento de récord.',
+                    style: text.bodyMedium?.copyWith(color: style.color)),
+              ),
             if (dashboard.dayType == DayType.descanso)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -223,26 +239,52 @@ class _PlanHero extends StatelessWidget {
 }
 
 /// Empezar la sesión del día (y la versión ligera si ayer hubo partido
-/// intenso), dentro de la tarjeta principal.
+/// intenso), dentro de la tarjeta principal. Con el día hecho, la tarjeta
+/// dice "Día completo" y recomienda recuperar: el 5 oct, después de circuito
+/// y fútbol intenso, Hoy invitaba a "Otra sesión de circuito" (§16.15).
 class _StartButtons extends ConsumerWidget {
   const _StartButtons({required this.dashboard, required this.color});
 
   final TodayDashboard dashboard;
   final Color color;
 
+  Future<void> _another(BuildContext context, WidgetRef ref) async {
+    final load = dashboard.load;
+    if (load.warnAnotherSession || dashboard.trained) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('¿Otra sesión hoy?'),
+          content: Text(load.warnAnotherSession ? load.reason : 'Lo del plan de hoy ya está hecho.'),
+          actions: [
+            FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Mejor recupero')),
+            TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Entrenar igual')),
+          ],
+        ),
+      );
+      if (ok != true || !context.mounted) return;
+    }
+    await startGuidedSession(context, ref);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final d = dashboard;
+    if (d.trained) return _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (d.planB) ...[
+          _PlanBCard(dashboard: d, color: color),
+          const SizedBox(height: 8),
+        ],
         FilledButton.icon(
-          onPressed: () => startGuidedSession(context, ref),
+          onPressed: () => d.load.warnAnotherSession ? _another(context, ref) : startGuidedSession(context, ref),
           style: FilledButton.styleFrom(backgroundColor: color, minimumSize: const Size.fromHeight(52)),
-          icon: Icon(d.trained ? Icons.replay : Icons.play_arrow),
-          label: Text('${d.trained ? 'Otra sesión de' : 'Empezar'} ${d.dayType.label.toLowerCase()}'),
+          icon: const Icon(Icons.play_arrow),
+          label: Text('Empezar ${d.dayType.label.toLowerCase()}'),
         ),
-        if (d.hardFootballYesterday != null && !d.trained) ...[
+        if (d.hardFootballYesterday != null) ...[
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => startGuidedSession(context, ref, light: true),
@@ -251,6 +293,107 @@ class _StartButtons extends ConsumerWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// El plan del día está hecho: no se invita a otra sesión. Se recomienda
+/// recuperar (§16.15, §19.9) y la otra sesión queda como enlace discreto.
+class _DayComplete extends ConsumerWidget {
+  const _DayComplete({required this.dashboard, required this.color, required this.onAnother});
+
+  final TodayDashboard dashboard;
+  final Color color;
+  final VoidCallback onAnother;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final d = dashboard;
+    final text = Theme.of(context).textTheme;
+    final game = d.footballToday;
+    final legs = game != null || d.dayType == DayType.piernas || d.soreZones.isNotEmpty;
+    final sweat = game == null
+        ? null
+        : sweatReading(
+            beforeKg: game.weightBeforeKg, afterKg: game.weightAfterKg, fluidMl: game.fluidMl, minutes: game.minutes);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(color: color.withOpacity(0.16), borderRadius: BorderRadius.circular(14)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.check_circle, color: color),
+              const SizedBox(width: 8),
+              Text('Día completo', style: text.titleMedium?.copyWith(fontWeight: FontWeight.w800, color: color)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (legs)
+          OutlinedButton.icon(
+            onPressed: () => startMobility(context, ref, routine: legRecovery),
+            icon: const Icon(Icons.self_improvement),
+            label: const Text('Recuperación de piernas (10 min)'),
+          ),
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Text(
+            [
+              if (sweat != null && sweat.replaceL > 0)
+                'Hidratación: bebe ≈ ${fmtDec(sweat.replaceL)} L en las próximas horas'
+              else if (game != null)
+                'Hidratación: 1,5 L por cada kg perdido (pésate antes y después del partido)',
+              'Dormir ≥ 8 h en cama',
+            ].map((l) => '• $l').join('\n'),
+            style: text.bodyMedium,
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(onPressed: onAnother, child: const Text('Otra sesión')),
+        ),
+      ],
+    );
+  }
+}
+
+/// Plan B de solo torso (§16.15): con 3 días intensos seguidos o molestia en
+/// la pierna, el día que trae pierna.
+class _PlanBCard extends ConsumerWidget {
+  const _PlanBCard({required this.dashboard, required this.color});
+
+  final TodayDashboard dashboard;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final text = Theme.of(context).textTheme;
+    final why = dashboard.load.threeIntense
+        ? '${dashboard.load.intenseStreak} días intensos seguidos'
+        : 'molestia en la pierna';
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: color),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Plan B: solo torso', style: text.titleSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
+          Text('Por $why, hoy sin pierna (vuelve en 48 h). Supinas, flexiones, pike, remo, plancha lateral y '
+              'hollow, todo a RIR 2.', style: text.bodySmall),
+          const SizedBox(height: 6),
+          FilledButton.tonalIcon(
+            onPressed: () => startPlanB(context, ref),
+            icon: const Icon(Icons.swap_horiz),
+            label: const Text('Empezar plan B'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -328,13 +471,14 @@ class _CorrectionsBanner extends ConsumerWidget {
       title: 'Correcciones del traspaso',
       children: [
         Text('$pending ${pending == 1 ? 'corrección' : 'correcciones'} del traspaso por aplicar '
-            '(sesiones, comidas y medidas). Revísalas antes: solo se toca lo que coincide exacto.'),
+            '(sesiones, comidas, peso y pasos). Revísalas antes: solo se toca lo que coincide exacto.'),
         const SizedBox(height: 8),
         Row(
           children: [
             TextButton(
               onPressed: () async {
                 await ref.read(localFlagsProvider).set(FlagKeys.corrections29SepDismissed, true);
+                await ref.read(localFlagsProvider).set(FlagKeys.corrections5OctDismissed, true);
                 ref.invalidate(pendingCorrectionsProvider);
               },
               child: const Text('No aplicar'),
@@ -544,7 +688,8 @@ class _RingsCard extends StatelessWidget {
           if (d.recordSuspect != null) _RecordSuspectTile(suspect: d.recordSuspect!),
         ],
         _WalksLine(dashboard: d),
-        const StepsSourceLine(),
+        StepsSourceLine(activityToday: d.sessionsToday > 0 || d.footballToday != null),
+        _MorningPrompt(date: d.date),
         _SleepLine(date: d.date),
         _EggsLine(date: d.date),
         _CloseDayLine(dashboard: d),
@@ -608,6 +753,28 @@ class _SleepLine extends ConsumerWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Por la mañana, si no se anotó: el registro de la mañana (peso en ayunas,
+/// pulso en reposo, sueño y molestias) de un toque (§16.15, §19.6).
+class _MorningPrompt extends ConsumerWidget {
+  const _MorningPrompt({required this.date});
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final done = ref.watch(morningDoneProvider(dayKey(date))).valueOrNull ?? true;
+    if (done || DateTime.now().hour >= 14) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: OutlinedButton.icon(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => MorningCheckScreen(date: date))),
+        icon: const Icon(Icons.wb_sunny_outlined),
+        label: const Text('Registro de la mañana: peso, pulso, sueño y molestias'),
       ),
     );
   }
@@ -911,10 +1078,33 @@ class _ActionsCardState extends ConsumerState<_ActionsCard> {
               icon: const Icon(Icons.straighten),
               label: const Text('Medición'),
             ),
+            // Peso y pasos a la vista (§18.10, 5 oct: "no hay dónde anotar el
+            // peso ni los pasos a mano"; los pasos se anotaban tocando el anillo).
+            TextButton.icon(
+              onPressed: () => addWeightDialog(context, ref, date: _target),
+              icon: const Icon(Icons.monitor_weight_outlined),
+              label: const Text('Peso'),
+            ),
+            TextButton.icon(
+              onPressed: () => editStepsDialog(context, ref, _target, null),
+              icon: const Icon(Icons.directions_walk),
+              label: const Text('Pasos'),
+            ),
+            TextButton.icon(
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => MorningCheckScreen(date: _target))),
+              icon: const Icon(Icons.wb_sunny_outlined),
+              label: const Text('Registro de la mañana'),
+            ),
             TextButton.icon(
               onPressed: () => startMobility(context, ref),
               icon: const Icon(Icons.self_improvement),
               label: const Text('Movilidad nocturna · opcional'),
+            ),
+            TextButton.icon(
+              onPressed: () => startMobility(context, ref, routine: legRecovery),
+              icon: const Icon(Icons.spa_outlined),
+              label: const Text('Recuperación de piernas'),
             ),
           ],
         ),

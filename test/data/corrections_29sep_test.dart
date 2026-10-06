@@ -77,14 +77,14 @@ void main() {
 
   test('con los datos del 29 sep, todas quedan por aplicar', () async {
     await seedAsOn29Sep();
-    final states = await checkCorrections(db);
+    final states = await checkCorrections(db, corrections29Sep);
     expect(states.values.toSet(), {CorrectionState.pending}, reason: '$states');
     expect(states, hasLength(corrections29Sep.length));
   });
 
   test('aplicarlas deja cada registro como pide el traspaso', () async {
     await seedAsOn29Sep();
-    expect(await applyPendingCorrections(db), corrections29Sep.length);
+    expect(await applyPendingCorrections(db, corrections29Sep), corrections29Sep.length);
 
     expect((await session('2026-09-23')).rpe, 4);
     expect((await session('2026-09-24')).rpe, 6);
@@ -133,9 +133,9 @@ void main() {
     expect(oct3[MeasureSite.abdomen], closeTo(91.44, 0.01));
     expect(oct3[MeasureSite.hombros]! / oct3[MeasureSite.cinturaEstrecha]!, closeTo(1.40, 0.01));
 
-    final again = await checkCorrections(db);
+    final again = await checkCorrections(db, corrections29Sep);
     expect(again.values.toSet(), {CorrectionState.done}, reason: '$again');
-    expect(await applyPendingCorrections(db), 0, reason: 'aplicar dos veces no cambia nada');
+    expect(await applyPendingCorrections(db, corrections29Sep), 0, reason: 'aplicar dos veces no cambia nada');
   });
 
   test('lo que el usuario ya corrigió a mano distinto no se pisa', () async {
@@ -147,22 +147,36 @@ void main() {
     final dup = (await nutrition.range(d(9, 29), d(9, 29))).single;
     await nutrition.updateMealHeader(dup.meal.id, time: '07:30');
 
-    final states = await checkCorrections(db);
+    final states = await checkCorrections(db, corrections29Sep);
     expect(states['rpe-23'], CorrectionState.missing);
     expect(states['duplicado-29'], CorrectionState.done);
-    await applyPendingCorrections(db);
+    await applyPendingCorrections(db, corrections29Sep);
 
     expect((await session('2026-09-23')).rpe, 5);
     expect(await nutrition.range(d(9, 29), d(9, 29)), hasLength(1), reason: 'otra hora: no es el duplicado');
   });
 
   test('sin esos registros no se toca nada', () async {
-    final states = await checkCorrections(db);
+    final states = await checkCorrections(db, corrections29Sep);
     expect(states['rpe-23'], CorrectionState.missing);
     expect(states['desayuno-28'], CorrectionState.missing);
     expect(states['cerrar-24-28'], CorrectionState.missing, reason: 'sin comidas no hay días que cerrar');
     expect(states['sesion-2oct'], CorrectionState.pending, reason: 'no hay sesión el 2 oct: se recupera');
     expect(states['medidas-3oct'], CorrectionState.pending, reason: 'no hay medición el 3 oct: se carga');
-    expect(await applyPendingCorrections(db), 2);
+    expect(await applyPendingCorrections(db, corrections29Sep), 2);
+  });
+
+  test('datos del 5 oct: tres pesajes de referencia y los pasos del reloj (§18.10)', () async {
+    expect((await checkCorrections(db, corrections5Oct)).values.toSet(), {CorrectionState.pending});
+    expect(await applyPendingCorrections(db, corrections5Oct), 4);
+    final weights = await (db.select(db.bodyWeights)..where((t) => t.date.equals('2026-10-05'))).get();
+    expect(weights.map((w) => (w.kg, w.fasted, w.moment)).toSet(), {
+      (80.50, false, 'otro'),
+      (79.95, false, 'otro'),
+      (79.50, false, 'antesDormir'),
+    });
+    final steps = await (db.select(db.dailySteps)..where((t) => t.date.equals('2026-10-05'))).getSingle();
+    expect((steps.steps, steps.source), (8514, 'manual'));
+    expect(await applyPendingCorrections(db, corrections5Oct), 0, reason: 'aplicar dos veces no duplica');
   });
 }
