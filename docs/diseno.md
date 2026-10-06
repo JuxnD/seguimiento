@@ -54,12 +54,43 @@ dato en grande y píldoras de estado. Debajo, filas con icono de color
 una sola consulta.
 
 1. **Tarjeta del día**: fecha, racha, semana desde el inicio, tipo en grande con
-   su color e icono, meta de rondas y ejercicios. Un ✓ cuando ya entrenaste.
+   su color e icono y meta de rondas. **Empezar** aparece antes de los ejercicios;
+   **Ver rutina** despliega todo el trabajo principal y los bloques A/B. Las
+   alertas de carga, pulso y molestias quedan fuera del desplegable. Un ✓ cuando
+   ya entrenaste; en ese caso se conserva **Día completo**, recuperación y el
+   acceso secundario a otra sesión con su confirmación. El Plan B y la versión
+   ligera mantienen sus acciones y reglas.
 2. **Anillos**: proteína y kcal contra la meta, y rondas contra el objetivo (o
    sesión hecha/no hecha si el día no cuenta rondas). Se animan al cambiar, así
    que registrar una comida se nota. Debajo, el récord vigente.
-3. **Registrar**: el botón principal toma el color del día y dice qué empieza.
+3. **Registrar**: conserva los registros manuales, la fecha de destino y los
+   atajos. El registro de la mañana sigue junto a los anillos.
 4. **Medición**: días para la próxima, o que ya toca.
+
+## Edición del plan y claves de técnica
+
+El editor de una nueva versión permite modificar sostén mínimo/máximo en
+segundos, RIR mínimo/máximo, **Por lado** y notas del ejercicio, además de los
+campos anteriores y el descanso máximo. Usa los campos existentes del modelo:
+guardar crea otra versión y no reescribe el historial ni la variante/superserie
+que no se editaron. Antes de escribir, rechaza sostén de cero segundos, rangos
+invertidos y RIR fuera de 0–5; el extremo máximo necesita su mínimo. Son
+límites de entrada, no una recomendación nueva de entrenamiento. Los campos
+numéricos pasan a una columna cuando el texto del sistema está ampliado.
+
+La hoja de técnica muestra **Cómo hacerlo** de la guía fija y, debajo,
+**Claves personales** del catálogo que no repiten un paso. Quita duplicados por
+mayúsculas, tildes y espacios; sin guía fija, las claves siguen siendo los pasos.
+Los enlaces a una búsqueda se rotulan **Buscar demostración**; un enlace directo
+conserva **Ver video de referencia**. Las opciones Más fácil/Más difícil se
+apilan para permitir texto ampliado sin comprimir la lectura.
+
+`test/ui/experience_test.dart` cruza edición → SQLite → reapertura y comprueba
+el historial anterior, los rechazos, claves y enlaces, la rutina desplegable,
+el registro de la mañana, Día completo y Plan B a 360 dp con texto 1,5×.
+`EXPERIENCE_OUT=<carpeta> flutter test test/ui/experience_test.dart` guarda
+capturas opcionales con los fixtures de fuentes versionados para revisión visual. Estas comprobaciones
+no sustituyen la aceptación del usuario en el teléfono.
 
 ## Racha
 

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
@@ -12,6 +11,8 @@ import 'package:seguimiento/ui/exercise_figure.dart';
 import 'package:seguimiento/ui/exercise_figure_3d.dart';
 import 'package:seguimiento/ui/exercise_figure_3d_view.dart';
 import 'package:seguimiento/ui/theme.dart';
+
+import '../support/test_fonts.dart';
 
 /// Hallazgos de la auditoría del 5 oct (F01–F04): el pino no atraviesa la
 /// pared, la dominada respeta la variante de la sesión, el pie de los
@@ -173,21 +174,7 @@ void main() {
       tester.view.physicalSize = const Size(360, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      // La Roboto del SDK: con la fuente de pruebas el ancho del texto no es
-      // el del teléfono. Si no está, la prueba corre igual (más exigente).
-      final fonts = '${Platform.environment['FLUTTER_ROOT'] ?? ''}/bin/cache/artifacts/material_fonts';
-      if (Directory(fonts).existsSync()) {
-        await tester.runAsync(() async {
-          final loader = FontLoader('Roboto');
-          for (final name in ['roboto-regular.ttf', 'roboto-medium.ttf', 'roboto-bold.ttf']) {
-            loader.addFont(Future.value(ByteData.sublistView(File('$fonts/$name').readAsBytesSync())));
-          }
-          await loader.load();
-          final icons = FontLoader('MaterialIcons');
-          icons.addFont(Future.value(ByteData.sublistView(File('$fonts/materialicons-regular.otf').readAsBytesSync())));
-          await icons.load();
-        });
-      }
+      await loadTestFonts(tester);
       final theme = buildGymTheme();
       await tester.pumpWidget(MaterialApp(
         theme: theme.copyWith(textTheme: theme.textTheme.apply(fontFamily: 'Roboto')),

@@ -58,12 +58,15 @@ Mejoras pedidas tras el primer uso real, en este orden:
   con pausa) y récords múltiples. La carga por serie (`session_sets.load_kg`)
   ya existe.
 
-- Respaldo que incluya las fotos (hoy exportar y las copias automáticas solo
-  llevan la base de datos) y que pueda salir del teléfono sin acción manual.
-- Editar el plan desde la app con todos los campos (sostén, RIR, variante).
+- Respaldo automático fuera del teléfono. El ZIP manual con fotos entra en
+  1.19; las copias semanales internas conservan solamente registros.
+- El editor de 1.19 añade sostén, RIR, por lado, notas y descanso máximo.
+  Se conservan los campos de agarre/variante y bloque ya editables; A/B y
+  agrupación de superseries se preservan al guardar.
 
 ## Fuera de alcance
 
 - Sincronización en la nube o cuentas.
 - Base de datos externa de alimentos.
-- Análisis o IA dentro de la app: eso se hace fuera, con el informe.
+- Escritura autónoma por IA o envío de fotos. El copiloto descriptivo del informe
+  entra en1.19; [estado y gates de activación](ia-pendiente.md).

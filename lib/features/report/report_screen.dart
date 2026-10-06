@@ -12,6 +12,7 @@ import '../../ui/widgets.dart';
 import '../../ui/hero.dart';
 import 'charts_section.dart';
 import 'summary_screen.dart';
+import 'weekly_ai_screen.dart';
 
 /// El informe es el producto: se genera, se copia y se pega en el chat.
 class ReportScreen extends ConsumerStatefulWidget {
@@ -29,7 +30,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   Widget build(BuildContext context) {
     final profile = ref.watch(profileProvider);
     return profile.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
       data: (p) {
         final start = p.programStart;
@@ -37,7 +39,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
         final week = _weekIndex ?? currentWeek;
         final range = _customRange == null
             ? weekRange(start, week)
-            : WeekRange(week, dateOnly(_customRange!.start), dateOnly(_customRange!.end));
+            : WeekRange(week, dateOnly(_customRange!.start),
+                dateOnly(_customRange!.end));
         final key = (dayKey(range.start), dayKey(range.end));
         final report = ref.watch(reportProvider(key));
 
@@ -48,8 +51,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               IconButton(
                 tooltip: 'Tu progreso en números',
                 icon: const Icon(Icons.insights),
-                onPressed: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SummaryScreen())),
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const SummaryScreen())),
               ),
               IconButton(
                 tooltip: 'Rango personalizado',
@@ -59,7 +62,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     context: context,
                     firstDate: DateTime(2020),
                     lastDate: DateTime(2100),
-                    initialDateRange: DateTimeRange(start: range.start, end: range.end),
+                    initialDateRange:
+                        DateTimeRange(start: range.start, end: range.end),
                   );
                   if (picked != null) setState(() => _customRange = picked);
                 },
@@ -71,7 +75,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
             children: [
               HeroCard(
                 color: Theme.of(context).colorScheme.primary,
-                overline: _customRange == null ? 'Informe semanal' : 'Rango personalizado',
+                overline: _customRange == null
+                    ? 'Informe semanal'
+                    : 'Rango personalizado',
                 pills: [
                   if (_customRange == null && week == currentWeek)
                     const StatPill(icon: Icons.today, label: 'Semana en curso'),
@@ -95,12 +101,17 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                           children: [
                             Text(
                               _customRange == null ? 'SEMANA $week' : 'RANGO',
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall
+                                  ?.copyWith(
                                     fontWeight: FontWeight.w800,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                             ),
-                            Text('${formatShort(range.start)} – ${formatLong(range.end)}',
+                            Text(
+                                '${formatShort(range.start)} – ${formatLong(range.end)}',
                                 style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
@@ -128,6 +139,20 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 ],
               ),
               _SummaryLink(range: key),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.auto_awesome),
+                  label: const Text('Analizar este informe con IA'),
+                  onPressed: report.value == null
+                      ? null
+                      : () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  WeeklyAiScreen(report: report.value!))),
+                ),
+              ),
               ChartsSection(range: key),
               if (_customRange == null) _WeekNotes(weekIndex: week),
               AppCard(
@@ -140,24 +165,33 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                       onPressed: report.value == null
                           ? null
                           : () async {
-                              await Clipboard.setData(ClipboardData(text: report.value!));
-                              if (context.mounted) showSnack(context, 'Informe copiado');
+                              await Clipboard.setData(
+                                  ClipboardData(text: report.value!));
+                              if (context.mounted) {
+                                showSnack(context, 'Informe copiado');
+                              }
                             },
                     ),
                     IconButton(
                       tooltip: 'Compartir',
                       icon: const Icon(Icons.ios_share),
-                      onPressed: report.value == null ? null : () => Share.share(report.value!),
+                      onPressed: report.value == null
+                          ? null
+                          : () => Share.share(report.value!),
                     ),
                   ],
                 ),
                 children: [
                   report.when(
-                    loading: () => const Center(child: Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator())),
+                    loading: () => const Center(
+                        child: Padding(
+                            padding: EdgeInsets.all(24),
+                            child: CircularProgressIndicator())),
                     error: (e, _) => Text('Error: $e'),
                     data: (md) => SelectableText(
                       md,
-                      style: const TextStyle(fontFamily: 'monospace', fontSize: 12, height: 1.35),
+                      style: const TextStyle(
+                          fontFamily: 'monospace', fontSize: 12, height: 1.35),
                     ),
                   ),
                 ],
@@ -180,11 +214,14 @@ class _SummaryLink extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(periodSummaryProvider(range)).valueOrNull;
     final text = Theme.of(context).textTheme;
-    final top = s == null ? const <ExerciseTotal>[] : s.exercises.where((e) => !e.isHold).take(3).toList();
+    final top = s == null
+        ? const <ExerciseTotal>[]
+        : s.exercises.where((e) => !e.isHold).take(3).toList();
     return AppCard(
       title: 'En números',
       trailing: TextButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SummaryScreen())),
+        onPressed: () => Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const SummaryScreen())),
         child: const Text('Semana y mes'),
       ),
       children: [
@@ -195,9 +232,11 @@ class _SummaryLink extends ConsumerWidget {
         else
           Text(
             [
-              for (final e in top) '${fmtInt(e.amount)} ${e.name.toLowerCase()}',
+              for (final e in top)
+                '${fmtInt(e.amount)} ${e.name.toLowerCase()}',
               if (s.stepsTotal > 0) '${fmtInt(s.stepsTotal)} pasos',
-              if (s.kcalBurned case final k?) '≈ ${fmtInt(k)} kcal en actividad',
+              if (s.kcalBurned case final k?)
+                '≈ ${fmtInt(k)} kcal en actividad',
             ].join(' · '),
             style: text.bodyLarge,
           ),
@@ -238,14 +277,18 @@ class _WeekNotesState extends ConsumerState<_WeekNotes> {
         TextField(
           controller: _controller,
           maxLines: 3,
-          decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'Lo que el dato no cuenta'),
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Lo que el dato no cuenta'),
         ),
         const SizedBox(height: 8),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton.tonal(
             onPressed: () async {
-              await ref.read(profileRepositoryProvider).saveWeekNote(widget.weekIndex, _controller.text);
+              await ref
+                  .read(profileRepositoryProvider)
+                  .saveWeekNote(widget.weekIndex, _controller.text);
               if (context.mounted) showSnack(context, 'Notas guardadas');
             },
             child: const Text('Guardar notas'),

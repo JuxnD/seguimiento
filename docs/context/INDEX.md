@@ -21,6 +21,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Respaldo, restauración y releases | [../actualizaciones.md](../actualizaciones.md) | Cambia el flujo de respaldo, la firma o el pipeline |
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
 | Fases y pendientes | [../roadmap.md](../roadmap.md) | Entra o sale trabajo del MVP/v2 |
+| Copiloto semanal y activación | [../ia-pendiente.md](../ia-pendiente.md) | Cambia gateway, envío consentido, límites o aceptación |
 
 ## Hechos que no se deducen del código
 
@@ -31,10 +32,10 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   martes.
 - El informe se pega en un chat para que un tercero lo audite. Por eso incluye
   detalle crudo (vueltas, series partidas, contexto) y no solo promedios.
-- Los datos viven únicamente en el dispositivo. No hay backend ni sincronización.
-  Respaldo: exportar a mano desde Ajustes (lo único que protege de perder el
-  teléfono) y una copia automática semanal dentro de la app (protege de
-  errores). Ambas se restauran desde Ajustes. Las fotos no van en ninguna.
+- Registros y fotos viven en el dispositivo, sin sincronización. Desde 1.19,
+  Ajustes exporta un ZIP portable con base y fotos. La copia semanal interna
+  conserva solamente registros; ambas se restauran desde Ajustes. IA es opt-in:
+  únicamente el informe elegido se envía a Control360i/OpenAI tras confirmación.
 - Fuera de la base viven `flags.json` (permisos ya pedidos, fechas de copia) y
   `sesion-en-curso.json` (cronómetro a medias). Restaurar no los toca.
 - En este equipo, desde el 2 oct 2026 `C:lutter` es Flutter 3.47 (lo
@@ -74,7 +75,8 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
   `python tool/figuras3d.py`, que importa `figuras.py`, en
   `assets/tecnica/figuras3d.json`. Se revisa a ojo con
   `FIG3D_OUT=<carpeta> flutter test test/ui/exercise_figure_3d_render_test.dart`
-  (sin esa variable la prueba se salta). Ver [diseno.md](../diseno.md).
+  (sin esa variable la captura se salta). Las pruebas usan fuentes versionadas,
+  independientes del SDK del host. Ver [diseno.md](../diseno.md).
 - Las entradas libres se guardan solas en el catálogo (`origin =
   entradaLibre`). Un alimento "a ojo" sigue contando como estimado en el
   informe aunque ya esté en el catálogo.

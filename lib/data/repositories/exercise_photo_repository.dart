@@ -7,7 +7,8 @@ import '../database.dart';
 
 /// Fotos de referencia por ejercicio. El archivo vive en el directorio de la
 /// app (`fotos/ejercicios/`) y la base guarda la ruta relativa. Como las fotos
-/// de progreso, no entran en los respaldos.
+/// de progreso, entran en el ZIP manual desde 1.19; las copias automáticas
+/// SQLite conservan únicamente registros.
 class ExercisePhotoRepository {
   ExercisePhotoRepository(this.db, this.documents);
 
