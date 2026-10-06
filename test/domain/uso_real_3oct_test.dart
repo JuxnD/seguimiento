@@ -120,7 +120,7 @@ void main() {
       expect(walksLeft(7400, 7500), 1);
     });
 
-    test('peso: promedio semanal de lunes a domingo, solo en ayunas si los hay (§18.10)', () {
+    test('peso: promedio semanal de lunes a domingo, solo en ayunas (§18.10)', () {
       final weeks = weeklyWeightAverages([
         (DateTime(2026, 10, 6), 74.0, true), // mar
         (DateTime(2026, 10, 8), 73.6, true), // jue
@@ -128,10 +128,10 @@ void main() {
         (DateTime(2026, 10, 10), 73.8, true), // sáb
         (DateTime(2026, 10, 13), 73.2, false), // mar siguiente, sin ayunas
       ]);
-      expect(weeks.map((w) => w.monday), [DateTime(2026, 10, 5), DateTime(2026, 10, 12)]);
+      expect(weeks.map((w) => w.monday), [DateTime(2026, 10, 5)],
+          reason: 'una semana sin pesajes en ayunas no tiene promedio');
       expect(weeks.first.kg, closeTo(73.8, 0.001));
       expect(weeks.first.count, 3);
-      expect(weeks.last.kg, 73.2, reason: 'sin pesajes en ayunas esa semana, usa los que hay');
     });
   });
 }

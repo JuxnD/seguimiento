@@ -41,6 +41,9 @@ const databaseFileName = 'seguimiento.sqlite';
   ExercisePhotos,
   CustomReminders,
   SleepLogs,
+  MorningChecks,
+  SorenessLogs,
+  SkillAchievements,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -48,7 +51,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 16;
+  int get schemaVersion => 17;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -183,6 +186,16 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(footballGames, footballGames.weightAfterKg);
             await m.addColumn(footballGames, footballGames.fluidMl);
             await m.createTable(sleepLogs);
+          }
+          if (from < 17) {
+            // v17: momento y hora del pesaje, registro de la mañana (pulso en
+            // reposo y molestias) y huevos por porción de cada alimento.
+            await m.addColumn(bodyWeights, bodyWeights.moment);
+            await m.addColumn(bodyWeights, bodyWeights.time);
+            await m.addColumn(foods, foods.eggsPerUnit);
+            await m.createTable(morningChecks);
+            await m.createTable(sorenessLogs);
+            await m.createTable(skillAchievements);
           }
           if (from < 16) {
             // Guías del catálogo con todas las columnas ya creadas: las de

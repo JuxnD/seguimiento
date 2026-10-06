@@ -129,13 +129,13 @@ List<WeekAverage> weeklyWeightAverages(Iterable<(DateTime date, double kg, bool 
     final monday = addDays(dateOnly(date), -(date.weekday - 1));
     byWeek.putIfAbsent(dayKey(monday), () => []).add((kg, fasted));
   }
-  final keys = byWeek.keys.toList()..sort();
+  // Solo en ayunas (§18.10, 5 oct): después de comer o antes de dormir el
+  // peso sube y baja por lo comido; es referencia, no tendencia.
+  final keys = byWeek.keys.where((k) => byWeek[k]!.any((w) => w.$2)).toList()..sort();
   return [
     for (final k in keys)
       () {
-        final all = byWeek[k]!;
-        final fasted = all.where((w) => w.$2).toList();
-        final used = fasted.isEmpty ? all : fasted;
+        final used = byWeek[k]!.where((w) => w.$2).toList();
         return WeekAverage(parseDay(k), used.fold(0.0, (a, w) => a + w.$1) / used.length, used.length);
       }(),
   ];

@@ -240,12 +240,14 @@ class _FoodDialogState extends State<FoodDialog> {
   late final _carbs = TextEditingController(text: widget.food == null ? '' : fmtDec(widget.food!.carbs));
   late final _fat = TextEditingController(text: widget.food == null ? '' : fmtDec(widget.food!.fat));
   late final _qty = TextEditingController(text: fmtDec(widget.food?.defaultQuantity ?? 1));
+  late final _eggs = TextEditingController(
+      text: widget.food?.eggsPerUnit == null ? '' : fmtDec(widget.food!.eggsPerUnit!));
   late FoodBasis _basis = widget.food?.basis ?? FoodBasis.unit;
   late MacroSource _source = widget.food?.source ?? MacroSource.referencia;
 
   @override
   void dispose() {
-    for (final c in [_name, _unit, _kcal, _protein, _carbs, _fat, _qty]) {
+    for (final c in [_name, _unit, _kcal, _protein, _carbs, _fat, _qty, _eggs]) {
       c.dispose();
     }
     super.dispose();
@@ -311,6 +313,10 @@ class _FoodDialogState extends State<FoodDialog> {
             ),
             const SizedBox(height: 8),
             NumberField(controller: _qty, label: 'Cantidad por defecto', decimal: true),
+            const SizedBox(height: 8),
+            // Para el contador del día: un plato con huevos los cuenta aunque
+            // no diga "huevo" en el nombre (§16.15).
+            NumberField(controller: _eggs, label: 'Huevos enteros por porción (vacío = ninguno)', decimal: true),
             const SizedBox(height: 12),
             SegmentedButton<MacroSource>(
               segments: const [
@@ -353,6 +359,7 @@ class _FoodDialogState extends State<FoodDialog> {
                 fat: Value(parseNum(_fat.text) ?? 0),
                 // 0 o vacío abriría el diálogo de cantidad con el botón apagado.
                 defaultQuantity: Value(_positiveOr(parseNum(_qty.text), 1)),
+                eggsPerUnit: Value((parseNum(_eggs.text) ?? 0) > 0 ? parseNum(_eggs.text) : null),
                 source: Value(_source),
               ),
             );

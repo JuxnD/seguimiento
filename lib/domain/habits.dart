@@ -48,18 +48,42 @@ const eggWarnAt = 5;
 /// Gramos de un huevo, para las entradas por peso.
 const _eggGrams = 55.0;
 
-/// Huevos enteros de una lista de ítems de comida: los que se llaman
-/// "huevo" y no son claras. Por unidad cuenta la cantidad; por gramos, a
-/// 55 g el huevo; sin cantidad, uno.
-double wholeEggs(Iterable<({String label, double? quantity, String? unit})> items) {
+/// Huevos enteros de una lista de ítems de comida (§16.15: el 5 oct un
+/// desayuno de 4 huevos contaba 1). Por ítem, en este orden:
+/// 1. si el alimento dice cuántos huevos trae por porción (`eggsPerUnit`),
+///    porciones × huevos;
+/// 2. si el nombre trae el número ("4 huevos", "huevos (3)", "huevos x2"),
+///    ese número × porciones;
+/// 3. si se llama "huevo" (sin claras): la cantidad en unidades, o los gramos
+///    a 55 g el huevo; sin cantidad, uno.
+double wholeEggs(Iterable<({String label, double? quantity, String? unit, double? eggsPerUnit})> items) {
   var total = 0.0;
   for (final i in items) {
+    final unit = i.unit == null ? '' : foldText(i.unit!).trim();
+    final byWeight = unit == 'g' || unit == 'ml';
+    // Porciones: por peso no se sabe el tamaño de la porción; cuenta 1.
+    final portions = i.quantity == null || byWeight ? 1.0 : i.quantity!;
+    if (i.eggsPerUnit case final e? when e > 0) {
+      total += e * portions;
+      continue;
+    }
     final name = foldText(i.label);
     if (!name.contains('huevo') || name.contains('clara')) continue;
-    final unit = i.unit == null ? '' : foldText(i.unit!).trim();
-    total += i.quantity == null ? 1 : (unit == 'g' ? i.quantity! / _eggGrams : i.quantity!);
+    final n = _eggsInName(name);
+    if (n != null) {
+      total += n * portions;
+    } else {
+      total += i.quantity == null ? 1 : (unit == 'g' ? i.quantity! / _eggGrams : i.quantity!);
+    }
   }
   return total;
+}
+
+/// "4 huevos", "huevos pericos (3)", "huevos x2", "2 huevos pericos" → el número.
+int? _eggsInName(String folded) {
+  final m = RegExp(r'(\d+)\s*huevos?|huevos?\s*x\s*(\d+)|huevos?[^\d(]*\((\d+)\)').firstMatch(folded);
+  if (m == null) return null;
+  return int.tryParse(m.group(1) ?? m.group(2) ?? m.group(3) ?? '');
 }
 
 // ---------------------------------------------------------------------------

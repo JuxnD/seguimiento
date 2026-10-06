@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/recovery.dart';
 import '../database.dart';
 
 /// Una toma de medidas: todas las del mismo día.
@@ -41,10 +42,30 @@ class BodyRepository {
   /// Un pesaje por día **y** condición: volver a pesarse en ayunas el mismo
   /// día corrige el anterior en vez de duplicar el punto de la gráfica. Uno
   /// en ayunas y otro sin ayunas conviven (el informe prefiere el de ayunas).
-  Future<void> addWeight(DateTime date, double kg, {bool fasted = true}) => db.transaction(() async {
-        await (db.delete(db.bodyWeights)..where((t) => t.date.equals(dayKey(date)) & t.fasted.equals(fasted))).go();
-        await db.into(db.bodyWeights).insert(BodyWeightsCompanion.insert(date: dayKey(date), kg: kg, fasted: Value(fasted)));
+  /// Un pesaje. En ayunas, antes de dormir y antes o después del fútbol hay
+  /// uno por día (registrar otro lo reemplaza); "otro" admite varios
+  /// (§18.10). Sin `moment`, se deduce de `fasted` como antes.
+  Future<void> addWeight(DateTime date, double kg, {bool fasted = true, WeighMoment? moment, String? time}) =>
+      db.transaction(() async {
+        final m = moment ?? (fasted ? WeighMoment.ayunas : WeighMoment.otro);
+        if (m.onePerDay) {
+          final same = await (db.select(db.bodyWeights)..where((t) => t.date.equals(dayKey(date)))).get();
+          for (final w in same.where((w) => weighMomentOf(w.moment, fasted: w.fasted) == m)) {
+            await (db.delete(db.bodyWeights)..where((t) => t.id.equals(w.id))).go();
+          }
+        }
+        await db.into(db.bodyWeights).insert(BodyWeightsCompanion.insert(
+              date: dayKey(date),
+              kg: kg,
+              fasted: Value(m == WeighMoment.ayunas),
+              moment: Value(m.name),
+              time: Value(time),
+            ));
       });
+
+  /// Pesajes de un día (para prellenar el fútbol con antes y después).
+  Future<List<BodyWeightRow>> weightsOn(DateTime date) =>
+      (db.select(db.bodyWeights)..where((t) => t.date.equals(dayKey(date)))).get();
 
   /// Primer pesaje registrado: la línea base del "desde…".
   Stream<BodyWeightRow?> watchFirstWeight() => (db.select(db.bodyWeights)

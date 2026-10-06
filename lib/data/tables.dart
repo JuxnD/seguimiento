@@ -280,6 +280,11 @@ class Foods extends Table {
 
   /// Marcado para salir primero al buscar.
   BoolColumn get favorite => boolean().withDefault(const Constant(false))();
+
+  /// Huevos enteros por unidad o porción ("Huevos pericos (4)" = 4). Así el
+  /// contador del día los cuenta aunque vengan dentro de un plato o un combo
+  /// (§16.15). null = se deduce del nombre.
+  RealColumn get eggsPerUnit => real().nullable()();
 }
 
 /// Combos de un toque: lo que se repite (batido, cena base…). Guardan
@@ -336,6 +341,15 @@ class BodyWeights extends Table {
   TextColumn get date => text()();
   RealColumn get kg => real()();
   BoolColumn get fasted => boolean().withDefault(const Constant(true))();
+
+  /// Momento del pesaje (§18.10): 'ayunas', 'antesDormir', 'antesFutbol',
+  /// 'despuesFutbol' u 'otro'. Solo 'ayunas' entra en el promedio semanal; el
+  /// resto es referencia y alimenta la tasa de sudor. null en pesajes
+  /// anteriores al esquema 17 (se lee de `fasted`).
+  TextColumn get moment => text().nullable()();
+
+  /// Hora del pesaje (`HH:mm`). null si no se anotó.
+  TextColumn get time => text().nullable()();
 }
 
 @DataClassName('MeasurementRow')
@@ -443,6 +457,40 @@ class SleepLogs extends Table {
 
   @override
   Set<Column> get primaryKey => {date};
+}
+
+/// Registro de la mañana (§16.15, §19.6): pulso en reposo al despertar. El
+/// peso en ayunas va en `body_weights` y las horas en cama en `sleep_logs`.
+@DataClassName('MorningCheckRow')
+class MorningChecks extends Table {
+  TextColumn get date => text()();
+  IntColumn get restingHr => integer().nullable().check(restingHr.isBetweenValues(25, 220))();
+
+  @override
+  Set<Column> get primaryKey => {date};
+}
+
+/// Molestia por zona y día, de 0 a 10 (en escaleras, §16.15). Una fila por
+/// zona; 0 no se guarda.
+@DataClassName('SorenessRow')
+class SorenessLogs extends Table {
+  TextColumn get date => text()();
+  TextColumn get zone => text()();
+  IntColumn get level => integer().check(level.isBetweenValues(0, 10))();
+
+  @override
+  Set<Column> get primaryKey => {date, zone};
+}
+
+/// Habilidades logradas de la hoja de ruta (§19.8): id de la habilidad y día
+/// en que se cumplió el criterio.
+@DataClassName('SkillAchievementRow')
+class SkillAchievements extends Table {
+  TextColumn get skill => text()();
+  TextColumn get date => text()();
+
+  @override
+  Set<Column> get primaryKey => {skill};
 }
 
 /// Notas libres por semana (índice anclado a la fecha de inicio).

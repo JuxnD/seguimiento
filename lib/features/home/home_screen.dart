@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
+import '../../data/database.dart' show FoodRow;
 import '../../data/repositories/dashboard_repository.dart';
 import '../../data/repositories/nutrition_repository.dart';
 import '../../data/repositories/profile_repository.dart';
@@ -622,9 +623,16 @@ class _EggsLine extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final meals = ref.watch(mealsForDayProvider(dayKey(date))).valueOrNull ?? const [];
+    // Huevos por porción de cada alimento del catálogo: cuentan aunque vengan
+    // dentro de un plato o un combo (§16.15).
+    final eggsPer = {
+      for (final f in ref.watch(foodsProvider).valueOrNull ?? const <FoodRow>[])
+        if (f.eggsPerUnit != null) f.id: f.eggsPerUnit!,
+    };
     final eggs = wholeEggs([
       for (final m in meals)
-        for (final i in m.items) (label: i.label, quantity: i.quantity, unit: i.quantityUnit),
+        for (final i in m.items)
+          (label: i.label, quantity: i.quantity, unit: i.quantityUnit, eggsPerUnit: eggsPer[i.foodId]),
     ]);
     if (eggs < 1) return const SizedBox.shrink();
     final warn = eggs >= eggWarnAt;

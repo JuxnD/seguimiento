@@ -9,15 +9,25 @@ void main() {
   test('huevos enteros: por unidad, por gramos y sin contar las claras', () {
     expect(
       wholeEggs([
-        (label: 'Huevo (unidad)', quantity: 3, unit: 'unidad'),
-        (label: 'Claras de huevo', quantity: 4, unit: 'unidad'),
-        (label: 'Huevos revueltos', quantity: 110, unit: 'g'),
-        (label: 'Arepa con huevo', quantity: null, unit: null),
-        (label: 'Pan Mipan', quantity: 75, unit: 'g'),
+        (label: 'Huevo (unidad)', quantity: 3, unit: 'unidad', eggsPerUnit: null),
+        (label: 'Claras de huevo', quantity: 4, unit: 'unidad', eggsPerUnit: null),
+        (label: 'Huevos revueltos', quantity: 110, unit: 'g', eggsPerUnit: null),
+        (label: 'Arepa con huevo', quantity: null, unit: null, eggsPerUnit: null),
+        (label: 'Pan Mipan', quantity: 75, unit: 'g', eggsPerUnit: null),
       ]),
       6,
     );
     expect(eggWarnAt, 5);
+  });
+
+  test('huevos dentro de platos: el número del nombre o los huevos por porción (§16.15)', () {
+    expect(wholeEggs([(label: 'Desayuno: 4 huevos con salchichón', quantity: 1, unit: 'porción', eggsPerUnit: null)]), 4,
+        reason: 'el 5 oct contaba 1');
+    expect(wholeEggs([(label: 'Huevos pericos (3)', quantity: 2, unit: 'porción', eggsPerUnit: null)]), 6);
+    expect(wholeEggs([(label: '4 huevos + queso', quantity: 1, unit: null, eggsPerUnit: null)]), 4,
+        reason: 'el registro del 5 oct que la app contaba como 1');
+    expect(wholeEggs([(label: 'Desayuno típico', quantity: 1, unit: 'porción', eggsPerUnit: 4)]), 4,
+        reason: 'un plato sin "huevo" en el nombre cuenta si el alimento lo dice');
   });
 
   test('hidratación: tasa de sudor y cuánto reponer', () {
