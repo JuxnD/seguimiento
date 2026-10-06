@@ -288,4 +288,70 @@ void main() {
     expect(frozen.sourceHash, hash);
     expect(() => frozen.sources.clear(), throwsUnsupportedError);
   });
+
+  test('reabre metadata exacta de guía y detecta cambios en ella', () async {
+    final guide = AiConversationSnapshot(
+      kind: AiConversationKind.exerciseQuestion,
+      title: 'Guía · Dominadas',
+      sources: const [
+        AiContextSource(
+          id: 'exercise_guide:dominadas',
+          title: 'Guía seleccionada · Dominadas',
+          text: 'Guía de dominadas con carga.',
+        ),
+      ],
+      model: aiQuestionModel,
+      contractVersion: aiQuestionContractVersion,
+      guideContext: AiGuideContext(
+        exercise: 'Dominadas',
+        cues: ['Escápulas activas'],
+        progressionNote: 'Mantén la variante elegida.',
+        grip: 'prona',
+        loaded: true,
+      ),
+    );
+    final id = await repository.createValidatedConversation(
+      snapshot: guide,
+      question: '¿Qué cuidar?',
+      answer: 'Mantén las escápulas activas.',
+      citations: const [
+        AiCitation(
+            sourceId: 'exercise_guide:dominadas', quote: 'dominadas con carga')
+      ],
+      turnModel: aiQuestionModel,
+      turnContractVersion: aiQuestionContractVersion,
+    );
+    final read = (await repository.read(id))!.snapshot;
+    expect(read.guideContext?.exercise, 'Dominadas');
+    expect(read.guideContext?.grip, 'prona');
+    expect(read.guideContext?.loaded, isTrue);
+    expect(read.guideContext?.cues, ['Escápulas activas']);
+    expect(read.guideContextHash, guide.guideContextHash);
+    expect(() => read.guideContext!.cues.clear(), throwsUnsupportedError);
+
+    await (db.update(db.aiConversations)..where((row) => row.id.equals(id)))
+        .write(const AiConversationsCompanion(
+            guideContextJson: Value('{"exercise":"Otra"}')));
+    await expectLater(repository.read(id), throwsFormatException);
+  });
+
+  test('metadata de guía valida enum local y coincide con la fuente', () {
+    expect(
+      () => AiGuideContext(exercise: 'Dominadas', cues: [], grip: 'neutra'),
+      throwsFormatException,
+    );
+    expect(
+      () => AiConversationSnapshot(
+        kind: AiConversationKind.exerciseQuestion,
+        title: 'Guía',
+        sources: const [
+          AiContextSource(id: 'otro', title: 'Fuente', text: 'Texto')
+        ],
+        model: aiQuestionModel,
+        contractVersion: aiQuestionContractVersion,
+        guideContext: AiGuideContext(exercise: 'Dominadas', cues: []),
+      ),
+      throwsFormatException,
+    );
+  });
 }

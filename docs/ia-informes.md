@@ -17,6 +17,9 @@ respuestas del contrato 2 se limitan a 1.500 caracteres y no pueden añadir
 cifras fuera de las citas. Una respuesta inválida, fallida o cancelada no se
 guarda. La conversación se crea solo después de validar la respuesta; continuar
 una conversación vuelve a comprobar sus citas contra el snapshot persistido.
+Las conversaciones de guía conservan aparte la variante local para reabrir la
+misma guía y figura; esa metadata tiene hash propio y no se incluye en el
+cuerpo enviado a la IA.
 
 El historial vive en SQLite local y forma parte del ZIP portable. Cada
 conversación conserva el JSON exacto de sus fuentes, hash SHA-256, tipo, título,

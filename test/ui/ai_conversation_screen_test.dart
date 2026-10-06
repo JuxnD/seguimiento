@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,13 +15,32 @@ import '../support/sqlite_host.dart';
 import '../support/test_fonts.dart';
 
 class _Activation extends AiActivation {
+  String license = 'AAAA-BBBB-CCCC-DDDD';
   @override
-  Future<(String, String)> read() async =>
-      ('HWID-FICTICIO', 'AAAA-BBBB-CCCC-DDDD');
+  Future<(String, String)> read() async => ('HWID-FICTICIO', license);
 
   @override
-  Future<void> save(String license) async {}
+  Future<void> save(String value) async => license = value;
 }
+
+http.Response _gatewayResponse(String task, Map<String, Object?> result,
+        {int remaining = 3}) =>
+    http.Response(
+      jsonEncode({
+        'status': 'success',
+        'contract': 2,
+        'task': task,
+        'model': 'gpt-6-luna',
+        'result': result,
+        'quota': {
+          'remaining': remaining,
+          'limit': 4,
+          'reset_at': '2026-10-07T00:00:00Z'
+        },
+      }),
+      200,
+      headers: {'content-type': 'application/json; charset=utf-8'},
+    );
 
 class _RecordingRepository extends AiConversationRepository {
   _RecordingRepository(super.db);
@@ -107,25 +127,23 @@ void main() {
     final requests = <http.Request>[];
     final client = MockClient((request) async {
       requests.add(request);
-      final responseBody = jsonEncode({
-        'status': 'success',
-        'contract': 2,
-        'task': 'report_question',
-        'model': 'gpt-6-luna',
-        'result': {
-          'answer': 'El rango reúne sesiones y comidas.',
-          'citations': [
-            {'source_id': 'report', 'quote': 'Sesiones y comidas del rango.'}
-          ],
-        },
+      final task =
+          (jsonDecode(request.body) as Map<String, dynamic>)['task'] as String;
+      if (task == 'status') return _gatewayResponse(task, {'enabled': true});
+      return _gatewayResponse(task, {
+        'answer': 'El rango reúne sesiones y comidas.',
+        'citations': [
+          {'source_id': 'report', 'quote': 'Sesiones y comidas del rango.'}
+        ],
       });
-      return http.Response(responseBody, 200,
-          headers: {'content-type': 'application/json; charset=utf-8'});
     });
     await ask(tester, client);
 
-    expect(requests, hasLength(1));
-    final body = jsonDecode(requests.single.body) as Map<String, dynamic>;
+    expect(requests, hasLength(2));
+    final questionRequest = requests.singleWhere((request) =>
+        (jsonDecode(request.body) as Map<String, dynamic>)['task'] ==
+        'report_question');
+    final body = jsonDecode(questionRequest.body) as Map<String, dynamic>;
     expect(body['task'], 'report_question');
     final input = body['input'] as Map<String, dynamic>;
     final sources = input['sources'] as List<dynamic>;
@@ -141,12 +159,21 @@ void main() {
 
   testWidgets('cita inventada queda visible como error y no crea historial',
       (tester) async {
-    final client = MockClient((_) async => http.Response(
+    final client = MockClient((request) async {
+      final task =
+          (jsonDecode(request.body) as Map<String, dynamic>)['task'] as String;
+      if (task == 'status') return _gatewayResponse(task, {'enabled': true});
+      return http.Response(
           jsonEncode({
             'status': 'success',
             'contract': 2,
-            'task': 'report_question',
+            'task': task,
             'model': 'gpt-6-luna',
+            'quota': {
+              'remaining': 3,
+              'limit': 4,
+              'reset_at': '2026-10-07T00:00:00Z'
+            },
             'result': {
               'answer': 'El informe se ve consistente.',
               'citations': [
@@ -155,13 +182,54 @@ void main() {
             },
           }),
           200,
-          headers: {'content-type': 'application/json; charset=utf-8'},
-        ));
+          headers: {'content-type': 'application/json; charset=utf-8'});
+    });
     await ask(tester, client);
 
     expect(repository.creates, 0);
     expect(find.text('Una cita no coincide con la fuente guardada.'),
         findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('respuesta vieja de status no pisa nueva licencia ni cuota',
+      (tester) async {
+    final activation = _Activation();
+    final oldStatus = Completer<http.Response>();
+    var oldStatusRequests = 0;
+    final client = MockClient((request) async {
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      if (body['task'] != 'status') {
+        return _gatewayResponse('report_question', {});
+      }
+      if (body['license_key'] == 'AAAA-BBBB-CCCC-DDDD' &&
+          oldStatusRequests++ == 0) {
+        return oldStatus.future;
+      }
+      return _gatewayResponse('status', {'enabled': true}, remaining: 1);
+    });
+    await loadTestFonts(tester);
+    await tester.pumpWidget(MaterialApp(
+        home: AiConversationScreen.forQuestion(
+      repository: repository,
+      snapshot: snapshot,
+      activation: activation,
+      clientFactory: () => client,
+    )));
+    await tester.pump();
+    await tester.tap(find.text('Revisar activación de IA'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'EEEE-FFFF-GGGG-HHHH');
+    await tester.tap(find.text('Guardar licencia'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Consultas disponibles: 1/4'), findsOneWidget);
+    await tester.tap(find.byTooltip('Volver'));
+    await tester.pumpAndSettle();
+    oldStatus
+        .complete(_gatewayResponse('status', {'enabled': true}, remaining: 3));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Consultas disponibles: 1/4'), findsOneWidget);
+    expect(find.textContaining('Consultas disponibles: 3/4'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }

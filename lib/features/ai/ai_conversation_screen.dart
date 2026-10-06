@@ -49,10 +49,16 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
   AiConversationRecord? _record;
   bool _loadingConversation = false;
   String? _hwid, _license, _error;
+  String? _status;
   AiQuota? _quota;
-  bool _consent = false, _busy = false, _persisting = false;
-  int _generation = 0;
+  bool _consent = false,
+      _busy = false,
+      _persisting = false,
+      _statusLoading = false,
+      _enabled = false;
+  int _generation = 0, _activationGeneration = 0, _statusGeneration = 0;
   http.Client? _client;
+  http.Client? _statusClient;
 
   AiActivation get _activation => widget.activation ?? AiActivation();
   List<AiConversationTurn> get _turns => _record?.turns ?? const [];
@@ -92,17 +98,63 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
   }
 
   Future<void> _loadActivation() async {
+    final activationGeneration = ++_activationGeneration;
+    ++_statusGeneration;
+    _statusClient?.close();
+    _statusClient = null;
+    if (mounted) {
+      setState(() {
+        _status = null;
+        _quota = null;
+        _enabled = false;
+        _statusLoading = true;
+      });
+    }
     try {
       final (hwid, license) = await _activation.read();
-      if (!mounted) return;
+      if (!mounted || activationGeneration != _activationGeneration) return;
       setState(() {
         _hwid = hwid;
         _license = license;
+        _statusLoading = false;
       });
+      if (license.isNotEmpty) {
+        await _refreshStatus(hwid, license, activationGeneration);
+      } else if (mounted && activationGeneration == _activationGeneration) {
+        setState(
+            () => _status = 'Activa la IA para consultar la disponibilidad.');
+      }
     } on Object {
-      if (mounted) {
+      if (mounted && activationGeneration == _activationGeneration) {
+        setState(() => _statusLoading = false);
         setState(() => _error = 'No se pudo leer la activación segura.');
       }
+    }
+  }
+
+  Future<void> _refreshStatus(
+      String hwid, String license, int activationGeneration) async {
+    final statusGeneration = ++_statusGeneration;
+    _statusClient?.close();
+    final client = (widget.clientFactory ?? http.Client.new)();
+    _statusClient = client;
+    if (mounted) setState(() => _statusLoading = true);
+    try {
+      final status =
+          await AiGatewayClient(client).status(hwid: hwid, license: license);
+      if (mounted &&
+          activationGeneration == _activationGeneration &&
+          statusGeneration == _statusGeneration) {
+        setState(() {
+          _status = status.message;
+          _quota = status.quota;
+          _enabled = status.enabled;
+          _statusLoading = false;
+        });
+      }
+    } finally {
+      client.close();
+      if (identical(_statusClient, client)) _statusClient = null;
     }
   }
 
@@ -110,7 +162,8 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
     await Navigator.push<void>(
         context,
         MaterialPageRoute(
-            builder: (_) => AiActivationScreen(activation: _activation)));
+            builder: (_) => AiActivationScreen(
+                activation: _activation, clientFactory: widget.clientFactory)));
     if (mounted) await _loadActivation();
   }
 
@@ -323,7 +376,14 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
 
   String? _exerciseForGuide(AiConversationSnapshot? snapshot) {
     if (snapshot?.kind != AiConversationKind.exerciseQuestion) return null;
-    for (final source in snapshot!.sources) {
+    final context = snapshot!.guideContext;
+    if (context != null) {
+      for (final name in exerciseDetails.keys) {
+        if (nameKey(name) == nameKey(context.exercise)) return name;
+      }
+      return null;
+    }
+    for (final source in snapshot.sources) {
       const prefix = 'exercise_guide:';
       if (!source.id.startsWith(prefix)) continue;
       final key = source.id.substring(prefix.length);
@@ -337,17 +397,29 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
   void _openGuide() {
     final exercise = _exerciseForGuide(_snapshot);
     if (exercise == null) return;
+    final guide = _snapshot?.guideContext;
     if (widget.conversationId == null) {
       Navigator.pop(context);
     } else {
-      showTechniqueSheet(context, exercise: exercise);
+      showTechniqueSheet(
+        context,
+        exercise: exercise,
+        cues: guide?.cues ?? const [],
+        progressionNote: guide?.progressionNote,
+        anchor: guide?.anchor,
+        grip: guide?.grip,
+        loaded: guide?.loaded,
+      );
     }
   }
 
   @override
   void dispose() {
     _generation++;
+    _activationGeneration++;
+    _statusGeneration++;
     _client?.close();
+    _statusClient?.close();
     _question.dispose();
     super.dispose();
   }
@@ -486,12 +558,18 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
                   icon: const Icon(Icons.key_outlined),
                   label: const Text('Revisar activación de IA'),
                 ),
-                AiBudget(quota: _quota),
+                AiStatusPanel(
+                    status: _statusLoading
+                        ? 'Consultando disponibilidad…'
+                        : _status,
+                    quota: _quota),
                 FilledButton.icon(
                   onPressed: !_busy &&
                           _consent &&
                           _hwid != null &&
                           (_license?.isNotEmpty ?? false) &&
+                          _enabled &&
+                          !_statusLoading &&
                           (_quota?.remaining ?? 1) > 0 &&
                           canContinue
                       ? _send

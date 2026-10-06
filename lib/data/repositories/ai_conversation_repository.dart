@@ -119,6 +119,8 @@ class AiConversationRepository {
             contractVersion: snapshot.contractVersion,
             sourcesJson: snapshot.sourceJson,
             sourcesHash: snapshot.sourceHash,
+            guideContextJson: Value(snapshot.guideContextJson),
+            guideContextHash: Value(snapshot.guideContextHash),
             createdAt: time,
           ));
       await _insertTurn(
@@ -223,6 +225,8 @@ class AiConversationRepository {
         contractVersion: row.contractVersion,
         sourceJson: row.sourcesJson,
         sourceHash: row.sourcesHash,
+        guideContextJson: row.guideContextJson,
+        guideContextHash: row.guideContextHash,
       );
 
   List<AiCitation> _decodeCitations(String json) {

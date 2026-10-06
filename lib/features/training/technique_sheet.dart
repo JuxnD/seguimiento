@@ -192,6 +192,14 @@ class TechniqueContent extends StatelessWidget {
                     ],
                     model: aiQuestionModel,
                     contractVersion: aiQuestionContractVersion,
+                    guideContext: AiGuideContext(
+                      exercise: exercise,
+                      cues: cues,
+                      progressionNote: progressionNote,
+                      anchor: anchor,
+                      grip: grip,
+                      loaded: loaded,
+                    ),
                   );
                 } on FormatException {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

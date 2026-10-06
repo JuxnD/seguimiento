@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
+import 'search.dart';
+
 const aiQuestionModel = 'gpt-6-luna';
 const aiQuestionContractVersion = 2;
 const aiMaxQuestionBytes = 48000;
@@ -10,6 +12,81 @@ const aiMaxHistoryCharacters = 4000;
 enum AiConversationKind { weeklyAnalysis, reportQuestion, exerciseQuestion }
 
 enum AiMessageRole { user, assistant }
+
+/// Parámetros locales necesarios para reabrir exactamente la variante de guía.
+/// Nunca se serializan en la solicitud al gateway.
+class AiGuideContext {
+  AiGuideContext({
+    required this.exercise,
+    required List<String> cues,
+    this.progressionNote,
+    this.anchor,
+    this.grip,
+    this.loaded,
+  }) : cues = List.unmodifiable(cues) {
+    _validate();
+  }
+
+  final String exercise;
+  final List<String> cues;
+  final String? progressionNote;
+  final String? anchor;
+  final String? grip;
+  final bool? loaded;
+
+  Map<String, Object?> toJson() => {
+        'exercise': exercise,
+        'cues': cues,
+        'progressionNote': progressionNote,
+        'anchor': anchor,
+        'grip': grip,
+        'loaded': loaded,
+      };
+
+  factory AiGuideContext.fromJson(Map<String, dynamic> json) {
+    if (json.keys.toSet().difference({
+          'exercise',
+          'cues',
+          'progressionNote',
+          'anchor',
+          'grip',
+          'loaded'
+        }).isNotEmpty ||
+        json['exercise'] is! String ||
+        json['cues'] is! List ||
+        (json['progressionNote'] != null &&
+            json['progressionNote'] is! String) ||
+        (json['anchor'] != null && json['anchor'] is! String) ||
+        (json['grip'] != null && json['grip'] is! String) ||
+        (json['loaded'] != null && json['loaded'] is! bool) ||
+        (json['cues'] as List).any((cue) => cue is! String)) {
+      throw const FormatException(
+          'El contexto de guía no tiene un formato válido.');
+    }
+    return AiGuideContext(
+      exercise: json['exercise'] as String,
+      cues: (json['cues'] as List).cast<String>(),
+      progressionNote: json['progressionNote'] as String?,
+      anchor: json['anchor'] as String?,
+      grip: json['grip'] as String?,
+      loaded: json['loaded'] as bool?,
+    );
+  }
+
+  void _validate() {
+    if (exercise.trim().isEmpty ||
+        exercise.length > 120 ||
+        cues.length > 30 ||
+        cues.any((cue) => cue.trim().isEmpty || cue.length > 500) ||
+        (progressionNote?.length ?? 0) > 1000 ||
+        (anchor != null &&
+            !{'alto', 'medio', 'bajo', 'manos'}.contains(anchor)) ||
+        (grip != null && !{'prona', 'supina'}.contains(grip))) {
+      throw const FormatException(
+          'Los parámetros locales de guía no son válidos.');
+    }
+  }
+}
 
 class AiContextSource {
   const AiContextSource(
@@ -52,6 +129,7 @@ class AiConversationSnapshot {
     required List<AiContextSource> sources,
     required this.model,
     required this.contractVersion,
+    this.guideContext,
     this.rangeStart,
     this.rangeEnd,
   })  : sources = List.unmodifiable(sources),
@@ -61,6 +139,11 @@ class AiConversationSnapshot {
             .convert(utf8.encode(
                 jsonEncode([for (final source in sources) source.toJson()])))
             .toString() {
+    guideContextJson =
+        guideContext == null ? null : jsonEncode(guideContext!.toJson());
+    guideContextHash = guideContextJson == null
+        ? null
+        : sha256.convert(utf8.encode(guideContextJson!)).toString();
     _validateMetadata(
         title: title,
         model: model,
@@ -68,6 +151,7 @@ class AiConversationSnapshot {
         rangeStart: rangeStart,
         rangeEnd: rangeEnd);
     validateAiSources(sources);
+    _validateGuideBinding(kind, this.sources, guideContext);
   }
 
   AiConversationSnapshot._({
@@ -78,6 +162,9 @@ class AiConversationSnapshot {
     required this.contractVersion,
     required this.sourceJson,
     required this.sourceHash,
+    required this.guideContext,
+    required this.guideContextJson,
+    required this.guideContextHash,
     this.rangeStart,
     this.rangeEnd,
   }) : sources = List.unmodifiable(sources) {
@@ -88,6 +175,7 @@ class AiConversationSnapshot {
         rangeStart: rangeStart,
         rangeEnd: rangeEnd);
     validateAiSources(sources);
+    _validateGuideBinding(kind, this.sources, guideContext);
   }
 
   final AiConversationKind kind;
@@ -99,6 +187,9 @@ class AiConversationSnapshot {
   final int contractVersion;
   final String sourceJson;
   final String sourceHash;
+  final AiGuideContext? guideContext;
+  late final String? guideContextJson;
+  late final String? guideContextHash;
 
   static AiConversationSnapshot restore({
     required String kind,
@@ -109,12 +200,29 @@ class AiConversationSnapshot {
     required int contractVersion,
     required String sourceJson,
     required String sourceHash,
+    String? guideContextJson,
+    String? guideContextHash,
   }) {
     if (sha256.convert(utf8.encode(sourceJson)).toString() != sourceHash) {
       throw const FormatException(
           'El contexto guardado cambió y no puede verificarse.');
     }
     final raw = jsonDecode(sourceJson);
+    AiGuideContext? guideContext;
+    if ((guideContextJson == null) != (guideContextHash == null)) {
+      throw const FormatException('La metadata de guía está incompleta.');
+    }
+    if (guideContextJson != null) {
+      if (sha256.convert(utf8.encode(guideContextJson)).toString() !=
+          guideContextHash) {
+        throw const FormatException('La variante de guía guardada cambió.');
+      }
+      final decodedGuide = jsonDecode(guideContextJson);
+      if (decodedGuide is! Map<String, dynamic>) {
+        throw const FormatException('La variante de guía no es válida.');
+      }
+      guideContext = AiGuideContext.fromJson(decodedGuide);
+    }
     if (raw is! List || raw.any((e) => e is! Map<String, dynamic>)) {
       throw const FormatException(
           'El contexto guardado no tiene un formato válido.');
@@ -152,7 +260,20 @@ class AiConversationSnapshot {
       contractVersion: contractVersion,
       sourceJson: sourceJson,
       sourceHash: sourceHash,
+      guideContext: guideContext,
+      guideContextJson: guideContextJson,
+      guideContextHash: guideContextHash,
     );
+  }
+}
+
+void _validateGuideBinding(AiConversationKind kind,
+    List<AiContextSource> sources, AiGuideContext? guideContext) {
+  if (guideContext == null) return;
+  if (kind != AiConversationKind.exerciseQuestion ||
+      !sources.any((source) =>
+          source.id == 'exercise_guide:${nameKey(guideContext.exercise)}')) {
+    throw const FormatException('La guía guardada no coincide con su fuente.');
   }
 }
 

@@ -503,8 +503,9 @@ class WeekNotes extends Table {
   Set<Column> get primaryKey => {weekIndex};
 }
 
-/// Conversaciones locales de IA. `sourcesJson` es el snapshot inmutable que
-/// se mostró y envió; `sourcesHash` detecta cualquier alteración al reabrir.
+/// Conversaciones locales de IA. `sourcesJson` y `sourcesHash` congelan la
+/// fuente mostrada; la metadata local de guía tiene su propio JSON/hash y no
+/// forma parte de la solicitud al gateway.
 @DataClassName('AiConversationRow')
 class AiConversations extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -516,6 +517,8 @@ class AiConversations extends Table {
   IntColumn get contractVersion => integer()();
   TextColumn get sourcesJson => text()();
   TextColumn get sourcesHash => text().withLength(min: 64, max: 64)();
+  TextColumn get guideContextJson => text().nullable()();
+  TextColumn get guideContextHash => text().nullable()();
   IntColumn get createdAt => integer()();
 }
 
