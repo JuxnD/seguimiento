@@ -89,7 +89,7 @@ apilan para permitir texto ampliado sin comprimir la lectura.
 el historial anterior, los rechazos, claves y enlaces, la rutina desplegable,
 el registro de la mañana, Día completo y Plan B a 360 dp con texto 1,5×.
 `EXPERIENCE_OUT=<carpeta> flutter test test/ui/experience_test.dart` guarda
-capturas opcionales con Roboto del SDK para revisión visual. Estas comprobaciones
+capturas opcionales con los fixtures de fuentes versionados para revisión visual. Estas comprobaciones
 no sustituyen la aceptación del usuario en el teléfono.
 
 ## Racha

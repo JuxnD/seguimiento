@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
@@ -26,6 +25,7 @@ import 'package:seguimiento/ui/exercise_figure_3d_view.dart';
 import 'package:seguimiento/ui/theme.dart';
 
 import '../support/sqlite_host.dart';
+import '../support/test_fonts.dart';
 
 class _FixedToday extends TodayNotifier {
   @override
@@ -33,35 +33,7 @@ class _FixedToday extends TodayNotifier {
 }
 
 void main() {
-  setUpAll(() async {
-    useHostSqlite();
-    var sdk = Directory(Platform.environment['FLUTTER_ROOT'] ??
-        File(Platform.resolvedExecutable).parent.path);
-    while (!Directory('${sdk.path}/bin/cache/artifacts/material_fonts')
-        .existsSync()) {
-      if (sdk.parent.path == sdk.path) {
-        throw StateError('No se encontró la fuente real del SDK de Flutter');
-      }
-      sdk = sdk.parent;
-    }
-    final fonts = '${sdk.path}/bin/cache/artifacts/material_fonts';
-    for (final family in ['Roboto', 'FlutterTest', 'Ahem']) {
-      final loader = FontLoader(family);
-      for (final name in [
-        'roboto-regular.ttf',
-        'roboto-medium.ttf',
-        'roboto-bold.ttf'
-      ]) {
-        loader.addFont(Future.value(
-            ByteData.sublistView(File('$fonts/$name').readAsBytesSync())));
-      }
-      await loader.load();
-    }
-    final icons = FontLoader('MaterialIcons');
-    icons.addFont(Future.value(ByteData.sublistView(
-        File('$fonts/materialicons-regular.otf').readAsBytesSync())));
-    await icons.load();
-  });
+  setUpAll(useHostSqlite);
 
   final art = ExerciseArtCatalog.fromJsonString(
       File(ExerciseArtCatalog.asset).readAsStringSync());
@@ -76,6 +48,7 @@ void main() {
 
   Future<void> mount(WidgetTester tester, Widget screen,
       {List<Override> overrides = const [], double scale = 1.5}) async {
+    await loadTestFonts(tester);
     tester.view.physicalSize = const Size(360, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
