@@ -275,7 +275,8 @@ void main() {
       ]));
       final report = ReportRepository(db, NutritionRepository(db));
       final md = buildReport(await report.load(d(9, 28), d(10, 4), today: d(9, 28)));
-      expect(md, contains('- Plancha lateral: 35 s · 32 s'));
+      // Por lado (§16.6.2): derecho y luego izquierdo forman una serie.
+      expect(md, contains('- Plancha lateral: S1: I 32 s / D 35 s'));
       expect(md, contains('| Plancha lateral | 67 s |'));
       expect(md, contains('| Flexiones | 10 |'));
     });
