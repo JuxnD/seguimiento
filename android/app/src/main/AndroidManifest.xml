@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Consultar si hay versión nueva en GitHub. Flutter solo añade este
          permiso a los builds de debug: sin esta línea, el release falla el
-         DNS (errno 7). Nada más sale del dispositivo. -->
+         DNS (errno 7). El copiloto de IA envía solo el informe que el usuario
+         elige y confirma explícitamente. -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <!-- Recordatorios locales: sesión, comidas, proteína, medición y fin del

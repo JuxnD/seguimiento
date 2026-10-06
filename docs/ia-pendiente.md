@@ -1,25 +1,29 @@
-# IA en Seguimiento · estado 6-oct-2026
+# Copiloto semanal de IA — estado y activación
 
-El owner autorizó incluir pendientes en1.19 y pidió reutilizar la infraestructura de Escriba/FioraSoft en Control360i. El estado anterior aplazada/sin build autorizado queda sustituido por **cliente y gateway implementados; despliegue/activación/aceptación pendientes**. No se afirma que la IA opere en producción todavía.
+Actualizado el 6 oct 2026. El owner autorizó incluir pendientes en 1.19 y desplegar y activar el gateway de Control360i. Sustituye el estado anterior «aplazada, sin build autorizado».
 
-## Uso y arquitectura
+**Implementado:** cliente en 1.19.0+27 y gateway publicado. Consulta real a GPT-6 Luna verificada con informe ficticio desde Windows y Android. **Pendiente:** licencia del teléfono de uso diario y aceptación de utilidad. La licencia de QA fue desactivada y el servidor confirmó 403; las licencias anteriores permanecen intactas.
 
-Informe → Analizar este informe con IA. Vista previa del texto exacto, consentimiento por consulta, licencia revocable propia de cada teléfono. Modelo fijo GPT-6 Luna. App envía solo informe seleccionado, no SQLite ni fotos. El usuario revisa comentarios y citas; IA no guarda ni cambia metas, plan, comidas o sesiones. SQLite/cálculos/informe siguen offline.
+## Cómo se usa
 
-Escriba usa `/fiora/update/llave` para recibir la clave y guardarla mediante Windows DPAPI. Ese mecanismo no se traslada al móvil. Nuevo POST `/seguimiento/analizar`: autentica HWID+licencia ATLAS activa+cuenta dueña del canal, reutiliza la clave configurada **dentro del servidor**. Android almacena únicamente la licencia cifrada con Keystore en noBackupFilesDir, excluida de respaldos. Reinstalación exige nueva activación; restaurar datos no transfiere licencia.
+Informe → **Analizar este informe con IA**. Vista previa del texto exacto, política de datos y consentimiento para enviarlo. Solo salen el informe elegido y la activación: no SQLite ni fotos. Los comentarios llevan citas y son propuestas para revisar; no cambian plan, metas, comidas, registros ni cálculos locales.
 
-Servidor propuesto: Control360i, canal existente bondo-estacion previa autorización específica. Rama aislada `JuxnD/seguimiento-ia`, checkout `C:\My Projects\control360i-seguimiento-ia`; especificación `docs/seguimiento-ia.md` allí. Ninguna ruta de Escriba/ERP se modifica. AGENTS.md del servidor exige aprobación explícita para despliegue; consulta pendiente al owner, separada de su autorización de publicar1.19.
+Para activar otro teléfono: copiar su identificador `SEG-…`, crear su licencia en **Control360i → ATLAS** dentro de la cuenta propietaria del canal `bondo-estacion` y escribirla en la app. No reutilizar la identidad/licencia de Escriba. Se revoca desde ATLAS. Android cifra la licencia con Keystore en `noBackupFilesDir`, fuera de respaldos; reinstalar requiere activación nueva.
 
-## Límites y privacidad
+## Arquitectura y límites
 
-Informe≤48KB; seis notas máx., quote literal verificable en informe, sin cifras nuevas fuera de cita; formato desconocido/refusal/incomplete se rechaza. Esto comprueba referencias y límites, **no garantiza veracidad semántica** ni seguridad clínica. Comentarios descriptivos, sin diagnóstico/prescripción. Es una propuesta para revisar, no una decisión automática.
+Escriba recibe la clave mediante `/fiora/update/llave` y la cifra con DPAPI. Seguimiento usa POST `/seguimiento/analizar`: valida licencia activa, identificador y cuenta propietaria; la clave existente permanece en el servidor. No se alteraron rutas de Escriba ni ERP.
 
-Servidor conexión8s/respuesta40s, app50s; cancelar descarta respuesta tardía y cierra transporte, pero una llamada recibida puede facturarse. Sin reintento automático. Cuotas failclosed con bloqueo:4intentos por cuenta/día UTC y20globales; intento fallido consume cuota. Clave no va alAPK; licencia no se registra en logs ni paquetes. Servidor no conserva informes/respuestas, solamente contadores de uso. Responses API usa store=false. OpenAI puede retener registros de seguridad por defecto hasta30d, con excepciones legales/de seguridad; [política oficial](https://developers.openai.com/api/docs/guides/your-data), revisada6oct.
+Gateway: rama `JuxnD/seguimiento-ia` de Control360i; código publicado `caf0b4bd`, dos archivos nuevos con relectura SHA-256 verificada. Especificación/recibo en `docs/seguimiento-ia.md` de ese repo.
 
-## Caso y gates
+Modelo fijo `gpt-6-luna`, sin herramientas ni SQL. Informe máximo 48 KB, seis notas, citas literales y ningún dígito nuevo fuera de citas. Rechaza formato inválido, negativa del modelo y respuesta incompleta. Estos controles verifican referencias, **no garantizan veracidad semántica ni validez clínica**. Comentarios descriptivos, sin diagnóstico ni prescripción.
 
-Dolor: copiar/pegar informe al chat interrumpe revisión semanal. Oportunidad: acceso dentro de app a comentarios con evidencia. Adoptante: owner que usa app a diario. Baseline de tiempo/utilidad no medida; no se promete ahorro. Supuesto crítico: respuesta útil y verificable con datos faltantes sin cambiar registros.
+Cuota con bloqueo y fallo cerrado: cuatro intentos por cuenta/día UTC, veinte globales. Fallos consumen intento; sin reintento automático. Servidor: conexión 8 s, respuesta 40 s; app: 50 s. Cancelar cierra transporte y descarta respuestas tardías, pero una llamada recibida puede facturarse.
 
-Pruebas técnicas con datos ficticios: cliente y consentimiento/cancelación; servicio y frontera HTTP de autenticación/cuenta/límites. Pendientes: autorización de deploy del servidor, licencia específica del teléfono, S0 sintético contra modelo real, relectura de bytes/HTTP de producción y aceptación de utilidad. Ventana propuesta dos semanas, sin compromiso de fecha del owner. Un resultado sintético no demuestra aceptación cotidiana ni validación médica.
+Servidor conserva contadores y códigos de diagnóstico, sin informes/respuestas/claves/licencias en logs; acceso HTTP a esos archivos devolvió 403. Responses usa `store=false`. OpenAI conserva registros de seguridad normalmente hasta 30 días, con excepciones legales o de seguridad: [política oficial](https://developers.openai.com/api/docs/guides/your-data).
 
-Después del S0/activación, el usuario decide enviar sus registros en cada consulta. Fotos/comidas por IA, nube y escritura automática permanecen fuera de esta versión.
+## Evidencia y aceptación
+
+Controles locales de validación, consentimiento, cancelación y errores; 16 controles PHP y ocho HTTP local. S0 publicado devolvió cinco notas coherentes, con todas sus citas verificadas. Android comprobó cifrado/lectura/borrado de licencia y consulta HTTPS al gateway real. Ninguna prueba envió registros personales ni fotos.
+
+Caso: evitar copiar informe al chat. Adoptante: owner que usa la app diariamente. Baseline de tiempo/utilidad sin medir; no se declara ahorro ni ROI. Propuesta de aceptación: dos semanas comparando utilidad/correcciones con el flujo anterior, sin fecha comprometida. Fotos por IA, comidas y escritura autónoma quedan para evaluación posterior. Informe local disponible sin internet.

@@ -392,8 +392,13 @@ void main() {
     expect(find.text('Empezar tren superior').hitTestable(), findsOneWidget);
     await shot(tester, 'hoy-inicio');
     expect(find.text('• Ejercicio 12'), findsNothing);
-    expect(find.text('Registro de la mañana: peso, pulso, sueño y molestias'),
-        findsOneWidget);
+    final morning =
+        find.text('Registro de la mañana: peso, pulso, sueño y molestias');
+    await tester.scrollUntilVisible(morning, 120,
+        scrollable: find.byType(Scrollable).first);
+    expect(morning.hitTestable(), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Ver rutina'), -120,
+        scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Ver rutina'));
     await settle(tester);
     await tester.scrollUntilVisible(find.text('• Ejercicio 12'), 180,
