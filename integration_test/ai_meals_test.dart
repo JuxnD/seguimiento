@@ -141,8 +141,13 @@ void main() {
     await tester.tap(find.text('Describir comida · IA'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).first, 'dos huevos');
-    await tester.tap(find.byType(CheckboxListTile).first);
     await tester.pumpAndSettle();
+    final textConsent = find.byType(CheckboxListTile).first;
+    await tester.ensureVisible(textConsent);
+    await tester.pumpAndSettle();
+    await tester.tap(textConsent);
+    await tester.pumpAndSettle();
+    expect(tester.widget<CheckboxListTile>(textConsent).value, isTrue);
     await tester.scrollUntilVisible(find.text('Preparar borrador'), 140,
         scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Preparar borrador'));

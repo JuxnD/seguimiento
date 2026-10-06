@@ -32,18 +32,36 @@ void main() {
         home: WeeklyAiScreen(
       report: 'Peso: sin registro',
       activation: _Activation(),
-      clientFactory: () => MockClient((_) async => http.Response(
-          jsonEncode({
-            'model': 'gpt-6-luna',
-            'notes': [
-              {
-                'kind': 'missing',
-                'text': 'Falta el registro.',
-                'quote': 'Peso: sin registro'
-              }
-            ]
-          }),
-          200)),
+      clientFactory: () => MockClient((request) async {
+        if ((jsonDecode(request.body) as Map)['task'] == 'status') {
+          return http.Response(
+              jsonEncode({
+                'status': 'success',
+                'contract': 2,
+                'task': 'status',
+                'model': 'gpt-6-luna',
+                'result': {'enabled': true},
+                'quota': {
+                  'remaining': 19,
+                  'limit': 20,
+                  'reset_at': '2026-10-07T00:00:00Z'
+                },
+              }),
+              200);
+        }
+        return http.Response(
+            jsonEncode({
+              'model': 'gpt-6-luna',
+              'notes': [
+                {
+                  'kind': 'missing',
+                  'text': 'Falta el registro.',
+                  'quote': 'Peso: sin registro'
+                }
+              ]
+            }),
+            200);
+      }),
     )));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.byType(CheckboxListTile), 160,

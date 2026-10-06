@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/app/providers.dart';
 import 'package:seguimiento/data/weekly_ai.dart';
 import 'package:seguimiento/data/repositories/ai_conversation_repository.dart';
 import 'package:seguimiento/domain/ai_context.dart';
@@ -76,6 +78,7 @@ void main() {
 
   late AppDatabase db;
   late _RecordingRepository repository;
+  var dbClosed = false;
   final snapshot = AiConversationSnapshot(
     kind: AiConversationKind.reportQuestion,
     title: 'Informe sintético',
@@ -93,22 +96,39 @@ void main() {
   );
 
   setUp(() {
+    dbClosed = false;
     db = openInMemoryDatabase();
     repository = _RecordingRepository(db);
   });
 
-  tearDown(() => db.close());
+  tearDown(() async {
+    if (!dbClosed) await db.close();
+  });
+
+  Future<void> mount(WidgetTester tester, Widget home) async {
+    await tester.pumpWidget(ProviderScope(
+      overrides: [databaseProvider.overrideWithValue(db)],
+      child: MaterialApp(home: home),
+    ));
+  }
+
+  Future<void> finish(WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 10));
+    await db.close();
+    dbClosed = true;
+  }
 
   Future<void> ask(WidgetTester tester, MockClient client) async {
     await loadTestFonts(tester);
-    await tester.pumpWidget(MaterialApp(
-      home: AiConversationScreen.forQuestion(
-        repository: repository,
-        snapshot: snapshot,
-        activation: _Activation(),
-        clientFactory: () => client,
-      ),
-    ));
+    await mount(
+        tester,
+        AiConversationScreen.forQuestion(
+          repository: repository,
+          snapshot: snapshot,
+          activation: _Activation(),
+          clientFactory: () => client,
+        ));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), '¿Qué resume este rango?');
     await tester.pump();
@@ -155,6 +175,7 @@ void main() {
     expect(repository.question, '¿Qué resume este rango?');
     expect(repository.citations.single.quote, 'Sesiones y comidas del rango.');
     expect(tester.takeException(), isNull);
+    await finish(tester);
   });
 
   testWidgets('cita inventada queda visible como error y no crea historial',
@@ -190,6 +211,7 @@ void main() {
     expect(find.text('Una cita no coincide con la fuente guardada.'),
         findsOneWidget);
     expect(tester.takeException(), isNull);
+    await finish(tester);
   });
 
   testWidgets('respuesta vieja de status no pisa nueva licencia ni cuota',
@@ -209,13 +231,14 @@ void main() {
       return _gatewayResponse('status', {'enabled': true}, remaining: 1);
     });
     await loadTestFonts(tester);
-    await tester.pumpWidget(MaterialApp(
-        home: AiConversationScreen.forQuestion(
-      repository: repository,
-      snapshot: snapshot,
-      activation: activation,
-      clientFactory: () => client,
-    )));
+    await mount(
+        tester,
+        AiConversationScreen.forQuestion(
+          repository: repository,
+          snapshot: snapshot,
+          activation: activation,
+          clientFactory: () => client,
+        ));
     await tester.pump();
     await tester.tap(find.text('Revisar activación de IA'));
     await tester.pumpAndSettle();
@@ -228,8 +251,12 @@ void main() {
     oldStatus
         .complete(_gatewayResponse('status', {'enabled': true}, remaining: 3));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+        find.textContaining('Consultas disponibles: 1/4'), 140,
+        scrollable: find.byType(Scrollable).first);
     expect(find.textContaining('Consultas disponibles: 1/4'), findsOneWidget);
     expect(find.textContaining('Consultas disponibles: 3/4'), findsNothing);
     expect(tester.takeException(), isNull);
+    await finish(tester);
   });
 }

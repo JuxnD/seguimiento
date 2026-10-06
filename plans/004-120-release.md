@@ -1,7 +1,10 @@
 # Plan004: integrar y publicar la versión completa autorizada
 
 P1/L/MED, depende001/002/003 aprobados. Fuente inicial app0e3855c y server9f1981cf.
-No ejecutar hasta cerrar sus criterios. Owner autorizó toda la nueva versión,
+No publicar la app hasta cerrar sus criterios. El gateway compatible con 1.19
+puede desplegarse y probarse con datos ficticios tras aprobar 001, mientras
+terminan los frentes 002/003; así se verifica el proveedor antes de cerrar la
+integración móvil. Owner autorizó toda la nueva versión,
 despliegue de rutas IA y publicación después de Improve el6oct. No repetir permiso.
 
 ## Autoridades

@@ -66,9 +66,15 @@ Mejoras pedidas tras el primer uso real, en este orden:
 
 ## Próxima actualización — candidato 1.20
 
-Seleccionar/copiar/compartir comentarios con citas y preparar comidas mediante
-foto consentida. Implementación local; publicación, endpoint de fotos y piloto
-pendientes. [Detalle, límites y siguientes oportunidades de IA](ia-oportunidades.md).
+Alcance completo autorizado después de Improve: seleccionar/copiar/compartir
+comentarios, comidas por foto y por frase, lectura de etiquetas con revisión,
+historial local, preguntas sobre informes y comparación elegida, consultas sobre
+la guía real de un ejercicio y accesos fechados a datos faltantes. Comparten
+activación, transporte y cuota; la IA no guarda registros por sí sola.
+Gateway publicado y etiquetas sintéticas verificadas, incluida foto >1 MB.
+La candidata está integrada; publicación del APK y aceptación en el teléfono
+siguen como gates separados. [Recibo de integración](context/sessions/2026-10-06-integracion-120.md),
+[detalle y límites](ia-oportunidades.md).
 
 ## Fuera de alcance
 

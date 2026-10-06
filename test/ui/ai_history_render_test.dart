@@ -1,12 +1,16 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:seguimiento/app/providers.dart';
 import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/data/weekly_ai.dart';
 import 'package:seguimiento/data/repositories/ai_conversation_repository.dart';
 import 'package:seguimiento/domain/ai_context.dart';
 import 'package:seguimiento/features/ai/ai_conversation_screen.dart';
@@ -15,6 +19,12 @@ import 'package:seguimiento/ui/theme.dart';
 
 import '../support/sqlite_host.dart';
 import '../support/test_fonts.dart';
+
+class _Activation extends AiActivation {
+  @override
+  Future<(String, String)> read() async =>
+      ('SEG-FICTICIO', 'AAAA-BBBB-CCCC-DDDD');
+}
 
 void main() {
   setUpAll(useHostSqlite);
@@ -90,6 +100,25 @@ void main() {
                   : AiConversationScreen.forQuestion(
                       repository: repo,
                       snapshot: snapshot,
+                      activation: _Activation(),
+                      clientFactory: () => MockClient((request) async {
+                        expect((jsonDecode(request.body) as Map)['task'],
+                            'status');
+                        return http.Response(
+                            jsonEncode({
+                              'status': 'success',
+                              'contract': 2,
+                              'task': 'status',
+                              'model': 'gpt-6-luna',
+                              'result': {'enabled': true},
+                              'quota': {
+                                'remaining': 19,
+                                'limit': 20,
+                                'reset_at': '2026-10-07T00:00:00Z'
+                              },
+                            }),
+                            200);
+                      }),
                     ),
             ),
           ),

@@ -33,7 +33,11 @@ providers/backups, UIhistory/question/actions/guide; integration_test/ai_history
 test/fixtures/schema17-synthetic.sql o .sqlite; docs/ia-informes.md,
 docs/modelo-datos.md (migración18). DatabaseHost solo si necesita extensión
 de validación condicional (legacy17 válido); backup_archive sin nuevo formato.
-No comidas/foods/gatewayclient/native/pubspeclib ni backend. No índiceplans.
+No comidas/foods/native/pubspeclib ni backend. No índiceplans.
+Extensión acotada de revisión: `lib/data/ai_gateway.dart`,
+`lib/features/ai/ai_activation_screen.dart` y `ai_budget.dart`, junto a sus
+tests, para reutilizar `status` gratuito y su presentación en Weekly, preguntas
+y activación. El contrato `assist`, transporte y rutas permanecen iguales.
 
 ## Shared contrato001
 

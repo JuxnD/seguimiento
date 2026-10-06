@@ -7,8 +7,11 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 Fuente ce68981, APK público y gateway comprobados. La captura del owner del
 6 oct confirma uso del copiloto en el teléfono; versión instalada no inspeccionada.
 Aceptación visual y proveedor externo de respaldos siguen pendientes.
-**Candidato siguiente:** [acciones de IA y comidas por foto](../ia-oportunidades.md),
-1.20.0+28 en `JuxnD/ia-comidas-foto`. [Pruebas, APK y gates](sessions/2026-10-06-candidato-120-ia.md).
+**Candidato siguiente:** [asistente por tareas con revisión](../ia-oportunidades.md),
+1.20.0+28 en `C:/My Projects/seguimiento-120-release`, rama `JuxnD/120-release`.
+[Improve y alcance autorizado](../../plans/120-improve-audit.md),
+[integración y gates](sessions/2026-10-06-integracion-120.md).
+El candidato inicial de foto queda como [evidencia histórica](sessions/2026-10-06-candidato-120-ia.md).
 No sustituye la release publicada.
 
 | Tema | Documento | Cuándo se actualiza |
@@ -46,13 +49,17 @@ No sustituye la release publicada.
   Ajustes exporta un ZIP portable con base y fotos. La copia semanal interna
   conserva solamente registros; ambas se restauran desde Ajustes. IA es opt-in:
   el texto exacto del informe o la guía seleccionada se envía tras confirmación;
-  comparar el periodo previo requiere una elección explícita. No se envían fotos.
+  comparar el periodo previo requiere una elección explícita. Foto de comida y
+  etiqueta tienen consentimiento separado: sólo sale la imagen elegida,
+  reencodificada sin EXIF. Las fotos corporales no se incluyen en consultas.
 - Fuera de la base viven `flags.json` (permisos ya pedidos, fechas de copia) y
   `sesion-en-curso.json` (cronómetro a medias). Restaurar no los toca.
-- En este equipo, desde el 2 oct 2026 `C:lutter` es Flutter 3.47 (lo
-  actualizó otro proyecto); el 3.22 de este repo está en
-  `C:lutter-3.22-oldin`. Con 3.47 el análisis falla (`CardTheme`) y `pub`
-  reescribe `pubspec.lock`: anteponer esa ruta al `PATH` antes de compilar.
+- Flutter 3.22.0 / Dart 3.4.0 y Java 17 son los del pipeline. En este host se
+  usa `C:/seguimiento-sdk-3.22.0/flutter/bin`, recuperado desde el archivo
+  oficial con SHA-256 verificado. El SDK previo `C:/flutter-3.22-old` está
+  incompleto y se preservó; su causa no se determinó. `C:/flutter` pertenece
+  a otro proyecto (3.47); no usarlo ni cambiar dependencias/lock para esta app.
+  [Recibo de integración](sessions/2026-10-06-integracion-120.md).
 - Flutter está fijado en 3.22: `pub` resuelve versiones de `fl_chart` y
   `share_plus` que luego no compilan. Compilar el APK y correr las pruebas de
   pantalla es la verificación real de cualquier cambio de dependencias.

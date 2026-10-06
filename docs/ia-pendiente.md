@@ -14,11 +14,19 @@ Para activar otro teléfono: copiar su identificador `SEG-…`, crear su licenci
 
 Escriba recibe la clave mediante `/fiora/update/llave` y la cifra con DPAPI. Seguimiento usa POST `/seguimiento/analizar`: valida licencia activa, identificador y cuenta propietaria; la clave existente permanece en el servidor. No se alteraron rutas de Escriba ni ERP.
 
-Gateway: rama `JuxnD/seguimiento-ia` de Control360i; código publicado `caf0b4bd`, dos archivos nuevos con relectura SHA-256 verificada. Especificación/recibo en `docs/seguimiento-ia.md` de ese repo.
+Gateway inicial 1.19: `caf0b4bd`, dos archivos nuevos con relectura SHA-256.
+Gateway ampliado para 1.20: `f107763a`, rama aislada `JuxnD/120-release` de
+Control360i, cinco runtimes re-leídos e idénticos al staging. Las rutas previas
+conservan contrato; las tareas nuevas usan `/seguimiento/asistir`.
+Especificaciones en `docs/seguimiento-ia.md` y `docs/seguimiento-ia-v2.md` de ese repo.
 
 Modelo fijo `gpt-6-luna`, sin herramientas ni SQL. Informe máximo 48 KB, seis notas, citas literales y ningún dígito nuevo fuera de citas. Rechaza formato inválido, negativa del modelo y respuesta incompleta. Estos controles verifican referencias, **no garantizan veracidad semántica ni validez clínica**. Comentarios descriptivos, sin diagnóstico ni prescripción.
 
-Cuota con bloqueo y fallo cerrado: cuatro intentos por cuenta/día UTC, veinte globales. Fallos consumen intento; sin reintento automático. Servidor: conexión 8 s, respuesta 40 s; app: 50 s. Cancelar cierra transporte y descarta respuestas tardías, pero una llamada recibida puede facturarse.
+Cuota compartida con bloqueo y fallo cerrado: veinte intentos por cuenta/día
+UTC, cien globales. La app muestra saldo y reinicio; consultar status y abrir
+historial no llaman al modelo. Fallos consumen intento; sin reintento automático.
+Servidor: conexión 8 s, respuesta 40 s; app: 50 s. Cancelar cierra transporte y
+descarta respuestas tardías, pero una llamada recibida puede facturarse.
 
 Servidor conserva contadores y códigos de diagnóstico, sin informes/respuestas/claves/licencias en logs; acceso HTTP a esos archivos devolvió 403. Responses usa `store=false`. OpenAI conserva registros de seguridad normalmente hasta 30 días, con excepciones legales o de seguridad: [política oficial](https://developers.openai.com/api/docs/guides/your-data).
 
@@ -40,7 +48,13 @@ misma autorización/cuota. Propuesta estimada → revisión → borrador → Gua
 no se crean registros automáticamente. No conserva imagen ni cambia el backup.
 [Especificación y oportunidades](ia-oportunidades.md), [ADR](adr/0011-comidas-foto-como-borrador-estimado.md).
 
-Estado local candidato; no se declara publicado ni probado con comidas reales.
-La autorización anterior cubrió el gateway semanal y publicación 1.19; activar
-la ruta de fotos y publicar esta actualización requiere confirmar alcance de
-producción conforme al AGENTS.md de Control360i.
+Todas las oportunidades están integradas en la candidata 1.20. El gateway
+publicado leyó dos etiquetas ficticias, una mayor de 1 MB; Android comprobó
+preparación de foto, envío y lectura contra el proveedor real. La licencia QA
+se revocó de nuevo y status devolvió 403. No se afirma exactitud con comidas reales.
+El 6 oct el owner autorizó todas las oportunidades propuestas, incluidas las
+que estaban diferidas, y su publicación en una nueva versión. También está
+vigente su autorización explícita de despliegue en Control360i/canal
+`bondo-estacion`. Se ejecutó Improve antes de implementar; el alcance y los
+controles de entrega están en [plans](../plans/120-improve-audit.md). Esta
+autorización no equivale a afirmar que el candidato ya esté publicado.

@@ -139,16 +139,30 @@ void main() {
       await tester.tap(openGuide);
       await tester.pumpAndSettle();
       expect(find.text('Dominadas'), findsWidgets);
-      expect(find.text('prona'), findsWidgets);
-      expect(find.text('Escápulas activas'), findsWidgets);
-      expect(
-          find.text(
-              'Si va con mochila: correas ajustadas y el peso envuelto en una toalla para que no se mueva.'),
-          findsOneWidget);
       final figure =
           tester.widget<ExerciseFigureView>(find.byType(ExerciseFigureView));
       expect(figure.grip, 'prona');
       expect(figure.loaded, isTrue);
+      // La variante vive en el visor, no en un Text aislado llamado "prona".
+      // El asset se lee por IO real y las filas inferiores son perezosas.
+      for (var wait = 0;
+          wait < 100 && find.byType(Figure3DMoments).evaluate().isEmpty;
+          wait++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.byType(Figure3DMoments), findsOneWidget);
+      final guideScroll = find
+          .byWidgetPredicate((widget) =>
+              widget is Scrollable &&
+              widget.axisDirection == AxisDirection.down)
+          .last;
+      await tester.scrollUntilVisible(find.text('Escápulas activas'), 140,
+          scrollable: guideScroll);
+      expect(find.text('Escápulas activas'), findsWidgets);
+      final loadedCue = find.text(
+          'Si va con mochila: correas ajustadas y el peso envuelto en una toalla para que no se mueva.');
+      await tester.scrollUntilVisible(loadedCue, -140, scrollable: guideScroll);
+      expect(loadedCue, findsOneWidget);
       expect(tester.takeException(), isNull);
 
       final input = ReportInput(

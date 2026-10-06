@@ -27,6 +27,16 @@ válida o en un 429 con cuota válida. Cada consumidor crea y cierra su propio
 `http.Client`; al cancelar, cierra ese cliente. No se envían encabezados con
 claves del proveedor.
 
+El JSON UTF-8 menor que 16.384 bytes usa application/json. Desde ese tamaño,
+el mismo JSON se envía como el único campo escalar `payload` de multipart,
+sin archivos ni reintentos. El alojamiento no permite escribir su temporal
+de PHP y pierde los cuerpos crudos grandes. Este formato conserva imagen,
+Unicode, contrato y límites; se comprobó con un PNG ficticio de más de 1 MB.
+El gateway admite ambos formatos y rechaza campos adicionales y archivos.
+El controller limita el cuerpo a 2.900.000 bytes antes de JSON/auth/cuota;
+PHP procesa multipart antes del controller y conserva su límite exterior
+de post_max_size (20M observado). No se cambió configuración general del host.
+
 ```dart
 AiActivationScreen({Key? key, AiActivation? activation,
                     http.Client Function()? clientFactory})

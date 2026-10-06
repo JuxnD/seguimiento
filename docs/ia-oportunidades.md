@@ -24,11 +24,14 @@ el número de versión instalado.
   Servidor y app validan límites/coherencia de salida. Cifras plausibles no
   implican exactitud nutricional.
 
-Estado: implementación candidata. Se distingue de la 1.19 publicada.
-Faltan despliegue del endpoint, prueba real de visión, publicación y piloto
-en el teléfono. Las pruebas sintéticas no validan reconocer una comida real.
+El owner autorizó todas las oportunidades de esta tabla para 1.20 después de
+Improve. Están integradas: [frase y etiqueta](ia-comidas.md),
+[preguntas, guías e historial](ia-informes.md), [decisión común](adr/0012-asistente-por-tareas-y-fuentes-locales.md).
+El gateway está publicado y leyó los valores impresos de dos etiquetas
+sintéticas, una mayor de 1 MB. Falta cerrar publicación/verificación del APK
+y piloto en el teléfono. Las pruebas sintéticas no validan reconocer una comida real.
 
-## Oportunidades en orden
+## Funciones incluidas en la candidata 1.20
 
 | Prioridad | Función propuesta | Valor y condición de aceptación |
 |---|---|---|

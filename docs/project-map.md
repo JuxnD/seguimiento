@@ -55,7 +55,8 @@
   sesión guardada con series y vueltas → insumo del informe.
 
 ## 3. Architecture map
-- Contexto: app móvil sin servicios externos. Entrada: el usuario. Salida: el
+- Contexto: app móvil con registros locales y gateway de IA opcional de
+  Control360i, autorizado por licencia y consentimiento por consulta. Entrada: el usuario. Salida: el
   informe en Markdown y el archivo de respaldo, ambos compartidos a mano.
 - Contenedores: un único proceso Flutter + archivo SQLite en el directorio de
   documentos de la app.

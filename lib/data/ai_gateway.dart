@@ -155,12 +155,20 @@ Future<http.Response> _postAiJson(http.Client client, Uri endpoint,
     Map<String, Object?> body, Duration timeout) async {
   try {
     Future<http.Response> sendAndRead() async {
-      final request = http.Request('POST', endpoint)
-        ..headers.addAll(const {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        })
-        ..body = jsonEncode(body);
+      final encoded = jsonEncode(body);
+      final http.BaseRequest request;
+      // El alojamiento pierde php://input cuando su buffer de 16 KiB necesita
+      // un temporal. Un campo multipart conserva el JSON completo sin subir
+      // archivos ni reintentar una consulta que podría consumir cuota.
+      if (utf8.encode(encoded).length >= 16 * 1024) {
+        request = http.MultipartRequest('POST', endpoint)
+          ..fields['payload'] = encoded;
+      } else {
+        request = http.Request('POST', endpoint)
+          ..headers['Content-Type'] = 'application/json'
+          ..body = encoded;
+      }
+      request.headers['Accept'] = 'application/json';
       final streamed = await client.send(request);
       final length = int.tryParse(streamed.headers['content-length'] ?? '');
       if (length != null && length > _maxAiResponseBytes) {

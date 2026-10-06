@@ -8,7 +8,8 @@ El esquema 18 agrega snapshots locales verificables y turnos con citas. La
 fixture sintética de esquema 17 fue generada desde el código anterior al cambio
 y congelada en `c3d6bbb`; migración y ZIP se prueban contra esa fixture. Preguntas
 nuevas requieren consentimiento por contexto, usan las fuentes visibles y solo
-se persisten tras validar semánticamente la respuesta. El flujo común aplica
+se persisten tras validar estructura y citas de la respuesta. Esto no acredita
+la interpretación semántica. El flujo común aplica
 modelo y contrato, límites de entrada/historial y citas exactas.
 
 La fuente de informe es el texto exacto del renderer seleccionado; el usuario

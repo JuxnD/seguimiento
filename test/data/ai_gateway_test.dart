@@ -7,6 +7,57 @@ import 'package:http/testing.dart';
 import 'package:seguimiento/data/ai_gateway.dart';
 
 void main() {
+  test('envía JSON grande como un único campo multipart sin perder bytes',
+      () async {
+    for (final size in [16383, 16384, 1400000]) {
+      final overhead = utf8.encode(jsonEncode({'value': ''})).length;
+      final input = <String, Object?>{'value': 'A' * (size - overhead)};
+      var calls = 0;
+      final client = MockClient((request) async {
+        calls++;
+        if (size < 16384) {
+          expect(
+              request.headers['content-type'], startsWith('application/json'));
+          expect(jsonDecode(utf8.decode(request.bodyBytes)), input);
+        } else {
+          final type = request.headers['content-type']!;
+          expect(type, startsWith('multipart/form-data; boundary='));
+          final boundary = type.split('boundary=').last;
+          final wire = utf8.decode(request.bodyBytes);
+          expect(wire, contains('name="payload"'));
+          expect(wire, isNot(contains('filename=')));
+          final start = wire.indexOf('\r\n\r\n') + 4;
+          final end = wire.lastIndexOf('\r\n--$boundary--');
+          expect(jsonDecode(wire.substring(start, end)), input);
+        }
+        return http.Response('{"ok":true}', 200);
+      });
+      await postAiJson(
+          client,
+          Uri.parse('https://www.control360i.co/app/seguimiento/asistir'),
+          input);
+      expect(calls, 1);
+      client.close();
+    }
+  });
+
+  test('decide multipart por bytes UTF-8 y conserva el texto Unicode',
+      () async {
+    final input = <String, Object?>{'text': 'ñ🧡' * 3000};
+    final client = MockClient((request) async {
+      expect(
+          request.headers['content-type'], startsWith('multipart/form-data'));
+      final wire = utf8.decode(request.bodyBytes);
+      expect(wire, contains(jsonEncode(input)));
+      return http.Response('{}', 200);
+    });
+    await postAiJson(
+        client,
+        Uri.parse('https://www.control360i.co/app/seguimiento/analizar'),
+        input);
+    client.close();
+  });
+
   Map<String, Object?> envelope({
     String status = 'success',
     String task = 'report_question',
