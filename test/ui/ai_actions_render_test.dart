@@ -63,8 +63,27 @@ void main() {
                   ? MealPhotoScreen(
                       activation: _Activation(),
                       pickPhoto: (_) async => fictionalPhoto(),
-                      clientFactory: () => MockClient((_) async =>
-                          http.Response(jsonEncode(fictionalMeal()), 200)))
+                      clientFactory: () => MockClient((request) async {
+                            final body = jsonDecode(request.body) as Map;
+                            if (body['task'] == 'status') {
+                              return http.Response(
+                                  jsonEncode({
+                                    'status': 'success',
+                                    'contract': 2,
+                                    'task': 'status',
+                                    'model': 'gpt-6-luna',
+                                    'result': {'enabled': true},
+                                    'quota': {
+                                      'remaining': 3,
+                                      'limit': 4,
+                                      'reset_at': '2026-10-07T00:00:00Z'
+                                    },
+                                  }),
+                                  200);
+                            }
+                            return http.Response(
+                                jsonEncode(fictionalMeal()), 200);
+                          }))
                   : WeeklyAiScreen(
                       report: 'Peso: sin registro',
                       activation: _Activation(),

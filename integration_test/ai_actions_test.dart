@@ -67,7 +67,7 @@ void main() {
     final db = openInMemoryDatabase();
     final repo = NutritionRepository(db);
     final date = DateTime(2026, 10, 6);
-    var calls = 0;
+    var modelCalls = 0, statusCalls = 0;
     await tester.pumpWidget(ProviderScope(
         overrides: [databaseProvider.overrideWithValue(db)],
         child: MaterialApp(
@@ -86,8 +86,31 @@ void main() {
                                         pickPhoto: (_) async =>
                                             fictionalPhoto(),
                                         clientFactory: () =>
-                                            MockClient((_) async {
-                                              calls++;
+                                            MockClient((request) async {
+                                              final body =
+                                                  jsonDecode(request.body)
+                                                      as Map;
+                                              if (body['task'] == 'status') {
+                                                statusCalls++;
+                                                return http.Response(
+                                                    jsonEncode({
+                                                      'status': 'success',
+                                                      'contract': 2,
+                                                      'task': 'status',
+                                                      'model': 'gpt-6-luna',
+                                                      'result': {
+                                                        'enabled': true
+                                                      },
+                                                      'quota': {
+                                                        'remaining': 3,
+                                                        'limit': 4,
+                                                        'reset_at':
+                                                            '2026-10-07T00:00:00Z'
+                                                      },
+                                                    }),
+                                                    200);
+                                              }
+                                              modelCalls++;
                                               return http.Response(
                                                   jsonEncode(fictionalMeal()),
                                                   200);
@@ -117,7 +140,8 @@ void main() {
     await tester.tap(find.widgetWithText(FloatingActionButton, 'Guardar'));
     await tester.pumpAndSettle();
     final meals = await repo.range(date, date);
-    expect(calls, 1);
+    expect(modelCalls, 1);
+    expect(statusCalls, 2);
     expect(meals.length, 1);
     expect(meals.single.items.length, 2);
     expect(meals.single.macros.kcal, 460);

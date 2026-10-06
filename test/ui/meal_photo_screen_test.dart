@@ -15,6 +15,21 @@ class _Activation extends AiActivation {
       ('SEG-FICTICIO', 'AAAA-BBBB-CCCC-DDDD');
 }
 
+http.Response _status() => http.Response(
+    jsonEncode({
+      'status': 'success',
+      'contract': 2,
+      'task': 'status',
+      'model': 'gpt-6-luna',
+      'result': {'enabled': true},
+      'quota': {
+        'remaining': 3,
+        'limit': 4,
+        'reset_at': '2026-10-07T00:00:00Z',
+      }
+    }),
+    200);
+
 Future<void> _choosePhoto(WidgetTester tester) async {
   await tester.runAsync(() async {
     await tester.tap(find.text('Elegir foto'));
@@ -42,8 +57,14 @@ void main() {
                             builder: (_) => MealPhotoScreen(
                                   activation: _Activation(),
                                   pickPhoto: (_) async => fictionalPhoto(),
-                                  clientFactory: () => MockClient((_) async {
+                                  clientFactory: () =>
+                                      MockClient((request) async {
                                     calls++;
+                                    if ((jsonDecode(request.body)
+                                            as Map)['task'] ==
+                                        'status') {
+                                      return _status();
+                                    }
                                     return http.Response(
                                         jsonEncode(fictionalMeal()), 200);
                                   }),
@@ -53,7 +74,7 @@ void main() {
     await tester.tap(find.text('Abrir'));
     await tester.pumpAndSettle();
     await _choosePhoto(tester);
-    expect(calls, 0);
+    expect(calls, 1);
     expect(result, isNull);
     final analyze = find.widgetWithText(FilledButton, 'Analizar foto');
     await tester.scrollUntilVisible(analyze, 180,
@@ -63,7 +84,7 @@ void main() {
     await tester.pump();
     await tester.tap(analyze);
     await tester.pumpAndSettle();
-    expect(calls, 1);
+    expect(calls, 3); // estado inicial, foto y refresco gratuito de cuota
     expect(result, isNull);
     await tester.scrollUntilVisible(find.text('Arroz cocido'), 150,
         scrollable: find.byType(Scrollable).first);
@@ -96,8 +117,11 @@ void main() {
         home: MealPhotoScreen(
       activation: _Activation(),
       pickPhoto: (_) async => fictionalPhoto(),
-      clientFactory: () => MockClient((_) {
+      clientFactory: () => MockClient((request) {
         calls++;
+        if ((jsonDecode(request.body) as Map)['task'] == 'status') {
+          return Future.value(_status());
+        }
         return reply.future;
       }),
     )));
@@ -118,7 +142,7 @@ void main() {
     reply.complete(http.Response(jsonEncode(fictionalMeal()), 200));
     await tester.pumpAndSettle();
     expect(find.text('Revisa la propuesta'), findsNothing);
-    expect(calls, 1);
+    expect(calls, 2); // la cancelación no dispara otro estado
     await tester.scrollUntilVisible(find.text('Elegir foto'), -180,
         scrollable: find.byType(Scrollable).first);
     await _choosePhoto(tester);

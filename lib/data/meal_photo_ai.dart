@@ -84,7 +84,8 @@ class MealPhotoAi {
       Uri.parse('https://www.control360i.co/app/seguimiento/comida');
 
   Future<PhotoMealEstimate> analyze(
-      Uint8List photo, String hwid, String license) async {
+      Uint8List photo, String hwid, String license,
+      {void Function()? onResponse}) async {
     if (photo.isEmpty || photo.length > maxPhotoBytes) {
       throw const AiError('La foto supera el tamaño permitido. Elige otra.');
     }
@@ -99,6 +100,7 @@ class MealPhotoAi {
             'photo_base64': base64Encode(photo)
           },
           timeout: timeout);
+      onResponse?.call();
       if (response.statusCode != 200) {
         throw AiError(switch (response.statusCode) {
           401 ||

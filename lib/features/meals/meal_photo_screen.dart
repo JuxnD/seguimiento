@@ -5,10 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 import '../../data/meal_photo_ai.dart';
+import '../../data/meal_assistant.dart';
 import '../../data/repositories/nutrition_repository.dart';
 import '../../data/weekly_ai.dart';
 import '../../domain/format.dart';
 import '../../domain/nutrition.dart';
+import '../ai/ai_activation_screen.dart';
+import '../ai/ai_budget.dart';
 
 class PhotoMealSelection {
   const PhotoMealSelection(this.items, this.notes);
@@ -30,9 +33,10 @@ class MealPhotoScreen extends StatefulWidget {
 class _MealPhotoScreenState extends State<MealPhotoScreen> {
   Uint8List? _photo;
   String? _hwid, _license, _error;
-  bool _consent = false, _busy = false;
-  int _generation = 0;
-  http.Client? _client;
+  bool _consent = false, _busy = false, _enabled = false;
+  AiQuota? _quota;
+  int _generation = 0, _activationGeneration = 0, _statusGeneration = 0;
+  http.Client? _client, _statusClient;
   PhotoMealEstimate? _estimate;
   List<bool> _selected = [];
   List<double> _multipliers = [];
@@ -44,21 +48,77 @@ class _MealPhotoScreenState extends State<MealPhotoScreen> {
   }
 
   Future<void> _loadActivation() async {
+    final generation = ++_activationGeneration;
+    _statusGeneration++;
+    _statusClient?.close();
+    _statusClient = null;
+    if (mounted) {
+      setState(() {
+        _enabled = false;
+        _quota = null;
+      });
+    }
     try {
       final (hwid, license) =
           await (widget.activation ?? AiActivation()).read();
-      if (mounted) {
+      if (mounted && generation == _activationGeneration) {
         setState(() {
           _hwid = hwid;
           _license = license;
         });
       }
+      if (license.isNotEmpty && generation == _activationGeneration) {
+        await _refreshStatus(hwid, license, activationGeneration: generation);
+      }
     } on Object {
-      if (mounted) {
+      if (mounted && generation == _activationGeneration) {
         setState(() => _error =
             'No se pudo abrir la activación segura. Puedes registrar a mano.');
       }
     }
+  }
+
+  Future<void> _refreshStatus(String hwid, String license,
+      {required int activationGeneration}) async {
+    final generation = ++_statusGeneration;
+    _statusClient?.close();
+    final client = (widget.clientFactory ?? http.Client.new)();
+    _statusClient = client;
+    try {
+      final assistant = MealAssistant(client);
+      final result = await assistant.gateway.assist(
+          task: 'status', input: const {}, hwid: hwid, license: license);
+      if (mounted &&
+          generation == _statusGeneration &&
+          activationGeneration == _activationGeneration) {
+        setState(() {
+          _quota = assistant.lastQuota;
+          _enabled = result['enabled'] == true;
+        });
+      }
+    } on AiError catch (e) {
+      if (mounted &&
+          generation == _statusGeneration &&
+          activationGeneration == _activationGeneration) {
+        setState(() {
+          _quota = e.quota ?? _quota;
+          _enabled = false;
+        });
+      }
+    } on Object {
+      // Status is informational and never changes the local draft.
+    } finally {
+      client.close();
+      if (identical(_statusClient, client)) _statusClient = null;
+    }
+  }
+
+  Future<void> _openActivation() async {
+    await Navigator.of(context).push<void>(MaterialPageRoute(
+        builder: (_) => AiActivationScreen(
+            activation: widget.activation,
+            clientFactory: widget.clientFactory)));
+    if (mounted) await _loadActivation();
   }
 
   Future<void> _pick(ImageSource source) async {
@@ -120,9 +180,11 @@ class _MealPhotoScreenState extends State<MealPhotoScreen> {
     });
     final client = (widget.clientFactory ?? http.Client.new)();
     _client = client;
+    var responseReceived = false;
     try {
-      final estimate =
-          await MealPhotoAi(client).analyze(photo, _hwid!, _license!);
+      final estimate = await MealPhotoAi(client).analyze(
+          photo, _hwid!, _license!,
+          onResponse: () => responseReceived = true);
       if (mounted && generation == _generation) {
         setState(() {
           _estimate = estimate;
@@ -143,6 +205,10 @@ class _MealPhotoScreenState extends State<MealPhotoScreen> {
           _busy = false;
           _client = null;
         });
+        if (responseReceived && _hwid != null && _license != null) {
+          await _refreshStatus(_hwid!, _license!,
+              activationGeneration: _activationGeneration);
+        }
       }
     }
   }
@@ -157,7 +223,8 @@ class _MealPhotoScreenState extends State<MealPhotoScreen> {
     final items = _drafts;
     if (items.isEmpty) return;
     final notes = StringBuffer(
-        'Estimación por foto · GPT-6 Luna; revisada antes de guardar.');
+        'Propuesta original por foto · estimación revisada antes de guardar. '
+        'Este detalle no se actualiza si después corriges alimentos o cantidades; revisa el borrador de arriba.');
     for (var i = 0; i < _selected.length; i++) {
       if (_selected[i]) {
         notes.write(
@@ -173,13 +240,17 @@ class _MealPhotoScreenState extends State<MealPhotoScreen> {
   @override
   void dispose() {
     _generation++;
+    _activationGeneration++;
+    _statusGeneration++;
     _client?.close();
+    _statusClient?.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final active = _hwid != null &&
+    final active = _enabled &&
+        _hwid != null &&
         RegExp(r'^[A-Z0-9]{4}(-[A-Z0-9]{4}){3}$').hasMatch(_license ?? '');
     final total = Macros.sum(_drafts.map((d) => d.macros));
     return Scaffold(
@@ -189,8 +260,10 @@ class _MealPhotoScreenState extends State<MealPhotoScreen> {
             'Fotografía el plato completo. La IA propone alimentos y cantidades aproximadas; puedes quitar alimentos, ajustar porciones y corregir las cifras antes de guardar.'),
         const SizedBox(height: 12),
         if (!active)
-          const Text(
-              'Primero activa la IA en Informe → Analizar con IA. Usa la misma licencia de este teléfono.'),
+          TextButton.icon(
+              onPressed: _openActivation,
+              icon: const Icon(Icons.lock_open),
+              label: const Text('Activar IA en este teléfono')),
         Wrap(spacing: 8, children: [
           OutlinedButton.icon(
               onPressed: _busy ? null : () => _pick(ImageSource.camera),
@@ -209,6 +282,7 @@ class _MealPhotoScreenState extends State<MealPhotoScreen> {
           const SizedBox(height: 12),
           const Text(
               'Se enviará solo esta imagen, reducida y sin ubicación EXIF, a Control360i y OpenAI. Control360i no conserva la foto ni la propuesta. OpenAI puede conservar registros de seguridad hasta 30 días, con excepciones. La foto no se añade al respaldo. Requiere internet y comparte el límite diario del análisis semanal.'),
+          AiBudget(quota: _quota),
           CheckboxListTile(
               contentPadding: EdgeInsets.zero,
               value: _consent,
