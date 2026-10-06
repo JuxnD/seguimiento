@@ -30,7 +30,7 @@ descarta respuestas tardías, pero una llamada recibida puede facturarse.
 
 Servidor conserva contadores y códigos de diagnóstico, sin informes/respuestas/claves/licencias en logs; acceso HTTP a esos archivos devolvió 403. Responses usa `store=false`. OpenAI conserva registros de seguridad normalmente hasta 30 días, con excepciones legales o de seguridad: [política oficial](https://developers.openai.com/api/docs/guides/your-data).
 
-## Evidencia y aceptación
+## Evidencia inicial de 1.19 y aceptación
 
 Controles locales de validación, consentimiento, cancelación y errores; 16 controles PHP y ocho HTTP local. S0 publicado devolvió cinco notas coherentes, con todas sus citas verificadas. Android comprobó cifrado/lectura/borrado de licencia y consulta HTTPS al gateway real. Ninguna prueba envió registros personales ni fotos.
 
@@ -43,7 +43,7 @@ selección de texto. La exportación no contiene licencia, HWID ni informe compl
 
 La comida por foto usa otra pantalla y otro consentimiento: solo imagen elegida,
 reencodificada sin EXIF, resolución/peso acotados y activación. No SQLite,
-historial ni fotos corporales. Endpoint candidato `/seguimiento/comida` con la
+historial ni fotos corporales. Endpoint publicado `/seguimiento/comida` con la
 misma autorización/cuota. Propuesta estimada → revisión → borrador → Guardar;
 no se crean registros automáticamente. No conserva imagen ni cambia el backup.
 [Especificación y oportunidades](ia-oportunidades.md), [ADR](adr/0011-comidas-foto-como-borrador-estimado.md).

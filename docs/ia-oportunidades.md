@@ -36,7 +36,7 @@ piloto en el teléfono. Las pruebas sintéticas no validan reconocer una comida 
 
 | Prioridad | Función propuesta | Valor y condición de aceptación |
 |---|---|---|
-| 1 | Comidas por foto con revisión | Reducir escritura; aceptar solo si revisar/corregir tarda menos que registrar manualmente. Ya hay candidato. |
+| 1 | Comidas por foto con revisión | Publicado; falta medir si revisar/corregir tarda menos que registrar manualmente. |
 | 2 | Registro por frase: «dos huevos, arroz y pollo» | Proponer alimentos del catálogo y pedir solo la cantidad que falte. Macros calculados localmente, confirmación única. El dictado del teclado puede aportar voz sin otra API. |
 | 3 | Historial local y preguntas sobre informes | Reabrir análisis con fecha/rango y preguntar «¿qué cambió frente a la semana anterior?». Respuestas con citas y cálculos locales; elegir contexto antes de enviarlo. |
 | 4 | Convertir datos faltantes en accesos | Desde «falta peso» abrir pesaje; desde comida incompleta abrir el día. Se puede implementar de forma determinista sin consumir otra consulta. |
@@ -61,4 +61,4 @@ GPT-6 Luna admite imágenes como entrada y texto como salida según
 El envío utiliza `input_image` en Responses con imagen base64, conforme a
 [Images and vision](https://developers.openai.com/api/docs/guides/images-vision).
 Las limitaciones visuales y las porciones desconocidas obligan a mantener la
-estimación y la revisión. Este candidato no usa audio ni herramientas del modelo.
+estimación y la revisión. Esta versión no usa audio ni herramientas del modelo.

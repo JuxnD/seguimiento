@@ -83,5 +83,5 @@ como gates separados. [Entrega](context/sessions/2026-10-06-entrega-120.md),
 - Sincronización en la nube o cuentas.
 - Base de datos externa de alimentos.
 - Escritura autónoma por IA. El copiloto descriptivo del informe está en 1.19;
-  las fotos de comida entran como borradores revisables en el candidato siguiente.
+  las fotos de comida son borradores revisables desde la 1.20.
   [Estado y gates](ia-pendiente.md).
