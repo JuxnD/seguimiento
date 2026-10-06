@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show Value;
@@ -9,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/providers.dart';
+import '../../data/backup_archive.dart';
 import '../../data/database.dart';
 import '../../data/database_host.dart';
 import '../../data/repositories/profile_repository.dart';
@@ -80,72 +82,115 @@ class SettingsScreen extends ConsumerWidget {
                         title: const Text('Avisos y horas'),
                         subtitle: Text(remindersSummary(rows)),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => Navigator.push(
-                            context, MaterialPageRoute(builder: (_) => const RemindersScreen())),
+                        onTap: () =>
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const RemindersScreen())),
                       ),
                     ),
               ],
             ),
-            AppCard(
-              title: 'Respaldo',
-              children: [
-                const Text('Los datos viven solo en este dispositivo. Exporta la base de vez en cuando '
-                    'y guárdala donde la puedas recuperar.'),
-                const SizedBox(height: 8),
-                FilledButton.tonalIcon(
-                  onPressed: () => _export(context, ref),
-                  icon: const Icon(Icons.save_alt),
-                  label: const Text('Exportar base de datos'),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  onPressed: () => _restore(context, ref),
-                  icon: const Icon(Icons.restore),
-                  label: const Text('Restaurar desde un respaldo'),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: Text('Restaurar reemplaza TODO lo registrado por el contenido del respaldo.'),
-                ),
-                const SizedBox(height: 12),
-                Text('Copias automáticas', style: Theme.of(context).textTheme.titleSmall),
-                const Text('Una por semana, dentro de la app; se guardan las 4 últimas. Sirven para '
-                    'deshacer un error, no para cambiar de teléfono: para eso, exporta.'),
-                ref.watch(autoBackupsProvider).when(
-                      loading: () => const LinearProgressIndicator(),
-                      error: (e, _) => Text('Error: $e'),
-                      data: (list) => list.isEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 8),
-                              child: Text('Todavía no hay copias: la primera se hace al abrir la app.'),
-                            )
-                          : Column(
-                              children: [
-                                for (final b in list)
-                                  ListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    leading: const Icon(Icons.history),
-                                    title: Text('${weekdayLong(b.date.weekday)} ${formatLong(b.date)}'),
-                                    subtitle: Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB'),
-                                    trailing: TextButton(
-                                      onPressed: () => _restoreFile(context, ref, b.file,
-                                          'la copia automática del ${formatLong(b.date)}'),
-                                      child: const Text('Restaurar'),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                    ),
-              ],
-            ),
+            const _BackupCard(),
             const UpdatesCard(),
           ],
         ),
       ),
     );
   }
+}
 
-  /// Reemplaza la base por un archivo `.sqlite` exportado antes. Pide
+class _BackupCard extends ConsumerStatefulWidget {
+  const _BackupCard();
+
+  @override
+  ConsumerState<_BackupCard> createState() => _BackupCardState();
+}
+
+class _BackupCardState extends ConsumerState<_BackupCard> {
+  bool _busy = false;
+
+  @override
+  Widget build(BuildContext context) => AppCard(
+        title: 'Respaldo',
+        children: [
+          const Text('Exporta un ZIP con tus registros y fotos de progreso y ejercicios. '
+              'Guárdalo fuera del teléfono para poder recuperarlo si lo pierdes.'),
+          const SizedBox(height: 8),
+          FilledButton.tonalIcon(
+            onPressed: _busy ? null : () => _export(context, ref),
+            icon: const Icon(Icons.save_alt),
+            label: const Text('Exportar registros y fotos'),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: _busy ? null : () => _restore(context, ref),
+            icon: const Icon(Icons.restore),
+            label: const Text('Restaurar desde un respaldo'),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child:
+                Text('Un ZIP reemplaza registros y fotos. Los respaldos antiguos .sqlite solo reemplazan registros.'),
+          ),
+          const SizedBox(height: 12),
+          Text('Copias automáticas', style: Theme.of(context).textTheme.titleSmall),
+          const Text('Una por semana, dentro de la app; se guardan las 4 últimas. '
+              'Solo contienen registros, sin fotos. Sirven para deshacer un error; '
+              'si pierdes el teléfono se pierden también. Para cambiar de teléfono, exporta el ZIP.'),
+          ref.watch(autoBackupsProvider).when(
+                loading: () => const LinearProgressIndicator(),
+                error: (e, _) => Text('Error: $e'),
+                data: (list) => list.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text('Todavía no hay copias: la primera se hace al abrir la app.'),
+                      )
+                    : Column(children: [
+                        for (final b in list)
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(Icons.history),
+                            title: Text('${weekdayLong(b.date.weekday)} ${formatLong(b.date)}'),
+                            subtitle: Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB · registros sin fotos'),
+                            trailing: TextButton(
+                              onPressed: _busy
+                                  ? null
+                                  : () => _restoreFile(
+                                      context, ref, b.file, 'la copia automática del ${formatLong(b.date)}'),
+                              child: const Text('Restaurar'),
+                            ),
+                          ),
+                      ]),
+              ),
+        ],
+      );
+
+  Future<BackupArchive> _archive(WidgetRef ref) async =>
+      BackupArchive(host: ref.read(databaseHostProvider), documents: await ref.read(documentsDirProvider.future));
+
+  Future<T> _progress<T>(String title, Future<T> Function() action) async {
+    final navigator = Navigator.of(context);
+    unawaited(showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          title: Text(title),
+          content: const Row(children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 20),
+            Expanded(child: Text('Espera mientras verificamos los archivos.'))
+          ]),
+        ),
+      ),
+    ));
+    try {
+      return await action();
+    } finally {
+      navigator.pop();
+    }
+  }
+
+  /// Reemplaza registros y, para ZIP, fotos. Pide
   /// confirmación explícita porque borra lo registrado desde ese respaldo.
   Future<void> _restore(BuildContext context, WidgetRef ref) async {
     final picked = await FilePicker.platform.pickFiles(withData: false);
@@ -155,25 +200,43 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _restoreFile(BuildContext context, WidgetRef ref, File file, String label) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('¿Restaurar este respaldo?'),
-        content: Text('Respaldo: $label\n\n'
-            'Se reemplazan todas las sesiones, comidas y medidas actuales por las del respaldo. '
-            'Esto no se puede deshacer.\n\n'
-            'Si lo de ahora te sirve, exporta primero.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Restaurar')),
-        ],
-      ),
-    );
-    if (confirmed != true) return;
-
+    if (_busy) return;
+    setState(() => _busy = true);
+    PreparedBackup? prepared;
+    var replaced = false;
     try {
-      await ref.read(databaseHostProvider).restoreFrom(file);
-      if (context.mounted) showSnack(context, 'Respaldo restaurado');
+      final archive = await _archive(ref);
+      final ready = await _progress('Verificando respaldo', () => archive.prepare(file));
+      prepared = ready;
+      if (!context.mounted) return;
+      final legacy = ready.legacy;
+      final missing = ready.missingPhotos.length;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('¿Restaurar este respaldo?'),
+          content: Text('Respaldo: $label\n\n'
+              'Se reemplazan todas las sesiones, comidas y medidas actuales por las del respaldo. '
+              '${legacy ? 'Es un respaldo antiguo: NO contiene fotos. Las fotos actuales se conservan.' : 'Se reemplazan también las fotos actuales por las ${ready.photoCount} fotos del ZIP.'}\n\n'
+              '${missing == 0 ? '' : 'RESPALDO INCOMPLETO: $missing fotos ya faltaban al exportarlo y no se pueden recuperar.\n\n'}'
+              'Esto no se puede deshacer.\n\n'
+              'Si lo de ahora te sirve, exporta primero.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+            FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Restaurar')),
+          ],
+        ),
+      );
+      if (confirmed != true || !context.mounted) return;
+      replaced = true;
+      await _progress('Restaurando respaldo', () => archive.restore(ready, allowMissingPhotos: true));
+      if (context.mounted) {
+        showSnack(
+            context,
+            legacy
+                ? 'Registros restaurados; fotos actuales conservadas'
+                : 'Registros y ${ready.photoCount} fotos restaurados${missing == 0 ? '' : '; $missing fotos faltantes'}');
+      }
     } on RestoreException catch (e) {
       if (context.mounted) showSnack(context, e.message);
     } on Object catch (e) {
@@ -181,22 +244,49 @@ class SettingsScreen extends ConsumerWidget {
     } finally {
       // Siempre: aunque falle, la conexión pudo cerrarse y reabrirse en el
       // rollback. Sin esto, repositorios y streams quedan sobre la vieja.
-      ref.read(databaseGenerationProvider.notifier).state++;
+      if (replaced) ref.read(databaseGenerationProvider.notifier).state++;
+      await prepared?.dispose();
+      if (mounted) setState(() => _busy = false);
     }
   }
 
   Future<void> _export(BuildContext context, WidgetRef ref) async {
+    if (_busy) return;
+    setState(() => _busy = true);
     try {
       final dir = await getTemporaryDirectory();
-      final path = p.join(dir.path, 'seguimiento-${dayKey(DateTime.now())}.sqlite');
-      // Las exportaciones anteriores ya se compartieron: se borran para no
-      // acumular una copia de la base por día. La de hoy se deja, porque la
+      final path =
+          p.join(dir.path, 'seguimiento-${dayKey(DateTime.now())}-${DateTime.now().microsecondsSinceEpoch}.zip');
+      // Se limpian exportaciones temporales de días anteriores. Las de hoy
+      // se dejan, porque la
       // app que la recibe puede leerla después de cerrar el menú de compartir.
       await _deleteOldExports(dir, keep: p.basename(path));
-      final file = await ref.read(databaseHostProvider).exportTo(path);
-      await Share.shareXFiles([XFile(file.path)], subject: 'Respaldo Seguimiento');
+      final archive = await _archive(ref);
+      final exported = await _progress('Creando respaldo', () => archive.exportTo(path));
+      if (!context.mounted) return;
+      if (!exported.complete) {
+        final sharePartial = await showDialog<bool>(
+          context: context,
+          builder: (c) => AlertDialog(
+            title: const Text('Respaldo incompleto'),
+            content: Text('${exported.missingPhotos.length} fotos ya no están en el teléfono. '
+                'El ZIP contiene los registros y ${exported.photoCount} fotos disponibles, pero no las faltantes. '
+                '¿Quieres compartirlo de todos modos?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+              FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Compartir incompleto'))
+            ],
+          ),
+        );
+        if (sharePartial != true || !context.mounted) return;
+      }
+      await Share.shareXFiles([XFile(exported.file.path, mimeType: 'application/zip')],
+          subject: 'Respaldo Seguimiento');
+      if (context.mounted) showSnack(context, 'Comprueba que el ZIP quedó guardado donde lo puedas recuperar.');
     } on Object catch (e) {
       if (context.mounted) showSnack(context, 'No se pudo exportar: $e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
   }
 }
@@ -392,10 +482,10 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
 }
 
 Future<void> _deleteOldExports(Directory dir, {required String keep}) async {
-  final exports = RegExp(r'^seguimiento-\d{4}-\d{2}-\d{2}\.sqlite$');
+  final exports = RegExp(r'^seguimiento-\d{4}-\d{2}-\d{2}(?:-\d+)?\.(?:sqlite|zip)$');
   for (final f in dir.listSync().whereType<File>()) {
     final name = p.basename(f.path);
-    if (name == keep || !exports.hasMatch(name)) continue;
+    if (name == keep || name.startsWith('seguimiento-${dayKey(DateTime.now())}') || !exports.hasMatch(name)) continue;
     try {
       await f.delete();
     } on Object {

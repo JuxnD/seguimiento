@@ -7,6 +7,9 @@ environment:
   sdk: '>=3.4.0 <4.0.0'
 
 dependencies:
+  # ZIP portable de base + fotos. Fijado para Dart 3.4 / Flutter 3.22.
+  archive: 3.6.1
+  crypto: ^3.0.7
   # Reloj reemplazable: el cronómetro lo usa para que las pruebas controlen el tiempo.
   clock: ^1.1.1
   drift: ">=2.19.2 <2.23.0"
