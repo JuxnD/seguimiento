@@ -75,8 +75,9 @@ void main() {
                                     MockClient((request) async {
                                   final task =
                                       (jsonDecode(request.body) as Map)['task'];
-                                  if (task == 'status')
+                                  if (task == 'status') {
                                     return _reply('status', {'enabled': true});
+                                  }
                                   textModelCalls++;
                                   return _reply('meal_text', {
                                     'items': [
@@ -107,8 +108,9 @@ void main() {
                                     MockClient((request) async {
                                   final task =
                                       (jsonDecode(request.body) as Map)['task'];
-                                  if (task == 'status')
+                                  if (task == 'status') {
                                     return _reply('status', {'enabled': true});
+                                  }
                                   labelModelCalls++;
                                   return _reply('food_label', {
                                     'name': 'Yogur de prueba',

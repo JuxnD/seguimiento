@@ -67,9 +67,10 @@ void main() {
                                       calls++;
                                       final body =
                                           jsonDecode(request.body) as Map;
-                                      if (body['task'] == 'status')
+                                      if (body['task'] == 'status') {
                                         return _reply(
                                             'status', {'enabled': true});
+                                      }
                                       expect(body['task'], 'food_label');
                                       return _reply('food_label', {
                                         'name': 'Yogur',

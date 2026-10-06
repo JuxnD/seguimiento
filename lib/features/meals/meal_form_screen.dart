@@ -277,9 +277,10 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       return MealItemDraft.fromFood(food, food.defaultQuantity * e.multiplier);
     } on Object {
       // Sin catálogo la comida se registra igual: el dato imperfecto vale más.
-      if (mounted)
+      if (mounted) {
         showSnack(context,
             'No se pudo guardar en el catálogo; se registra solo en esta comida');
+      }
       return e.toDraft();
     }
   }
@@ -524,8 +525,9 @@ class _FoodPickerState extends State<_FoodPicker> {
     if (food == null || !mounted) return;
     final qty = await showDialog<double>(
         context: context, builder: (_) => _QuantityDialog(food: food));
-    if (qty != null && mounted)
+    if (qty != null && mounted) {
       Navigator.pop(context, MealItemDraft.fromFood(food, qty));
+    }
   }
 
   @override

@@ -161,8 +161,9 @@ class _MealTextScreenState extends State<MealTextScreen> {
     final hwid = _hwid;
     final license = _license;
     final text = _text.text.trim();
-    if (hwid == null || license == null || license.isEmpty || text.isEmpty)
+    if (hwid == null || license == null || license.isEmpty || text.isEmpty) {
       return;
+    }
     if (_consentedText != _text.text) {
       setState(() =>
           _error = 'Confirma el envío de esta descripción antes de continuar.');
@@ -240,8 +241,9 @@ class _MealTextScreenState extends State<MealTextScreen> {
           : _useProposed[i]
               ? _proposal!.items[i].quantity
               : parseNum(_quantities[i].text);
-      if (parsed == null || !parsed.isFinite || parsed <= 0 || parsed > 5000)
+      if (parsed == null || !parsed.isFinite || parsed <= 0 || parsed > 5000) {
         continue;
+      }
       drafts.add(MealItemDraft.fromFood(food, parsed));
     }
     return drafts;

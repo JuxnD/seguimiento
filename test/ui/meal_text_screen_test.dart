@@ -263,8 +263,10 @@ void main() {
       }),
     )));
     await tester.pumpAndSettle();
+    expect(find.textContaining('Consultas disponibles: 3/4'), findsOneWidget);
     final description = find.byType(TextField).first;
     await tester.enterText(description, 'un huevo');
+    await tester.pump();
     tester
         .widget<CheckboxListTile>(find.byType(CheckboxListTile).first)
         .onChanged!(true);
@@ -334,8 +336,10 @@ void main() {
       }),
     )));
     await tester.pumpAndSettle();
+    expect(find.textContaining('Consultas disponibles: 3/4'), findsOneWidget);
     final phrase = find.byType(TextField).first;
     await tester.enterText(phrase, 'un huevo');
+    await tester.pump();
     tester
         .widget<CheckboxListTile>(find.byType(CheckboxListTile).first)
         .onChanged!(true);

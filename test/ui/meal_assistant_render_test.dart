@@ -136,21 +136,41 @@ void main() {
             await Future<void>.delayed(const Duration(milliseconds: 20));
           });
           await tester.pumpAndSettle();
-          await tester.scrollUntilVisible(find.byType(CheckboxListTile), 130,
+          final consent = find.byType(CheckboxListTile);
+          await tester.scrollUntilVisible(consent, 130,
               scrollable: find.byType(Scrollable).first);
-          await tester.tap(find.byType(CheckboxListTile));
+          await tester.ensureVisible(consent);
+          await tester.pumpAndSettle();
+          await tester.tap(consent);
           await tester.pumpAndSettle();
           final read = find.text('Leer etiqueta');
           await tester.scrollUntilVisible(read, 130,
               scrollable: find.byType(Scrollable).first);
+          await tester.ensureVisible(read);
+          await tester.pumpAndSettle();
+          await tester.tap(read);
+          await tester.pumpAndSettle();
+          await tester.scrollUntilVisible(find.text('Revisa lo leído'), 130,
+              scrollable: find.byType(Scrollable).first);
         } else {
           await tester.enterText(find.byType(TextField).first, 'una bebida');
-          await tester.scrollUntilVisible(find.byType(CheckboxListTile), 130,
+          await tester.pump();
+          final consent = find.byType(CheckboxListTile);
+          await tester.scrollUntilVisible(consent, 130,
               scrollable: find.byType(Scrollable).first);
-          await tester.tap(find.byType(CheckboxListTile));
+          await tester.ensureVisible(consent);
+          await tester.pumpAndSettle();
+          await tester.tap(consent);
           await tester.pumpAndSettle();
           final analyze = find.text('Preparar borrador');
           await tester.scrollUntilVisible(analyze, 130,
+              scrollable: find.byType(Scrollable).first);
+          await tester.ensureVisible(analyze);
+          await tester.pumpAndSettle();
+          await tester.tap(analyze);
+          await tester.pumpAndSettle();
+          await tester.scrollUntilVisible(
+              find.text('Revisa alimento y cantidad'), 130,
               scrollable: find.byType(Scrollable).first);
         }
         await tester.pumpAndSettle();

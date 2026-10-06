@@ -110,9 +110,12 @@ void main() {
           });
           await tester.pumpAndSettle();
         }
-        await tester.scrollUntilVisible(find.byType(CheckboxListTile), 160,
+        final consent = find.byType(CheckboxListTile);
+        await tester.scrollUntilVisible(consent, 160,
             scrollable: find.byType(Scrollable).first);
-        await tester.tap(find.byType(CheckboxListTile));
+        await tester.ensureVisible(consent);
+        await tester.pumpAndSettle();
+        await tester.tap(consent);
         await tester.pumpAndSettle();
         final send = find.text(photo ? 'Analizar foto' : 'Enviar y analizar');
         await tester.scrollUntilVisible(send, 130,

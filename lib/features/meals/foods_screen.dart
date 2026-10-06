@@ -160,16 +160,18 @@ class _FoodsScreenState extends ConsumerState<FoodsScreen> {
         ],
       ),
     );
-    if (ok == true && context.mounted)
+    if (ok == true && context.mounted) {
       await guarded(context, () => repo.deleteFood(food.id));
+    }
   }
 
   Future<void> _edit(BuildContext context, WidgetRef ref, FoodRow? food) async {
     final data = await showDialog<FoodsCompanion>(
         context: context, builder: (_) => FoodDialog(food: food));
-    if (data != null && context.mounted)
+    if (data != null && context.mounted) {
       await guarded(
           context, () => ref.read(nutritionRepositoryProvider).saveFood(data));
+    }
   }
 
   Future<void> _importLabel(BuildContext context, WidgetRef ref) async {
@@ -333,6 +335,11 @@ class _FoodDialogState extends State<FoodDialog> {
     final source = draft.sourceSnapshot;
     String value(double? v, String unit) =>
         v == null ? 'no leído' : '${fmtDec(v)} $unit';
+    final basis = switch (source.basis) {
+      'per100' => 'Por 100 ${source.unit ?? '(unidad no identificada)'}',
+      'portion' => 'Por porción',
+      _ => 'No identificada',
+    };
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -342,8 +349,8 @@ class _FoodDialogState extends State<FoodDialog> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
             'Lectura de etiqueta · ${_verifiedAgainstPackage ? 'verificada por ti' : 'sin verificar'}'),
-        Text(
-            'Base: ${source.basis == 'per100' ? 'por 100 ${source.unit ?? 'unidad no identificada'}' : source.basis == 'portion' ? 'por porción' : 'no identificada'} · ${source.unit ?? 'unidad faltante'}'),
+        Text('Base leída: $basis'),
+        Text('Unidad leída: ${source.unit ?? 'no identificada'}'),
         Text(
             'Porción: ${source.servingQuantity == null ? 'no identificada' : '${fmtDec(source.servingQuantity!)} ${source.unit ?? ''}'}'),
         Text(

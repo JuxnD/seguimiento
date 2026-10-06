@@ -234,10 +234,17 @@ class _FoodLabelScreenState extends State<FoodLabelScreen> {
 
   double? _per100(double? value) {
     final serving = _proposal?.servingQuantity;
-    if (!_converted || value == null || serving == null || serving <= 0)
+    if (!_converted || value == null || serving == null || serving <= 0) {
       return value;
+    }
     return value * 100 / serving;
   }
+
+  String _basisLabel(String? basis, String? unit) => switch (basis) {
+        'per100' => 'Por 100 ${unit ?? '(unidad no identificada)'}',
+        'portion' => 'Por porción',
+        _ => 'No identificada',
+      };
 
   FoodLabelDraft _toDraft() {
     final p = _proposal!;
@@ -366,7 +373,7 @@ class _FoodLabelScreenState extends State<FoodLabelScreen> {
           Text('Revisa lo leído',
               style: Theme.of(context).textTheme.titleLarge),
           Text('Nombre: ${proposal.name ?? 'falta completar'}'),
-          Text('Base leída: ${proposal.basis ?? 'no identificada'}'),
+          Text('Base leída: ${_basisLabel(proposal.basis, proposal.unit)}'),
           Text('Unidad: ${proposal.unit ?? 'falta confirmar g o ml'}'),
           Text(
               'Porción: ${proposal.servingQuantity == null ? 'no identificada' : '${fmtDec(proposal.servingQuantity!)} ${proposal.unit ?? ''}'}'),
