@@ -1,0 +1,6 @@
+# 1.19 — respaldo portable
+Planned at c5b84e72d35c49cf0b23383b188e4a287de91a58; dependency: none.
+Estado: IN PROGRESS. Executor branch JuxnD/119-respaldo.
+Problema: SQLite exportado conserva referencias a fotos que no viajan.
+Alcance: lib/data/database_host.dart, servicio nuevo lib/data/backup_archive.dart, lib/features/settings/settings_screen.dart (localizar ruta exacta), pubspec.yaml/lock, test/data/*backup*, docs/actualizaciones.md. Exportar ZIP con manifiesto versionado, base y ambas carpetas de fotos; hashes/bytes para validar. Restaurar archivos y DB con reversión si cualquier fase falla; preservar compatibilidad SQLite. Nunca aceptar rutas absolutas/../duplicadas, sobrescritura de archivos ajenos, paquetes incompletos o tamaños excesivos. Faltantes previos deben informarse, nunca prometer respaldo completo si faltan fotos. No tocar flags/cronómetro/IA/fuentes/Hoy/editor.
+Criterios: prueba sintética exportar A/restaurar B, releer DB y hashes de fotos; corrupto/incompleto/traversal no cambia B; fallo tardío vuelve a DB/fotos B; SQLite legacy admitido. Probar rojo del problema y verde de implementación. flutter analyze; flutter test focalizado usando Flutter 3.22 en C:\flutter-3.22-old\bin. Worktree limpio separado; pub get/build_runner si necesita. Revisar diff y commit al terminar, nunca push/deploy. STOP si requiere datos reales o secretos.

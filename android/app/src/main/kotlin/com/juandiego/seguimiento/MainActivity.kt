@@ -18,6 +18,9 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        val ai = AiCredentialsBridge(this)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "seguimiento/ia")
+            .setMethodCallHandler { call, result -> ai.handle(call, result) }
         val bridge = HealthConnectBridge(this).also { health = it }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "seguimiento/salud")
             .setMethodCallHandler { call, result -> bridge.handle(call, result) }
