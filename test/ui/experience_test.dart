@@ -266,17 +266,15 @@ void main() {
   testWidgets(
       'guía conserva pasos y claves personales, deduplica y distingue búsqueda de video',
       (tester) async {
+    const sharedStep =
+        'Baja en 2 segundos hasta estirar los brazos por completo.';
     await mount(
         tester,
         const Scaffold(
             body: TechniqueContent(
           exercise: 'Dominadas',
           loaded: false,
-          cues: [
-            'Mi clave personal',
-            ' Mi clave personal ',
-            'Baja en 2 segundos hasta estirar los brazos por completo.'
-          ],
+          cues: ['Mi clave personal', ' Mi clave personal ', sharedStep],
           mediaUrl: 'https://www.youtube.com/results?search_query=dominadas',
         )),
         overrides: [
@@ -285,13 +283,41 @@ void main() {
           exercisePhotoProvider.overrideWith((ref, _) => Stream.value(null)),
           documentsDirProvider.overrideWith((ref) => Directory.systemTemp),
         ]);
+    // Contar los hijos reales de la lista evita confundir un texto que salió
+    // del caché con uno que se eliminó. La visibilidad se comprueba al navegar.
+    Iterable<String> textContent(Widget widget) sync* {
+      if (widget is Text && widget.data != null) yield widget.data!;
+      if (widget is SingleChildRenderObjectWidget && widget.child != null) {
+        yield* textContent(widget.child!);
+      }
+      if (widget is ProxyWidget) yield* textContent(widget.child);
+      if (widget is MultiChildRenderObjectWidget) {
+        for (final child in widget.children) {
+          yield* textContent(child);
+        }
+      }
+    }
+
+    final children = (tester
+            .widget<ListView>(find.byType(ListView))
+            .childrenDelegate as SliverChildListDelegate)
+        .children;
+    final texts = children.expand(textContent).toList();
+    expect(texts.where((text) => text == sharedStep), hasLength(1),
+        reason: 'el paso fijo no se repite como clave personal');
+    expect(texts.where((text) => text == 'Mi clave personal'), hasLength(1),
+        reason: 'las claves personales duplicadas se muestran una sola vez');
+    await tester.scrollUntilVisible(find.text(sharedStep), 180,
+        scrollable: find.byType(Scrollable).first);
+    await tester.pump();
+    expect(find.text(sharedStep).hitTestable(), findsOneWidget,
+        reason: 'el paso conservado es accesible al recorrer la guía');
     await tester.scrollUntilVisible(find.text('Claves personales'), 180,
         scrollable: find.byType(Scrollable).first);
-    expect(find.text('Mi clave personal'), findsOneWidget);
+    await tester.pump();
+    expect(find.text('Claves personales').hitTestable(), findsOneWidget);
+    expect(find.text('Mi clave personal').hitTestable(), findsOneWidget);
     await shot(tester, 'guia-claves');
-    expect(
-        find.text('Baja en 2 segundos hasta estirar los brazos por completo.'),
-        findsOneWidget);
     await tester.scrollUntilVisible(find.text('Buscar demostración'), 180,
         scrollable: find.byType(Scrollable).first);
     expect(find.text('Ver video de referencia'), findsNothing);
