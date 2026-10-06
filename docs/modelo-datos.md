@@ -54,7 +54,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **16**. Al cambiar una tabla:
+`schemaVersion` vale **17**. Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -80,10 +80,11 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 14 | `sessions.pending_review`: sesión guardada sola al terminar el cronómetro, sin revisar (falta RPE); `measurements.time`: hora de la toma |
 | 15 | Plan v3: `plan_versions.scheme` ('v3' = periodización por semana), `plan_exercises.superset_group`, `exercises.anchor` (banda), `session_sets.variant` (variante de la progresión), `sessions.mode` ('cindy', 'tabata', 'porTiempo') y `sessions.extra_reps` (reps sueltas del AMRAP). Tipos nuevos en `DayType` y `SessionType`: `trenSuperior`, `piernas`, `resistencia`, `densidad` (se guardan por nombre) |
 | 16 | Plan v3.1: `session_sets.rir` (0–5), `profiles.kcal_target_football` (meta de sábado y domingo; null = la misma), `football_games.weight_before_kg`, `weight_after_kg` y `fluid_ml` (hidratación), tabla `sleep_logs` (horas en cama por mañana). `plan_versions.scheme` admite 'v3.1' |
+| 17 | `body_weights.moment` ('ayunas', 'antesDormir', 'antesFutbol', 'despuesFutbol', 'otro'; null = se lee de `fasted`) y `time`; `foods.eggs_per_unit` (huevos enteros por porción); tablas `morning_checks` (pulso en reposo por mañana), `soreness_logs` (molestia 0–10 por zona y día) y `skill_achievements` (habilidad → fecha de logro). Solo los pesajes en ayunas entran en el promedio semanal |
 
-Los saltos 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14 y 15 → 16 están cubiertos por
+Los saltos 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 y 16 → 17 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-vieja con datos se abre, conserva lo registrado y queda en `user_version = 16`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 17`.
 El 6 → 8 se verificó además en el emulador (Android 15) con la base de la 1.6.1.
 
 **Récord de rondas.** Una sola definición en

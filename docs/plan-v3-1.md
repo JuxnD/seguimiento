@@ -128,12 +128,60 @@ cambio. Si Android cierra la app, Hoy ofrece retomarlos donde iban; si el
 AMRAP terminó con la app cerrada, pide la ronda a medias. Cortados antes de
 tiempo quedan incompletos (desde la 1.16.0).
 
+## Registro de la mañana, carga y recuperación (1.19.0, §16.15, §19.6)
+
+[`recovery.dart`](../lib/domain/recovery.dart) y
+[`morning_check_screen.dart`](../lib/features/home/morning_check_screen.dart).
+
+- **Registro de la mañana**: peso en ayunas, pulso en reposo al despertar,
+  horas en cama y molestias por zona (0–10). Hoy lo propone hasta las 2 p. m.
+  y está en Registrar.
+- **Peso con momento**: en ayunas, antes de dormir, antes o después del
+  fútbol, u otro. Solo en ayunas entra en el promedio semanal. El fútbol trae
+  solos los pesajes de antes y después.
+- **Pulso en reposo**: si 3 días seguidos está 5 lpm o más por encima de la
+  media de los 7 anteriores, Hoy sugiere la versión ligera.
+- **Molestias**: si una zona no baja en 3 días o sube, Hoy pide aplazar
+  piernas o el intento de récord.
+- **Carga** (RPE × minutos, también el fútbol). Hay tres casos que la hacen
+  alta: dos sesiones hoy, ≥ 600 en el día, o 3 días intensos seguidos.
+  - Con el día hecho, Hoy dice **"Día completo"** y recomienda recuperación
+    de piernas, hidratación y sueño.
+  - "Otra sesión" queda como enlace y, con carga alta, pide confirmación.
+- **Plan B (solo torso)**: con 3 días intensos o molestia en la pierna, el
+  día que trae pierna propone supinas, flexiones, pike, remo, plancha lateral
+  y hollow, a RIR 2.
+- **Recuperación de piernas** (§19.9): rutina guiada de 10–12 min, como la
+  movilidad nocturna.
+- **Pasos**:
+  - con sesión o partido hoy, el aviso de sincronizar el reloj salta a la
+    hora;
+  - los pasos a mano (Registrar → Pasos) solo se reemplazan si Health
+    Connect trae más.
+- **Huevos**: cuentan los del nombre ("4 huevos + queso") y los huevos por
+  porción de cada alimento (se editan en el catálogo).
+- **Datos del 5 oct**: tres pesajes de referencia y 8.514 pasos, como
+  correcciones del traspaso.
+
+## Planche y habilidades (1.19.0, §19.7, §19.8)
+
+- **Interruptor "Tengo las mini paralelas"** en Plan semanal. Martes, jueves
+  y viernes del v3.1 empiezan con:
+  - muñecas;
+  - inclinación de planche;
+  - flexiones pseudo-planche, solo el martes;
+  - tuck planche, cuando la última inclinación llegó a 3 × 30 s.
+
+  En descarga, solo inclinaciones. El bloque se arma igual al empezar y al
+  retomar, para que el guion no cambie.
+- **Habilidades** (Cuerpo): las 14 de la hoja de ruta, con criterio, ventana
+  estimada desde oct 2026 y prerrequisitos. Se marcan a mano con la fecha.
+
 ## Pendiente
 
-- Figuras de los ejercicios nuevos: maniquí 3D en desarrollo (tres momentos
-  grandes, vista lateral primero, giro opcional), validando primero con 3
-  ejercicios.
+- Figuras 3D del resto de los ejercicios. Ya están el pino, el nórdico y las
+  dominadas con mochila.
 - Récord propio de Cindy y su gráfica.
 - Una pantalla propia para las pruebas del 11 dic.
-- Los ejercicios unilaterales siguen registrándose por lado como entradas
-  sueltas (§16.6.2).
+- Pulso en reposo desde Health Connect (`RestingHeartRateRecord`); hoy se
+  anota a mano.
