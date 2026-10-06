@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:seguimiento/data/weekly_ai.dart';
 import 'package:seguimiento/features/report/weekly_ai_screen.dart';
+import '../support/test_fonts.dart';
 
 class FakeActivation extends AiActivation {
   String license = 'AAAA-BBBB-CCCC-DDDD';
@@ -21,6 +22,10 @@ void main() {
   testWidgets(
       'sin consentimiento no envía; preview coincide y cancelar descarta respuesta tardía',
       (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await loadTestFonts(tester);
     var calls = 0;
     final reply = Completer<http.Response>();
     await tester.pumpWidget(MaterialApp(
@@ -33,19 +38,27 @@ void main() {
                 }))));
     await tester.pumpAndSettle();
     final send = find.widgetWithText(FilledButton, 'Enviar y analizar');
+    await tester.scrollUntilVisible(send, 160,
+        scrollable: find.byType(Scrollable).first);
     expect(tester.widget<FilledButton>(send).onPressed, isNull);
     expect(calls, 0);
+    await tester.scrollUntilVisible(
+        find.text('Ver exactamente qué se enviará'), -160,
+        scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Ver exactamente qué se enviará'));
     await tester.pumpAndSettle();
     expect(find.text('Peso: sin registro'), findsOneWidget);
-    await tester.ensureVisible(find.byType(CheckboxListTile));
+    await tester.scrollUntilVisible(find.byType(CheckboxListTile), 160,
+        scrollable: find.byType(Scrollable).first);
     await tester.tap(find.byType(CheckboxListTile));
     await tester.pump();
-    await tester.ensureVisible(send);
+    await tester.scrollUntilVisible(send, 160,
+        scrollable: find.byType(Scrollable).first);
     await tester.tap(send);
     await tester.pump();
     expect(calls, 1);
-    await tester.ensureVisible(find.text('Cancelar'));
+    await tester.scrollUntilVisible(find.text('Cancelar'), 100,
+        scrollable: find.byType(Scrollable).first);
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('Cancelar'));
     await tester.pump();
