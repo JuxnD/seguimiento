@@ -66,4 +66,5 @@ Mejoras pedidas tras el primer uso real, en este orden:
 
 - Sincronización en la nube o cuentas.
 - Base de datos externa de alimentos.
-- Análisis o IA dentro de la app: eso se hace fuera, con el informe.
+- Escritura autónoma por IA o envío de fotos. El copiloto descriptivo del informe
+  entra en1.19; [estado y gates de activación](ia-pendiente.md).

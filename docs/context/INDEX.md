@@ -21,6 +21,7 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 | Respaldo, restauración y releases | [../actualizaciones.md](../actualizaciones.md) | Cambia el flujo de respaldo, la firma o el pipeline |
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
 | Fases y pendientes | [../roadmap.md](../roadmap.md) | Entra o sale trabajo del MVP/v2 |
+| Copiloto semanal y activación | [../ia-pendiente.md](../ia-pendiente.md) | Cambia gateway, envío consentido, límites o aceptación |
 
 ## Hechos que no se deducen del código
 

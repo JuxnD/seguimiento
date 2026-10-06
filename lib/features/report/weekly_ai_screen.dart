@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import '../../data/weekly_ai.dart';
 
 class WeeklyAiScreen extends StatefulWidget {
@@ -131,7 +132,13 @@ class _WeeklyAiScreenState extends State<WeeklyAiScreen> {
                   : () async {
                       try {
                         await _activation.save('');
-                        if (mounted) setState(() => _license.clear());
+                        if (mounted) {
+                          setState(() {
+                            _license.clear();
+                            _error = null;
+                          });
+                          await _load();
+                        }
                       } on Object {
                         if (mounted) {
                           setState(
@@ -147,7 +154,13 @@ class _WeeklyAiScreenState extends State<WeeklyAiScreen> {
                     style: const TextStyle(fontSize: 12))
               ]),
           const Text(
-              'Se envía este texto a Control360i y OpenAI. No se envían fotos ni la base. Control360i no conserva el informe ni la respuesta; OpenAI puede conservar registros de seguridad hasta 30 días. La consulta requiere internet.'),
+              'Se envía este texto a Control360i y OpenAI. No se envían fotos ni la base. Control360i no conserva el informe ni la respuesta. OpenAI conserva registros de seguridad normalmente hasta 30 días, con excepciones legales o de seguridad. La consulta requiere internet.'),
+          TextButton(
+              onPressed: () => launchUrl(
+                  Uri.parse(
+                      'https://developers.openai.com/api/docs/guides/your-data'),
+                  mode: LaunchMode.externalApplication),
+              child: const Text('Consultar política de datos de OpenAI')),
           CheckboxListTile(
               contentPadding: EdgeInsets.zero,
               value: _consent,
