@@ -19,6 +19,11 @@ class SleepRepository {
   Stream<double?> watchDay(DateTime day) =>
       (db.select(db.sleepLogs)..where((t) => t.date.equals(dayKey(day)))).watchSingleOrNull().map((r) => r?.hours);
 
+  Stream<Map<String, double>> watchRange(DateTime from, DateTime to) =>
+      (db.select(db.sleepLogs)..where((t) => t.date.isBetweenValues(dayKey(from), dayKey(to))))
+          .watch()
+          .map((rows) => {for (final row in rows) row.date: row.hours});
+
   /// Noches anotadas en el rango (incluidos los dos extremos).
   Future<Map<String, double>> range(DateTime from, DateTime to) async {
     final rows = await (db.select(db.sleepLogs)

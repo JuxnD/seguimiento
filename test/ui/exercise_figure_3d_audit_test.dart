@@ -137,6 +137,36 @@ void main() {
       await tester.pump();
     }
 
+    testWidgets('guía extensa conserva lectura y rechaza solo la consulta de IA',
+        (tester) async {
+      await loadTestFonts(tester);
+      tester.view.physicalSize = const Size(360, 120000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final longCue = List.filled(2500, 'clave extensa sin cifras').join(' ');
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          figure3dProvider.overrideWith((ref) => catalog),
+          exerciseArtProvider.overrideWith((ref) => art2d),
+          exercisePhotoProvider.overrideWith((ref, _) => Stream.value(null)),
+          documentsDirProvider.overrideWith((ref) => Directory.systemTemp),
+        ],
+        child: MaterialApp(
+            home: Scaffold(
+                body: TechniqueContent(
+                    exercise: 'Dominadas', cues: [longCue]))),
+      ));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      final ask = find.text('Preguntar sobre esta guía');
+      expect(ask, findsOneWidget);
+      await tester.tap(ask);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('supera el límite de consulta'), findsOneWidget);
+      expect(find.text('Dominadas'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('supina sin carga (jueves): figura plana y nada de mochila', (tester) async {
       await pumpSheet(tester, grip: 'supina', loaded: false);
       expect(find.byKey(const ValueKey('figura3d-momentos')), findsNothing);

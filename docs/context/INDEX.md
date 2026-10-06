@@ -30,6 +30,7 @@ No sustituye la release publicada.
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
 | Fases y pendientes | [../roadmap.md](../roadmap.md) | Entra o sale trabajo del MVP/v2 |
 | Copiloto semanal y activación | [../ia-pendiente.md](../ia-pendiente.md) | Cambia gateway, envío consentido, límites o aceptación |
+| Preguntas con fuentes e historial local | [../ia-informes.md](../ia-informes.md) | Cambia snapshots, citas, límites, retención o acciones desde el informe/guía |
 | IA en uso diario y comidas por foto | [../ia-oportunidades.md](../ia-oportunidades.md) | Cambia candidato, validación o prioridad de funciones |
 
 ## Hechos que no se deducen del código
@@ -44,7 +45,8 @@ No sustituye la release publicada.
 - Registros y fotos viven en el dispositivo, sin sincronización. Desde 1.19,
   Ajustes exporta un ZIP portable con base y fotos. La copia semanal interna
   conserva solamente registros; ambas se restauran desde Ajustes. IA es opt-in:
-  únicamente el informe elegido se envía a Control360i/OpenAI tras confirmación.
+  el texto exacto del informe o la guía seleccionada se envía tras confirmación;
+  comparar el periodo previo requiere una elección explícita. No se envían fotos.
 - Fuera de la base viven `flags.json` (permisos ya pedidos, fechas de copia) y
   `sesion-en-curso.json` (cronómetro a medias). Restaurar no los toca.
 - En este equipo, desde el 2 oct 2026 `C:lutter` es Flutter 3.47 (lo

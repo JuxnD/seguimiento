@@ -502,3 +502,34 @@ class WeekNotes extends Table {
   @override
   Set<Column> get primaryKey => {weekIndex};
 }
+
+/// Conversaciones locales de IA. `sourcesJson` es el snapshot inmutable que
+/// se mostró y envió; `sourcesHash` detecta cualquier alteración al reabrir.
+@DataClassName('AiConversationRow')
+class AiConversations extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get kind => text()();
+  TextColumn get title => text().withLength(min: 1, max: 120)();
+  TextColumn get rangeStart => text().nullable()();
+  TextColumn get rangeEnd => text().nullable()();
+  TextColumn get model => text()();
+  IntColumn get contractVersion => integer()();
+  TextColumn get sourcesJson => text()();
+  TextColumn get sourcesHash => text().withLength(min: 64, max: 64)();
+  IntColumn get createdAt => integer()();
+}
+
+/// Preguntas y respuestas verificadas. Las citas quedan ligadas al snapshot
+/// por `conversationId`; borrar una conversación las elimina en cascada.
+@DataClassName('AiMessageRow')
+class AiMessages extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get conversationId =>
+      integer().references(AiConversations, #id, onDelete: KeyAction.cascade)();
+  TextColumn get role => text()();
+  TextColumn get messageText => text()();
+  TextColumn get citationsJson => text()();
+  TextColumn get model => text()();
+  IntColumn get contractVersion => integer()();
+  IntColumn get createdAt => integer()();
+}

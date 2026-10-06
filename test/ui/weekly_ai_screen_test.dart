@@ -6,8 +6,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:seguimiento/data/weekly_ai.dart';
+import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/data/repositories/ai_conversation_repository.dart';
 import 'package:seguimiento/features/report/weekly_ai_screen.dart';
 import '../support/test_fonts.dart';
+import '../support/sqlite_host.dart';
 
 class FakeActivation extends AiActivation {
   String license = 'AAAA-BBBB-CCCC-DDDD';
@@ -19,10 +22,26 @@ class FakeActivation extends AiActivation {
   }
 }
 
+http.Response statusResponse() => http.Response(
+      jsonEncode({
+        'status': 'success',
+        'contract': 2,
+        'task': 'status',
+        'model': 'gpt-6-luna',
+        'result': {'enabled': true},
+      }),
+      200,
+      headers: {'content-type': 'application/json; charset=utf-8'},
+    );
+
 void main() {
+  setUpAll(useHostSqlite);
   testWidgets(
       'la respuesta permite seleccionar, copiar y compartir con evidencia',
       (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await loadTestFonts(tester);
     final platformCalls = <MethodCall>[];
     tester.binding.defaultBinaryMessenger
@@ -46,18 +65,24 @@ void main() {
         home: WeeklyAiScreen(
             report: 'Peso: sin registro',
             activation: FakeActivation(),
-            clientFactory: () => MockClient((_) async => http.Response(
-                jsonEncode({
-                  'model': 'gpt-6-luna',
-                  'notes': [
-                    {
-                      'kind': 'missing',
-                      'text': 'Falta el registro.',
-                      'quote': 'Peso: sin registro'
-                    }
-                  ]
-                }),
-                200)))));
+            clientFactory: () => MockClient((request) async =>
+                request.url.path.endsWith('/asistir')
+                    ? statusResponse()
+                    : http.Response(
+                        jsonEncode({
+                          'model': 'gpt-6-luna',
+                          'notes': [
+                            {
+                              'kind': 'missing',
+                              'text': 'Falta el registro.',
+                              'quote': 'Peso: sin registro'
+                            }
+                          ]
+                        }),
+                        200,
+                        headers: {
+                            'content-type': 'application/json; charset=utf-8'
+                          })))));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.byType(CheckboxListTile), 180,
         scrollable: find.byType(Scrollable).first);
@@ -111,7 +136,10 @@ void main() {
         home: WeeklyAiScreen(
             report: 'Peso: sin registro',
             activation: FakeActivation(),
-            clientFactory: () => MockClient((_) {
+            clientFactory: () => MockClient((request) {
+                  if (request.url.path.endsWith('/asistir')) {
+                    return Future.value(statusResponse());
+                  }
                   calls++;
                   return reply.future;
                 }))));
@@ -158,5 +186,65 @@ void main() {
     expect(find.text('Consulta cancelada. No se cambió ningún registro.'),
         findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('un segundo análisis fallido no enlaza la conversación anterior',
+      (tester) async {
+    await loadTestFonts(tester);
+    final db = openInMemoryDatabase();
+    final repository = AiConversationRepository(db);
+    var analyses = 0;
+    await tester.pumpWidget(MaterialApp(
+        home: WeeklyAiScreen(
+      report: 'Peso: sin registro',
+      activation: FakeActivation(),
+      repository: repository,
+      clientFactory: () => MockClient((request) async {
+        if (request.url.path.endsWith('/asistir')) return statusResponse();
+        analyses++;
+        if (analyses == 1) {
+          return http.Response(
+            jsonEncode({
+              'model': 'gpt-6-luna',
+              'notes': [
+                {
+                  'kind': 'missing',
+                  'text': 'Falta el registro.',
+                  'quote': 'Peso: sin registro'
+                }
+              ]
+            }),
+            200,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }
+        return http.Response('fallo sintético', 503);
+      }),
+    )));
+    await tester.pumpAndSettle();
+
+    Future<void> consentAndSend() async {
+      final checkbox = find.byType(CheckboxListTile);
+      await tester.scrollUntilVisible(checkbox, 180,
+          scrollable: find.byType(Scrollable).first);
+      await tester.tap(checkbox);
+      await tester.pump();
+      final send = find.widgetWithText(FilledButton, 'Enviar y analizar');
+      await tester.scrollUntilVisible(send, 180,
+          scrollable: find.byType(Scrollable).first);
+      await tester.tap(send);
+      await tester.pumpAndSettle();
+    }
+
+    await consentAndSend();
+    expect(find.text('Preguntar sobre estos comentarios'), findsOneWidget);
+    expect(await repository.count(), 1);
+    await consentAndSend();
+    expect(analyses, 2);
+    expect(find.text('Preguntar sobre estos comentarios'), findsNothing);
+    expect(await repository.count(), 1);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await db.close();
   });
 }

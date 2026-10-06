@@ -61,27 +61,11 @@ class _AiActivationScreenState extends State<AiActivationScreen> {
     _client = client;
     try {
       final gateway = AiGatewayClient(client);
-      final result = await gateway.assist(
-          task: 'status', input: const {}, hwid: hwid, license: license);
+      final status = await gateway.status(hwid: hwid, license: license);
       if (mounted && generation == _generation) {
         setState(() {
-          _quota = gateway.lastQuota;
-          _status = result['enabled'] == true
-              ? 'IA habilitada para este teléfono.'
-              : 'La IA aún no está habilitada para esta licencia.';
-        });
-      }
-    } on AiError catch (e) {
-      if (mounted && generation == _generation) {
-        setState(() {
-          _quota = e.quota;
-          _status = e.message;
-        });
-      }
-    } on Object {
-      if (mounted && generation == _generation) {
-        setState(() {
-          _status = 'No se pudo consultar el estado.';
+          _quota = status.quota;
+          _status = status.message;
         });
       }
     } finally {
@@ -210,8 +194,7 @@ class _AiActivationScreenState extends State<AiActivationScreen> {
             if (_busy) const LinearProgressIndicator(),
             if (_status != null) ...[
               const SizedBox(height: 12),
-              Text(_status!),
-              AiBudget(quota: _quota),
+              AiStatusPanel(status: _status, quota: _quota),
             ],
             if (_error != null)
               Padding(

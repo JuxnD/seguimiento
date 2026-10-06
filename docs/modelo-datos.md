@@ -54,13 +54,15 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **17**. Al cambiar una tabla:
+`schemaVersion` vale **18**. Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
 3. Anotar aquí qué cambió y por qué.
 4. Correr `dart run build_runner build --delete-conflicting-outputs`.
-5. Probar el salto de versión con datos reales exportados, no solo con base nueva.
+5. Probar el salto de versión con fixtures sintéticas independientes y ZIP
+   portables de prueba, no solo con base nueva. No usar datos personales para
+   las pruebas locales.
 
 | Versión | Cambio |
 |---|---|
@@ -81,10 +83,14 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 15 | Plan v3: `plan_versions.scheme` ('v3' = periodización por semana), `plan_exercises.superset_group`, `exercises.anchor` (banda), `session_sets.variant` (variante de la progresión), `sessions.mode` ('cindy', 'tabata', 'porTiempo') y `sessions.extra_reps` (reps sueltas del AMRAP). Tipos nuevos en `DayType` y `SessionType`: `trenSuperior`, `piernas`, `resistencia`, `densidad` (se guardan por nombre) |
 | 16 | Plan v3.1: `session_sets.rir` (0–5), `profiles.kcal_target_football` (meta de sábado y domingo; null = la misma), `football_games.weight_before_kg`, `weight_after_kg` y `fluid_ml` (hidratación), tabla `sleep_logs` (horas en cama por mañana). `plan_versions.scheme` admite 'v3.1' |
 | 17 | `body_weights.moment` ('ayunas', 'antesDormir', 'antesFutbol', 'despuesFutbol', 'otro'; null = se lee de `fasted`) y `time`; `foods.eggs_per_unit` (huevos enteros por porción); tablas `morning_checks` (pulso en reposo por mañana), `soreness_logs` (molestia 0–10 por zona y día) y `skill_achievements` (habilidad → fecha de logro). Solo los pesajes en ayunas entran en el promedio semanal |
+| 18 | `ai_conversations` congela tipo, título, rango, modelo, contrato y JSON/hash exactos de las fuentes; `ai_messages` guarda preguntas y respuestas verificadas, citas, modelo y contrato. Borrado en cascada; licencia, HWID e imágenes no se guardan |
 
-Los saltos 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 y 16 → 17 están cubiertos por
+Los saltos de esquemas anteriores a 18 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-vieja con datos se abre, conserva lo registrado y queda en `user_version = 17`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 18`.
+El salto 17 → 18 parte de [`test/fixtures/schema17-synthetic.sqlite`](../test/fixtures/schema17-synthetic.sqlite),
+una fixture sintética congelada desde el código de esquema 17 antes de añadir
+las tablas de conversaciones; no se reconstruye desde el esquema actual.
 El 6 → 8 se verificó además en el emulador (Android 15) con la base de la 1.6.1.
 
 **Récord de rondas.** Una sola definición en
@@ -122,14 +128,14 @@ convertir nada mentalmente.
 
 ## Respaldo
 
-**Las fotos no van en el respaldo.** El archivo exportado es la base de datos:
-las imágenes viven aparte, en el directorio de la app. Si cambias de teléfono,
-cópialas por tu cuenta o vuelve a tomarlas.
-
-Ajustes → *Exportar base de datos* usa `VACUUM INTO`, que produce una copia
-consistente incluso con el WAL abierto. Ajustes → *Restaurar desde un respaldo*
-valida el archivo, reemplaza la base y hace rollback si algo falla. El detalle
-del procedimiento está en [actualizaciones.md](actualizaciones.md).
+El respaldo manual es un ZIP portable con la base SQLite y las fotos de
+progreso/referencia. La exportación copia la base con `VACUUM INTO`, de forma
+consistente aunque el WAL esté abierto. El respaldo automático semanal contiene
+solo la base SQLite, no fotos. Ambos contienen el historial de IA guardado en
+las tablas; no contienen licencias, HWID ni imágenes enviadas a la IA. Ajustes →
+*Restaurar desde un respaldo* valida el paquete, reemplaza base y fotos cuando
+es ZIP, y hace rollback si algo falla. El detalle está en
+[`actualizaciones.md`](actualizaciones.md).
 
 Un respaldo con `user_version` mayor que el `schemaVersion` de la app se
 rechaza: es de una versión más nueva y restaurarlo rompería los datos.

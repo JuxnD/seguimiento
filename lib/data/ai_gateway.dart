@@ -55,6 +55,34 @@ class AiGatewayClient {
   final Duration timeout;
   AiQuota? lastQuota;
 
+  Future<AiStatus> status({
+    required String hwid,
+    required String license,
+  }) async {
+    try {
+      final result = await assist(
+        task: 'status',
+        input: const {},
+        hwid: hwid,
+        license: license,
+      );
+      return AiStatus(
+        enabled: result['enabled'] == true,
+        message: result['enabled'] == true
+            ? 'IA habilitada para este teléfono.'
+            : 'La IA aún no está habilitada para esta licencia.',
+        quota: lastQuota,
+      );
+    } on AiError catch (error) {
+      return AiStatus(
+          message: error.message,
+          quota: error.quota ?? lastQuota,
+          enabled: false);
+    } on Object {
+      return const AiStatus(message: 'No se pudo consultar el estado.');
+    }
+  }
+
   Future<Map<String, dynamic>> assist({
     required String task,
     required Map<String, Object?> input,
@@ -106,6 +134,14 @@ class AiGatewayClient {
     if (quota != null) lastQuota = quota;
     return Map<String, dynamic>.from(data['result'] as Map);
   }
+}
+
+class AiStatus {
+  const AiStatus({required this.message, this.enabled = false, this.quota});
+
+  final String message;
+  final bool enabled;
+  final AiQuota? quota;
 }
 
 /// Un solo transporte para las rutas v1 y v2. La ruta siempre la decide el

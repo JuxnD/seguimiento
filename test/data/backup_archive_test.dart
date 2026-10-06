@@ -12,6 +12,8 @@ import 'package:seguimiento/data/backup_archive.dart';
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/repositories/body_repository.dart';
+import 'package:seguimiento/data/repositories/ai_conversation_repository.dart';
+import 'package:seguimiento/domain/ai_context.dart';
 
 import '../support/sqlite_host.dart';
 
@@ -156,6 +158,55 @@ void main() {
     await archiveB.restoreFrom(legacy);
     expect((await BodyRepository(b.db).watchWeights().first).map((w) => w.kg), [72]);
     expect(File('${b.file.parent.path}/fotos/vieja.jpg').readAsBytesSync(), [99]);
+  });
+
+  test('el ZIP lleva el snapshot y la base 17 restaurada migra a 18', () async {
+    final repository = AiConversationRepository(a.db);
+    final snapshot = AiConversationSnapshot(
+      kind: AiConversationKind.reportQuestion,
+      title: 'Informe sintético',
+      rangeStart: DateTime(2026, 10, 1),
+      rangeEnd: DateTime(2026, 10, 2),
+      sources: const [
+        AiContextSource(
+            id: 'report', title: 'Fuente', text: 'Pasos y sesiones ficticios.')
+      ],
+      model: aiQuestionModel,
+      contractVersion: aiQuestionContractVersion,
+    );
+    final id = await repository.createValidatedConversation(
+      snapshot: snapshot,
+      question: '¿Qué resume la fuente?',
+      answer: 'Resume sesiones y pasos registrados.',
+      citations: const [
+        AiCitation(sourceId: 'report', quote: 'Pasos y sesiones ficticios.')
+      ],
+      turnModel: aiQuestionModel,
+      turnContractVersion: aiQuestionContractVersion,
+    );
+    final portable = await archiveA.exportTo('${root.path}/conversacion.zip');
+    await archiveB.restoreFrom(portable.file);
+    final restored = await AiConversationRepository(b.db).read(id);
+    expect(restored!.snapshot.sourceJson, snapshot.sourceJson);
+    expect(restored.snapshot.sourceHash, snapshot.sourceHash);
+    expect(restored.turns.last.citations.single.quote,
+        'Pasos y sesiones ficticios.');
+    expect(restored.turns.last.model, aiQuestionModel);
+    expect(restored.turns.last.contractVersion, aiQuestionContractVersion);
+
+    final legacy = File('${root.path}/legacy17.sqlite');
+    File('test/fixtures/schema17-synthetic.sqlite').copySync(legacy.path);
+    await archiveB.restoreFrom(legacy);
+    expect(
+        await b.db
+            .customSelect('pragma user_version')
+            .map((row) => row.data.values.first as int)
+            .getSingle(),
+        18);
+    expect(await AiConversationRepository(b.db).count(), 0);
+    expect(
+        (await BodyRepository(b.db).watchWeights().first).map((row) => row.kg),
+        [70]);
   });
 
   test('el manifiesto declara esquema, bytes y SHA-256 del archivo que viaja', () async {

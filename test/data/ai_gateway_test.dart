@@ -108,6 +108,44 @@ void main() {
     expect(gateway.lastQuota?.remaining, 0);
   });
 
+  test('status consulta sin datos y expone activación y cuota válidas',
+      () async {
+    final client = MockClient((request) async {
+      expect(request.url.path, '/app/seguimiento/asistir');
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      expect(body['task'], 'status');
+      expect(body['input'], isEmpty);
+      expect(body.keys, containsAll(['hwid', 'license_key']));
+      return http.Response(
+          jsonEncode(envelope(task: 'status', result: {'enabled': true})), 200,
+          headers: {'content-type': 'application/json; charset=utf-8'});
+    });
+    final status = await AiGatewayClient(client)
+        .status(hwid: 'SEG-FICTICIO', license: 'AAAA-BBBB-CCCC-DDDD');
+    expect(status.enabled, isTrue);
+    expect(status.quota?.remaining, 3);
+    expect(status.message, contains('habilitada'));
+  });
+
+  test('status 503 falla cerrado y conserva la cuota remota permitida',
+      () async {
+    final status = await AiGatewayClient(MockClient((_) async => http.Response(
+            jsonEncode({
+              'error': {'code': 'service_not_configured'},
+              'quota': {
+                'remaining': 0,
+                'limit': 4,
+                'reset_at': '2026-10-07T00:00:00Z',
+              }
+            }),
+            503,
+            headers: {'content-type': 'application/json; charset=utf-8'})))
+        .status(hwid: 'SEG-FICTICIO', license: 'AAAA-BBBB-CCCC-DDDD');
+    expect(status.enabled, isFalse);
+    expect(status.quota?.remaining, 0);
+    expect(status.message, contains('aún no está habilitado'));
+  });
+
   test('cuota malformada no reemplaza una lectura válida', () async {
     var response = jsonEncode(envelope());
     final gateway = AiGatewayClient(MockClient((_) async => http.Response(

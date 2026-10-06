@@ -27,3 +27,19 @@ class AiBudget extends StatelessWidget {
     );
   }
 }
+
+class AiStatusPanel extends StatelessWidget {
+  const AiStatusPanel({super.key, required this.status, required this.quota});
+
+  final String? status;
+  final AiQuota? quota;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (status != null) Text(status!),
+          AiBudget(quota: quota),
+        ],
+      );
+}
