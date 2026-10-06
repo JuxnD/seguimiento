@@ -176,6 +176,23 @@ void main() {
     expect(md, contains('4 (arquero)'));
   });
 
+  test('los ejercicios por lado salen por serie con cada pierna (§16.6.2)', () {
+    final md = buildReport(ReportInput(
+      programStart: DateTime(2026, 8, 26),
+      rangeStart: DateTime(2026, 10, 12),
+      rangeEnd: DateTime(2026, 10, 18),
+      today: DateTime(2026, 10, 18),
+      perSideExercises: const {'Sentadilla búlgara'},
+      sessions: [
+        SessionEntry(date: DateTime(2026, 10, 14), type: SessionType.piernas, sets: [
+          for (var i = 0; i < 6; i++)
+            SetEntry(exercise: 'Sentadilla búlgara', setIndex: i + 1, reps: i.isEven ? 9 : 8, loadKg: 5),
+        ]),
+      ],
+    ));
+    expect(md, contains('- Sentadilla búlgara: S1: I 8 @ 5 kg / D 9 @ 5 kg · S2: I 8 @ 5 kg / D 9 @ 5 kg · S3:'));
+  });
+
   test('una Cindy cortada dice lo que duró y que no es marca', () {
     final md = buildReport(ReportInput(
       programStart: DateTime(2026, 8, 26),

@@ -216,7 +216,9 @@ void _sessions(StringBuffer b, ReportStats s) {
     for (final e in byExercise.entries) {
       final sets = [...e.value]..sort((a, c) => a.setIndex.compareTo(c.setIndex));
       final hold = s.input.holdExercises.contains(e.key);
-      b.writeln('- ${e.key}: ${sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
+      b.writeln('- ${e.key}: ${s.input.perSideExercises.contains(e.key) && sets.length.isEven
+          ? _perSideLabel(sets, seconds: hold)
+          : sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
     }
     final extra = [
       if (x.limitingExercise != null && x.limitingExercise!.isNotEmpty) 'Limitante: ${x.limitingExercise}',
@@ -237,6 +239,13 @@ String _roundsCell(SessionEntry x) {
   final unfinished = x.incomplete ? ' (incompleta)' : '';
   return '$prefix${x.roundsDone}$target$estimated$unfinished';
 }
+
+/// Series por lado (§16.6.2): el cronómetro hace derecho y luego izquierdo,
+/// así que van de dos en dos. "S1: I 8 / D 8 · S2: I 8 / D 8".
+String _perSideLabel(List<SetEntry> sets, {bool seconds = false}) => [
+      for (var i = 0; i + 1 < sets.length; i += 2)
+        'S${i ~/ 2 + 1}: I ${_setLabel(sets[i + 1], seconds: seconds)} / D ${_setLabel(sets[i], seconds: seconds)}',
+    ].join(' · ');
 
 String _setLabel(SetEntry e, {bool seconds = false}) {
   final amount = seconds ? '${e.reps} s' : '${e.reps}';

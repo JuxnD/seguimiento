@@ -234,6 +234,10 @@ class ReportRepository {
         for (final pe in await (db.select(db.planExercises)..where((x) => x.holdSecMin.isNotNull())).get())
           if (names[pe.exerciseId] case final name?) name,
       },
+      perSideExercises: {
+        for (final pe in await (db.select(db.planExercises)..where((x) => x.perSide.equals(true))).get())
+          if (names[pe.exerciseId] case final name?) name,
+      },
       previous: previous,
       notes: notes.length <= 1
           ? notes.firstOrNull?.body

@@ -285,6 +285,7 @@ class ReportInput {
     this.sleep = const {},
     this.mobility = const [],
     this.holdExercises = const {},
+    this.perSideExercises = const {},
     this.previous,
     this.notes,
   });
@@ -338,6 +339,10 @@ class ReportInput {
   /// Ejercicios por tiempo (plancha, hollow): sus series guardan segundos, no
   /// repeticiones, y así se muestran.
   final Set<String> holdExercises;
+
+  /// Ejercicios por lado (búlgara, peso muerto a una pierna…): el cronómetro
+  /// guarda derecho e izquierdo como dos entradas seguidas por serie.
+  final Set<String> perSideExercises;
 
   /// El rango anterior del mismo largo (la semana pasada), para comparar.
   /// null en el propio rango anterior: la comparación no se encadena.
