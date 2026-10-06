@@ -8,4 +8,6 @@
 Integración en `JuxnD/release-1-19`, 1.19.0+27. Pruebas locales: 476 aprobadas,
 dos capturas opcionales omitidas en la corrida general y ejecutadas aparte.
 Tres controles Android aprobados, incluida consulta ficticia al gateway real.
-El gate de publicación exige CI/Release del SHA final y firma del APK.
+Gate de publicación aprobado: fuente ce68981, CI37499905119 y Release37499977216
+exitosos; APK publicado descargado, hash y firma verificados e instalado en QA.
+[Recibo y pendientes de aceptación](../docs/context/sessions/2026-10-06-entrega-119.md).

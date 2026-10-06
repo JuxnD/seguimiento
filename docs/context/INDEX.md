@@ -3,6 +3,10 @@
 Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
+**Entrega vigente:** [1.19.0+27 publicada y verificada](sessions/2026-10-06-entrega-119.md).
+Fuente ce68981, APK público y gateway comprobados. Licencia del teléfono,
+aceptación visual y proveedor externo de respaldos siguen pendientes.
+
 | Tema | Documento | Cuándo se actualiza |
 |---|---|---|
 | Qué es y cómo se corre | [../../README.md](../../README.md) | Cambian comandos, stack o estructura |
