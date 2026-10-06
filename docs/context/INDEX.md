@@ -4,8 +4,12 @@ Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
 **Entrega vigente:** [1.19.0+27 publicada y verificada](sessions/2026-10-06-entrega-119.md).
-Fuente ce68981, APK público y gateway comprobados. Licencia del teléfono,
-aceptación visual y proveedor externo de respaldos siguen pendientes.
+Fuente ce68981, APK público y gateway comprobados. La captura del owner del
+6 oct confirma uso del copiloto en el teléfono; versión instalada no inspeccionada.
+Aceptación visual y proveedor externo de respaldos siguen pendientes.
+**Candidato siguiente:** [acciones de IA y comidas por foto](../ia-oportunidades.md),
+1.20.0+28 en `JuxnD/ia-comidas-foto`. [Pruebas, APK y gates](sessions/2026-10-06-candidato-120-ia.md).
+No sustituye la release publicada.
 
 | Tema | Documento | Cuándo se actualiza |
 |---|---|---|
@@ -26,6 +30,7 @@ aceptación visual y proveedor externo de respaldos siguen pendientes.
 | Decisiones durables | [../adr/](../adr/) | Se toma una decisión difícil de revertir |
 | Fases y pendientes | [../roadmap.md](../roadmap.md) | Entra o sale trabajo del MVP/v2 |
 | Copiloto semanal y activación | [../ia-pendiente.md](../ia-pendiente.md) | Cambia gateway, envío consentido, límites o aceptación |
+| IA en uso diario y comidas por foto | [../ia-oportunidades.md](../ia-oportunidades.md) | Cambia candidato, validación o prioridad de funciones |
 
 ## Hechos que no se deducen del código
 

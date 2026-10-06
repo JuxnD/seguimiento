@@ -6,7 +6,18 @@ import 'package:http/http.dart' as http;
 class AiNote {
   const AiNote(this.kind, this.text, this.quote);
   final String kind, text, quote;
+
+  String get title => switch (kind) {
+        'missing' => 'Dato faltante',
+        'question' => 'Pregunta para revisar',
+        _ => 'Observación',
+      };
+  String get copyText => '$title\n$text\nDel informe: $quote';
 }
+
+String aiReviewText(List<AiNote> notes) =>
+    'Comentarios de IA · Seguimiento\nVerifica la evidencia antes de actuar.\n\n'
+    '${notes.map((n) => n.copyText).join('\n\n')}';
 
 /// El servidor recibe solo el informe elegido, nunca SQLite ni fotos.
 class WeeklyAi {
@@ -64,7 +75,9 @@ class WeeklyAi {
 
   static List<AiNote> parse(String body, String report) {
     final data = jsonDecode(body);
-    if (data is! Map || data['model'] != 'gpt-6-luna' || data['notes'] is! List) {
+    if (data is! Map ||
+        data['model'] != 'gpt-6-luna' ||
+        data['notes'] is! List) {
       throw const FormatException();
     }
     final raw = data['notes'] as List;

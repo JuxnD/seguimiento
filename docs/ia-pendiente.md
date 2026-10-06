@@ -2,7 +2,7 @@
 
 Actualizado el 6 oct 2026. El owner autorizó incluir pendientes en 1.19 y desplegar y activar el gateway de Control360i. Sustituye el estado anterior «aplazada, sin build autorizado».
 
-**Implementado:** cliente en 1.19.0+27 y gateway publicado. Consulta real a GPT-6 Luna verificada con informe ficticio desde Windows y Android. **Pendiente:** licencia del teléfono de uso diario y aceptación de utilidad. La licencia de QA fue desactivada y el servidor confirmó 403; las licencias anteriores permanecen intactas.
+**Implementado:** cliente en 1.19.0+27 y gateway publicado. Consulta real a GPT-6 Luna verificada con informe ficticio desde Windows y Android. La captura del owner del 6 oct confirma comentarios en el teléfono diario; no se inspeccionó su versión instalada. **Pendiente:** aceptación de utilidad. La licencia de QA fue desactivada y el servidor confirmó 403; las licencias anteriores permanecen intactas.
 
 ## Cómo se usa
 
@@ -26,4 +26,21 @@ Servidor conserva contadores y códigos de diagnóstico, sin informes/respuestas
 
 Controles locales de validación, consentimiento, cancelación y errores; 16 controles PHP y ocho HTTP local. S0 publicado devolvió cinco notas coherentes, con todas sus citas verificadas. Android comprobó cifrado/lectura/borrado de licencia y consulta HTTPS al gateway real. Ninguna prueba envió registros personales ni fotos.
 
-Caso: evitar copiar informe al chat. Adoptante: owner que usa la app diariamente. Baseline de tiempo/utilidad sin medir; no se declara ahorro ni ROI. Propuesta de aceptación: dos semanas comparando utilidad/correcciones con el flujo anterior, sin fecha comprometida. Fotos por IA, comidas y escritura autónoma quedan para evaluación posterior. Informe local disponible sin internet.
+Caso: evitar copiar informe al chat. Adoptante: owner que usa la app diariamente. Baseline de tiempo/utilidad sin medir; no se declara ahorro ni ROI. Propuesta de aceptación: dos semanas comparando utilidad/correcciones con el flujo anterior, sin fecha comprometida. Informe local disponible sin internet.
+
+## Candidato 1.20: acciones y foto de comida
+
+Copiar/compartir cada comentario o respuesta completa, conservando citas, y
+selección de texto. La exportación no contiene licencia, HWID ni informe completo.
+
+La comida por foto usa otra pantalla y otro consentimiento: solo imagen elegida,
+reencodificada sin EXIF, resolución/peso acotados y activación. No SQLite,
+historial ni fotos corporales. Endpoint candidato `/seguimiento/comida` con la
+misma autorización/cuota. Propuesta estimada → revisión → borrador → Guardar;
+no se crean registros automáticamente. No conserva imagen ni cambia el backup.
+[Especificación y oportunidades](ia-oportunidades.md), [ADR](adr/0011-comidas-foto-como-borrador-estimado.md).
+
+Estado local candidato; no se declara publicado ni probado con comidas reales.
+La autorización anterior cubrió el gateway semanal y publicación 1.19; activar
+la ruta de fotos y publicar esta actualización requiere confirmar alcance de
+producción conforme al AGENTS.md de Control360i.

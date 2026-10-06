@@ -127,3 +127,16 @@ reporta el porcentaje de kcal de cada una. Ver [informe.md](informe.md).
 Borrar un combo o cambiar un alimento del catálogo **no** altera lo ya
 registrado: cada comida guarda una copia de sus cifras
 ([ADR 0002](adr/0002-snapshot-macros-en-comidas.md)).
+# Registro por foto — candidato 1.20
+
+Nueva comida → **Registrar con foto · IA**. Se puede tomar foto o elegirla de
+galería. La vista previa y consentimiento preceden cada envío. La IA identifica
+alimentos y sugiere porciones/macros aproximados; quitar alimentos y multiplicar
+porciones ajusta el total. **Añadir al borrador** vuelve al formulario habitual:
+tocar un ítem permite corregir cifras, y **Guardar** registra la comida.
+
+El origen queda estimado y las porciones asumidas/incertidumbres se conservan
+en notas. No se crean alimentos del catálogo automáticamente ni se conserva
+la foto. Volver/cancelar no registra nada. Cuota compartida con análisis semanal;
+sin conexión se puede seguir registrando manualmente. Esta función pertenece
+al candidato siguiente, no a la 1.19 publicada.

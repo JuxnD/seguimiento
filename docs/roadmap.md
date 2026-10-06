@@ -33,7 +33,7 @@
 | Pendiente | Por qué importa |
 |---|---|
 | Confirmar contra etiqueta Klim, Nestum y atún | Son de uso diario y hoy están como referencia; el catálogo los marca |
-| Editor del plan sin campos para sostén ni RIR | Se ven, pero solo se editan desde el código; al guardar no se pierden. Agarre/variante y bloque sí se editan |
+| Aceptación del editor y figuras de 1.19 en uso diario | Sostén y RIR ya se editan; falta confirmar comodidad visual con el owner |
 
 ## En curso
 
@@ -64,9 +64,16 @@ Mejoras pedidas tras el primer uso real, en este orden:
   Se conservan los campos de agarre/variante y bloque ya editables; A/B y
   agrupación de superseries se preservan al guardar.
 
+## Próxima actualización — candidato 1.20
+
+Seleccionar/copiar/compartir comentarios con citas y preparar comidas mediante
+foto consentida. Implementación local; publicación, endpoint de fotos y piloto
+pendientes. [Detalle, límites y siguientes oportunidades de IA](ia-oportunidades.md).
+
 ## Fuera de alcance
 
 - Sincronización en la nube o cuentas.
 - Base de datos externa de alimentos.
-- Escritura autónoma por IA o envío de fotos. El copiloto descriptivo del informe
-  entra en1.19; [estado y gates de activación](ia-pendiente.md).
+- Escritura autónoma por IA. El copiloto descriptivo del informe está en 1.19;
+  las fotos de comida entran como borradores revisables en el candidato siguiente.
+  [Estado y gates](ia-pendiente.md).

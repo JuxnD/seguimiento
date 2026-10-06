@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../data/weekly_ai.dart';
 
@@ -22,6 +23,37 @@ class _WeeklyAiScreenState extends State<WeeklyAiScreen> {
   List<AiNote>? _notes;
   int _generation = 0;
   AiActivation get _activation => widget.activation ?? AiActivation();
+
+  Future<void> _copy(String text) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: text));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Copiado con su evidencia.')));
+      }
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('No se pudo copiar. Puedes seleccionar el texto.')));
+      }
+    }
+  }
+
+  Future<void> _share() async {
+    final text = aiReviewText(_notes!);
+    final box = context.findRenderObject() as RenderBox?;
+    try {
+      await Share.share(text,
+          subject: 'Comentarios de IA · Seguimiento',
+          sharePositionOrigin:
+              box == null ? null : box.localToGlobal(Offset.zero) & box.size);
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('No se pudo compartir. Usa Copiar respuesta.')));
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -181,6 +213,16 @@ class _WeeklyAiScreenState extends State<WeeklyAiScreen> {
                 child: Text(_error!)),
           if (_notes != null) ...[
             const Text('Comentarios de IA · verifica la evidencia'),
+            Wrap(spacing: 8, children: [
+              TextButton.icon(
+                  onPressed: () => _copy(aiReviewText(_notes!)),
+                  icon: const Icon(Icons.copy),
+                  label: const Text('Copiar respuesta')),
+              TextButton.icon(
+                  onPressed: _share,
+                  icon: const Icon(Icons.share_outlined),
+                  label: const Text('Compartir respuesta')),
+            ]),
             for (final note in _notes!)
               Card(
                   child: Padding(
@@ -188,14 +230,18 @@ class _WeeklyAiScreenState extends State<WeeklyAiScreen> {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                                switch (note.kind) {
-                                  'missing' => 'Dato faltante',
-                                  'question' => 'Pregunta para revisar',
-                                  _ => 'Observación'
-                                },
-                                style: Theme.of(context).textTheme.titleSmall),
-                            Text(note.text),
+                            Row(children: [
+                              Expanded(
+                                  child: Text(note.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall)),
+                              IconButton(
+                                  tooltip: 'Copiar comentario',
+                                  icon: const Icon(Icons.copy_outlined),
+                                  onPressed: () => _copy(note.copyText)),
+                            ]),
+                            SelectableText(note.text),
                             const SizedBox(height: 8),
                             SelectableText('Del informe: ${note.quote}'),
                           ]))),

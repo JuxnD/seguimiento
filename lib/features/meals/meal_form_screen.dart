@@ -12,14 +12,16 @@ import '../../domain/nutrition.dart';
 import '../../domain/search.dart';
 import '../../ui/widgets.dart';
 import 'foods_screen.dart';
+import 'meal_photo_screen.dart';
 
 class MealFormScreen extends ConsumerStatefulWidget {
-  const MealFormScreen({super.key, required this.draft, this.template});
+  const MealFormScreen({super.key, required this.draft, this.template, this.photoScreenBuilder});
 
   final MealDraft draft;
 
   /// Si viene, se edita este combo en vez de registrar una comida.
   final MealTemplate? template;
+  final MealPhotoScreen Function()? photoScreenBuilder;
 
   @override
   ConsumerState<MealFormScreen> createState() => _MealFormScreenState();
@@ -44,6 +46,16 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       builder: (_) => _FoodPicker(foods: foods, onCreate: _createFood),
     );
     if (item != null) setState(() => d.items.add(item));
+  }
+
+  Future<void> _addPhoto() async {
+    final result = await Navigator.push<PhotoMealSelection>(context,
+        MaterialPageRoute(builder: (_) => widget.photoScreenBuilder?.call() ?? const MealPhotoScreen()));
+    if (!mounted || result == null) return;
+    setState(() {
+      d.items.addAll(result.items);
+      _notes.text = [_notes.text.trim(), result.notes].where((s) => s.isNotEmpty).join('\n\n');
+    });
   }
 
   /// Alta de un alimento sin salir del registro. Devuelve el alimento ya
@@ -314,6 +326,10 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
         padding: const EdgeInsets.only(bottom: 96),
         children: [
           if (widget.template == null) _DayTotals(draft: d),
+          if (widget.template == null)
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: OutlinedButton.icon(onPressed: _addPhoto,
+                icon: const Icon(Icons.add_a_photo_outlined), label: const Text('Registrar con foto · IA'))),
           AppCard(
             children: [
               if (widget.template == null) ...[
