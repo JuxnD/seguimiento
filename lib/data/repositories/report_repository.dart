@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../domain/core_ladders.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/report/report_input.dart';
@@ -235,11 +236,19 @@ class ReportRepository {
       holdExercises: {
         for (final pe in await (db.select(db.planExercises)..where((x) => x.holdSecMin.isNotNull())).get())
           if (names[pe.exerciseId] case final name?) name,
+        // Las escaleras de core (§19.10) no están en el plan guardado.
+        hollowHold,
+        for (final l in coreLadders)
+          for (final s in l.steps)
+            if (s.holdMin != null) s.exercise,
       },
       dataStart: await firstDataDay(db),
       perSideExercises: {
         for (final pe in await (db.select(db.planExercises)..where((x) => x.perSide.equals(true))).get())
           if (names[pe.exerciseId] case final name?) name,
+        for (final l in coreLadders)
+          for (final s in l.steps)
+            if (s.perSide) s.exercise,
       },
       previous: previous,
       notes: notes.length <= 1

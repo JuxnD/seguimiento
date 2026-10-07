@@ -9,7 +9,9 @@ import '../../data/repositories/nutrition_repository.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
+import '../../domain/core_ladders.dart';
 import '../../domain/enums.dart';
+import '../../domain/fitness_test.dart' show TestPart;
 import '../../domain/format.dart';
 import '../../domain/habits.dart';
 import '../../domain/meal_slots.dart';
@@ -22,6 +24,7 @@ import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../body/body_screen.dart' show addWeightDialog;
+import '../body/ladders_screen.dart';
 import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
 import 'morning_check_screen.dart';
@@ -36,6 +39,7 @@ import '../settings/updates_card.dart';
 import '../training/active_session_banner.dart';
 import '../training/football_form_screen.dart';
 import '../training/mobility_screen.dart';
+import '../training/test_mode_screen.dart';
 import '../training/training_screen.dart';
 import '../../ui/theme.dart';
 
@@ -80,6 +84,7 @@ class HomeScreen extends ConsumerWidget {
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
               const _PendingReviewCard(),
+              const _LadderStepUpCard(),
               _YesterdayCheckCard(today: today),
               const _CorrectionsBanner(),
               const TodayCustomRemindersCard(),
@@ -312,6 +317,44 @@ class _StartButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final d = dashboard;
     if (d.trained) return _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref));
+    final test = d.fitnessTest;
+    if (test != null && !test.done) {
+      final torso = test.part == TestPart.torso;
+      Future<void> openTest() => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => TestModeScreen(date: d.date, round: test.round, part: test.part)),
+          );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            torso
+                ? 'Día de test ${test.round}: torso, core y habilidades (~60 min). Sustituye la sesión de tirón.'
+                : 'Test ${test.round} de piernas: 4 pruebas después del FIFA 11+, antes de la sesión.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 8),
+          FilledButton.icon(
+            onPressed: openTest,
+            style: FilledButton.styleFrom(backgroundColor: color, minimumSize: const Size.fromHeight(52)),
+            icon: const Icon(Icons.assignment_turned_in_outlined),
+            label: Text(torso ? 'Empezar test' : 'Empezar pruebas de piernas'),
+          ),
+          const SizedBox(height: 8),
+          if (torso)
+            TextButton(
+              onPressed: () => startGuidedSession(context, ref),
+              child: const Text('Hacer la sesión de tirón en su lugar'),
+            )
+          else
+            OutlinedButton.icon(
+              onPressed: () => startGuidedSession(context, ref),
+              icon: const Icon(Icons.play_arrow),
+              label: Text('Empezar ${d.dayType.label.toLowerCase()}'),
+            ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -442,6 +485,49 @@ class _PlanBCard extends ConsumerWidget {
 /// Sesiones guardadas solas al terminar el cronómetro y todavía sin revisar:
 /// ya cuentan, pero les falta el RPE (§16.9). No se pierden por no tocar un
 /// botón.
+/// Escalera de core con el criterio cumplido (§19.10): se propone subir; lo
+/// confirma el usuario.
+class _LadderStepUpCard extends ConsumerWidget {
+  const _LadderStepUpCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final advice = ref.watch(ladderAdviceProvider).valueOrNull ?? const {};
+    final ready = [
+      for (final l in coreLadders)
+        if (advice[l.id] case final a? when a.canStepUp) (l, a),
+    ];
+    if (ready.isEmpty) return const SizedBox.shrink();
+    return AppCard(
+      title: 'Escaleras de core',
+      trailing: TextButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LaddersScreen())),
+        child: const Text('Ver'),
+      ),
+      children: [
+        for (final (l, a) in ready) ...[
+          Text('${l.name}: ${a.status}'),
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FilledButton.tonal(
+              onPressed: () async {
+                final step = await ref.read(ladderRepositoryProvider).stepUp(l, ref.read(todayProvider));
+                ref.invalidate(ladderAdviceProvider);
+                ref.invalidate(dashboardProvider);
+                if (context.mounted) {
+                  showSnack(context, '${l.name}: peldaño $step, ${l.stepAt(step).exercise}.');
+                }
+              },
+              child: Text('Subir a ${l.stepAt(a.step.step + 1).exercise}'),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
 class _PendingReviewCard extends ConsumerWidget {
   const _PendingReviewCard();
 

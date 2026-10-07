@@ -90,7 +90,7 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   final (deloaded, note) = _v3Adjust(planDay, v3);
   final adjusted = await ref
       .read(trainingRepositoryProvider)
-      .withPlanche(deloaded, day, v3, enabled: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
+      .withV31Blocks(deloaded, day, v3, planche: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
   if (!context.mounted) return;
 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
@@ -379,8 +379,8 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       }
       final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, parseDay(s.date));
       final (deloaded, note) = _v3Adjust(view.day, v3);
-      final adjusted = await ref.read(trainingRepositoryProvider).withPlanche(deloaded, parseDay(s.date), v3,
-          enabled: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
+      final adjusted = await ref.read(trainingRepositoryProvider).withV31Blocks(deloaded, parseDay(s.date), v3,
+          planche: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
       if (!context.mounted) return;
       await _runGuided(
         context,

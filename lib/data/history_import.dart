@@ -4,7 +4,10 @@ import '../domain/dates.dart';
 import '../domain/enums.dart';
 import 'corrections_29sep.dart' show CorrectionState, DataCorrection;
 import 'database.dart';
-import 'seed_plan.dart' show v31KcalFootball, v31KcalWeekday, v31ProteinMax, v31ProteinMin;
+import 'repositories/exercise_repository.dart';
+import 'repositories/plan_repository.dart';
+import 'seed_plan.dart' show planV31, v31KcalFootball, v31KcalWeekday, v31ProteinMax, v31ProteinMin;
+import '../domain/plan_v3.dart' show v31Scheme;
 
 // Traspaso del 7 oct (§16.16, punto 0): el historial anterior a la app y las
 // metas del v3.1 aplicadas ya, sin esperar a activar el plan. Se aplican desde
@@ -170,7 +173,47 @@ final corrections7Oct = <DataCorrection>[
       }
     },
   ),
+  _tuesdayV31,
 ];
+
+/// Versiones v3.1 vigentes (la más nueva de cada fecha) con el martes de
+/// antes del 6 oct (arquero y pies elevados).
+Future<List<PlanVersionRow>> _oldTuesdayV31(AppDatabase db) async {
+  final plan = PlanRepository(db, ExerciseRepository(db));
+  final latest = <String, PlanVersionRow>{};
+  for (final v in await db.select(db.planVersions).get()) {
+    if (latest[v.validFrom] == null || latest[v.validFrom]!.id < v.id) latest[v.validFrom] = v;
+  }
+  final out = <PlanVersionRow>[];
+  for (final v in latest.values.where((v) => v.scheme == v31Scheme)) {
+    final tuesday = (await plan.load(v.id)).days[DateTime.tuesday - 1];
+    if (tuesday.exercises.any((e) => e.name == 'Flexión arquero')) out.add(v);
+  }
+  return out;
+}
+
+/// Si el v3.1 ya se activó, el martes del 6 oct entra con una versión nueva
+/// desde el mismo lunes (a igual fecha gana la más nueva). El resto del plan
+/// queda como estaba.
+final _tuesdayV31 = DataCorrection(
+  id: 'v31-martes-6oct',
+  date: 'mar 6 oct',
+  title: 'Martes del v3.1: flexión a una mano y diamante',
+  change: 'Sale el arquero y las flexiones con pies elevados; entran la flexión a una mano 3 × 3–4 por lado '
+      'y las diamante 3 × 8–12 (§19.1, ajuste del 6 oct).',
+  check: (db) async => (await _oldTuesdayV31(db)).isEmpty ? CorrectionState.done : CorrectionState.pending,
+  apply: (db) async {
+    final plan = PlanRepository(db, ExerciseRepository(db));
+    for (final v in await _oldTuesdayV31(db)) {
+      final draft = await plan.load(v.id);
+      final start = await plan.schemeStart(v);
+      draft.days[DateTime.tuesday - 1].exercises
+        ..clear()
+        ..addAll(planV31(start).days[DateTime.tuesday - 1].exercises);
+      await plan.saveAsNewVersion(draft);
+    }
+  },
+);
 
 /// Primer día con algo registrado (incluido lo importado). null si nada.
 Future<DateTime?> firstDataDay(AppDatabase db) async {

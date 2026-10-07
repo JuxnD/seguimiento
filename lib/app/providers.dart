@@ -20,6 +20,8 @@ import '../data/repositories/body_repository.dart';
 import '../data/repositories/chart_repository.dart';
 import '../data/repositories/dashboard_repository.dart';
 import '../data/repositories/exercise_repository.dart';
+import '../data/repositories/fitness_test_repository.dart';
+import '../data/repositories/ladder_repository.dart';
 import '../data/repositories/nutrition_repository.dart';
 import '../data/repositories/photo_repository.dart';
 import '../data/repositories/plan_repository.dart';
@@ -34,6 +36,7 @@ import '../data/repositories/ai_conversation_repository.dart';
 import '../data/repositories/steps_repository.dart';
 import '../data/repositories/training_repository.dart';
 import '../domain/active_session.dart';
+import '../domain/core_ladders.dart';
 import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/report/period_summary.dart';
@@ -103,6 +106,19 @@ final morningDoneProvider = FutureProvider.family<bool, String>((ref, day) async
 
 /// Habilidades logradas de la hoja de ruta (§19.8): id → fecha.
 final skillsProvider = StreamProvider((ref) => ref.watch(recoveryRepositoryProvider).watchSkills());
+
+/// Escaleras de core (§19.10): peldaño y si toca subir. Se refresca con
+/// `ref.invalidate` al guardar una sesión o cambiar de peldaño.
+final ladderRepositoryProvider = Provider((ref) => LadderRepository(ref.watch(databaseProvider)));
+final ladderAdviceProvider = FutureProvider.autoDispose((ref) async {
+  final repo = ref.watch(ladderRepositoryProvider);
+  final today = ref.watch(todayProvider);
+  return {for (final l in coreLadders) l.id: await repo.advice(l, today)};
+});
+
+/// Test de condición (§19.11).
+final fitnessTestRepositoryProvider = Provider((ref) => FitnessTestRepository(ref.watch(databaseProvider)));
+final fitnessTestsProvider = FutureProvider.autoDispose((ref) => ref.watch(fitnessTestRepositoryProvider).all());
 
 /// Horas en cama anotadas la mañana de ese día (`YYYY-MM-DD`).
 final sleepDayProvider =

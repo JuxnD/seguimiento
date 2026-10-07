@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../domain/dates.dart';
+import '../../domain/fitness_test.dart' show legTests, torsoTests;
 import '../../domain/format.dart';
 import '../../domain/progress.dart';
 import '../../domain/report/period_summary.dart';
@@ -11,6 +12,7 @@ import '../../ui/hero.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
+import '../body/test_results_screen.dart';
 import 'charts.dart';
 
 enum SummaryPeriod { semana, mes, todo }
@@ -172,8 +174,32 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
                   ],
             orElse: () => const <Widget>[],
           ),
+          const _TestsCard(),
         ],
       ),
+    );
+  }
+}
+
+/// Test 1 / 2 / 3 con el % de mejora (§19.11). No depende del periodo.
+class _TestsCard extends ConsumerWidget {
+  const _TestsCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final results = ref.watch(fitnessTestsProvider).valueOrNull ?? const [];
+    if (results.isEmpty) return const SizedBox.shrink();
+    return AppCard(
+      title: 'Test de condición',
+      trailing: TextButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TestResultsScreen())),
+        child: const Text('Dosis'),
+      ),
+      children: [
+        TestTable(results: results, items: torsoTests),
+        const SizedBox(height: 12),
+        TestTable(results: results, items: legTests),
+      ],
     );
   }
 }

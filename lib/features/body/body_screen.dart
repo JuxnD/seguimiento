@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../data/repositories/body_repository.dart';
+import '../../domain/core_ladders.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
@@ -15,7 +16,9 @@ import '../../ui/hero.dart';
 import '../../ui/widgets.dart';
 import 'measurement_form_screen.dart';
 import 'photos_screen.dart';
+import 'ladders_screen.dart';
 import 'skills_screen.dart';
+import 'test_results_screen.dart';
 import '../../ui/theme.dart';
 
 class BodyScreen extends ConsumerWidget {
@@ -51,6 +54,8 @@ class BodyScreen extends ConsumerWidget {
           ),
           _DecisionCard(weights: weights.value ?? const [], checkIns: checkIns.value ?? const []),
           const _SkillsCard(),
+          const _LaddersCard(),
+          const _TestCard(),
           AppCard(
             title: 'Peso',
             trailing: IconButton(
@@ -242,6 +247,52 @@ class _SkillsCard extends ConsumerWidget {
       children: [
         Text('${done.length} de ${skillRoadmap.length} logradas'
             '${next.isEmpty ? '' : ' · próximas: ${next.map((s) => '${s.name} (${s.criterion})').join(', ')}'}'),
+      ],
+    );
+  }
+}
+
+/// Escaleras de core (§19.10): el peldaño de cada una.
+class _LaddersCard extends ConsumerWidget {
+  const _LaddersCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final advice = ref.watch(ladderAdviceProvider).valueOrNull ?? const {};
+    return AppCard(
+      title: 'Escaleras de core',
+      trailing: TextButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LaddersScreen())),
+        child: const Text('Ver'),
+      ),
+      children: [
+        for (final l in coreLadders)
+          if (advice[l.id] case final a?)
+            Text('${l.name}: peldaño ${a.step.step} de ${l.top}, ${a.step.exercise}'
+                '${a.canStepUp ? ' · toca subir' : ''}'),
+      ],
+    );
+  }
+}
+
+/// Test de condición (§19.11): cuántos van y el acceso a la tabla.
+class _TestCard extends ConsumerWidget {
+  const _TestCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final results = ref.watch(fitnessTestsProvider).valueOrNull ?? const [];
+    final rounds = {for (final r in results) r.round}.toList()..sort();
+    return AppCard(
+      title: 'Test de condición',
+      trailing: TextButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TestResultsScreen())),
+        child: const Text('Ver'),
+      ),
+      children: [
+        Text(rounds.isEmpty
+            ? 'Test 1 el lunes de la semana 1 del v3.1 (torso) y el miércoles (piernas).'
+            : 'Hechos: ${rounds.map((r) => 'Test $r').join(', ')}. Tabla comparativa y dosis inicial.'),
       ],
     );
   }

@@ -483,4 +483,105 @@ const exerciseDetails = <String, ExerciseDetail>{
     easier: 'Brazos a los lados o rodillas dobladas.',
     harder: 'Brazos estirados por encima de la cabeza.',
   ),
+  // Escaleras de core (§19.10). Peldaño 1 con la guía v3.1; los siguientes,
+  // con lo mínimo hasta que el usuario llegue a ellos.
+  'Encogimiento inverso': ExerciseDetail(
+    muscles: 'Abdomen bajo, control de la pelvis',
+    steps: [
+      'Boca arriba, brazos a los lados con las palmas en el suelo (o agarrado a la pata de la cama detrás de la cabeza).',
+      'Rodillas dobladas a 90°, justo encima de la cadera.',
+      'Exhala y lleva las rodillas hacia la cara hasta que la cadera despegue del suelo, sin impulso.',
+      'Baja en 3 segundos hasta que la cadera vuelva a tocar el suelo; la zona lumbar no se arquea.',
+    ],
+    mistakes: ['Balancear las piernas para coger impulso.', 'Empujar fuerte con las manos.', 'Dejar caer la cadera de golpe.'],
+    easier: 'Solo lleva las rodillas al pecho sin despegar la cadera.',
+    harder: 'Piernas más estiradas o pausa de 1 s arriba.',
+    note: 'Peldaño 1 del dragon flag. Si la lumbar se arquea o molesta, vuelve un peldaño.',
+  ),
+  'Vela': ExerciseDetail(
+    muscles: 'Abdomen, control de la pelvis',
+    steps: [
+      'Boca arriba, agarrado a la pata de la cama o al marco de una puerta detrás de la cabeza.',
+      'Sube cadera y piernas hasta la vertical; los hombros se quedan en el suelo.',
+      'Aguanta con el cuerpo recto de hombros a pies.',
+    ],
+    mistakes: ['Doblar la cadera (las piernas se van hacia la cara).', 'Apoyar el peso en el cuello.'],
+    note: 'Peldaño 2 del dragon flag. Meta para subir: 3 × 20 s con la cadera vertical.',
+  ),
+  'Negativo de dragon flag recogido': ExerciseDetail(
+    muscles: 'Todo el core, dorsal',
+    steps: [
+      'Sube a la vela con las rodillas recogidas, agarrado detrás de la cabeza.',
+      'Baja en 4 s con la cadera extendida y las rodillas recogidas.',
+      'Solo los hombros tocan el suelo; la lumbar no se arquea.',
+    ],
+    mistakes: ['Doblar la cadera al bajar.', 'Arquear la zona lumbar.'],
+    note: 'Peldaño 3 del dragon flag. Meta: 3 × 5 sin arquear la lumbar.',
+  ),
+  'Negativo de dragon flag a una pierna': ExerciseDetail(
+    muscles: 'Todo el core, dorsal',
+    steps: [
+      'Como el negativo recogido, pero con una pierna estirada y la otra recogida.',
+      'Baja despacio con el cuerpo recto de hombros a cadera.',
+    ],
+    mistakes: ['Doblar la cadera al bajar.', 'Arquear la zona lumbar.'],
+    note: 'Peldaño 4 del dragon flag. Alterna la pierna estirada entre series.',
+  ),
+  'Negativo de dragon flag': ExerciseDetail(
+    muscles: 'Todo el core, dorsal',
+    steps: [
+      'Desde la vela, cuerpo recto de hombros a pies.',
+      'Baja en 5 s como una tabla; solo los hombros tocan el suelo.',
+    ],
+    mistakes: ['Doblar la cadera.', 'Arquear la zona lumbar.'],
+    note: 'Peldaño 5 del dragon flag.',
+  ),
+  'Dragon flag': ExerciseDetail(
+    muscles: 'Todo el core, dorsal',
+    steps: [
+      'Desde la vela, baja como una tabla hasta casi tocar el suelo.',
+      'Sube otra vez sin doblar la cadera.',
+    ],
+    mistakes: ['Doblar la cadera para subir.', 'Arquear la zona lumbar.'],
+    note: 'Peldaño 6 del dragon flag.',
+  ),
+  'Tuck-up': ExerciseDetail(
+    muscles: 'Abdomen completo, flexores de cadera',
+    steps: [
+      'Túmbate en posición hollow: lumbar pegada al suelo, hombros y pies un poco despegados, brazos por encima de la cabeza.',
+      'Exhala y junta pecho y rodillas a la vez, llevando los brazos hacia las espinillas.',
+      'Arriba quedas equilibrado sobre los glúteos, sin apoyar las manos.',
+      'Vuelve despacio a la posición hollow sin que la lumbar se despegue.',
+    ],
+    mistakes: ['Tirar del cuello con la cabeza.', 'Arquear la espalda al volver.', 'Dejarse caer al suelo entre repeticiones.'],
+    easier: 'Brazos a los lados del cuerpo en lugar de por encima de la cabeza.',
+    harder: 'V-up a una pierna (alternando) y después V-up completo.',
+    note: 'Peldaño 1 del V-up.',
+  ),
+  'V-up a una pierna': ExerciseDetail(
+    muscles: 'Abdomen completo, flexores de cadera',
+    steps: [
+      'Desde la posición hollow, sube una pierna estirada y el torso a la vez.',
+      'Toca el pie con las manos y baja despacio a hollow.',
+      'Alterna la pierna en cada repetición.',
+    ],
+    mistakes: ['Doblar la pierna que sube.', 'Arquear la espalda al volver.'],
+    note: 'Peldaño 2 del V-up. Meta: 3 × 8 por lado.',
+  ),
+  'V-up': ExerciseDetail(
+    muscles: 'Abdomen completo, flexores de cadera',
+    steps: [
+      'Desde la posición hollow, sube piernas estiradas y torso a la vez.',
+      'Toca los pies arriba, en V, equilibrado sobre los glúteos.',
+      'Baja despacio a hollow sin que la lumbar se despegue.',
+    ],
+    mistakes: ['Doblar las rodillas.', 'Dejarse caer al suelo entre repeticiones.'],
+    note: 'Peldaño 3 del V-up. Meta: 3 × 12.',
+  ),
+  'V-up con bajada lenta': ExerciseDetail(
+    muscles: 'Abdomen completo, flexores de cadera',
+    steps: ['Como el V-up, pero la bajada dura 3 s.'],
+    mistakes: ['Acelerar al final de la bajada.'],
+    note: 'Peldaño 4 del V-up.',
+  ),
 };

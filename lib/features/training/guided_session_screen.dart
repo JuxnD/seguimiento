@@ -14,6 +14,7 @@ import '../../data/repositories/exercise_repository.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
+import '../../domain/core_ladders.dart';
 import '../../domain/dates.dart';
 import '../../domain/energy.dart';
 import '../../domain/format.dart';
@@ -138,6 +139,34 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   void _setRir(int doneIndex, int? rir) {
     setState(() => _done[doneIndex] = _done[doneIndex].withRir(rir));
     _persist();
+  }
+
+  /// Escaleras con molestia lumbar marcada en esta sesión (una vez basta).
+  final _lumbar = <String>{};
+
+  /// Molestia lumbar en una serie de la escalera (§19.10): baja un peldaño
+  /// desde la próxima sesión y hoy no cuenta como limpia.
+  Future<void> _markLumbar(CoreLadder ladder) async {
+    setState(() => _lumbar.add(ladder.id));
+    final step = await ref.read(ladderRepositoryProvider).lumbar(ladder, widget.date);
+    ref.invalidate(ladderAdviceProvider);
+    if (!mounted) return;
+    showSnack(context, 'Escalera del ${ladder.name}: la próxima sesión va con el peldaño $step '
+        '(${ladder.stepAt(step).exercise}).');
+  }
+
+  Widget? _lumbarChip(String exercise) {
+    final ladder = ladderOf(exercise);
+    if (ladder == null) return null;
+    final marked = _lumbar.contains(ladder.id);
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: ActionChip(
+        avatar: Icon(marked ? Icons.check : Icons.healing_outlined, size: 18),
+        label: Text(marked ? 'Molestia lumbar anotada' : 'Molestia lumbar'),
+        onPressed: marked ? null : () => _markLumbar(ladder),
+      ),
+    );
   }
 
   late int _index = widget.resume?.index ?? 0;
@@ -977,6 +1006,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             value: _done.last.rir,
             onChanged: (v) => _setRir(_done.length - 1, v),
           ),
+        if (prev is WorkStep && _done.isNotEmpty)
+          if (_lumbarChip(prev.exercise) case final chip?) chip,
         const SizedBox(height: 16),
         ProgressRing(
           progress: left,
@@ -1091,6 +1122,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             value: _done.last.rir,
             onChanged: (v) => _setRir(_done.length - 1, v),
           ),
+        if (lastWork != null && _done.isNotEmpty)
+          if (_lumbarChip(lastWork.exercise) case final chip?) chip,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [

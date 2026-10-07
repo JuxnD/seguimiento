@@ -330,9 +330,13 @@ PlanDraft planV31(DateTime start) {
       pino(),
       ex('Fondos en barra', 4, reps: 6, repsMax: 10, rir: 1, rirMax: 2, rest: 120, restMax: 180,
           notes: 'Con mochila cuando salgan 4 × 10.'),
-      ex('Flexión arquero', 3, reps: 4, repsMax: 6, rir: 2, rest: 120, perSide: true,
-          notes: 'Cuando el arquero sea fácil, flexión a una mano con la mano elevada.'),
-      ex('Flexiones con pies elevados', 3, reps: 10, repsMax: 20, rir: 0, rirMax: 2, rest: 90),
+      // Ajuste del 6 oct: ya salen 5 a una mano por lado y más de 15 diamante;
+      // fuera el arquero y los pies elevados. A una mano se retoma conservador.
+      ex('Flexión a una mano', 3, reps: 3, repsMax: 4, rir: 2, rest: 120, perSide: true,
+          notes: 'Semana 1: 3 × 3–4; luego 3 × 4–5. Con 3 × 5 limpias: 3 × 6 → 3 × 6–8 → pies más juntos → '
+              'pies elevados → con mochila.'),
+      ex('Flexiones diamante', 3, reps: 8, repsMax: 12, rir: 1, rirMax: 2, rest: 90,
+          notes: 'Con mochila: +2–3 kg al llegar a 3 × 12.'),
       ex('Extensión de tríceps sobre la cabeza con banda', 3, reps: 12, repsMax: 20, rir: 0, rirMax: 1, rest: 60,
           superset: 'brazos'),
       ex('Curl con banda', 3, reps: 12, repsMax: 20, rir: 0, rirMax: 1, rest: 60, superset: 'brazos'),

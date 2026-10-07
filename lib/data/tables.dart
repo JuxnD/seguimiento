@@ -526,6 +526,9 @@ class LadderStates extends Table {
   IntColumn get step => integer()();
   TextColumn get since => text()();
 
+  /// Último día con molestia lumbar: esa sesión no cuenta como limpia.
+  TextColumn get lumbarOn => text().nullable()();
+
   @override
   Set<Column> get primaryKey => {ladder};
 }

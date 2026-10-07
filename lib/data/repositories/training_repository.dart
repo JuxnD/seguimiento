@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../domain/core_ladders.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
@@ -8,6 +9,7 @@ import '../../domain/session_math.dart';
 import '../database.dart';
 import '../seed_plan.dart' show plancheBlock;
 import 'exercise_repository.dart';
+import 'ladder_repository.dart';
 import 'plan_repository.dart';
 
 class SetDraft {
@@ -480,6 +482,60 @@ class TrainingRepository {
       exercises: [...block, ...day.exercises],
     );
   }
+
+  /// El día con el peldaño actual de la escalera de core (§19.10): dragon
+  /// flag el lunes y V-up el jueves del v3.1. Va antes de lo opcional. En la
+  /// descarga, dos series.
+  Future<PlanDayDraft> withLadder(PlanDayDraft day, DateTime date, V3Day? v3) async {
+    if (v3 == null || !v3.isV31) return day;
+    final ladder = coreLadders.where((l) => l.weekday == date.weekday).firstOrNull;
+    if (ladder == null) return day;
+    final step = (await LadderRepository(db).state(ladder, today: date)).current;
+    final sets = v3.reducedVolume ? 2 : step.sets;
+    final block = [
+      PlanExerciseDraft(
+        name: step.exercise,
+        sets: sets,
+        repsMin: step.repsMin,
+        repsMax: step.repsMax ?? step.repsMin,
+        holdSecMin: step.holdMin,
+        holdSecMax: step.holdMax,
+        restSec: step.rest,
+        restSecMax: step.restMax,
+        rirMin: step.rir,
+        rirMax: step.rir,
+        perSide: step.perSide,
+        block: ladderBlock,
+        notes: 'Peldaño ${step.step} de ${ladder.top} de la escalera del ${ladder.name}.'
+            '${step.notes == null ? '' : ' ${step.notes}'}',
+      ),
+      if (step.hollowSec case final sec?)
+        PlanExerciseDraft(
+          name: hollowHold,
+          sets: sets,
+          holdSecMin: 30,
+          holdSecMax: sec,
+          restSec: 60,
+          block: ladderBlock,
+          notes: 'Lumbar pegada al suelo. Para subir de peldaño: 3 × $sec s.',
+        ),
+    ];
+    final optional = day.exercises.indexWhere((e) => e.block == 'opcional');
+    final at = optional < 0 ? day.exercises.length : optional;
+    return PlanDayDraft(
+      weekday: day.weekday,
+      type: day.type,
+      targetRounds: day.targetRounds,
+      restBetweenRoundsSec: day.restBetweenRoundsSec,
+      notes: day.notes,
+      exercises: [...day.exercises.take(at), ...block, ...day.exercises.skip(at)],
+    );
+  }
+
+  /// Los bloques que el v3.1 agrega al día: planche (si hay paralelas) y la
+  /// escalera de core. Igual para Hoy, para empezar y para retomar.
+  Future<PlanDayDraft> withV31Blocks(PlanDayDraft day, DateTime date, V3Day? v3, {required bool planche}) async =>
+      withLadder(await withPlanche(day, date, v3, enabled: planche), date, v3);
 
   /// Sesiones que se guardaron solas al terminar el cronómetro y aún no se
   /// revisan (falta el RPE). Las más recientes primero.

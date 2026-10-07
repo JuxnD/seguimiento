@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/fitness_test.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
@@ -10,6 +11,7 @@ import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlo
 import '../../domain/steps.dart';
 import '../database.dart';
 import 'exercise_repository.dart';
+import 'fitness_test_repository.dart';
 import 'nutrition_repository.dart';
 import 'plan_repository.dart';
 import 'profile_repository.dart';
@@ -50,7 +52,12 @@ class TodayDashboard {
     this.restingHrWarning,
     this.soreZones = const [],
     this.planB = false,
+    this.fitnessTest,
   });
+
+  /// Test de condición de hoy (§19.11): el lunes sustituye el tirón; el
+  /// miércoles va antes de la sesión de piernas. null si hoy no toca.
+  final ({int round, TestPart part, bool done})? fitnessTest;
 
   final DateTime date;
   final int weekIndex;
@@ -215,7 +222,7 @@ class DashboardRepository {
       mainExercises: view == null ? const [] : _mainLines(view.day, v3),
       blockExercises: view == null || view.day.type == DayType.resistencia
           ? const []
-          : blockLines(await training.withPlanche(view.day, date, v3, enabled: planche)),
+          : blockLines(await training.withV31Blocks(view.day, date, v3, planche: planche)),
       midweekGame: type == DayType.resistencia && (v3?.isV31 ?? false) && await _gameThisWeekBefore(date),
       load: load,
       restingHrWarning: restingHrWarning(await recovery.restingHrRange(date), date),
@@ -239,6 +246,7 @@ class DashboardRepository {
       recordDate: record == null ? null : await _recordDate(record),
       v3: v3,
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
+      fitnessTest: await _fitnessTest(date, v3),
       measurement: measurementDue(
         today: date,
         lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
@@ -247,6 +255,14 @@ class DashboardRepository {
         maxDays: p.measureIntervalMaxDays,
       ),
     );
+  }
+
+  Future<({int round, TestPart part, bool done})?> _fitnessTest(DateTime date, V3Day? v3) async {
+    if (v3 == null || !v3.isV31) return null;
+    final start = addDays(date, -(date.weekday - 1) - (v3.week - 1) * 7);
+    final t = scheduledTest(start, date);
+    if (t == null) return null;
+    return (round: t.round, part: t.part, done: await FitnessTestRepository(db).done(t.round, t.part));
   }
 
   /// La sesión del récord, si el plan de ese día no era de circuito.
