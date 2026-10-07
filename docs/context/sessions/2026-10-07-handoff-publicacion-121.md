@@ -47,3 +47,42 @@ guion permanecen: publicar desde el commit nuevo, descargar el asset público,
 verificar firma/versión e instalar sobre APK público1.20 en QA propia sin
 uninstall intermedio; releer DB/snapshot tras reinicio. Aceptación en el teléfono
 real continúa separada.
+
+
+## Publicación verificada
+
+- Tag anotado v1.21.0 (objeto be24c2b), commit de fuente e3141519ffcb6037de3ec2d5018a2fbee6a82d07.
+- [CI37702312234](https://github.com/JuxnD/seguimiento/actions/runs/37702312234) y
+  [Release37703032657](https://github.com/JuxnD/seguimiento/actions/runs/37703032657): success.
+  Ambos ejecutaron 594 pruebas y omitieron 14 capturas opcionales. Análisis limpio.
+- [APK público](https://github.com/JuxnD/seguimiento/releases/download/v1.21.0/seguimiento-v1.21.0.apk):
+  72.147.050 bytes; SHA256 `7410dca1a6cea9187efbae7e91fde97e199454ab66d998ff2ba58b6e2fc8e3cb`,
+  coincide con digest del asset620132654 en GitHub. versionName1.21.0/code29,
+  minSDK26/target34 y apksigner válido con SHA histórica
+  `6f839c41abf9e17634544a8ae5dff18ca64333b070ef40cd582dbdc9ac133ed7`.
+- APK público1.20 SHAc064bec4... instalado primero; después install-r del APK
+  descargado1.21 sin uninstall entre ambos. Sólo Seguimiento_QA_119/5580,
+  datos de prueba. Se conservaron las29tablas/231filas originales, todas sus
+  columnas,2conversaciones/6mensajes IA y todos los campos/índice39 del snapshot.
+  Relectura tras force-stop/reinicio dio el mismo resultado. El guion completo
+  conserva los40pasos/dosis; Rollout con toalla sigue en serie2/2,de6reps.
+- Después de ese gate se probaron las correcciones con confirmación de UI en
+  otra copia extraída: el perfil tras upgrade seguía160/170; tras «Aplicar» es
+  130/160 y Hoy muestra «de130». Se aplicaron9correcciones QA y hubo respaldo;
+  no atribuir esa copia posterior a la comparación de231filas anterior.
+- Captura del APK confirma el nuevo texto sin recortes y el botón Hecho visible.
+- Evidencia local en `%TEMP%/seguimiento-121-public-upgrade`: publication-receipt.json,
+  upgrade-receipt.json,reopen-receipt.json,DB/snapshots/XML/PNG de cada etapa.
+  Adjunto revisado SHA256 `caae4d32b8ee6c9007b34b12a8efc647e446728537eea94eae51998e37b55b1f`.
+
+Implementación y publicación completas; validación operacional en QA propia.
+Aceptación/actualización del teléfono del owner pendiente. Las ampliaciones
+§16.19–22 permanecen en el roadmap. No hubo despliegue ni consulta nueva al gateway.
+El commit posterior a e314151 sólo registra documentación de esta entrega;
+no cambia el código ni sustituye el tag o el asset verificados.
+
+
+Copia local distribuible sincronizada con el asset público en
+`C:/My Projects/seguimiento-121-ready/release/seguimiento-v1.21.0.apk` (SHA7410dca1).
+La candidata local anterior se conserva como
+`release/seguimiento-v1.21.0-pre-handoff-local.apk` (SHA54a48046).

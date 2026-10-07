@@ -3,27 +3,29 @@
 Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
-**Entrega vigente:** [1.20.0+28 publicada y verificada](sessions/2026-10-06-entrega-120.md).
-Tag v1.20.0/fuente c7972c7, CI y release exitosos. APK público firmado con la
-llave histórica, instalado sobre 1.19 en QA y SQLite17→18 sin perder registros.
-Gateway f107763a verificado con datos ficticios; QA revocada. El owner confirmó que tiene la 1.20 instalada en su teléfono; no se inspeccionó
-el dispositivo. Utilidad y precisión con comidas reales siguen pendientes.
-**Alcance entregado:** [asistente por tareas con revisión](../ia-oportunidades.md),
-integrado en `C:/My Projects/seguimiento-120-release`, rama `JuxnD/120-release`.
-[Improve y alcance autorizado](../../plans/120-improve-audit.md),
-[integración y gates](sessions/2026-10-06-integracion-120.md).
-El candidato inicial de foto queda como [evidencia histórica](sessions/2026-10-06-candidato-120-ia.md).
-La evidencia de [1.19](sessions/2026-10-06-entrega-119.md) se conserva como histórica.
-**Candidato listo para publicar:** [1.21.0+29 verificada](sessions/2026-10-07-lista-121.md) en
-`C:/My Projects/seguimiento-121`, rama `v121/test-y-escaleras`: historial
-importado, Progreso con denominador justo, escaleras de core, test de
-condición y martes del 6 oct. La candidata corregida en
-`C:/My Projects/seguimiento-121-ready`, rama `JuxnD/121-ready`, usa esquema20
-(ver [ADR0013](../adr/0013-test-parcial-y-guion-congelado.md)). APK previo firmado y actualización18→20 comprobados en QA. La revisión del
-[handoff actualizado](sessions/2026-10-07-handoff-publicacion-121.md) corrige las
-metas de proteína y el texto del acumulado; ese APK previo ya no es el artefacto
-final. Publicación y verificación del APK final en curso. §16.17 espera los permisos de
-Innova; §16.18 necesita autorizar un endpoint nuevo del gateway.
+**Entrega vigente:** [1.21.0+29 publicada y verificada](sessions/2026-10-07-handoff-publicacion-121.md).
+Tag v1.21.0/fuente e314151; CI y release exitosos (594 pruebas, análisis limpio).
+APK público firmado con la llave histórica, instalado sobre 1.20 en QA:
+SQLite18→20,29tablas/231registros y conversaciones IA preservados. Sesión
+legada retomada con sus40pasos/dosis y estado conservados tras reinicio.
+
+**Alcance nuevo:** test de condición parcial/reanudable, Progreso con denominador
+justo, escaleras de core y guion congelado; historial importable y correcciones
+revisables. Handoff actualizado: proteína mínimo130/objetivo140–160 y texto de
+acumulado por sesión aclarado. Ajustes exige confirmar las metas; actualizar
+no reescribe el perfil. Ver [ADR0013](../adr/0013-test-parcial-y-guion-congelado.md).
+Checkout preparado/publicado: `C:/My Projects/seguimiento-121-ready`, rama
+`JuxnD/121-ready`. La [preparación](sessions/2026-10-07-lista-121.md) queda como
+antecedente, con APK local histórico distinto al final público.
+
+**Capacidades conservadas de1.20:** [asistente IA por tareas con revisión](../ia-oportunidades.md),
+comidas por foto/texto y respaldo portable con fotos. [Entrega anterior](sessions/2026-10-06-entrega-120.md).
+Gateway f107763a sigue vigente; QA remota revocada y sin nuevo despliegue.
+El owner confirmó1.20 instalada; su teléfono no se inspeccionó ni actualizó.
+Utilidad/precisión con comidas reales y aceptación de figuras siguen pendientes.
+Las ampliaciones §16.19–22 (pasos/sueño, comidaIA, técnica y guía con historial)
+están en [roadmap](../roadmap.md). §16.17 espera permisos/fuentes de Innova;
+§16.18 requiere ampliar el contrato del gateway para la propuesta semanal.
 
 | Tema | Documento | Cuándo se actualiza |
 |---|---|---|

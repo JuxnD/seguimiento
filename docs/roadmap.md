@@ -101,3 +101,14 @@ por sesión. Los apartados nuevos no se declaran entregados:
 | §16.21 Sesión técnica | Plantilla revisable de técnica con RIR 4; comprobar que no cumple la sesión intensa ni altera la regla de carga y que se registra diferenciada. |
 | §16.22 Guía con historial | Mejor/último registro, claves por estado y propuestas basadas en datos importados/registrados; sin inventar RIR ni tratar un único dato como progreso. La aclaración de texto en 1.21 no implementa este motor. |
 | §16.17/18 Reloj y propuesta semanal IA | Persisten pendientes anteriores: verificar fuentes/permisos en teléfono y ampliar contrato del gateway para propuestas versionadas con aceptación por cambio y reversión. |
+
+
+## 1.21.0 — publicada y verificada
+
+Test parcial y por lado, escaleras de core/épocas, guion efectivo congelado,
+historial importable y correcciones revisables; mínimo de proteína actualizado
+y texto de acumulado aclarado. Tag e314151/code29, CI/Release exitosos,
+APK público firmado e instalado sobre1.20 en QA sin pérdida de231registros
+originales; reanudación verificada tras reinicio.
+[Recibo final](context/sessions/2026-10-07-handoff-publicacion-121.md).
+Los nuevos apartados del handoff listados arriba siguen pendientes.

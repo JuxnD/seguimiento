@@ -35,11 +35,12 @@ medida porcentual de corrección general.
 | Evento lumbar → SQLite → snapshot/contexto/época | Cubierta: idempotencia, crash entreBD/JSON, sesiones de época vieja guardadas después excluidas | Evento repetido no vuelve a bajar; día efectivo no cambia al retomar |
 | Crear/editar/borrar series → Drift → consejo visible | Cubierta: consumer vivo true/false/true/false; Android y widget | A6 rojo; mutante readsFrom desconectado:5pasan/1falla exacto |
 | SQLite18/19 → SQLite20 → ZIP → receptor → reapertura | Cubierta: todascolumnas29/31tablas; fuentes/guía/hash/citas IA; negativos de pérdida | Única normalización19: tiempo de mode=test sin medición; tiempos normales preservados |
-| Fuente → APK distribuible → firma/instalación/BD | Cubierta local: release real72,147,082bytes; firma histórica; install-r público20→21;231filas originales exactas | Publicación/CI del tag y aceptación en teléfono pendientes |
+| Fuente → APK distribuible → firma/instalación/BD | Cubierta pública: APK72.147.050bytes/SHA7410dca1; CI/Release del tag e314151, firma histórica, install-r público20→público21,231filas exactas tras reinicio | Aceptación en teléfono pendiente; ver recibo handoff-publicacion-121 |
+| Handoff → metas propuestas → confirmación → perfil/anillo | Cubierta: rojo de metas antiguas; QA APK público conserva160/170 al instalar y cambia130/160 sólo al Aplicar; Hoy de130 | No se reemplaza perfil silenciosamente; objetivo140–160 visible en propuesta |
 | Tabla de resultados → contexto del informe/IA | Declarada: save escribe nombres/lados/calidad y «duración sin medir» en contexto existente | No se hizo consulta remota nueva; gateway no cambia |
 | APK → técnica3D de ejercicios | Declarada: catálogo heredado, suite base de figuras; capturas opcionales omitidas | No se cambiaronfiguras ni se afirmó aceptación visual nueva |
 | Datos reales → utilidad del asistente/foto | Declarada: capacidades de1.20 preservadas; pruebas existentes | Precisión con comidas reales y adopción owner siguen pendientes |
 
-9 de 12 costuras enumeradas con ejecución vigente; 3 declaradas y 0 sin cobertura en
+10 de 13 costuras enumeradas con ejecución vigente; 3 declaradas y 0 sin cobertura en
 este alcance. Variaciones de artefacto/configuración/recorrido invalidan atribuir
 estos resultados a otro paquete: ejecutar los mismos gates de nuevo.
