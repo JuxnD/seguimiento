@@ -36,7 +36,6 @@ import '../data/repositories/ai_conversation_repository.dart';
 import '../data/repositories/steps_repository.dart';
 import '../data/repositories/training_repository.dart';
 import '../domain/active_session.dart';
-import '../domain/core_ladders.dart';
 import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/report/period_summary.dart';
@@ -87,8 +86,8 @@ final bodyRepositoryProvider = Provider((ref) => BodyRepository(ref.watch(databa
 final stepsRepositoryProvider = Provider((ref) => StepsRepository(ref.watch(databaseProvider)));
 final sleepRepositoryProvider = Provider((ref) => SleepRepository(ref.watch(databaseProvider)));
 final aiConversationRepositoryProvider = Provider((ref) => AiConversationRepository(ref.watch(databaseProvider)));
-final aiConversationsProvider = StreamProvider.family((ref, (int, int) page) =>
-    ref.watch(aiConversationRepositoryProvider).watchRecent(limit: page.$1, offset: page.$2));
+final aiConversationsProvider = StreamProvider.family(
+    (ref, (int, int) page) => ref.watch(aiConversationRepositoryProvider).watchRecent(limit: page.$1, offset: page.$2));
 final aiConversationCountProvider = StreamProvider((ref) => ref.watch(aiConversationRepositoryProvider).watchCount());
 final recoveryRepositoryProvider = Provider((ref) => RecoveryRepository(ref.watch(databaseProvider)));
 
@@ -107,13 +106,12 @@ final morningDoneProvider = FutureProvider.family<bool, String>((ref, day) async
 /// Habilidades logradas de la hoja de ruta (§19.8): id → fecha.
 final skillsProvider = StreamProvider((ref) => ref.watch(recoveryRepositoryProvider).watchSkills());
 
-/// Escaleras de core (§19.10): peldaño y si toca subir. Se refresca con
-/// `ref.invalidate` al guardar una sesión o cambiar de peldaño.
+/// Drift observa todas las fuentes del consejo, incluso ediciones/borrados.
 final ladderRepositoryProvider = Provider((ref) => LadderRepository(ref.watch(databaseProvider)));
-final ladderAdviceProvider = FutureProvider.autoDispose((ref) async {
+final ladderAdviceProvider = StreamProvider.autoDispose((ref) {
   final repo = ref.watch(ladderRepositoryProvider);
   final today = ref.watch(todayProvider);
-  return {for (final l in coreLadders) l.id: await repo.advice(l, today)};
+  return repo.watchAdvice(today);
 });
 
 /// Test de condición (§19.11).
@@ -295,9 +293,9 @@ final rescheduleRemindersProvider = Provider<Future<void> Function()>((ref) => c
       }
     }));
 
-
 final profileProvider = StreamProvider((ref) => ref.watch(profileRepositoryProvider).watch());
 final exercisesProvider = StreamProvider((ref) => ref.watch(exerciseRepositoryProvider).watchAll());
+
 /// Una versión del plan completa. Es inmutable: se carga una vez y queda.
 final planDraftProvider = FutureProvider.family<PlanDraft, int>((ref, versionId) {
   ref.watch(databaseGenerationProvider);
@@ -307,12 +305,13 @@ final planVersionsProvider = StreamProvider((ref) => ref.watch(planRepositoryPro
 final sessionsProvider = StreamProvider((ref) => ref.watch(trainingRepositoryProvider).watchRecent());
 final footballProvider = StreamProvider((ref) => ref.watch(trainingRepositoryProvider).watchFootball());
 final foodsProvider = StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchFoods());
-final mealTemplatesProvider =
-    StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchTemplates());
+final mealTemplatesProvider = StreamProvider((ref) => ref.watch(nutritionRepositoryProvider).watchTemplates());
+
 /// Si el día (`YYYY-MM-DD`) se cerró a mano en Comidas.
-final dayClosedProvider =
-    StreamProvider.family<bool, String>((ref, day) => ref.watch(nutritionRepositoryProvider).watchClosed(parseDay(day)));
+final dayClosedProvider = StreamProvider.family<bool, String>(
+    (ref, day) => ref.watch(nutritionRepositoryProvider).watchClosed(parseDay(day)));
 final weightsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchWeights());
+
 /// Peso más reciente (kg) para estimar kcal; null sin pesajes.
 final latestWeightProvider = Provider<double?>((ref) {
   final list = ref.watch(weightsProvider).valueOrNull;
@@ -322,11 +321,11 @@ final firstWeightProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProv
 final checkInsProvider = StreamProvider((ref) => ref.watch(bodyRepositoryProvider).watchCheckIns());
 
 /// La clave es `dayKey` para que la familia compare por valor.
-final mealsForDayProvider = StreamProvider.family(
-    (ref, String day) => ref.watch(nutritionRepositoryProvider).watchDay(parseDay(day)));
+final mealsForDayProvider =
+    StreamProvider.family((ref, String day) => ref.watch(nutritionRepositoryProvider).watchDay(parseDay(day)));
 
-final planDayProvider = StreamProvider.family(
-    (ref, String day) => ref.watch(planRepositoryProvider).watchDayFor(parseDay(day)));
+final planDayProvider =
+    StreamProvider.family((ref, String day) => ref.watch(planRepositoryProvider).watchDayFor(parseDay(day)));
 
 final weekNoteProvider =
     StreamProvider.family((ref, int week) => ref.watch(profileRepositoryProvider).watchWeekNote(week));
@@ -367,48 +366,43 @@ final periodSummaryProvider = FutureProvider.family<PeriodSummary, (String, Stri
 });
 
 /// Stream auxiliar: hace que el informe reaccione a cambios de comidas.
-final mealsRangeRefreshProvider = StreamProvider.family(
-    (ref, (String, String) range) => ref
-        .watch(nutritionRepositoryProvider)
-        .watchRange(parseDay(range.$1), parseDay(range.$2))
-        .map((meals) => jsonEncode([
-              for (final meal in meals)
-                {
-                  'id': meal.meal.id,
-                  'date': meal.meal.date,
-                  'time': meal.meal.time,
-                  'slot': meal.meal.slot.name,
-                  'notes': meal.meal.notes,
-                  'items': [
-                    for (final item in meal.items)
-                      {
-                        'id': item.id,
-                        'food_id': item.foodId,
-                        'label': item.label,
-                        'quantity': item.quantity,
-                        'quantity_unit': item.quantityUnit,
-                        'kcal': item.kcal,
-                        'protein': item.protein,
-                        'carbs': item.carbs,
-                        'fat': item.fat,
-                        'source_verified': item.sourceVerified,
-                      }
-                  ],
-                }
-            ])));
+final mealsRangeRefreshProvider = StreamProvider.family((ref, (String, String) range) => ref
+    .watch(nutritionRepositoryProvider)
+    .watchRange(parseDay(range.$1), parseDay(range.$2))
+    .map((meals) => jsonEncode([
+          for (final meal in meals)
+            {
+              'id': meal.meal.id,
+              'date': meal.meal.date,
+              'time': meal.meal.time,
+              'slot': meal.meal.slot.name,
+              'notes': meal.meal.notes,
+              'items': [
+                for (final item in meal.items)
+                  {
+                    'id': item.id,
+                    'food_id': item.foodId,
+                    'label': item.label,
+                    'quantity': item.quantity,
+                    'quantity_unit': item.quantityUnit,
+                    'kcal': item.kcal,
+                    'protein': item.protein,
+                    'carbs': item.carbs,
+                    'fat': item.fat,
+                    'source_verified': item.sourceVerified,
+                  }
+              ],
+            }
+        ])));
 
 /// Días cerrados a mano en un rango: cerrar o reabrir uno cambia promedios y
 /// alertas del informe.
-final closedDaysRangeProvider = StreamProvider.family(
-    (ref, (String, String) range) => ref
-        .watch(nutritionRepositoryProvider)
-        .watchClosedRange(parseDay(range.$1), parseDay(range.$2)));
+final closedDaysRangeProvider = StreamProvider.family((ref, (String, String) range) =>
+    ref.watch(nutritionRepositoryProvider).watchClosedRange(parseDay(range.$1), parseDay(range.$2)));
 
 /// Cambios del rango informado y del rango anterior que se compara.
-final sleepRangeRefreshProvider = StreamProvider.family(
-    (ref, (String, String) range) => ref
-        .watch(sleepRepositoryProvider)
-        .watchRange(parseDay(range.$1), parseDay(range.$2)));
+final sleepRangeRefreshProvider = StreamProvider.family((ref, (String, String) range) =>
+    ref.watch(sleepRepositoryProvider).watchRange(parseDay(range.$1), parseDay(range.$2)));
 
 /// Versión instalada, leída del propio paquete.
 final appVersionProvider = FutureProvider<String>((ref) async {

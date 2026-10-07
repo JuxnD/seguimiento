@@ -145,7 +145,8 @@ class TodayDashboard {
   bool get trained => sessionsToday > 0 || (footballToday != null && !dayType.isTraining);
   double get proteinProgress => goalProgress(macros.protein, proteinMin);
   double get kcalProgress => goalProgress(macros.kcal, kcalTarget);
-  double get stepsProgress => stepsGoal == null ? ((stepsToday ?? 0) > 0 ? 1 : 0) : goalProgress(stepsToday ?? 0, stepsGoal!);
+  double get stepsProgress =>
+      stepsGoal == null ? ((stepsToday ?? 0) > 0 ? 1 : 0) : goalProgress(stepsToday ?? 0, stepsGoal!);
   double get roundsProgress => goalProgress(roundsDone ?? 0, targetRounds ?? 0);
 }
 
@@ -173,14 +174,15 @@ class DashboardRepository {
     final training = TrainingRepository(db, ExerciseRepository(db));
     final v3 = await training.blockDay(view, date);
     // El viernes del v3.1 deja de ser circuito cuando ya salieron 10 limpias.
-    final type = v3 != null && v3.isV31 && v3.resistance != null
-        ? DayType.resistencia
-        : view?.day.type ?? DayType.descanso;
+    final type =
+        v3 != null && v3.isV31 && v3.resistance != null ? DayType.resistencia : view?.day.type ?? DayType.descanso;
     final proposal = type == DayType.progresion ? await training.progressionProposal(date) : null;
 
-    final sessions = await (db.select(db.sessions)
-          ..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions))
-        .get();
+    final sessions =
+        await (db.select(db.sessions)..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions)).get();
+    final test = await _fitnessTest(date, v3);
+    final planSessions = sessions.where((s) => s.mode != 'test').toList();
+    final torsoComplete = date.weekday == DateTime.monday && test?.part == TestPart.torso && test!.done;
     final meals = await nutrition.range(date, date);
     final football = await _lastGame(date);
     final yesterday = await _lastGame(addDays(date, -1));
@@ -194,14 +196,14 @@ class DashboardRepository {
 
     // Carga de la última semana: sesiones (RPE × min) y partidos.
     final weekAgo = dayKey(addDays(date, -7));
-    final recentSessions = await (db.select(db.sessions)
-          ..where((t) => t.date.isBiggerOrEqualValue(weekAgo) & db.trainingSessions))
-        .get();
+    final recentSessions =
+        await (db.select(db.sessions)..where((t) => t.date.isBiggerOrEqualValue(weekAgo) & db.trainingSessions)).get();
     final recentGames = await (db.select(db.footballGames)..where((t) => t.date.isBiggerOrEqualValue(weekAgo))).get();
     final load = loadReading([
-      for (final s in recentSessions)
+      for (final s in recentSessions.where((s) => s.mode != 'test'))
         LoadItem(date: parseDay(s.date), minutes: (s.totalSec - s.warmupSec - s.cooldownSec) ~/ 60, effort: s.rpe),
-      for (final g in recentGames) LoadItem(date: parseDay(g.date), minutes: g.minutes, effort: g.intensity, isFootball: true),
+      for (final g in recentGames)
+        LoadItem(date: parseDay(g.date), minutes: g.minutes, effort: g.intensity, isFootball: true),
     ], date);
     final recovery = RecoveryRepository(db);
     final soreness = await recovery.sorenessRange(date);
@@ -227,11 +229,11 @@ class DashboardRepository {
       load: load,
       restingHrWarning: restingHrWarning(await recovery.restingHrRange(date), date),
       soreZones: persistentSoreness(soreness, date),
-      planB: sessions.isEmpty && suggestPlanB(dayHasLegs: dayHasLegs, load: load, soreness: soreness, today: date),
+      planB: planSessions.isEmpty && suggestPlanB(dayHasLegs: dayHasLegs, load: load, soreness: soreness, today: date),
       targetRounds: proposal?.rounds ?? view?.day.targetRounds,
       proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
-      sessionsToday: sessions.length,
+      sessionsToday: planSessions.length + (torsoComplete ? 1 : 0),
       footballToday: football,
       hardFootballYesterday: yesterday != null && isHardGame(yesterday) ? yesterday : null,
       streak: await _streak(date),
@@ -239,14 +241,15 @@ class DashboardRepository {
       proteinMin: p.proteinMin,
       proteinMax: p.proteinMax,
       kcalTarget: dailyKcalTarget(day: date, weekdayTarget: p.kcalTarget, footballTarget: p.kcalTargetFootball),
-      stepsToday: (await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(date)))).getSingleOrNull())?.steps,
+      stepsToday:
+          (await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(date)))).getSingleOrNull())?.steps,
       stepsGoal: stepsGoalFor(date, p.stepsTarget),
       roundsRecord: record,
       recordSuspect: record == null ? null : await _recordSuspect(record),
       recordDate: record == null ? null : await _recordDate(record),
       v3: v3,
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
-      fitnessTest: await _fitnessTest(date, v3),
+      fitnessTest: test,
       measurement: measurementDue(
         today: date,
         lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
@@ -271,7 +274,10 @@ class DashboardRepository {
   static List<String> _mainLines(PlanDayDraft day, V3Day? v3) {
     final resistance = day.type == DayType.resistencia || (v3 != null && v3.isV31 && v3.resistance != null);
     if (resistance && v3?.resistance == ResistanceMode.tabata) {
-      return [for (final e in day.exercises) if (e.block == tabataBlock) '${e.name} 8 × 20 s a tope'];
+      return [
+        for (final e in day.exercises)
+          if (e.block == tabataBlock) '${e.name} 8 × 20 s a tope'
+      ];
     }
     if (resistance && v3?.resistance == ResistanceMode.cindy) {
       return ['20 min: ${day.main.map((e) => '${e.repsMin ?? ''} ${e.name.toLowerCase()}'.trim()).join(' + ')}'];

@@ -48,6 +48,7 @@ const databaseFileName = 'seguimiento.sqlite';
   AiMessages,
   FitnessTests,
   LadderStates,
+  LadderEvents,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -55,7 +56,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 19;
+  int get schemaVersion => 20;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -214,6 +215,19 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(fitnessTests);
             await m.createTable(ladderStates);
           }
+          if (from < 20) {
+            // Desde 18 createTable usa la definición actual (incluye la
+            // frontera); una candidata 19 necesita añadirla explícitamente.
+            if (from >= 19) await m.addColumn(ladderStates, ladderStates.sessionsAfter);
+            if (from >= 19) await m.addColumn(ladderStates, ladderStates.epoch);
+            await m.addColumn(sessions, sessions.coreEpochs);
+            await m.createTable(ladderEvents);
+            // La candidata19 midió pantalla abierta como trabajo; no hubo
+            // cronómetro de esfuerzo. Conservar resultados, quitar duración
+            // inferida para no producir energía ficticia.
+            await customStatement(
+                "UPDATE sessions SET total_sec=0, warmup_sec=0, cooldown_sec=0, rest_sec=0 WHERE mode='test'");
+          }
           if (from < 16) {
             // Guías del catálogo con todas las columnas ya creadas: las de
             // antes del 8 y las del v3.1 (dominadas con carga, ejercicios
@@ -262,4 +276,3 @@ Future<AppDatabase> openAppDatabase() async {
 
 /// Para pruebas.
 AppDatabase openInMemoryDatabase() => AppDatabase(NativeDatabase.memory());
-

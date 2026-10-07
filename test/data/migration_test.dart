@@ -86,8 +86,18 @@ void main() {
   Future<void> buildOldSchema(int version, {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    if (version >= 20) {
+      await rows?.call(db);
+      await db.close();
+      return;
+    }
+    await db.customStatement('alter table sessions drop column core_epochs');
+    await db.customStatement('alter table ladder_states drop column sessions_after');
+    await db.customStatement('alter table ladder_states drop column epoch');
+    await db.customStatement('drop table ladder_events');
     if (version >= 19) {
       await rows?.call(db);
+      await db.customStatement('pragma user_version = $version');
       await db.close();
       return;
     }
@@ -259,13 +269,17 @@ void main() {
     frozen.copySync(file.path);
     final raw = sqlite.sqlite3.open(file.path);
     expect(raw.select('pragma user_version').single.values.first, 17);
-    expect(raw.select("select name from sqlite_master where type='table' and name in ('ai_conversations', 'ai_messages')"), isEmpty);
+    expect(
+        raw.select("select name from sqlite_master where type='table' and name in ('ai_conversations', 'ai_messages')"),
+        isEmpty);
     raw.dispose();
 
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await userVersion(migrated), 19);
     expect((await BodyRepository(migrated).watchWeights().first).map((row) => row.kg), [70]);
-    final meal = await migrated.customSelect('select m.date, i.label, i.kcal from meals m join meal_items i on i.meal_id = m.id').getSingle();
+    final meal = await migrated
+        .customSelect('select m.date, i.label, i.kcal from meals m join meal_items i on i.meal_id = m.id')
+        .getSingle();
     expect(meal.data, {'date': '2026-09-29', 'label': 'Dato sintético', 'kcal': 350});
     expect(await migrated.select(migrated.aiConversations).get(), isEmpty);
     await migrated.close();
@@ -476,13 +490,20 @@ void main() {
           protein: 13,
           defaultQuantity: const Value(100)));
       final combo = await db.into(db.mealTemplates).insert(MealTemplatesCompanion.insert(name: 'Huevos con pan'));
-      await db.into(db.mealTemplateItems)
+      await db
+          .into(db.mealTemplateItems)
           .insert(MealTemplateItemsCompanion.insert(templateId: combo, foodId: panId, quantity: 2));
-      await db.into(db.mealTemplateItems)
+      await db
+          .into(db.mealTemplateItems)
           .insert(MealTemplateItemsCompanion.insert(templateId: combo, foodId: mipan60, quantity: 1));
       final meal = await db.into(db.meals).insert(MealsCompanion.insert(date: '2026-09-28', slot: MealSlot.desayuno));
       await db.into(db.mealItems).insert(MealItemsCompanion.insert(
-          mealId: meal, foodId: Value(panId), label: 'Pan (unidad)', quantity: const Value(1), kcal: 140, protein: 4.5));
+          mealId: meal,
+          foodId: Value(panId),
+          label: 'Pan (unidad)',
+          quantity: const Value(1),
+          kcal: 140,
+          protein: 4.5));
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
@@ -519,7 +540,8 @@ void main() {
   test('una base del esquema 14 llega al 19: plan y sesiones listos para el v3', () async {
     await buildOldSchema(14, rows: (db) async {
       await db.customStatement("insert into plan_versions (valid_from) values ('2026-09-28')");
-      await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-02', 'progresion', 1332)");
+      await db
+          .customStatement("insert into sessions (date, type, total_sec) values ('2026-10-02', 'progresion', 1332)");
     });
     final migrated = AppDatabase(NativeDatabase(file));
     final version = await migrated.select(migrated.planVersions).getSingle();
@@ -534,7 +556,8 @@ void main() {
     await buildOldSchema(15, rows: (db) async {
       await db.customStatement("insert into exercises (name) values ('Dominadas')");
       await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-05', 'bloques', 1800)");
-      await db.customStatement('insert into session_sets (session_id, exercise_id, set_index, reps) values (1, 1, 1, 8)');
+      await db
+          .customStatement('insert into session_sets (session_id, exercise_id, set_index, reps) values (1, 1, 1, 8)');
       await db.customStatement("insert into football_games (date, minutes) values ('2026-10-04', 90)");
     });
     final migrated = AppDatabase(NativeDatabase(file));
@@ -561,26 +584,35 @@ void main() {
     expect((w.kg, w.fasted, w.moment, w.time), (80.5, false, null, null), reason: 'el momento se deduce de fasted');
     final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Desayuno típico');
     expect(food.eggsPerUnit, isNull);
-    await migrated.into(migrated.morningChecks).insert(MorningChecksCompanion.insert(date: '2026-10-06', restingHr: const Value(58)));
-    await migrated.into(migrated.sorenessLogs).insert(SorenessLogsCompanion.insert(date: '2026-10-06', zone: 'Isquios', level: 4));
-    await migrated.into(migrated.skillAchievements).insert(SkillAchievementsCompanion.insert(skill: 'l_sit', date: '2026-12-11'));
+    await migrated
+        .into(migrated.morningChecks)
+        .insert(MorningChecksCompanion.insert(date: '2026-10-06', restingHr: const Value(58)));
+    await migrated
+        .into(migrated.sorenessLogs)
+        .insert(SorenessLogsCompanion.insert(date: '2026-10-06', zone: 'Isquios', level: 4));
+    await migrated
+        .into(migrated.skillAchievements)
+        .insert(SkillAchievementsCompanion.insert(skill: 'l_sit', date: '2026-12-11'));
     expect(await userVersion(migrated), 19);
     await migrated.close();
   });
 
   test('una base del esquema 18 llega al 19: historial importado, tests y escaleras', () async {
     await buildOldSchema(18, rows: (db) async {
-      await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-05', 'circuitoLigero', 1500)");
+      await db.customStatement(
+          "insert into sessions (date, type, total_sec) values ('2026-10-05', 'circuitoLigero', 1500)");
       await db.customStatement("insert into football_games (date, minutes) values ('2026-10-04', 90)");
     });
     final migrated = AppDatabase(NativeDatabase(file));
     expect((await migrated.select(migrated.sessions).getSingle()).imported, isFalse,
         reason: 'lo registrado en la app no queda como importado');
     expect((await migrated.select(migrated.footballGames).getSingle()).imported, isFalse);
-    await migrated.into(migrated.fitnessTests).insert(
-        FitnessTestsCompanion.insert(date: '2026-10-12', round: 1, item: 'pullups', value: 12));
-    await migrated.into(migrated.ladderStates).insert(
-        LadderStatesCompanion.insert(ladder: 'dragon_flag', step: 1, since: '2026-10-12'));
+    await migrated
+        .into(migrated.fitnessTests)
+        .insert(FitnessTestsCompanion.insert(date: '2026-10-12', round: 1, item: 'pullups', value: 12));
+    await migrated
+        .into(migrated.ladderStates)
+        .insert(LadderStatesCompanion.insert(ladder: 'dragon_flag', step: 1, since: '2026-10-12'));
     expect(await userVersion(migrated), 19);
     await migrated.close();
   });

@@ -25,7 +25,9 @@ class TestModeScreen extends ConsumerStatefulWidget {
 
 class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   late final _items = widget.part == TestPart.torso ? torsoTests : legTests;
-  final _startedAt = clock.now();
+  bool _loaded = false;
+  bool _changed = false;
+  final _errors = <String, String>{};
 
   /// Campo por prueba y lado ('' sin lado).
   final _fields = <String, TextEditingController>{};
@@ -38,12 +40,41 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   String _key(TestItem t, String side) => '${t.id}|$side';
   List<String> _sides(TestItem t) => t.perSide ? const ['I', 'D'] : const [''];
 
-  TextEditingController _field(TestItem t, String side) =>
-      _fields.putIfAbsent(_key(t, side), () => TextEditingController()..addListener(() => setState(() {})));
+  TextEditingController _field(TestItem t, String side) => _fields.putIfAbsent(
+      _key(t, side),
+      () => TextEditingController()
+        ..addListener(() => setState(() {
+              _changed = true;
+            })));
 
   double? _value(TestItem t, String side) => double.tryParse(_field(t, side).text.trim().replaceAll(',', '.'));
 
   bool get _hasAny => _fields.values.any((c) => c.text.trim().isNotEmpty);
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final rows = await ref.read(fitnessTestRepositoryProvider).all();
+    if (!mounted) return;
+    for (final t in _items) {
+      for (final side in _sides(t)) {
+        final r = rows.where((r) => r.round == widget.round && r.item == t.id && (r.side ?? '') == side).firstOrNull;
+        final c = _field(t, side);
+        if (r != null) {
+          c.text = r.value.toString();
+          if (!r.clean) _doubtful.add(_key(t, side));
+        }
+      }
+    }
+    setState(() {
+      _loaded = true;
+      _changed = false;
+    });
+  }
 
   void _startRest() {
     _ticker?.cancel();
@@ -77,6 +108,18 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   }
 
   Future<void> _save() async {
+    _errors.clear();
+    for (final t in _items) {
+      for (final side in _sides(t)) {
+        if (_field(t, side).text.trim().isEmpty) continue;
+        final error = testResultError(t, _value(t, side));
+        if (error != null) _errors[_key(t, side)] = error;
+      }
+    }
+    if (_errors.isNotEmpty) {
+      setState(() {});
+      return;
+    }
     final results = <TestResult>[
       for (final t in _items)
         for (final side in _sides(t))
@@ -86,7 +129,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
               item: t.id,
               side: side.isEmpty ? null : side,
               value: v,
-              clean: !_doubtful.contains(t.id),
+              clean: !_doubtful.contains(_key(t, side)),
             ),
     ];
     if (results.isEmpty) return;
@@ -98,7 +141,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
             round: widget.round,
             part: widget.part,
             results: results,
-            totalSec: clock.now().difference(_startedAt).inSeconds,
+            totalSec: 0,
           ),
     );
     if (!mounted) return;
@@ -111,7 +154,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   }
 
   Future<bool> _confirmLeave() async {
-    if (!_hasAny) return true;
+    if (!_changed) return true;
     final leave = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
@@ -133,35 +176,41 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     final rest = _restEndsAt?.difference(clock.now());
     final torso = widget.part == TestPart.torso;
     return PopScope(
-      canPop: !_hasAny,
+      canPop: !_changed,
       onPopInvoked: (didPop) async {
         if (didPop) return;
         if (await _confirmLeave() && context.mounted) Navigator.pop(context);
       },
       child: Scaffold(
         appBar: AppBar(title: Text('Test ${widget.round} · ${torso ? 'torso y core' : 'piernas'}')),
-        body: ListView(
-          padding: const EdgeInsets.only(bottom: 120),
-          children: [
-            AppCard(
-              children: [
-                Text(
-                  torso
-                      ? 'Antes de empezar: calentamiento de 10 min. Sustituye la sesión de tirón de hoy.'
-                      : 'Después del FIFA 11+ y antes de la sesión de piernas.',
-                  style: text.bodyMedium,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Cada prueba es una sola serie máxima con técnica estricta: se corta en la primera repetición fea, '
-                  'nunca al fallo total. 3 min de descanso entre pruebas.',
-                  style: text.bodySmall,
-                ),
-              ],
-            ),
-            for (final (i, t) in _items.indexed) _itemCard(context, i + 1, t, previous),
-          ],
-        ),
+        body: !_loaded
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: const EdgeInsets.only(bottom: 120),
+                children: [
+                  AppCard(
+                    children: [
+                      Text(
+                        torso
+                            ? (widget.date.weekday == DateTime.monday
+                                ? 'Antes de empezar: calentamiento de 10 min. El test completo sustituye la sesión de tirón.'
+                                : 'Test de torso y core. La Cindy del viernes sigue pendiente.')
+                            : 'Después del FIFA 11+ y antes de la sesión de piernas.',
+                        style: text.bodyMedium,
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                          'Puedes guardar un test parcial y continuarlo después. 0 indica un intento sin repeticiones; vacío queda pendiente. El tiempo de esta pantalla no se registra como trabajo.'),
+                      Text(
+                        'Cada prueba es una sola serie máxima con técnica estricta: se corta en la primera repetición fea, '
+                        'nunca al fallo total. 3 min de descanso entre pruebas.',
+                        style: text.bodySmall,
+                      ),
+                    ],
+                  ),
+                  for (final (i, t) in _items.indexed) _itemCard(context, i + 1, t, previous),
+                ],
+              ),
         bottomNavigationBar: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 6, 12, 8),
@@ -183,7 +232,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: _hasAny && !_saving ? _save : null,
+                    onPressed: _loaded && _hasAny && !_saving ? _save : null,
                     icon: const Icon(Icons.check),
                     label: const Text('Guardar test'),
                   ),
@@ -223,10 +272,13 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
             for (final side in _sides(t)) ...[
               Expanded(
                 child: TextField(
+                  key: ValueKey('test-value-${t.id}-$side'),
                   controller: _field(t, side),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(
-                    labelText: side.isEmpty ? t.unit.short : '${side == 'I' ? 'Izquierda' : 'Derecha'} (${t.unit.short})',
+                    labelText:
+                        side.isEmpty ? t.unit.short : '${side == 'I' ? 'Izquierda' : 'Derecha'} (${t.unit.short})',
+                    errorText: _errors[_key(t, side)],
                     border: const OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -240,16 +292,24 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
         Wrap(
           spacing: 6,
           children: [
-            ChoiceChip(
-              label: const Text('Limpia'),
-              selected: !_doubtful.contains(t.id),
-              onSelected: (_) => setState(() => _doubtful.remove(t.id)),
-            ),
-            ChoiceChip(
-              label: const Text('Con dudas'),
-              selected: _doubtful.contains(t.id),
-              onSelected: (_) => setState(() => _doubtful.add(t.id)),
-            ),
+            for (final side in _sides(t)) ...[
+              ChoiceChip(
+                label: Text('${side.isEmpty ? '' : '$side · '}Limpia'),
+                selected: !_doubtful.contains(_key(t, side)),
+                onSelected: (_) => setState(() {
+                  _changed = true;
+                  _doubtful.remove(_key(t, side));
+                }),
+              ),
+              ChoiceChip(
+                label: Text('${side.isEmpty ? '' : '$side · '}Con dudas'),
+                selected: _doubtful.contains(_key(t, side)),
+                onSelected: (_) => setState(() {
+                  _changed = true;
+                  _doubtful.add(_key(t, side));
+                }),
+              ),
+            ],
           ],
         ),
       ],

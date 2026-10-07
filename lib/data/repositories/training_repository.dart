@@ -67,6 +67,7 @@ class SessionDraft {
     this.mode,
     this.extraReps,
     this.imported = false,
+    this.coreEpochs,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
     List<int>? roundRestSec,
@@ -115,6 +116,7 @@ class SessionDraft {
 
   /// Del historial anterior a la app (§16.16): editar la conserva.
   bool imported;
+  String? coreEpochs;
 
   /// En orden de ejecución; el índice de serie se calcula por ejercicio.
   final List<SetDraft> sets;
@@ -130,8 +132,7 @@ class SessionDraft {
   List<int>? get roundWorkSec => roundWork(roundMarksSec, roundRestSec);
 
   /// Trabajo neto: sin calentamiento, enfriamiento ni descansos.
-  int get netSec =>
-      circuitNetSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec, restSec: restSec);
+  int get netSec => circuitNetSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec, restSec: restSec);
 
   /// Tiempo de circuito con descansos: sobre esto se miden las vueltas.
   int get spanSec => circuitSpanSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec);
@@ -165,8 +166,9 @@ class TrainingRepository {
         OrderingTerm(expression: db.sessions.startTime, mode: OrderingMode.desc),
       ])
       ..limit(limit);
-    return q.watch().map((rows) =>
-        rows.map((r) => SessionSummary(r.readTable(db.sessions), r.read(splitCount) ?? 0)).toList());
+    return q
+        .watch()
+        .map((rows) => rows.map((r) => SessionSummary(r.readTable(db.sessions), r.read(splitCount) ?? 0)).toList());
   }
 
   Future<int> save(SessionDraft d) => db.transaction(() async {
@@ -198,6 +200,7 @@ class TrainingRepository {
           mode: Value(d.mode),
           extraReps: Value(d.extraReps),
           imported: Value(d.imported),
+          coreEpochs: Value(d.coreEpochs),
         );
         final int id;
         if (d.id == null) {
@@ -277,6 +280,7 @@ class TrainingRepository {
       mode: r.mode,
       extraReps: r.extraReps,
       imported: r.imported,
+      coreEpochs: r.coreEpochs,
       sets: [
         for (final s in sets)
           SetDraft(
@@ -439,7 +443,8 @@ class TrainingRepository {
           .get();
       if (sets.isEmpty) continue;
       return [
-        for (final s in sets) SetDraft(exercise: exercise, reps: s.reps, loadKg: s.loadKg, variant: s.variant, rir: s.rir),
+        for (final s in sets)
+          SetDraft(exercise: exercise, reps: s.reps, loadKg: s.loadKg, variant: s.variant, rir: s.rir),
       ];
     }
     return const [];
@@ -458,7 +463,10 @@ class TrainingRepository {
         .get();
     if (last.isEmpty) return false;
     final sessionId = last.first.readTable(db.sessions).id;
-    final sets = [for (final r in last) if (r.readTable(db.sessions).id == sessionId) r.readTable(db.sessionSets)];
+    final sets = [
+      for (final r in last)
+        if (r.readTable(db.sessions).id == sessionId) r.readTable(db.sessionSets)
+    ];
     return sets.where((s) => s.reps >= 30).length >= 3;
   }
 
@@ -490,7 +498,8 @@ class TrainingRepository {
     if (v3 == null || !v3.isV31) return day;
     final ladder = coreLadders.where((l) => l.weekday == date.weekday).firstOrNull;
     if (ladder == null) return day;
-    final step = (await LadderRepository(db).state(ladder, today: date)).current;
+    final state = await LadderRepository(db).state(ladder, today: date);
+    final step = state.current;
     final sets = v3.reducedVolume ? 2 : step.sets;
     final block = [
       PlanExerciseDraft(
@@ -529,6 +538,7 @@ class TrainingRepository {
       restBetweenRoundsSec: day.restBetweenRoundsSec,
       notes: day.notes,
       exercises: [...day.exercises.take(at), ...block, ...day.exercises.skip(at)],
+      coreEpochs: {...day.coreEpochs, ladder.id: state.identity},
     );
   }
 

@@ -63,6 +63,17 @@ const testRestSec = 180;
 
 enum TestPart { torso, piernas }
 
+enum TestStatus { pending, partial, complete }
+
+List<TestItem> itemsFor(TestPart part) => part == TestPart.torso ? torsoTests : legTests;
+
+String? testResultError(TestItem item, double? value) {
+  if (value == null || !value.isFinite) return 'Escribe un número finito';
+  if (value < 0) return 'El valor no puede ser negativo';
+  if (item.unit == TestUnit.reps && value != value.roundToDouble()) return 'Las repeticiones deben ser enteras';
+  return null;
+}
+
 /// Qué parte del test toca `date` en el v3.1 que empezó el lunes `start`, y
 /// cuál (1, 2 o 3). null si ese día no hay test.
 ({int round, TestPart part})? scheduledTest(DateTime start, DateTime date) {
@@ -94,7 +105,15 @@ class TestResult {
 /// Lo que cuenta de una prueba en un test: la suma no, el lado más débil
 /// (marca el trabajo); sin lados, el valor.
 double? testValue(List<TestResult> results, int round, String item) {
-  final xs = results.where((r) => r.round == round && r.item == item).map((r) => r.value).toList();
+  final definition = testItem(item);
+  if (definition == null) return null;
+  final rows =
+      results.where((r) => r.round == round && r.item == item && testResultError(definition, r.value) == null).toList();
+  if (testItem(item)?.perSide == true && (!rows.any((r) => r.side == 'I') || !rows.any((r) => r.side == 'D')))
+    return null;
+  if (rows.length != (definition.perSide ? 2 : 1)) return null;
+  if (rows.any((r) => definition.perSide ? r.side != 'I' && r.side != 'D' : r.side != null)) return null;
+  final xs = rows.map((r) => r.value).toList();
   if (xs.isEmpty) return null;
   return xs.reduce((a, b) => a < b ? a : b);
 }
@@ -106,7 +125,7 @@ double? improvement(double? first, double? later) =>
 /// Dosis inicial (§19.11): reps, el tope del rango al 70–75 % del máximo;
 /// isométricos, series del 50–60 % del máximo. null en el salto.
 String? initialDose(TestItem item, double max) {
-  if (item.unit == TestUnit.cm || max <= 0) return null;
+  if (item.unit == TestUnit.cm || !max.isFinite || max <= 0) return null;
   if (item.isHold) {
     final lo = (max * .5).round();
     final hi = (max * .6).round();
@@ -118,5 +137,6 @@ String? initialDose(TestItem item, double max) {
   return lo == hi || lo < 1 ? 'Tope del rango: $hi reps' : 'Tope del rango: $lo–$hi reps';
 }
 
-String formatTestValue(TestItem item, double v) =>
-    '${v == v.roundToDouble() ? v.toInt() : v.toStringAsFixed(1)} ${item.unit.short}';
+String formatTestValue(TestItem item, double v) => !v.isFinite || v < 0
+    ? 'Inválido'
+    : '${v == v.roundToDouble() ? v.toInt() : v.toStringAsFixed(1)} ${item.unit.short}';

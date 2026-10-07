@@ -90,7 +90,9 @@ class BodyScreen extends ConsumerWidget {
                                 final ok =
                                     await guarded(context, () => repo.deleteWeight(w.id), failure: 'No se pudo borrar');
                                 if (ok && context.mounted) {
-                                  showUndoSnack(context, 'Pesaje borrado',
+                                  showUndoSnack(
+                                      context,
+                                      'Pesaje borrado',
                                       () => repo.addWeight(parseDay(w.date), w.kg,
                                           moment: weighMomentOf(w.moment, fasted: w.fasted), time: w.time));
                                 }
@@ -156,9 +158,8 @@ class BodyScreen extends ConsumerWidget {
     );
   }
 
-  String _summary(MeasurementCheckIn c, LengthUnit unit) => c.valuesCm.entries
-      .map((e) => '${e.key.shortLabel} ${fmtDec(fromCm(e.value, unit))}')
-      .join(' · ');
+  String _summary(MeasurementCheckIn c, LengthUnit unit) =>
+      c.valuesCm.entries.map((e) => '${e.key.shortLabel} ${fmtDec(fromCm(e.value, unit))}').join(' · ');
 
   Future<void> _openMeasurement(BuildContext context, WidgetRef ref, MeasurementCheckIn? existing) =>
       Navigator.push(context, MaterialPageRoute(builder: (_) => MeasurementFormScreen(existing: existing)));
@@ -180,7 +181,9 @@ Future<void> addWeightDialog(BuildContext context, WidgetRef ref, {DateTime? dat
     () => ref
         .read(bodyRepositoryProvider)
         .addWeight(result.$1, result.$2, moment: result.$3, time: timeKey(now.hour, now.minute)),
-    ok: result.$3 == WeighMoment.ayunas ? 'Peso en ayunas guardado' : 'Peso guardado como referencia (${result.$3.label.toLowerCase()})',
+    ok: result.$3 == WeighMoment.ayunas
+        ? 'Peso en ayunas guardado'
+        : 'Peso guardado como referencia (${result.$3.label.toLowerCase()})',
   );
   ref.invalidate(dashboardProvider);
 }
@@ -223,8 +226,10 @@ class _DecisionCard extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 6),
-        Text('Compara el promedio semanal en ayunas con el de 2 semanas antes. Si caen las repeticiones, '
-            'también se suben 150–200 kcal.', style: text.bodySmall),
+        Text(
+            'Compara el promedio semanal en ayunas con el de 2 semanas antes. Si caen las repeticiones, '
+            'también se suben 150–200 kcal.',
+            style: text.bodySmall),
       ],
     );
   }
@@ -292,7 +297,7 @@ class _TestCard extends ConsumerWidget {
       children: [
         Text(rounds.isEmpty
             ? 'Test 1 el lunes de la semana 1 del v3.1 (torso) y el miércoles (piernas).'
-            : 'Hechos: ${rounds.map((r) => 'Test $r').join(', ')}. Tabla comparativa y dosis inicial.'),
+            : 'Resultados registrados: ${rounds.map((r) => 'Test $r').join(', ')}. Abre la tabla para continuar o editar; un registro parcial no completa el test.'),
       ],
     );
   }
@@ -332,7 +337,8 @@ class _WeightDialogState extends State<_WeightDialog> {
             runSpacing: 4,
             children: [
               for (final m in WeighMoment.values)
-                ChoiceChip(label: Text(m.label), selected: _moment == m, onSelected: (_) => setState(() => _moment = m)),
+                ChoiceChip(
+                    label: Text(m.label), selected: _moment == m, onSelected: (_) => setState(() => _moment = m)),
             ],
           ),
           const SizedBox(height: 6),
@@ -404,7 +410,8 @@ class _BodyHero extends StatelessWidget {
               'Promedio de la semana del ${formatShort(week.monday)} '
                   '(${week.count} ${week.count == 1 ? 'pesaje' : 'pesajes'})',
               if (prevWeek != null) '${fmtDelta(week.kg - prevWeek.kg)} kg vs la anterior',
-              if (delta != null && prevWeek == null) '${fmtDelta(delta)} kg desde ${formatShort(parseDay(first!.date))}',
+              if (delta != null && prevWeek == null)
+                '${fmtDelta(delta)} kg desde ${formatShort(parseDay(first!.date))}',
             ].join(' · '),
       icon: Icons.accessibility_new,
       pills: [

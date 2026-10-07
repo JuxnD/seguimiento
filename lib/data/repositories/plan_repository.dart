@@ -118,6 +118,7 @@ class PlanDayDraft {
     this.restBetweenRoundsSec,
     this.notes,
     List<PlanExerciseDraft>? exercises,
+    this.coreEpochs = const {},
   }) : exercises = exercises ?? [];
 
   final int weekday;
@@ -126,6 +127,7 @@ class PlanDayDraft {
   int? restBetweenRoundsSec;
   String? notes;
   final List<PlanExerciseDraft> exercises;
+  final Map<String, String> coreEpochs;
 
   /// Trabajo principal del día (sin los bloques extra).
   List<PlanExerciseDraft> get main => exercises.where((e) => e.block == null).toList();
@@ -153,9 +155,7 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
         name: e.name,
         sets: e.sets == null || e.sets! < 3 ? e.sets : e.sets! - 1,
         repsMin: e.repsMin,
-        repsMax: e.repsMin == null || e.repsMax == null || e.repsMax! - e.repsMin! <= 2
-            ? e.repsMax
-            : e.repsMin! + 2,
+        repsMax: e.repsMin == null || e.repsMax == null || e.repsMax! - e.repsMin! <= 2 ? e.repsMax : e.repsMin! + 2,
         restSec: e.restSec,
         restSecMax: e.restSecMax,
         grip: e.grip,
@@ -179,6 +179,7 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
     targetRounds: day.targetRounds == null ? null : (day.targetRounds! > 1 ? day.targetRounds! - 1 : 1),
     restBetweenRoundsSec: day.restBetweenRoundsSec,
     notes: day.notes,
+    coreEpochs: day.coreEpochs,
     exercises: [
       for (final e in day.exercises)
         if (circuit && e.block == null) e else lighter(e),
@@ -433,8 +434,7 @@ class PlanRepository {
   }
 
   /// Cambia cuando cambia cualquier versión; útil para refrescar "Hoy".
-  Stream<PlanDayView?> watchDayFor(DateTime date) =>
-      db.select(db.planVersions).watch().asyncMap((_) => dayFor(date));
+  Stream<PlanDayView?> watchDayFor(DateTime date) => db.select(db.planVersions).watch().asyncMap((_) => dayFor(date));
 }
 
 String? _blankToNull(String? s) => (s == null || s.trim().isEmpty) ? null : s.trim();

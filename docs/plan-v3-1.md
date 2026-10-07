@@ -184,13 +184,16 @@ tiempo quedan incompletos (desde la 1.16.0).
   desde el tuck-up). Las dos empiezan en el peldaño 1 el lunes del v3.1.
 - `TrainingRepository.withLadder` mete el peldaño actual en el bloque
   `escalera`, antes de lo opcional; el peldaño 1 lleva el hollow del criterio
-  (3 × 40 s el lunes, 3 × 30 s el jueves). En descarga, 2 series. Hoy, empezar
-  y retomar usan `withV31Blocks` (planche + escalera), así el guion no cambia.
+  (3 × 40 s el lunes, 3 × 30 s el jueves). En descarga, 2 series. Hoy y empezar usan `withV31Blocks` (planche + escalera). Retomar usa el día
+  efectivo congelado en el snapshot; una bajada o edición no cambia esa sesión.
 - Subir: el criterio en **2 sesiones seguidas** y **14 días** en el peldaño.
   Hoy y Cuerpo lo proponen; sube el usuario. Lo importado no cuenta.
 - **Molestia lumbar**: chip en el descanso de una serie de la escalera (y en
   Cuerpo → Escaleras). Baja un peldaño, reinicia los 14 días y esa sesión no
-  cuenta como limpia (`ladder_states.lumbar_on`).
+  cuenta como limpia. El evento persiste por identidad de sesión para no duplicar
+  bajadas al reabrir. Cada cambio abre una época nueva: una guía vieja guardada
+  después no cuenta para el peldaño nuevo. El consejo se actualiza al crear, editar
+  o borrar series; la subida revalida el criterio dentro de una transacción.
 - Cuerpo → Escaleras permite elegir el peldaño a mano (p. ej. tras el test).
 
 ## Test de condición (1.21.0, §19.11)
@@ -203,10 +206,16 @@ tiempo quedan incompletos (desde la 1.16.0).
   - Test 2: lunes y miércoles de la descarga (semana 6, 16 y 18 nov);
   - Test 3: miércoles de la semana 9 (piernas) y el viernes de pruebas
     (torso, 11 dic).
-- Hoy muestra "Empezar test" ese día. **Modo test**: un campo por prueba (por
-  lado si toca), limpia / con dudas, cronómetro de 3 min. Guardar crea una
-  sesión `otro` con `mode = 'test'`: el día cuenta como entrenado.
-- Por lado cuenta el lado más débil. Tu progreso y Cuerpo → Test muestran
+- Hoy y Cuerpo → Test permiten abrir, continuar y editar conservando la fecha
+  original. **Modo test**: campo y calidad por lado, descanso de 3 min. Vacío
+  queda pendiente, 0 es un intento válido. Completo requiere todos los ítems y
+  ambos lados; guardar parcial mantiene acceso. Una sesión `otro`/`test` cuenta
+  como actividad para la racha, pero sólo torso **completo en lunes** sustituye
+  tirón. Piernas deja su sesión pendiente; el Test 3 de torso no sustituye Cindy.
+  El tiempo de esta pantalla no mide esfuerzo: duración 0, sin estimación de kcal.
+  Los resultados/lados/calidad se incluyen en el contexto del informe.
+- Por lado cuenta el más débil sólo si se midieron I y D; parcial no produce
+  mejora ni dosis bilateral. Tu progreso y Cuerpo → Test muestran
   T1 / T2 / T3 con el % de mejora contra el Test 1 y la dosis inicial:
   - reps, el tope del rango al 70–75 % del máximo;
   - aguantes, series del 50–60 %.

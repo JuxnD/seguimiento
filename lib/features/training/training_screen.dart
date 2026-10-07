@@ -8,6 +8,7 @@ import '../../data/database.dart';
 import '../../data/local_flags.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
+import '../../data/guided_plan_snapshot.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
@@ -88,17 +89,15 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
     return;
   }
   final (deloaded, note) = _v3Adjust(planDay, v3);
-  final adjusted = await ref
-      .read(trainingRepositoryProvider)
-      .withV31Blocks(deloaded, day, v3, planche: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
+  final adjusted = await ref.read(trainingRepositoryProvider).withV31Blocks(deloaded, day, v3,
+      planche: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
   if (!context.mounted) return;
 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
   final variants = adjusted.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
   // El día de progresión propone la meta según la regla; no la sube solo.
-  final proposal = planDay.type == DayType.progresion
-      ? await ref.read(trainingRepositoryProvider).progressionProposal(day)
-      : null;
+  final proposal =
+      planDay.type == DayType.progresion ? await ref.read(trainingRepositoryProvider).progressionProposal(day) : null;
   if (!context.mounted) return;
   final suggestLight = light ?? await ref.read(dashboardRepositoryProvider).hardGameBefore(day);
   if (!context.mounted) return;
@@ -195,7 +194,10 @@ Future<void> _startResistance(
     case ResistanceMode.cindy:
       await _runTimer(context, ref, date: day, mode: 'cindy', cindyTest: cindyTest && mode == suggested);
     case ResistanceMode.tabata:
-      final names = [for (final e in view.day.exercises) if (e.block == tabataBlock) e.name];
+      final names = [
+        for (final e in view.day.exercises)
+          if (e.block == tabataBlock) e.name
+      ];
       await _runTimer(context, ref, date: day, mode: 'tabata', exercises: names.isEmpty ? tabataExercises : names);
     case ResistanceMode.porTiempo:
       await _runGuided(
@@ -385,8 +387,9 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       await _runGuided(
         context,
         GuidedSessionScreen(
-          day: s.light ? lightVersion(adjusted) : adjusted,
-          note: note,
+          day: s.effectiveDay == null ? (s.light ? lightVersion(adjusted) : adjusted) : thawGuidedDay(s.effectiveDay!),
+          note: s.effectiveDay == null ? note : s.note,
+          mode: s.mode,
           date: parseDay(s.date),
           planDayId: s.planDayId,
           sessionType: s.sessionType,
@@ -400,7 +403,9 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       await _runCounter(context, date: parseDay(s.date), outOfPlan: s.outOfPlan, resume: s);
     case final TimerSnapshot s:
       final date = parseDay(s.date);
-      final v3 = await ref.read(trainingRepositoryProvider).blockDay(await ref.read(planRepositoryProvider).dayFor(date), date);
+      final v3 = await ref
+          .read(trainingRepositoryProvider)
+          .blockDay(await ref.read(planRepositoryProvider).dayFor(date), date);
       if (!context.mounted) return;
       await _runTimer(context, ref,
           date: date,
@@ -722,7 +727,8 @@ Future<void> _runCounter(BuildContext context,
 
 /// true si se guardó (o se borró) la sesión; null si se salió sin guardar.
 Future<bool?> openSessionForm(BuildContext context, SessionDraft draft, {bool celebrate = true}) =>
-    Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
+    Navigator.push<bool>(
+        context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
 
 class TrainingScreen extends ConsumerWidget {
   const TrainingScreen({super.key});

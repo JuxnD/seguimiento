@@ -5,6 +5,7 @@ import '../../app/providers.dart';
 import '../../domain/fitness_test.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
+import '../training/test_mode_screen.dart';
 
 /// Test 1 / Test 2 / Test 3 con el % de mejora (§19.11) y la dosis inicial
 /// que sale del último test.
@@ -28,6 +29,24 @@ class TestResultsScreen extends ConsumerWidget {
                     'del 11 dic. Por lado cuenta el más débil. Lo marcado "con dudas" lleva *.'),
               ],
             ),
+            AppCard(title: 'Abrir o continuar', children: [
+              Wrap(spacing: 8, children: [
+                for (final round in [1, 2, 3])
+                  for (final part in TestPart.values)
+                    OutlinedButton(
+                        onPressed: () async {
+                          final date = await ref.read(fitnessTestRepositoryProvider).dateFor(round, part);
+                          if (!context.mounted) return;
+                          if (date == null) {
+                            showSnack(context, 'Activa el plan v3.1 para programar los tests.');
+                            return;
+                          }
+                          await Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => TestModeScreen(date: date, round: round, part: part)));
+                        },
+                        child: Text('T$round ${part == TestPart.torso ? 'torso' : 'piernas'}')),
+              ]),
+            ]),
             if (r.isEmpty)
               const AppCard(children: [Text('Aún no hay resultados: el Test 1 es el lunes de la semana 1.')])
             else ...[
@@ -62,12 +81,20 @@ class TestTable extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     String cell(TestItem t, int round) {
       final v = testValue(results, round, t.id);
-      if (v == null) return '—';
+      if (v == null) {
+        final partial = results.where((r) => r.round == round && r.item == t.id);
+        return partial.isEmpty
+            ? '—'
+            : '${partial.map((r) => '${r.side}: ${formatTestValue(t, r.value)}${r.clean ? '' : '*'}').join('\n')}\nParcial';
+      }
       final doubtful = results.any((r) => r.round == round && r.item == t.id && !r.clean);
       return '${formatTestValue(t, v)}${doubtful ? '*' : ''}';
     }
 
-    final rows = [for (final t in items) if (results.any((r) => r.item == t.id)) t];
+    final rows = [
+      for (final t in items)
+        if (results.any((r) => r.item == t.id)) t
+    ];
     if (rows.isEmpty) return Text('Sin resultados todavía.', style: text.bodySmall);
     return Table(
       columnWidths: const {0: FlexColumnWidth(2.4)},

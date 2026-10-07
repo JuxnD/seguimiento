@@ -144,3 +144,20 @@ es ZIP, y hace rollback si algo falla. El detalle está en
 
 Un respaldo con `user_version` mayor que el `schemaVersion` de la app se
 rechaza: es de una versión más nueva y restaurarlo rompería los datos.
+
+## Esquema 20 (candidata 1.21.0+29)
+
+- `sessions.core_epochs`: JSON de las épocas de escalera efectivamente usadas;
+  se conserva al editar. `ladder_states.epoch` y `sessions_after` separan cambios
+  incluso con sesiones del mismo día o guías antiguas guardadas después.
+- `ladder_events`: identidad de incidente y escalera, fecha y peldaño resultante;
+  la repetición del evento no vuelve a bajar. Una sesión guiada identifica el
+  incidente por su inicio durable; en Cuerpo el incidente manual es por día.
+- 18→20 conserva historial local de IA y datos previos. 19→20 conserva resultados
+  y escaleras y pone a 0 los tiempos de sesiones `mode=test`, que en la candidata
+  19 eran tiempo con la pantalla abierta sin medición de esfuerzo. Los tiempos de
+  entrenamientos normales se conservan. Oráculos independientes:
+  `test/data/schema18_121_migration_test.dart` y `schema19_121_migration_test.dart`.
+- La validación del repositorio rechaza antes de escribir valores no finitos,
+  negativos, reps decimales, lados/ítems/rondas incoherentes y claves duplicadas.
+  Los datos heredados inválidos no rompen el formateador ni alimentan dosis.

@@ -156,8 +156,7 @@ class Sessions extends Table {
   /// true si las rondas salieron de la estimación por tiempo.
   BoolColumn get roundsEstimated => boolean().withDefault(const Constant(false))();
   IntColumn get rpe => integer().nullable().check(rpe.isBetweenValues(1, 10))();
-  IntColumn get limitingExerciseId =>
-      integer().nullable().references(Exercises, #id, onDelete: KeyAction.setNull)();
+  IntColumn get limitingExerciseId => integer().nullable().references(Exercises, #id, onDelete: KeyAction.setNull)();
   TextColumn get context => text().nullable()();
   TextColumn get notes => text().nullable()();
 
@@ -190,6 +189,9 @@ class Sessions extends Table {
   /// Viene del historial anterior a la app (§16.16): cuenta para totales,
   /// rachas y días entrenados, no para récords ni medias.
   BoolColumn get imported => boolean().withDefault(const Constant(false))();
+
+  /// Identidad de los peldaños realmente usados, JSON id → step:epoch.
+  TextColumn get coreEpochs => text().nullable()();
 }
 
 /// Marcas del contador: segundos desde el inicio del circuito al cerrar cada ronda.
@@ -529,8 +531,21 @@ class LadderStates extends Table {
   /// Último día con molestia lumbar: esa sesión no cuenta como limpia.
   TextColumn get lumbarOn => text().nullable()();
 
+  /// Sesiones anteriores al cambio (incluidas las del mismo día) no cuentan.
+  IntColumn get sessionsAfter => integer().withDefault(const Constant(0))();
+  IntColumn get epoch => integer().withDefault(const Constant(0))();
+
   @override
   Set<Column> get primaryKey => {ladder};
+}
+
+class LadderEvents extends Table {
+  TextColumn get eventKey => text()();
+  TextColumn get ladder => text()();
+  TextColumn get date => text()();
+  IntColumn get step => integer()();
+  @override
+  Set<Column> get primaryKey => {eventKey, ladder};
 }
 
 /// Notas libres por semana (índice anclado a la fecha de inicio).
@@ -567,8 +582,7 @@ class AiConversations extends Table {
 @DataClassName('AiMessageRow')
 class AiMessages extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get conversationId =>
-      integer().references(AiConversations, #id, onDelete: KeyAction.cascade)();
+  IntColumn get conversationId => integer().references(AiConversations, #id, onDelete: KeyAction.cascade)();
   TextColumn get role => text()();
   TextColumn get messageText => text()();
   TextColumn get citationsJson => text()();

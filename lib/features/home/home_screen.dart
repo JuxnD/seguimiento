@@ -134,9 +134,7 @@ class _PlanHero extends StatelessWidget {
               runSpacing: 6,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Text(
-                    '${weekdayLong(dashboard.date.weekday)} ${formatShort(dashboard.date)}'
-                        .toUpperCase(),
+                Text('${weekdayLong(dashboard.date.weekday)} ${formatShort(dashboard.date)}'.toUpperCase(),
                     style: text.labelSmall?.copyWith(letterSpacing: 1)),
                 _Chip(
                   icon: Icons.local_fire_department,
@@ -145,9 +143,7 @@ class _PlanHero extends StatelessWidget {
                       : '${dashboard.streak} ${dashboard.streak == 1 ? 'día' : 'días'}',
                   color: dashboard.streak >= 3 ? style.color : null,
                 ),
-                _Chip(
-                    icon: Icons.calendar_today_outlined,
-                    label: 'Sem ${dashboard.weekIndex}'),
+                _Chip(icon: Icons.calendar_today_outlined, label: 'Sem ${dashboard.weekIndex}'),
               ],
             ),
             const SizedBox(height: 12),
@@ -175,16 +171,12 @@ class _PlanHero extends StatelessWidget {
                         ),
                       ),
                       if (dashboard.targetRounds != null)
-                        Text('Meta: ${dashboard.targetRounds} rondas',
-                            style: text.titleSmall),
-                      if (dashboard.planVersion != null)
-                        Text('Plan v${dashboard.planVersion}',
-                            style: text.bodySmall),
+                        Text('Meta: ${dashboard.targetRounds} rondas', style: text.titleSmall),
+                      if (dashboard.planVersion != null) Text('Plan v${dashboard.planVersion}', style: text.bodySmall),
                     ],
                   ),
                 ),
-                if (dashboard.trained)
-                  Icon(Icons.check_circle, color: style.color, size: 28),
+                if (dashboard.trained) Icon(Icons.check_circle, color: style.color, size: 28),
               ],
             ),
             // Lo de todos los días, a la vista: con el v3.1 el día tiene 8–12
@@ -193,8 +185,7 @@ class _PlanHero extends StatelessWidget {
               const SizedBox(height: 14),
               _StartButtons(dashboard: dashboard, color: style.color),
             ],
-            if (dashboard.hardFootballYesterday case final game?
-                when dashboard.dayType.isTraining)
+            if (dashboard.hardFootballYesterday case final game? when dashboard.dayType.isTraining)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
@@ -204,15 +195,12 @@ class _PlanHero extends StatelessWidget {
                 ),
               ),
             if (dashboard.proposal case final p? when !dashboard.trained)
-              _ProposalLine(
-                  proposal: p, date: dashboard.date, color: style.color),
-            if (dashboard.v3 case final v3?)
-              _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
+              _ProposalLine(proposal: p, date: dashboard.date, color: style.color),
+            if (dashboard.v3 case final v3?) _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
             if (dashboard.restingHrWarning case final hr?)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text(hr,
-                    style: text.bodyMedium?.copyWith(color: style.color)),
+                child: Text(hr, style: text.bodyMedium?.copyWith(color: style.color)),
               ),
             if (dashboard.soreZones.isNotEmpty)
               Padding(
@@ -225,11 +213,9 @@ class _PlanHero extends StatelessWidget {
             if (dashboard.dayType == DayType.descanso)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text('Día de descanso. La racha no se rompe.',
-                    style: text.bodyMedium),
+                child: Text('Día de descanso. La racha no se rompe.', style: text.bodyMedium),
               ),
-            if (dashboard.mainExercises.isNotEmpty ||
-                dashboard.blockExercises.isNotEmpty)
+            if (dashboard.mainExercises.isNotEmpty || dashboard.blockExercises.isNotEmpty)
               _RoutineDetails(dashboard: dashboard),
           ],
         ),
@@ -258,15 +244,13 @@ class _RoutineDetails extends StatelessWidget {
             for (final e in d.mainExercises)
               Padding(
                 padding: const EdgeInsets.only(bottom: 2),
-                child:
-                    Text('• $e', style: Theme.of(context).textTheme.bodyMedium),
+                child: Text('• $e', style: Theme.of(context).textTheme.bodyMedium),
               ),
           ],
           if (d.blockExercises.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
-              d.blockExercises.any((l) => l.contains(' A:')) &&
-                      d.blockExercises.any((l) => l.contains(' B:'))
+              d.blockExercises.any((l) => l.contains(' A:')) && d.blockExercises.any((l) => l.contains(' B:'))
                   ? 'Además (A y B se alternan por semana):'
                   : 'Además:',
               style: Theme.of(context).textTheme.labelLarge,
@@ -274,8 +258,7 @@ class _RoutineDetails extends StatelessWidget {
             for (final line in d.blockExercises)
               Padding(
                 padding: const EdgeInsets.only(bottom: 2),
-                child: Text('• $line',
-                    style: Theme.of(context).textTheme.bodyMedium),
+                child: Text('• $line', style: Theme.of(context).textTheme.bodyMedium),
               ),
           ],
         ]),
@@ -316,9 +299,10 @@ class _StartButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final d = dashboard;
-    if (d.trained) return _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref));
     final test = d.fitnessTest;
-    if (test != null && !test.done) {
+    if (d.trained && test == null)
+      return _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref));
+    if (test != null) {
       final torso = test.part == TestPart.torso;
       Future<void> openTest() => Navigator.push(
             context,
@@ -329,7 +313,9 @@ class _StartButtons extends ConsumerWidget {
         children: [
           Text(
             torso
-                ? 'Día de test ${test.round}: torso, core y habilidades (~60 min). Sustituye la sesión de tirón.'
+                ? (d.date.weekday == DateTime.monday
+                    ? 'Día de test ${test.round}: torso, core y habilidades. Completo sustituye tirón.'
+                    : 'Test ${test.round} de torso y core. La Cindy de hoy sigue pendiente.')
                 : 'Test ${test.round} de piernas: 4 pruebas después del FIFA 11+, antes de la sesión.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -338,10 +324,12 @@ class _StartButtons extends ConsumerWidget {
             onPressed: openTest,
             style: FilledButton.styleFrom(backgroundColor: color, minimumSize: const Size.fromHeight(52)),
             icon: const Icon(Icons.assignment_turned_in_outlined),
-            label: Text(torso ? 'Empezar test' : 'Empezar pruebas de piernas'),
+            label: Text(test.done ? 'Revisar o editar test' : 'Abrir o continuar test'),
           ),
           const SizedBox(height: 8),
-          if (torso)
+          if (d.trained)
+            _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref))
+          else if (torso && d.date.weekday == DateTime.monday)
             TextButton(
               onPressed: () => startGuidedSession(context, ref),
               child: const Text('Hacer la sesión de tirón en su lugar'),
@@ -468,8 +456,10 @@ class _PlanBCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text('Plan B: solo torso', style: text.titleSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
-          Text('Por $why, hoy sin pierna (vuelve en 48 h). Supinas, flexiones, pike, remo, plancha lateral y '
-              'hollow, todo a RIR 2.', style: text.bodySmall),
+          Text(
+              'Por $why, hoy sin pierna (vuelve en 48 h). Supinas, flexiones, pike, remo, plancha lateral y '
+              'hollow, todo a RIR 2.',
+              style: text.bodySmall),
           const SizedBox(height: 6),
           FilledButton.tonalIcon(
             onPressed: () => startPlanB(context, ref),
@@ -876,8 +866,7 @@ class _SleepLine extends ConsumerWidget {
             spacing: 6,
             runSpacing: 4,
             children: [
-              for (final h in _options)
-                ActionChip(label: Text(fmtDec(h)), onPressed: () => _set(ref, h)),
+              for (final h in _options) ActionChip(label: Text(fmtDec(h)), onPressed: () => _set(ref, h)),
             ],
           ),
         ],
@@ -1079,7 +1068,6 @@ class _ActionsCard extends ConsumerStatefulWidget {
   /// Viernes del v3: EMOM de burpees (minutos, burpees por minuto).
   final (int, int)? burpees;
 
-
   @override
   ConsumerState<_ActionsCard> createState() => _ActionsCardState();
 }
@@ -1144,7 +1132,8 @@ class _ActionsCardState extends ConsumerState<_ActionsCard> {
         Wrap(
           spacing: 6,
           children: [
-            ChoiceChip(label: const Text('Hoy'), selected: isToday, onSelected: (_) => setState(() => _target = _today)),
+            ChoiceChip(
+                label: const Text('Hoy'), selected: isToday, onSelected: (_) => setState(() => _target = _today)),
             ChoiceChip(
               label: const Text('Ayer'),
               selected: _target == _yesterday,
@@ -1219,8 +1208,8 @@ class _ActionsCardState extends ConsumerState<_ActionsCard> {
               label: const Text('Pasos'),
             ),
             TextButton.icon(
-              onPressed: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => MorningCheckScreen(date: _target))),
+              onPressed: () =>
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => MorningCheckScreen(date: _target))),
               icon: const Icon(Icons.wb_sunny_outlined),
               label: const Text('Registro de la mañana'),
             ),
@@ -1279,8 +1268,10 @@ class _V3Strip extends StatelessWidget {
           if (dashboard.dayType == DayType.densidad && v3.burpees == null && !v3.reducedVolume)
             Text('Sin burpees esta semana.', style: text.bodySmall),
           if (daysToTest > 0)
-            Text('Faltan $daysToTest días para ${v3.isV31 ? 'las pruebas' : 'el test final'} '
-                '(${weekdayShort(v3.testDate.weekday)} ${formatShort(v3.testDate)})', style: text.bodySmall)
+            Text(
+                'Faltan $daysToTest días para ${v3.isV31 ? 'las pruebas' : 'el test final'} '
+                '(${weekdayShort(v3.testDate.weekday)} ${formatShort(v3.testDate)})',
+                style: text.bodySmall)
           else if (daysToTest == 0)
             Text(
                 v3.isV31
@@ -1306,9 +1297,11 @@ class _V3SuggestionCard extends ConsumerWidget {
     return AppCard(
       title: 'Plan v3.1 listo',
       children: [
-        Text('Tirón + hombro, empuje + brazos, piernas el miércoles, torso B y el viernes de referencia. '
+        Text(
+            'Tirón + hombro, empuje + brazos, piernas el miércoles, torso B y el viernes de referencia. '
             'Series a RIR 0–3 con doble progresión. 9 semanas hasta las pruebas del '
-            '${formatShort(v31TestDate(monday))}.', style: text.bodyMedium),
+            '${formatShort(v31TestDate(monday))}.',
+            style: text.bodyMedium),
         const SizedBox(height: 8),
         FilledButton.icon(
           onPressed: () => activateV31(context, ref, monday),

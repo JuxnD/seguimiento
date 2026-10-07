@@ -107,8 +107,8 @@ void main() {
       ],
     );
     final after = await dashboard.today(now: d(10, 12));
-    expect(after.fitnessTest?.done, isTrue);
-    expect(after.trained, isTrue);
+    expect(after.fitnessTest?.done, isFalse, reason: 'tres resultados no completan el test');
+    expect(after.trained, isFalse, reason: 'el torso parcial no sustituye el plan');
     expect((await dashboard.today(now: d(10, 14))).fitnessTest, (round: 1, part: TestPart.piernas, done: false));
 
     final all = await FitnessTestRepository(db).all();

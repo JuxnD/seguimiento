@@ -229,3 +229,13 @@ la sesión como tipo "Otro" para que nunca entre al récord de rondas.
 
 Si el día es de fútbol o descanso y entrenas igual, la sesión queda marcada
 como **fuera de plan** y así aparece en el informe.
+
+### Snapshot efectivo de la 1.21
+
+El guiado conserva el día compuesto completo (ejercicios, dosis, descanso,
+variante, nota y épocas), índice y las molestias lumbares en
+`sesion-en-curso.json`. La selección actual de escalera no reconstruye una
+sesión ya empezada. Snapshots anteriores sin día efectivo siguen usando el
+plan inmutable por id y los bloques actuales: compatibilidad explícita, sin
+poder recuperar una selección que nunca se guardó. El incidente lumbar también
+se relee de SQLite si Android cerró entre el commit del evento y el snapshot.

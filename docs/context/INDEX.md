@@ -6,8 +6,8 @@ de tema; si un hecho cambia, se actualiza aquí y en su documento.
 **Entrega vigente:** [1.20.0+28 publicada y verificada](sessions/2026-10-06-entrega-120.md).
 Tag v1.20.0/fuente c7972c7, CI y release exitosos. APK público firmado con la
 llave histórica, instalado sobre 1.19 en QA y SQLite17→18 sin perder registros.
-Gateway f107763a verificado con datos ficticios; QA revocada. Instalación en el
-teléfono del owner, utilidad y precisión con comidas reales siguen pendientes.
+Gateway f107763a verificado con datos ficticios; QA revocada. El owner confirmó que tiene la 1.20 instalada en su teléfono; no se inspeccionó
+el dispositivo. Utilidad y precisión con comidas reales siguen pendientes.
 **Alcance entregado:** [asistente por tareas con revisión](../ia-oportunidades.md),
 integrado en `C:/My Projects/seguimiento-120-release`, rama `JuxnD/120-release`.
 [Improve y alcance autorizado](../../plans/120-improve-audit.md),
@@ -17,7 +17,9 @@ La evidencia de [1.19](sessions/2026-10-06-entrega-119.md) se conserva como hist
 **Candidato siguiente:** [1.21.0+29](sessions/2026-10-07-candidato-121.md) en
 `C:/My Projects/seguimiento-121`, rama `v121/test-y-escaleras`: historial
 importado, Progreso con denominador justo, escaleras de core, test de
-condición y martes del 6 oct (esquema 19). §16.17 espera los permisos de
+condición y martes del 6 oct. La candidata corregida en
+`C:/My Projects/seguimiento-121-ready`, rama `JuxnD/121-ready`, usa esquema20
+(ver [ADR0013](../adr/0013-test-parcial-y-guion-congelado.md)). Aún no publicada. §16.17 espera los permisos de
 Innova; §16.18 necesita autorizar un endpoint nuevo del gateway.
 
 | Tema | Documento | Cuándo se actualiza |

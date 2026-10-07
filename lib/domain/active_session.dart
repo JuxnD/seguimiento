@@ -96,10 +96,14 @@ class GuidedSnapshot extends ActiveSession {
     this.techniqueOk,
     this.fullRange,
     this.recoveryOk,
+    this.effectiveDay,
+    this.note,
+    this.mode,
+    this.lumbar = const [],
   });
 
-  /// El día del plan se relee por id: las versiones del plan son inmutables,
-  /// así que el guion que se reconstruye es el mismo que se estaba siguiendo.
+  /// Referencia al plan base. Las sesiones nuevas además conservan el día
+  /// efectivo para que una escalera mutable no altere el guion al retomar.
   final int planDayId;
   final SessionType? sessionType;
   final String? coreVariant;
@@ -131,6 +135,13 @@ class GuidedSnapshot extends ActiveSession {
   final bool? fullRange;
   final bool? recoveryOk;
 
+  /// Día efectivo ya compuesto: escalera, descarga y dosis congeladas.
+  /// null en snapshots legados, que usan la reconstrucción compatible.
+  final Map<String, Object?>? effectiveDay;
+  final String? note;
+  final String? mode;
+  final List<String> lumbar;
+
   @override
   Map<String, Object?> toJson() => {
         'kind': 'guided',
@@ -155,6 +166,10 @@ class GuidedSnapshot extends ActiveSession {
         'techniqueOk': techniqueOk,
         'fullRange': fullRange,
         'recoveryOk': recoveryOk,
+        'effectiveDay': effectiveDay,
+        'note': note,
+        'mode': mode,
+        'lumbar': lumbar,
       };
 
   static GuidedSnapshot _fromJson(Map<String, Object?> j) => GuidedSnapshot(
@@ -179,6 +194,10 @@ class GuidedSnapshot extends ActiveSession {
         techniqueOk: j['techniqueOk'] as bool?,
         fullRange: j['fullRange'] as bool?,
         recoveryOk: j['recoveryOk'] as bool?,
+        effectiveDay: (j['effectiveDay'] as Map?)?.cast<String, Object?>(),
+        note: j['note'] as String?,
+        mode: j['mode'] as String?,
+        lumbar: [for (final x in (j['lumbar'] as List?) ?? const []) x as String],
       );
 }
 
