@@ -170,3 +170,7 @@ de guardarla igual.
   en el chat.
 - No incluye fotos: son para mirarlas en el teléfono. Si algún día hacen falta,
   el informe diría qué tomas hay en el rango (fecha y ángulo), no las imágenes.
+
+### Resultados de condición en1.21
+
+El contexto de sesiones mode=test conserva nombre de prueba, lado, valor y calidad. Vacíos siguen pendientes y un solo lado no produce dosis ni mejora bilateral. La duración figura sin medir (0), para no convertir el tiempo de la pantalla en kcal de ejercicio. El informe y sus consultas usan ese contexto local existente; no se añadió un endpoint.

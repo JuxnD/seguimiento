@@ -14,12 +14,12 @@ integrado en `C:/My Projects/seguimiento-120-release`, rama `JuxnD/120-release`.
 [integración y gates](sessions/2026-10-06-integracion-120.md).
 El candidato inicial de foto queda como [evidencia histórica](sessions/2026-10-06-candidato-120-ia.md).
 La evidencia de [1.19](sessions/2026-10-06-entrega-119.md) se conserva como histórica.
-**Candidato siguiente:** [1.21.0+29](sessions/2026-10-07-candidato-121.md) en
+**Candidato listo para publicar:** [1.21.0+29 verificada](sessions/2026-10-07-lista-121.md) en
 `C:/My Projects/seguimiento-121`, rama `v121/test-y-escaleras`: historial
 importado, Progreso con denominador justo, escaleras de core, test de
 condición y martes del 6 oct. La candidata corregida en
 `C:/My Projects/seguimiento-121-ready`, rama `JuxnD/121-ready`, usa esquema20
-(ver [ADR0013](../adr/0013-test-parcial-y-guion-congelado.md)). Aún no publicada. §16.17 espera los permisos de
+(ver [ADR0013](../adr/0013-test-parcial-y-guion-congelado.md)). APK firmado y actualización18→20 comprobados en QA. Aún no publicada. §16.17 espera los permisos de
 Innova; §16.18 necesita autorizar un endpoint nuevo del gateway.
 
 | Tema | Documento | Cuándo se actualiza |
@@ -130,3 +130,19 @@ Innova; §16.18 necesita autorizar un endpoint nuevo del gateway.
 - **Serie partida**: serie que no se completó de corrido (12+3).
 - **Toma de medidas (check-in)**: todas las medidas de una misma fecha.
 - **Versión del plan**: foto inmutable del plan semanal vigente desde una fecha.
+
+## Adaptación de la biblioteca existente
+
+La biblioteca conserva los documentos temáticos canónicos que ya usa la app.
+Producto/capacidades: `README.md`, `docs/project-map.md`, `docs/plan-v3-1.md`;
+referencias y decisiones: contratos en estas secciones y `docs/adr/`;
+dominio/datos: `docs/modelo-datos.md` y glosario de este índice; arquitectura:
+`README.md` y ADRs; operación: `docs/actualizaciones.md`; entrega/pendientes:
+`docs/roadmap.md` y el recibo vigente; evidencia: `sessions/`;
+fronteras: [COSTURAS.md](COSTURAS.md). Fecha de verificación para el alcance
+1.21:2026-10-07, según [preparación](sessions/2026-10-07-lista-121.md).
+
+Esta adaptación no duplica autoridad en páginas con nombres genéricos. El
+validador estructural global exige esos nombres y encabezados literales en
+inglés; sus incompatibilidades con esta biblioteca se declaran aparte y no
+son evidencia de que la app funcione ni de que deje de funcionar.
