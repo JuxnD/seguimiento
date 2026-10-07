@@ -1,0 +1,159 @@
+{
+  "format": "seguimiento-schema19-independent-oracle-v1",
+  "synthetic_only": true,
+  "schema_version": 19,
+  "source_commit": "afaaf86e1718d49acaa86e13a08515c7ea699421",
+  "fixture_sha256": "45cea7fcdb225e0d24671335d6932b0def99cf80a4e11bf66752e81965830d46",
+  "source_sha256": {
+    "lib/data/database.dart": "bbf7800d338d88c634b93abffc75b8568f356da127e135c4db2fb374caef7183",
+    "lib/data/tables.dart": "47639be442047495688461c709886888bbd349cd86ccadc09b091da5703854d8",
+    "lib/data/repositories/fitness_test_repository.dart": "3a62d39f7003c5c12d1da5427e2adb93551ddd93aa8c467898137c66fa1ad2af",
+    "lib/data/repositories/ladder_repository.dart": "6a1dffaf0e7952eafaec1870f7fb5883ac068bed538571c9b3d18cecb690dce4",
+    "pubspec.lock": "6d625acce6c72b2485197988d02d0ef85ad1fdc4ac6169b6381f422811d69c05"
+  },
+  "table_inventory": [
+    "ai_conversations",
+    "ai_messages",
+    "body_weights",
+    "closed_days",
+    "custom_reminders",
+    "daily_steps",
+    "exercise_photos",
+    "exercises",
+    "fitness_tests",
+    "foods",
+    "football_games",
+    "ladder_states",
+    "meal_items",
+    "meal_template_items",
+    "meal_templates",
+    "meals",
+    "measurements",
+    "morning_checks",
+    "plan_days",
+    "plan_exercises",
+    "plan_versions",
+    "profiles",
+    "progress_photos",
+    "reminders",
+    "session_rounds",
+    "session_sets",
+    "sessions",
+    "skill_achievements",
+    "sleep_logs",
+    "soreness_logs",
+    "week_notes"
+  ],
+  "expected": {
+    "sessions": [
+      {
+        "id": 902,
+        "date": "2026-10-19",
+        "start_time": "07:20",
+        "type": "bloques",
+        "total_sec": 1500,
+        "warmup_sec": 360,
+        "cooldown_sec": 180,
+        "rest_sec": 300,
+        "rpe": 7,
+        "context": "QA schema19: core",
+        "notes": "Preservar todos los campos",
+        "technique_ok": 1,
+        "full_range": 1,
+        "recovery_ok": 1,
+        "imported": 0
+      },
+      {
+        "id": 903,
+        "date": "2026-10-12",
+        "type": "otro",
+        "total_sec": 3600,
+        "warmup_sec": 0,
+        "cooldown_sec": 0,
+        "rest_sec": 0,
+        "mode": "test",
+        "context": "Test 1 · torso, core y habilidades",
+        "imported": 0
+      },
+      {
+        "id": 906,
+        "date": "2026-09-11",
+        "type": "resistencia",
+        "total_sec": 960,
+        "rounds_done": 7,
+        "mode": "cindy",
+        "context": "QA importado",
+        "imported": 1
+      }
+    ],
+    "session_sets": [
+      {
+        "id": 903,
+        "session_id": 902,
+        "exercise_id": 901,
+        "set_index": 1,
+        "reps": 12,
+        "rir": 2
+      }
+    ],
+    "fitness_tests": [
+      {
+        "id": 1,
+        "date": "2026-10-12",
+        "round": 1,
+        "item": "pullup",
+        "side": null,
+        "value": 8.0,
+        "clean": 1
+      },
+      {
+        "id": 2,
+        "date": "2026-10-12",
+        "round": 1,
+        "item": "wall_handstand",
+        "side": null,
+        "value": 35.0,
+        "clean": 0
+      },
+      {
+        "id": 3,
+        "date": "2026-10-12",
+        "round": 1,
+        "item": "one_arm_pushup",
+        "side": "I",
+        "value": 3.0,
+        "clean": 1
+      }
+    ],
+    "ladder_states": [
+      {
+        "ladder": "dragon_flag",
+        "step": 2,
+        "since": "2026-10-12",
+        "lumbar_on": "2026-10-19"
+      },
+      {
+        "ladder": "v_up",
+        "step": 3,
+        "since": "2026-10-15",
+        "lumbar_on": null
+      }
+    ],
+    "football_games": [
+      {
+        "id": 907,
+        "date": "2026-09-13",
+        "minutes": 0,
+        "notes": "QA por confirmar",
+        "imported": 1
+      }
+    ]
+  },
+  "sole_allowed_change": {
+    "table": "sessions",
+    "id": 903,
+    "column": "total_sec",
+    "before": 3600,
+    "after": 0
+  }
+}
