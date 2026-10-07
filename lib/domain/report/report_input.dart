@@ -114,6 +114,7 @@ class SessionEntry {
     this.pendingReview = false,
     this.mode,
     this.extraReps,
+    this.imported = false,
   });
 
   final DateTime date;
@@ -127,6 +128,9 @@ class SessionEntry {
   final int restSec;
   final int? roundsDone;
   final bool roundsEstimated;
+
+  /// Del historial anterior a la app (§16.16): suma a totales, no es marca.
+  final bool imported;
   final int? rpe;
   final String? limitingExercise;
   final String? context;
@@ -286,6 +290,7 @@ class ReportInput {
     this.mobility = const [],
     this.holdExercises = const {},
     this.perSideExercises = const {},
+    this.dataStart,
     this.previous,
     this.notes,
   });
@@ -343,6 +348,11 @@ class ReportInput {
   /// Ejercicios por lado (búlgara, peso muerto a una pierna…): el cronómetro
   /// guarda derecho e izquierdo como dos entradas seguidas por serie.
   final Set<String> perSideExercises;
+
+  /// Primer día con algo registrado en la app (incluido el historial
+  /// importado). Los días del plan anteriores no son faltas: no hay datos
+  /// (§16.16). null = no se sabe; cuenta todo el rango.
+  final DateTime? dataStart;
 
   /// El rango anterior del mismo largo (la semana pasada), para comparar.
   /// null en el propio rango anterior: la comparación no se encadena.

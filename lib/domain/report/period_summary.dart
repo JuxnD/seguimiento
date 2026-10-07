@@ -45,6 +45,9 @@ class PeriodSummary {
     required this.to,
     required this.trainingSessions,
     required this.plannedSessions,
+    this.plannedElapsed = 0,
+    this.plannedWithoutData = 0,
+    this.dataStart,
     required this.footballGames,
     required this.footballMinutes,
     required this.mobilitySessions,
@@ -78,6 +81,13 @@ class PeriodSummary {
 
   /// Las que pedía el plan en el periodo.
   final int plannedSessions;
+
+  /// Las que pedía el plan desde el primer dato hasta hoy (§16.16).
+  final int plannedElapsed;
+
+  /// Las del plan anteriores al primer dato en la app: sin datos, no faltas.
+  final int plannedWithoutData;
+  final DateTime? dataStart;
   final int footballGames;
   final int footballMinutes;
   final int mobilitySessions;
@@ -240,6 +250,9 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
     to: dateOnly(input.rangeEnd),
     trainingSessions: input.sessions.length,
     plannedSessions: stats.expectedTraining,
+    plannedElapsed: stats.plannedElapsedWithData,
+    plannedWithoutData: stats.plannedWithoutData,
+    dataStart: input.dataStart,
     footballGames: input.football.length,
     footballMinutes: footballMinutes,
     mobilitySessions: input.mobility.length,

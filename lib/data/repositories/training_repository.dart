@@ -64,6 +64,7 @@ class SessionDraft {
     this.pendingReview = false,
     this.mode,
     this.extraReps,
+    this.imported = false,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
     List<int>? roundRestSec,
@@ -109,6 +110,9 @@ class SessionDraft {
 
   /// AMRAP: repeticiones de la ronda que quedó a medias.
   int? extraReps;
+
+  /// Del historial anterior a la app (§16.16): editar la conserva.
+  bool imported;
 
   /// En orden de ejecución; el índice de serie se calcula por ejercicio.
   final List<SetDraft> sets;
@@ -191,6 +195,7 @@ class TrainingRepository {
           pendingReview: Value(d.pendingReview),
           mode: Value(d.mode),
           extraReps: Value(d.extraReps),
+          imported: Value(d.imported),
         );
         final int id;
         if (d.id == null) {
@@ -269,6 +274,7 @@ class TrainingRepository {
       pendingReview: r.pendingReview,
       mode: r.mode,
       extraReps: r.extraReps,
+      imported: r.imported,
       sets: [
         for (final s in sets)
           SetDraft(

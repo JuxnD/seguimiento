@@ -97,6 +97,12 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 32),
         children: [
+          // Siempre a la vista: el mes en curso o el que empieza con la app no
+          // deben hacer parecer que se entrena hace pocos días (§16.16).
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+            child: Text(trainingAgeLine(start, today), style: text.titleSmall, textAlign: TextAlign.center),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
             child: SegmentedButton<SummaryPeriod>(
@@ -141,8 +147,9 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
               ),
               if (_period != SummaryPeriod.todo && to.isAfter(dateOnly(today)))
                 Text(
-                  'Van ${daysBetween(from, today) + 1} de ${daysBetween(from, to) + 1} días: '
-                  'la comparación con el periodo anterior sale al cerrarlo.',
+                  '${_period == SummaryPeriod.mes ? 'Mes' : 'Semana'} en curso: hoy es el día '
+                  '${daysBetween(from, today) + 1} de ${daysBetween(from, to) + 1}. '
+                  'La comparación con el periodo anterior sale al cerrarlo.',
                   textAlign: TextAlign.center,
                   style: text.bodySmall,
                 ),
@@ -150,7 +157,7 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
               summary.when(
                 loading: () => const LinearProgressIndicator(),
                 error: (e, _) => Text('Error: $e'),
-                data: (s) => _Headline(summary: s, versus: _versus(to, today)),
+                data: (s) => _Headline(summary: s, versus: _versus(to, today), inProgress: to.isAfter(dateOnly(today))),
               ),
             ],
           ),
@@ -173,16 +180,23 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
 
 /// Cuatro números grandes: sesiones, tiempo activo, repeticiones y pasos.
 class _Headline extends StatelessWidget {
-  const _Headline({required this.summary, required this.versus});
+  const _Headline({required this.summary, required this.versus, this.inProgress = false});
 
   final PeriodSummary summary;
   final String versus;
+  final bool inProgress;
 
   @override
   Widget build(BuildContext context) {
     final s = summary;
     final p = s.previous;
-    return GridView.count(
+    final text = Theme.of(context).textTheme;
+    // Denominador justo (§16.16): en curso, los días hábiles transcurridos con
+    // datos posibles; cerrado, los del periodo desde el primer dato. Los
+    // anteriores a la app no son faltas.
+    final planned = inProgress ? s.plannedElapsed : s.plannedSessions - s.plannedWithoutData;
+    final games = s.footballGames == 0 ? '' : ' + ${s.footballGames} ${s.footballGames == 1 ? 'partido' : 'partidos'}';
+    final grid = GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -193,10 +207,10 @@ class _Headline extends StatelessWidget {
         _BigStat(
           icon: Icons.fitness_center,
           color: Theme.of(context).colorScheme.primary,
-          value: s.plannedSessions > 0 ? '${s.trainingSessions}/${s.plannedSessions}' : '${s.trainingSessions}',
-          label: s.footballGames == 0
-              ? 'sesiones'
-              : 'sesiones + ${s.footballGames} ${s.footballGames == 1 ? 'partido' : 'partidos'}',
+          value: planned > 0 ? '${s.trainingSessions}/$planned' : '${s.trainingSessions}',
+          label: inProgress && s.plannedSessions > 0
+              ? 'días hábiles hasta hoy · ${s.plannedSessions} en el periodo$games'
+              : 'sesiones$games',
         ),
         _BigStat(
           icon: Icons.timer_outlined,
@@ -221,7 +235,32 @@ class _Headline extends StatelessWidget {
         ),
       ],
     );
+    if (s.plannedWithoutData == 0 || s.dataStart == null) return grid;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        grid,
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Text(
+            'Sin datos en la app: ${s.plannedWithoutData} '
+            '${s.plannedWithoutData == 1 ? 'día hábil' : 'días hábiles'} antes del ${formatShort(s.dataStart!)}. '
+            'No cuentan como faltas.',
+            textAlign: TextAlign.center,
+            style: text.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
+        ),
+      ],
+    );
   }
+}
+
+/// "Llevas 6 semanas (desde el 26 ago)" (§16.16).
+String trainingAgeLine(DateTime start, DateTime today) {
+  final days = daysBetween(dateOnly(start), dateOnly(today)) + 1;
+  if (days <= 0) return 'El programa empieza el ${formatShort(start)}';
+  final weeks = (days / 7).ceil();
+  return 'Llevas $weeks ${weeks == 1 ? 'semana' : 'semanas'} (desde el ${formatShort(start)})';
 }
 
 class _BigStat extends StatelessWidget {

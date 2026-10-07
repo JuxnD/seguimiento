@@ -5,6 +5,7 @@ import '../../domain/enums.dart';
 import '../../domain/report/report_input.dart';
 import '../../domain/session_math.dart';
 import '../database.dart';
+import '../history_import.dart' show firstDataDay;
 import 'exercise_repository.dart';
 import 'nutrition_repository.dart';
 import 'profile_repository.dart';
@@ -86,6 +87,7 @@ class ReportRepository {
         restSec: s.restSec,
         roundsDone: s.roundsDone,
         roundsEstimated: s.roundsEstimated,
+        imported: s.imported,
         rpe: s.rpe,
         limitingExercise: s.limitingExerciseId == null ? null : names[s.limitingExerciseId],
         context: s.context,
@@ -234,6 +236,7 @@ class ReportRepository {
         for (final pe in await (db.select(db.planExercises)..where((x) => x.holdSecMin.isNotNull())).get())
           if (names[pe.exerciseId] case final name?) name,
       },
+      dataStart: await firstDataDay(db),
       perSideExercises: {
         for (final pe in await (db.select(db.planExercises)..where((x) => x.perSide.equals(true))).get())
           if (names[pe.exerciseId] case final name?) name,

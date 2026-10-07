@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../domain/enums.dart';
 import 'database.dart';
+import 'history_import.dart' show corrections7Oct;
 
 // Correcciones de datos del traspaso del 29 sep 2026 (§17). Cada una busca el
 // registro **exacto** que describe el traspaso y solo lo toca si sigue como
@@ -415,7 +416,7 @@ DataCorrection _weight5Oct(String id, double kg, String moment, String time, Str
     );
 
 /// Todas las correcciones de los traspasos, en orden.
-List<DataCorrection> get allCorrections => [...corrections29Sep, ...corrections5Oct];
+List<DataCorrection> get allCorrections => [...corrections29Sep, ...corrections5Oct, ...corrections7Oct];
 
 /// Estado de cada corrección.
 Future<Map<String, CorrectionState>> checkCorrections(AppDatabase db, [List<DataCorrection>? list]) async => {

@@ -520,6 +520,7 @@ class _CorrectionsBanner extends ConsumerWidget {
               onPressed: () async {
                 await ref.read(localFlagsProvider).set(FlagKeys.corrections29SepDismissed, true);
                 await ref.read(localFlagsProvider).set(FlagKeys.corrections5OctDismissed, true);
+                await ref.read(localFlagsProvider).set(FlagKeys.corrections7OctDismissed, true);
                 ref.invalidate(pendingCorrectionsProvider);
               },
               child: const Text('No aplicar'),

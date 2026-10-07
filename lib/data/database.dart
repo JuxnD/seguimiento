@@ -46,6 +46,8 @@ const databaseFileName = 'seguimiento.sqlite';
   SkillAchievements,
   AiConversations,
   AiMessages,
+  FitnessTests,
+  LadderStates,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -53,7 +55,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 18;
+  int get schemaVersion => 19;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -204,6 +206,14 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(aiConversations);
             await m.createTable(aiMessages);
           }
+          if (from < 19) {
+            // v19: historial importado (§16.16), tests (§19.11) y escaleras de
+            // core (§19.10).
+            await m.addColumn(sessions, sessions.imported);
+            await m.addColumn(footballGames, footballGames.imported);
+            await m.createTable(fitnessTests);
+            await m.createTable(ladderStates);
+          }
           if (from < 16) {
             // Guías del catálogo con todas las columnas ya creadas: las de
             // antes del 8 y las del v3.1 (dominadas con carga, ejercicios
@@ -222,7 +232,9 @@ class AppDatabase extends _$AppDatabase {
   /// cierre de sesión y el informe.
   Expression<bool> get countedCircuitRounds =>
       sessions.type.isIn(SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList()) &
-      sessions.roundsEstimated.equals(false);
+      sessions.roundsEstimated.equals(false) &
+      // El historial importado (lo prescrito, no lo medido) no es marca.
+      sessions.imported.equals(false);
 
   /// Sesiones que cuentan como entrenamiento del plan: todas menos la
   /// movilidad, que es opcional y no suma adherencia, racha ni avisos.

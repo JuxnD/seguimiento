@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../data/corrections_29sep.dart';
+import '../../data/history_import.dart' show corrections7Oct;
 import '../../data/local_flags.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
@@ -20,7 +21,8 @@ final pendingCorrectionsProvider = Provider<int>((ref) {
       ? 0
       : list.where((c) => states[c.id] == CorrectionState.pending).length;
   return pending(corrections29Sep, FlagKeys.corrections29SepDismissed) +
-      pending(corrections5Oct, FlagKeys.corrections5OctDismissed);
+      pending(corrections5Oct, FlagKeys.corrections5OctDismissed) +
+      pending(corrections7Oct, FlagKeys.corrections7OctDismissed);
 });
 
 Future<void> openCorrections(BuildContext context) =>

@@ -186,6 +186,10 @@ class Sessions extends Table {
   /// AMRAP: repeticiones sueltas de la ronda que quedó a medias (Cindy
   /// "12 + 7"). null si no aplica.
   IntColumn get extraReps => integer().nullable()();
+
+  /// Viene del historial anterior a la app (§16.16): cuenta para totales,
+  /// rachas y días entrenados, no para récords ni medias.
+  BoolColumn get imported => boolean().withDefault(const Constant(false))();
 }
 
 /// Marcas del contador: segundos desde el inicio del circuito al cerrar cada ronda.
@@ -249,6 +253,9 @@ class FootballGames extends Table {
   RealColumn get weightBeforeKg => real().nullable()();
   RealColumn get weightAfterKg => real().nullable()();
   IntColumn get fluidMl => integer().nullable()();
+
+  /// Del historial anterior a la app (§16.16), por confirmar: sin minutos.
+  BoolColumn get imported => boolean().withDefault(const Constant(false))();
 }
 
 /// Macros por 1 unidad (`unit`) o por 100 g/ml (`per100`).
@@ -491,6 +498,36 @@ class SkillAchievements extends Table {
 
   @override
   Set<Column> get primaryKey => {skill};
+}
+
+/// Resultado de una prueba del test (§19.11): una serie máxima con técnica
+/// estricta. `round`: 1 = test inicial, 2 = descarga, 3 = pruebas finales.
+@DataClassName('FitnessTestRow')
+class FitnessTests extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get date => text()();
+  IntColumn get round => integer()();
+
+  /// Id de la prueba (`pullups`, `broad_jump`…).
+  TextColumn get item => text()();
+
+  /// 'I' o 'D' en las pruebas por lado; null en el resto.
+  TextColumn get side => text().nullable()();
+  RealColumn get value => real()();
+
+  /// true = limpia; false = con dudas.
+  BoolColumn get clean => boolean().withDefault(const Constant(true))();
+}
+
+/// Peldaño actual de cada escalera de habilidad (§19.10) y desde cuándo.
+@DataClassName('LadderStateRow')
+class LadderStates extends Table {
+  TextColumn get ladder => text()();
+  IntColumn get step => integer()();
+  TextColumn get since => text()();
+
+  @override
+  Set<Column> get primaryKey => {ladder};
 }
 
 /// Notas libres por semana (índice anclado a la fecha de inicio).

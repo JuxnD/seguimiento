@@ -39,6 +39,7 @@ class ReportStats {
 
     final sortedPlans = [...input.planVersions]..sort((a, b) => a.validFrom.compareTo(b.validFrom));
     _plans = sortedPlans;
+    final dataStart = input.dataStart == null ? null : dateOnly(input.dataStart!);
     for (final d in days) {
       final p = planFor(d);
       if (p == null) continue;
@@ -46,10 +47,23 @@ class ReportStats {
       if (t.isTraining) {
         expectedTraining++;
         if (d.isBefore(today)) expectedTrainingClosed++;
+        if (dataStart != null && d.isBefore(dataStart)) {
+          plannedWithoutData++;
+        } else if (!d.isAfter(today)) {
+          plannedElapsedWithData++;
+        }
       }
       if (t == DayType.futbol) expectedFootball++;
     }
   }
+
+  /// Días de entrenamiento del plan anteriores al primer dato en la app: "Sin
+  /// datos en la app", no faltas (§16.16).
+  int plannedWithoutData = 0;
+
+  /// Días de entrenamiento del plan con datos posibles y ya llegados (hasta
+  /// hoy incluido): el denominador justo del periodo en curso.
+  int plannedElapsedWithData = 0;
 
   final ReportInput input;
   late final List<DateTime> days;
@@ -107,7 +121,7 @@ class ReportStats {
   Map<SessionType, int> get maxRoundsByType {
     final out = <SessionType, int>{};
     for (final x in input.sessions) {
-      if (!x.type.isCircuit || x.roundsDone == null || x.roundsEstimated) continue;
+      if (!x.type.isCircuit || x.roundsDone == null || x.roundsEstimated || x.imported) continue;
       final r = x.roundsDone!;
       if ((out[x.type] ?? -1) < r) out[x.type] = r;
     }
@@ -192,10 +206,11 @@ class ReportStats {
       [...input.sessions]..sort((a, b) => '${dayKey(a.date)} ${a.startTime ?? ''}'
           .compareTo('${dayKey(b.date)} ${b.startTime ?? ''}'));
 
-  /// Máximo de rondas **contadas**: una estimación por tiempo no es marca.
+  /// Máximo de rondas **contadas**: una estimación por tiempo o el historial
+  /// importado no son marca.
   int? get maxRoundsInRange {
     final r = input.sessions
-        .where((s) => s.type.isCircuit && s.roundsDone != null && !s.roundsEstimated)
+        .where((s) => s.type.isCircuit && s.roundsDone != null && !s.roundsEstimated && !s.imported)
         .map((s) => s.roundsDone!);
     return r.isEmpty ? null : r.reduce((a, b) => a > b ? a : b);
   }
