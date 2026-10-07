@@ -62,8 +62,9 @@ class FitnessTestRepository {
     required List<TestResult> results,
     required int totalSec,
   }) {
-    if (round < 1 || round > 3 || totalSec < 0 || results.isEmpty)
+    if (round < 1 || round > 3 || totalSec < 0 || results.isEmpty) {
       throw const FormatException('Test vacío o duración inválida');
+    }
     final allowed = itemsFor(part).map((t) => t.id).toSet();
     final keys = <String>{};
     for (final r in results) {

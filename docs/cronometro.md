@@ -236,6 +236,9 @@ El guiado conserva el día compuesto completo (ejercicios, dosis, descanso,
 variante, nota y épocas), índice y las molestias lumbares en
 `sesion-en-curso.json`. La selección actual de escalera no reconstruye una
 sesión ya empezada. Snapshots anteriores sin día efectivo siguen usando el
-plan inmutable por id y los bloques actuales: compatibilidad explícita, sin
-poder recuperar una selección que nunca se guardó. El incidente lumbar también
+plan inmutable por id y el bloque planche original de1.20, sin agregar
+escaleras nuevas ni mover índices. En una candidata19 sin día efectivo no
+se puede recuperar una selección de escalera que nunca se guardó; los
+DoneSteps y tiempos se conservan. Un mapa efectivo malformado se descarta
+con mensaje para permitir empezar una sesión nueva. El incidente lumbar también
 se relee de SQLite si Android cerró entre el commit del evento y el snapshot.

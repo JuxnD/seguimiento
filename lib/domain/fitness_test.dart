@@ -109,8 +109,9 @@ double? testValue(List<TestResult> results, int round, String item) {
   if (definition == null) return null;
   final rows =
       results.where((r) => r.round == round && r.item == item && testResultError(definition, r.value) == null).toList();
-  if (testItem(item)?.perSide == true && (!rows.any((r) => r.side == 'I') || !rows.any((r) => r.side == 'D')))
+  if (testItem(item)?.perSide == true && (!rows.any((r) => r.side == 'I') || !rows.any((r) => r.side == 'D'))) {
     return null;
+  }
   if (rows.length != (definition.perSide ? 2 : 1)) return null;
   if (rows.any((r) => definition.perSide ? r.side != 'I' && r.side != 'D' : r.side != null)) return null;
   final xs = rows.map((r) => r.value).toList();

@@ -300,8 +300,9 @@ class _StartButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final d = dashboard;
     final test = d.fitnessTest;
-    if (d.trained && test == null)
+    if (d.trained && test == null) {
       return _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref));
+    }
     if (test != null) {
       final torso = test.part == TestPart.torso;
       Future<void> openTest() => Navigator.push(

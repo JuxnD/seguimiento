@@ -381,13 +381,26 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       }
       final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, parseDay(s.date));
       final (deloaded, note) = _v3Adjust(view.day, v3);
-      final adjusted = await ref.read(trainingRepositoryProvider).withV31Blocks(deloaded, parseDay(s.date), v3,
-          planche: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
+      // Legado1.20 no incluía escaleras. Añadirlas aquí desplazaría índices
+      // de una sesión anterior. Las sesiones nuevas llevan día efectivo.
+      final adjusted = await ref.read(trainingRepositoryProvider).withPlanche(deloaded, parseDay(s.date), v3,
+          enabled: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
+      if (!context.mounted) return;
+      PlanDayDraft effective;
+      try {
+        effective =
+            s.effectiveDay == null ? (s.light ? lightVersion(adjusted) : adjusted) : thawGuidedDay(s.effectiveDay!);
+      } on Object {
+        if (!context.mounted) return;
+        showSnack(context, 'La sesión guardada tiene un guion inválido; se descarta para poder empezar otra.');
+        await _clearActive(ProviderScope.containerOf(context, listen: false));
+        return;
+      }
       if (!context.mounted) return;
       await _runGuided(
         context,
         GuidedSessionScreen(
-          day: s.effectiveDay == null ? (s.light ? lightVersion(adjusted) : adjusted) : thawGuidedDay(s.effectiveDay!),
+          day: effective,
           note: s.effectiveDay == null ? note : s.note,
           mode: s.mode,
           date: parseDay(s.date),

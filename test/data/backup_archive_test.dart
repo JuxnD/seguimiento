@@ -160,7 +160,7 @@ void main() {
     expect(File('${b.file.parent.path}/fotos/vieja.jpg').readAsBytesSync(), [99]);
   });
 
-  test('el ZIP lleva el snapshot y la base 17 restaurada migra a 19', () async {
+  test('el ZIP lleva el snapshot y la base 17 restaurada migra a 20', () async {
     final repository = AiConversationRepository(a.db);
     final snapshot = AiConversationSnapshot(
       kind: AiConversationKind.reportQuestion,
@@ -202,7 +202,7 @@ void main() {
             .customSelect('pragma user_version')
             .map((row) => row.data.values.first as int)
             .getSingle(),
-        19);
+        20);
     expect(await AiConversationRepository(b.db).count(), 0);
     expect(
         (await BodyRepository(b.db).watchWeights().first).map((row) => row.kg),
