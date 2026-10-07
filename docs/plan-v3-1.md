@@ -26,8 +26,8 @@ cronómetros de Cindy y Tabata.
 
 | Día | Tipo | Qué |
 |---|---|---|
-| Lunes | Tren superior | Pino 5 min, dominadas con mochila, remo + laterales en superserie, pike, face pull, elevaciones colgado, rollout. Después, caminata de 15–20 min |
-| Martes | Tren superior | Pino, fondos con mochila, arquero, flexiones con pies elevados, tríceps + curl en superserie, colgarse de la barra |
+| Lunes | Tren superior | Pino 5 min, dominadas con mochila, remo + laterales en superserie, pike, face pull, elevaciones colgado, rollout, peldaño del dragon flag. Después, caminata de 15–20 min |
+| Martes | Tren superior | Pino, fondos con mochila, flexión a una mano 3 × 3–4 por lado (luego 3 × 4–5), diamante con mochila 3 × 8–12, tríceps + curl en superserie, colgarse de la barra |
 | Miércoles | Piernas | FIFA 11+ como calentamiento, saltos, aceleraciones, búlgara, peso muerto a una pierna, nórdicos, gemelos, carga de maleta, core (Pallof + plancha lateral) |
 | Jueves | Tren superior | Torso B; compresión (A) o L-sit (B) en semanas alternas; pistol opcional |
 | Viernes | Progresión → Resistencia | Pino, circuito 5/10/15 hasta 10 rondas limpias, habilidades ligeras. Después, Cindy y Tabata de bajo impacto alternos |
@@ -177,11 +177,47 @@ tiempo quedan incompletos (desde la 1.16.0).
 - **Habilidades** (Cuerpo): las 14 de la hoja de ruta, con criterio, ventana
   estimada desde oct 2026 y prerrequisitos. Se marcan a mano con la fecha.
 
+## Escaleras de core (1.21.0, §19.10)
+
+- [`core_ladders.dart`](../lib/domain/core_ladders.dart): **dragon flag** el
+  lunes (6 peldaños, desde el encogimiento inverso) y **V-up** el jueves (4,
+  desde el tuck-up). Las dos empiezan en el peldaño 1 el lunes del v3.1.
+- `TrainingRepository.withLadder` mete el peldaño actual en el bloque
+  `escalera`, antes de lo opcional; el peldaño 1 lleva el hollow del criterio
+  (3 × 40 s el lunes, 3 × 30 s el jueves). En descarga, 2 series. Hoy, empezar
+  y retomar usan `withV31Blocks` (planche + escalera), así el guion no cambia.
+- Subir: el criterio en **2 sesiones seguidas** y **14 días** en el peldaño.
+  Hoy y Cuerpo lo proponen; sube el usuario. Lo importado no cuenta.
+- **Molestia lumbar**: chip en el descanso de una serie de la escalera (y en
+  Cuerpo → Escaleras). Baja un peldaño, reinicia los 14 días y esa sesión no
+  cuenta como limpia (`ladder_states.lumbar_on`).
+- Cuerpo → Escaleras permite elegir el peldaño a mano (p. ej. tras el test).
+
+## Test de condición (1.21.0, §19.11)
+
+- [`fitness_test.dart`](../lib/domain/fitness_test.dart): 12 pruebas de
+  torso, core y habilidades y 4 de piernas.
+- Calendario (`scheduledTest`):
+  - Test 1: lunes de la semana 1 (torso, **sustituye el tirón**) y miércoles
+    (piernas, después del FIFA 11+ y antes de la sesión);
+  - Test 2: lunes y miércoles de la descarga (semana 6, 16 y 18 nov);
+  - Test 3: miércoles de la semana 9 (piernas) y el viernes de pruebas
+    (torso, 11 dic).
+- Hoy muestra "Empezar test" ese día. **Modo test**: un campo por prueba (por
+  lado si toca), limpia / con dudas, cronómetro de 3 min. Guardar crea una
+  sesión `otro` con `mode = 'test'`: el día cuenta como entrenado.
+- Por lado cuenta el lado más débil. Tu progreso y Cuerpo → Test muestran
+  T1 / T2 / T3 con el % de mejora contra el Test 1 y la dosis inicial:
+  - reps, el tope del rango al 70–75 % del máximo;
+  - aguantes, series del 50–60 %.
+  La dosis se muestra; el plan no se reescribe solo.
+
 ## Pendiente
 
 - Figuras 3D del resto de los ejercicios. Ya están el pino, el nórdico y las
   dominadas con mochila.
 - Récord propio de Cindy y su gráfica.
-- Una pantalla propia para las pruebas del 11 dic.
+- Ilustraciones de los peldaños 2+ de las escaleras (el handoff las deja para
+  cuando el usuario llegue).
 - Pulso en reposo desde Health Connect (`RestingHeartRateRecord`); hoy se
   anota a mano.

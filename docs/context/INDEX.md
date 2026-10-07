@@ -14,6 +14,11 @@ integrado en `C:/My Projects/seguimiento-120-release`, rama `JuxnD/120-release`.
 [integración y gates](sessions/2026-10-06-integracion-120.md).
 El candidato inicial de foto queda como [evidencia histórica](sessions/2026-10-06-candidato-120-ia.md).
 La evidencia de [1.19](sessions/2026-10-06-entrega-119.md) se conserva como histórica.
+**Candidato siguiente:** [1.21.0+29](sessions/2026-10-07-candidato-121.md) en
+`C:/My Projects/seguimiento-121`, rama `v121/test-y-escaleras`: historial
+importado, Progreso con denominador justo, escaleras de core, test de
+condición y martes del 6 oct (esquema 19). §16.17 espera los permisos de
+Innova; §16.18 necesita autorizar un endpoint nuevo del gateway.
 
 | Tema | Documento | Cuándo se actualiza |
 |---|---|---|

@@ -36,6 +36,8 @@ El código generado (`database.g.dart`) no se edita a mano.
 | `reminders` | Ajustes de cada recordatorio (activo, hora, umbral) | Una fila por tipo; `ensureDefaults` crea las que falten sin pisar lo editado |
 | `week_notes` | Notas libres por semana | La clave es el índice de semana anclado al inicio |
 | `closed_days` | Días de comida cerrados a mano | Un día con desayuno, almuerzo y cena ya cuenta como cerrado sin estar aquí |
+| `fitness_tests` | Resultado de una prueba del test de condición: ronda (1, 2, 3), id de la prueba, lado (`I`/`D` o null), valor y si fue limpia | Ronda + prueba se reemplazan al volver a guardar esa parte; por lado cuenta el más débil |
+| `ladder_states` | Peldaño de cada escalera de core (`dragon_flag`, `v_up`), desde cuándo y el último día con molestia lumbar | Sin fila = peldaño 1 desde el primer lunes del v3.1; la sesión del día lumbar no cuenta como limpia |
 
 ## Decisiones que el esquema hace cumplir
 
@@ -84,10 +86,13 @@ El código generado (`database.g.dart`) no se edita a mano.
 | 16 | Plan v3.1: `session_sets.rir` (0–5), `profiles.kcal_target_football` (meta de sábado y domingo; null = la misma), `football_games.weight_before_kg`, `weight_after_kg` y `fluid_ml` (hidratación), tabla `sleep_logs` (horas en cama por mañana). `plan_versions.scheme` admite 'v3.1' |
 | 17 | `body_weights.moment` ('ayunas', 'antesDormir', 'antesFutbol', 'despuesFutbol', 'otro'; null = se lee de `fasted`) y `time`; `foods.eggs_per_unit` (huevos enteros por porción); tablas `morning_checks` (pulso en reposo por mañana), `soreness_logs` (molestia 0–10 por zona y día) y `skill_achievements` (habilidad → fecha de logro). Solo los pesajes en ayunas entran en el promedio semanal |
 | 18 | `ai_conversations` congela tipo, título, rango, modelo, contrato y JSON/hash exactos de las fuentes; para preguntas sobre guías también guarda metadata local tipada (ejercicio, claves, progresión, anclaje, agarre y variante con carga) con JSON/hash propio, sin enviarla al gateway. `ai_messages` guarda preguntas y respuestas verificadas, citas, modelo y contrato. Borrado en cascada; licencia, HWID e imágenes no se guardan |
+| 19 | `sessions.imported` y `football_games.imported`: historial anterior a la app (§16.16), cuenta para totales y rachas pero no para récords ni medias; tablas `fitness_tests` (§19.11) y `ladder_states` (§19.10) |
 
-Los saltos de esquemas anteriores a 18 están cubiertos por
+Los saltos de esquemas anteriores a 19 están cubiertos por
 [`test/data/migration_test.dart`](../test/data/migration_test.dart): una base
-vieja con datos se abre, conserva lo registrado y queda en `user_version = 18`.
+vieja con datos se abre, conserva lo registrado y queda en `user_version = 19`.
+El 18 → 19 parte del esquema actual sin las columnas `imported` ni las tablas
+nuevas; lo ya registrado queda como no importado.
 El salto 17 → 18 parte de [`test/fixtures/schema17-synthetic.sqlite`](../test/fixtures/schema17-synthetic.sqlite),
 una fixture sintética congelada desde el código de esquema 17 antes de añadir
 las tablas de conversaciones; no se reconstruye desde el esquema actual.
@@ -95,9 +100,9 @@ El 6 → 8 se verificó además en el emulador (Android 15) con la base de la 1.
 
 **Récord de rondas.** Una sola definición en
 `AppDatabase.countedCircuitRounds`: sesiones de circuito con rondas
-**contadas**. Las estimadas por tiempo no son marca; las de una sesión cerrada
-antes de tiempo sí (esas rondas se hicieron). La usan Hoy, el cierre de sesión
-y el informe.
+**contadas**. Las estimadas por tiempo y las importadas del historial no son
+marca; las de una sesión cerrada antes de tiempo sí (esas rondas se hicieron).
+La usan Hoy, el cierre de sesión y el informe.
 
 **Qué no vive en la base.** Las banderas del dispositivo (si ya se pidió el
 permiso de notificaciones, fecha del último respaldo automático y de la

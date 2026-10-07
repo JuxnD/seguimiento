@@ -38,6 +38,21 @@ mismo `ReportInput` del informe; pruebas en
 El Markdown suma dos líneas al *Resumen*: movimiento (tiempo activo, pasos,
 km) y gasto aproximado por actividad.
 
+**Denominador justo (§16.16, 1.21.0).** Arriba, siempre: "Llevas N semanas
+(desde el 26 ago)", contado desde el primer dato en la app (`firstDataDay`,
+historial importado incluido).
+- Periodo en curso: "4/4 · días hábiles hasta hoy · 22 en el periodo" y "Mes
+  en curso: hoy es el día 6 de 31". El denominador son los días de
+  entrenamiento del plan desde el primer dato hasta hoy.
+- Periodo cerrado: los días del plan anteriores al primer dato no son faltas;
+  salen en gris como "Sin datos en la app".
+- El historial del 26 ago al 21 sep entra por *Correcciones del traspaso*
+  (`imported = true`): suma a sesiones, repeticiones y rachas, no a récords
+  de rondas. Lo prescrito por el plan va con su mínimo; lo que no tiene
+  detalle es una sesión `otro`. Se edita y se borra como cualquier sesión.
+- **Test de condición** (§19.11): tabla T1 / T2 / T3 con el % de mejora,
+  independiente del periodo.
+
 ## Semana y comparaciones (§16.8, 1.13.0)
 
 - La semana del programa va de **lunes a domingo** (la 1 empieza el lunes de
