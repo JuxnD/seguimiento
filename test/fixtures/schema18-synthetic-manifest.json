@@ -1,0 +1,226 @@
+{
+  "format": "seguimiento-schema18-independent-oracle-v1",
+  "synthetic_only": true,
+  "schema_version": 18,
+  "source_commit": "410da05d341d8ea88915fe8a197d3df6eee54283",
+  "fixture_sha256": "6bfe3abcf1295bbc109ee597c61ca39a7262f394163e8347d8cfa4b56279827a",
+  "source_sha256": {
+    "lib/data/database.dart": "4370e6f27c170a5a1c6b7a8f9a3f277e565d4c8cb8779fd1e6637e4714e68235",
+    "lib/data/tables.dart": "f3b4bbc17444269b3853ee7d3353ca60ec83523ee9fa04372dc77263a3309c9a",
+    "lib/data/repositories/ai_conversation_repository.dart": "68f3bee2c982dafcbc3079560b6bcb28850667fd172ca15031389c8490c38727",
+    "lib/domain/ai_context.dart": "3f7129ddcbf66235f4109efa28cc3b84ff9e9bba1e5114e8332cd6e1031f5a61",
+    "pubspec.lock": "6d625acce6c72b2485197988d02d0ef85ad1fdc4ac6169b6381f422811d69c05"
+  },
+  "table_inventory": [
+    "ai_conversations",
+    "ai_messages",
+    "body_weights",
+    "closed_days",
+    "custom_reminders",
+    "daily_steps",
+    "exercise_photos",
+    "exercises",
+    "foods",
+    "football_games",
+    "meal_items",
+    "meal_template_items",
+    "meal_templates",
+    "meals",
+    "measurements",
+    "morning_checks",
+    "plan_days",
+    "plan_exercises",
+    "plan_versions",
+    "profiles",
+    "progress_photos",
+    "reminders",
+    "session_rounds",
+    "session_sets",
+    "sessions",
+    "skill_achievements",
+    "sleep_logs",
+    "soreness_logs",
+    "week_notes"
+  ],
+  "reminder_setting": {
+    "kind": "sesion",
+    "enabled": 0,
+    "hour": 14,
+    "minute": 15,
+    "threshold": null
+  },
+  "expected": {
+    "profiles": [
+      {
+        "id": 1,
+        "start_date": "2026-09-28",
+        "height_cm": 175.0,
+        "protein_min": 160,
+        "protein_max": 170,
+        "kcal_target": 2100
+      }
+    ],
+    "exercises": [
+      {
+        "id": 901,
+        "name": "Dominadas QA",
+        "form_cues": "Escápulas activas",
+        "tracks_load": 1
+      }
+    ],
+    "sessions": [
+      {
+        "id": 902,
+        "date": "2026-10-05",
+        "type": "bloques",
+        "total_sec": 1500,
+        "warmup_sec": 360,
+        "cooldown_sec": 180,
+        "rest_sec": 300,
+        "rounds_done": 3,
+        "rpe": 7,
+        "context": "QA sintética: fuente18",
+        "notes": "No representa datos de una persona",
+        "technique_ok": 1,
+        "full_range": 1,
+        "recovery_ok": 1
+      }
+    ],
+    "session_sets": [
+      {
+        "id": 903,
+        "session_id": 902,
+        "exercise_id": 901,
+        "set_index": 1,
+        "reps": 8,
+        "load_kg": 4.5,
+        "rir": 2
+      }
+    ],
+    "meals": [
+      {
+        "id": 904,
+        "date": "2026-10-05",
+        "time": "08:10",
+        "slot": "desayuno",
+        "notes": "Comida QA sintética"
+      }
+    ],
+    "meal_items": [
+      {
+        "id": 905,
+        "meal_id": 904,
+        "label": "Plato QA",
+        "quantity": 1.0,
+        "quantity_unit": "porción",
+        "kcal": 450.0,
+        "protein": 30.0,
+        "carbs": 45.0,
+        "fat": 15.0,
+        "source_verified": 0
+      }
+    ],
+    "body_weights": [
+      {
+        "id": 906,
+        "date": "2026-10-05",
+        "kg": 72.5,
+        "fasted": 1,
+        "moment": "ayunas",
+        "time": "06:50"
+      }
+    ],
+    "ai_conversations": [
+      {
+        "id": 1,
+        "kind": "reportQuestion",
+        "title": "QA · informe sintético",
+        "range_start": "2026-09-28",
+        "range_end": "2026-10-05",
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "sources_json": "[{\"id\":\"report\",\"title\":\"Informe QA\",\"text\":\"Sesión QA: 3 series. Comida QA: 450 kcal. Peso QA: 72,5 kg.\"},{\"id\":\"prior_report\",\"title\":\"Periodo previo QA\",\"text\":\"Registro previo QA incompleto. No permite concluir una tendencia.\"}]",
+        "sources_hash": "1f032f6d5492277045a56d2d257ff0d61fe8fb0ab8d33d6eebe8c4e531891ecc",
+        "guide_context_json": null,
+        "guide_context_hash": null,
+        "created_at": 1791288000000
+      },
+      {
+        "id": 2,
+        "kind": "exerciseQuestion",
+        "title": "QA · guía Dominadas",
+        "range_start": null,
+        "range_end": null,
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "sources_json": "[{\"id\":\"exercise_guide:dominadas\",\"title\":\"Guía QA\",\"text\":\"Dominadas con carga y agarre prona. Escápulas activas.\"}]",
+        "sources_hash": "199ee32b8e3f53debc5f48019c4678d88daa28726d339f385f4b69b5df28a6cd",
+        "guide_context_json": "{\"exercise\":\"Dominadas\",\"cues\":[\"Escápulas activas\"],\"progressionNote\":\"Mantén la variante elegida.\",\"anchor\":null,\"grip\":\"prona\",\"loaded\":true}",
+        "guide_context_hash": "6535978e90720801a2dc69760e36d4442a9425da0f4c8803c61408a7d6ea0548",
+        "created_at": 1791288120000
+      }
+    ],
+    "ai_messages": [
+      {
+        "id": 1,
+        "conversation_id": 1,
+        "role": "user",
+        "message_text": "¿Qué está registrado?",
+        "citations_json": "[]",
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "created_at": 1791288000000
+      },
+      {
+        "id": 2,
+        "conversation_id": 1,
+        "role": "assistant",
+        "message_text": "La fuente registra sesión, comida y peso; el periodo previo está incompleto.",
+        "citations_json": "[{\"source_id\":\"report\",\"quote\":\"Sesión QA: 3 series.\"},{\"source_id\":\"prior_report\",\"quote\":\"Registro previo QA incompleto.\"}]",
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "created_at": 1791288000000
+      },
+      {
+        "id": 3,
+        "conversation_id": 1,
+        "role": "user",
+        "message_text": "¿Hay evidencia de tendencia?",
+        "citations_json": "[]",
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "created_at": 1791288060000
+      },
+      {
+        "id": 4,
+        "conversation_id": 1,
+        "role": "assistant",
+        "message_text": "La fuente previa no permite concluir una tendencia.",
+        "citations_json": "[{\"source_id\":\"prior_report\",\"quote\":\"No permite concluir una tendencia.\"}]",
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "created_at": 1791288060000
+      },
+      {
+        "id": 5,
+        "conversation_id": 2,
+        "role": "user",
+        "message_text": "¿Qué variante corresponde?",
+        "citations_json": "[]",
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "created_at": 1791288120000
+      },
+      {
+        "id": 6,
+        "conversation_id": 2,
+        "role": "assistant",
+        "message_text": "La guía corresponde a dominadas con carga y agarre prona.",
+        "citations_json": "[{\"source_id\":\"exercise_guide:dominadas\",\"quote\":\"Dominadas con carga y agarre prona.\"}]",
+        "model": "gpt-6-luna",
+        "contract_version": 2,
+        "created_at": 1791288120000
+      }
+    ]
+  }
+}
