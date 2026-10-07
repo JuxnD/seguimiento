@@ -16,12 +16,13 @@ class ChartRepository {
   final NutritionRepository nutrition;
 
   /// Rondas de cada sesión de circuito, en orden. Es la línea que debe subir.
+  /// El historial importado no entra: es lo prescrito, no lo medido (§16.16).
   Future<List<SeriesPoint>> rounds({int limit = 20, SessionType? only}) async {
     final types = only == null
         ? SessionType.values.where((t) => t.isCircuit).map((t) => t.name).toList()
         : [only.name];
     final rows = await (db.select(db.sessions)
-          ..where((t) => t.type.isIn(types) & t.roundsDone.isNotNull())
+          ..where((t) => t.type.isIn(types) & t.roundsDone.isNotNull() & t.imported.equals(false))
           ..orderBy([(t) => OrderingTerm(expression: t.date)]))
         .get();
     final points = [

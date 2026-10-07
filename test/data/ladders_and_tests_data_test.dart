@@ -9,6 +9,7 @@ import 'package:seguimiento/data/repositories/ladder_repository.dart';
 import 'package:seguimiento/data/repositories/nutrition_repository.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
 import 'package:seguimiento/data/repositories/profile_repository.dart';
+import 'package:seguimiento/data/repositories/report_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/data/seed_plan.dart';
 import 'package:seguimiento/domain/core_ladders.dart';
@@ -113,6 +114,14 @@ void main() {
     final all = await FitnessTestRepository(db).all();
     expect(all, hasLength(3));
     expect(testValue(all, 1, 'one_arm_pushup'), 4);
+  });
+
+  test('el informe no toma el Tabata por aguantes; sí la vela y el hollow', () async {
+    final input = await ReportRepository(db, NutritionRepository(db)).load(d(10, 12), d(10, 18));
+    expect(input.holdExercises, isNot(contains('Flexiones')));
+    expect(input.holdExercises, isNot(contains('Sentadillas')));
+    expect(input.holdExercises, containsAll(['Vela', hollowHold, 'Pino pecho a la pared']));
+    expect(input.perSideExercises, contains('V-up a una pierna'));
   });
 
   test('martes del 6 oct: el v3.1 nuevo ya lo trae; uno activado antes se corrige', () async {

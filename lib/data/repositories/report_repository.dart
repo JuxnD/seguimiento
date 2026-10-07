@@ -5,6 +5,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/report/report_input.dart';
 import '../../domain/session_math.dart';
+import '../../domain/session_script.dart' show tabataBlock;
 import '../database.dart';
 import '../history_import.dart' show firstDataDay;
 import 'exercise_repository.dart';
@@ -234,7 +235,11 @@ class ReportRepository {
       sleep: {for (final s in sleep) parseDay(s.date): s.hours},
       mobility: mobility,
       holdExercises: {
-        for (final pe in await (db.select(db.planExercises)..where((x) => x.holdSecMin.isNotNull())).get())
+        // El Tabata (flexiones, sentadillas… 8 × 20 s) va por tiempo en el
+        // plan, pero se anotan repeticiones: no son aguantes.
+        for (final pe in await (db.select(db.planExercises)
+              ..where((x) => x.holdSecMin.isNotNull() & (x.block.isNull() | x.block.equals(tabataBlock).not())))
+            .get())
           if (names[pe.exerciseId] case final name?) name,
         // Las escaleras de core (§19.10) no están en el plan guardado.
         hollowHold,

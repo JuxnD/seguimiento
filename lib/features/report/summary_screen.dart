@@ -234,9 +234,7 @@ class _Headline extends StatelessWidget {
           icon: Icons.fitness_center,
           color: Theme.of(context).colorScheme.primary,
           value: planned > 0 ? '${s.trainingSessions}/$planned' : '${s.trainingSessions}',
-          label: inProgress && s.plannedSessions > 0
-              ? 'días hábiles hasta hoy · ${s.plannedSessions} en el periodo$games'
-              : 'sesiones$games',
+          label: inProgress && s.plannedSessions > 0 ? 'hasta hoy$games' : 'sesiones$games',
         ),
         _BigStat(
           icon: Icons.timer_outlined,
@@ -261,21 +259,29 @@ class _Headline extends StatelessWidget {
         ),
       ],
     );
-    if (s.plannedWithoutData == 0 || s.dataStart == null) return grid;
+    final notes = [
+      // "4 de 4 días hábiles hasta hoy · 22 en el mes": no cabe en la tarjeta.
+      if (inProgress && s.plannedSessions > 0)
+        '${s.trainingSessions} de $planned días hábiles hasta hoy · ${s.plannedSessions} en el periodo.',
+      if (s.plannedWithoutData > 0 && s.dataStart != null)
+        'Sin datos en la app: ${s.plannedWithoutData} '
+            '${s.plannedWithoutData == 1 ? 'día hábil' : 'días hábiles'} antes del ${formatShort(s.dataStart!)}. '
+            'No cuentan como faltas.',
+    ];
+    if (notes.isEmpty) return grid;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         grid,
-        Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Text(
-            'Sin datos en la app: ${s.plannedWithoutData} '
-            '${s.plannedWithoutData == 1 ? 'día hábil' : 'días hábiles'} antes del ${formatShort(s.dataStart!)}. '
-            'No cuentan como faltas.',
-            textAlign: TextAlign.center,
-            style: text.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        for (final n in notes)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              n,
+              textAlign: TextAlign.center,
+              style: text.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
           ),
-        ),
       ],
     );
   }

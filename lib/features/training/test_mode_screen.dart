@@ -25,7 +25,7 @@ class TestModeScreen extends ConsumerStatefulWidget {
 
 class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   late final _items = widget.part == TestPart.torso ? torsoTests : legTests;
-  late final _startedAt = clock.now();
+  final _startedAt = clock.now();
 
   /// Campo por prueba y lado ('' sin lado).
   final _fields = <String, TextEditingController>{};
