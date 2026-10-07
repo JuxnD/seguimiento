@@ -221,7 +221,6 @@ class _Headline extends StatelessWidget {
     // datos posibles; cerrado, los del periodo desde el primer dato. Los
     // anteriores a la app no son faltas.
     final planned = inProgress ? s.plannedElapsed : s.plannedSessions - s.plannedWithoutData;
-    final games = s.footballGames == 0 ? '' : ' + ${s.footballGames} ${s.footballGames == 1 ? 'partido' : 'partidos'}';
     final grid = GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -234,7 +233,7 @@ class _Headline extends StatelessWidget {
           icon: Icons.fitness_center,
           color: Theme.of(context).colorScheme.primary,
           value: planned > 0 ? '${s.trainingSessions}/$planned' : '${s.trainingSessions}',
-          label: inProgress && s.plannedSessions > 0 ? 'hasta hoy$games' : 'sesiones$games',
+          label: inProgress && s.plannedSessions > 0 ? 'hasta hoy' : 'sesiones',
         ),
         _BigStat(
           icon: Icons.timer_outlined,
@@ -259,10 +258,13 @@ class _Headline extends StatelessWidget {
         ),
       ],
     );
+    final games = s.footballGames == 0 ? '' : ' Más ${s.footballGames} ${s.footballGames == 1 ? 'partido' : 'partidos'}.';
+    // Lo largo va debajo: en la tarjeta no cabe.
     final notes = [
-      // "4 de 4 días hábiles hasta hoy · 22 en el mes": no cabe en la tarjeta.
       if (inProgress && s.plannedSessions > 0)
-        '${s.trainingSessions} de $planned días hábiles hasta hoy · ${s.plannedSessions} en el periodo.',
+        '${s.trainingSessions} de $planned días hábiles hasta hoy · ${s.plannedSessions} en el periodo.$games'
+      else if (games.isNotEmpty)
+        games.trim(),
       if (s.plannedWithoutData > 0 && s.dataStart != null)
         'Sin datos en la app: ${s.plannedWithoutData} '
             '${s.plannedWithoutData == 1 ? 'día hábil' : 'días hábiles'} antes del ${formatShort(s.dataStart!)}. '
