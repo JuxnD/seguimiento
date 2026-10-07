@@ -54,7 +54,7 @@ void main() {
     expect((await dashboard.today(now: d(10, 17))).kcalTarget, 2400, reason: 'sábado de fútbol');
 
     final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
-    expect((profile.proteinMin, profile.proteinMax, profile.kcalTargetFootball), (160, 170, 2400));
+    expect((profile.proteinMin, profile.proteinMax, profile.kcalTargetFootball), (130, 160, 2400));
     expect(profile.nextMeasurementDate, '2026-10-17');
     expect((profile.measureIntervalDays, profile.measureIntervalMaxDays), (14, 21),
         reason: 'el abdomen cada 2 semanas no es "antes de tiempo" ni alerta en el informe');

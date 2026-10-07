@@ -92,3 +92,14 @@ El estado vigente de riesgos vive en project-map, no aquí.
 - **Contexto con etiquetas** (oficina, dormí poco, fútbol ayer) en vez de texto
   libre: permitiría cruzar contexto con rendimiento en el informe. Hoy el texto
   libre va completo al informe, que es donde se analiza.
+
+
+## Contraste del handoff antes de publicar 1.21 (7 oct)
+
+El adjunto actualizado sustituye la antigua meta de proteína: mínimo 130 g,
+objetivo 140–160 g. Se corrigen las constantes de activación y la propuesta
+visible en Ajustes; actualizar el APK no reescribe metas personales sin confirmar.
+El mensaje de acumulado del cronómetro indica la sesión actual, sin afirmar que
+el ejercicio carece de historial. §16.19–22 son ampliaciones pendientes, registradas
+con criterios en [roadmap](roadmap.md); no se atribuyen a esta publicación.
+[Comparación y evidencia](context/sessions/2026-10-07-handoff-publicacion-121.md).

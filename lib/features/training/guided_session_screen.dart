@@ -1391,7 +1391,9 @@ class _RepsSoFar extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.only(top: 6),
         child: Text(
-          reps == 0 ? 'Primera vez hoy con este ejercicio' : 'Llevas $reps ${seconds ? 's' : 'reps'} de $exercise',
+          reps == 0
+              ? (seconds ? 'Aún sin segundos registrados en esta sesión' : 'Aún sin reps registradas en esta sesión')
+              : 'Llevas $reps ${seconds ? 's' : 'reps'} de $exercise',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),

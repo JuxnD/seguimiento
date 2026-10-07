@@ -138,7 +138,7 @@ void main() {
     await startNow(tester);
 
     // Ronda 1: dos paradas.
-    expect(find.text('Primera vez hoy con este ejercicio'), findsOneWidget);
+    expect(find.text('Aún sin reps registradas en esta sesión'), findsOneWidget);
     await tester.tap(find.text('Hecho'));
     await step(tester);
     await tester.tap(find.text('Hecho'));

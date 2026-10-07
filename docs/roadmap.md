@@ -85,3 +85,19 @@ como gates separados. [Entrega](context/sessions/2026-10-06-entrega-120.md),
 - Escritura autónoma por IA. El copiloto descriptivo del informe está en 1.19;
   las fotos de comida son borradores revisables desde la 1.20.
   [Estado y gates](ia-pendiente.md).
+
+
+## Handoff actualizado del 7 oct — pendientes posteriores a 1.21
+
+Revisión antes de publicar: [contraste y gates](context/sessions/2026-10-07-handoff-publicacion-121.md).
+La 1.21 mantiene el alcance de test, escaleras, historial y actualización segura.
+Se incorporan el mínimo de proteína actualizado y la aclaración del acumulado
+por sesión. Los apartados nuevos no se declaran entregados:
+
+| Apartado | Trabajo pendiente y criterio observable |
+|---|---|
+| §16.19 Pasos y sueño | Promedio lunes–domingo 7.500, piso diario 5.000 y pasos del fútbol sin doble conteo; definir denominador de días faltantes. Sueño 9,5/10+ y entrada manual, importación sólo después de comprobar permisos y datos de Innova. |
+| §16.20 Comida descrita | Prioridad alta por uso real: conservar 350 ml; descomponer leche + Milo sin omitir ingrediente; advertir cantidades faltantes. Alta de alimento estimado con macros revisables/procedencia, conversiones editables y atajos editables sin mutar plantilla. No promover las tablas propuestas a etiqueta verificada. Prueba de aceptación con la frase de cuatro huevos, pan y leche con Milo. |
+| §16.21 Sesión técnica | Plantilla revisable de técnica con RIR 4; comprobar que no cumple la sesión intensa ni altera la regla de carga y que se registra diferenciada. |
+| §16.22 Guía con historial | Mejor/último registro, claves por estado y propuestas basadas en datos importados/registrados; sin inventar RIR ni tratar un único dato como progreso. La aclaración de texto en 1.21 no implementa este motor. |
+| §16.17/18 Reloj y propuesta semanal IA | Persisten pendientes anteriores: verificar fuentes/permisos en teléfono y ampliar contrato del gateway para propuestas versionadas con aceptación por cambio y reversión. |

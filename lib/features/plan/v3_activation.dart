@@ -17,7 +17,7 @@ Future<void> activateV31(BuildContext context, WidgetRef ref, DateTime monday) a
       title: Text('Plan v3.1 desde el ${weekdayShort(monday.weekday)} ${formatShort(monday)}'),
       content: Text('Se crea la versión nueva del plan; la actual sigue hasta el domingo anterior. '
           'Metas: ${fmtInt(v31KcalWeekday)} kcal entre semana, ${fmtInt(v31KcalFootball)} en días de fútbol, '
-          'proteína $v31ProteinMin–$v31ProteinMax g. '
+          'proteína: mínimo $v31ProteinMin g, objetivo $v31ProteinGoal–$v31ProteinMax g. '
           'Abdomen en ayunas el ${formatShort(v31MeasurementDates(monday).first)} y luego cada 2 semanas. '
           'Pruebas: ${formatShort(v31TestDate(monday))}.'),
       actions: [

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/data/corrections_29sep.dart';
 import 'package:seguimiento/data/database.dart';
@@ -67,12 +68,27 @@ void main() {
     expect(sep21.single.imported, isFalse);
   });
 
-  test('metas del v3.1 desde ya', () async {
+  test('metas del v3.1 desde ya, mínimo 130 y techo 160 según el handoff actualizado', () async {
     final goals = byId('metas-v31');
     expect(await goals.check(db), CorrectionState.pending);
     await goals.apply(db);
     expect(await goals.check(db), CorrectionState.done);
     final p = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
-    expect((p.kcalTarget, p.kcalTargetFootball, p.proteinMin, p.proteinMax), (2100, 2400, 160, 170));
+    expect((p.kcalTarget, p.kcalTargetFootball, p.proteinMin, p.proteinMax), (2100, 2400, 130, 160));
+  });
+
+  test('revisar las metas anteriores no las cambia sin confirmar y aplicar es idempotente', () async {
+    await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(
+      const ProfilesCompanion(proteinMin: Value(160), proteinMax: Value(170)),
+    );
+    final goals = byId('metas-v31');
+    expect(goals.change, contains('mínimo 130 g, objetivo 140–160 g'));
+    expect(await goals.check(db), CorrectionState.pending);
+    var profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
+    expect((profile.proteinMin, profile.proteinMax), (160, 170));
+    expect(await applyPendingCorrections(db, [goals]), 1);
+    profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
+    expect((profile.proteinMin, profile.proteinMax), (130, 160));
+    expect(await applyPendingCorrections(db, [goals]), 0);
   });
 }

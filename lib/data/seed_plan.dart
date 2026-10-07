@@ -445,12 +445,14 @@ List<PlanExerciseDraft> plancheBlock({required int weekday, required bool deload
 }
 
 /// Metas del v3.1 (§19.3): 2.100 kcal entre semana y 2.400 en días de
-/// fútbol (los rangos son 2.100–2.200 y 2.400–2.500), proteína 160–170 g
-/// todos los días. Son el punto de partida: la báscula decide cada 2 semanas.
+/// fútbol (los rangos son 2.100–2.200 y 2.400–2.500), proteína: mínimo 130 g
+/// y objetivo 140–160 g todos los días (actualización del 7 oct).
+/// Son el punto de partida: la báscula decide cada 2 semanas.
 const v31KcalWeekday = 2100;
 const v31KcalFootball = 2400;
-const v31ProteinMin = 160;
-const v31ProteinMax = 170;
+const v31ProteinMin = 130;
+const v31ProteinGoal = 140;
+const v31ProteinMax = 160;
 
 /// Activa el Plan v3.1 desde el lunes `start`: crea la versión (si había un
 /// v3 desde ese mismo lunes, el v3.1 lo reemplaza: a igual fecha gana la

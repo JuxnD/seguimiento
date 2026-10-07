@@ -6,7 +6,7 @@ import 'corrections_29sep.dart' show CorrectionState, DataCorrection;
 import 'database.dart';
 import 'repositories/exercise_repository.dart';
 import 'repositories/plan_repository.dart';
-import 'seed_plan.dart' show planV31, v31KcalFootball, v31KcalWeekday, v31ProteinMax, v31ProteinMin;
+import 'seed_plan.dart' show planV31, v31KcalFootball, v31KcalWeekday, v31ProteinMax, v31ProteinMin, v31ProteinGoal;
 import '../domain/plan_v3.dart' show v31Scheme;
 
 // Traspaso del 7 oct (§16.16, punto 0): el historial anterior a la app y las
@@ -144,7 +144,7 @@ final corrections7Oct = <DataCorrection>[
     date: 'mié 7 oct',
     title: 'Metas del v3.1 desde ya',
     change: '$v31KcalWeekday kcal entre semana, $v31KcalFootball en días de fútbol, '
-        'proteína $v31ProteinMin–$v31ProteinMax g (§19.3)',
+        'proteína: mínimo $v31ProteinMin g, objetivo $v31ProteinGoal–$v31ProteinMax g (§19.3 actualizado)',
     check: (db) async {
       final p = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
       final done = p.kcalTarget == v31KcalWeekday &&

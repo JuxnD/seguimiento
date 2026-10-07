@@ -16,7 +16,7 @@ cronómetros de Cindy y Tabata.
   - crea la versión con `scheme = 'v3.1'`;
   - completa las guías de los ejercicios nuevos;
   - pone las metas de §19.3: 2.100 kcal entre semana, 2.400 en días de
-    fútbol, proteína 160–170 g;
+    fútbol, proteína: mínimo 130 g, objetivo 140–160 g (ajuste del 7 oct);
   - fija la próxima medición en el sábado de la semana 1.
 - Un v3 activado para el mismo lunes queda reemplazado, porque a igual fecha
   gana la versión más nueva. La semana del bloque cuenta desde la primera

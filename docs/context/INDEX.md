@@ -19,7 +19,10 @@ La evidencia de [1.19](sessions/2026-10-06-entrega-119.md) se conserva como hist
 importado, Progreso con denominador justo, escaleras de core, test de
 condición y martes del 6 oct. La candidata corregida en
 `C:/My Projects/seguimiento-121-ready`, rama `JuxnD/121-ready`, usa esquema20
-(ver [ADR0013](../adr/0013-test-parcial-y-guion-congelado.md)). APK firmado y actualización18→20 comprobados en QA. Aún no publicada. §16.17 espera los permisos de
+(ver [ADR0013](../adr/0013-test-parcial-y-guion-congelado.md)). APK previo firmado y actualización18→20 comprobados en QA. La revisión del
+[handoff actualizado](sessions/2026-10-07-handoff-publicacion-121.md) corrige las
+metas de proteína y el texto del acumulado; ese APK previo ya no es el artefacto
+final. Publicación y verificación del APK final en curso. §16.17 espera los permisos de
 Innova; §16.18 necesita autorizar un endpoint nuevo del gateway.
 
 | Tema | Documento | Cuándo se actualiza |
