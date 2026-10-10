@@ -14,6 +14,14 @@ UpdateService/comparador/canal de descarga y conserva errores.
 [Recibo y pruebas025](sessions/2026-10-10-025-version-visible.md).
 Sin cambio de versión, SDK, datos, SettingsScreen012 ni AVD.
 
+**Cierre012/023 local (10oct):** [metas por fecha y presencia](sessions/2026-10-10-023-presencia-metas.md)
+en `C:/My Projects/seguimiento-012-presencia`, base integrada5352440/schema23.
+Historia única gobierna Hoy, comidas, Ajustes, avisos e informe/nueva fuenteIA;
+plantillas del nuevo perfil requieren exploración explícita.90mínimos pasan,
+análisis0; pruebas ampliadas/capturas/full aplazadas por instrucción del owner
+de priorizar publicación. Integración024, CI/APK/firma/upgrade y teléfono son
+gates separados del coordinador; versión/empaquetado1.23+31 fuera de este tramo.
+
 **Plan011 implementación local:** radar real en Tu progreso, referencias009 con
 vigencia y reactividad SQL, proteína/pasos por fecha, kcal con calendario
 existente y rutas protegidas. [Recibo011](sessions/2026-10-10-011-radar-integrado.md),

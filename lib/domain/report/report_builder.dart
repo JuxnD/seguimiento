@@ -108,16 +108,21 @@ void _summary(StringBuffer b, ReportStats s) {
         : pMin.segments.isEmpty && pMax.segments.isEmpty
             ? 'histórica no registrada'
             : 'mínimo ${pMin.label(fmtInt)}, máximo ${pMax.label(fmtInt)}';
-    final kcal = GoalSpan.over(goals, GoalMetric.kcal, days, fallback: t.kcalTarget);
-    final football = GoalSpan.over(goals, GoalMetric.kcalFutbol, days, fallback: t.kcalTargetFootball);
-    final footballInherits = football.segments.every((x) => x.value == null) && football.unknownDays == 0;
+    final kcal = GoalSpan.fromReferences(days, s.input.kcalReferenceOn);
     b.writeln('- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta $proteinGoal)'
         '${vs(s.avgProtein!, prev?.avgProtein)} · '
-        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${kcal.label(fmtInt)}'
-        '${footballInherits ? '' : ' entre semana, ${football.label(fmtInt, none: 'la misma')} fútbol'})'
+        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${kcal.label(fmtInt)})'
         '${vs(s.avgKcal!, prev?.avgKcal)} · '
         'días cerrados: $closed/$elapsed');
-    b.writeln('- Días bajo ${fmtInt(t.kcalFloor)} kcal: ${s.daysBelowFloor.length}');
+    final floor = s.floorSpan(days);
+    if (floor.single case final value?) {
+      b.writeln(
+          '- Días bajo ${fmtInt(value)} kcal: ${s.daysBelowFloor.length}');
+    } else {
+      final judged = days.where((d) => s.floorOn(d).comparable).length;
+    b.writeln('- Piso de alerta kcal: ${floor.label(fmtInt)} · '
+          '${s.daysBelowFloor.length}/$judged días bajo piso con referencia válida');
+    }
   }
 
   final steps = s.steps;
@@ -236,9 +241,8 @@ void _sessions(StringBuffer b, ReportStats s) {
     for (final e in byExercise.entries) {
       final sets = [...e.value]..sort((a, c) => a.setIndex.compareTo(c.setIndex));
       final hold = s.input.holdExercises.contains(e.key);
-      b.writeln('- ${e.key}: ${s.input.perSideExercises.contains(e.key) && sets.length.isEven
-          ? _perSideLabel(sets, seconds: hold)
-          : sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
+      b.writeln(
+          '- ${e.key}: ${s.input.perSideExercises.contains(e.key) && sets.length.isEven ? _perSideLabel(sets, seconds: hold) : sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
     }
     final extra = [
       if (x.limitingExercise != null && x.limitingExercise!.isNotEmpty) 'Limitante: ${x.limitingExercise}',
@@ -351,7 +355,7 @@ void _nutrition(StringBuffer b, ReportStats s) {
     });
     final total = s.macrosOn(d);
     final closed = s.isClosed(d);
-    final flag = closed && total != null && total.kcal < s.input.targets.kcalFloor ? ' ⚠' : '';
+    final flag = closed && total != null && s.belowFloorOn(d) ? ' ⚠' : '';
     final open = total != null && !closed ? ' (incompleto)' : '';
     b.writeln('| ${_dayLabel(d, null)} | ${cells.join(' | ')} | '
         '${total == null ? 'sin registro' : '${fmtInt(total.kcal)}$flag$open'} | '

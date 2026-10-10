@@ -355,3 +355,22 @@ sin conflictos, fuente5352440 y esquema23. GeneraciónDrift/analyze/diff pasan;
 no es evidencia de una suite final combinada. Barrera Navigator tras ZIPpending
 024 sigue NO_EVALUADA; cierre de lectores023 y continuidad genuina18/20/22→23
 pendientes. [Recibo](sessions/2026-10-10-integracion-122-011-022-base.md).
+
+
+## Cierre012/023: decisión SQL → presencia por fecha → consumidores
+
+Base integrada5352440, esquema23 sin migración nueva. Una sola GoalHistory,
+GoalAt y goalHistoryProvider011. goalReferenceOn/kcalGoalReferenceOn resuelven
+número conocido/null conocido/desconocido; historia no cargada sólo admite
+compatibilidad legacy explícita. GoalSpan.fromReferences comparte compresión
+de texto/alertas/ratios, sin fallback por ausencia en historia cargada.
+
+| Frontera | Evidencia y límite |
+|---|---|
+| confirmSetup Más adelante → SQLite → Dashboard/ReportBuilder → fuenteIA | Rojo3assertions en BASE; casos verdes reales con macros901/31, cero piso inventado y texto usado por reportQuestionSources. No llamadaIA externa. |
+| Definir/quitar → GoalRepository → historia por fecha | Igualplaceholder130 crea aceptación; quitar no toca día anterior; piso950→null no reclasifica; altura no acepta metas. FalloSQLite inducido revierte perfil/decisiones. |
+| Historia → ReminderScheduler/DTO → sink | Fixture de usuario conocido desde1sept conserva130/43/87; metas conocidas por día y null suprimen comparaciones falsas. Android no observado. |
+| Historia → Ajustes/pantallas/plantilla | Código reactivo011 y reloj real; evita montar inputs de proyección antes de historia. Exploración explícita no activa una rutina. UIampliada/cancel/restore/medianoche/capturas aplazadas por owner; no afirmar prueba nativa. |
+
+[Recibo023 y rawlogs comprimidos](sessions/2026-10-10-023-presencia-metas.md).
+90mínimos/análisis0 no sustituyen CI/artefacto exacto,024 ni prueba del teléfono.

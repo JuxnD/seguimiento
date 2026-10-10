@@ -142,6 +142,71 @@ class GoalRepository {
         effectiveFrom: effectiveFrom ?? today, origin: GoalOrigin.perfil, reason: 'Referencia aceptada', now: today);
   }
 
+  /// Decisiones expresas de metas personales, incluida quitar nutrición/piso.
+  /// El perfil conserva sus proyecciones internas para compatibilidad; null se
+  /// registra en la historia, nunca como0. No cambia una vigencia anterior.
+  Future<void> setPersonalGoals(Map<GoalMetric, double?> selections,
+          {ProfilesCompanion profileChanges = const ProfilesCompanion(),
+          DateTime? now}) =>
+      db.transaction(() async {
+        if (_presentGoals(profileChanges).isNotEmpty) {
+          throw ArgumentError(
+              'Las metas se eligen en selections, no en la proyección del perfil.');
+        }
+        final today = dateOnly(now ?? DateTime.now());
+        final h = await history();
+        for (final e in selections.entries) {
+          final value = e.value;
+          if (e.key.reference || (e.key == GoalMetric.pasos && value == null)) {
+            throw ArgumentError(
+                'No se elimina la meta de pasos ni se editan referencias del radar aquí.');
+          }
+          final max = e.key == GoalMetric.pasos
+              ? 100000
+              : (e.key == GoalMetric.proteinaMin ||
+                      e.key == GoalMetric.proteinaMax
+                  ? 500
+                  : 10000);
+          if (value != null &&
+              (!value.isFinite ||
+                  value <= 0 ||
+                  value > max ||
+                  value != value.roundToDouble())) {
+            throw ArgumentError(
+                'La meta debe ser una cifra entera positiva dentro de su rango.');
+          }
+        }
+        double? chosen(GoalMetric m) {
+          if (selections.containsKey(m)) return selections[m];
+          final at = goalReferenceOn(h, m, today);
+          return at.comparable ? at.value : null;
+        }
+
+        final min = chosen(GoalMetric.proteinaMin),
+            max = chosen(GoalMetric.proteinaMax);
+        final kcal = chosen(GoalMetric.kcal),
+            floor = chosen(GoalMetric.kcalFloor);
+        if ((min != null && max != null && min > max) ||
+            (kcal != null && floor != null && floor > kcal)) {
+          throw ArgumentError(
+              'El mínimo/piso no puede superar su objetivo definido.');
+        }
+        await updateProfile(profileChanges,
+            origin: GoalOrigin.perfil, now: today);
+        for (final e in selections.entries) {
+          final at = goalReferenceOn(h, e.key, today);
+          if (at.known && at.value == e.value) continue;
+          await scheduleGoal(e.key, e.value,
+              effectiveFrom: today,
+              origin: GoalOrigin.perfil,
+              reason: e.value == null
+                  ? 'Sin meta por decisión expresa'
+                  : 'Meta personal definida',
+              now: today);
+        }
+        await projectDueGoals(today);
+      });
+
   Future<void> updateProfile(
     ProfilesCompanion data, {
     required String origin,

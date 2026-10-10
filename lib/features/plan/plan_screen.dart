@@ -98,6 +98,7 @@ class PlanScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final versions = ref.watch(planVersionsProvider);
+    final setup = ref.watch(setupStatusProvider).valueOrNull;
     return Scaffold(
       appBar: AppBar(title: const Text('Plan semanal')),
       body: versions.when(
@@ -111,7 +112,31 @@ class PlanScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
-              if (!hasV3) const _V3ActivationCard(),
+              if (!hasV3 && setup != null && !setup.isNewInstall) const _V3ActivationCard(),
+              if (!hasV3 && setup?.isNewInstall == true)
+                AppCard(children: [
+                  const Text(
+                      'Tu rutina sigue vigente. Puedes revisar una plantilla antes de decidir si la adoptas.'),
+                  OutlinedButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => Scaffold(
+                                  appBar: AppBar(
+                                      title: const Text('Explorar plantillas')),
+                                  body: ListView(children: const [
+                                    Padding(
+                                        padding: EdgeInsets.all(16),
+                                        child: Text(
+                                            'Plantilla v3.1: al activarla se crea una versión del plan y cambian metas de comida, '
+                                            'fechas de medición y pruebas. Verás las cifras y el calendario antes de confirmar. '
+                                            'Puedes volver sin cambiar nada.')),
+                                    _V3ActivationCard(),
+                                  ]),
+                                ))),
+                    child: const Text('Explorar plantillas'),
+                  ),
+                ]),
               if (hasV3) const _PlancheCard(),
               for (var i = list.length - 1; i >= 0; i--)
                 _VersionCard(versionId: list[i].id, number: i + 1, validFrom: parseDay(list[i].validFrom), notes: list[i].notes),

@@ -23,7 +23,8 @@ List<String> buildAlerts(ReportStats s) {
   }
 
   for (final streak in s.lowKcalStreaks.where((st) => st.length >= 2)) {
-    out.add('${streak.length} días seguidos bajo ${fmtInt(t.kcalFloor)} kcal (${_days(streak)})');
+    out.add(
+        '${streak.length} días seguidos bajo ${s.floorSpan(streak).label(fmtInt)} kcal (${_days(streak)})');
   }
 
   // Cada día con el mínimo que regía ese día (plan 009): una meta nueva no
@@ -188,4 +189,3 @@ List<String> interferenceNotes(ReportStats s) {
 }
 
 String _days(List<DateTime> days) => days.map((d) => '${weekdayShort(d.weekday)} ${d.day}').join(', ');
-

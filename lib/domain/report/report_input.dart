@@ -363,26 +363,21 @@ class ReportInput {
   /// Meta de un día: la vigente ese día; null si es "meta histórica no
   /// registrada" (no se clasifica). Sin historia, la de `targets`.
   double? goalOn(GoalMetric metric, DateTime day, num fallback) {
-    final at = goals?.on(metric, day);
-    if (at == null) return fallback.toDouble();
+    final at = referenceOn(metric, day, fallback);
     return at.known ? at.value : null;
   }
 
   /// Visual comparisons fail closed when a loaded history has no dated value.
   GoalAt referenceOn(GoalMetric metric, DateTime day, num? fallback) {
-    if (goals == null) return GoalAt(fallback?.toDouble(), known: true);
-    return goals!.on(metric, day) ?? const GoalAt(null, known: false);
+    return goalReferenceOn(goals, metric, day, fallback: fallback);
   }
 
   /// Reuses the established Saturday/Sunday calendar. The 0/1 selector is
   /// internal, never a calorie amount: nullable/unknown evidence stays so.
   GoalAt kcalReferenceOn(DateTime day) {
-    final weekday = referenceOn(GoalMetric.kcal, day, targets.kcalTarget);
-    final footballDay = dailyKcalTarget(day: day, weekdayTarget: 0, footballTarget: 1) == 1;
-    if (!footballDay) return weekday;
-    final football = referenceOn(GoalMetric.kcalFutbol, day, targets.kcalTargetFootball);
-    if (!football.known) return football;
-    return football.value == null ? weekday : football;
+    return kcalGoalReferenceOn(goals, day,
+        weekdayFallback: targets.kcalTarget,
+        footballFallback: targets.kcalTargetFootball);
   }
 
   /// El rango anterior del mismo largo (la semana pasada), para comparar.

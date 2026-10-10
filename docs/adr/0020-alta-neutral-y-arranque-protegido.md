@@ -119,14 +119,16 @@ Semántica que deben consumir los lectores (con los adapters 011 congelados):
 
 ## Pendiente obligatorio (cierre 012)
 
-Hoy, comidas, Ajustes (salvo la entrada «sin meta»), avisos, informe, ratios e
-IA todavía leen el perfil proyectado: un usuario con «Más adelante» vería 130 g
-o 2.400 kcal como meta. Ese cierre debe leer la historia vía adapters 011 sin
-convertir null en 0 ni reintroducir placeholders. Hasta entonces **no activar
-un usuario nuevo en la app diaria, ni publicar ni pilotar**. Tampoco:
-`PlanScreen` sigue ofreciendo «Activar v3.1» a quien ya creó un plan propio
-(fuera de los archivos autorizados); iOS `DarwinInitializationSettings` pediría
-permiso en `init()` antes del alta (app Android; nativo no evaluado).
+El cierre012/023 implementa localmente presencia por fecha sobre la historia
+compartida011: conocidos-null y desconocidos no usan el perfil proyectado.
+Hoy/comidas tienen anillos neutrales y acceso a Definir; Ajustes espera historia
+y permite poner/quitar decisiones expresas; avisos se abstienen sin referencia.
+El piso del informe es histórico y el NUEVO contextoIA toma ese mismo texto;
+las conversaciones previas se conservan. PlanScreen del nuevo perfil requiere
+Explorar plantillas y confirmación del activador existente. [Recibo023](../context/sessions/2026-10-10-023-presencia-metas.md).
+Integración/release/QA nativa siguen separadas. iOS
+`DarwinInitializationSettings` pediría permiso en `init()` antes del alta
+(app Android; nativo no evaluado).
 
 ## Consecuencias
 

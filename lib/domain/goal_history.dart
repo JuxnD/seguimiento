@@ -1,4 +1,5 @@
 import 'dates.dart';
+import 'nutrition.dart' show dailyKcalTarget;
 
 // Metas con historia (plan 009, ADR 0016): cada día se evalúa con la meta
 // vigente ese día. Una meta nueva no reclasifica el pasado. Lo anterior a la
@@ -89,6 +90,35 @@ class GoalAt {
   /// no registrada). El valor es el legado, sólo como referencia.
   final bool known;
   final DateTime? since;
+
+  /// Sólo una referencia conocida positiva permite comparar lo registrado.
+  bool get comparable =>
+      known && value != null && value!.isFinite && value! > 0;
+
+  String get absenceLabel => known ? 'Sin meta' : 'Meta no registrada';
+}
+
+/// null en la historia es compatibilidad legacy explícita; una historia
+/// cargada incompleta nunca usa la proyección interna del perfil.
+GoalAt goalReferenceOn(GoalHistory? history, GoalMetric metric, DateTime day,
+        {num? fallback}) =>
+    history == null
+        ? GoalAt(fallback?.toDouble(), known: true)
+        : history.on(metric, day) ?? const GoalAt(null, known: false);
+
+/// Conserva el calendario existente, sin inferir metas desde partidos.
+GoalAt kcalGoalReferenceOn(GoalHistory? history, DateTime day,
+    {num? weekdayFallback, num? footballFallback}) {
+  final weekly =
+      goalReferenceOn(history, GoalMetric.kcal, day, fallback: weekdayFallback);
+  if (dailyKcalTarget(day: day, weekdayTarget: 0, footballTarget: 1) == 0)
+  {
+    return weekly;
+  }
+  final football = goalReferenceOn(history, GoalMetric.kcalFutbol, day,
+      fallback: footballFallback);
+  if (!football.known) return football;
+  return football.value == null ? weekly : football;
 }
 
 class GoalHistory {
@@ -154,24 +184,23 @@ class GoalSpan {
 
   /// Sin historia cargada: la meta de siempre en todos los días.
   factory GoalSpan.over(GoalHistory? goals, GoalMetric m, Iterable<DateTime> days, {num? fallback}) {
+    return GoalSpan.fromReferences(
+        days, (day) => goalReferenceOn(goals, m, day, fallback: fallback));
+  }
+
+  /// La misma compresión de referencias para texto, alertas y gráficas011.
+  factory GoalSpan.fromReferences(
+      Iterable<DateTime> days, GoalAt Function(DateTime) resolve) {
     final sorted = [for (final d in days) dateOnly(d)]..sort();
     final segments = <({double? value, DateTime from})>[];
     var unknown = 0;
     for (final d in sorted) {
-      final double? value;
-      if (goals == null) {
-        value = fallback?.toDouble();
-      } else {
-        final at = goals.on(m, d);
-        if (at == null) {
-          value = fallback?.toDouble();
-        } else if (!at.known) {
+      final at = resolve(d);
+      if (!at.known) {
           unknown++;
           continue;
-        } else {
-          value = at.value;
         }
-      }
+      final value = at.value;
       if (segments.isEmpty || segments.last.value != value) segments.add((value: value, from: d));
     }
     return GoalSpan(segments, unknownDays: unknown);

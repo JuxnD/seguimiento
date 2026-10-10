@@ -371,18 +371,5 @@ double? _weightFor(ReportInput input) {
 
 /// Compresses already resolved daily evidence; no current-profile substitution.
 GoalSpan _referencesSpan(Iterable<DateTime> days, GoalAt Function(DateTime) resolve) {
-  final sorted = [...days]..sort();
-  final segments = <({double? value, DateTime from})>[];
-  var unknown = 0;
-  for (final day in sorted) {
-    final at = resolve(day);
-    if (!at.known) {
-      unknown++;
-      continue;
+  return GoalSpan.fromReferences(days, resolve);
     }
-    if (segments.isEmpty || segments.last.value != at.value) {
-      segments.add((value: at.value, from: day));
-    }
-  }
-  return GoalSpan(segments, unknownDays: unknown);
-}

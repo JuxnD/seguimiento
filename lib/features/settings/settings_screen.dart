@@ -13,7 +13,7 @@ import '../../data/backup_archive.dart';
 import '../../data/database.dart';
 import '../../data/repositories/goal_repository.dart';
 import '../../data/repositories/profile_repository.dart';
-import '../../domain/goal_history.dart' show GoalMetric;
+import '../../domain/goal_history.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
@@ -42,7 +42,22 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             // La clave recrea la tarjeta al restaurar: si no, mostraría (y al
             // guardar escribiría) el perfil anterior.
-            _ProfileCard(key: ValueKey(ref.watch(databaseGenerationProvider)), profile: p),
+            ref.watch(goalHistoryProvider).when(
+                  loading: () =>
+                      const AppCard(children: [Text('Consultando metas…')]),
+                  error: (e, _) => AppCard(children: [
+                    Text('No se pudieron consultar las metas: $e')
+                  ]),
+                  data: (history) => _ProfileCard(key: ValueKey((ref.watch(databaseGenerationProvider),
+                        p,
+                        ref.watch(todayProvider),
+                        history.versions
+                            .map((v) => '${v.id}:${v.value}:${v.effectiveFrom}')
+                            .join('|')
+                      )), profile: p,
+                      history: history,
+                      day: ref.watch(todayProvider)),
+                ),
             const HealthConnectCard(),
             AppCard(
               title: 'Catálogos',
@@ -277,9 +292,13 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
 }
 
 class _ProfileCard extends ConsumerStatefulWidget {
-  const _ProfileCard({super.key, required this.profile});
+  const _ProfileCard({super.key, required this.profile,
+      required this.history,
+      required this.day});
 
   final ProfileRow profile;
+  final GoalHistory history;
+  final DateTime day;
 
   @override
   ConsumerState<_ProfileCard> createState() => _ProfileCardState();
@@ -288,63 +307,67 @@ class _ProfileCard extends ConsumerStatefulWidget {
 class _ProfileCardState extends ConsumerState<_ProfileCard> {
   late final p = widget.profile;
   late final _height = TextEditingController(text: p.heightCm == null ? '' : fmtDec(p.heightCm!));
-  late final _proteinMin = TextEditingController(text: '${p.proteinMin}');
-  late final _proteinMax = TextEditingController(text: '${p.proteinMax}');
-  late final _kcal = TextEditingController(text: '${p.kcalTarget}');
-  late final _kcalFloor = TextEditingController(text: '${p.kcalFloor}');
-  late final _kcalFootball = TextEditingController(text: p.kcalTargetFootball == null ? '' : '${p.kcalTargetFootball}');
+  late final _proteinMin = TextEditingController(text: _goalText(GoalMetric.proteinaMin));
+  late final _proteinMax = TextEditingController(text: _goalText(GoalMetric.proteinaMax));
+  late final _kcal = TextEditingController(text: _goalText(GoalMetric.kcal));
+  late final _kcalFloor = TextEditingController(text: _goalText(GoalMetric.kcalFloor));
+  late final _kcalFootball = TextEditingController(text: _goalText(GoalMetric.kcalFutbol));
   late final _warmup = TextEditingController(text: formatDuration(p.minWarmupSec));
   late final _interval = TextEditingController(text: '${p.measureIntervalDays}');
   late final _intervalMax = TextEditingController(text: '${p.measureIntervalMaxDays}');
   late final _cooldown = TextEditingController(text: formatDuration(p.cooldownTargetSec));
-  late final _steps = TextEditingController(text: '${p.stepsTarget}');
+  late final _steps = TextEditingController(text: _goalText(GoalMetric.pasos));
   late DateTime _start = p.programStart;
   late DateTime? _birth = p.birthDate == null ? null : parseDay(p.birthDate!);
   late DateTime? _nextMeasurement = p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!);
   late LengthUnit _unit = p.lengthUnit;
   late bool _neverToFailure = p.neverToFailure;
 
-  /// Metas cuya vigencia es "sin meta" (plan 022): el campo se muestra vacío
-  /// y la proyección interna del perfil no se ofrece como elección. Escribir
-  /// una cifra la acepta; dejarlo vacío no toca esa meta.
-  Set<GoalMetric> _none = const {};
-  late final _noneFields = {
+  late final _goalFields = {
     GoalMetric.proteinaMin: _proteinMin,
     GoalMetric.proteinaMax: _proteinMax,
     GoalMetric.kcal: _kcal,
     GoalMetric.kcalFloor: _kcalFloor,
+    GoalMetric.kcalFutbol: _kcalFootball,
+    GoalMetric.pasos: _steps,
   };
 
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_loadDecisions());
-  }
+  GoalAt _at(GoalMetric metric) =>
+      goalReferenceOn(widget.history, metric, widget.day);
+  String _goalText(GoalMetric metric) =>
+      _at(metric).comparable ? '${_at(metric).value!.round()}' : '';
+  String _label(GoalMetric metric, String label) => _at(metric).comparable
+      ? label
+      : '$label (${_at(metric).absenceLabel.toLowerCase()})';
 
-  Future<void> _loadDecisions() async {
-    final h = await GoalRepository(ref.read(databaseProvider)).history();
-    final today = DateTime.now();
-    final none = {
-      for (final m in _noneFields.keys)
-        if (h.current(m, today) case final v? when v.value == null) m,
-    };
-    if (!mounted || none.isEmpty) return;
-    setState(() {
-      _none = none;
-      for (final m in none) {
-        _noneFields[m]!.clear();
+  Future<void> _removeGoal(GoalMetric metric) async {
+    final football = metric == GoalMetric.kcalFutbol;
+    final ok = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+              title: Text(football
+                  ? '¿Usar la meta semanal en fútbol?'
+                  : '¿Quitar ${metric.label.toLowerCase()}?'),
+              content: Text(football
+                  ? 'Desde la confirmación se usa la meta semanal si está definida. Los registros anteriores se conservan.'
+                  : 'Desde la confirmación queda sin meta. Se conservan registros y metas anteriores; puedes definirla después.'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(c, false),
+                    child: const Text('Cancelar')),
+                FilledButton(
+                    onPressed: () => Navigator.pop(c, true),
+                    child: Text(football ? 'Usar la misma' : 'Quitar meta')),
+              ],
+            ));
+    if (ok != true || !mounted) return;
+    await guarded(
+        context,
+        () => GoalRepository(ref.read(databaseProvider)).setPersonalGoals(
+            {metric: null},
+            now: ref.read(decisionClockProvider)()),
+        ok: football ? 'Se usa la meta semanal' : 'Meta quitada');
       }
-    });
-  }
-
-  /// Valor que escribe el guardado: vacío en una meta "sin meta" no cambia.
-  Value<int> _goalValue(GoalMetric m, int fallback) {
-    final v = int.tryParse(_noneFields[m]!.text.trim());
-    if (_none.contains(m) && v == null) return const Value.absent();
-    return Value(v ?? fallback);
-  }
-
-  String _label(GoalMetric m, String label) => _none.contains(m) ? '$label (sin meta)' : label;
 
   @override
   void dispose() {
@@ -367,18 +390,31 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
   }
 
   Future<void> _save() async {
-    final proteinMin = _goalValue(GoalMetric.proteinaMin, p.proteinMin);
-    final proteinMax = _goalValue(GoalMetric.proteinaMax, p.proteinMax);
-    final kcal = _goalValue(GoalMetric.kcal, p.kcalTarget);
-    final kcalFloor = _goalValue(GoalMetric.kcalFloor, p.kcalFloor);
-    bool both(Value<int> a, Value<int> b) => a.present && b.present;
+    final selections = <GoalMetric, double?>{};
+    for (final entry in _goalFields.entries) {
+      final raw = entry.value.text.trim();
+      if (raw.isEmpty) {
+        if (_at(entry.key).comparable) {
+          showSnack(context,
+              'Para quitar ${entry.key.label.toLowerCase()}, usa su acción explícita; no se guardó nada.');
+          return;
+        }
+        continue;
+      }
+      final value = _positiveInt(raw);
+      if (value == null) {
+        showSnack(context,
+            'Revisa ${entry.key.label.toLowerCase()}: escribe una cifra entera positiva.');
+        return;
+      }
+      if (!_at(entry.key).known || _at(entry.key).value != value)
+      {
+        selections[entry.key] = value.toDouble();
+      }
+    }
     final interval = int.tryParse(_interval.text) ?? p.measureIntervalDays;
     final intervalMax = int.tryParse(_intervalMax.text) ?? p.measureIntervalMaxDays;
-    final problem = both(proteinMin, proteinMax) && proteinMin.value > proteinMax.value
-        ? 'La proteína mínima no puede ser mayor que la máxima'
-        : both(kcalFloor, kcal) && kcalFloor.value > kcal.value
-            ? 'El piso de alerta no puede ser mayor que las kcal objetivo'
-            : interval <= 0 || intervalMax < interval
+    final problem = interval <= 0 || intervalMax < interval
                 ? 'La ventana de medición va de un mínimo (> 0) a un máximo mayor o igual'
                 : null;
     if (problem != null) {
@@ -387,24 +423,21 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
     }
     await guarded(
         context,
-        () => ref.read(profileRepositoryProvider).save(ProfilesCompanion(
+        () => GoalRepository(ref.read(databaseProvider)).setPersonalGoals(
+            selections,
+            profileChanges: ProfilesCompanion(
               birthDate: Value(_birth == null ? null : dayKey(_birth!)),
               heightCm: Value(parseNum(_height.text)),
               startDate: Value(dayKey(_start)),
-              proteinMin: proteinMin,
-              proteinMax: proteinMax,
-              kcalTarget: kcal,
-              kcalFloor: kcalFloor,
-              kcalTargetFootball: Value(_positiveInt(_kcalFootball.text)),
               minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
               measureIntervalDays: Value(interval),
               measureIntervalMaxDays: Value(intervalMax),
               nextMeasurementDate: Value(_nextMeasurement == null ? null : dayKey(_nextMeasurement!)),
               cooldownTargetSec: Value(parseDuration(_cooldown.text) ?? p.cooldownTargetSec),
               neverToFailure: Value(_neverToFailure),
-              stepsTarget: Value(_positiveInt(_steps.text) ?? p.stepsTarget),
               lengthUnit: Value(_unit),
-            )),
+            ),
+            now: ref.read(decisionClockProvider)()),
         ok: 'Perfil guardado');
   }
 
@@ -460,6 +493,17 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
         ),
         const SizedBox(height: 8),
         NumberField(controller: _kcalFootball, label: 'kcal en días de fútbol (sáb y dom; vacío = la misma)'),
+        const Text(
+            'En fútbol, «la misma» hereda la meta semanal si está definida. Vaciar un número no lo cambia.'),
+        Wrap(spacing: 8, runSpacing: 4, children: [
+          for (final metric in _goalFields.keys
+              .where((m) => m != GoalMetric.pasos && _at(m).comparable))
+            TextButton(
+                onPressed: () => _removeGoal(metric),
+                child: Text(metric == GoalMetric.kcalFutbol
+                    ? 'Fútbol: usar la misma'
+                    : 'Quitar ${metric.label.toLowerCase()}')),
+        ]),
         const SizedBox(height: 8),
         NumberField(controller: _steps, label: 'Pasos diarios entre semana', suffix: 'pasos'),
         if (p.stepsTarget == 7500) ...[

@@ -837,7 +837,7 @@ class _RingsCard extends StatelessWidget {
               size: size,
               progress: d.proteinProgress,
               value: fmtInt(d.macros.protein),
-              sublabel: 'de ${d.proteinMin}',
+              sublabel: d.proteinMin == null ? null : 'de ${d.proteinMin}',
               label: 'Proteína',
               color: AppColors.protein,
             ),
@@ -845,7 +845,8 @@ class _RingsCard extends StatelessWidget {
               size: size,
               progress: d.kcalProgress,
               value: fmtInt(d.macros.kcal),
-              sublabel: 'de ${fmtInt(d.kcalTarget)}',
+              sublabel:
+                  d.kcalTarget == null ? null : 'de ${fmtInt(d.kcalTarget!)}',
               label: 'kcal',
               color: AppColors.kcal,
             ),
@@ -878,6 +879,18 @@ class _RingsCard extends StatelessWidget {
               ),
           ],
         ),
+        if (d.proteinMin == null || d.kcalTarget == null || d.stepsGoal == null) ...[
+          const SizedBox(height: 8),
+          Text(
+              'Proteína: ${d.proteinMin == null ? d.proteinReference?.absenceLabel ?? 'Sin meta' : 'meta registrada'} · '
+              'kcal: ${d.kcalTarget == null ? d.kcalReference?.absenceLabel ?? 'Sin meta' : 'meta registrada'}'),
+          if (d.stepsGoal == null) Text('Pasos: ${d.stepsReference?.absenceLabel ?? 'Sin meta'}'),
+          TextButton(
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen())),
+            child: const Text('Definir metas'),
+          ),
+        ],
         if (d.roundsRecord != null) ...[
           const SizedBox(height: 12),
           Row(
@@ -1057,7 +1070,8 @@ class _StepsRing extends ConsumerWidget {
         size: size,
         progress: d.stepsProgress,
         value: d.stepsToday == null ? '—' : compactSteps(d.stepsToday!),
-        sublabel: d.stepsGoal == null ? 'sin meta' : 'de ${compactSteps(d.stepsGoal!)}',
+        sublabel: d.stepsGoal == null ? null
+            : 'de ${compactSteps(d.stepsGoal!)}',
         label: 'Pasos',
         color: AppColors.steps,
       ),

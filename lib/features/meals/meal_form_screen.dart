@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/goal_history.dart';
+import '../settings/settings_screen.dart';
 
 import '../../app/providers.dart';
 import '../../data/database.dart';
@@ -1028,29 +1030,33 @@ class _DayTotals extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final meals =
         ref.watch(mealsForDayProvider(dayKey(draft.date))).value ?? const [];
-    final profile = ref.watch(profileProvider).value;
+    final history = ref.watch(goalHistoryProvider).valueOrNull;
     final others = Macros.sum(
         meals.where((m) => m.meal.id != draft.id).map((m) => m.macros));
     final day = others + draft.macros;
-    final kcalTarget = dailyKcalTarget(
-        day: draft.date,
-        weekdayTarget: profile?.kcalTarget ?? 2400,
-        footballTarget: profile?.kcalTargetFootball);
-    final proteinMin = profile?.proteinMin ?? 130;
+    final kcal = history == null
+        ? const GoalAt(null, known: false)
+        : kcalGoalReferenceOn(history, draft.date);
+    final protein = history == null
+        ? const GoalAt(null, known: false)
+        : goalReferenceOn(history, GoalMetric.proteinaMin, draft.date);
     final text = Theme.of(context).textTheme;
-    String left(double have, num goal, String unit) {
-      final missing = goal - have;
+    String left(double have, GoalAt goal, String unit) {
+      if (!goal.comparable) return goal.absenceLabel;
+      final missing = goal.value! - have;
       return missing <= 0 ? 'meta cumplida' : 'faltan ${fmtInt(missing)} $unit';
     }
 
     return AppCard(
       title: 'El día con esta comida',
       children: [
-        Text('${fmtInt(day.kcal)} kcal · ${left(day.kcal, kcalTarget, 'kcal')}',
+        Text('${fmtInt(day.kcal)} kcal · ${left(day.kcal, kcal, 'kcal')}',
             style: text.titleSmall),
-        Text(
-            'P ${fmtInt(day.protein)} g · ${left(day.protein, proteinMin, 'g')}',
+        Text('P ${fmtInt(day.protein)} g · ${left(day.protein, protein, 'g')}',
             style: text.titleSmall),
+        if (!protein.comparable || !kcal.comparable)
+          TextButton(onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen())), child: const Text('Definir metas')),
       ],
     );
   }

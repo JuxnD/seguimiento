@@ -9,6 +9,8 @@ import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/progress.dart';
+import '../../domain/goal_history.dart';
+import '../settings/settings_screen.dart';
 import '../../ui/hero.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/widgets.dart';
@@ -38,7 +40,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
     });
     final today = ref.watch(todayProvider);
     final meals = ref.watch(mealsForDayProvider(dayKey(_day)));
-    final profile = ref.watch(profileProvider).value;
+    final history = ref.watch(goalHistoryProvider).valueOrNull;
 
     return Scaffold(
       appBar: AppBar(
@@ -110,26 +112,37 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                 error: (e, _) => Text('Error: $e'),
                 data: (list) {
                   final total = Macros.sum(list.map((m) => m.macros));
-                  final kcalTarget = dailyKcalTarget(
-                      day: _day, weekdayTarget: profile?.kcalTarget ?? 2400, footballTarget: profile?.kcalTargetFootball);
-                  final proteinMin = profile?.proteinMin ?? 130;
+                  final kcal = history == null
+                      ? const GoalAt(null, known: false)
+                      : kcalGoalReferenceOn(history, _day);
+                  final protein = history == null
+                      ? const GoalAt(null, known: false)
+                      : goalReferenceOn(history, GoalMetric.proteinaMin, _day);
                   return Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ProgressRing(
-                            progress: goalProgress(total.protein, proteinMin),
+                            progress: protein.comparable
+                                ? goalProgress(total.protein, protein.value!)
+                                : null,
                             value: fmtInt(total.protein),
-                            sublabel: 'de $proteinMin',
+                            sublabel: protein.comparable
+                                ? 'de ${fmtInt(protein.value!)}'
+                                : null,
                             label: 'Proteína (g)',
                             color: AppColors.protein,
                             size: 104,
                           ),
                           ProgressRing(
-                            progress: goalProgress(total.kcal, kcalTarget),
+                            progress: kcal.comparable
+                                ? goalProgress(total.kcal, kcal.value!)
+                                : null,
                             value: fmtInt(total.kcal),
-                            sublabel: 'de ${fmtInt(kcalTarget)}',
+                            sublabel: kcal.comparable
+                                ? 'de ${fmtInt(kcal.value!)}'
+                                : null,
                             label: 'kcal',
                             color: AppColors.kcal,
                             size: 104,
@@ -137,6 +150,17 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
+                      if (!protein.comparable || !kcal.comparable) ...[
+                        Text(
+                            'Proteína: ${protein.comparable ? 'meta registrada' : protein.absenceLabel} · '
+                            'kcal: ${kcal.comparable ? 'meta registrada' : kcal.absenceLabel}'),
+                        TextButton(
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const SettingsScreen())),
+                            child: const Text('Definir metas')),
+                      ],
                       Text('Carbos ${fmtInt(total.carbs)} g · Grasa ${fmtInt(total.fat)} g',
                           style: Theme.of(context).textTheme.bodySmall),
                       if (!_day.isAfter(today) && list.isNotEmpty)

@@ -224,7 +224,7 @@ class CoachRepository {
     final rows = await (db.select(db.dailySteps)
           ..where((t) => t.date.isBiggerOrEqualValue(from) & t.date.isSmallerThanValue(dayKey(d0))))
         .get();
-    return stepsReadingFrom(
+    final reading = stepsReadingFrom(
       today: d0,
       steps: {for (final r in rows) parseDay(r.date): r.steps},
       goal: goal,
@@ -236,6 +236,12 @@ class CoachRepository {
       recovery: await recovery(d0),
       last: await goals.lastProposal('pasos'),
     );
+    final reference = goalReferenceOn(history, GoalMetric.pasos, d0);
+    if (!reference.comparable && !reading.recoveryFirst) {
+      return CoachReading(evaluatedOn: d0, state: CoachState.faltanDatos,
+          reason: reference.absenceLabel, action: 'Define una meta de pasos antes de comparar tu progreso.');
+    }
+    return reading;
   }
 }
 

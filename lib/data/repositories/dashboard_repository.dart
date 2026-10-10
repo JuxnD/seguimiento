@@ -8,7 +8,7 @@ import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/recovery.dart';
 import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
-import '../../domain/steps.dart';
+import '../../domain/goal_history.dart';
 import '../../domain/technique_session.dart';
 import '../database.dart';
 import '../../domain/adaptive_coach.dart';
@@ -42,6 +42,9 @@ class TodayDashboard {
     required this.proteinMin,
     required this.proteinMax,
     required this.kcalTarget,
+    this.proteinReference,
+    this.kcalReference,
+    this.stepsReference,
     this.stepsToday,
     this.stepsGoal,
     required this.roundsRecord,
@@ -104,9 +107,12 @@ class TodayDashboard {
   final FootballGameRow? hardFootballYesterday;
   final int streak;
   final Macros macros;
-  final int proteinMin;
-  final int proteinMax;
-  final int kcalTarget;
+  final int? proteinMin;
+  final int? proteinMax;
+  final int? kcalTarget;
+  final GoalAt? proteinReference;
+  final GoalAt? kcalReference;
+  final GoalAt? stepsReference;
 
   /// Pasos anotados hoy; null si aún no.
   final int? stepsToday;
@@ -165,10 +171,12 @@ class TodayDashboard {
   /// en un día de entrenamiento no reemplaza la sesión del plan (la racha sí
   /// lo cuenta).
   bool get trained => sessionsToday > 0 || (footballToday != null && !dayType.isTraining);
-  double get proteinProgress => goalProgress(macros.protein, proteinMin);
-  double get kcalProgress => goalProgress(macros.kcal, kcalTarget);
-  double get stepsProgress =>
-      stepsGoal == null ? ((stepsToday ?? 0) > 0 ? 1 : 0) : goalProgress(stepsToday ?? 0, stepsGoal!);
+  double? get proteinProgress =>
+      proteinMin == null ? null : goalProgress(macros.protein, proteinMin!);
+  double? get kcalProgress =>
+      kcalTarget == null ? null : goalProgress(macros.kcal, kcalTarget!);
+  double? get stepsProgress =>
+      stepsGoal == null ? null : goalProgress(stepsToday ?? 0, stepsGoal!);
   double get roundsProgress => goalProgress(roundsDone ?? 0, targetRounds ?? 0);
 }
 
@@ -194,6 +202,13 @@ class DashboardRepository {
     // Lo que ya rige hoy pasa al perfil antes de leerlo (plan 009).
     await GoalRepository(db).projectDueGoals(date);
     final p = await profile.get();
+    final history = await GoalRepository(db).history();
+    final protein = goalReferenceOn(history, GoalMetric.proteinaMin, date);
+    final proteinMax = goalReferenceOn(history, GoalMetric.proteinaMax, date);
+    final kcal = kcalGoalReferenceOn(history, date);
+    final steps = date.weekday >= DateTime.saturday
+        ? const GoalAt(null, known: true)
+        : goalReferenceOn(history, GoalMetric.pasos, date);
     final view = await plan.dayFor(date);
     final training = TrainingRepository(db, ExerciseRepository(db));
     final v3 = await training.blockDay(view, date);
@@ -267,12 +282,15 @@ class DashboardRepository {
       hardFootballYesterday: yesterday != null && isHardGame(yesterday) ? yesterday : null,
       streak: await _streak(date),
       macros: Macros.sum(meals.map((m) => m.macros)),
-      proteinMin: p.proteinMin,
-      proteinMax: p.proteinMax,
-      kcalTarget: dailyKcalTarget(day: date, weekdayTarget: p.kcalTarget, footballTarget: p.kcalTargetFootball),
+      proteinMin: protein.comparable ? protein.value!.round() : null,
+      proteinMax: proteinMax.comparable ? proteinMax.value!.round() : null,
+      kcalTarget: kcal.comparable ? kcal.value!.round() : null,
+      proteinReference: protein,
+      kcalReference: kcal,
+      stepsReference: steps,
       stepsToday:
           (await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(date)))).getSingleOrNull())?.steps,
-      stepsGoal: stepsGoalFor(date, p.stepsTarget),
+      stepsGoal: steps.comparable ? steps.value!.round() : null,
       roundsRecord: record,
       recordSuspect: record == null ? null : await _recordSuspect(record),
       recordDate: record == null ? null : await _recordDate(record),
