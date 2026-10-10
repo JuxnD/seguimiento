@@ -154,3 +154,15 @@ R1: Retracciones valida también la suela completa respecto al suelo en61muestra
 independiente de cámara. ViewerCTA→glifo real→semantics→acción prueba etiqueta
 completa a360px/text1,6 y2,0; reflow conserva todos los controles. ReciboR1
 sobrebasee35a; aceptación humana yAPK pendientes.
+
+## Slice016: consumidores Android de marca y respaldo
+
+| Cruce | Estado / límite |
+|---|---|
+| S013→PNG→launch legacy/atributo31→theme consumidor | Parser fuente, consumidor y hashes30PNG; mutantes recurso/fondo/default rechazados. Render Android/arranque del APK exacto PENDIENTE |
+| Política→Manifest→reglas legacy/cloud/D2D | XML real con los9dominios admitidos; modo vacío/ausente, include, dominio desconocido, path ajeno y consumidores rotos rechazados. Fusión de Manifest/OEM/transportes PENDIENTE |
+| Copy→Ajustes→ZIP/cancelación/SQLite/fotos | Prueba widget de texto completo configurado y límites, más confirmación/cancelación y relectura originales. Android AutoBackup nativo NO_OBSERVADO |
+
+Decisión y autoridad:[ADR0018](../adr/0018-arranque-y-respaldo-android.md).
+No transforma una política fuente en promesa de eliminación de copias previas
+ni de control de terceros; no toma verdes de APK anteriores para este slice.

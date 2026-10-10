@@ -117,6 +117,10 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
               'Guárdalo en un lugar privado fuera del teléfono para recuperarlo si lo pierdes. '
               'La licencia de IA no se incluye.'),
           const SizedBox(height: 8),
+          const Text('Esta app está configurada para excluir sus datos de copias automáticas de Android '
+              'y del traslado entre teléfonos. Usa el ZIP. No borra copias previas '
+              'ni controla herramientas del fabricante o de terceros.'),
+          const SizedBox(height: 8),
           FilledButton.tonalIcon(
             onPressed: _busy ? null : () => _export(context, ref),
             icon: const Icon(Icons.save_alt),

@@ -11,6 +11,13 @@ revisable y esquema21:83controles pasan con interopPHP local ficticio, migració
 y ZIP. Se conservan008/mode/warmup/snapshot y012/013;009/22 y los demás frentes
 siguen pendientes. Sin APK, backend desplegado ni teléfono probado.
 
+**Slice016 aislado:** [arranque y política Android](../adr/0018-arranque-y-respaldo-android.md)
+en `seguimiento-016-android`, basec04b2a9. Misma S013, reglas de exclusión
+cloud/D2D y divulgación en Ajustes; ZIP/local conservados. Verificación fuente
+no equivale a Manifest fusionado, APK ni respaldo observado en un teléfono.
+[Recibo016 y gates](sessions/2026-10-10-016-android.md):15testsPython,
+8testsFlutter, análisis/diff0; sin cambiar los30PNG originales.
+
 **Implementación local plan008 (9oct):** [contrato de evidencia de progreso](progress-evidence.md)
 y [recibo de pruebas](sessions/2026-10-09-008-evidencia.md). Worktree aislado
 `C:/My Projects/seguimiento-008-evidencia`; no equivale a publicación.009/011

@@ -19,6 +19,12 @@ Direcciones, comparación en pequeño y límites de validación:
 [logo013](design/logo-013.md). No se cambió nombre, paquete ni firma; revisión
 del owner e ícono en APK integrado pendientes.
 
+**Arranque016:** reutiliza ese foreground013, cuadrado108dp y centrado en
+legacy; icono nativo31+ y fondo`#0B0806` también en NormalTheme/día/noche.
+No imagen nueva ni espera artificial.30PNG originales se conservan; XML y
+referencias se verifican en fuente. Arranque frío/transición del APK exacto y
+lectura del owner pendientes: [ADR0018](adr/0018-arranque-y-respaldo-android.md).
+
 ### Color por tipo de día
 
 Definido una sola vez en [`lib/ui/session_style.dart`](../lib/ui/session_style.dart)

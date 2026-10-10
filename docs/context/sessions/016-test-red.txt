@@ -1,0 +1,21 @@
+test_real_source_and_013_inputs (__main__.AndroidPolicyTests.test_real_source_and_013_inputs) ... FAIL
+
+======================================================================
+FAIL: test_real_source_and_013_inputs (__main__.AndroidPolicyTests.test_real_source_and_013_inputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-016-android\tool\android_policy_test.py", line 14, in test_real_source_and_013_inputs
+    self.assertEqual(result['violations'], [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['ALLOW_BACKUP_ENABLED', 'LEGACY_RULE_CONS[548 chars]xml'] != []
+
+First list contains 14 additional elements.
+First extra element 0:
+'ALLOW_BACKUP_ENABLED'
+
+Diff is 642 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 0.898s
+
+FAILED (failures=1)
