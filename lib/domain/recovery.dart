@@ -166,7 +166,10 @@ class LoadReading {
 LoadReading loadReading(List<LoadItem> items, DateTime today) {
   final d0 = dateOnly(today);
   final todayItems = items.where((i) => dateOnly(i.date) == d0).toList();
-  bool intenseOn(DateTime d) => items.any((i) => dateOnly(i.date) == d && i.intense);
+  // Días intensos calculados una vez: antes cada día de la racha recorría
+  // toda la historia (1.000 días ≈ 5 s; plan 009, paso 5). Mismo resultado.
+  final intenseDays = {for (final i in items) if (i.intense) dateOnly(i.date)};
+  bool intenseOn(DateTime d) => intenseDays.contains(d);
   var streak = 0;
   var day = intenseOn(d0) ? d0 : addDays(d0, -1);
   // Una sesión moderada conocida hoy termina la racha. Sin RPE no prueba
