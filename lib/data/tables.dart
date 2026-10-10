@@ -475,6 +475,10 @@ class MorningChecks extends Table {
   TextColumn get date => text()();
   IntColumn get restingHr => integer().nullable().check(restingHr.isBetweenValues(25, 220))();
 
+  /// Cómo amaneció (plan 009): 1 descansado, 2 normal, 3 cansado. null = no
+  /// respondió; no se toma como recuperado ni como fatiga.
+  IntColumn get feeling => integer().nullable().check(feeling.isBetweenValues(1, 3))();
+
   @override
   Set<Column> get primaryKey => {date};
 }
@@ -590,3 +594,47 @@ class AiMessages extends Table {
   IntColumn get contractVersion => integer()();
   IntColumn get createdAt => integer()();
 }
+
+/// Vigencias de las metas (plan 009, esquema 22). Cada día se evalúa con la
+/// que regía. `effective_from` null sólo en lo legado: la meta que había al
+/// migrar, sin fecha conocida.
+@DataClassName('GoalVersionRow')
+class GoalVersions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  /// `GoalMetric.name`: pasos, proteinaMin, proteinaMax, kcal, kcalFutbol.
+  TextColumn get metric => text()();
+  RealColumn get value => real().nullable()();
+  TextColumn get effectiveFrom => text().nullable()();
+  TextColumn get acceptedAt => text()();
+
+  /// legado, inicio, perfil, propuesta, plan.
+  TextColumn get origin => text()();
+  TextColumn get reason => text().nullable()();
+  IntColumn get policy => integer().withDefault(const Constant(1))();
+}
+
+/// Propuestas del acompañamiento y su decisión (plan 009). El ID es estable
+/// por evidencia y política: la misma no se repite como novedad.
+@DataClassName('CoachProposalRow')
+class CoachProposals extends Table {
+  TextColumn get id => text()();
+
+  /// 'pasos' por ahora.
+  TextColumn get kind => text()();
+
+  /// pendiente, aceptada, pospuesta, rechazada.
+  TextColumn get status => text()();
+  TextColumn get evidence => text()();
+  TextColumn get createdOn => text()();
+  TextColumn get decidedOn => text().nullable()();
+  TextColumn get reviewAfter => text().nullable()();
+
+  /// Valor aceptado (puede diferir del propuesto si la persona lo editó).
+  RealColumn get acceptedValue => real().nullable()();
+  IntColumn get policy => integer().withDefault(const Constant(1))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+

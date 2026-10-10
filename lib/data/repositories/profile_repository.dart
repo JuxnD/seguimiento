@@ -2,7 +2,9 @@ import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/report/report_input.dart';
+import '../../domain/goal_history.dart' show GoalOrigin;
 import '../database.dart';
+import 'goal_repository.dart';
 
 class ProfileRepository {
   ProfileRepository(this.db);
@@ -13,8 +15,9 @@ class ProfileRepository {
 
   Future<ProfileRow> get() => (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
 
-  Future<void> save(ProfilesCompanion data) =>
-      (db.update(db.profiles)..where((t) => t.id.equals(1))).write(data);
+  /// Guarda el perfil; cada meta que cambie queda con su vigencia desde hoy
+  /// (plan 009). El pasado se sigue evaluando con la meta que regía.
+  Future<void> save(ProfilesCompanion data) => GoalRepository(db).updateProfile(data, origin: GoalOrigin.perfil);
 
   Stream<String?> watchWeekNote(int weekIndex) => (db.select(db.weekNotes)
         ..where((t) => t.weekIndex.equals(weekIndex)))

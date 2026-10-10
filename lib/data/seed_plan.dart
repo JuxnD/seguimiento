@@ -6,6 +6,8 @@ import '../domain/plan_v3.dart';
 import 'catalog_updates.dart';
 import 'database.dart';
 import 'repositories/plan_repository.dart';
+import 'repositories/goal_repository.dart';
+import '../domain/goal_history.dart' show GoalOrigin;
 
 /// Plan real del usuario, sembrado en la primera apertura.
 ///
@@ -462,7 +464,8 @@ const v31ProteinMax = 160;
 Future<int> activatePlanV31(AppDatabase db, PlanRepository plan, DateTime start) async {
   final id = await plan.saveAsNewVersion(planV31(start));
   await applyExerciseGuides(db);
-  await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(ProfilesCompanion(
+  // Por GoalRepository: las metas del v3.1 quedan con su vigencia (plan 009).
+  await GoalRepository(db).updateProfile(origin: GoalOrigin.plan, reason: 'Activación del v3.1', ProfilesCompanion(
     nextMeasurementDate: Value(dayKey(v31MeasurementDates(start).first)),
     kcalTarget: const Value(v31KcalWeekday),
     kcalTargetFootball: const Value(v31KcalFootball),
@@ -518,7 +521,7 @@ Future<bool> seedIfEmpty(AppDatabase db, PlanRepository plan) async {
   await plan.saveAsNewVersion(planV1());
   await plan.saveAsNewVersion(planV2());
   await applyExerciseGuides(db);
-  await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(const ProfilesCompanion(
+  await GoalRepository(db).updateProfile(origin: GoalOrigin.plan, reason: 'Siembra inicial', const ProfilesCompanion(
     startDate: Value(programStartDate),
     proteinMin: Value(130),
     proteinMax: Value(160),
