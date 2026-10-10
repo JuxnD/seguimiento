@@ -1,0 +1,10 @@
+Analyzing seguimiento-018-radar...
+
+   info - Statements in an if should be enclosed in a block - lib\domain\progress_metrics.dart:212:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\progress_metrics.dart:214:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\progress_metrics.dart:216:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\progress_metrics.dart:219:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\progress_metrics.dart:221:5 - curly_braces_in_flow_control_structures
+   info - The parameter name 'old' doesn't match the name 'oldDelegate' in the overridden method - lib\features\report\personal_radar_widget.dart:301:45 - avoid_renaming_method_parameters
+
+6 issues found. (ran in 65.6s)

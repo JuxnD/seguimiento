@@ -9,31 +9,17 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/cindy_protocol.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/widgets.dart';
 import 'pre_attempt_card.dart';
+
+export '../../domain/cindy_protocol.dart' show cindyRound, splitPartialRound;
 
 // Cronómetros del Plan v3 (§18.2, §18.9, §18.10): Cindy (AMRAP 20 min),
 // Tabata (4 bloques de 8 × 20/10) y el EMOM de burpees del viernes. Todo se
 // mide con marcas de reloj: si la pantalla se apaga, al volver el tiempo
 // sigue bien.
-
-/// La ronda de Cindy: 5 dominadas, 10 flexiones, 15 sentadillas.
-const cindyRound = [('Dominadas', 5), ('Flexiones', 10), ('Sentadillas', 15)];
-
-/// Reparte las repeticiones de la ronda a medias en orden: primero las
-/// dominadas, luego flexiones, luego sentadillas.
-List<(String, int)> splitPartialRound(int reps) {
-  final out = <(String, int)>[];
-  var left = reps;
-  for (final (name, n) in cindyRound) {
-    if (left <= 0) break;
-    final take = left < n ? left : n;
-    out.add((name, take));
-    left -= take;
-  }
-  return out;
-}
 
 void _beep({bool strong = false}) {
   unawaited(SystemSound.play(SystemSoundType.alert));

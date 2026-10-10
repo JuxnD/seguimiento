@@ -1,5 +1,9 @@
 # Gráficas del informe: rango y evidencia
 
+El [núcleo/widget018 de radar](design/radar-personal.md) extiende las métricas con
+seis pruebas específicas e historial de observaciones, sin conectar aún pantallas
+o metas persistidas. Los valores del mock no son referencias por defecto.
+
 Slice015 sobre bf1da688, independiente del motor009. Reutiliza el contrato008
 de evidencia y el tema existente. No completa011, no introduce radar ni una
 nota universal de condición física.

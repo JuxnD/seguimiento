@@ -252,3 +252,20 @@ Cindy y barrera deFuture reales sobreviven; writer y registros viejos intactos.
 Schema21, SDK3.22, JSON79/73 y30PNG no cambian. Full681/16 del source019
 es anterior al copyplural y no acredita este snapshot. APK/owner pendientes;
 mutante2DBNO_EVALUADO y causa previaNO_CONFIRMADA conservados explícitamente.
+
+## Plan018 local: núcleo y widget del radar (10oct)
+
+Base238ef85f/018-radar-core, sin esquema/repos/providers/metas009 o rutas nuevas.
+[Contrato](../design/radar-personal.md), [recibo](sessions/2026-10-10-018-radar-core.md).
+
+| Cruce enumerado | Evidencia / límite |
+|---|---|
+| TestResult008 → selección por fecha → actual/inicio | Primera/última apta, I/D coherentes y menor; futuro/parcial/duda posterior no borran apta anterior; una fecha no demuestra cambio |
+| Receta del timer → helper compartido → conteo Cindy | Extracción literal/re-export conserva callers; receta completa+parcial validada, ventana real1200s; overflow y denominador no demostrado quedan observaciones |
+| Referencia explícita → dos perfiles → raw/porcentaje | Misma referencia identificada; sin referencia no score;>100 sólo recortado en geometría;0 real no ausencia |
+| SQLite de tests → repositorio008 → núcleo → widget | Relectura sintética conserva fecha/calidad/I/D y muestra duda posterior separada; sin cambiar consultas de producto |
+| DTO → pintura Flutter → comprensión inspeccionable | Nombres en ejes/texto1/1.6, números+leyenda a2; RGBA de punto y tramos de ambos contornos fuera de círculos; ausencia no cierra/rellena; tabla y tap/teclado/semántica/callbacks |
+| Núcleo/widget → pantallas/metas reales/APK | Declarado pendiente011/009; callbacks sin navegación ni escritura.019 corregirá composición del timer fuera018. Capturas no equivalen a aceptación del owner |
+
+Cinco cruces locales cubiertos y uno declarado. El inventario acota018,
+no certifica condición física, publicación o utilidad con datos reales.

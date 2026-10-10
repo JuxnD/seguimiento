@@ -1,0 +1,11 @@
+00:00 +0: loading C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart
+00:00 +0: conteo extremo no acredita receta por overflow de entero
+00:00 +0 -1: conteo extremo no acredita receta por overflow de entero [E]
+  Expected: null
+    Actual: <Instance of 'RadarObservation'>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 17:5         main.<fn>
+
+00:00 +0 -1: Some tests failed.

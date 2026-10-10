@@ -1,0 +1,60 @@
+00:00 +0: loading C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart
+00:00 +0: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+00:00 +0 -1: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo [E]
+  Expected: <10>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 15:5         main.<fn>
+
+00:00 +0 -1: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+00:00 +0 -2: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta [E]
+  Expected: <20>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 34:5         main.<fn>
+
+00:00 +0 -2: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+00:00 +0 -3: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado [E]
+  Expected: <0>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 48:5         main.<fn>
+
+00:00 +0 -3: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+00:00 +0 -4: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20 [E]
+  Expected: <6.1>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 59:5         main.<fn>
+
+00:00 +0 -4: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+00:00 +0 -5: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias [E]
+  Expected: <8>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 67:5         main.<fn>
+
+00:00 +0 -5: loading C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart
+test/ui/personal_radar_test.dart:13:68: Error: Expected ';' after this.
+    SingleChildScrollView(child:PersonalRadarWidget(radar:radar))))));
+                                                                   ^
+test/ui/personal_radar_test.dart:13:69: Error: Expected an identifier, but got ')'.
+Try inserting an identifier before ')'.
+    SingleChildScrollView(child:PersonalRadarWidget(radar:radar))))));
+                                                                    ^
+test/ui/personal_radar_test.dart:13:69: Error: Unexpected token ';'.
+    SingleChildScrollView(child:PersonalRadarWidget(radar:radar))))));
+                                                                    ^
+00:00 +0 -6: loading C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart
+00:00 +0 -6: Some tests failed.

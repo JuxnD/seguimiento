@@ -9,6 +9,12 @@ desde7843732:51dirigidos, análisis/diff0, checklistClaude y barrera deFuture
 reales intactos. Schema21 y recursos79/73/30PNG conservados. APK, teléfono,
 full candidato y revisión posterior quedan pendientes.
 
+**Núcleo/widget local018 (10oct):** [radar personal explicable](../design/radar-personal.md)
+y [recibo](sessions/2026-10-10-018-radar-core.md), base238ef85f en
+`C:/My Projects/seguimiento-018-radar`. Seis mediciones, primera/última apta,
+último intento separado y referencias explícitas comunes; sin defaults ni
+persistencia/rutas nuevas.011 espera009 aprobado e integración del coordinador.
+
 **Plan015 implementado localmente (10oct):** [gráficas con rango y evidencia](../progreso-metricas.md)
 y [recibo](sessions/2026-10-10-015-graficas-evidencia.md), worktree aislado
 `C:/My Projects/seguimiento-015-graficas`, base de integración122 `bf1da688`.

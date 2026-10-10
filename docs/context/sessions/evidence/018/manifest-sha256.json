@@ -1,0 +1,194 @@
+{
+  "base": "238ef85f1ef62321536f7b965d04efae31c84e7c",
+  "branch": "JuxnD/018-radar-core",
+  "scope": "018 standalone core/widget; no persistence or product routes",
+  "hashScope": "SHA256 executor working bytes; gitBlobOid normalized Git content, checkout autocrlf may change bytes",
+  "fullBeforeCopyPassed": 698,
+  "fullOptionalSkipped": 16,
+  "finalDirectedPassed": 45,
+  "finalAnalyzeExit": 0,
+  "sourceAndTests": [
+    {
+      "path": "lib/domain/progress_metrics.dart",
+      "sha256WorkingBytes": "7dabc10c82e8c15ba30484181b28a80f7e8c2f31714a0d4a4f62979fc6f3eba1",
+      "gitBlobOid": "ee18c79a6dc2fda40b8d2e390e86a05100727314"
+    },
+    {
+      "path": "lib/domain/personal_radar.dart",
+      "sha256WorkingBytes": "4deb3444ccc10a3598418b2c5cac99a99dfae41bc86122ce5210ea3b4d830431",
+      "gitBlobOid": "504cdd28b0112d6c1281cee7bdf9cb1f96ff6902"
+    },
+    {
+      "path": "lib/domain/cindy_protocol.dart",
+      "sha256WorkingBytes": "11a91c5d43224811b1a0bbbdcc661188012035b8e7bd3ea06840f2e12ce95b23",
+      "gitBlobOid": "ae7fab0af5b574156fdbdd7d76dc5bb489b28d6e"
+    },
+    {
+      "path": "lib/features/report/personal_radar_widget.dart",
+      "sha256WorkingBytes": "1ae6427719231a9c35416cb00d1ae3f777a2d731e0e199bb7e0ef85b2eff051b",
+      "gitBlobOid": "04ca1f38bf2968ea17f16425bbd12877d92021d0"
+    },
+    {
+      "path": "lib/features/training/v3_timers.dart",
+      "sha256WorkingBytes": "d67769d2b121707bd63261c896125e302ba4c21e9c9dfd2da75a2dd54c2fddef",
+      "gitBlobOid": "e02f36d73a96cb085f2a6502ea4bffbf33f3ae97"
+    },
+    {
+      "path": "test/domain/progress_metrics_test.dart",
+      "sha256WorkingBytes": "36ddd39fdceabc674cd41675406f10237073817933648da18db399910cea9eba",
+      "gitBlobOid": "db58854ae945f3f66ea2a67df238787696f52968"
+    },
+    {
+      "path": "test/ui/personal_radar_test.dart",
+      "sha256WorkingBytes": "2d903564aefac6e339aabb22deec849aa47dad38b26a5d59260b8e8d5f423258",
+      "gitBlobOid": "0833a7b0d73d6749cad51ebd14af88ba18c41ed2"
+    },
+    {
+      "path": "test/support/radar_fixture.dart",
+      "sha256WorkingBytes": "707509237d87b34f7cb6f73ab03a061c84c70efd231022da176515412469dd49",
+      "gitBlobOid": "421bced3c5fbba4532a35bafb7fa59ca41ddaf3e"
+    },
+    {
+      "path": "lib/domain/fitness_test.dart",
+      "sha256WorkingBytes": "37af9a35247b5a4a3ce3787e49d0310f33935d8ba7f4a2d5a2e66f4a6243413f",
+      "gitBlobOid": "69600324ed4944cad240a3ec8ab88917fb858a44"
+    },
+    {
+      "path": "lib/domain/progress_evidence.dart",
+      "sha256WorkingBytes": "acef863ac4a4790f57093f9d5f2c75f704554ceda6a2009d966cced301c77fbd",
+      "gitBlobOid": "237b5d8a8c2bf4a0949242a0aaddaade80d06437"
+    },
+    {
+      "path": "lib/domain/session_math.dart",
+      "sha256WorkingBytes": "8ecc9ccba5b96eae3c1c7094df712003c63e1e12b6426b14f8012081b6d9201c",
+      "gitBlobOid": "c77817b5969f17bb20795ad2db7872bded165464"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/context/sessions/evidence/018/analyze-018.log",
+      "sha256WorkingBytes": "6b22e14de7b9eb2767de7e01abf65aece2860ae7cea47042c7bea2fd7d548135",
+      "gitBlobOid": "b4efe3dbb3974da1a0dd2e17547af29737630aba"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/baseline-018.log",
+      "sha256WorkingBytes": "d2403284c5c44a5464a9db19fdf58c860a8064dae674e8f37034a77ab0d4b3b1",
+      "gitBlobOid": "47945ce325399d8486f1c8e58d85888749c2e345"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/completo-360-texto1.0.json",
+      "sha256WorkingBytes": "da15c11b78b6adda4996ce42f45ef5af27c2ac9e899dd7c16ea165de88660222",
+      "gitBlobOid": "d7192bccf14adfa7b6ca1939aa1da27310084f3a"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/completo-360-texto1.0.png",
+      "sha256WorkingBytes": "f436805647a74df42bfde39856420c6b31b14319b82a55df4b03388ab32eba2e",
+      "gitBlobOid": "1e19e5e23ae6fd96f71fd6f19570a0de0f3f4a4c"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/completo-360-texto1.6.json",
+      "sha256WorkingBytes": "da15c11b78b6adda4996ce42f45ef5af27c2ac9e899dd7c16ea165de88660222",
+      "gitBlobOid": "d7192bccf14adfa7b6ca1939aa1da27310084f3a"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/completo-360-texto1.6.png",
+      "sha256WorkingBytes": "d2420c3af0b9d849843bc657c678a86148da5c540d12034d8c7a6df106a1b12d",
+      "gitBlobOid": "bf598246482be4cba81a02598b9138c1b10cd76a"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/completo-360-texto2.0.json",
+      "sha256WorkingBytes": "da15c11b78b6adda4996ce42f45ef5af27c2ac9e899dd7c16ea165de88660222",
+      "gitBlobOid": "d7192bccf14adfa7b6ca1939aa1da27310084f3a"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/completo-360-texto2.0.png",
+      "sha256WorkingBytes": "36f23fe69d33905741513bd87d6338527cb5aac014fd0ff309bff93b2201a4b9",
+      "gitBlobOid": "b7d1c4d7e4031f838b334101951a0f12a11a97f7"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/dos-ejes-360-texto16.json",
+      "sha256WorkingBytes": "11b2dc1ab4c7e48d001397ed858f8ce7c7e1ab27a3284897f83bdf7d9909270a",
+      "gitBlobOid": "54c20e043bfd4b5f7f0d423531fdd57a47cf0ef7"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/dos-ejes-360-texto16.png",
+      "sha256WorkingBytes": "a18fc5bf782dcd4f035556f3aff66dfff6d35f9f7a44a5356fdf720820bb2e32",
+      "gitBlobOid": "dedfd58ca564cb86c48516636c995ccf24a35d4a"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/expanded-018.log",
+      "sha256WorkingBytes": "a46d7c80a1ce7a7a5a0e491caa90afe0a6b523dcea56140fa42fc7516cc91a1c",
+      "gitBlobOid": "8d2f93ea7cf024c8327159892b16cec8ea646298"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/final-analyze-018.log",
+      "sha256WorkingBytes": "8883f66d4fd92b419f35d9e5634b29b5e3373cb774fee5c98f446359c07726ef",
+      "gitBlobOid": "7b83467a6d239bad1dce4cfc8497a3ae68ffb7c0"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/final-human-018.log",
+      "sha256WorkingBytes": "ade66469abbf9ae15ce686c3dce23e03c9f4d165a3bbbb3d11d717780acc0668",
+      "gitBlobOid": "e927b6306cae7db2237d9c7be682048cc722adc3"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/full-018.log",
+      "sha256WorkingBytes": "4939e1202d4991facaee1c225f61655d0dced861c1e71c116914214cc03e1c5f",
+      "gitBlobOid": "bd1b60a1b8799abd14460195db802163f176435e"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/full-source-before-copy.json",
+      "sha256WorkingBytes": "5ba67bbc01fb6c780d5916d477a1c2ed548484cef3fb82c086048565e895182c",
+      "gitBlobOid": "1c6988cd2079365e1cb67912e18081b5fc595f3f"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/gate-names-018.log",
+      "sha256WorkingBytes": "2be5ff1b8bbb26f09534a02a315edaf1a9cf9badad76a0805f78dc480e6d3204",
+      "gitBlobOid": "745f06e5c5d189c800b3389ac43b0de5246b803d"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/human-analyze-018.log",
+      "sha256WorkingBytes": "205cfc43d78a24afb608813a00c4180cb4fde8de3d77dd031c7ca230be3be1bd",
+      "gitBlobOid": "d68676fd89148814bc6e2d63b7ea8e981325fb5f"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/mutant-points-018.log",
+      "sha256WorkingBytes": "5d0c801c1111a98c26a9fc1facbcac3e71a4f8a99477738cb5a4a6791549e478",
+      "gitBlobOid": "c111eb7686a185aff12d5961588a4229be00f147"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/preparation-018.log",
+      "sha256WorkingBytes": "5db2dfaadd2e63426ad51a7d2fbc53e1b1f683fdab8d952f0b1e0fc0d01f9163",
+      "gitBlobOid": "b374edef1c54f7c6252d53ff20b96156662552b5"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/red-denominator-018.log",
+      "sha256WorkingBytes": "7a5058de829fb49ab456ba0f250bee6950bfb3729f788eb1dd15dd9cdbe9bef0",
+      "gitBlobOid": "82f552a1f18322b53aa3c1a90e37ccd0d56ececf"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/red-functional-018.log",
+      "sha256WorkingBytes": "3cde46b46272ca091c9333048b065945ae30b76af6aed56cd7500a596b2d6f9a",
+      "gitBlobOid": "4cc1ba23e3b9258b85993b14f82cf4c93dbf3820"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/red-overflow-018.log",
+      "sha256WorkingBytes": "f9508c003cfa92939731b3ef3ba9b90249ad1a58c2c919ebf2dda9d4f26c6457",
+      "gitBlobOid": "80de39bbfac4a3eee4bb85233877a352c447dd25"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/red-single-date-018.log",
+      "sha256WorkingBytes": "2e5ce9f623369a5d1bd2ab8997e05a464b27c7d1a5470927cab02e9be491d580",
+      "gitBlobOid": "cb5b68496c5b9523b288cf844a608f86f23929bf"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/sin-datos-360-texto2.json",
+      "sha256WorkingBytes": "45ca9cc5c39fc497972e3a446418c23447040edb46238702b406cd639c6014c2",
+      "gitBlobOid": "5b9f4e6b915607e577426627e4a103038dd492d8"
+    },
+    {
+      "path": "docs/context/sessions/evidence/018/sin-datos-360-texto2.png",
+      "sha256WorkingBytes": "95877be59cf28c0cac9bb2ab5b6531e5af8ae6d088a0f99182c02e2966a90c4e",
+      "gitBlobOid": "df915fb38ef33b2e4b77cfd37977bdbb2501b026"
+    }
+  ]
+}

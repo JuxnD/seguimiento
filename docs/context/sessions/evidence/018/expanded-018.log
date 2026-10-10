@@ -1,0 +1,45 @@
+00:00 +0: loading C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart
+00:00 +0: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: helper extraído conserva receta y export público del timer
+00:00 +1: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: referencias inválidas no producen coordenada ni defaults
+00:00 +2: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: cambio de referencia escala ambos perfiles; no cambia delta crudo
+00:00 +3: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: política documentada separa histórica de actual; sin política no caduca
+00:00 +4: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: inválidos, fechas desconocidas y bilateral mixto conservan payload
+00:00 +5: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: Cindy importada/estimada/cortada/30min/Tabata/dudas sigue observada
+00:00 +6: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: receta distinta/lastre/variante/partial desconocido no normaliza
+00:00 +7: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+00:00 +8: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+00:00 +9: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+00:00 +10: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+00:00 +11: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+00:00 +12: loading C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart
+00:03 +12: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: (setUpAll)
+00:03 +12: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: cero real frente a ausentes y callbacks sin escritura/rutas
+00:07 +13: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: dos ejes no rellenan huecos y sin refs mantiene crudo
+00:08 +14: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: SQLite→008→núcleo→UI conserva dudas/fecha/bilateral
+00:10 +15: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: touch canvas, teclado, semántica y mostrar inicio
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+A SemanticsHandle was active at the end of the test.
+All SemanticsHandle instances must be disposed by calling dispose() on the SemanticsHandle.
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester._verifySemanticsHandlesWereDisposed (package:flutter_test/src/widget_tester.dart:1072:7)
+#1      WidgetTester._endOfTestVerifications (package:flutter_test/src/widget_tester.dart:1063:5)
+#2      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1029:22)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  touch canvas, teclado, semántica y mostrar inicio
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:11 +15 -1: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: touch canvas, teclado, semántica y mostrar inicio [E]
+  Test failed. See exception logs above.
+  The test description was: touch canvas, teclado, semántica y mostrar inicio
+
+00:11 +15 -1: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: renderer real360 texto1.0, >100 conserva crudo
+00:12 +16 -1: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: renderer real360 texto1.6, >100 conserva crudo
+00:13 +17 -1: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: renderer real360 texto2.0, >100 conserva crudo
+00:13 +18 -1: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: widget muestra valor/ref común y tap evidencia sin rutas
+00:14 +19 -1: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: (tearDownAll)
+00:14 +19 -1: Some tests failed.
