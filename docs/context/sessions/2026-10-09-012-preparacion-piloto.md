@@ -32,6 +32,9 @@ a su propio artefacto; las herramientas012 son una frontera nueva.
 
 ## Pruebas y límites
 
+Salidas adjuntas normalizan sólo espacios finales/líneas CRLF para que el diff
+sea verificable; los originales de ejecución quedan en build/qa012 local.
+
 | Prueba | Evidencia / resultado |
 |---|---|
 | Rojo antes de fuenteUI | [3 fallos funcionales](2026-10-09-012-evidence/disclosure-red.txt): inventario IA/cifrado, revisión previa y alcance de borrado. Fallo inicial de preparación por database.g.dart ausente fue corregido regenerando sobre schema20, no contado como rojo funcional |

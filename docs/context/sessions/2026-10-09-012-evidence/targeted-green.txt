@@ -50,7 +50,7 @@
 00:18 +38: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: el primer arranque respalda; hasta la semana siguiente no repite
 00:19 +39: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: se queda solo con los más recientes
 00:19 +40: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: el respaldo se puede restaurar y trae los datos de ese día
-WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
 Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
 Here is the stacktrace from when the database was opened a second time:
 #0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
@@ -97,7 +97,7 @@ This warning will only appear on debug builds.
 00:35 +50: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
 00:36 +51: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
 00:37 +52: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
-WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
 Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
 Here is the stacktrace from when the database was opened a second time:
 #0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)

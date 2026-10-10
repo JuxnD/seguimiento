@@ -25,7 +25,7 @@ The test description was:
 00:01 +0 -1: inventario incluye IA y explica cifrado y copias automáticas [E]
   Test failed. See exception logs above.
   The test description was: inventario incluye IA y explica cifrado y copias automáticas
-  
+
 00:01 +0 -1: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
 ══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
 The following TestFailure was thrown running a test:
@@ -51,7 +51,7 @@ The test description was:
 00:03 +0 -2: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo [E]
   Test failed. See exception logs above.
   The test description was: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
-  
+
 00:03 +0 -2: borrar IA explica copia actual y anteriores; cancelación conserva conversación
 ══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
 The following TestFailure was thrown running a test:
@@ -78,6 +78,6 @@ The test description was:
 00:04 +0 -3: borrar IA explica copia actual y anteriores; cancelación conserva conversación [E]
   Test failed. See exception logs above.
   The test description was: borrar IA explica copia actual y anteriores; cancelación conserva conversación
-  
+
 00:04 +0 -3: (tearDownAll)
 00:04 +0 -3: Some tests failed.
