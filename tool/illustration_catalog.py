@@ -199,14 +199,14 @@ def generate(name):
     if name == 'Círculos de hombros':
         frames=[]
         for offset,caption in [((0,0),'Brazos relajados: mueve los hombros, no los brazos'),
-                               ((0,1.2),'Sube suavemente los hombros'),
-                               ((-.8,0),'Llévalos atrás sin sacar el pecho'),
-                               ((0,-.8),'Bájalos, dejando el cuello largo'),
-                               ((.8,0),'Pásalos al frente y vuelve; cambia el sentido')]:
+                               ((0,1.2),'1. Arriba: sube suavemente los hombros'),
+                               ((-.8,0),'2. Atrás: llévalos atrás sin sacar el pecho'),
+                               ((0,-.8),'3. Abajo: baja hombros y deja el cuello largo'),
+                               ((.8,0),'4. Frente: pásalos al frente sin sacar pecho')]:
             f=pose(caption);f['shoulderOffset']=offset;frames.append(f)
         frames.append(dict(cp(frames[0]),caption='Vuelve al inicio; repite el círculo en sentido contrario'))
         ex=basic(name,frames,group='Calentamiento',yaw=35,focus='neck',
-                 annotations=[dict(joint='nearShoulder',text='Hombros en círculo',corner='tl')])
+                 annotations=[dict(joint='nearShoulder',text='1. Arriba\n2. Atrás\n3. Abajo\n4. Frente',corner='tl')])
         ex['regions']=[dict(part='shoulder')]
         ex['gripZ']=4.5
         return ex
@@ -215,9 +215,9 @@ def generate(name):
         for rise,caption in [(0,'Cuelga de la barra: codos rectos, pies libres'),
                              (1.2,'Baja los hombros: el cuerpo sube un poco, sin doblar codos'),
                              (0,'Vuelve al colgado sin balancearte')]:
-            f=pose(caption,(0,-30-rise),na=arm(-90,-90,hand=-90,grip='bar'),fa=arm(-90,-90,hand=-90,grip='bar'))
+            f=pose(caption,(0,-34-rise),na=arm(-90,-90,hand=-90,grip='bar'),fa=arm(-90,-90,hand=-90,grip='bar'))
             f['shoulderOffset']=(0,-rise);frames.append(f)
-        ex=basic(name,frames,group='Calentamiento',props=[dict(type='bar',x=0,y=-67,half=15)],yaw=30,focus='neck',
+        ex=basic(name,frames,group='Calentamiento',props=[dict(type='bar',x=0,y=-71,half=15)],yaw=30,focus='neck',
                  annotations=[dict(joint='nearShoulder',text='Hombros lejos de las orejas',corner='tl')])
         ex['regions']=[dict(part='shoulder')]
         ex['gripZ']=4.5

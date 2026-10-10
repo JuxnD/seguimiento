@@ -147,3 +147,10 @@ pendientes: estos83casos no son una nueva certificación global del producto.
 
 [Recibo014](sessions/2026-10-10-014-calentamiento.md). La política por dolor
 no pertenece a este frente y no se valida por la figura disponible.
+
+
+R1: Retracciones valida también la suela completa respecto al suelo en61muestras
+(min4,75u), no sólo mano–barra. Círculos declara dirección por texto numerado
+independiente de cámara. ViewerCTA→glifo real→semantics→acción prueba etiqueta
+completa a360px/text1,6 y2,0; reflow conserva todos los controles. ReciboR1
+sobrebasee35a; aceptación humana yAPK pendientes.

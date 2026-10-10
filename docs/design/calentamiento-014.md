@@ -74,3 +74,26 @@ sólo compone y reduce capturas Flutter, no redibuja posturas. Hay65PNG reales:
 [hojas con texto grande](calentamiento-014/hojas-texto-1-6-top.jpg),
 [instrucciones con texto grande](calentamiento-014/hojas-texto-1-6-cues.jpg).
 Los hashes individuales están en `calentamiento-014/capturas-sha256.json`.
+
+
+## Revisión visual R1 y ajuste acotado
+
+La base de implementación fuee35a72c. El coordinator pidió distinguir «pies
+libres»: no estaban apoyados, pero la suela dejaba sólo0,75u≈2,4cm del suelo.
+Se elevó exclusivamente figura y barra4u, conservando los ángulos y el contacto:
+la suela deja mínimo4,75u≈15,2cm en61muestras. Es claridad de la ilustración,
+no una altura clínica recomendada. [Lateral real](calentamiento-014/retracciones-lateral-r1.png).
+
+Los Círculos conservan recorrido sutil: anotación y captions numeradas indican
+Arriba→Atrás→Abajo→Frente. Se evitan flechas fijas a pantalla porque la cámara
+puede girarse. No se exageró movimiento para distinguir miniaturas.
+
+El viewer heredado truncaba «Ver movimiento» conellipsis enRow; el reflow
+Wrap conserva indicadores, acción y ampliación a fuente grande, sin reducirla.
+Prueba real mira si se pinta la última letra, verifica semantics completos y
+acciona ambos estados a360px con escala1,6 y2,0. El botón puede ocupar otra
+fila; no se crea otro visor ni se oculta ninguna acción.
+
+65capturas de catálogo/hojas recapturadas, más1lateral diagnóstico (66PNG).
+La huella deJSON actual y resultados R1 están en el recibo; comprensión
+humana e instalación permanecen abiertas.

@@ -107,3 +107,36 @@ casts a `Map<String,Object?>`; cinco casos del fixture pasan y analyze informa
 «No issues found» (11,2s). `git diff --check` pasa. Ninguna geometría ni assertion
 cambió. Se preserva el STOP anterior y su evidencia. Revisión visual del
 coordinator todavía pendiente, al igual que aceptación humana del owner.
+
+
+## Revisión visual R1 · basee35a72c
+
+Root leyó los seis recorridos y autorizó tres ajustes acotados antes de aprobar:
+
+- Retracciones: diagnóstico61muestras midió tobillo/suelo2u y suela/suelo0,75u.
+  Figura+barra elevadas4u, sin otros ángulos: suela mínima4,75u, captura lateral
+  real y control de perfil completo de zapato, no sólo agarre o centro de joint.
+- Círculos: anotación existente y captions numeradas Arriba/ Atrás/ Abajo/ Frente,
+  conservando anatomía; sin flechas que se inviertan al girar cámara.
+- Viewer: labelheredado conellipsis dentroRow falló selección de última letra
+  a1,6 y2,0. Ahora Wraprefluye sin bajar fuente ni ocultar controles; ambos
+  estados conservan semantics y son accionables. Root amplió únicamente ese
+  viewer y prueba de legibilidad correspondiente.
+
+Rojo real R1:8pasan/3fallan (gap y2truncamientos). Primer intento verde:
+45pasan/2fallan por cierre tardío delSemanticsHandle del fixture; visual y
+semantics pasaban. Dispose se llevó a finally, sin cambiar assertions.
+Gatefinal R1:47pasan. Analyze tuvo una observación de braces delnuevo test,
+corregida manteniendoassertion; luego «No issues found». No se tocó el rig.
+Generación determinista y73objetos/hashgeometrías originales idénticos.
+
+2pruebas de captura pasan,65recapturas de catálogo/hojas+1lateral diagnóstico.
+Recorridos R1 y CTAcompleta inspeccionados; R2 del coordinator y comprensión
+humana pendientes. La cifra f9a42... previa corresponde a basee35a,
+JSON actual R1 SHA256: 1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a.
+
+Salidas `r1-*.txt/json`, diagnóstico y capturas están vinculados en diseño.
+La recreación opcional de la captura antigua desdeGit fue rechazada por
+revisión automática del comando; no se ejecutó ni se atribuye una imagen nueva
+al antes. Se conserva la medición anterior real y la basee35a para reproducirla.
+No impide comprobar el gapactual con el artefacto real.

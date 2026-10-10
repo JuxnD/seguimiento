@@ -165,4 +165,29 @@ void main() {
     expect(trunk.dot(thigh), greaterThan(.999), reason: 'línea hombro-cadera-rodilla sin arco lumbar');
     expect(top['hip']!.y, lessThan(first['hip']!.y - 4));
   });
+  test('retracciones deja volumen de zapatos claramente libre del suelo en61muestras', () {
+    final fig = catalog.forExercise('Retracciones escapulares')!;
+    for (var i = 0; i <= 60; i++) {
+      final body = liftSkeleton(fig.skeletonAt(i / 60), fig);
+      for (final sd in ['near', 'far']) {
+        final ankle = body.p['${sd}Ankle']!, toe = body.p['${sd}Toe']!;
+        final forward = (toe - ankle).unit, lateral = body.up.cross(body.front).unit;
+        final width = (lateral - forward * forward.dot(lateral)).unit;
+        final sole = width.cross(forward).unit;
+        // Full _foot profile, including heel/front sole, not just ankle center.
+        final points = <V3>[
+          ankle - forward * 1.3 + sole * 1.1,
+          ankle - forward * 1.0 - sole * .6,
+          ankle + forward * .8 - sole * .75,
+          ankle + forward * (fig.dims.foot - .6) - sole * .05,
+          ankle + forward * fig.dims.foot + sole * .55,
+          ankle + forward * (fig.dims.foot - .7) + sole * 1.15,
+          ankle - forward * .9 + sole * 1.25
+        ];
+        for (final point in points) {
+          expect(-point.y, greaterThanOrEqualTo(4.74), reason: '$sd/$i: pies libres visibles, no sólo sin penetrar');
+        }
+      }
+    }
+  });
 }

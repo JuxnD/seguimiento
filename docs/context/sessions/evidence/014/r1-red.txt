@@ -1,0 +1,76 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart
+00:00 +0: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +3: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +4: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +5: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +6: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +7: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +8: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +8 -1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +8 -1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: retracciones deja volumen de zapatos claramente libre del suelo en61muestras [E]
+  Expected: a value greater than or equal to <4.74>
+    Actual: <0.8999999999999999>
+     Which: is not a value greater than or equal to <4.74>
+  near/0: pies libres visibles, no sólo sin penetrar
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_supports_test.dart 182:36      main.<fn>
+
+00:01 +8 -1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: non-empty
+  Actual: []
+última letra debe pintarse: Ver movimiento, Círculos de hombros ×1.6
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.complete (file:///C:/My%20Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart:26:11)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart:30:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart line 26
+The test description was:
+  CTA completa y accesible en360px texto1.6
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +8 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6 [E]
+  Test failed. See exception logs above.
+  The test description was: CTA completa y accesible en360px texto1.6
+
+00:01 +8 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: non-empty
+  Actual: []
+última letra debe pintarse: Ver movimiento, Círculos de hombros ×2.0
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.complete (file:///C:/My%20Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart:26:11)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart:30:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart line 26
+The test description was:
+  CTA completa y accesible en360px texto2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +8 -3: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: CTA completa y accesible en360px texto2.0
+
+00:01 +8 -3: Some tests failed.

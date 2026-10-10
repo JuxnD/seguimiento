@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/build/warmup_r1_diagnostic_test.dart
+00:00 +0: R1 gap source and actual lateral capture
+R1 Retracciones61samples min ankle-floor=6.0 u; exact rendered shoe sole-floor=4.75 u (~15.200000000000001cm)
+00:00 +1: All tests passed!

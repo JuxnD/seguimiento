@@ -6,7 +6,7 @@
   "newEntries": 6,
   "legacyEntriesUnchanged": 73,
   "samplesPerFigure": 61,
-  "captureCount": 65,
+  "captureCount": 66,
   "syntheticOnly": true,
   "mainGatePassed": 62,
   "rigAfterReviewPassed": 6,
@@ -18,15 +18,25 @@
   "installedPhone": "NOT_RUN",
   "fullIntegrationSuite": "DEFERRED_TO_INTEGRATION",
   "sourceHashes": {
-    "assets/tecnica/figuras3d.json": "f9a42b6fe6c4bc300ea044e37a9c74e25b28da801677efff1c169a62aad8c0b2",
+    "assets/tecnica/figuras3d.json": "1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a",
     "lib/ui/exercise_figure_3d.dart": "329cc468a73b44a5043fb8afca9d4d2a05dd8c389be65799a41fb971c854c43e",
-    "tool/illustration_catalog.py": "3b9ba7e344535f9d3071e4dc4a7e9fdd6be7ed0ded3dd7c4b5316920af8ae8b7",
+    "tool/illustration_catalog.py": "0d76e70821f95c0538601eef45699fad498edd0453e49bc66d00dd76f56b70f0",
     "tool/figuras.py": "322649e30ad03098ba2108a215d2ea6533155634fced51b181dbe144e01745d1",
     "tool/figuras3d.py": "5e3c5e52e4ecf62189a33734edd02ce35a497e1a7ee9005b3bc26c2109a6c695",
-    "test/fixtures/illustration_legacy_929.json": "72afd85bd6a1070ba588ce995f4beb980b73885ca9f2e628b2d5966b7599dd76"
+    "test/fixtures/illustration_legacy_929.json": "72afd85bd6a1070ba588ce995f4beb980b73885ca9f2e628b2d5966b7599dd76",
+    "lib/ui/exercise_figure_3d_view.dart": "3526b42f22eadd6c4ed164d9d66d9ce96b6497ff57e10749f4eef16446525c16"
   },
-  "closureAnalyze": "NO_ISSUES_AFTER_EXPLICIT_REOPENING",
+  "closureAnalyze": "NO_ISSUES_R1",
   "fixtureReopenedPassed": 5,
-  "coordinatorVisualReview": "PENDING",
-  "stopPreserved": true
+  "coordinatorVisualReview": "R2_PENDING",
+  "stopPreserved": true,
+  "r1BaseCommit": "e35a72c69b6a57ca6778922ab850f8d5285b8e45",
+  "r1GatePassed": 47,
+  "r1GapMinShoeToFloorUnits": 4.75,
+  "r1LabelScales": [
+    1.6,
+    2
+  ],
+  "catalogCaptureCount": 65,
+  "r1DiagnosticCaptureCount": 1
 }

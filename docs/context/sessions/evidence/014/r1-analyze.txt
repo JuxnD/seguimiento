@@ -1,0 +1,5 @@
+Analyzing seguimiento-014-calentamiento...
+
+   info - Statements in a for should be enclosed in a block - test\ui\illustration_supports_test.dart:188:11 - curly_braces_in_flow_control_structures
+
+1 issue found. (ran in 5.1s)
