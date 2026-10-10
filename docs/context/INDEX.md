@@ -1,5 +1,12 @@
 # Índice de contexto
 
+**Integración local122/018:** [componente de radar](sessions/2026-10-10-integracion-122-018.md)
+desde d108fafa,74dirigidos y análisis/diff0; receta extraída sin alterar019,
+checklistClaude o barrera de guardado784. Renderer360 texto1/1.6/2 probado,
+5PNG/JSON sintéticos idénticos a fuente aprobada; schema21/SDK/79/73/30PNG
+intactos. No conecta011 ni metas009/rutas/alta. Full, APK y comprensión del
+owner pendientes;698/16 previos al último copy018 no acreditan este árbol.
+
 **Plan019 local (10oct):** [ventana medida de Cindy](../cronometro.md#ventana-medida-de-cindy-plan-019)
 y [recibo](sessions/2026-10-10-019-cindy-window.md), worktree aislado
 `C:/My Projects/seguimiento-019-cindy`, base `238ef85`. Nuevos drafts suman

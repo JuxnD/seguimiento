@@ -253,6 +253,17 @@ Schema21, SDK3.22, JSON79/73 y30PNG no cambian. Full681/16 del source019
 es anterior al copyplural y no acredita este snapshot. APK/owner pendientes;
 mutante2DBNO_EVALUADO y causa previaNO_CONFIRMADA conservados explícitamente.
 
+## Integración122/018 · evidencia→radar y receta→draft
+
+[Recibo combinado](sessions/2026-10-10-integracion-122-018.md): sourcebc6cc9b
+integrado sobre d108fafa, conflictos documentales concatenados.74casos cruzan
+núcleo008/renderer, SQLite→UI y cronómetros/snapshots anteriores. Se compara
+literalmente `_draft`019 y receta extraída; checklistClaude y barrera784 intactos.
+CincoPNG/JSON nuevos coinciden con fuente aprobada y raster corre siempre en
+las3escalas. No se crea persistencia ni ruta deproducto;011/009/piloto pendientes.
+Solo lectura conserva79/73/30PNG/schema21/SDK/Android.698/16 de018 previos al
+último copy no son full de integración. Comprensiónowner y gate de APK abiertos.
+
 ## Plan018 local: núcleo y widget del radar (10oct)
 
 Base238ef85f/018-radar-core, sin esquema/repos/providers/metas009 o rutas nuevas.

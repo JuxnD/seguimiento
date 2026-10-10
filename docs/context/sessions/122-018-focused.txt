@@ -1,0 +1,104 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: una sola fecha apta no demuestra un cambio entre fechas
+00:00 +1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: sólo un prefijo parcial no demuestra el denominador de Cindy
+00:00 +2: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: conteo extremo no acredita receta por overflow de entero
+00:00 +3: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: helper extraído conserva receta y export público del timer
+00:00 +4: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: referencias inválidas no producen coordenada ni defaults
+00:00 +5: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: cambio de referencia escala ambos perfiles; no cambia delta crudo
+00:00 +6: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: política documentada separa histórica de actual; sin política no caduca
+00:00 +7: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: inválidos, fechas desconocidas y bilateral mixto conservan payload
+00:00 +8: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: Cindy importada/estimada/cortada/30min/Tabata/dudas sigue observada
+00:00 +9: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: receta distinta/lastre/variante/partial desconocido no normaliza
+00:00 +10: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+00:00 +11: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+00:00 +12: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+00:00 +13: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+00:00 +14: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+00:00 +15: loading C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart
+00:01 +15: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: (setUpAll)
+00:01 +15: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: cero real frente a ausentes y callbacks sin escritura/rutas
+00:02 +16: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: dos ejes no rellenan huecos y sin refs mantiene crudo
+00:03 +17: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: SQLite→008→núcleo→UI conserva dudas/fecha/bilateral
+00:03 +18: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: touch canvas, teclado, semántica y mostrar inicio
+00:04 +19: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: renderer real360 texto1.0, >100 conserva crudo
+00:04 +20: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: renderer real360 texto1.6, >100 conserva crudo
+00:04 +21: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: renderer real360 texto2.0, >100 conserva crudo
+00:05 +22: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: widget muestra valor/ref común y tap evidencia sin rutas
+00:05 +23: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: (tearDownAll)
+00:05 +23: loading C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart
+00:06 +23: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) semanas y fases desde el lunes de inicio
+00:06 +24: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) fechas clave: mediciones 6 nov y 4 dic, test 18 dic
+00:06 +25: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) volumen reducido: semanas 4 y 8, y la 10 hasta el miércoles
+00:06 +26: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) miércoles: Cindy impares, Tabata pares; la 4 y la 10 Cindy, la 8 por tiempo
+00:06 +27: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) burpees EMOM por fase, sin burpees en descarga ni en la semana del test (§18.10)
+00:06 +28: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) el v3 arranca en lunes
+00:06 +29: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) tipos de día y esquema
+00:06 +30: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) jueves: curl y extensión van en superserie y el cronómetro los alterna
+00:06 +31: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) viernes: 6 rondas de circuito y después L-sit y toes-to-bar
+00:06 +32: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) descarga: una serie menos en los ejercicios de series; el circuito no cambia
+00:06 +33: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Tabata: 4 × 8 de 20/10 con 1 min entre bloques = 16:10
+00:06 +34: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Cindy: la ronda a medias se reparte en orden
+00:06 +35: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros EMOM: un minuto fallado baja al escalón anterior
+00:06 +36: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: PlanExerciseDraft.copyWith conserva la superserie
+00:06 +37: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: variantes: la cadena de progresión se parte en escalones (§18.4)
+00:06 +38: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: el informe nombra el formato de resistencia y la variante de cada serie
+00:06 +39: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: los ejercicios por lado salen por serie con cada pierna (§16.6.2)
+00:06 +40: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: una Cindy cortada dice lo que duró y que no es marca
+00:06 +41: loading C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart
+00:07 +41: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy completa con fracciones no inventa un segundo de circuito
+00:08 +42: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy completa con segundos enteros conserva sus tiempos
+00:09 +43: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy cortada mide 2:00 reales con fracciones y conserva la foto
+00:10 +44: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy sin inicio de trabajo no convierte el cap en tiempo hecho
+00:10 +45: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy conserva ventana medida distinta del cap sin normalizarla
+00:10 +46: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Tabata conserva su cálculo y dosis sin composición de Cindy
+00:11 +47: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: la foto de Cindy o Tabata vuelve igual tras pasar por JSON
+00:11 +48: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy de prueba: calentamiento y checklist a la vista; la normal no los muestra
+00:11 +49: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy retomada sigue con sus rondas y su reloj
+00:11 +50: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy que terminó con la app cerrada pide la ronda a medias
+00:11 +51: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Tabata retomado sigue en el bloque en que iba
+00:11 +52: loading C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart
+00:12 +52: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio las semanas van de lunes a domingo; la 1 empieza el lunes del inicio (§16.8)
+00:12 +53: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio fechas previas al inicio dan semana ≤ 0 sin error
+00:12 +54: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: duraciones parse y formato
+00:12 +55: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión circuito neto = total − cal − enf, nunca negativo
+00:12 +56: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión estimación de rondas por tiempo
+00:12 +57: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión vueltas del contador
+00:12 +58: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades macros por unidad y por 100 g
+00:12 +59: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades pulgadas se guardan en cm
+00:12 +60: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: formato es-CO miles y decimales
+00:12 +61: loading C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart
+00:13 +61: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: (setUpAll)
+00:13 +61: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: calentamiento guiado: pasos con su dosis, reloj por paso y lo marcado queda anotado
+00:16 +62: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: saltar el calentamiento queda registrado y no pregunta
+00:17 +63: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: molestia en el registro: aviso visible y los mismos pasos
+00:17 +64: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:282:39)
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart:262:16)
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#9      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:18 +65: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: foto vieja sin calentamiento guiado: nada marcado, no se rompe
+00:18 +66: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: (tearDownAll)
+00:18 +66: loading C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart
+00:19 +66: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+00:19 +67: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+00:19 +68: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+00:19 +69: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+00:19 +70: loading C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart
+00:21 +70: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: sin archivo no hay sesión
+00:21 +71: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+00:21 +72: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: clear después de save no deja nada
+00:21 +73: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: un archivo dañado se ignora
+00:21 +74: All tests passed!
