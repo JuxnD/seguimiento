@@ -168,9 +168,10 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
                 ? [const AppCard(children: [EmptyHint('Nada registrado en este periodo todavía.')])]
                 : [
                     _ExercisesCard(summary: s, versus: _versus(to, today)),
-                    _StepsCard(summary: s, stepsGoal: profile.targets.stepsTarget),
+                    _StepsCard(summary: s, stepsGoal: profile.targets.stepsTarget.toDouble()),
                     _EnergyCard(summary: s),
-                    _FoodCard(summary: s, proteinMin: profile.proteinMin, kcalTarget: profile.kcalTarget),
+                    _FoodCard(
+                        summary: s, proteinMin: profile.proteinMin.toDouble(), kcalTarget: profile.kcalTarget.toDouble()),
                   ],
             orElse: () => const <Widget>[],
           ),
@@ -442,7 +443,9 @@ class _StepsCard extends StatelessWidget {
   const _StepsCard({required this.summary, required this.stepsGoal});
 
   final PeriodSummary summary;
-  final int stepsGoal;
+
+  /// La de hoy: sólo si el resumen no trae la del período.
+  final double stepsGoal;
 
   @override
   Widget build(BuildContext context) {
@@ -469,7 +472,8 @@ class _StepsCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 6),
               child: Text(
-                'Meta de ${fmtInt(stepsGoal)} entre semana: ${s.weekdaysAtGoal} de '
+                '${s.stepsGoal?.segments.isEmpty ?? false ? 'Meta histórica no registrada' : 'Meta de ${s.stepsGoal?.label(fmtInt) ?? fmtInt(stepsGoal)}'} '
+                'entre semana: ${s.weekdaysAtGoal} de '
                 '${s.weekdaysWithSteps - s.weekdaysGoalUnknown} días.'
                 '${s.weekdaysGoalUnknown == 0 ? '' : ' ${s.weekdaysGoalUnknown} con meta histórica no registrada.'}',
                 style: text.bodyMedium,
@@ -563,13 +567,20 @@ class _FoodCard extends StatelessWidget {
   const _FoodCard({required this.summary, required this.proteinMin, required this.kcalTarget});
 
   final PeriodSummary summary;
-  final int proteinMin;
-  final int kcalTarget;
+
+  /// Las de hoy: sólo si el resumen no trae las del período (plan 009).
+  final double proteinMin;
+  final double kcalTarget;
 
   @override
   Widget build(BuildContext context) {
     final s = summary;
     final text = Theme.of(context).textTheme;
+    // Con una sola meta en el período el anillo la usa; si cambió o no se
+    // sabe, la proporción es la de días en meta y el rótulo lo dice.
+    final protein = s.proteinGoal?.single ?? (s.proteinGoal == null ? proteinMin : null);
+    final kcal = s.kcalGoal?.single ?? (s.kcalGoal == null ? kcalTarget : null);
+    final judged = s.closedDays - s.proteinDaysGoalUnknown;
     if (s.closedDays == 0) {
       return const AppCard(
         title: 'Comida',
@@ -583,10 +594,10 @@ class _FoodCard extends StatelessWidget {
           children: [
             Expanded(
               child: ProgressRing(
-                progress: goalProgress(s.avgKcalIn!, kcalTarget),
+                progress: kcal == null ? 0 : goalProgress(s.avgKcalIn!, kcal),
                 value: fmtInt(s.avgKcalIn!),
                 label: 'kcal/día',
-                sublabel: 'meta ${fmtInt(kcalTarget)}',
+                sublabel: kcal == null ? 'meta ${s.kcalGoal!.short(fmtInt)}' : 'meta ${fmtInt(kcal)}',
                 size: 110,
                 stroke: 10,
                 color: AppColors.kcal,
@@ -594,10 +605,12 @@ class _FoodCard extends StatelessWidget {
             ),
             Expanded(
               child: ProgressRing(
-                progress: goalProgress(s.avgProtein!, proteinMin),
+                progress: protein != null
+                    ? goalProgress(s.avgProtein!, protein)
+                    : (judged == 0 ? 0 : s.proteinDaysAtMin / judged),
                 value: '${fmtInt(s.avgProtein!)} g',
                 label: 'proteína/día',
-                sublabel: 'mín ${fmtInt(proteinMin)} g',
+                sublabel: protein == null ? 'mín ${s.proteinGoal!.short(fmtInt)}' : 'mín ${fmtInt(protein)} g',
                 size: 110,
                 stroke: 10,
                 color: AppColors.protein,
@@ -608,7 +621,8 @@ class _FoodCard extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Promedio de ${s.closedDays} ${s.closedDays == 1 ? 'día cerrado' : 'días cerrados'}. '
-          'Proteína en meta: ${s.proteinDaysAtMin} de ${s.closedDays}.',
+          'Proteína en meta: ${s.proteinDaysAtMin} de $judged.'
+          '${s.proteinDaysGoalUnknown == 0 ? '' : ' ${s.proteinDaysGoalUnknown} con meta histórica no registrada.'}',
           style: text.bodyMedium,
         ),
       ],

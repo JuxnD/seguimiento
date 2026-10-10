@@ -72,6 +72,9 @@ class PeriodSummary {
     required this.closedDays,
     required this.proteinDaysAtMin,
     this.proteinDaysGoalUnknown = 0,
+    this.proteinGoal,
+    this.kcalGoal,
+    this.stepsGoal,
     required this.days,
     this.previous,
   });
@@ -127,6 +130,12 @@ class PeriodSummary {
   final int closedDays;
   final int proteinDaysAtMin;
   final int proteinDaysGoalUnknown;
+
+  /// Las metas que regían en el período (plan 009): el resumen de una semana
+  /// pasada no se mide con la meta de hoy. null = construido sin entrada.
+  final GoalSpan? proteinGoal;
+  final GoalSpan? kcalGoal;
+  final GoalSpan? stepsGoal;
   final List<DayActivity> days;
   final PeriodSummary? previous;
 
@@ -297,6 +306,13 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
     closedDays: closed.length,
     proteinDaysAtMin: proteinAtMin,
     proteinDaysGoalUnknown: proteinGoalUnknown,
+    proteinGoal: GoalSpan.over(input.goals, GoalMetric.proteinaMin, closed, fallback: input.targets.proteinMin),
+    kcalGoal: GoalSpan.over(input.goals, GoalMetric.kcal, closed, fallback: input.targets.kcalTarget),
+    stepsGoal: GoalSpan.over(
+        input.goals,
+        GoalMetric.pasos,
+        [for (final k in inRange.keys) if (parseDay(k).weekday <= DateTime.friday) parseDay(k)],
+        fallback: input.targets.stepsTarget),
     days: [
       for (final d in stats.days)
         DayActivity(

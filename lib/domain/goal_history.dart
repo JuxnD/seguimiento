@@ -141,3 +141,69 @@ class GoalHistory {
     return all.length < 2 ? null : all[all.length - 2];
   }
 }
+
+/// Las metas que rigieron en unos días (plan 009, R2): un informe de un
+/// período pasado imprime la meta de ese período, el cambio si lo hubo o la
+/// incertidumbre, nunca la actual sobre días que tenían otra.
+class GoalSpan {
+  const GoalSpan(this.segments, {this.unknownDays = 0});
+
+  /// Sin historia cargada: la meta de siempre en todos los días.
+  factory GoalSpan.over(GoalHistory? goals, GoalMetric m, Iterable<DateTime> days, {num? fallback}) {
+    final sorted = [for (final d in days) dateOnly(d)]..sort();
+    final segments = <({double? value, DateTime from})>[];
+    var unknown = 0;
+    for (final d in sorted) {
+      final double? value;
+      if (goals == null) {
+        value = fallback?.toDouble();
+      } else {
+        final at = goals.on(m, d);
+        if (at == null) {
+          value = fallback?.toDouble();
+        } else if (!at.known) {
+          unknown++;
+          continue;
+        } else {
+          value = at.value;
+        }
+      }
+      if (segments.isEmpty || segments.last.value != value) segments.add((value: value, from: d));
+    }
+    return GoalSpan(segments, unknownDays: unknown);
+  }
+
+  /// Cada vigencia conocida, con el primer día del período en que rigió.
+  final List<({double? value, DateTime from})> segments;
+
+  /// Días anteriores a toda vigencia registrada: no se comparan.
+  final int unknownDays;
+
+  bool get changed => segments.length > 1;
+
+  /// La única meta del período; null si cambió, si una parte no se sabe o si
+  /// es "sin meta".
+  double? get single => segments.length == 1 && unknownDays == 0 ? segments.first.value : null;
+
+  /// Para un rótulo corto: "130→160", "?" lo que no se sabe.
+  String short(String Function(double v) fmt) => [
+        if (unknownDays > 0) '?',
+        for (final x in segments) x.value == null ? '—' : fmt(x.value!),
+      ].join('→');
+
+  /// "130", "130 → 160 desde el 15 oct", "histórica no registrada"…
+  String label(String Function(double v) fmt, {String none = 'sin meta'}) {
+    if (segments.isEmpty) return 'histórica no registrada';
+    final b = StringBuffer();
+    for (var i = 0; i < segments.length; i++) {
+      final v = segments[i].value;
+      if (i > 0) b.write(' → ');
+      b.write(v == null ? none : fmt(v));
+      if (i > 0) b.write(' desde el ${formatShort(segments[i].from)}');
+    }
+    if (unknownDays > 0) {
+      b.write('; $unknownDays ${unknownDays == 1 ? 'día' : 'días'} con meta histórica no registrada');
+    }
+    return b.toString();
+  }
+}

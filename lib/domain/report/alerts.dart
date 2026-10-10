@@ -1,6 +1,7 @@
 import '../dates.dart';
 import '../enums.dart';
 import '../format.dart';
+import '../goal_history.dart';
 import 'report_input.dart';
 import 'report_stats.dart';
 
@@ -25,9 +26,27 @@ List<String> buildAlerts(ReportStats s) {
     out.add('${streak.length} días seguidos bajo ${fmtInt(t.kcalFloor)} kcal (${_days(streak)})');
   }
 
+  // Cada día con el mínimo que regía ese día (plan 009): una meta nueva no
+  // vuelve falta lo que cumplía la anterior.
   final p = s.avgProtein;
-  if (p != null && p < t.proteinMin) {
-    out.add('Proteína promedio ${fmtInt(p)} g, bajo el mínimo de ${t.proteinMin} g');
+  if (p != null) {
+    final span = GoalSpan.over(s.input.goals, GoalMetric.proteinaMin, s.closedDays, fallback: t.proteinMin);
+    if (span.single case final min?) {
+      if (p < min) out.add('Proteína promedio ${fmtInt(p)} g, bajo el mínimo de ${fmtInt(min)} g');
+    } else if (span.segments.isEmpty) {
+      out.add('Proteína promedio ${fmtInt(p)} g: el mínimo que regía esos días no está registrado, sin comparar');
+    } else {
+      final judged = [
+        for (final d in s.closedDays)
+          if (s.input.goalOn(GoalMetric.proteinaMin, d, t.proteinMin) case final goal?) (d, goal),
+      ];
+      final below = [for (final (d, goal) in judged) if (s.macrosOn(d)!.protein < goal) d];
+      if (below.isNotEmpty) {
+        out.add('Proteína bajo el mínimo que regía en ${below.length} de ${judged.length} '
+            '${judged.length == 1 ? 'día cerrado' : 'días cerrados'} (${_days(below)}); '
+            'mínimo del período: ${span.label((v) => '${fmtInt(v)} g')}');
+      }
+    }
   }
 
   // Solo días ya cerrados: a mitad de semana no es una falta lo que aún no llega.
