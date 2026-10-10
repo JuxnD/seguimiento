@@ -213,3 +213,11 @@ No cambian nombre, paquete, firma, SDK, versión ni pantallas. [Diseño y compar
 [recibo](sessions/2026-10-09-013-logo.md).
 Validación de entradas PNG/safezone/alpha y revisión técnica en pequeño;
 APK integrado, permisos/notificación/temático y aceptación humana pendientes.
+
+
+Frente014: seis nuevas guías de calentamiento tienen figura explícita,
+79entradas de catálogo (73 anteriores+6 nuevas). Contrato `shoulderOffset`
+y `keepReachRadius` opt-in, recorridos y comprensión pendiente:
+[Diseño014](../design/calentamiento-014.md) y
+[recibo014](sessions/2026-10-10-014-calentamiento.md).
+No atribuir estas figuras a unAPK anterior ni a la instalación del owner.

@@ -196,6 +196,110 @@ def band(name):
 def generate(name):
     existing = {e['name']: e for e in legacy.EXERCISES}
     old = {e['name']: e for e in flat.EXERCISES}
+    if name == 'Círculos de hombros':
+        frames=[]
+        for offset,caption in [((0,0),'Brazos relajados: mueve los hombros, no los brazos'),
+                               ((0,1.2),'Sube suavemente los hombros'),
+                               ((-.8,0),'Llévalos atrás sin sacar el pecho'),
+                               ((0,-.8),'Bájalos, dejando el cuello largo'),
+                               ((.8,0),'Pásalos al frente y vuelve; cambia el sentido')]:
+            f=pose(caption);f['shoulderOffset']=offset;frames.append(f)
+        frames.append(dict(cp(frames[0]),caption='Vuelve al inicio; repite el círculo en sentido contrario'))
+        ex=basic(name,frames,group='Calentamiento',yaw=35,focus='neck',
+                 annotations=[dict(joint='nearShoulder',text='Hombros en círculo',corner='tl')])
+        ex['regions']=[dict(part='shoulder')]
+        ex['gripZ']=4.5
+        return ex
+    if name == 'Retracciones escapulares':
+        frames=[]
+        for rise,caption in [(0,'Cuelga de la barra: codos rectos, pies libres'),
+                             (1.2,'Baja los hombros: el cuerpo sube un poco, sin doblar codos'),
+                             (0,'Vuelve al colgado sin balancearte')]:
+            f=pose(caption,(0,-30-rise),na=arm(-90,-90,hand=-90,grip='bar'),fa=arm(-90,-90,hand=-90,grip='bar'))
+            f['shoulderOffset']=(0,-rise);frames.append(f)
+        ex=basic(name,frames,group='Calentamiento',props=[dict(type='bar',x=0,y=-67,half=15)],yaw=30,focus='neck',
+                 annotations=[dict(joint='nearShoulder',text='Hombros lejos de las orejas',corner='tl')])
+        ex['regions']=[dict(part='shoulder')]
+        ex['gripZ']=4.5
+        return ex
+    if name == 'Flexiones escapulares':
+        base=plank(24,'Colócate en plancha: palmas y dedos de los pies apoyados')
+        origin=flat.solve(base)['joints']['neck']
+        frames=[]
+        for angle,caption in [(base['torso'],'Plancha alta: codos rectos'),
+                              (base['torso']+2,'Deja bajar un poco el pecho entre los hombros'),
+                              (base['torso']-4,'Empuja el suelo: el pecho sube, codos sin doblarse'),
+                              (base['torso'],'Vuelve; conserva la cadera estable')]:
+            f=cp(base);f['torso']=angle;f['caption']=caption
+            neck=flat.add(f['hip'],flat.dirv(angle),18)
+            delta=(origin[0]-neck[0],origin[1]-neck[1])
+            front,up=flat.dirv(angle+90),flat.dirv(angle)
+            f['shoulderOffset']=(sum(a*b for a,b in zip(delta,front)),sum(a*b for a,b in zip(delta,up)))
+            f['nearArm']=arm(90,90,hand=0);f['farArm']=cp(f['nearArm']);frames.append(f)
+        ex=basic(name,frames,group='Calentamiento',yaw=25,focus='neck',
+                 annotations=[dict(joint='nearShoulder',text='Escápulas: recorrido pequeño',corner='tl')])
+        ex['regions']=[dict(part='shoulder')]
+        ex['gripZ']=4.5
+        return ex
+    if name == 'Balanceos de pierna':
+        vectors=[([0,28,0],[1,0,0],'Una mano en la pared; el otro pie sostiene el cuerpo'),
+                 ([28*math.cos(math.radians(55)),28*math.sin(math.radians(55)),0],
+                  [math.cos(math.radians(-35)),math.sin(math.radians(-35)),0],'Pierna móvil relajada y pie libre: balancea delante, sin patear'),
+                 ([28*math.cos(math.radians(115)),28*math.sin(math.radians(115)),0],
+                  [math.cos(math.radians(25)),math.sin(math.radians(25)),0],'Balancea atrás sin arquear la espalda'),
+                 ([0,28,0],[1,0,0],'Vuelve al centro antes del balanceo lateral'),
+                 ([0,28*math.cos(math.radians(30)),14],[1,0,0],'Abre la pierna hacia el lado; el pie de apoyo no se mueve'),
+                 ([5,math.sqrt(28**2-5**2-7**2),-7],[1,0,0],'Cruza suavemente por delante, no detrás del apoyo'),
+                 ([0,28,0],[1,0,0],'Vuelve al centro; cambia de pierna')]
+        frames=[]
+        for vector,end,caption in vectors:
+            # Mobile leg is relaxed: slight knee flexion leaves the foot clear.
+            vector=[component * 27.5 / 28 for component in vector]
+            f=pose(caption,nl=limb(90,90,reach3=vector,pole=[1,0,0],end3=end,keepReachRadius=True),
+                   fl=limb(90,90,foot=0),na=arm(),
+                   fa=arm(160,160,reach3=[0,4,-12],pole=[1,-1,0],end3=[0,-1,0],grip='hold'))
+            frames.append(f)
+        return basic(name,frames,group='Calentamiento',yaw=35,
+                     props=[box([0,-32,-18],[50,64,2],alpha=.28)],focus='hip',
+                     annotations=[dict(joint='nearAnkle',text='Pierna móvil',corner='tr'),
+                                  dict(joint='farToe',text='Pie de apoyo',corner='bl'),
+                                  dict(joint='farHand',text='Mano en pared lateral',corner='tl')])
+    if name == 'Puente de glúteo':
+        # Shoulder pivot and both foot contacts stay fixed. Solve the upper
+        # position where shoulder→hip→knee are collinear, shin length14.
+        theta=math.acos(2281/math.hypot(2432,192))-math.atan2(192,2432)
+        frames=[]
+        for angle,caption in [(0,'Boca arriba: pies planos, rodillas dobladas'),
+                              (theta,'Sube la pelvis: hombros, cadera y rodillas alineados'),
+                              (0,'Baja despacio; conserva los pies y hombros apoyados')]:
+            hip=(-18+18*math.cos(angle),-4-18*math.sin(angle))
+            a=math.degrees(math.asin(3.25/19))
+            f=pose(caption,hip,180-math.degrees(angle),reach(20,-1,foot=0),reach(20,-1,foot=0),
+                   arm(a,a,hand=0),arm(a,a,hand=0))
+            f['gaze']=math.degrees(angle);frames.append(f)
+        ex=basic(name,frames,group='Calentamiento',yaw=30,focus='hip',
+                 annotations=[dict(joint='neck',text='Hombros apoyados',corner='tl'),
+                              dict(joint='nearToe',text='Pies planos',corner='br')])
+        ex['pivot']=(-18,-4)
+        ex['gripZ']=4.5
+        return ex
+    if name == 'Dislocaciones con banda':
+        frames=[]
+        radius=math.sqrt(19**2-14**2)
+        for angle,caption in [(35,'Banda al frente: agarre ancho y codos rectos'),
+                              (-90,'Pasa por arriba; la banda queda libre sobre la cabeza'),
+                              (-215,'Lleva atrás sólo hasta donde resulte cómodo, sin forzar'),
+                              (-90,'Regresa por arriba manteniendo el agarre ancho'),
+                              (35,'Vuelve al frente; no es una luxación del hombro')]:
+            target=flat.add((0,0),flat.dirv(angle),radius)
+            elbow,hand=flat.two_link((0,0),dict(reach=target,bend=1),10,9)
+            angles=(legacy._ang((0,0),elbow),legacy._ang(elbow,hand))
+            f=pose(caption,na=arm(*angles,depth=18.5,end3=[0,0,1],grip='handle'),
+                   fa=arm(*angles,depth=-18.5,end3=[0,0,-1],grip='handle'))
+            frames.append(f)
+        return basic(name,frames,group='Calentamiento',yaw=40,
+                     props=[dict(type='band',a='nearHand',b='farHand')],focus=None,
+                     annotations=[dict(joint='nearHand',text='Agarre ancho',corner='tl')])
     if name in existing:
         e = cp(existing[name]); e['group'] = 'Tirón' if name == 'Dominadas' else 'Piernas' if name.startswith('Nórdico') else 'Empuje'
         e['focus'] = 'hip' if name.startswith('Nórdico') else 'nearHand' if name.startswith('Pino') else 'neck'
@@ -509,7 +613,7 @@ def export(ex):
     out, projection_warnings = legacy.build(ex)
     # El chequeo legado sólo ve XY: los alcances/frontales/roll se validan
     # contra el cuerpo real 3D en illustration_geometry_test y audit_test.
-    per_side = any(word in ex['name'].lower() for word in ['una pierna','una mano','búlgara','pistol','plancha lateral','maleta','pallof','caballero','90/90','rotación torácica','tobillo','cuádriceps','gemelo contra','isquios con','figura 4','flexor de cadera de'])
+    per_side = ex['name'] == 'Balanceos de pierna' or any(word in ex['name'].lower() for word in ['una pierna','una mano','búlgara','pistol','plancha lateral','maleta','pallof','caballero','90/90','rotación torácica','tobillo','cuádriceps','gemelo contra','isquios con','figura 4','flexor de cadera de'])
     out['perSide'] = per_side
     out['annotations'] = ex.get('annotations',[])
     out.update(continuous=ex['name'] not in {'90/90 de cadera','Hollow body hold','Calentamiento tipo FIFA 11+','Salto vertical','Salto largo','Salto de patinador','Aceleración 10–20 m','Rodillas arriba','Burpees','Sentadilla con salto'},group=ex.get('group','Otros'),focus=ex.get('focus'),source=ex.get('source','guía local; revisión candidata'))
@@ -519,7 +623,7 @@ def export(ex):
         for name in ('nearArm','farArm','nearLeg','farLeg'):
             spec=raw.get(name)
             if spec:
-                target['limbs'][name].update({k:spec[k] for k in ('depth','pole','end3','reach3') if k in spec})
+                target['limbs'][name].update({k:spec[k] for k in ('depth','pole','end3','reach3','keepReachRadius') if k in spec})
                 if 'reach3' in spec: target['limbs'][name].pop('pin',None)
                 if 'angles' in spec:
                     delta=math.sin(math.radians(spec['angles'][1]-spec['angles'][0]))

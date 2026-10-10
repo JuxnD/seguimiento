@@ -133,3 +133,17 @@ ficticio→Dart, revisión→SQLite,18/19/20→21, registry→ZIP→reapertura y
 se conserva junto al gate consolidado posterior; no se infiere su causa.
 Suite completa del candidato, APK/backend remoto y aceptación del owner siguen
 pendientes: estos83casos no son una nueva certificación global del producto.
+
+
+## Frente014 · figuras del calentamiento (10oct2026)
+
+| Cruce | Evidencia / límite |
+|---|---|
+| warmupMobility/warmupForZone/buildWarmup → recetas | Test producción primero rojo6ausentes, ahora exige cobertura real;79entradas, sin fallback para esas seis |
+| Python→JSON→KeyPose→solve2D→lift3D→interpolación | Campos opcionales de hombros y arco de pierna;61muestras, defectos rojos y mutantes reales;73objetos/geometrías previas idénticos |
+| Pose→suelo/barra/pared/banda→extremos | Palmas/pies/codos/contactos y grip con relectura del JSON; no afloja umbral0,35 ni guards |
+| Painter/TechniqueContent→PNG→montaje |65capturas reales, seis guías e intermedios, lado derecho, texto1/1,6 y scroll; Roboto versionado |
+| Fuente→comprensión→APK→persona | Comprensión humana y QA integración/APK pendientes; no hubo build, instalación ni publicación |
+
+[Recibo014](sessions/2026-10-10-014-calentamiento.md). La política por dolor
+no pertenece a este frente y no se valida por la figura disponible.

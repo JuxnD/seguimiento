@@ -1,0 +1,18 @@
+import 'dart:io';
+import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/ui/exercise_figure_3d.dart';
+void main(){test('read-only clearance proposal',(){
+  final raw=jsonDecode(File(Figure3DCatalog.asset).readAsStringSync());
+  final f=(raw['figures'] as List).firstWhere((f)=>f['name']=='Balanceos de pierna');
+  for(final frame in f['frames']) {final limb=frame['limbs']['nearLeg'];limb['reach3']=(limb['reach3'] as List).map((n)=>(n as num)*27.5/28).toList();}
+  final fig=Figure3DCatalog.fromJsonString(jsonEncode(raw)).forExercise('Balanceos de pierna')!;
+  final first=liftSkeleton(fig.skeletonAt(0),fig).p;
+  var gap=0.0,dot=0.0;
+  for(var i=0;i<=60;i++){final p=liftSkeleton(fig.skeletonAt(i/60),fig).p;
+    final g=(p['farAnkle']!-first['farAnkle']!).length;if(g>gap)gap=g;
+    final d=(p['nearAnkle']!-p['nearKnee']!).unit.dot((p['nearToe']!-p['nearAnkle']!).unit).abs();if(d>dot)dot=d;
+  }
+  print('PROPOSAL radius27.5 supportDrift=$gap tibia-foot maxdot=$dot');
+  expect(gap,lessThan(.01));expect(dot,lessThan(.35));
+});}

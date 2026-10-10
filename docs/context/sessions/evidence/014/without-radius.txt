@@ -1,0 +1,13 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart
+00:00 +0: balanceos distingue pierna móvil, pie fijo y mano en pared lateral
+00:00 +0 -1: balanceos distingue pierna móvil, pie fijo y mano en pared lateral [E]
+  Expected: a value less than <0.35>
+    Actual: <0.43348920339903735>
+     Which: is not a value less than <0.35>
+  pie móvil sin inversión extrema
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_supports_test.dart 143:7       main.<fn>
+
+00:00 +0 -1: Some tests failed.

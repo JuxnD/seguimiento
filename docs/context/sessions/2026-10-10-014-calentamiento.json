@@ -1,0 +1,32 @@
+{
+  "status": "IMPLEMENTATION_COMPLETE_INDEPENDENT_014",
+  "baseSha": "929f2897c73a86760cc73ce228a89f3aaa3789a8",
+  "branch": "JuxnD/014-figuras-calentamiento",
+  "catalogEntries": 79,
+  "newEntries": 6,
+  "legacyEntriesUnchanged": 73,
+  "samplesPerFigure": 61,
+  "captureCount": 65,
+  "syntheticOnly": true,
+  "mainGatePassed": 62,
+  "rigAfterReviewPassed": 6,
+  "supportsBothSidesPassed": 8,
+  "mutantsRejected": 4,
+  "humanComprehension": "PENDING",
+  "clinicalAcceptance": "NOT_CERTIFIED",
+  "apkBuild": "NOT_RUN",
+  "installedPhone": "NOT_RUN",
+  "fullIntegrationSuite": "DEFERRED_TO_INTEGRATION",
+  "sourceHashes": {
+    "assets/tecnica/figuras3d.json": "f9a42b6fe6c4bc300ea044e37a9c74e25b28da801677efff1c169a62aad8c0b2",
+    "lib/ui/exercise_figure_3d.dart": "329cc468a73b44a5043fb8afca9d4d2a05dd8c389be65799a41fb971c854c43e",
+    "tool/illustration_catalog.py": "3b9ba7e344535f9d3071e4dc4a7e9fdd6be7ed0ded3dd7c4b5316920af8ae8b7",
+    "tool/figuras.py": "322649e30ad03098ba2108a215d2ea6533155634fced51b181dbe144e01745d1",
+    "tool/figuras3d.py": "5e3c5e52e4ecf62189a33734edd02ce35a497e1a7ee9005b3bc26c2109a6c695",
+    "test/fixtures/illustration_legacy_929.json": "72afd85bd6a1070ba588ce995f4beb980b73885ca9f2e628b2d5966b7599dd76"
+  },
+  "closureAnalyze": "NO_ISSUES_AFTER_EXPLICIT_REOPENING",
+  "fixtureReopenedPassed": 5,
+  "coordinatorVisualReview": "PENDING",
+  "stopPreserved": true
+}

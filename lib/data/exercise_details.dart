@@ -590,8 +590,8 @@ const exerciseDetails = <String, ExerciseDetail>{
     muscles: 'Hombros, escápulas',
     steps: [
       'De pie, brazos relajados a los lados.',
-      'Haz círculos grandes con los hombros, primero hacia atrás y luego hacia adelante.',
-      'Amplía poco a poco hasta llevar los brazos estirados.',
+      'Mueve los hombros en círculos suaves: arriba, atrás, abajo y al frente.',
+      'Mantén los brazos colgando y cambia el sentido; no son círculos grandes de brazos.',
     ],
     mistakes: ['Encoger el cuello.', 'Ir rápido y con tirones.'],
   ),
@@ -637,10 +637,10 @@ const exerciseDetails = <String, ExerciseDetail>{
     muscles: 'Hombros, pecho, espalda alta',
     steps: [
       'Toma la banda con las manos bien abiertas, brazos estirados al frente.',
-      'Llévala por encima de la cabeza hasta detrás de la espalda, sin doblar los codos.',
+      'Pásala por encima de la cabeza y llévala atrás sólo hasta donde estés cómodo, sin forzar ni doblar los codos.',
       'Vuelve al frente igual de lento.',
     ],
-    mistakes: ['Agarrar demasiado cerrado: si duele, abre más las manos.', 'Arquear la espalda baja.'],
-    note: 'Sin dolor: si el hombro molesta, reduce el recorrido.',
+    mistakes: ['Forzar el recorrido o agarrar demasiado cerrado.', 'Arquear la espalda baja.'],
+    note: 'Es un pase de banda, no una luxación. Mantén un recorrido cómodo; detente si duele.',
   ),
 };

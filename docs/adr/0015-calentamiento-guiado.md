@@ -53,3 +53,9 @@ posterior necesitan consultarlo como dato, la migración puede leer la nota
   Corresponde al frente de ilustraciones.
 - La Cindy de prueba y las pruebas del viernes (temporizadores) no muestran
   aún el checklist.
+
+
+Actualización10oct2026: el frente014 resuelve las seis ausencias visuales
+mediante recetas específicas, no fallback. [Diseño y límites](../design/calentamiento-014.md).
+La lista anterior describe la base histórica; no modifica la política de dosis
+ni demuestra seguridad por dolor, instalación o comprensión humana.

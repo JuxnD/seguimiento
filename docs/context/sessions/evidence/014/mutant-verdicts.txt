@@ -1,0 +1,4 @@
+without-radius: exit 1
+without-shoulder: exit 1
+without-grip: exit 1
+inverted-foot: exit 1

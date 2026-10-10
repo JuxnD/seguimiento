@@ -1,0 +1,93 @@
+[INFO] Generating build script...
+[INFO] Generating build script completed, took 1.2s
+
+[INFO] Precompiling build script......
+[INFO] Precompiling build script... completed, took 13.0s
+
+[INFO] Initializing inputs
+[INFO] Building new asset graph...
+[INFO] Building new asset graph completed, took 4.0s
+
+[INFO] Checking for unexpected pre-existing outputs....
+[INFO] Checking for unexpected pre-existing outputs. completed, took 1ms
+
+[INFO] Running build...
+[INFO] Generating SDK summary...
+[INFO] 6.3s elapsed, 0/16 actions completed.
+[INFO] 7.7s elapsed, 0/16 actions completed.
+[INFO] 11.2s elapsed, 0/16 actions completed.
+[INFO] 12.3s elapsed, 0/16 actions completed.
+[INFO] 13.6s elapsed, 0/16 actions completed.
+[INFO] Generating SDK summary completed, took 13.6s
+
+[INFO] 14.8s elapsed, 0/34 actions completed.
+[WARNING] No actions completed for 15.1s, waiting on:
+  - build_resolvers:transitive_digests on package:path/path.dart
+  - build_resolvers:transitive_digests on package:crypto/crypto.dart
+  - build_resolvers:transitive_digests on package:flutter/material.dart
+  - build_resolvers:transitive_digests on package:flutter/foundation.dart
+  - build_resolvers:transitive_digests on package:flutter/services.dart
+  .. and 29 more
+
+[INFO] 16.2s elapsed, 7/54 actions completed.
+[INFO] 17.3s elapsed, 12/60 actions completed.
+[INFO] 18.4s elapsed, 15/67 actions completed.
+[INFO] 19.5s elapsed, 22/67 actions completed.
+[INFO] 20.8s elapsed, 29/72 actions completed.
+[INFO] 23.1s elapsed, 41/75 actions completed.
+[INFO] 25.2s elapsed, 42/75 actions completed.
+[INFO] 26.4s elapsed, 42/76 actions completed.
+[INFO] 27.4s elapsed, 47/81 actions completed.
+[INFO] 31.0s elapsed, 48/81 actions completed.
+[INFO] 33.1s elapsed, 56/83 actions completed.
+[INFO] 34.3s elapsed, 57/83 actions completed.
+[INFO] 35.4s elapsed, 57/84 actions completed.
+[INFO] 44.0s elapsed, 69/96 actions completed.
+[INFO] 45.1s elapsed, 70/97 actions completed.
+[INFO] 46.1s elapsed, 84/111 actions completed.
+[INFO] 47.1s elapsed, 97/124 actions completed.
+[INFO] 48.2s elapsed, 115/144 actions completed.
+[INFO] 1m 0s elapsed, 132/153 actions completed.
+[INFO] 1m 1s elapsed, 140/159 actions completed.
+[INFO] 1m 8s elapsed, 154/173 actions completed.
+[INFO] 1m 11s elapsed, 167/183 actions completed.
+[INFO] 1m 12s elapsed, 167/183 actions completed.
+[INFO] 1m 13s elapsed, 199/215 actions completed.
+[INFO] 1m 14s elapsed, 231/247 actions completed.
+[INFO] 1m 15s elapsed, 248/264 actions completed.
+[INFO] 1m 16s elapsed, 248/264 actions completed.
+[INFO] 1m 17s elapsed, 264/280 actions completed.
+[INFO] 1m 18s elapsed, 295/300 actions completed.
+[INFO] 1m 19s elapsed, 297/313 actions completed.
+[INFO] 1m 20s elapsed, 329/333 actions completed.
+[INFO] 1m 21s elapsed, 330/347 actions completed.
+[INFO] 1m 23s elapsed, 341/356 actions completed.
+[INFO] 1m 24s elapsed, 379/393 actions completed.
+[INFO] 1m 25s elapsed, 385/401 actions completed.
+[INFO] 1m 26s elapsed, 398/414 actions completed.
+[INFO] 1m 27s elapsed, 405/421 actions completed.
+[INFO] 1m 28s elapsed, 412/428 actions completed.
+[INFO] 1m 29s elapsed, 415/431 actions completed.
+[INFO] 1m 30s elapsed, 419/435 actions completed.
+[INFO] 1m 31s elapsed, 429/445 actions completed.
+[INFO] 1m 32s elapsed, 433/449 actions completed.
+[INFO] 1m 33s elapsed, 441/457 actions completed.
+[INFO] 1m 34s elapsed, 443/459 actions completed.
+[INFO] 1m 35s elapsed, 457/473 actions completed.
+[INFO] 1m 36s elapsed, 471/485 actions completed.
+[INFO] 1m 38s elapsed, 485/501 actions completed.
+[INFO] 1m 39s elapsed, 499/515 actions completed.
+[INFO] 1m 40s elapsed, 512/528 actions completed.
+[INFO] 1m 41s elapsed, 526/542 actions completed.
+[INFO] 1m 42s elapsed, 539/555 actions completed.
+[INFO] 1m 43s elapsed, 553/565 actions completed.
+[INFO] 1m 44s elapsed, 567/583 actions completed.
+[INFO] 1m 45s elapsed, 583/599 actions completed.
+[INFO] 1m 47s elapsed, 861/862 actions completed.
+[INFO] 1m 48s elapsed, 1045/1045 actions completed.
+[INFO] Running build completed, took 1m 49s
+
+[INFO] Caching finalized dependency graph...
+[INFO] Caching finalized dependency graph completed, took 302ms
+
+[INFO] Succeeded after 1m 49s with 364 outputs (1226 actions)

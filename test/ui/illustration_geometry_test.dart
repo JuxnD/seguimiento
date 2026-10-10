@@ -65,4 +65,23 @@ void main() {
       expect(pose.p['farElbow']!.y, lessThan(-3));
     }
   });
+
+  test('las seis guías nuevas conservan largos anatómicos en 61 muestras', () {
+    for (final fig in catalog.all.where((f) => f.group == 'Calentamiento')) {
+      for (var sample = 0; sample <= 60; sample++) {
+        final p = liftSkeleton(fig.skeletonAt(sample / 60), fig).p;
+        for (final side in ['near', 'far']) {
+          for (final segment in [
+            ('Shoulder', 'Elbow', fig.dims.upperArm),
+            ('Elbow', 'Hand', fig.dims.forearm),
+            ('Hip', 'Knee', fig.dims.thigh),
+            ('Knee', 'Ankle', fig.dims.shin)
+          ]) {
+            expect((p['$side${segment.$2}']! - p['$side${segment.$1}']!).length, closeTo(segment.$3, .03),
+                reason: '${fig.name}/$sample: no estirar huesos para llegar');
+          }
+        }
+      }
+    }
+  });
 }
