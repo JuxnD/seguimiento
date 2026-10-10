@@ -195,3 +195,10 @@ base de integración122 `bf1da688`. Sin cambios de esquema ni servicios externos
 
 Siete cruces locales cubiertos y uno declarado en este alcance. No cierra011,
 radar, historial de metas o piloto, ni hereda validación de otro APK.
+
+En [checkpoint122/015](sessions/2026-10-10-integracion-122-015.md),los44criterios
+pasan sobre la fuente combinada con008/010/014/016. Nueve controles compartidos
+cruzan unidad de comida, paridad geométrica, controles grandes y divulgación.
+No se cambió comportamiento para integrar; catálogo79/73 y30PNG preservados.
+Rango/protocolo comparten el mismo read-model; metas históricas y radar siguen
+pendientes de sus adaptadores, no se fabrican a partir del perfil actual.
