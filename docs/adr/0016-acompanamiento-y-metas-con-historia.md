@@ -69,8 +69,11 @@ declarado agotamiento.
 - **Nuevos, política v1 EXPERIMENTAL** (`coachPolicyExperimental`, se ve en
   la tarjeta junto a la propuesta), a confirmar por el owner. Es revisión de
   una meta elegida por la persona, no prescripción automática: cobertura 8/10, 80 %
-  para proponer, 50 % para revisar, RPE ≥ 9 como cansancio, RPE ≤ 8 o
-  despertar 1–2 como señal favorable, ventana de 3 días, redondeo de 500.
+  para proponer, 50 % para revisar, RPE ≥ 9 como cansancio y redondeo de 500.
+  En la ventana experimental de 3 días, sólo despertar 1–2 o
+  `recoveryOk=true` son señales favorables declaradas; una señal desfavorable
+  prevalece y nada declarado es desconocido. Un RPE moderado no demuestra
+  recuperación.
   No suben nada solos: la cifra sugerida es el promedio propio.
 
 ## Seguimiento de propuestas con criterios existentes

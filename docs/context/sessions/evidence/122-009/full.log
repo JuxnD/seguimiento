@@ -1,0 +1,1214 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/app/android_manifest_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/app/android_manifest_test.dart: una sola tarea: singleTask y sin afinidad vacía (§16.13)
+00:00 +1: C:/My Projects/seguimiento-122-integracion/test/app/android_manifest_test.dart: puede leer el nombre de la app del reloj (§16.14)
+00:00 +2: C:/My Projects/seguimiento-122-integracion/test/app/coalesce_test.dart: nunca corre dos veces a la vez
+00:00 +3: C:/My Projects/seguimiento-122-integracion/test/app/coalesce_test.dart: un pedido durante la ejecución no se pierde
+00:00 +4: C:/My Projects/seguimiento-122-integracion/test/app/coalesce_test.dart: tras terminar, un pedido nuevo vuelve a correr
+00:00 +5: C:/My Projects/seguimiento-122-integracion/test/app/coalesce_test.dart: si la tarea falla, el siguiente pedido corre igual
+00:00 +6: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: sin archivo no hay sesión
+00:00 +7: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+00:00 +8: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: clear después de save no deja nada
+00:00 +9: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: un archivo dañado se ignora
+00:01 +10: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: (setUpAll)
+00:01 +10: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: pasos holgados: propone; aceptar desde Hoy rige mañana y Hoy cambia a "en prueba"
+00:01 +11: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: "cansado" al despertar o RPE 9: recuperación primero en Hoy y sin aviso de pasos
+00:01 +12: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: el pulso del registro de la mañana no borra cómo amaneció, y al revés
+00:01 +13: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: Hoy trae la lectura del acompañamiento
+00:01 +14: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: crea al validar, relee snapshot/hash/cita y borra mensajes en cascada
+00:01 +15: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: crea al validar, relee snapshot/hash/cita y borra mensajes en cascada
+00:01 +16: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: crea al validar, relee snapshot/hash/cita y borra mensajes en cascada
+00:02 +17: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: fuerza en Hoy: una serie guardada al fallo frena la subida y lo dice
+00:02 +18: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: fuerza en Hoy: una serie guardada al fallo frena la subida y lo dice
+00:02 +19: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: fuerza en Hoy: una serie guardada al fallo frena la subida y lo dice
+00:02 +20: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: fuerza en Hoy: una serie guardada al fallo frena la subida y lo dice
+00:02 +21: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +22: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +23: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +24: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +25: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +26: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +27: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +28: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:02 +29: C:/My Projects/seguimiento-122-integracion/test/data/ai_gateway_test.dart: usa solo el endpoint v2 fijo y valida el envelope
+00:02 +30: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: respuesta v2 con dígitos y snapshot alterado fallan cerrados
+00:02 +31: C:/My Projects/seguimiento-122-integracion/test/data/ai_gateway_test.dart: rechaza status, contract, task, model y result inesperados
+00:02 +32: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: read rechaza citas guardadas que no pertenecen al snapshot
+00:02 +33: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: read rechaza citas guardadas que no pertenecen al snapshot
+00:02 +34: C:/My Projects/seguimiento-122-integracion/test/data/ai_gateway_test.dart: status consulta sin datos y expone activación y cuota válidas
+00:02 +35: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el snapshot copia la lista de fuentes y congela el hash
+00:02 +36: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el snapshot copia la lista de fuentes y congela el hash
+00:02 +37: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: el snapshot copia la lista de fuentes y congela el hash
+00:02 +38: C:/My Projects/seguimiento-122-integracion/test/data/ai_gateway_test.dart: respuesta sobredimensionada y timeout fallan de forma acotada
+00:02 +39: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: reabre metadata exacta de guía y detecta cambios en ella
+00:02 +40: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: metadata de guía valida enum local y coincide con la fuente
+00:02 +41: C:/My Projects/seguimiento-122-integracion/test/data/ai_conversation_repository_test.dart: (tearDownAll)
+00:02 +41: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: (setUpAll)
+00:02 +41: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: el primer arranque respalda; hasta la semana siguiente no repite
+00:03 +42: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: se queda solo con los más recientes
+00:03 +43: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: el respaldo se puede restaurar y trae los datos de ese día
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart:62:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:03 +44: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:03 +45: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:04 +46: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: SQLite legacy sigue restaurando solo los registros y conserva las fotos locales
+00:04 +47: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 22
+00:05 +48: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el manifiesto declara esquema, bytes y SHA-256 del archivo que viaja
+00:05 +49: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/../flags.json
+00:06 +50: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: ../escape.jpg
+00:06 +51: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: /fotos/absolute.jpg
+00:06 +52: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: C:/fotos/absolute.jpg
+00:07 +53: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a/../../escape.jpg
+00:07 +54: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a\..\escape.jpg
+00:08 +55: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: flags.json
+00:08 +56: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: duplicados exactos y por mayúsculas se rechazan antes de extraer
+00:08 +57: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: una entrada symlink se rechaza sin escribir su destino
+00:09 +58: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:09 +59: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:10 +60: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:10 +61: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:10 +62: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:11 +63: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:11 +64: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:11 +65: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:11 +65: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:26:89)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:131:15)
+<asynchronous suspension>
+#8      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#9      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+00:11 +66: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:11 +66: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+<asynchronous suspension>
+#10     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:11 +67: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:11 +68: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:11 +68: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+00:11 +69: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:11 +70: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:11 +71: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:11 +72: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:12 +73: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:12 +73: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:152:5)
+00:12 +74: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:12 +74: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+<asynchronous suspension>
+00:12 +74: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:12 +74: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:152:5)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:106:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:152:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:157:20)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:12 +75: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:12 +76: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:12 +77: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:13 +78: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:13 +79: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:13 +80: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:13 +81: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:13 +82: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +83: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +84: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +85: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +86: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +87: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +88: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +89: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:14 +90: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:15 +91: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:15 +92: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:15 +93: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:15 +94: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:15 +95: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:16 +96: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:16 +96: C:/My Projects/seguimiento-122-integracion/test/data/gateway_estimate_interop_test.dart: Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)
+  Skip: Requiere SEGUIMIENTO_ESTIMATE_GATEWAY y SEGUIMIENTO_ESTIMATE_PHP; no es prueba remota.
+00:16 +96 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:17 +97 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:17 +98 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:17 +99 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:17 +100 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:17 +101 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:17 +101 ~1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart:179:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _BackupCardState._progress (package:seguimiento/features/settings/settings_screen.dart:198:14)
+<asynchronous suspension>
+#10     _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:220:21)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:18 +102 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +103 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +104 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +105 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +106 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +107 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +108 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +109 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +110 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +111 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +112 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +113 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +114 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +115 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +116 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +117 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:18 +118 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +119 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +120 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +121 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +122 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +123 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +124 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +125 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +126 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +127 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:19 +128 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +129 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +130 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +131 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +132 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +133 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +134 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +135 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +136 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +137 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +138 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +139 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +140 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +141 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +142 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:20 +143 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:21 +144 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:21 +145 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:21 +146 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:21 +147 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:21 +148 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:21 +149 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:21 +150 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:22 +151 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:22 +152 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:22 +153 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:22 +154 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:22 +155 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:22 +156 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:23 +157 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:23 +158 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:23 +159 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:23 +160 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:23 +161 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:23 +162 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:23 +163 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +164 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +165 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +166 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +167 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +168 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +169 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +170 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +171 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +172 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +173 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:24 +174 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:25 +175 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:25 +176 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:25 +177 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:25 +178 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:25 +179 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:25 +180 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:25 +181 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +182 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +183 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +184 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +185 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +186 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +187 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +188 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +189 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+previa: 12282570 µs por lectura (1143 registros, windows 16 núcleos)
+actual: 110457 µs por lectura (1143 registros, windows 16 núcleos)
+00:26 +190 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+00:26 +191 ~1: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: el aviso de sesión dice lo que toca ese día
+00:26 +192 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 130 no queda bajo mínimo
+00:26 +193 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 130 no queda bajo mínimo
+00:26 +194 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 130 no queda bajo mínimo
+00:27 +195 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 130 no queda bajo mínimo
+00:27 +196 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +197 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +198 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +199 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +200 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +200 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 historia: 145 g cumplieron 130 aunque el mínimo actual sea 160
+R2 histórico: [] | - Proteína promedio: 145 g (meta 130–160) · kcal promedio: 2.500 (meta 2.400) · días cerrados: 7/7
+00:27 +201 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +202 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +202 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 desconocido: 145 g no prueban incumplir una meta histórica sin fecha
+R2 desconocido: [] | - Proteína promedio: 145 g (meta histórica no registrada) · kcal promedio: 2.500 (meta histórica no registrada entre semana, histórica no registrada fútbol) · días cerrados: 7/7
+00:27 +203 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +203 ~1: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: repositorio: 1.000 días en SQLite, dos consultas y la misma lectura
+repositorio: 2 consultas, 184 ms (1.000 sesiones)
+00:27 +204 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +205 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +206 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:27 +207 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:27 +208 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:27 +209 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:27 +210 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:27 +211 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:27 +212 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:27 +213 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:28 +214 ~1: C:/My Projects/seguimiento-122-integracion/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:28 +215 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +216 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +217 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +218 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +219 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +220 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +221 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +222 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +223 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +224 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +225 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:28 +226 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 11 llega al 22 con la tabla de recordatorios propios
+00:28 +227 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 11 llega al 22 con la tabla de recordatorios propios
+00:28 +228 ~1: C:/My Projects/seguimiento-122-integracion/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+00:28 +229 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: rondas "hoy no" deja las rondas de la última vez hoy; el viernes siguiente vuelve
+00:28 +230 ~1: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: rondas "hoy no" deja las rondas de la última vez hoy; el viernes siguiente vuelve
+00:29 +231 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +232 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +233 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +234 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +235 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +236 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +237 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +238 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +239 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +240 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +241 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +242 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +243 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +244 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +245 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +245 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: restaurar devuelve los datos del respaldo y descarta los posteriores
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+00:29 +246 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +246 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: restaurar devuelve los datos del respaldo y descarta los posteriores
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+00:29 +247 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +247 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: restaurar devuelve los datos del respaldo y descarta los posteriores
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:21:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+00:29 +247 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:29 +247 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: restaurar devuelve los datos del respaldo y descarta los posteriores
+<asynchronous suspension>
+00:29 +248 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: restaurar devuelve los datos del respaldo y descarta los posteriores
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:43:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:29 +249 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 13 llega al 22: las sesiones quedan revisadas
+00:29 +250 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 13 llega al 22: las sesiones quedan revisadas
+00:29 +250 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: un respaldo sin recordatorios queda con los de por defecto
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:21:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:54:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:29 +251 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 13 llega al 22: las sesiones quedan revisadas
+00:30 +252 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:30 +252 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: el perfil restaurado es el del respaldo, no el actual
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:21:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+00:30 +253 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:30 +253 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: el perfil restaurado es el del respaldo, no el actual
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:66:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:30 +254 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:30 +255 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:30 +256 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 14 llega al 22: plan y sesiones listos para el v3
+00:30 +256 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: una base sqlite ajena se rechaza por no tener las tablas
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:83:19)
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:88:17)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:30 +257 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 14 llega al 22: plan y sesiones listos para el v3
+00:30 +258 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +259 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +259 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: si la base restaurada no abre, vuelve la anterior con todo lo registrado
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:108:14)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#11     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+00:31 +260 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +260 ~1: C:/My Projects/seguimiento-122-integracion/test/data/restore_test.dart: si la base restaurada no abre, vuelve la anterior con todo lo registrado
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#13     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#14     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/restore_test.dart:111:5)
+<asynchronous suspension>
+#15     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#16     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#17     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:31 +261 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +262 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +263 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +264 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +265 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +266 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:31 +267 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción
+00:31 +268 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción
+00:31 +269 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción
+00:31 +270 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción
+00:31 +271 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción
+00:31 +272 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción
+00:31 +273 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: normalizing the clock cannot erase regular training time or ladder dates
+00:31 +274 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: normalizing the clock cannot erase regular training time or ladder dates
+00:31 +275 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: normalizing the clock cannot erase regular training time or ladder dates
+00:31 +276 ~1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: normalizing the clock cannot erase regular training time or ladder dates
+00:31 +277 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +278 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +279 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +280 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +281 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +282 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +283 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +284 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:32 +285 ~1: C:/My Projects/seguimiento-122-integracion/test/data/seed_plan_test.dart: v2: añade los bloques y protege jueves y viernes
+00:32 +286 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 20 llega al 22: metas legadas sin fecha, sin propuestas
+00:32 +287 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 20 llega al 22: metas legadas sin fecha, sin propuestas
+00:32 +288 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 20 llega al 22: metas legadas sin fecha, sin propuestas
+00:32 +289 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 20 llega al 22: metas legadas sin fecha, sin propuestas
+00:32 +290 ~1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 20 llega al 22: metas legadas sin fecha, sin propuestas
+00:32 +291 ~1: C:/My Projects/seguimiento-122-integracion/test/data/steps_sync_test.dart: sincronización sin conectar en Ajustes no toca nada
+00:32 +292 ~1: C:/My Projects/seguimiento-122-integracion/test/data/steps_sync_test.dart: sincronización conectado trae los días y respeta lo anotado a mano si es mayor
+00:32 +293 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: plantilla del handoff: 8 ejercicios, lo de reps a RIR 4
+00:32 +294 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: plantilla del handoff: 8 ejercicios, lo de reps a RIR 4
+00:32 +295 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: plantilla del handoff: 8 ejercicios, lo de reps a RIR 4
+00:32 +296 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: se ofrece la víspera de cada test y de las pruebas, y en la descarga
+00:33 +297 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: se ofrece la víspera de cada test y de las pruebas, y en la descarga
+00:33 +298 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: se ofrece la víspera de cada test y de las pruebas, y en la descarga
+00:33 +299 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: una sesión técnica a RPE 4 no cuenta como intensa para la racha
+00:33 +300 ~1: C:/My Projects/seguimiento-122-integracion/test/data/technique_session_data_test.dart: (tearDownAll)
+00:33 +300 ~1: C:/My Projects/seguimiento-122-integracion/test/data/update_service_test.dart: lectura de la release toma la etiqueta, las notas y el APK adjunto
+00:33 +301 ~1: C:/My Projects/seguimiento-122-integracion/test/data/update_service_test.dart: lectura de la release sin APK adjunto queda solo la página
+00:33 +302 ~1: C:/My Projects/seguimiento-122-integracion/test/data/update_service_test.dart: lectura de la release respuesta inesperada devuelve null en vez de reventar
+00:33 +303 ~1: C:/My Projects/seguimiento-122-integracion/test/data/update_service_test.dart: consulta de actualización anuncia solo si la publicada es más nueva
+00:33 +304 ~1: C:/My Projects/seguimiento-122-integracion/test/data/update_service_test.dart: consulta de actualización sin releases publicadas informa, no falla
+00:33 +305 ~1: C:/My Projects/seguimiento-122-integracion/test/data/update_service_test.dart: consulta de actualización un error de red se reporta como texto
+00:33 +306 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: (setUpAll)
+00:33 +306 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy un partido registrado hoy marca el día como hecho
+00:34 +307 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy en un día de circuito el partido no da por hecha la sesión, pero suma racha
+00:34 +308 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+00:34 +309 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+00:34 +310 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+00:34 +311 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+00:34 +312 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+00:34 +313 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+00:34 +314 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §16.2 récord de 11 un récord en día de circuito no se señala
+00:34 +315 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza con técnica, rango y recuperación en sí, Hoy propone 9
+00:34 +316 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo el pan Mipan y los platos que se repiten vienen sembrados
+00:34 +317 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza un criterio en "no" mantiene la meta aunque los demás estén bien
+00:34 +318 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo el nombre se compara sin mayúsculas, tildes ni espacios de sobra
+00:34 +319 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza un día que no es de progresión sigue con la meta del plan
+00:34 +320 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza un día que no es de progresión sigue con la meta del plan
+00:34 +321 ~1: C:/My Projects/seguimiento-122-integracion/test/data/warmup_soreness_data_test.dart: SQLite -> molestias de hoy y ayer -> un aviso por zona sobre el umbral
+00:34 +322 ~1: C:/My Projects/seguimiento-122-integracion/test/data/warmup_soreness_data_test.dart: SQLite -> molestias de hoy y ayer -> un aviso por zona sobre el umbral
+00:34 +323 ~1: C:/My Projects/seguimiento-122-integracion/test/data/warmup_soreness_data_test.dart: SQLite -> molestias de hoy y ayer -> un aviso por zona sobre el umbral
+00:34 +324 ~1: C:/My Projects/seguimiento-122-integracion/test/data/warmup_soreness_data_test.dart: SQLite -> molestias de hoy y ayer -> un aviso por zona sobre el umbral
+00:34 +325 ~1: C:/My Projects/seguimiento-122-integracion/test/data/warmup_soreness_data_test.dart: SQLite -> molestias de hoy y ayer -> un aviso por zona sobre el umbral
+00:35 +326 ~1: C:/My Projects/seguimiento-122-integracion/test/data/warmup_soreness_data_test.dart: SQLite -> molestias de hoy y ayer -> un aviso por zona sobre el umbral
+00:35 +327 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §14 pasos diarios anotar otra vez el mismo día reemplaza; Hoy muestra la cifra y la meta
+00:35 +328 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §14 pasos diarios el informe trae el promedio semanal y lo compara con la semana anterior
+00:35 +329 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: §13 movilidad es opcional: no marca Hoy, no sostiene la racha y va aparte en el informe
+00:35 +330 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: aguantes en segundos (28 sep) el informe muestra la plancha en segundos, no en repeticiones
+00:35 +331 ~1: C:/My Projects/seguimiento-122-integracion/test/data/uso_real_27sep_test.dart: (tearDownAll)
+00:35 +331 ~1: C:/My Projects/seguimiento-122-integracion/test/data/weekly_ai_test.dart: solo envía informe elegido al endpoint fijo, sin clave de OpenAI
+00:35 +332 ~1: C:/My Projects/seguimiento-122-integracion/test/data/weekly_ai_test.dart: rechaza cita inventada, cifras en explicación y tipo no permitido
+00:35 +333 ~1: C:/My Projects/seguimiento-122-integracion/test/data/weekly_ai_test.dart: mide texto y cita en puntos Unicode, incluidos emojis
+00:35 +334 ~1: C:/My Projects/seguimiento-122-integracion/test/data/weekly_ai_test.dart: errores no filtran respuesta remota ni licencia
+00:35 +335 ~1: C:/My Projects/seguimiento-122-integracion/test/data/weekly_ai_test.dart: timeout y fallo al leer respuesta se consideran error
+00:35 +336 ~1: C:/My Projects/seguimiento-122-integracion/test/data/weekly_ai_test.dart: vacío o muy largo nunca llama al servidor
+00:35 +337 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+00:35 +338 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+00:35 +339 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+00:35 +340 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+00:35 +341 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: metas con historia un día anterior al cambio no se reclasifica con la meta nueva
+00:35 +342 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: metas con historia mismo día: gana la última registrada; la anterior queda para volver
+00:35 +343 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: metas con historia una vigencia futura no rige hoy
+00:35 +344 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos nuevo perfil sin datos: faltan datos, sin éxitos inventados
+00:35 +345 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos pocos días registrados: faltan datos aunque los que hay sean buenos
+00:35 +346 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos racha intensa o cansancio declarado: recuperación primero, sin presión de caminatas
+00:35 +347 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos diez rondas sin chequeo: no presume cansancio ni recuperación
+00:35 +348 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos cumple holgado: propone subir a su promedio redondeado, con ID estable
+00:35 +349 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos sin ninguna señal de recuperación conocida no se propone subir
+00:36 +350 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos carga alta hoy (90 min a RPE 8) o dos sesiones hoy frenan la propuesta ese día
+00:36 +351 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos un rechazo vale para su ventana: con una ventana nueva completa se reconsidera
+00:36 +352 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos cumple justo: se mantiene, no propone
+00:36 +353 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos rechazada con la misma evidencia no insiste; pospuesta espera su fecha
+00:36 +354 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos meta recién cambiada: en prueba hasta su revisión; luego, si no se sostiene, revisar
+00:36 +355 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos días con meta histórica no registrada no se clasifican
+00:36 +356 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_progress_regression_test.dart: una sesión moderada registrada hoy corta la racha intensa previa
+00:36 +357 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_progress_regression_test.dart: un pesaje aislado por semana no justifica ajustar comida o pasos
+00:36 +358 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_progress_regression_test.dart: cintura de enero no produce reducción con pesos de octubre
+00:36 +359 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/ai_report_sources_test.dart: conserva exactamente el informe seleccionado por defecto
+00:36 +360 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/ai_report_sources_test.dart: cita peso actual sin poder atribuir el del periodo anterior
+00:36 +361 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/ai_report_sources_test.dart: añade comparación del periodo previo solo si se elige
+00:37 +362 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: escaleras empiezan en el peldaño 1: dragon flag el lunes, V-up el jueves
+00:37 +363 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: escaleras sube con el criterio en 2 sesiones seguidas y 2 semanas en el peldaño
+00:37 +364 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: escaleras nunca antes de 2 semanas en el peldaño
+00:37 +365 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: escaleras la última sesión sin el criterio corta la racha; el hollow también cuenta
+00:37 +366 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: escaleras por lado: 3 × 8 en cada lado
+00:37 +367 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: escaleras el último peldaño no propone subir
+00:37 +368 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: escaleras el hollow no es de ninguna escalera; los peldaños sí
+00:37 +369 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: test de condición Test 1 el lun 12 y el mié 14; Test 2 en la descarga; Test 3 con las pruebas del 11 dic
+00:37 +370 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: test de condición 12 pruebas de torso y 4 de piernas
+00:37 +371 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: test de condición dosis inicial: reps al 70–75 %, aguantes al 50–60 %
+00:37 +372 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/core_ladders_test.dart: test de condición por lado cuenta el más débil; mejora contra el Test 1
+00:37 +373 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/custom_reminders_test.dart: se cuenta desde la última vez hecho, o desde el inicio
+00:37 +374 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/custom_reminders_test.dart: avisa el día que toca y cada día después hasta marcarlo
+00:37 +375 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/custom_reminders_test.dart: repositorio (setUpAll)
+00:37 +375 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/custom_reminders_test.dart: repositorio crear, marcar hecho, deshacer, apagar y borrar
+00:37 +376 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/custom_reminders_test.dart: repositorio (tearDownAll)
+00:37 +376 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio las semanas van de lunes a domingo; la 1 empieza el lunes del inicio (§16.8)
+00:37 +377 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio fechas previas al inicio dan semana ≤ 0 sin error
+00:37 +378 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: duraciones parse y formato
+00:37 +379 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión circuito neto = total − cal − enf, nunca negativo
+00:37 +380 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión estimación de rondas por tiempo
+00:37 +381 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión vueltas del contador
+00:37 +382 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades macros por unidad y por 100 g
+00:37 +383 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades pulgadas se guardan en cm
+00:37 +384 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: formato es-CO miles y decimales
+00:38 +385 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/energy_test.dart: sin peso no hay estimación
+00:38 +386 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/energy_test.dart: circuito de 20 min a 70 kg ≈ 187 kcal de trabajo
+00:38 +387 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/energy_test.dart: cada fase suma con su propio MET
+00:38 +388 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/energy_test.dart: descansar gasta menos que trabajar el mismo tiempo
+00:38 +389 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/energy_test.dart: un circuito ligero gasta menos que uno vigoroso
+00:38 +390 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: huevos enteros: por unidad, por gramos y sin contar las claras
+00:38 +391 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: huevos dentro de platos: el número del nombre o los huevos por porción (§16.15)
+00:38 +392 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: hidratación: tasa de sudor y cuánto reponer
+00:38 +393 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: sueño: promedio y noches en la meta
+00:38 +394 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) baja más de 0,7 kg/sem: subir
+00:38 +395 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) baja 0,5 kg/sem: no cambiar
+00:38 +396 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) casi no baja y la cintura quieta 3 semanas: −150 kcal o +2.000 pasos
+00:38 +397 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) casi no baja pero la cintura sí: no cambiar
+00:38 +398 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) pesajes viejos: pide pesarse de nuevo
+00:38 +399 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) la semana en curso no cuenta y sin la de 2 semanas antes faltan datos
+00:39 +400 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: trabajo por ronda cada vuelta pierde el descanso que la precede
+00:39 +401 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: trabajo por ronda sin descansos medidos no inventa el trabajo
+00:39 +402 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: día cerrado con desayuno, almuerzo y cena, o cerrado a mano
+00:39 +403 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: propuesta de progresión con los cinco criterios cumplidos propone una ronda más
+00:39 +404 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: propuesta de progresión si algo falla mantiene la meta y dice qué
+00:39 +405 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: propuesta de progresión sin completar la meta no sube
+00:39 +406 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: avisos nuevos calorías a las 20:00 si va por debajo del umbral
+00:39 +407 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: avisos nuevos comidas sin registrar a las 22:00 nombra las que faltan
+00:39 +408 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/handoff_v2_test.dart: la escala RPE dice cuántas quedaban
+00:39 +409 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/light_version_test.dart: Hoy muestra el core además del circuito, una línea por variante
+00:39 +410 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/light_version_test.dart: la versión ligera: 5 rondas, elevaciones 2×8–10 y hollow 2×20–30 s
+00:39 +411 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/light_version_test.dart: el guion de la versión ligera tiene 5 rondas y el core recortado
+00:39 +412 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/light_version_test.dart: un día de bloques pierde una serie en lo que tiene 3 o más
+00:39 +413 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/light_version_test.dart: retomar una sesión ligera la reconstruye ligera
+00:39 +414 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: franja por hora cada hora cae en su franja
+00:39 +415 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: franja por hora la madrugada sigue siendo cena
+00:39 +416 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: franja por hora los bordes caen en la franja que empieza
+00:39 +417 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: aviso de hora que no cuadra un desayuno a las 14:57 sugiere almuerzo
+00:39 +418 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: aviso de hora que no cuadra una cena a las 13:00 sugiere almuerzo
+00:39 +419 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: aviso de hora que no cuadra dentro de la franja no avisa
+00:39 +420 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: aviso de hora que no cuadra media hora de margen en los bordes
+00:39 +421 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/meal_slots_test.dart: aviso de hora que no cuadra "otro" y sin hora nunca avisan
+00:40 +422 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/missing_data_actions_test.dart: emite acciones tipadas con fecha histórica sin escribir datos
+00:40 +423 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/missing_data_actions_test.dart: respeta pesaje en rango, días cerrados y evita fechas futuras
+00:40 +424 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: cuenta las repeticiones de cada ejercicio de la semana
+00:40 +425 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: compara cada ejercicio contra la semana anterior
+00:40 +426 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: suma pasos, kilómetros y el mejor día
+00:40 +427 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: el gasto suma entrenamiento, fútbol y caminar sin contar dos veces el partido
+00:40 +428 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: sin peso no inventa el gasto
+00:40 +429 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: tiempo activo: sesiones, movilidad y fútbol
+00:40 +430 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: un periodo vacío lo dice
+00:40 +431 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: calendario (§19.4) 9 semanas: bloque 1 de 5, descarga en la 6, bloque 2 de 3
+00:40 +432 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: calendario (§19.4) pruebas el viernes 11 dic; abdomen cada 2 semanas en sábado
+00:40 +433 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: calendario (§19.4) el día dice semana, fase y la nota de la descarga
+00:40 +434 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: viernes (§19.1) sin 10 rondas limpias es el circuito de progresión
+00:40 +435 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: viernes (§19.1) desde el viernes siguiente a las 10 limpias: Cindy y Tabata alternos, Cindy de prueba cada 4 semanas
+00:40 +436 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: viernes (§19.1) las 10 limpias de un viernes cambian el siguiente, no el mismo
+00:40 +437 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: viernes (§19.1) el viernes de pruebas siempre es Cindy
+00:40 +438 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: semana tipo (§19.1) tipos por día y esquema
+00:41 +439 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: semana tipo (§19.1) lunes: pino primero, luego dominadas; remo y laterales en superserie
+00:41 +440 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: semana tipo (§19.1) miércoles: el FIFA 11+ es el calentamiento, no un paso
+00:41 +441 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: semana tipo (§19.1) viernes: pino, 10 rondas y habilidades; el Tabata no entra al cronómetro
+00:41 +442 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: semana tipo (§19.1) jueves: compresión (A) o L-sit (B)
+00:41 +443 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: semana tipo (§19.1) descarga del v3.1: la mitad de las series, redondeando hacia arriba
+00:41 +444 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: doble progresión (§19.2) todas al tope sin fallo: con lastre, +2–5 kg
+00:41 +445 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: doble progresión (§19.2) sin lastre: el siguiente escalón de la cadena
+00:41 +446 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: doble progresión (§19.2) no toca: una serie por debajo, una al fallo o faltan series
+00:41 +447 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: Tabata cortado: solo cuentan las pausas que llegaron
+00:41 +448 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v31_test.dart: meta de kcal: sábado y domingo usan la de fútbol (§19.3)
+00:41 +449 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) semanas y fases desde el lunes de inicio
+00:41 +450 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) fechas clave: mediciones 6 nov y 4 dic, test 18 dic
+00:41 +451 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) volumen reducido: semanas 4 y 8, y la 10 hasta el miércoles
+00:41 +452 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) miércoles: Cindy impares, Tabata pares; la 4 y la 10 Cindy, la 8 por tiempo
+00:41 +453 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) burpees EMOM por fase, sin burpees en descarga ni en la semana del test (§18.10)
+00:41 +454 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) el v3 arranca en lunes
+00:41 +455 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) tipos de día y esquema
+00:41 +456 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) jueves: curl y extensión van en superserie y el cronómetro los alterna
+00:41 +457 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) viernes: 6 rondas de circuito y después L-sit y toes-to-bar
+00:41 +458 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) descarga: una serie menos en los ejercicios de series; el circuito no cambia
+00:41 +459 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Tabata: 4 × 8 de 20/10 con 1 min entre bloques = 16:10
+00:41 +460 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Cindy: la ronda a medias se reparte en orden
+00:41 +461 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros EMOM: un minuto fallado baja al escalón anterior
+00:41 +462 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: PlanExerciseDraft.copyWith conserva la superserie
+00:41 +463 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: variantes: la cadena de progresión se parte en escalones (§18.4)
+00:41 +464 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: el informe nombra el formato de resistencia y la variante de cada serie
+00:41 +465 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: los ejercicios por lado salen por serie con cada pierna (§16.6.2)
+00:41 +466 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: una Cindy cortada dice lo que duró y que no es marca
+00:41 +467 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_denominator_test.dart: mes en curso: los días hábiles hasta hoy, no los del mes entero
+00:41 +468 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_denominator_test.dart: los días antes del primer dato en la app no son faltas
+00:41 +469 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_denominator_test.dart: una sesión importada suma a totales pero no es marca
+00:42 +470 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_evidence_test.dart: duraciones una vez, protocolo y base explícitos
+00:42 +471 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_evidence_test.dart: mantiene política RIR ausente, bloquea fallo, partición y mezcla
+00:42 +472 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_evidence_test.dart: observado visible, apto exige fecha, ambos lados y limpio; T3 parcial no oculta T2
+00:42 +473 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: una sola fecha apta no demuestra un cambio entre fechas
+00:42 +474 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: sólo un prefijo parcial no demuestra el denominador de Cindy
+00:42 +475 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: conteo extremo no acredita receta por overflow de entero
+00:42 +476 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: helper extraído conserva receta y export público del timer
+00:42 +477 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: referencias inválidas no producen coordenada ni defaults
+00:42 +478 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: cambio de referencia escala ambos perfiles; no cambia delta crudo
+00:42 +479 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: política documentada separa histórica de actual; sin política no caduca
+00:42 +480 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: inválidos, fechas desconocidas y bilateral mixto conservan payload
+00:42 +481 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: Cindy importada/estimada/cortada/30min/Tabata/dudas sigue observada
+00:42 +482 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: receta distinta/lastre/variante/partial desconocido no normaliza
+00:42 +483 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+00:42 +484 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+00:42 +485 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+00:42 +486 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+00:42 +487 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+00:42 +488 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha cuenta días seguidos con sesión
+00:42 +489 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha un día de entrenamiento sin sesión la corta
+00:42 +490 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha un día de descanso no la corta ni la suma
+00:42 +491 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha hoy sin entrenar todavía no rompe lo de ayer
+00:42 +492 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha sin sesiones la racha es cero
+00:42 +493 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: progreso hacia la meta se acota entre 0 y 1
+00:42 +494 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: récord hay que superar, no igualar
+00:42 +495 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: récord la primera sesión con rondas ya es récord
+00:42 +496 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: series para las gráficas suma lo del mismo día y ordena
+00:42 +497 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: series para las gráficas los días sin dato quedan en cero, sin inventar pendientes
+00:42 +498 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: series para las gráficas el máximo escala el eje sin dividir por cero
+00:42 +499 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre el récord manda sobre todo lo demás
+00:42 +500 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre subir de ronda respecto a la anterior se celebra con el dato
+00:42 +501 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre mismas rondas pero más rápido
+00:42 +502 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre una diferencia de 1 s no se vende como mejora
+00:42 +503 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre incompleta: registrada, sin culpa y con el dato
+00:42 +504 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre una sola ronda se dice en singular
+00:42 +505 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre sin comparación posible, igual cierra en positivo
+00:42 +506 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir sin medidas ni fecha acordada no hay cálculo
+00:42 +507 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir antes de la ventana faltan días
+00:42 +508 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir dentro de la ventana toca medir sin ir atrasado
+00:42 +509 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir pasada la ventana va atrasado
+00:42 +510 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir la fecha acordada manda mientras no se haya medido
+00:42 +511 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir una fecha acordada ya cumplida se ignora
+00:43 +512 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: pesaje los pesajes viejos toman el momento de "en ayunas"
+00:43 +513 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: molestias no baja en 3 días o sube: avisa
+00:43 +514 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: pulso en reposo 3 días seguidos 5 lpm por encima de la media: recuperación baja
+00:43 +515 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: carga circuito y fútbol intenso el mismo día: dos sesiones, otra sesión pide confirmar
+00:43 +516 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: carga sin nada hoy, la racha cuenta desde ayer
+00:43 +517 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: carga plan B: día con pierna y 3 días intensos o molestia en la pierna
+00:43 +518 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: planche (§19.7) martes con pseudo-planche; jueves sin; lunes nada
+00:43 +519 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: planche (§19.7) en descarga, solo inclinaciones
+00:43 +520 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/recovery_test.dart: hoja de habilidades: ventanas desde oct 2026
+00:43 +521 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión avisa 15 minutos antes y dice qué toca
+00:43 +522 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión un día de bloques nombra el trabajo del día
+00:43 +523 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión no avisa en día de fútbol ni de descanso
+00:43 +524 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión si la sesión ya está registrada, callado
+00:43 +525 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión el aviso de sesión sin registrar va a su hora
+00:43 +526 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: proteína avisa con lo que llevas y lo que falta
+00:43 +527 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: proteína por encima del umbral no molesta
+00:43 +528 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: comidas programa las franjas activadas
+00:43 +529 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: comidas lo apagado no se programa
+00:43 +530 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición usa la fecha acordada si existe
+00:43 +531 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición si no, cuenta el intervalo desde la última toma
+00:43 +532 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición una medición vencida se recuerda a la mañana siguiente
+00:43 +533 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición sin línea base no inventa un aviso
+00:43 +534 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales nada se programa en el pasado
+00:43 +535 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales los avisos salen ordenados por hora
+00:43 +536 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales cada aviso tiene un id estable por tipo y día
+00:43 +537 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales programa varios días por adelantado
+00:43 +538 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) meta 1.000, 1.500 pasos, umbral 4.000: no avisa "Faltan -500"
+00:43 +539 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) contraprueba: meta 5.000, 1.500 pasos, umbral 4.000: avisa lo que falta
+00:43 +540 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) el umbral configurado se respeta: meta 5.000, 4.200 pasos, umbral 4.000: no avisa
+00:43 +541 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) sin anotar sigue avisando aunque la meta sea baja
+00:43 +542 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) proteína y kcal: meta baja ya cumplida bajo el umbral no avisa; si falta, sí
+00:43 +543 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: 145 g con mínimo vigente 130: cumple, sin alerta, y el informe dice 130–160, no 160–180
+00:43 +544 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: contraprueba: con el mismo 145 g y mínimo vigente 160 sí alerta
+00:43 +545 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: sin historia cargada: la de Targets, como antes
+00:43 +546 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: la meta cambió dentro del período: cada día con la suya y el cambio explícito
+00:43 +547 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: legado desconocido: sin alerta concluyente, la incertidumbre dicha
+00:43 +548 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: parte del período sin vigencia registrada: se juzga sólo lo conocido
+00:44 +549 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: estadísticas sesiones esperadas usan la versión vigente de cada día
+00:44 +550 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: estadísticas promedios solo sobre días registrados
+00:44 +551 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: alertas detecta las reglas del plan
+00:44 +552 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: alertas medición antes de tiempo
+00:44 +553 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: alertas sin alerta de intervalo cuando se respeta el mínimo
+00:44 +554 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del tipo fuera de plan y de la sesión incompleta
+00:44 +555 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del enfriamiento corto
+00:44 +556 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: sesiones fuera de plan e incompletas la tabla muestra rondas hechas sobre planificadas
+00:44 +557 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: sesiones fuera de plan e incompletas una sesión fuera de plan se marca en la tabla
+00:44 +558 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: regla de progresión subir de ronda con series partidas genera alerta
+00:44 +559 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: regla de progresión subir de ronda limpio no genera alerta
+00:44 +560 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: regla de progresión técnica o recuperación marcadas en no también bloquean
+00:44 +561 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: semana en curso a mitad de semana, los días que no han llegado no son faltas
+00:44 +562 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: semana en curso un día de entrenamiento ya cerrado sin sesión sí es falta
+00:44 +563 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: semana en curso una ronda estimada no es récord
+00:44 +564 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown una semana del programa va de lunes a domingo y se titula como semana (§16.8)
+00:44 +565 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown con 1 de 5 hecha hoy quedan 4, no 5 (§16.8)
+00:44 +566 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown encabezado, resumen y secciones
+00:44 +567 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown medidas en la unidad elegida con Δ vs línea base
+00:44 +568 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown el descanso va en su columna y no cuenta como trabajo neto
+00:44 +569 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown dice de dónde salen las kcal
+00:44 +570 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown trabajo por ronda sin descanso, R1→Rn y descansos aparte
+00:44 +571 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown sin descansos medidos las vueltas dicen que los llevan dentro
+00:44 +572 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown un día sin desayuno, almuerzo y cena no entra al promedio ni a las alertas
+00:44 +573 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown cerrar el día a mano lo cuenta aunque falte una comida
+00:44 +574 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown volumen por ejercicio contra la semana anterior
+00:44 +575 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown flexiones peores el viernes tras una semana con pike push-ups sugiere bajar a 2 series
+00:44 +576 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown RPE 9 o 10 en circuito ligero se señala
+00:44 +577 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/report_test.dart: informe markdown rango vacío no revienta
+00:44 +578 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/search_test.dart: sin tildes ni mayúsculas
+00:44 +579 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/search_test.dart: palabras en cualquier orden
+00:44 +580 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/search_test.dart: consulta vacía o con espacios coincide con todo
+00:44 +581 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: circuito cada ronda recorre los tres ejercicios seguidos
+00:44 +582 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: circuito no hay descanso dentro de la ronda, solo al cerrarla
+00:44 +583 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: circuito la última ronda no termina en descanso
+00:44 +584 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: circuito se puede bajar el objetivo de rondas del día
+00:44 +585 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: bloques agota un ejercicio antes de pasar al siguiente
+00:44 +586 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: bloques el descanso sale del plan y anuncia qué sigue
+00:44 +587 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: bloques la última serie del último ejercicio no lleva descanso
+00:44 +588 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: bloques el objetivo de cada serie viene del plan
+00:44 +589 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: bloques extra del plan v2 van después del circuito y solo la variante elegida
+00:44 +590 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: bloques extra del plan v2 los sostenes se muestran en segundos y por lado
+00:44 +591 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: cierre anticipado cuenta solo las rondas completas
+00:44 +592 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: cierre anticipado una ronda a medias no cuenta
+00:44 +593 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: cierre anticipado en bloques no se reportan rondas
+00:44 +594 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/session_script_test.dart: core del lunes: transición, lados por separado y descanso entre series
+00:45 +595 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/sleep_entry_test.dart: los botones llegan a 10 h y traen 9,5
+00:45 +596 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/sleep_entry_test.dart: 10 h 11 min se entiende de varias formas
+00:45 +597 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/sleep_entry_test.dart: fuera de 0–16 o sin sentido: no se guarda
+00:45 +598 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/sleep_entry_test.dart: un valor escrito no es un botón
+00:45 +599 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/sleep_entry_test.dart: lo escrito se muestra en horas y minutos
+00:45 +600 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: la meta es solo entre semana
+00:45 +601 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: el resumen promedia solo los días registrados
+00:45 +602 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: aviso de las 18:00 entre semana suena si va por debajo o si no se anotaron
+00:45 +603 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: aviso de las 18:00 no suena si ya pasó el umbral ni el fin de semana
+00:45 +604 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) hora de 12 horas
+00:45 +605 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) la línea dice la app y la hora; ayer u otro día, con el día
+00:45 +606 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) sin nombre visible usa uno conocido o el paquete
+00:45 +607 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) más de 6 h sin registros pide abrir la app del reloj
+00:45 +608 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) se guarda y se lee igual en las banderas
+00:45 +609 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: limpio y al tope: sube con la regla existente
+00:45 +610 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: cada causa de no subir sale de lo guardado
+00:45 +611 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: por lado no se compara: lo guardado no conserva el lado
+00:45 +612 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: sin registro anterior lo dice, no inventa
+00:45 +613 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) variante: la siguiente de la cadena, guardada y leída de vuelta sin texto
+00:45 +614 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) banda o pausa: no se registran, así que no se afirma la subida
+00:45 +615 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) lo guardado que no es una dosis completa no se interpreta
+00:45 +616 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) carga: +2 kg con otra variante no es la misma progresión; RIR sin anotar no se certifica
+00:46 +617 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente marca R3 y nada más
+00:46 +618 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente propone pasar 30 s al descanso, sin dejar la ronda bajo la mediana
+00:46 +619 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente un descanso corto con una ronda normal no es sospechoso
+00:46 +620 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente con pocas rondas no hay mediana fiable
+00:46 +621 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: el informe marca la ronda y la deja fuera de la media y del R1→Rn
+00:46 +622 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: semana en curso: el volumen se compara con el mismo punto de la anterior (§16.8)
+00:46 +623 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: medidas: después de comer contra ayunas se marca, y sale el índice hombros ÷ cintura (§16.10)
+00:46 +624 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: traspaso del 4 oct día cerrado por regla alternativa: 3 comidas o 1.800 kcal (§16.6.3)
+00:46 +625 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: traspaso del 4 oct caminatas de 10 min que faltan para la meta (§18.10)
+00:46 +626 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/uso_real_3oct_test.dart: traspaso del 4 oct peso: promedio semanal de lunes a domingo, solo en ayunas (§18.10)
+00:46 +627 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/version_test.dart: comparación de versiones ordena por major, minor y patch
+00:46 +628 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/version_test.dart: comparación de versiones tolera el prefijo v, el build y las versiones cortas
+00:46 +629 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/version_test.dart: comparación de versiones ante texto raro no anuncia actualización
+00:46 +630 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/warmup_test.dart: aproximación: 40 % hacia abajo, mínimo 1
+00:46 +631 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/warmup_test.dart: circuito: movilidad, activación de tirón y una ronda de aproximación
+00:46 +632 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/warmup_test.dart: empuje y piernas activan distinto; sólo el primer ejercicio se aproxima
+00:46 +633 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/warmup_test.dart: con FIFA 11+ sólo queda la aproximación
+00:46 +634 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/warmup_test.dart: una molestia se avisa, no agrega un ejercicio
+00:46 +635 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/warmup_test.dart: las claves son estables y el registro dice lo hecho
+00:46 +636 ~1: C:/My Projects/seguimiento-122-integracion/test/domain/warmup_test.dart: antes de un test: torso sin aproximación; piernas con el FIFA 11+
+00:47 +637 ~1: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:48 +637 ~2: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:48 +637 ~3: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:48 +637 ~4: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:48 +637 ~5: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:50 +637 ~6: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:50 +637 ~7: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:50 +637 ~8: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:50 +637 ~9: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:51 +638 ~9: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:51 +639 ~9: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:51 +640 ~9: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:51 +641 ~9: C:/My Projects/seguimiento-122-integracion/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:51 +642 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/ai_conversation_screen_test.dart: consentimiento y respuesta válida llegan a persistencia sin secretos
+00:52 +643 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: diálogo abierto el lunes, aceptado el martes 00:05: rige el miércoles, como dice el texto
+00:52 +644 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/ai_conversation_screen_test.dart: cita inventada queda visible como error y no crea historial
+00:52 +645 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +646 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +647 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +648 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +649 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +650 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +651 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +652 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:53 +653 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +654 ~9: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +654 ~10: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +654 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +655 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +656 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +657 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +658 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +659 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +660 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +661 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +662 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:54 +663 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +664 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +665 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +666 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +667 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +668 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +669 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +670 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +671 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +672 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +673 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +674 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +675 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +676 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +677 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +678 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +679 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +680 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:55 +681 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:56 +682 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:56 +683 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+00:56 +684 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:56 +685 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:56 +686 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:56 +687 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:56 +688 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_library_test.dart: buscar sin tildes, consultar ambos lados y ampliar sin crear sesión
+00:57 +689 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_library_test.dart: buscar sin tildes, consultar ambos lados y ampliar sin crear sesión
+00:58 +690 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_library_test.dart: buscar sin tildes, consultar ambos lados y ampliar sin crear sesión
+00:58 +691 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_library_test.dart: buscar sin tildes, consultar ambos lados y ampliar sin crear sesión
+00:58 +692 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:59 +693 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:59 +694 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:59 +695 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:59 +696 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:59 +697 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:59 +698 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:59 +699 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+01:00 +700 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+01:00 +701 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:00 +702 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:00 +703 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:00 +704 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:01 +705 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:01 +706 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:01 +707 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:01 +708 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +709 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +710 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +711 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +712 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +713 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +714 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +715 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +716 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +717 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +718 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +719 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:02 +720 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:03 +721 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:03 +722 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:03 +723 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:04 +724 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:04 +724 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+01:04 +725 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:04 +725 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:300:39)
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart:262:16)
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#9      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:04 +726 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:04 +727 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:04 +728 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:04 +729 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:04 +730 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:05 +731 ~11: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:05 +731 ~12: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:05 +731 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:05 +732 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:05 +733 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:05 +734 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +735 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +736 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +737 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +738 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +739 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +740 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +741 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +742 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +743 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +744 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +745 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +746 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +747 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +748 ~13: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +748 ~14: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +748 ~15: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +748 ~16: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:06 +748 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:07 +749 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:08 +750 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:09 +751 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:09 +752 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+01:10 +753 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_edit_test.dart: editar una estimación coincidente no enlaza ni verifica catálogo antes de Guardar
+01:11 +754 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+01:11 +755 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+01:12 +756 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+01:12 +757 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+01:12 +758 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+01:13 +759 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+01:13 +760 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:13 +761 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:13 +762 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:14 +763 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:14 +764 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:14 +765 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:14 +766 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:14 +767 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:14 +768 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:14 +769 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:15 +770 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:15 +771 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:15 +772 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:16 +773 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:16 +774 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:16 +775 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:16 +776 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:16 +777 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:16 +778 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:16 +779 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:17 +780 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:17 +781 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:17 +782 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:17 +783 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:18 +784 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:19 +785 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:19 +786 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:19 +787 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:19 +788 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:19 +789 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:19 +790 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+01:20 +791 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+01:21 +792 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+01:21 +793 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+01:21 +794 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+01:21 +795 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/suspicious_combo_test.dart: combo con 150 porciones: pregunta y "Registrar igual" lo registra
+01:22 +796 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/suspicious_combo_test.dart: combo con 150 porciones: pregunta y "Registrar igual" lo registra
+01:22 +797 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:22 +798 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:22 +799 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:23 +800 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:23 +801 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:24 +802 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:24 +803 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:24 +804 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:24 +805 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:24 +806 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +807 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +808 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +809 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +810 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +811 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +812 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +813 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +814 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:25 +815 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:26 +816 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:27 +817 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+01:27 +818 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/2026-10-07 exige confirmar todas antes de guardar
+01:27 +819 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/2026-10-07 exige confirmar todas antes de guardar
+01:28 +820 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/2026-10-07 exige confirmar todas antes de guardar
+01:28 +821 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: consumer advice cambia tras guardar editar y borrar sin reiniciar
+01:29 +822 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/2027-01-05 exige confirmar todas antes de guardar
+01:29 +823 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: legado1.20 conserva secuencia e indice sin agregar escalera; guion malformado se descarta
+01:30 +824 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2027-01-05/2027-01-05 exige confirmar todas antes de guardar
+01:30 +825 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+01:31 +826 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+01:31 +827 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+01:31 +828 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+01:31 +829 ~17: C:/My Projects/seguimiento-122-integracion/test/ui/release121_flows_test.dart: (tearDownAll)
+01:31 +829 ~17: All tests passed!

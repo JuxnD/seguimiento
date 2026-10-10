@@ -1,5 +1,16 @@
 # Índice de contexto
 
+**Estado actual del candidato local, 10 de octubre:** 009 aprobado como fuente y
+fusionado sobre e6b420a mediante merge 4f11d87, sin conflictos. Se conservan
+radar 018, medición/plural 019, checklist, barrera Future/archivo 784, catálogo 21,
+79/73 figuras y 30 PNG; metas con historia en esquema 22. [Recibo combinado](sessions/2026-10-10-integracion-122-009.md):
+310 dirigidos existentes y nuevo cruce real 21→22 pasan. Full propia 829/17 sobre
+producto final y harness anterior al tipado; caso 21 tipado y análisis final 0.
+Política v1 experimental, aceptación humana pendiente. Siguen 011, alta/esquema 23,
+gate de piloto 012 y QA APK/upgrade/teléfono; no publicación ni cambio SDK.
+Las entradas siguientes conservan resultados y pendientes históricos de sus
+checkpoints, que no deben confundirse con este estado más reciente.
+
 **Integración local122/018:** [componente de radar](sessions/2026-10-10-integracion-122-018.md)
 desde d108fafa,74dirigidos y análisis/diff0; receta extraída sin alterar019,
 checklistClaude o barrera de guardado784. Renderer360 texto1/1.6/2 probado,

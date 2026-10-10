@@ -1,0 +1,21 @@
+Analyzing seguimiento-122-integracion...
+
+   info - Unnecessary use of double quotes - build\qa-122-009\source21\test\schema21_fixture_seed_test.dart:22:32 - prefer_single_quotes
+   info - Unnecessary use of double quotes - build\qa-122-009\source21\test\schema21_fixture_seed_test.dart:24:32 - prefer_single_quotes
+   info - Unnecessary use of double quotes - build\qa-122-009\source21\test\schema21_fixture_seed_test.dart:26:32 - prefer_single_quotes
+   info - Unnecessary use of double quotes - build\qa-122-009\source21\test\schema21_fixture_seed_test.dart:29:32 - prefer_single_quotes
+   info - Unnecessary use of double quotes - build\qa-122-009\source21\test\schema21_fixture_seed_test.dart:32:32 - prefer_single_quotes
+   info - Unnecessary use of double quotes - build\qa-122-009\source21\test\schema21_fixture_seed_test.dart:34:32 - prefer_single_quotes
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:34:13 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:34:69 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:47:14 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:66:28 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:67:27 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:74:15 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:83:15 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:112:28 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:113:27 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:121:15 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\schema21_122_integration_test.dart:138:15 - avoid_dynamic_calls
+
+17 issues found. (ran in 19.2s)

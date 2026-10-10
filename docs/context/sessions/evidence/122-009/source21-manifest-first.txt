@@ -1,0 +1,1 @@
+Observed tool validation failed before any AppDatabase22 open: AssertionError: catalog_patches. Seed test had passed1 case but did not call seedFoodsIfEmpty, so beforeOpen skipped an empty foods table. This is a fixture setup error, not a product red. Original binary and seed log preserved.

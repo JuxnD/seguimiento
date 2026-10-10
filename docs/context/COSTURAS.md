@@ -280,3 +280,24 @@ Base238ef85f/018-radar-core, sin esquema/repos/providers/metas009 o rutas nuevas
 
 Cinco cruces locales cubiertos y uno declarado. El inventario acota018,
 no certifica condición física, publicación o utilidad con datos reales.
+
+## Integración 122 / 009 — metas 22 junto a radar 18/timer 19
+
+[Recibo combinado](sessions/2026-10-10-integracion-122-009.md), merge 4f11d87
+sobre e6b420a con fuente 566 aprobada; ancestro 784, sin conflictos. Preserva
+nueve rutas 018/019, composición medida de Cindy, plural/checklist y barrera real
+Future → archivo. Esquema 22 conserva CatalogPatches 21; no escribe 23 ni cambia SDK.
+
+| Cruce | Evidencia local y límite |
+|---|---|
+| SQLite 21 real → migración 22 → reapertura | Fixture sintética generada por AppDatabase de e6, hash/33 tablas/PRAGMA/filas fijados antes de abrir 22; todos datos 21 intactos, sólo tablas/columna 22 esperadas y metas legado desconocidas/conocidas; una prueba, no upgrade APK |
+| Metas/historial → Hoy/informe/avisos → decisión | 310 dirigidos combinados conservan dosis, variante/modo/calidad, vigencias, medianoche y cancelación/reactividad; RIR null no certifica reserva ni RPE moderado recuperación |
+| Evidencia → núcleo/widget 18 y reloj → draft 19 | Nueve archivos 18/19 idénticos a e6; radar no conecta aún 011, receta compartida/total de fases/plural preservados; sin nueva receta por dolor |
+| UI → save Future real → archivo | Barrera 784 intacta; causa histórica NO_CONFIRMADA y mutante 2DB BLOCKED/NO_EVALUADO se conservan |
+| Producto combinado → suite | Única full 829/17 anterior al tipado del test nuevo, con producto final exacto; mismo probe 21 tipado/analyze 0 después, sin cambios de oráculo/SQL/fixture ni otra full |
+| Fuente → APK/Manifest/upgrade → teléfono/owner | Pendiente QA nativa del candidato, firma y conservación reales; no se tocó AVD/backend/rama diaria ni se publicó |
+
+RPE de recuperación del ADR 0016 se reconcilió sólo en docs: favorable únicamente
+feeling 1–2 o recoveryOk=true en 3 días; negativo prevalece, faltante desconocido.
+Se mantienen RPE ≥ 9 como fatiga y política v1 experimental a revisar con el owner.
+011, alta/esquema 23 y gate 012 con candidato final siguen abiertos.

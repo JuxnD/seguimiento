@@ -1,0 +1,243 @@
+{
+  "authority": "C:\\My Projects\\seguimiento-122-integracion",
+  "branch": "JuxnD/122-integracion",
+  "base": "e6b420a66c55f0da82ee4dc97ebf31c7155ac98a",
+  "incoming": "566ce996373e7201c1bcdc1b3556a05b613a6521",
+  "mergeBase": "78437324be7de71cc986edad4560763c9acb2ede",
+  "overlappingModifiedPaths": [],
+  "nine018019": [
+    {
+      "path": "lib/domain/cindy_protocol.dart",
+      "canonicalSha256": "11a91c5d43224811b1a0bbbdcc661188012035b8e7bd3ea06840f2e12ce95b23",
+      "gitOid": "ae7fab0af5b574156fdbdd7d76dc5bb489b28d6e"
+    },
+    {
+      "path": "lib/domain/personal_radar.dart",
+      "canonicalSha256": "4deb3444ccc10a3598418b2c5cac99a99dfae41bc86122ce5210ea3b4d830431",
+      "gitOid": "504cdd28b0112d6c1281cee7bdf9cb1f96ff6902"
+    },
+    {
+      "path": "lib/domain/progress_metrics.dart",
+      "canonicalSha256": "7dabc10c82e8c15ba30484181b28a80f7e8c2f31714a0d4a4f62979fc6f3eba1",
+      "gitOid": "ee18c79a6dc2fda40b8d2e390e86a05100727314"
+    },
+    {
+      "path": "lib/features/report/personal_radar_widget.dart",
+      "canonicalSha256": "1ae6427719231a9c35416cb00d1ae3f777a2d731e0e199bb7e0ef85b2eff051b",
+      "gitOid": "04ca1f38bf2968ea17f16425bbd12877d92021d0"
+    },
+    {
+      "path": "lib/features/training/v3_timers.dart",
+      "canonicalSha256": "da64b4bd604a2d33a2b9cfb47c2d475473bcfd3b68f54745c853efe7b7be75ec",
+      "gitOid": "dafb45c3cb91e3e2c12131bc33e31c3d283c4aa8"
+    },
+    {
+      "path": "test/domain/progress_metrics_test.dart",
+      "canonicalSha256": "36ddd39fdceabc674cd41675406f10237073817933648da18db399910cea9eba",
+      "gitOid": "db58854ae945f3f66ea2a67df238787696f52968"
+    },
+    {
+      "path": "test/support/radar_fixture.dart",
+      "canonicalSha256": "707509237d87b34f7cb6f73ab03a061c84c70efd231022da176515412469dd49",
+      "gitOid": "421bced3c5fbba4532a35bafb7fa59ca41ddaf3e"
+    },
+    {
+      "path": "test/ui/personal_radar_test.dart",
+      "canonicalSha256": "2d903564aefac6e339aabb22deec849aa47dad38b26a5d59260b8e8d5f423258",
+      "gitOid": "0833a7b0d73d6749cad51ebd14af88ba18c41ed2"
+    },
+    {
+      "path": "test/ui/v3_timers_test.dart",
+      "canonicalSha256": "cfa0833e9d56c7dafd91d2c5b8845d035f341af8aff3f18d94217847758c809a",
+      "gitOid": "e4f328fb360d37c5b9d68b060e4f19e704e1a90a"
+    }
+  ],
+  "resources": [
+    {
+      "path": "android/app/src/main/res/drawable-hdpi/ic_stat_seguimiento.png",
+      "canonicalSha256": "3713123bd1597b8d3f882748326359f3ac1147d0a50ef563601cfcd286c9fd2c",
+      "rawSha256": "3713123bd1597b8d3f882748326359f3ac1147d0a50ef563601cfcd286c9fd2c"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-mdpi/ic_stat_seguimiento.png",
+      "canonicalSha256": "1eee661e4c347782b95c9984ce62be217090dcc375753c71b09ca5f6e38e6c30",
+      "rawSha256": "1eee661e4c347782b95c9984ce62be217090dcc375753c71b09ca5f6e38e6c30"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-xhdpi/ic_stat_seguimiento.png",
+      "canonicalSha256": "55fa70fb3bcef56ee304083f97734e6cf7e3acffacca0ad3b28893a521cf1b1b",
+      "rawSha256": "55fa70fb3bcef56ee304083f97734e6cf7e3acffacca0ad3b28893a521cf1b1b"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-xxhdpi/ic_stat_seguimiento.png",
+      "canonicalSha256": "6f9bd49c9fa6df16cc1e5f4c5a8b4d1a863d972222672d8faa55d87ad71a229b",
+      "rawSha256": "6f9bd49c9fa6df16cc1e5f4c5a8b4d1a863d972222672d8faa55d87ad71a229b"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-xxxhdpi/ic_stat_seguimiento.png",
+      "canonicalSha256": "0febae04272e6cf2d60802c3d771328c4391df291a15f411861ad986cd85963d",
+      "rawSha256": "0febae04272e6cf2d60802c3d771328c4391df291a15f411861ad986cd85963d"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "canonicalSha256": "7c96d6ab46d07563362eb43452b88bfd2e4910691f48f180b615f0f46242c567",
+      "rawSha256": "7c96d6ab46d07563362eb43452b88bfd2e4910691f48f180b615f0f46242c567"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher_background.png",
+      "canonicalSha256": "02bd11654e24d53ad69043efae64cd0406ee760701df9d40b51b69f9988c4030",
+      "rawSha256": "02bd11654e24d53ad69043efae64cd0406ee760701df9d40b51b69f9988c4030"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png",
+      "canonicalSha256": "74962d33631e02cde797b7918a84ca4f4859b0472b8e26a3f03c51d5ff3f3271",
+      "rawSha256": "74962d33631e02cde797b7918a84ca4f4859b0472b8e26a3f03c51d5ff3f3271"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher_monochrome.png",
+      "canonicalSha256": "962639b5d31decd3b35c5e560827ab24f5d354564ba36220fe45c5039a6cef02",
+      "rawSha256": "962639b5d31decd3b35c5e560827ab24f5d354564ba36220fe45c5039a6cef02"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "canonicalSha256": "d9b805d54fe2c37ee0db16ee1f9bef979b3e2cebe253c4468ccc21845fc7fde9",
+      "rawSha256": "d9b805d54fe2c37ee0db16ee1f9bef979b3e2cebe253c4468ccc21845fc7fde9"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher_background.png",
+      "canonicalSha256": "d5d9b5620df3c70b708140371066f7bcea53b883cd3e2636bc144a51b313e171",
+      "rawSha256": "d5d9b5620df3c70b708140371066f7bcea53b883cd3e2636bc144a51b313e171"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png",
+      "canonicalSha256": "01666dfb13dbc14d717f99aa4738c1a37dbd4f909c768079cded44ee95b34d5a",
+      "rawSha256": "01666dfb13dbc14d717f99aa4738c1a37dbd4f909c768079cded44ee95b34d5a"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher_monochrome.png",
+      "canonicalSha256": "387e4a14f444874b7dde2771c973d52e44a34a2c50d0cbbf84e641facefae118",
+      "rawSha256": "387e4a14f444874b7dde2771c973d52e44a34a2c50d0cbbf84e641facefae118"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "canonicalSha256": "4614d6773925535c274afad35d69bc292e730304136d23b9d6ef5cb9d3c6ed19",
+      "rawSha256": "4614d6773925535c274afad35d69bc292e730304136d23b9d6ef5cb9d3c6ed19"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher_background.png",
+      "canonicalSha256": "6aceef49f1106fae71a9dda1ca3f4863dce45d90676b4f65eeb5c1718e7091c5",
+      "rawSha256": "6aceef49f1106fae71a9dda1ca3f4863dce45d90676b4f65eeb5c1718e7091c5"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png",
+      "canonicalSha256": "9122d1a8d29335b66bb5dcbe01d2d095a49c2b47f8f394d51900cf3c8f0bf684",
+      "rawSha256": "9122d1a8d29335b66bb5dcbe01d2d095a49c2b47f8f394d51900cf3c8f0bf684"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher_monochrome.png",
+      "canonicalSha256": "b87723e9f9f22f584b913a26de12084f864b41c16fdb00199c55c67af9a4be0c",
+      "rawSha256": "b87723e9f9f22f584b913a26de12084f864b41c16fdb00199c55c67af9a4be0c"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "canonicalSha256": "1e89cdd564eeb35904ec97e84f8c2173ba99403105ba19759d9189eb2fb1bf2e",
+      "rawSha256": "1e89cdd564eeb35904ec97e84f8c2173ba99403105ba19759d9189eb2fb1bf2e"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_background.png",
+      "canonicalSha256": "aa9d63fe299c99875941e2103f7de15c73dc9bb41b88744f14a44bf9630245e5",
+      "rawSha256": "aa9d63fe299c99875941e2103f7de15c73dc9bb41b88744f14a44bf9630245e5"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png",
+      "canonicalSha256": "59fe7ecdbff39c823a407c6d0a01dc3fbbf814e79cf5239171a116cff7eb052c",
+      "rawSha256": "59fe7ecdbff39c823a407c6d0a01dc3fbbf814e79cf5239171a116cff7eb052c"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_monochrome.png",
+      "canonicalSha256": "7870255755f1d49511120a955df0edc9eb22f5ac898834b429b8593fb08ec8f4",
+      "rawSha256": "7870255755f1d49511120a955df0edc9eb22f5ac898834b429b8593fb08ec8f4"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "canonicalSha256": "3326b1f94540f9057f4e8968fad193eda6603b35a402d71d19ec287b44306f1a",
+      "rawSha256": "3326b1f94540f9057f4e8968fad193eda6603b35a402d71d19ec287b44306f1a"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_background.png",
+      "canonicalSha256": "d4df710ce6c6b70842e6107f9b45216120ee846db3ef8f17286757f8dea748b8",
+      "rawSha256": "d4df710ce6c6b70842e6107f9b45216120ee846db3ef8f17286757f8dea748b8"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+      "canonicalSha256": "a70752f134b2a1f72c59e6af0e040e4bdded751c1caae0f6863134f5374d7a6c",
+      "rawSha256": "a70752f134b2a1f72c59e6af0e040e4bdded751c1caae0f6863134f5374d7a6c"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.png",
+      "canonicalSha256": "0c950ba2ae499cebc1f407c868b0816d5a5837a854d7aa16784d47f9000f3548",
+      "rawSha256": "0c950ba2ae499cebc1f407c868b0816d5a5837a854d7aa16784d47f9000f3548"
+    },
+    {
+      "path": "assets/icon/ic_launcher_background_432.png",
+      "canonicalSha256": "d4df710ce6c6b70842e6107f9b45216120ee846db3ef8f17286757f8dea748b8",
+      "rawSha256": "d4df710ce6c6b70842e6107f9b45216120ee846db3ef8f17286757f8dea748b8"
+    },
+    {
+      "path": "assets/icon/ic_launcher_foreground_432.png",
+      "canonicalSha256": "a70752f134b2a1f72c59e6af0e040e4bdded751c1caae0f6863134f5374d7a6c",
+      "rawSha256": "a70752f134b2a1f72c59e6af0e040e4bdded751c1caae0f6863134f5374d7a6c"
+    },
+    {
+      "path": "assets/icon/ic_launcher_monochrome_432.png",
+      "canonicalSha256": "0c950ba2ae499cebc1f407c868b0816d5a5837a854d7aa16784d47f9000f3548",
+      "rawSha256": "0c950ba2ae499cebc1f407c868b0816d5a5837a854d7aa16784d47f9000f3548"
+    },
+    {
+      "path": "assets/icon/icono_1024.png",
+      "canonicalSha256": "108b5453ae7f193aa0cf32d458a081f004f40a072224a210d105a7b7b6fcd071",
+      "rawSha256": "108b5453ae7f193aa0cf32d458a081f004f40a072224a210d105a7b7b6fcd071"
+    },
+    {
+      "path": "assets/icon/playstore_512.png",
+      "canonicalSha256": "0e28a65d17d230e1b8f2ea0ebd39f2ab2ad7f118c68c00777cde009a248225ce",
+      "rawSha256": "0e28a65d17d230e1b8f2ea0ebd39f2ab2ad7f118c68c00777cde009a248225ce"
+    },
+    {
+      "path": "assets/tecnica/figuras.json",
+      "canonicalSha256": "9bed8ec265add852121094ca49be1249a11770c5f1ba3bfb9410404c125a252d",
+      "rawSha256": "9bed8ec265add852121094ca49be1249a11770c5f1ba3bfb9410404c125a252d"
+    },
+    {
+      "path": "assets/tecnica/figuras3d.json",
+      "canonicalSha256": "1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a",
+      "rawSha256": "1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a"
+    }
+  ],
+  "contracts": [
+    {
+      "path": "test/ui/guided_warmup_test.dart",
+      "canonicalSha256": "a7ce82512c8d3a70b6d27b9e8f5c9897d923cc0052d8593d0e69a261a272da5b"
+    },
+    {
+      "path": "lib/data/active_session_store.dart",
+      "canonicalSha256": "de7a9d172ab88e9cc9cdb61db2988e8c74a2a337da7a296f28c477439781dea2"
+    },
+    {
+      "path": "lib/domain/active_session.dart",
+      "canonicalSha256": "b063f79f777d9ca59ad98a80fce707414c84099b09fd2f7decc52bf1edd01753"
+    },
+    {
+      "path": "lib/domain/session_script.dart",
+      "canonicalSha256": "aa885415f75852fb74bb0c1a02c0a28fb99047c0488ac197475eb692ef095d83"
+    },
+    {
+      "path": "pubspec.yaml",
+      "canonicalSha256": "be4378c83f2029066e1a29366a71e484c204f1fe2a22393aab6e16be8f1b7d22"
+    },
+    {
+      "path": "pubspec.lock",
+      "canonicalSha256": "a62aea1728b5723830f065c6d8b42c1356b538b50c912550f9b3fe041549cf72"
+    }
+  ]
+}
