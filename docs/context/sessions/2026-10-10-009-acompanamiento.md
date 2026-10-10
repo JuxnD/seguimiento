@@ -15,6 +15,9 @@ publicación, teléfono ni datos reales.
 | `a5b2bf1` | Revisión de Codex: legado conocido desde la migración, rechazo por ventana, recuperación conocida, referencias del radar, perfil sin cambios hasta que la vigencia llega |
 | `bf40054` | Merge de `1567c9f`; 21 (010) → 22 (009) |
 | `8f50b95` | Fuerza del día sobre la evidencia de 008, con la causa de no subir |
+| `d3fc531` | R1: recuperación sólo declarada (al despertar / `recoveryOk`), `kcalFutbol` proyectada, `updateProfile` sin futuro, referencias finitas > 0 |
+| `9b1dfdc` | Paso 5: `loadReading` sin recorrido cuadrático (1.000 días) |
+| `0db4308` | R1: seguimiento de propuestas de rondas, fuerza y escaleras; política v1 experimental |
 
 ## Escenarios del plan y su prueba
 
@@ -31,11 +34,18 @@ publicación, teléfono ni datos reales.
 | Borrar el dato que la sostenía: se retira con razón | `adaptive_coach_data_test` |
 | Pospuesta/rechazada no insiste; ventana nueva reconsidera | `adaptive_coach_test` |
 | Aceptar: rige mañana, hoy igual en Hoy/avisos/informe | `goal_history_test` (antes/después de medianoche), `adaptive_coach_test` UI |
+| Recuperación: `recoveryOk=false` bloquea, todo null no permite, `true` permite | `adaptive_coach_data_test` (contrafactuales SQLite) |
+| Rondas/fuerza/escaleras: aceptar, hoy no, mantener, revisión | `proposal_tracking_test` |
+| 1.000 días: misma lectura, 2 consultas | `coach_load_1000_days_test` |
 
 ## Evidencia
 
 - `flutter analyze`: sin hallazgos.
-- `flutter test --concurrency 2` en `8f50b95`: **718 pasan**, 17 omitidas, exit 0.
+- `flutter test --concurrency 2` en `0db4308` (antes del retiro de un helper
+  sin uso): **733 pasan**, 17 omitidas, exit 0; analyze limpio.
+- Paso 5 (Windows, 16 núcleos, flutter_tester): `loadReading` con 1.143
+  registros 4,7–6,1 s → 38–63 ms; `CoachRepository.load` con 1.000 sesiones
+  5.077 → 80–83 ms, 2 consultas; resultado idéntico a la 1.22.
 - Rojo observado y corregido en el camino: `addColumn(feeling)` duplicada
   en bases < 17 (13 migraciones rojas → verdes con la guarda); la propuesta
   aceptada seguía visible el mismo día; `catalog_upgrade_test` de 010 armaba
@@ -44,8 +54,8 @@ publicación, teléfono ni datos reales.
 ## No verificado / pendiente
 
 - Emulador y teléfono: sin probar esta rama.
-- Paso 5 del plan (fixture de 1.000 días y conteo de consultas): no hecho.
-  `CoachRepository.load` sigue leyendo toda la historia, como la 1.22.
-- Propuestas persistentes para fuerza/escaleras: la fuerza es lectura del
-  día; las escaleras siguen con su propia confirmación (§19.10).
-- Umbrales nuevos de la política v1 (ADR 0016) pendientes de confirmar con el owner.
+- `CoachRepository.load` sigue leyendo toda la historia (2 consultas); con
+  1.000 días son ~80 ms. Una ventana acotada queda para cuando haga falta.
+- Umbrales de la política v1: **experimentales**, pendientes del owner (ADR 0016).
+- `release121_flows_test` "legado 1.20 …" dio timeout aislado con el equipo
+  cargado (sin y con cambios de 009); pasa en la suite completa. Es de Codex.
