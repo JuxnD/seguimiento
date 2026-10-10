@@ -5,6 +5,8 @@ y [recibo de pruebas](sessions/2026-10-09-008-evidencia.md). Worktree aislado
 `C:/My Projects/seguimiento-008-evidencia`; no equivale a publicación.009/011
 deben consumir los DTO/resolvers compartidos y conservar observaciones dudosas
 sin convertirlas en aptitud para aumentar dosis.
+La [revisión de fecha de toda la parte](sessions/2026-10-09-008-fecha-parte.md)
+añade confirmación ante fechas mezcladas, inválidas o futuras.
 
 Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.

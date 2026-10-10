@@ -81,7 +81,7 @@ Entorno autorizado: SQLite en memoria y flutter_test, fuente aislada en
 | Marcas acumuladas → SQLite → DTO → consumidor del cierre | Cubierto local:60/125/195→60/65/70→media65; work/lap separados y protocolo distinto/unknown no compara |
 | Serie manual con split/fallo → SQLite → DTO → guía siguiente | Cubierto local:12+3/fallo no muestra+kg; mutante de pérdida de flags en la proyección produce rojo en esa UI |
 | Tests parciales/dudosos → SQLite → tabla/dosis | Cubierto local:T3 parcial visible conservaT2 limpio; dudoso observado no aumenta dosis; unknown/futuro/inválido no aptos |
-| Fecha prevista vs real → pantalla → SQLite → reentrada | Cubierto local:nuevo usa9oct pese previsto11dic; edición conserva9oct |
+| Fecha prevista vs real → pantalla → SQLite → reentrada | Cubierto local:nuevo usa9oct pese previsto11dic; edición homogénea conserva9oct. [Revisión2](sessions/2026-10-09-008-fecha-parte.md): todas las filas de la parte; fechas mixtas/inválidas/futuras bloqueanGuardar hasta confirmar, sin escrituras al abrir/picker/cancelar |
 | Fuente integrada con Claude → APK → uso del owner | Declarado: repetir gates sobre candidato integrado y APK; no observado por este worktree |
 
 Cuatro cruces locales cubiertos y uno declarado en este alcance. El denominador

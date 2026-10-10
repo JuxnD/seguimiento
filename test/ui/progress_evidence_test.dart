@@ -194,4 +194,61 @@ void main() {
       }
     });
   }
+  for (final dates in [
+    ('2026-10-05', 'desconocida'),
+    ('2026-10-05', '2026-02-30'),
+    ('2026-10-05', '2026-10-07'),
+    ('2026-10-05', '2027-01-05'),
+    ('2027-01-05', '2027-01-05'),
+  ]) {
+    testWidgets('parte con fechas ${dates.$1}/${dates.$2} exige confirmar todas antes de guardar', (t) async {
+      await withClock(Clock.fixed(DateTime(2026, 10, 9)), () async {
+        try {
+          await io(t, () async {
+            await db
+                .into(db.fitnessTests)
+                .insert(FitnessTestsCompanion.insert(date: dates.$1, round: 1, item: 'pullup', value: 3));
+            await db
+                .into(db.fitnessTests)
+                .insert(FitnessTestsCompanion.insert(date: dates.$2, round: 1, item: 'dips', value: 5));
+          });
+          final originals = await io(t, () => db.select(db.fitnessTests).get());
+          await mount(t, TestModeScreen(date: DateTime(2026, 12, 11), round: 1, part: TestPart.torso));
+          expect(find.textContaining('Fecha del intento sin confirmar'), findsOneWidget);
+          expect(find.textContaining('(conservada)'), findsNothing);
+          final saveButton = find.ancestor(
+              of: find.text('Guardar test'), matching: find.byWidgetPredicate((w) => w is FilledButton));
+          expect(t.widget<FilledButton>(saveButton.first).onPressed, isNull);
+          await t.enterText(find.byKey(const ValueKey('test-value-pullup-')), '4');
+          await t.pump();
+          expect(t.widget<FilledButton>(saveButton.first).onPressed, isNull);
+          expect(await io(t, () => db.select(db.fitnessTests).get()), originals);
+          await t.tap(find.text('Confirmar o cambiar fecha'));
+          await t.pumpAndSettle();
+          await t.tap(find.text('Cancel'));
+          await t.pumpAndSettle();
+          expect(t.widget<FilledButton>(saveButton.first).onPressed, isNull);
+          expect(await io(t, () => db.select(db.fitnessTests).get()), originals);
+          await t.tap(find.text('Confirmar o cambiar fecha'));
+          await t.pumpAndSettle();
+          await t.tap(find.text('OK'));
+          await t.pumpAndSettle();
+          expect(find.text('Fecha del intento: 2026-10-09 (confirmada para esta parte)'), findsOneWidget);
+          expect(t.widget<FilledButton>(saveButton.first).onPressed, isNotNull);
+          expect(await io(t, () => db.select(db.fitnessTests).get()), originals,
+              reason: 'Elegir fecha sólo cambia el borrador, no SQLite');
+          await t.tap(find.text('Guardar test'));
+          await t.pump();
+          await io(t, () => Future<void>.delayed(const Duration(milliseconds: 100)));
+          await t.pump(const Duration(milliseconds: 400));
+          final accepted = await io(t, () => db.select(db.fitnessTests).get());
+          expect(accepted.map((r) => r.date).toSet(), {'2026-10-09'});
+          expect(accepted.firstWhere((r) => r.item == 'pullup').value, 4);
+          expect(accepted.firstWhere((r) => r.item == 'dips').value, 5);
+        } finally {
+          await close(t);
+        }
+      });
+    });
+  }
 }

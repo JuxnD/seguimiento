@@ -40,6 +40,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   late DateTime _executionDate;
   bool _editing = false;
   bool _dateNeedsConfirmation = false;
+  bool _dateWasConfirmed = false;
+  String _dateIssue = '';
 
   String _key(TestItem t, String side) => '${t.id}|$side';
   List<String> _sides(TestItem t) => t.perSide ? const ['I', 'D'] : const [''];
@@ -64,11 +66,22 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   Future<void> _load() async {
     final rows = await ref.read(fitnessTestRepositoryProvider).all();
     if (!mounted) return;
-    final original =
-        rows.where((r) => r.round == widget.round && _items.any((t) => t.id == r.item)).firstOrNull;
-    _editing = original != null;
-    _dateNeedsConfirmation = original != null && original.date == null;
-    _executionDate = dateOnly(original?.date ?? clock.now());
+    final partRows = rows.where((r) => r.round == widget.round && _items.any((t) => t.id == r.item)).toList();
+    final today = dateOnly(clock.now());
+    final dates = partRows.where((r) => r.date != null).map((r) => dayKey(r.date!)).toSet();
+    final invalid = partRows.any((r) => r.date == null);
+    final mixed = dates.length > 1;
+    final future = partRows.any((r) => r.date != null && dateOnly(r.date!).isAfter(today));
+    _editing = partRows.isNotEmpty;
+    _dateNeedsConfirmation = _editing && (invalid || mixed || future);
+    _dateIssue = [
+      if (invalid) 'Hay resultados sin fecha válida.',
+      if (mixed) 'Hay resultados de fechas distintas.',
+      if (future) 'Hay resultados con fecha futura.',
+    ].join(' ');
+    // Only a uniform valid non-future date belongs to the whole stored part.
+    // A conflicting legacy date is not replaced until explicit confirmation.
+    _executionDate = _editing && !_dateNeedsConfirmation ? dateOnly(partRows.first.date!) : today;
     for (final t in _items) {
       for (final side in _sides(t)) {
         final r = rows.where((r) => r.round == widget.round && r.item == t.id && (r.side ?? '') == side).firstOrNull;
@@ -199,9 +212,9 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                 children: [
                   AppCard(
                     children: [
-                      Text(_dateNeedsConfirmation ? 'Fecha del intento sin confirmar: el registro original no tiene fecha válida.' :
-                        'Fecha del intento: ${dayKey(_executionDate)}${_editing ? ' (conservada)' : ''}'),
-                      if (!_editing || _dateNeedsConfirmation)
+                      Text(_dateNeedsConfirmation ? 'Fecha del intento sin confirmar: revisa la fecha de toda esta parte. $_dateIssue' :
+                        'Fecha del intento: ${dayKey(_executionDate)}${_dateWasConfirmed ? ' (confirmada para esta parte)' : _editing ? ' (conservada)' : ''}'),
+                      if (!_editing || _dateNeedsConfirmation || _dateWasConfirmed)
                         TextButton(
                             onPressed: () async {
                               final picked = await showDatePicker(
@@ -213,6 +226,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                                 setState(() {
                                   _executionDate = picked;
                                   _dateNeedsConfirmation = false;
+                                  _dateWasConfirmed = true;
                                   _changed = true;
                                 });
                               }

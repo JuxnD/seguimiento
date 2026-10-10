@@ -44,10 +44,16 @@ sin ser apto para aumentar dosis.
 `recordedDateFor` y `plannedDateFor` separan ejecución y calendario. `dateFor`
 conserva su contrato antiguo de fallback previsto para consumidores existentes.
 La pantalla nueva utiliza fecha de hoy confirmable/cambiable; la edición de una
-parte ya guardada conserva su fecha original. Guardar continúa requiriendo una
+parte ya guardada conserva fecha sólo cuando TODAS sus filas comparten una
+fecha válida no futura. Guardar continúa requiriendo una
 acción del usuario y no reconstruye ni altera una guía pausada.
-Si una fila legacy tiene fecha inválida, editar no la sustituye por hoy:
-Guardar queda bloqueado hasta una selección explícita de fecha.
+Si cualquier fila de la parte tiene fecha ausente/inválida/futura, o las fechas
+son distintas, editar no toma la fecha de la primera como fecha común:
+Guardar queda bloqueado hasta seleccionar explícitamente la fecha de toda esa
+parte. El picker propone hoy como borrador, sin tocar SQLite. Cancelar mantiene
+el bloqueo; confirmar sólo cambia el borrador; confirmar Y Guardar acepta la
+fecha común elegida. Entonces el texto dice «confirmada para esta parte», no
+«conservada». Una parte homogénea válida conserva su fecha al editar.
 `recordedTestDate` exige roundtrip exacto YYYY-MM-DD:30febrero no se normaliza
 silenciosamente a marzo ni se reescribe en la base.
 
