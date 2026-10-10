@@ -4,7 +4,10 @@
 y [recibo](sessions/2026-10-10-019-cindy-window.md), worktree aislado
 `C:/My Projects/seguimiento-019-cindy`, base `238ef85`. Nuevos drafts suman
 fases para conservar el circuito medido, sin normalizar historias ni cambiar
-comparabilidad/Tabata. Integración, APK y teléfono quedan pendientes.
+comparabilidad/Tabata. [Integración local122](sessions/2026-10-10-integracion-122-019.md)
+desde7843732:51dirigidos, análisis/diff0, checklistClaude y barrera deFuture
+reales intactos. Schema21 y recursos79/73/30PNG conservados. APK, teléfono,
+full candidato y revisión posterior quedan pendientes.
 
 **Plan015 implementado localmente (10oct):** [gráficas con rango y evidencia](../progreso-metricas.md)
 y [recibo](sessions/2026-10-10-015-graficas-evidencia.md), worktree aislado

@@ -241,3 +241,14 @@ Se autorizó una barrera en el harness que espera las futures reales emitidas
 sin pendientes, cota5s dentro del timeout original y relectura física/assertions
 intactas.18dirigidos+8Store pasan con esa barrera; producción no cambia y la
 revisión independiente de esta fuente queda pendiente. Mutante2DB no se reabre.
+
+## Integración122/019 · reloj→fases→draftCindy
+
+[Recibo combinado](sessions/2026-10-10-integracion-122-019.md). Source019
+aprobado3b91c96 se integra sobre7843732 sin conflictos;51casos cruzan draft
+fraccionario/cortado/retomado y controlesClaude/warmup/Store. Composición de
+fases conserva la ventana medida, sin tolerancia ni cap inventado. Checklist
+Cindy y barrera deFuture reales sobreviven; writer y registros viejos intactos.
+Schema21, SDK3.22, JSON79/73 y30PNG no cambian. Full681/16 del source019
+es anterior al copyplural y no acredita este snapshot. APK/owner pendientes;
+mutante2DBNO_EVALUADO y causa previaNO_CONFIRMADA conservados explícitamente.
