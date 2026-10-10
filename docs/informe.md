@@ -12,6 +12,23 @@ Pruebas: [`test/domain/report_test.dart`](../test/domain/report_test.dart).
 Para ver una salida completa con datos de ejemplo:
 `dart run tool/sample_report.dart > docs/ejemplo-informe.md` (no se versiona).
 
+## Gráficas y evidencia del rango (plan015 local)
+
+Rondas, proteína, peso, medidas y sitios consultables respetan las fechas del
+informe. Los registros y resúmenes cambian con el tipo y las condiciones elegidas;
+no se mezclan dosis, variantes, lastres o ventanas distintas para afirmar mejora.
+Cindy cortada antes de20min, importaciones y estimaciones quedan como observación.
+Peso y medidas muestran su condición guardada; la hora se conserva como evidencia,
+sin crear un protocolo diferente por cada minuto.
+
+La proteína distingue ausencia, registro incompleto y día cerrado mediante la
+misma regla `isDayClosed` de `ReportStats`. Cerrar un día no verifica sus macros.
+Un0 observado mantiene su valor; ausencia no se convierte en0. La gráfica no
+aplica retrospectivamente la meta del perfil actual. La interfaz opcional de
+meta por fecha requiere fuente, unidad y vigencia, sin añadir historia ficticia.
+Ver [contrato de métricas](progreso-metricas.md) y
+[recibo de implementación local](context/sessions/2026-10-10-015-graficas-evidencia.md).
+
 ## Resumen en números (pantalla *Tu progreso*)
 
 Desde *Informe* (icono de gráfica o "Semana y mes") y desde la tarjeta "Esta

@@ -174,3 +174,24 @@ de restaurar bytes,10controles de apoyos/paridad verdes. SDK/schema/firma no
 cambian; native/OEM/owner y full candidato siguen pendientes. Al llegar009,
 la cobertura014 debe consumir fuentes seguras reales, sin reconstruir el mapa
 warmupForZone retirado por la política de dolor.
+
+## Plan015 local: gráficas con rango y evidencia (10oct)
+
+Autoridad acotada: `seguimiento-015-graficas`, `JuxnD/015-graficas-evidencia`,
+base de integración122 `bf1da688`. Sin cambios de esquema ni servicios externos.
+[Contrato](../progreso-metricas.md),
+[recibo y evidencias](sessions/2026-10-10-015-graficas-evidencia.md).
+
+| Cruce enumerado | Evidencia ejecutada / límite |
+|---|---|
+| Rango del informe → consultas SQL → providers → gráfica/registros | Fixtures SQLite con datos dentro/fuera; sitios y unidades del mismo rango;240sesiones y límite máximo200; selección cambia datos, resumen y tabla |
+| Dosis/modo/plan/ventana/calidad → protocolo → comparación | Firma compartida008;20/30min y técnica/normal separados; importada, estimada, cortada y desconocida siguen observaciones; rótulo humano muestra condiciones antes de escoger |
+| Fecha real → eje/tocar → fecha/valor/evidencia textual |1ene,2ene,1feb ocupan0,1,31días; sin curva inventada, punto aislado visible; tap y registros inspeccionables |
+| Snapshot de comida/cierre → nullable → barra/estado | Ausencia sin barra≠cero guardado; cierre igual aReportStats; actualización del cierre conserva tabla abierta; proteína0 real tiene eje válido |
+| Meta con fuente y vigencia → resolver → referencia y tabla | DTO/fixture local cubierto; rechaza unidad/fecha/fuente/número inválidos; no usa perfil actual para historia. Adaptador009 no implementado aquí |
+| Registro antiguo editado → reconsulta → rango activo | Actualiza peso/sesión fuera de90/60días; prueba refuta invalidación adicional, sin modificar watchers de otros consumidores |
+| Widgets compartidos → renderer360/texto1.6 → capturas | TresPNG sintéticos del Flutterrenderer; tabla y opciones completas revisadas. No equivale a aceptación humana o medición de latencia Android |
+| Fuente local → APK integrado → teléfono/piloto | Declarado pendiente del coordinador; ninguna instalación, publicación o usuario real verificado en015 |
+
+Siete cruces locales cubiertos y uno declarado en este alcance. No cierra011,
+radar, historial de metas o piloto, ni hereda validación de otro APK.

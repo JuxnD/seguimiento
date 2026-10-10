@@ -1,0 +1,340 @@
+00:00 +0: loading C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart
+00:00 +0: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: rango en todas las consultas, una medida, límite SQL y última fecha
+00:00 +1: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: nutrición nullable y cierre coinciden con informe, observado0 sobrevive
+00:01 +2: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: firma real separa dosis/técnica; importada/estimada/cortada/Cindy no son marca
+00:01 +3: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: metas requieren vigencia, unidad, fuente y cifra finita
+00:01 +4: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: sin registro no es cero de proteína observado
+00:01 +5: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: formato y calidad no desaparecen bajo mismo nombre Circuito
+00:01 +6: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: (tearDownAll)
+00:01 +6: loading C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart
+00:04 +6: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: (setUpAll)
+00:04 +6: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: barras: ausencia sin rod,0 observado, meta sólo en fecha documentada
+00:06 +7: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: SQLite→rango/tipo/tabla/evidencia y cierre reactivo a360 con texto1.6
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing 6 oct 2026 · 50 g · Día
+cerrado: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart:185:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart line 185
+The test description was:
+  SQLite→rango/tipo/tabla/evidencia y cierre reactivo a360 con texto1.6
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +7 -1: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: SQLite→rango/tipo/tabla/evidencia y cierre reactivo a360 con texto1.6 [E]
+  Test failed. See exception logs above.
+  The test description was: SQLite→rango/tipo/tabla/evidencia y cierre reactivo a360 con texto1.6
+
+00:10 +7 -1: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: X distingue un día de un mes, sin suavizado artificial
+Pending timers:
+Timer (duration: 0:00:00.000000, periodic: false), created:
+#0      new FakeTimer._ (package:fake_async/fake_async.dart:308:62)
+#1      FakeAsync._createTimer (package:fake_async/fake_async.dart:252:27)
+#2      FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:185:19)
+#6      StreamQueryStore.markAsClosed (package:drift/src/runtime/executor/stream_queries.dart:144:11)
+#7      QueryStream._onCancelOrPause (package:drift/src/runtime/executor/stream_queries.dart:293:14)
+#8      QueryStream._stream.<anonymous closure>.<anonymous closure> (package:drift/src/runtime/executor/stream_queries.dart:225:11)
+#20     FutureHandlerProviderElementMixin.runOnDispose (package:riverpod/src/async_notifier/base.dart:430:26)
+#21     ProviderElementBase.dispose (package:riverpod/src/framework/element.dart:861:5)
+#22     FutureHandlerProviderElementMixin.dispose (package:riverpod/src/async_notifier/base.dart:471:11)
+#23     StreamProviderElement.dispose (package:riverpod/src/stream_provider/base.dart:180:11)
+#24     ProviderContainer.dispose (package:riverpod/src/framework/container.dart:634:15)
+#25     ProviderScopeState.dispose (package:flutter_riverpod/src/framework.dart:264:15)
+#26     StatefulElement.unmount (package:flutter/src/widgets/framework.dart:5696:11)
+#27     _InactiveElements._unmount (package:flutter/src/widgets/framework.dart:2077:13)
+#28     ListIterable.forEach (dart:_internal/iterable.dart:49:13)
+#29     _InactiveElements._unmountAll (package:flutter/src/widgets/framework.dart:2086:25)
+#30     BuildOwner.lockState (package:flutter/src/widgets/framework.dart:2765:15)
+#31     BuildOwner.finalizeTree (package:flutter/src/widgets/framework.dart:3175:7)
+#32     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1439:19)
+#33     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:443:5)
+#34     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1392:15)
+#35     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1313:9)
+#36     AutomatedTestWidgetsFlutterBinding.scheduleWarmUpFrame (package:flutter_test/src/binding.dart:1364:5)
+#37     _runWidget (package:flutter/src/widgets/binding.dart:1442:7)
+#38     runApp (package:flutter/src/widgets/binding.dart:1373:3)
+#39     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1005:5)
+#42     TestWidgetsFlutterBinding._runTest (package:flutter_test/src/binding.dart:995:14)
+#43     AutomatedTestWidgetsFlutterBinding.runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1475:24)
+#44     FakeAsync.run.<anonymous closure>.<anonymous closure> (package:fake_async/fake_async.dart:182:54)
+#49     withClock (package:clock/src/default.dart:52:10)
+#50     FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:182:22)
+#55     FakeAsync.run (package:fake_async/fake_async.dart:182:7)
+#56     AutomatedTestWidgetsFlutterBinding.runTest (package:flutter_test/src/binding.dart:1472:15)
+#57     testWidgets.<anonymous closure> (package:flutter_test/src/widget_tester.dart:175:24)
+#58     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#59     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#60     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+(elided 24 frames from dart:async)
+
+Timer (duration: 0:00:00.000000, periodic: false), created:
+#0      new FakeTimer._ (package:fake_async/fake_async.dart:308:62)
+#1      FakeAsync._createTimer (package:fake_async/fake_async.dart:252:27)
+#2      FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:185:19)
+#6      StreamQueryStore.markAsClosed (package:drift/src/runtime/executor/stream_queries.dart:144:11)
+#7      QueryStream._onCancelOrPause (package:drift/src/runtime/executor/stream_queries.dart:293:14)
+#8      QueryStream._stream.<anonymous closure>.<anonymous closure> (package:drift/src/runtime/executor/stream_queries.dart:225:11)
+#20     FutureHandlerProviderElementMixin.runOnDispose (package:riverpod/src/async_notifier/base.dart:430:26)
+#21     ProviderElementBase.dispose (package:riverpod/src/framework/element.dart:861:5)
+#22     FutureHandlerProviderElementMixin.dispose (package:riverpod/src/async_notifier/base.dart:471:11)
+#23     StreamProviderElement.dispose (package:riverpod/src/stream_provider/base.dart:180:11)
+#24     ProviderContainer.dispose (package:riverpod/src/framework/container.dart:634:15)
+#25     ProviderScopeState.dispose (package:flutter_riverpod/src/framework.dart:264:15)
+#26     StatefulElement.unmount (package:flutter/src/widgets/framework.dart:5696:11)
+#27     _InactiveElements._unmount (package:flutter/src/widgets/framework.dart:2077:13)
+#28     ListIterable.forEach (dart:_internal/iterable.dart:49:13)
+#29     _InactiveElements._unmountAll (package:flutter/src/widgets/framework.dart:2086:25)
+#30     BuildOwner.lockState (package:flutter/src/widgets/framework.dart:2765:15)
+#31     BuildOwner.finalizeTree (package:flutter/src/widgets/framework.dart:3175:7)
+#32     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1439:19)
+#33     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:443:5)
+#34     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1392:15)
+#35     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1313:9)
+#36     AutomatedTestWidgetsFlutterBinding.scheduleWarmUpFrame (package:flutter_test/src/binding.dart:1364:5)
+#37     _runWidget (package:flutter/src/widgets/binding.dart:1442:7)
+#38     runApp (package:flutter/src/widgets/binding.dart:1373:3)
+#39     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1005:5)
+#42     TestWidgetsFlutterBinding._runTest (package:flutter_test/src/binding.dart:995:14)
+#43     AutomatedTestWidgetsFlutterBinding.runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1475:24)
+#44     FakeAsync.run.<anonymous closure>.<anonymous closure> (package:fake_async/fake_async.dart:182:54)
+#49     withClock (package:clock/src/default.dart:52:10)
+#50     FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:182:22)
+#55     FakeAsync.run (package:fake_async/fake_async.dart:182:7)
+#56     AutomatedTestWidgetsFlutterBinding.runTest (package:flutter_test/src/binding.dart:1472:15)
+#57     testWidgets.<anonymous closure> (package:flutter_test/src/widget_tester.dart:175:24)
+#58     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#59     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#60     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+(elided 24 frames from dart:async)
+
+Timer (duration: 0:00:00.000000, periodic: false), created:
+#0      new FakeTimer._ (package:fake_async/fake_async.dart:308:62)
+#1      FakeAsync._createTimer (package:fake_async/fake_async.dart:252:27)
+#2      FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:185:19)
+#6      StreamQueryStore.markAsClosed (package:drift/src/runtime/executor/stream_queries.dart:144:11)
+#7      QueryStream._onCancelOrPause (package:drift/src/runtime/executor/stream_queries.dart:293:14)
+#8      QueryStream._stream.<anonymous closure>.<anonymous closure> (package:drift/src/runtime/executor/stream_queries.dart:225:11)
+#20     FutureHandlerProviderElementMixin.runOnDispose (package:riverpod/src/async_notifier/base.dart:430:26)
+#21     ProviderElementBase.dispose (package:riverpod/src/framework/element.dart:861:5)
+#22     FutureHandlerProviderElementMixin.dispose (package:riverpod/src/async_notifier/base.dart:471:11)
+#23     StreamProviderElement.dispose (package:riverpod/src/stream_provider/base.dart:180:11)
+#24     ProviderContainer.dispose (package:riverpod/src/framework/container.dart:634:15)
+#25     ProviderScopeState.dispose (package:flutter_riverpod/src/framework.dart:264:15)
+#26     StatefulElement.unmount (package:flutter/src/widgets/framework.dart:5696:11)
+#27     _InactiveElements._unmount (package:flutter/src/widgets/framework.dart:2077:13)
+#28     ListIterable.forEach (dart:_internal/iterable.dart:49:13)
+#29     _InactiveElements._unmountAll (package:flutter/src/widgets/framework.dart:2086:25)
+#30     BuildOwner.lockState (package:flutter/src/widgets/framework.dart:2765:15)
+#31     BuildOwner.finalizeTree (package:flutter/src/widgets/framework.dart:3175:7)
+#32     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1439:19)
+#33     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:443:5)
+#34     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1392:15)
+#35     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1313:9)
+#36     AutomatedTestWidgetsFlutterBinding.scheduleWarmUpFrame (package:flutter_test/src/binding.dart:1364:5)
+#37     _runWidget (package:flutter/src/widgets/binding.dart:1442:7)
+#38     runApp (package:flutter/src/widgets/binding.dart:1373:3)
+#39     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1005:5)
+#42     TestWidgetsFlutterBinding._runTest (package:flutter_test/src/binding.dart:995:14)
+#43     AutomatedTestWidgetsFlutterBinding.runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1475:24)
+#44     FakeAsync.run.<anonymous closure>.<anonymous closure> (package:fake_async/fake_async.dart:182:54)
+#49     withClock (package:clock/src/default.dart:52:10)
+#50     FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:182:22)
+#55     FakeAsync.run (package:fake_async/fake_async.dart:182:7)
+#56     AutomatedTestWidgetsFlutterBinding.runTest (package:flutter_test/src/binding.dart:1472:15)
+#57     testWidgets.<anonymous closure> (package:flutter_test/src/widget_tester.dart:175:24)
+#58     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#59     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#60     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+(elided 24 frames from dart:async)
+
+Timer (duration: 0:00:00.000000, periodic: false), created:
+#0      new FakeTimer._ (package:fake_async/fake_async.dart:308:62)
+#1      FakeAsync._createTimer (package:fake_async/fake_async.dart:252:27)
+#2      FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:185:19)
+#6      StreamQueryStore.markAsClosed (package:drift/src/runtime/executor/stream_queries.dart:144:11)
+#7      QueryStream._onCancelOrPause (package:drift/src/runtime/executor/stream_queries.dart:293:14)
+#8      QueryStream._stream.<anonymous closure>.<anonymous closure> (package:drift/src/runtime/executor/stream_queries.dart:225:11)
+#17     FutureHandlerProviderElementMixin.runOnDispose (package:riverpod/src/async_notifier/base.dart:430:26)
+#18     ProviderElementBase.dispose (package:riverpod/src/framework/element.dart:861:5)
+#19     FutureHandlerProviderElementMixin.dispose (package:riverpod/src/async_notifier/base.dart:471:11)
+#20     StreamProviderElement.dispose (package:riverpod/src/stream_provider/base.dart:180:11)
+#21     ProviderContainer.dispose (package:riverpod/src/framework/container.dart:634:15)
+#22     ProviderScopeState.dispose (package:flutter_riverpod/src/framework.dart:264:15)
+#23     StatefulElement.unmount (package:flutter/src/widgets/framework.dart:5696:11)
+#24     _InactiveElements._unmount (package:flutter/src/widgets/framework.dart:2077:13)
+#25     ListIterable.forEach (dart:_internal/iterable.dart:49:13)
+#26     _InactiveElements._unmountAll (package:flutter/src/widgets/framework.dart:2086:25)
+#27     BuildOwner.lockState (package:flutter/src/widgets/framework.dart:2765:15)
+#28     BuildOwner.finalizeTree (package:flutter/src/widgets/framework.dart:3175:7)
+#29     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1439:19)
+#30     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:443:5)
+#31     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1392:15)
+#32     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1313:9)
+#33     AutomatedTestWidgetsFlutterBinding.scheduleWarmUpFrame (package:flutter_test/src/binding.dart:1364:5)
+#34     _runWidget (package:flutter/src/widgets/binding.dart:1442:7)
+#35     runApp (package:flutter/src/widgets/binding.dart:1373:3)
+#36     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1005:5)
+#39     TestWidgetsFlutterBinding._runTest (package:flutter_test/src/binding.dart:995:14)
+#40     AutomatedTestWidgetsFlutterBinding.runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1475:24)
+#41     FakeAsync.run.<anonymous closure>.<anonymous closure> (package:fake_async/fake_async.dart:182:54)
+#46     withClock (package:clock/src/default.dart:52:10)
+#47     FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:182:22)
+#52     FakeAsync.run (package:fake_async/fake_async.dart:182:7)
+#53     AutomatedTestWidgetsFlutterBinding.runTest (package:flutter_test/src/binding.dart:1472:15)
+#54     testWidgets.<anonymous closure> (package:flutter_test/src/widget_tester.dart:175:24)
+#55     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#56     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#57     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+(elided 21 frames from dart:async)
+
+Timer (duration: 0:00:00.000000, periodic: false), created:
+#0      new FakeTimer._ (package:fake_async/fake_async.dart:308:62)
+#1      FakeAsync._createTimer (package:fake_async/fake_async.dart:252:27)
+#2      FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:185:19)
+#6      StreamQueryStore.markAsClosed (package:drift/src/runtime/executor/stream_queries.dart:144:11)
+#7      QueryStream._onCancelOrPause (package:drift/src/runtime/executor/stream_queries.dart:293:14)
+#8      QueryStream._stream.<anonymous closure>.<anonymous closure> (package:drift/src/runtime/executor/stream_queries.dart:225:11)
+#20     FutureHandlerProviderElementMixin.runOnDispose (package:riverpod/src/async_notifier/base.dart:430:26)
+#21     ProviderElementBase.dispose (package:riverpod/src/framework/element.dart:861:5)
+#22     FutureHandlerProviderElementMixin.dispose (package:riverpod/src/async_notifier/base.dart:471:11)
+#23     StreamProviderElement.dispose (package:riverpod/src/stream_provider/base.dart:180:11)
+#24     ProviderContainer.dispose (package:riverpod/src/framework/container.dart:634:15)
+#25     ProviderScopeState.dispose (package:flutter_riverpod/src/framework.dart:264:15)
+#26     StatefulElement.unmount (package:flutter/src/widgets/framework.dart:5696:11)
+#27     _InactiveElements._unmount (package:flutter/src/widgets/framework.dart:2077:13)
+#28     ListIterable.forEach (dart:_internal/iterable.dart:49:13)
+#29     _InactiveElements._unmountAll (package:flutter/src/widgets/framework.dart:2086:25)
+#30     BuildOwner.lockState (package:flutter/src/widgets/framework.dart:2765:15)
+#31     BuildOwner.finalizeTree (package:flutter/src/widgets/framework.dart:3175:7)
+#32     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1439:19)
+#33     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:443:5)
+#34     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1392:15)
+#35     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1313:9)
+#36     AutomatedTestWidgetsFlutterBinding.scheduleWarmUpFrame (package:flutter_test/src/binding.dart:1364:5)
+#37     _runWidget (package:flutter/src/widgets/binding.dart:1442:7)
+#38     runApp (package:flutter/src/widgets/binding.dart:1373:3)
+#39     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1005:5)
+#42     TestWidgetsFlutterBinding._runTest (package:flutter_test/src/binding.dart:995:14)
+#43     AutomatedTestWidgetsFlutterBinding.runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1475:24)
+#44     FakeAsync.run.<anonymous closure>.<anonymous closure> (package:fake_async/fake_async.dart:182:54)
+#49     withClock (package:clock/src/default.dart:52:10)
+#50     FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:182:22)
+#55     FakeAsync.run (package:fake_async/fake_async.dart:182:7)
+#56     AutomatedTestWidgetsFlutterBinding.runTest (package:flutter_test/src/binding.dart:1472:15)
+#57     testWidgets.<anonymous closure> (package:flutter_test/src/widget_tester.dart:175:24)
+#58     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#59     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#60     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+(elided 24 frames from dart:async)
+
+Timer (duration: 0:00:00.000000, periodic: false), created:
+#0      new FakeTimer._ (package:fake_async/fake_async.dart:308:62)
+#1      FakeAsync._createTimer (package:fake_async/fake_async.dart:252:27)
+#2      FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:185:19)
+#6      StreamQueryStore.markAsClosed (package:drift/src/runtime/executor/stream_queries.dart:144:11)
+#7      QueryStream._onCancelOrPause (package:drift/src/runtime/executor/stream_queries.dart:293:14)
+#8      QueryStream._stream.<anonymous closure>.<anonymous closure> (package:drift/src/runtime/executor/stream_queries.dart:225:11)
+#23     FutureHandlerProviderElementMixin.runOnDispose (package:riverpod/src/async_notifier/base.dart:430:26)
+#24     ProviderElementBase.dispose (package:riverpod/src/framework/element.dart:861:5)
+#25     FutureHandlerProviderElementMixin.dispose (package:riverpod/src/async_notifier/base.dart:471:11)
+#26     StreamProviderElement.dispose (package:riverpod/src/stream_provider/base.dart:180:11)
+#27     ProviderContainer.dispose (package:riverpod/src/framework/container.dart:634:15)
+#28     ProviderScopeState.dispose (package:flutter_riverpod/src/framework.dart:264:15)
+#29     StatefulElement.unmount (package:flutter/src/widgets/framework.dart:5696:11)
+#30     _InactiveElements._unmount (package:flutter/src/widgets/framework.dart:2077:13)
+#31     ListIterable.forEach (dart:_internal/iterable.dart:49:13)
+#32     _InactiveElements._unmountAll (package:flutter/src/widgets/framework.dart:2086:25)
+#33     BuildOwner.lockState (package:flutter/src/widgets/framework.dart:2765:15)
+#34     BuildOwner.finalizeTree (package:flutter/src/widgets/framework.dart:3175:7)
+#35     AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1439:19)
+#36     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:443:5)
+#37     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1392:15)
+#38     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1313:9)
+#39     AutomatedTestWidgetsFlutterBinding.scheduleWarmUpFrame (package:flutter_test/src/binding.dart:1364:5)
+#40     _runWidget (package:flutter/src/widgets/binding.dart:1442:7)
+#41     runApp (package:flutter/src/widgets/binding.dart:1373:3)
+#42     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1005:5)
+#45     TestWidgetsFlutterBinding._runTest (package:flutter_test/src/binding.dart:995:14)
+#46     AutomatedTestWidgetsFlutterBinding.runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1475:24)
+#47     FakeAsync.run.<anonymous closure>.<anonymous closure> (package:fake_async/fake_async.dart:182:54)
+#52     withClock (package:clock/src/default.dart:52:10)
+#53     FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:182:22)
+#58     FakeAsync.run (package:fake_async/fake_async.dart:182:7)
+#59     AutomatedTestWidgetsFlutterBinding.runTest (package:flutter_test/src/binding.dart:1472:15)
+#60     testWidgets.<anonymous closure> (package:flutter_test/src/widget_tester.dart:175:24)
+#61     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#62     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#63     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+(elided 27 frames from dart:async)
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+A Timer is still pending even after the widget tree was disposed.
+'package:flutter_test/src/binding.dart':
+Failed assertion: line 1527 pos 12: '!timersPending'
+
+When the exception was thrown, this was the stack:
+#2      AutomatedTestWidgetsFlutterBinding._verifyInvariants (package:flutter_test/src/binding.dart:1527:12)
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1034:7)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from class _AssertionError and package:stack_trace)
+
+The test description was:
+  X distingue un día de un mes, sin suavizado artificial
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +7 -2: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: X distingue un día de un mes, sin suavizado artificial [E]
+  Test failed. See exception logs above.
+  The test description was: X distingue un día de un mes, sin suavizado artificial
+
+00:10 +7 -2: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: rango de informe filtra peso real, incluida una toma sola
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13142:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:278:39)
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart:234:16)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#9      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:10 +8 -2: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: (tearDownAll)
+00:10 +8 -2: Some tests failed.

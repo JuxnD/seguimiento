@@ -1,5 +1,12 @@
 # Índice de contexto
 
+**Plan015 implementado localmente (10oct):** [gráficas con rango y evidencia](../progreso-metricas.md)
+y [recibo](sessions/2026-10-10-015-graficas-evidencia.md), worktree aislado
+`C:/My Projects/seguimiento-015-graficas`, base de integración122 `bf1da688`.
+Selección, resumen y registros comparten rango/protocolo; ausencia no es cero.
+No completa011 ni añade radar o historial de metas: la conexión con009 es una
+interfaz opcional, sin persistencia nueva. APK y aceptación humana pendientes.
+
 **Integración local122:** [baseClaude929 + evidencia008](sessions/2026-10-09-integracion-122-base-evidencia.md)
 en `C:/My Projects/seguimiento-122-integracion`. Reconciliación de protocolo
 de fuerza/técnica sin migración en ese tramo; sin publicación.
