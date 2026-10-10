@@ -1,6 +1,6 @@
 # Recibo011 — radar real y referencias históricas
 
-Estado: IMPLEMENTATION_COMPLETE_LOCAL_FRESH_ANALYZE_PENDING. Bytes portables verificados; validación de proyecto completo nuevo pendiente.
+Estado: IMPLEMENTATION_COMPLETE_LOCAL_PORTABLE. Proyecto completo recuperado y analyze0; revisión raíz/owner, native y publicación separados.
 
 ## Identidad, autoridad y límites
 
@@ -199,3 +199,27 @@ exclusiones ni debilitamiento; no repite full por empaque. La copia rechazada
 queda retenida, no se evadió el rechazo de borrado. Resultado se añadirá después
 del exit real y hashes completos. Full849/17 acredita fuente congelada previa;
 no se la atribuye a un comando que no se ejecutó.
+
+
+## Validación completa nueva y cierre final
+
+Commit de empaque probado: `c03e023689745dd51a495584da464058e7aae420`.
+Worktree **completo**, limpio, `C:/My Projects/seguimiento-011-portable-review`,
+rama `JuxnD/011-portable-review`. Los55 artefactos del snapshotc03 coinciden en
+Git blobs y checkout;18 fuentes Dart y10 contratos coinciden raw en checkout.
+Pub get offline exit0, build_runner normal de artefactos ignorados exit0
+(418outputs), **flutter analyze --no-pub exit0, sin avisos**; diffcheck0.
+No se ajustaron exclusiones ni reglas y no se repitió full por empaque. Fuente
+Dart/digest ec96584d intactos, por eso se conserva full849/17 y Root28 críticos.
+
+La WToriginal con copia parcial conserva su estado contaminado/no compilable
+del montaje: **no** se le atribuye este analyze0. El rechazo de cleanup y copia
+original permanecen; la alternativa fue recuperar el repositorio completo en
+otra WT autorizada, sin ejecutar la acción rechazada ni variar autoridad.
+
+Se archivan3logs nuevos de esta verificación +recibo de hashes (4artefactos),
+con59 hashes +manifest final. Conserva los24logs originales exactamente, sin
+sustituir rojos ni recortar bytes. SourceFULL/fuentes permanecen iguales y los
+logs nuevos se revisaron sin credenciales ni datos personales. La validación
+final se puede recuperar desde el commit que incorpora este cierre, código
+idéntico al c03; cambios posteriores sólo de documentación/evidencia.

@@ -2,7 +2,7 @@
   "base": "f34ab7c9fd4107ffc728e2b9bfdd2153e00315a4",
   "sourceDigest": "ec96584df2c18b737847de1177c69c158eb832ca2e3c62d4ce6625db6074138c",
   "sourceFrozen": "source-frozen.json",
-  "status": "IMPLEMENTATION_COMPLETE_LOCAL_FRESH_PROJECT_ANALYZE_PENDING",
+  "status": "IMPLEMENTATION_COMPLETE_LOCAL_PORTABLE",
   "synthetic": true,
   "schema": 22,
   "sdk": "3.22.0/Dart3.4",
@@ -83,6 +83,10 @@
     "directed-final.log": "77d4a21b835068f90f7dad53fc3a2f1b632d298cb61195b8e015511abbbe61fa",
     "final-frontiers-corrected.log": "7a9d460b92fa0d5b9c59314c5f5699b22651c611778318221deb46e78f47f818",
     "final-frontiers-preflight.log": "d583dcb9e80d70bfd8a0ca9597d43d1814e7a2bf8d87830b7110440206fd6c39",
+    "fresh-project-analyze.log": "bc9c9e089bd8d9904fa8443466455d1bc71201d96ede842ed03fda753603b477",
+    "fresh-project-build-runner.log": "1c19895c8cd4da525e10ad035a2a780b8f8d032db17278f120ad76c580aae2ae",
+    "fresh-project-hashes.json": "0db0a1f02e4092b3fe9b0a255b900cb098d42a69d4bdc35035ca97dd8c271ecf",
+    "fresh-project-pub-get.log": "084059e0ee9236f05bf88ed928fccce137bfb3d44a72a31cd13fbbdf7128063f",
     "frontiers-corrected.log": "bbc9a343e477eed99157588d58ff46c07d9ecb2146e9fdbe2e6d715ac1387fca",
     "frontiers.log": "1323e86d2fd06a0e897c7e20e01233a3f496d82538fa54c60ad96e4901c646c2",
     "full-before-decision-clock.log": "57ec5a638cc9e3253f87889bde3b5ac785af8067df0c160b69419d5b89a458dd",
@@ -114,7 +118,7 @@
   "portable": true,
   "packaging": {
     "exactDeclaredLogs": 24,
-    "artifactHashCount": 55,
+    "artifactHashCount": 59,
     "sourcePhysicalHashes": 18,
     "sourceGitCanonicalLFHashes": 18,
     "unchangedContracts": 10,
@@ -123,9 +127,25 @@
     "dartGitDiff": "normal, no -diff source",
     "protection": "synthetic fixture provenance + private credential-pattern scan0; not universal secret detector",
     "finalOriginalArtifactFreshHashes": 55,
-    "currentProjectCheck": "Pending complete new worktree analyze; no exclusions",
+    "currentProjectCheck": "Complete fresh worktree analyze0; original partial retained after rejection",
     "cleanupRejected": "CreateProcess Rejected: blocked by policy; exact owned portable-checkout retained, no retries or alternative removal/move",
-    "capsuleZipSHA256": "ef8e486b64792612903d6a92d866468b86a5ad1160e94d0f97747e3c74f75eaa"
+    "capsuleZipSHA256": "ef8e486b64792612903d6a92d866468b86a5ad1160e94d0f97747e3c74f75eaa",
+    "sourceFullCheck": "849/17 snapshot ec96584d unchanged"
   },
-  "currentOriginalWorktreeAnalyze": "OPEN: partial verification checkout retained after policy rejection; source unchanged"
+  "currentOriginalWorktreeAnalyze": "OPEN: partial verification checkout retained after policy rejection; source unchanged",
+  "freshCompleteProject": {
+    "commit": "c03e023689745dd51a495584da464058e7aae420",
+    "path": "C:/My Projects/seguimiento-011-portable-review",
+    "branch": "JuxnD/011-portable-review",
+    "artifactsBlobAndCheckout": 55,
+    "sourceRawCheckout": 18,
+    "unchangedContractsRawCheckout": 10,
+    "pubGetOfflineExit": 0,
+    "buildRunnerExit": 0,
+    "analyzeExit": 0,
+    "diffCheckExit": 0,
+    "sourceUntouched": true,
+    "log": "fresh-project-analyze.log",
+    "noExtraFull": true
+  }
 }
