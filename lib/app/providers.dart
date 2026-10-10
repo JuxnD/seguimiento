@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart' show TableUpdateQuery;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -303,7 +304,17 @@ final reminderSyncProvider = Provider<void>((ref) {
   ref.listen(dayClosedProvider(dayKey(today)), (_, __) => run());
   ref.listen(stepsDayProvider(dayKey(today)), (_, __) => run());
   ref.listen(reminderSchedulerProvider, (_, __) => run());
+  ref.listen(coachSignalsProvider, (_, __) => run());
   run();
+});
+
+/// Lo que cambia la lectura del acompañamiento sin pasar por los providers de
+/// arriba (plan 009, R2): cómo amaneció, fútbol, vigencias y decisiones. Un
+/// cambio guardado reprograma o retira el aviso de pasos.
+final coachSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables(
+      [db.morningChecks, db.footballGames, db.goalVersions, db.coachProposals, db.dailySteps]));
 });
 
 /// Única puerta para reprogramar los avisos. Nunca lanza: sin permiso de

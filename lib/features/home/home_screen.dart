@@ -1513,7 +1513,10 @@ class _WalksLine extends StatelessWidget {
             const Icon(Icons.self_improvement, size: 18, color: AppColors.steps),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(dashboard.coach!.action ?? 'Pasos suaves, en llano.',
+              // La acción compartida y la señal que la motiva (R2).
+              child: Text(
+                  '${dashboard.coach!.action ?? 'Pasos suaves, en llano.'} '
+                  'Por qué: ${dashboard.coach!.evidence.join('; ')}.',
                   style: Theme.of(context).textTheme.bodyMedium),
             ),
           ],

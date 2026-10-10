@@ -180,7 +180,7 @@ void main() {
       await fill((i) => 6400 + i * 20, rested: false);
       await today20(false);
       final r = await coach.stepsReading(today);
-      expect((r.state, r.proposal), (CoachState.observar, null));
+      expect((r.state, r.proposal, r.recoveryFirst), (CoachState.recuperacion, null, true));
       expect(r.reason, contains('no te recuperaste bien'));
     });
 

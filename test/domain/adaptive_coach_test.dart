@@ -121,8 +121,10 @@ void main() {
       expect((r.state, r.proposal), (CoachState.faltanDatos, null));
       expect(r.reason, contains('falta saber cómo te recuperas'));
       final bad = read(today, weekdays(today, (i) => 6400 + i * 20), recovery: RecoverySignal.desfavorable);
-      expect((bad.state, bad.proposal), (CoachState.observar, null));
+      expect((bad.state, bad.proposal, bad.recoveryFirst), (CoachState.recuperacion, null, true),
+          reason: 'lo declarado frena la subida y también la presión de caminar (R2)');
       expect(bad.reason, contains('no te recuperaste bien'));
+      expect(bad.action, contains('Sin caminata extra'));
     });
 
     test('carga alta hoy (90 min a RPE 8) o dos sesiones hoy frenan la propuesta ese día', () {

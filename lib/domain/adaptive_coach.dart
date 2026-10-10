@@ -177,6 +177,21 @@ CoachReading stepsReading({
     );
   }
 
+  // Lo declarado manda (R2): si dijo que no se recuperó bien, Hoy, las
+  // caminatas y el aviso no empujan pasos. No es un diagnóstico de
+  // agotamiento: se repite lo que la persona marcó.
+  if (recovery == RecoverySignal.desfavorable) {
+    const why = 'declaraste que no te recuperaste bien en los últimos 3 días';
+    return CoachReading(
+      evaluatedOn: d0,
+      state: CoachState.recuperacion,
+      reason: 'Hoy la recuperación va primero: $why.',
+      evidence: const [why],
+      action: 'Pasos suaves, en llano. Sin caminata extra por la meta.',
+      nextReview: addDays(d0, 1),
+    );
+  }
+
   final window = coachWindow(d0);
   final byDay = {for (final e in steps.entries) dateOnly(e.key): e.value};
   final recorded = [for (final d in window) if (byDay[d] != null) d];
@@ -229,15 +244,6 @@ CoachReading stepsReading({
         state: CoachState.observar,
         reason: 'Vas para subir la meta, pero la carga de hoy ya es alta (${load.todayLoad}): la revisión espera.',
         evidence: [...evidence, 'carga de hoy ${load.todayLoad}'],
-        nextReview: addDays(d0, 1),
-      );
-    }
-    if (recovery == RecoverySignal.desfavorable) {
-      return CoachReading(
-        evaluatedOn: d0,
-        state: CoachState.observar,
-        reason: 'Vas para subir la meta, pero declaraste que no te recuperaste bien: la revisión espera.',
-        evidence: [...evidence, 'recuperación declarada no normal en 3 días'],
         nextReview: addDays(d0, 1),
       );
     }
