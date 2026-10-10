@@ -1,0 +1,89 @@
+{
+  "base": "cdcc9dfc0fb2f7ccf06e1f8198d860271941c6c1",
+  "productionBase": "604af8257751ecab1cf477a6794d53ced2274925",
+  "scope": "two UI meal harnesses only: actual scroll and hitTestable before taps",
+  "viewport": "unchanged default800x600",
+  "deadlineWatchdogSeconds": 120,
+  "baseline": {
+    "exit": 1,
+    "watchdog": "NOT_TRIGGERED",
+    "seconds": 12.116890500008594,
+    "pid": 10660,
+    "command": [
+      "cmd.exe",
+      "/d",
+      "/c",
+      "C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat",
+      "test",
+      "--no-pub",
+      "--concurrency=1",
+      "--reporter",
+      "expanded",
+      "test/ui/meal_form_free_edit_test.dart",
+      "test/ui/meal_form_free_replace_test.dart"
+    ]
+  },
+  "after": {
+    "exit": 0,
+    "watchdog": "NOT_TRIGGERED",
+    "seconds": 13.857826999999816,
+    "pid": 31244,
+    "command": [
+      "cmd.exe",
+      "/d",
+      "/c",
+      "C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat",
+      "test",
+      "--no-pub",
+      "--concurrency=1",
+      "--reporter",
+      "expanded",
+      "test/ui/meal_form_free_edit_test.dart",
+      "test/ui/meal_form_free_replace_test.dart"
+    ],
+    "testSourceHashes": {
+      "test/ui/meal_form_free_edit_test.dart": "d3e8bab0437034d4819ba4b36c5174c32b4e7557934c408ce0f7362a8ce2ee45",
+      "test/ui/meal_form_free_replace_test.dart": "878c256ce9ce3e1d9db52ae4249e4b5fd8cbfb71489a4f03f0c9c57f8498c80d"
+    }
+  },
+  "analyzeExit": 0,
+  "productionChanged": false,
+  "artifacts": {
+    "baseline.log": {
+      "rawSha256": "ad436524d0e173ee0863a5d1b97713013d45aa80b1d07a0155fa5d34dea31a9d",
+      "rawBytes": 11937,
+      "gzip": "baseline.log.gz",
+      "gzipSha256": "b0a836a2ae380cbfe0df9ef2509208eb1d134f72d769bd4a1ad202553b883885"
+    },
+    "baseline-result.json": {
+      "rawSha256": "f3842ecd6175cffa1a4c0b2627454aafc1462ba59b2eab28d452a38e2049bf07",
+      "rawBytes": 404,
+      "gzip": "baseline-result.json.gz",
+      "gzipSha256": "58d92aa8142d0b431b9f14ffb443a7f0e302e7488b07474502c6728d406a9787"
+    },
+    "after-scroll.log": {
+      "rawSha256": "3838b36cf4cb472d8b45249a226fe03df7e01b94daae023fd5ed110cb00aeffc",
+      "rawBytes": 988,
+      "gzip": "after-scroll.log.gz",
+      "gzipSha256": "9995c92dc6046635bed09a3ac333c42253d8801267875d69be4a87c233d75195"
+    },
+    "after-scroll-result.json": {
+      "rawSha256": "3552009bbca687cff4e05afd00f232ba26c90df6236491bc7aa6c2bff0a6adde",
+      "rawBytes": 665,
+      "gzip": "after-scroll-result.json.gz",
+      "gzipSha256": "05d7025176b8c40a24355635eb635d6372929b987ea7a5484564533caed6b82c"
+    },
+    "analyze.log": {
+      "rawSha256": "e524cac316d59e9969b20bbb18154b79ddc684f6a927b34f7524c823ae926bce",
+      "rawBytes": 99,
+      "gzip": "analyze.log.gz",
+      "gzipSha256": "bae0790c4541535d18dd70527a173b5a4df51c294052ba2dc4148958f0aa6894"
+    }
+  },
+  "priorCI": {
+    "source": "008 downloaded terminalCI37e, raw123-ci-second-failed.txt",
+    "rawSha256": "8653be14526b440c3cb0ce5a021cfa4fc2fab1ba42652f155fd85fe338e84bfa",
+    "rawBytes": 557457,
+    "preservedBy": "008 release123-ci-evidence"
+  }
+}

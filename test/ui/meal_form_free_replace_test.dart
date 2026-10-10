@@ -52,7 +52,11 @@ void main() {
     ));
     await settle(tester);
 
-    await tester.tap(find.byTooltip('Entrada libre'));
+    final freeEntry = find.byTooltip('Entrada libre');
+    await tester.ensureVisible(freeEntry);
+    await settle(tester);
+    expect(freeEntry.hitTestable(), findsOneWidget);
+    await tester.tap(freeEntry);
     await settle(tester);
     final fields = find.descendant(of: find.byType(AlertDialog), matching: find.byType(TextField));
     await tester.enterText(fields.at(0), 'Arroz blanco cocido');

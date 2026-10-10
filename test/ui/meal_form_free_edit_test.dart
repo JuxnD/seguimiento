@@ -72,7 +72,11 @@ void main() {
     ));
     await tester.tap(find.text('Abrir comida'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Yogur ×1 porción'));
+    final item = find.text('Yogur ×1 porción');
+    await tester.ensureVisible(item);
+    await tester.pumpAndSettle();
+    expect(item.hitTestable(), findsOneWidget);
+    await tester.tap(item);
     await tester.pumpAndSettle();
     expect(find.text('«Yogur» ya está en el catálogo'), findsNothing);
     await tester.tap(find.text('Guardar').last);
@@ -84,6 +88,8 @@ void main() {
 
     final save = find.text('Guardar');
     await tester.ensureVisible(save);
+    await tester.pumpAndSettle();
+    expect(save.hitTestable(), findsOneWidget);
     await tester.tap(save);
     await tester.pumpAndSettle();
     expect(saved, isTrue);
