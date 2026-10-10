@@ -98,7 +98,7 @@ void main() {
       final dose = StrengthDose.decode(variantDose().encode())!;
       expect((dose.kind, dose.fromVariant, dose.toVariant, dose.sets), (DoseKind.variante, 'Remo con piernas rectas', 'Remo con pies elevados', 3));
       List<StrengthSetEvidence> at(String v, {int n = 3}) => [for (var i = 0; i < n; i++) StrengthSetEvidence(reps: 9, rir: 2, variant: v)];
-      expect(strengthReview(dose, later(at('Remo con pies elevados'))), 'subiste a Remo con pies elevados y se sostuvo el 20 oct (3 series limpias)');
+      expect(strengthReview(dose, later(at('Remo con pies elevados'))), 'subiste a Remo con pies elevados y se sostuvo el 20 oct (3 series sin fallo ni partidas, RIR ≥ 1 anotado)');
       expect(strengthReview(dose, later(at('Remo con piernas rectas'))), 'aceptaste subir; el 20 oct repetiste Remo con piernas rectas: no demuestra la subida');
       expect(strengthReview(dose, later(at('Remo con pies elevados', n: 2))),
           'aceptaste subir a Remo con pies elevados; el 20 oct sólo 2 de 3 series con la subida: no demostrada');
@@ -112,10 +112,41 @@ void main() {
       expect(strengthReview(dose, later(clean(8))), startsWith('aceptaste subir (más banda o pausa arriba)'));
     });
 
-    test('lo guardado que no es una dosis no se interpreta', () {
+    test('lo guardado que no es una dosis completa no se interpreta', () {
       expect(StrengthDose.decode('+2–5 kg de mochila y vuelve a 6'), isNull);
       expect(StrengthDose.decode('{"v":2}'), isNull);
       expect(StrengthDose.decode(null), isNull);
+      const ok = '{"v":1,"kind":"carga","sessionId":1,"fromLoadKg":5,"sets":4,"repsMin":6}';
+      expect(StrengthDose.decode(ok)?.kind, DoseKind.carga);
+      for (final bad in [
+        '{"v":1,"kind":"variante","sessionId":1,"sets":3,"repsMin":8}', // sin variante destino
+        '{"v":1,"kind":"variante","sessionId":1,"toVariant":"","sets":3,"repsMin":8}',
+        '{"v":1,"kind":"carga","sessionId":1,"repsMin":6}', // sin series
+        '{"v":1,"kind":"carga","sessionId":1,"sets":0,"repsMin":6}',
+        '{"v":1,"kind":"carga","sessionId":1,"sets":4}', // sin piso
+        '{"v":1,"kind":"carga","sessionId":"1","sets":4,"repsMin":6}',
+        '{"v":1,"kind":"carga","sessionId":1,"sets":4,"repsMin":6,"fromLoadKg":-2}',
+        '{"v":1,"kind":"subir","sessionId":1,"sets":4,"repsMin":6}',
+        '{"v":1,',
+      ]) {
+        expect(StrengthDose.decode(bad), isNull, reason: bad);
+      }
+    });
+
+    test('carga: +2 kg con otra variante no es la misma progresión; RIR sin anotar no se certifica', () {
+      const dose = StrengthDose(
+          kind: DoseKind.carga, sessionId: 1, fromLoadKg: 5, fromVariant: 'lastre', sets: 4, repsMin: 6, planDayId: 7);
+      List<StrengthSetEvidence> sets(double kg, String? variant, {int? rir = 2}) =>
+          [for (var i = 0; i < 4; i++) StrengthSetEvidence(reps: 7, rir: rir, loadKg: kg, variant: variant)];
+      expect(strengthReview(dose, later(sets(7, 'agarre cerrado'))),
+          'aceptaste subir carga; el 20 oct cambiaste de variante (lastre → agarre cerrado): no es la misma progresión');
+      expect(strengthReview(dose, later(sets(7, 'lastre'))),
+          'subiste a 7 kg y se sostuvo el 20 oct (4 series sin fallo ni partidas, RIR ≥ 1 anotado)');
+      expect(strengthReview(dose, later(sets(7, 'lastre', rir: null))),
+          'subiste a 7 kg y se sostuvo el 20 oct (4 series sin fallo ni partidas; RIR no anotado en ninguna)');
+      final mixed = [...sets(7, 'lastre').take(3), const StrengthSetEvidence(reps: 7, loadKg: 7, variant: 'lastre')];
+      expect(strengthReview(dose, later(mixed)),
+          'subiste a 7 kg y se sostuvo el 20 oct (4 series sin fallo ni partidas; RIR no anotado en 1)');
     });
   });
 }

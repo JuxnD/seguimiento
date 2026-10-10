@@ -98,7 +98,7 @@ void main() {
     final input = week(legacyOnly);
     final alerts = buildAlerts(ReportStats(input));
     expect(alerts.where((a) => a.contains('bajo el mínimo')), isEmpty);
-    expect(alerts, contains('Proteína promedio 145 g: el mínimo que regía esos días no está registrado, sin comparar'));
+    expect(alerts, contains('Mínimo de proteína de esos días no registrado: el promedio de 145 g no se compara'));
     final report = buildReport(input);
     expect(report, contains('(meta histórica no registrada)'));
     expect(report, isNot(contains('160')));

@@ -131,10 +131,13 @@ class CoachRepository {
         final dose = StrengthDose.decode(last.$2.evidence);
         final attempt = await _firstSessionWith(e.name, from: last.$2.decidedOn!, before: date, notId: dose?.sessionId);
         if (attempt != null) {
+          final raw = last.$2.evidence ?? '';
           a = a.copyWith(
-              review: dose == null
-                  ? 'aceptaste subir; no quedó guardada la dosis acordada: no se puede revisar'
-                  : strengthReview(dose, attempt));
+              review: dose != null
+                  ? strengthReview(dose, attempt)
+                  : raw.startsWith('{')
+                      ? 'aceptaste subir; la dosis guardada está incompleta: no se puede revisar'
+                      : 'aceptaste subir; no quedó guardada la dosis acordada: no se puede revisar');
         }
       }
       out.add(a);
@@ -143,45 +146,49 @@ class CoachRepository {
   }
 
   /// Primera sesión (cualquier protocolo) con `exercise` desde `from` y antes
-  /// de `before`: la que intentó la subida aceptada.
+  /// de `before`: la que intentó la subida aceptada. Alcance: una consulta
+  /// (join con el ejercicio, primera por fecha e id) y otra para sus series,
+  /// por ejercicio con subida aceptada; no recorre sesión por sesión.
   Future<StrengthSessionEvidence?> _firstSessionWith(String exercise,
       {required DateTime from, required DateTime before, int? notId}) async {
     final exId = await ExerciseRepository(db).idOf(exercise);
     if (exId == null) return null;
-    final rows = await (db.select(db.sessions)
-          ..where((t) =>
-              t.date.isBiggerOrEqualValue(dayKey(from)) & t.date.isSmallerThanValue(dayKey(before)) & db.trainingSessions)
-          ..orderBy([(t) => OrderingTerm(expression: t.date), (t) => OrderingTerm(expression: t.id)]))
+    final sessions = db.sessions;
+    final q = db.select(sessions).join([innerJoin(db.sessionSets, db.sessionSets.sessionId.equalsExp(sessions.id))])
+      ..where(db.sessionSets.exerciseId.equals(exId) &
+          sessions.date.isBiggerOrEqualValue(dayKey(from)) &
+          sessions.date.isSmallerThanValue(dayKey(before)) &
+          db.trainingSessions &
+          (notId == null ? const Constant(true) : sessions.id.equals(notId).not()))
+      ..orderBy([OrderingTerm.asc(sessions.date), OrderingTerm.asc(sessions.id)])
+      ..limit(1);
+    final row = (await q.getSingleOrNull())?.readTable(sessions);
+    if (row == null) return null;
+    final sets = await (db.select(db.sessionSets)
+          ..where((t) => t.sessionId.equals(row.id) & t.exerciseId.equals(exId))
+          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
         .get();
-    for (final row in rows.where((r) => r.id != notId)) {
-      final sets = await (db.select(db.sessionSets)
-            ..where((t) => t.sessionId.equals(row.id) & t.exerciseId.equals(exId))
-            ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-          .get();
-      if (sets.isEmpty) continue;
-      return StrengthSessionEvidence(
-        sessionId: row.id,
-        date: parseDay(row.date),
-        type: row.type,
-        exercise: exercise,
-        planDayId: row.planDayId,
-        mode: row.mode,
-        incomplete: row.incomplete,
-        imported: row.imported,
-        sets: [
-          for (final s in sets)
-            StrengthSetEvidence(
-                reps: s.reps,
-                rir: s.rir,
-                split: s.split,
-                splitDetail: s.splitDetail,
-                toFailure: s.toFailure,
-                loadKg: s.loadKg,
-                variant: s.variant),
-        ],
-      );
-    }
-    return null;
+    return StrengthSessionEvidence(
+      sessionId: row.id,
+      date: parseDay(row.date),
+      type: row.type,
+      exercise: exercise,
+      planDayId: row.planDayId,
+      mode: row.mode,
+      incomplete: row.incomplete,
+      imported: row.imported,
+      sets: [
+        for (final s in sets)
+          StrengthSetEvidence(
+              reps: s.reps,
+              rir: s.rir,
+              split: s.split,
+              splitDetail: s.splitDetail,
+              toFailure: s.toFailure,
+              loadKg: s.loadKg,
+              variant: s.variant),
+      ],
+    );
   }
 
   /// Decide la propuesta de pasos que se mostró con el día real de la
@@ -196,8 +203,8 @@ class CoachRepository {
     final fresh = await stepsReading(day);
     final p = fresh.proposal;
     if (fresh.state != CoachState.propuesta || p == null || p.id != shown.id) return fresh;
-    await GoalRepository(db).decideSteps(p, status,
-        today: day, acceptedValue: acceptedValue, evidence: fresh.evidence.join(' · '));
+    await GoalRepository(db)
+        .decideSteps(p, status, today: day, acceptedValue: acceptedValue, evidence: fresh.evidence.join(' · '));
     return null;
   }
 

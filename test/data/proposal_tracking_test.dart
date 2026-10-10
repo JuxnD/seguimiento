@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
@@ -98,6 +99,79 @@ void main() {
       expect((await dips(d(10, 27))).status, StrengthStatus.subir, reason: 'martes siguiente, misma evidencia');
     });
 
+    // Oráculos de la revisión R2 de Codex (285eaf4, seguimiento-009-review-r2),
+    // adoptados con el arreglo: sesión de 5 kg «lastre» y aceptar con la dosis
+    // guardada. El control usa el texto nuevo, que dice qué se demostró.
+    Future<void> acceptRecordedLoadIncrease() async {
+      await db.delete(db.sessions).go();
+      await db.delete(db.coachProposals).go();
+      await training.save(SessionDraft(
+        date: d(10, 13),
+        type: SessionType.trenSuperior,
+        planDayId: (await plan.dayFor(d(10, 13)))!.dayId,
+        sets: [
+          for (var i = 0; i < 4; i++) SetDraft(exercise: 'Fondos en barra', reps: 10, rir: 2, loadKg: 5, variant: 'lastre'),
+        ],
+      ));
+      final before = await dips(d(10, 20));
+      expect(before.status, StrengthStatus.subir, reason: 'cuatro series limpias en el techo del rango');
+      expect(before.text, contains('+2–5 kg'), reason: 'propuesta existente de carga, no una política del test');
+      await goals.decideProposal(before.proposalId!, strengthProposalKind(before.exercise), ProposalStatus.aceptada,
+          today: d(10, 20), evidence: before.dose!.encode());
+      expect((await dips(d(10, 20))).decision, ProposalStatus.aceptada);
+    }
+
+    Future<void> lastre(DateTime date, {required double kg, int count = 4, String variant = 'lastre'}) async {
+      await training.save(SessionDraft(
+        date: date,
+        type: SessionType.trenSuperior,
+        planDayId: (await plan.dayFor(date))!.dayId,
+        sets: [
+          for (var i = 0; i < count; i++)
+            SetDraft(exercise: 'Fondos en barra', reps: 7, rir: 2, loadKg: kg, variant: variant),
+        ],
+      ));
+    }
+
+    test('R2 aceptar no prueba subida si la sesión siguiente mantiene carga y variante', () async {
+      await acceptRecordedLoadIncrease();
+      await lastre(d(10, 20), kg: 5);
+      final evidence = (await training.lastStrengthEvidence('Fondos en barra', d(10, 27)))!;
+      expect(evidence.sets.map((s) => (s.loadKg, s.variant)), everyElement((5, 'lastre')));
+      final after = await dips(d(10, 27));
+      expect(after.review, isNot(startsWith('subiste')),
+          reason: 'aceptar fue intención; SQLite conserva los mismos 5 kg y la misma variante');
+      expect(after.review, 'aceptaste subir; el 20 oct repetiste 5 kg: no demuestra la subida');
+    });
+
+    test('R2 una sola serie de las cuatro previstas no sostiene la dosis subida', () async {
+      await acceptRecordedLoadIncrease();
+      await lastre(d(10, 20), kg: 7, count: 1);
+      final tuesday = (await plan.dayFor(d(10, 27)))!;
+      expect(tuesday.day.exercises.firstWhere((e) => e.name == 'Fondos en barra').sets, 4);
+      final after = await dips(d(10, 27));
+      expect(after.review, isNot(startsWith('subiste y se sostuvo')));
+      expect(after.review, 'aceptaste subir a 7 kg; el 20 oct sólo 1 de 4 series con la subida: no demostrada');
+    });
+
+    test('R2 control: carga mayor con cuatro series limpias sí se sostiene', () async {
+      await acceptRecordedLoadIncrease();
+      await lastre(d(10, 20), kg: 7);
+      expect((await dips(d(10, 27))).review,
+          'subiste a 7 kg y se sostuvo el 20 oct (4 series sin fallo ni partidas, RIR ≥ 1 anotado)');
+    });
+
+    test('R2 carga con otra variante y dosis guardada incompleta: no se afirma ni se rompe Hoy', () async {
+      await acceptRecordedLoadIncrease();
+      await lastre(d(10, 20), kg: 7, variant: 'agarre cerrado');
+      expect((await dips(d(10, 27))).review,
+          'aceptaste subir carga; el 20 oct cambiaste de variante (lastre → agarre cerrado): no es la misma progresión');
+      // Una decisión restaurada con JSON incompleto: Hoy carga y lo dice.
+      await (db.update(db.coachProposals)..where((t) => t.kind.equals(strengthProposalKind('Fondos en barra'))))
+          .write(const CoachProposalsCompanion(evidence: Value('{"v":1,"kind":"variante","sessionId":1,"sets":4,"repsMin":6}')));
+      expect((await dips(d(10, 27))).review, 'aceptaste subir; la dosis guardada está incompleta: no se puede revisar');
+    });
+
     /// Martes 13 con 4×10 limpias: la regla propone +2–5 kg; se acepta el 20
     /// con la dosis guardada y la sesión del 20 la intenta (o no).
     Future<String?> reviewAfter(Future<void> Function() attempt, {bool withDose = true}) async {
@@ -119,7 +193,7 @@ void main() {
           'aceptaste subir; el 20 oct repetiste peso corporal: no demuestra la subida',
           reason: 'mismo peso: aceptar "Lo intento hoy" no es subir');
       expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4)),
-          'subiste a 4 kg y se sostuvo el 20 oct (4 series limpias)');
+          'subiste a 4 kg y se sostuvo el 20 oct (4 series sin fallo ni partidas, RIR ≥ 1 anotado)');
       expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4, sets: 1)),
           'aceptaste subir a 4 kg; el 20 oct sólo 1 de 4 series con la subida: no demostrada');
       expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4, failure: true)),

@@ -34,7 +34,8 @@ List<String> buildAlerts(ReportStats s) {
     if (span.single case final min?) {
       if (p < min) out.add('Proteína promedio ${fmtInt(p)} g, bajo el mínimo de ${fmtInt(min)} g');
     } else if (span.segments.isEmpty) {
-      out.add('Proteína promedio ${fmtInt(p)} g: el mínimo que regía esos días no está registrado, sin comparar');
+      // Sin alerta concluyente: se dice la incertidumbre, no una falta.
+      out.add('Mínimo de proteína de esos días no registrado: el promedio de ${fmtInt(p)} g no se compara');
     } else {
       final judged = [
         for (final d in s.closedDays)

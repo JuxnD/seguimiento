@@ -417,23 +417,33 @@ class StrengthDose {
 
   String encode() => jsonEncode(toJson());
 
-  /// null si lo guardado no es una dosis (p. ej. una decisión anterior que
-  /// sólo guardó el texto): entonces no se revisa.
+  /// null si lo guardado no es una dosis completa: una decisión anterior que
+  /// sólo guardó el texto, o un JSON sin series/piso válidos o (variante) sin
+  /// la variante destino. Entonces no se revisa; nunca se completa a ciegas.
   static StrengthDose? decode(String? raw) {
     if (raw == null || !raw.startsWith('{')) return null;
     try {
       final j = jsonDecode(raw) as Map<String, Object?>;
       if (j['v'] != 1) return null;
+      final kind = DoseKind.values.asNameMap()[j['kind']];
+      final sessionId = j['sessionId'], sets = j['sets'], repsMin = j['repsMin'];
+      final load = j['fromLoadKg'], from = j['fromVariant'], to = j['toVariant'];
+      final mode = j['mode'], planDayId = j['planDayId'];
+      if (kind == null || sessionId is! int || sets is! int || sets < 1 || repsMin is! int || repsMin < 1) return null;
+      if (load != null && (load is! num || !load.isFinite || load < 0)) return null;
+      if ((from != null && from is! String) || (to != null && to is! String)) return null;
+      if ((mode != null && mode is! String) || (planDayId != null && planDayId is! int)) return null;
+      if (kind == DoseKind.variante && (to is! String || to.isEmpty)) return null;
       return StrengthDose(
-        kind: DoseKind.values.byName(j['kind']! as String),
-        sessionId: j['sessionId']! as int,
-        fromLoadKg: (j['fromLoadKg'] as num?)?.toDouble(),
-        fromVariant: j['fromVariant'] as String?,
-        toVariant: j['toVariant'] as String?,
-        sets: j['sets'] as int?,
-        repsMin: j['repsMin'] as int?,
-        mode: j['mode'] as String?,
-        planDayId: j['planDayId'] as int?,
+        kind: kind,
+        sessionId: sessionId,
+        fromLoadKg: (load as num?)?.toDouble(),
+        fromVariant: from as String?,
+        toVariant: to as String?,
+        sets: sets,
+        repsMin: repsMin,
+        mode: mode as String?,
+        planDayId: planDayId as int?,
       );
     } on Object {
       return null;
@@ -485,17 +495,24 @@ String strengthReview(StrengthDose dose, StrengthSessionEvidence later) {
   }
   double load(StrengthSetEvidence s) => s.loadKg ?? 0;
   final from = dose.fromLoadKg ?? 0;
+  // Subir carga es con la misma variante: otro agarre o ejercicio con +2 kg
+  // no es la misma progresión.
   bool atDose(StrengthSetEvidence s) => switch (dose.kind) {
-        DoseKind.carga => load(s) - from >= StrengthDose.minLoadStepKg - 1e-9 &&
+        DoseKind.carga => s.variant == dose.fromVariant &&
+            load(s) - from >= StrengthDose.minLoadStepKg - 1e-9 &&
             load(s) - from <= StrengthDose.maxLoadStepKg + 1e-9,
         DoseKind.variante => s.variant == dose.toVariant,
         DoseKind.otra => false,
       };
   String kg(double v) => v == 0 ? 'peso corporal' : '${fmtDec(v)} kg';
-  final target = dose.kind == DoseKind.carga ? '+2–5 kg de mochila' : dose.toVariant!;
+  final target = dose.kind == DoseKind.carga ? '+2–5 kg de mochila' : (dose.toVariant ?? '');
   final done = later.sets.where(atDose).toList();
   if (done.isEmpty) {
     final s = later.sets.first;
+    if (dose.kind == DoseKind.carga && s.variant != dose.fromVariant) {
+      return 'aceptaste subir carga; $when cambiaste de variante '
+          '(${dose.fromVariant ?? 'sin variante'} → ${s.variant ?? 'sin variante'}): no es la misma progresión';
+    }
     final same = dose.kind == DoseKind.carga ? load(s) == from : s.variant == dose.fromVariant;
     if (same) {
       return 'aceptaste subir; $when repetiste ${dose.kind == DoseKind.carga ? kg(from) : (dose.fromVariant ?? 'la misma variante')}: '
@@ -505,7 +522,7 @@ String strengthReview(StrengthDose dose, StrengthSessionEvidence later) {
         '${dose.kind == DoseKind.carga ? kg(load(s)) : (s.variant ?? 'otra variante')}: no es la subida acordada';
   }
   final expected = dose.sets ?? later.sets.length;
-  final label = dose.kind == DoseKind.carga ? kg(load(done.first)) : dose.toVariant!;
+  final label = dose.kind == DoseKind.carga ? kg(load(done.first)) : target;
   if (done.length < expected || done.length < later.sets.length) {
     return 'aceptaste subir a $label; $when sólo ${done.length} de $expected series con la subida: no demostrada';
   }
@@ -523,7 +540,14 @@ String strengthReview(StrengthDose dose, StrengthSessionEvidence later) {
     cause = 'la más baja fue $low, bajo el piso de ${dose.repsMin}';
   }
   if (cause != null) return 'subiste a $label; $when no se sostuvo: $cause';
-  return 'subiste a $label y se sostuvo $when (${done.length} series limpias)';
+  // Lo que se demuestra es lo guardado: sin fallo ni partidas y, si se anotó,
+  // RIR ≥ 1. Un RIR sin anotar no es una reserva demostrada (008 lo admite
+  // como dato no declarado).
+  final noRir = done.where((s) => s.rir == null).length;
+  final quality = noRir == 0
+      ? 'sin fallo ni partidas, RIR ≥ 1 anotado'
+      : 'sin fallo ni partidas; RIR no anotado en ${noRir == done.length ? 'ninguna' : '$noRir'}';
+  return 'subiste a $label y se sostuvo $when (${done.length} series $quality)';
 }
 
 extension<T> on List<T> {
