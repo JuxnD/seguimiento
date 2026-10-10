@@ -20,16 +20,17 @@ class ChartDay {
 class DatedChartGoal {
   const DatedChartGoal(
       {required this.from,
-      required this.to,
+      this.to,
       required this.value,
       required this.unit,
       required this.source});
-  final DateTime from, to;
+  final DateTime from;
+  final DateTime? to;
   final double value;
   final String unit, source;
   bool covers(DateTime date) =>
       !dateOnly(date).isBefore(dateOnly(from)) &&
-      !dateOnly(date).isAfter(dateOnly(to));
+      (to == null || !dateOnly(date).isAfter(dateOnly(to!)));
 }
 
 typedef ChartGoalResolver = DatedChartGoal? Function(

@@ -1,0 +1,29 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: referencia confirma día real al cruzar medianoche sin backdate
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: (DateTime, DateTime):<(2026-10-11 00:00:00.000, 2026-10-11 00:00:00.000)>
+  Actual: (DateTime, DateTime):<(2026-10-10 00:00:00.000, 2026-10-10 00:00:00.000)>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart:379:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart line 379
+The test description was:
+  referencia confirma día real al cruzar medianoche sin backdate
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: referencia confirma día real al cruzar medianoche sin backdate [E]
+  Test failed. See exception logs above.
+  The test description was: referencia confirma día real al cruzar medianoche sin backdate
+  
+00:01 +0 -1: (tearDownAll)
+00:01 +0 -1: Some tests failed.

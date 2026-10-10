@@ -14,6 +14,9 @@ import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
 import '../body/test_results_screen.dart';
 import 'charts.dart';
+import 'personal_radar_section.dart';
+import '../../data/repositories/personal_radar_repository.dart';
+import '../../domain/chart_evidence.dart';
 
 enum SummaryPeriod { semana, mes, todo }
 
@@ -107,7 +110,21 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-            child: SegmentedButton<SummaryPeriod>(
+            child: MediaQuery.textScalerOf(context).scale(1) >= 1.6
+                ? DropdownButtonFormField<SummaryPeriod>(
+                    value: _period,
+                    decoration: const InputDecoration(labelText: 'Período'),
+                    items: const [
+                      DropdownMenuItem(value: SummaryPeriod.semana, child: Text('Semana')),
+                      DropdownMenuItem(value: SummaryPeriod.mes, child: Text('Mes')),
+                      DropdownMenuItem(value: SummaryPeriod.todo, child: Text('Todo')),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() { _period = value; _offset = 0; });
+                    },
+                  )
+                : SegmentedButton<SummaryPeriod>(
               segments: const [
                 ButtonSegment(value: SummaryPeriod.semana, label: Text('Semana')),
                 ButtonSegment(value: SummaryPeriod.mes, label: Text('Mes')),
@@ -120,6 +137,7 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
               }),
             ),
           ),
+          PersonalRadarSection(end: key.$2),
           HeroCard(
             color: color,
             overline: _period == SummaryPeriod.todo ? 'Programa' : (_offset == 0 ? 'En curso' : 'Anterior'),
@@ -168,7 +186,7 @@ class _SummaryScreenState extends ConsumerState<SummaryScreen> {
                 ? [const AppCard(children: [EmptyHint('Nada registrado en este periodo todavía.')])]
                 : [
                     _ExercisesCard(summary: s, versus: _versus(to, today)),
-                    _StepsCard(summary: s, stepsGoal: profile.targets.stepsTarget.toDouble()),
+                    _StepsCard(summary: s, stepsGoal: profile.targets.stepsTarget.toDouble(), goalResolver: ref.watch(goalHistoryProvider).valueOrNull == null ? null : (day, metric) => historicalChartGoal(ref.read(goalHistoryProvider).requireValue, day, metric)),
                     _EnergyCard(summary: s),
                     _FoodCard(
                         summary: s, proteinMin: profile.proteinMin.toDouble(), kcalTarget: profile.kcalTarget.toDouble()),
@@ -222,44 +240,46 @@ class _Headline extends StatelessWidget {
     // datos posibles; cerrado, los del periodo desde el primer dato. Los
     // anteriores a la app no son faltas.
     final planned = inProgress ? s.plannedElapsed : s.plannedSessions - s.plannedWithoutData;
-    final grid = GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.1,
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
-      children: [
-        _BigStat(
-          icon: Icons.fitness_center,
-          color: Theme.of(context).colorScheme.primary,
-          value: planned > 0 ? '${s.trainingSessions}/$planned' : '${s.trainingSessions}',
-          label: inProgress && s.plannedSessions > 0 ? 'hasta hoy' : 'sesiones',
-        ),
-        _BigStat(
-          icon: Icons.timer_outlined,
-          color: AppColors.kcal,
-          value: _hours(s.activeSec),
-          label: 'activo',
-          delta: p == null || versus.isEmpty ? null : _pct(s.activeSec, p.activeSec),
-        ),
-        _BigStat(
-          icon: Icons.repeat,
-          color: AppColors.record,
-          value: fmtInt(s.totalReps),
-          label: 'repeticiones',
-          delta: p == null || versus.isEmpty ? null : _pct(s.totalReps, p.totalReps),
-        ),
-        _BigStat(
-          icon: Icons.directions_walk,
-          color: AppColors.steps,
-          value: fmtInt(s.stepsTotal),
-          label: 'pasos · ${fmtDec(s.distanceKm)} km',
-          delta: p == null || versus.isEmpty ? null : _pct(s.stepsTotal, p.stepsTotal),
-        ),
-      ],
-    );
-    final games = s.footballGames == 0 ? '' : ' Más ${s.footballGames} ${s.footballGames == 1 ? 'partido' : 'partidos'}.';
+    final stats = <Widget>[
+      _BigStat(
+        icon: Icons.fitness_center,
+        color: Theme.of(context).colorScheme.primary,
+        value: planned > 0 ? '${s.trainingSessions}/$planned' : '${s.trainingSessions}',
+        label: inProgress && s.plannedSessions > 0 ? 'hasta hoy' : 'sesiones',
+      ),
+      _BigStat(
+        icon: Icons.timer_outlined,
+        color: AppColors.kcal,
+        value: _hours(s.activeSec),
+        label: 'activo',
+        delta: p == null || versus.isEmpty ? null : _pct(s.activeSec, p.activeSec),
+      ),
+      _BigStat(
+        icon: Icons.repeat,
+        color: AppColors.record,
+        value: fmtInt(s.totalReps),
+        label: 'repeticiones',
+        delta: p == null || versus.isEmpty ? null : _pct(s.totalReps, p.totalReps),
+      ),
+      _BigStat(
+        icon: Icons.directions_walk,
+        color: AppColors.steps,
+        value: fmtInt(s.stepsTotal),
+        label: 'pasos · ${fmtDec(s.distanceKm)} km',
+        delta: p == null || versus.isEmpty ? null : _pct(s.stepsTotal, p.stepsTotal),
+      ),
+    ];
+    final grid = LayoutBuilder(
+        builder: (context, constraints) => Wrap(spacing: 8, runSpacing: 8, children: [
+              for (final stat in stats)
+                SizedBox(
+                    width: MediaQuery.textScalerOf(context).scale(1) >= 1.6
+                        ? constraints.maxWidth
+                        : (constraints.maxWidth - 8) / 2,
+                    child: stat)
+            ]));
+    final games =
+        s.footballGames == 0 ? '' : ' Más ${s.footballGames} ${s.footballGames == 1 ? 'partido' : 'partidos'}.';
     // Lo largo va debajo: en la tarjeta no cabe.
     final notes = [
       if (inProgress && s.plannedSessions > 0)
@@ -324,20 +344,14 @@ class _BigStat extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      Text(value, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
-                      if (delta != null) ...[const SizedBox(width: 6), _DeltaChip(percent: delta!)],
-                    ],
-                  ),
-                ),
-                Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: text.bodySmall),
+                Wrap(spacing: 6, children: [
+                  Text(value, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+                  if (delta != null) _DeltaChip(percent: delta!)
+                ]),
+                Text(label, style: text.bodySmall),
               ],
             ),
           ),
@@ -440,7 +454,8 @@ class _ExercisesCard extends StatelessWidget {
 }
 
 class _StepsCard extends StatelessWidget {
-  const _StepsCard({required this.summary, required this.stepsGoal});
+  const _StepsCard({required this.summary, required this.stepsGoal, this.goalResolver});
+  final ChartGoalResolver? goalResolver;
 
   final PeriodSummary summary;
 
@@ -465,7 +480,8 @@ class _StepsCard extends StatelessWidget {
               _Fact('Total', fmtInt(s.stepsTotal)),
               _Fact('Promedio', '${fmtInt(s.stepsAvg!)}/día'),
               _Fact('Distancia', '≈ ${fmtDec(s.distanceKm)} km'),
-              if (best != null) _Fact('Mejor día', '${fmtInt(best.$2)} (${weekdayShort(best.$1.weekday)} ${formatShort(best.$1)})'),
+              if (best != null)
+                _Fact('Mejor día', '${fmtInt(best.$2)} (${weekdayShort(best.$1.weekday)} ${formatShort(best.$1)})'),
             ],
           ),
           if (s.weekdaysWithSteps > 0)
@@ -474,17 +490,28 @@ class _StepsCard extends StatelessWidget {
               child: Text(
                 '${s.stepsGoal?.segments.isEmpty ?? false ? 'Meta histórica no registrada' : 'Meta de ${s.stepsGoal?.label(fmtInt) ?? fmtInt(stepsGoal)}'} '
                 'entre semana: ${s.weekdaysAtGoal} de '
-                '${s.weekdaysWithSteps - s.weekdaysGoalUnknown} días.'
-                '${s.weekdaysGoalUnknown == 0 ? '' : ' ${s.weekdaysGoalUnknown} con meta histórica no registrada.'}',
+                '${s.weekdaysWithSteps - s.weekdaysGoalUnknown - s.weekdaysWithoutGoal} días.'
+                '${s.weekdaysGoalUnknown == 0 ? '' : ' ${s.weekdaysGoalUnknown} con meta histórica no registrada.'}'
+                '${s.weekdaysWithoutGoal == 0 ? '' : ' ${s.weekdaysWithoutGoal} sin referencia.'}',
                 style: text.bodyMedium,
               ),
             ),
           if (s.days.length <= 62) ...[
             const SizedBox(height: 12),
             DailyBarsChart(
-              points: [for (final d in s.days) SeriesPoint(d.date, (d.steps ?? 0).toDouble())],
+              points: [
+                for (final d in s.days)
+                  if (d.steps != null) SeriesPoint(d.date, d.steps!.toDouble())
+              ],
+              days: [
+                for (final d in s.days)
+                  ChartDay(
+                      d.date, d.steps?.toDouble(), d.steps == null ? ChartDayStatus.missing : ChartDayStatus.closed,
+                      evidence: d.steps == null ? 'Sin pasos registrados' : 'Pasos observados')
+              ],
+              metric: 'steps',
+              goalResolver: goalResolver,
               color: AppColors.steps,
-              goal: stepsGoal.toDouble(),
               unit: 'pasos',
               emptyText: 'Sin pasos en el periodo.',
             ),
@@ -580,49 +607,68 @@ class _FoodCard extends StatelessWidget {
     // sabe, la proporción es la de días en meta y el rótulo lo dice.
     final protein = s.proteinGoal?.single ?? (s.proteinGoal == null ? proteinMin : null);
     final kcal = s.kcalGoal?.single ?? (s.kcalGoal == null ? kcalTarget : null);
-    final judged = s.closedDays - s.proteinDaysGoalUnknown;
+    final judged = s.closedDays - s.proteinDaysGoalUnknown - s.proteinDaysWithoutGoal;
     if (s.closedDays == 0) {
       return const AppCard(
         title: 'Comida',
-        children: [EmptyHint('Ningún día cerrado en el periodo: con desayuno, almuerzo y cena (o cerrado a mano) entra aquí.')],
+        children: [
+          EmptyHint('Ningún día cerrado en el periodo: con desayuno, almuerzo y cena (o cerrado a mano) entra aquí.')
+        ],
       );
     }
     return AppCard(
       title: 'Comida',
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: ProgressRing(
-                progress: kcal == null ? 0 : goalProgress(s.avgKcalIn!, kcal),
+        Wrap(spacing: 20, runSpacing: 12, children: [
+          if (kcal != null && kcal > 0)
+            ProgressRing(
+                progress: goalProgress(s.avgKcalIn!, kcal),
                 value: fmtInt(s.avgKcalIn!),
                 label: 'kcal/día',
-                sublabel: kcal == null ? 'meta ${s.kcalGoal!.short(fmtInt)}' : 'meta ${fmtInt(kcal)}',
+                sublabel: 'referencia ${fmtInt(kcal)}',
                 size: 110,
                 stroke: 10,
-                color: AppColors.kcal,
-              ),
-            ),
-            Expanded(
-              child: ProgressRing(
-                progress: protein != null
-                    ? goalProgress(s.avgProtein!, protein)
-                    : (judged == 0 ? 0 : s.proteinDaysAtMin / judged),
+                color: AppColors.kcal)
+          else
+            _Fact('Promedio kcal/día', fmtInt(s.avgKcalIn!)),
+          if (protein != null && protein > 0)
+            ProgressRing(
+                progress: goalProgress(s.avgProtein!, protein),
                 value: '${fmtInt(s.avgProtein!)} g',
                 label: 'proteína/día',
-                sublabel: protein == null ? 'mín ${s.proteinGoal!.short(fmtInt)}' : 'mín ${fmtInt(protein)} g',
+                sublabel: 'mín ${fmtInt(protein)} g',
                 size: 110,
                 stroke: 10,
-                color: AppColors.protein,
-              ),
-            ),
-          ],
-        ),
+                color: AppColors.protein)
+          else if (judged > 0)
+            ProgressRing(
+                progress: s.proteinDaysAtMin / judged,
+                value: '${s.proteinDaysAtMin}/$judged',
+                label: 'Días que alcanzaron mínimo',
+                sublabel: 'Promedio ${fmtInt(s.avgProtein!)} g/día',
+                size: 110,
+                stroke: 10,
+                color: AppColors.protein)
+          else
+            _Fact('Promedio proteína/día', '${fmtInt(s.avgProtein!)} g'),
+        ]),
+        if (kcal == null)
+          Text(
+              'Referencias kcal: ${s.kcalGoal?.label(fmtInt) ?? 'sin historia disponible'}. El promedio conserva lo registrado; no se compara con una sola cifra.'),
+        if (s.nutritionReferences.isNotEmpty)
+          ExpansionTile(title: const Text('Referencias por día'), children: [
+            for (final day in s.nutritionReferences)
+              ListTile(
+                  title: Text(formatLong(day.date)),
+                  subtitle: Text(
+                      'Proteína: ${!day.protein.known ? 'histórica no registrada' : day.protein.value == null ? 'sin referencia' : '${fmtDec(day.protein.value!)} g'} · kcal: ${!day.kcal.known ? 'histórica no registrada' : day.kcal.value == null ? 'sin referencia' : fmtInt(day.kcal.value!)}')),
+          ]),
         const SizedBox(height: 8),
         Text(
           'Promedio de ${s.closedDays} ${s.closedDays == 1 ? 'día cerrado' : 'días cerrados'}. '
-          'Proteína en meta: ${s.proteinDaysAtMin} de $judged.'
-          '${s.proteinDaysGoalUnknown == 0 ? '' : ' ${s.proteinDaysGoalUnknown} con meta histórica no registrada.'}',
+          'Días que alcanzaron la referencia de proteína: ${s.proteinDaysAtMin} de $judged.'
+          '${s.proteinDaysGoalUnknown == 0 ? '' : ' ${s.proteinDaysGoalUnknown} con meta histórica no registrada.'}'
+          '${s.proteinDaysWithoutGoal == 0 ? '' : ' ${s.proteinDaysWithoutGoal} sin referencia.'}',
           style: text.bodyMedium,
         ),
       ],

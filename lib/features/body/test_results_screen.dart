@@ -12,7 +12,8 @@ import '../training/test_mode_screen.dart';
 /// Test 1 / Test 2 / Test 3 con el % de mejora (§19.11) y la dosis inicial
 /// que sale del último test.
 class TestResultsScreen extends ConsumerWidget {
-  const TestResultsScreen({super.key});
+  const TestResultsScreen({super.key, this.focusPart});
+  final TestPart? focusPart;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,32 +26,35 @@ class TestResultsScreen extends ConsumerWidget {
         data: (r) => ListView(
           padding: const EdgeInsets.only(bottom: 32),
           children: [
-            const AppCard(
-              children: [
-                Text('Test 1 en la semana 1 del v3.1, Test 2 en la descarga (16–22 nov) y Test 3 con las pruebas '
-                    'del 11 dic. Por lado cuenta el más débil. Lo marcado "con dudas" lleva *.'),
-              ],
-            ),
+            const AppCard(children: [
+              Text(
+                  'Elige Test 1, 2 o 3 y la parte que quieras registrar. Por lado cuenta el más débil. Lo marcado "con dudas" lleva *. Abrir una prueba no guarda resultados.')
+            ]),
+            FutureBuilder<List<String>>(
+                future: _planned(ref),
+                builder: (_, dates) => dates.data == null || dates.data!.isEmpty
+                    ? const SizedBox.shrink()
+                    : AppCard(title: 'Calendario previsto', children: [for (final label in dates.data!) Text(label)])),
             AppCard(title: 'Abrir o continuar', children: [
               Wrap(spacing: 8, children: [
                 for (final round in [1, 2, 3])
-                  for (final part in TestPart.values)
+                  for (final part in [
+                    if (focusPart != null) focusPart!,
+                    ...TestPart.values.where((p) => p != focusPart)
+                  ])
                     OutlinedButton(
                         onPressed: () async {
                           final date =
-                              await ref.read(fitnessTestRepositoryProvider).recordedDateFor(round, part) ??
-                                  clock.now();
+                              await ref.read(fitnessTestRepositoryProvider).recordedDateFor(round, part) ?? clock.now();
                           if (!context.mounted) return;
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => TestModeScreen(date: date, round: round, part: part)));
+                          await Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => TestModeScreen(date: date, round: round, part: part)));
                         },
                         child: Text('T$round ${part == TestPart.torso ? 'torso' : 'piernas'}')),
               ]),
             ]),
             if (r.isEmpty)
-              const AppCard(children: [Text('Aún no hay resultados: el Test 1 es el lunes de la semana 1.')])
+              const AppCard(children: [Text('Aún no hay resultados. Elige una prueba cuando quieras medirla.')])
             else ...[
               AppCard(title: 'Torso, core y habilidades', children: [TestTable(results: r, items: torsoTests)]),
               AppCard(title: 'Piernas', children: [TestTable(results: r, items: legTests)]),
@@ -60,6 +64,20 @@ class TestResultsScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<List<String>> _planned(WidgetRef ref) async {
+    final repo = ref.read(fitnessTestRepositoryProvider);
+    final labels = <String>[];
+    for (final round in [1, 2, 3]) {
+      for (final part in TestPart.values) {
+        final day = await repo.plannedDateFor(round, part);
+        if (day != null) {
+          labels.add('Previsto: T$round ${part == TestPart.torso ? 'torso' : 'piernas'} · ${dayKey(day)}');
+        }
+      }
+    }
+    return labels;
   }
 }
 

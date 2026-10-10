@@ -1,0 +1,58 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:674:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:861:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2140:94)
+#3      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart:99:15)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados [E]
+  Test failed. See exception logs above.
+  The test description was: referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados
+  
+00:01 +0 -1: SQL→Tu progreso viewport inicial360 texto1.0 y detalle
+00:01 +1 -1: SQL→Tu progreso viewport inicial360 texto1.6 y detalle
+00:01 +2 -1: SQL→Tu progreso viewport inicial360 texto2.0 y detalle
+00:02 +3 -1: dos ejes/sin referencia y pasado no cambia por decisión de hoy
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:674:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:861:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2140:94)
+#3      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart:140:15)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  dos ejes/sin referencia y pasado no cambia por decisión de hoy
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +3 -2: dos ejes/sin referencia y pasado no cambia por decisión de hoy [E]
+  Test failed. See exception logs above.
+  The test description was: dos ejes/sin referencia y pasado no cambia por decisión de hoy
+  
+00:02 +3 -2: Tu progreso conecta radar real incluso sin pruebas
+00:02 +4 -2: (tearDownAll)
+00:02 +4 -2: Some tests failed.

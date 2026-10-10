@@ -1,0 +1,14 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados
+00:01 +1: SQL→Tu progreso viewport inicial360 texto1.0 y detalle
+00:02 +2: SQL→Tu progreso viewport inicial360 texto1.6 y detalle
+00:02 +3: SQL→Tu progreso viewport inicial360 texto2.0 y detalle
+00:02 +4: dos ejes/sin referencia y pasado no cambia por decisión de hoy
+00:03 +5: Cindy cancelada conserva pendiente y no crea sesión nueva
+00:03 +6: pasos ausentes≠0 y adaptador proteína histórica por día
+00:04 +7: Cindy abre cronómetro real con checklist y cancelar no escribe SQLite
+00:04 +8: anillo proteína variable muestra días1/2 y kcal conserva promedio
+00:04 +9: Tu progreso conecta radar real incluso sin pruebas
+00:04 +10: (tearDownAll)
+00:04 +10: All tests passed!

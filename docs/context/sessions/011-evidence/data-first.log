@@ -1,0 +1,37 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart
+test/data/personal_radar_repository_test.dart:134:73: Error: The operator '&' isn't defined for the class 'Expression<bool>'.
+ - 'Expression' is from 'package:drift/src/runtime/query_builder/query_builder.dart' ('/C:/Users/Acer/AppData/Local/Pub/Cache/hosted/pub.dev/drift-2.21.0/lib/src/runtime/query_builder/query_builder.dart').
+Try correcting the operator to an existing operator, or defining a '&' operator.
+      await (db.update(db.fitnessTests)..where((r) => r.round.equals(1) & r.item.equals('pullup'))).write(const FitnessTestsCompanion(value: Value(0)));
+                                                                        ^
+test/data/personal_radar_repository_test.dart:137:73: Error: The operator '&' isn't defined for the class 'Expression<bool>'.
+ - 'Expression' is from 'package:drift/src/runtime/query_builder/query_builder.dart' ('/C:/Users/Acer/AppData/Local/Pub/Cache/hosted/pub.dev/drift-2.21.0/lib/src/runtime/query_builder/query_builder.dart').
+Try correcting the operator to an existing operator, or defining a '&' operator.
+      await (db.delete(db.fitnessTests)..where((r) => r.round.equals(1) & r.item.equals('pullup'))).go();
+                                                                        ^
+00:00 +0 -1: loading C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart
+00:00 +0 -1: loading C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart
+00:00 +0 -1: loading C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart [E]
+  Error: the Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 10:3  throwToolExit
+  package:flutter_tools/src/compile.dart 898:9     DefaultResidentCompiler._compile.<fn>
+  dart:async/zone.dart 1407:47                     _rootRunUnary
+  dart:async/zone.dart 1308:19                     _CustomZone.runUnary
+  dart:async/future_impl.dart 847:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 876:13               Future._propagateToListeners
+  dart:async/future_impl.dart 772:9                Future._propagateToListeners
+  dart:async/future_impl.dart 652:5                Future._completeWithValue
+  dart:async/future_impl.dart 722:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone.dart 1399:13                     _rootRun
+  dart:async/zone.dart 1301:19                     _CustomZone.run
+  dart:async/zone.dart 1209:7                      _CustomZone.runGuarded
+  dart:async/zone.dart 1249:23                     _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:21         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 118:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 185:5      _RawReceivePort._handleMessage
+  
+00:00 +0 -1: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: proteína130→160 distingue promedio140 de días1/2
+00:00 +1 -1: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: kcal calendario real propia/heredada/ausente sin fallback cargado
+00:00 +2 -1: Some tests failed.

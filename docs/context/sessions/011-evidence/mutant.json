@@ -1,0 +1,9 @@
+{
+  "mutation": "omit actual contour segments; preserve vertices/fill",
+  "exit": 1,
+  "exactAssertion": "Tramo naranja entre v\u00e9rtices.",
+  "before": "2787648f8a748f067f37d3b9d69a9ca703aea2b9a750c3e8a4e72b11416af2fe",
+  "mutant": "235ad9cc939eb6427a886229b490d19d105d748d0184d5acfd8183d7b1994b8a",
+  "restored": "2787648f8a748f067f37d3b9d69a9ca703aea2b9a750c3e8a4e72b11416af2fe",
+  "test": "304451d32ffb57c744e151525fa0a2b0a8921718a3e25abf3df6b578488fb1c4"
+}

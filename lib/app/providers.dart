@@ -19,6 +19,8 @@ import '../data/local_flags.dart';
 import '../data/update_service.dart';
 import '../data/repositories/body_repository.dart';
 import '../data/repositories/chart_repository.dart';
+import '../data/repositories/personal_radar_repository.dart';
+import '../domain/progress_metrics.dart';
 import '../data/repositories/dashboard_repository.dart';
 import '../data/repositories/exercise_repository.dart';
 import '../data/repositories/fitness_test_repository.dart';
@@ -136,6 +138,21 @@ final ladderDecisionsProvider = FutureProvider.autoDispose((ref) async {
 /// Test de condición (§19.11).
 final fitnessTestRepositoryProvider = Provider((ref) => FitnessTestRepository(ref.watch(databaseProvider)));
 final fitnessTestsProvider = FutureProvider.autoDispose((ref) => ref.watch(fitnessTestRepositoryProvider).all());
+
+/// Shared history reader: reference edits and restores invalidate all consumers.
+final goalHistoryProvider = StreamProvider((ref) => GoalRepository(ref.watch(databaseProvider)).watchHistory());
+final radarSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables(
+      [db.fitnessTests, db.sessions, db.sessionSets, db.exercises]));
+});
+final personalRadarProvider = FutureProvider.family<PersonalRadar, String>((ref, end) async {
+  ref.watch(radarSignalsProvider);
+  final today = ref.watch(todayProvider);
+  final history = await ref.watch(goalHistoryProvider.future);
+  return PersonalRadarRepository(ref.watch(databaseProvider)).load(
+      end: parseDay(end), today: today, history: history);
+});
 
 /// Horas en cama anotadas la mañana de ese día (`YYYY-MM-DD`).
 final sleepDayProvider =
@@ -287,6 +304,7 @@ class TodayNotifier extends Notifier<DateTime> {
 /// Resumen de Hoy. Se recalcula cuando cambia cualquier dato que muestre.
 final dashboardProvider = FutureProvider((ref) {
   final today = ref.watch(todayProvider);
+  ref.watch(goalHistoryProvider);
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
   ref.watch(planVersionsProvider);
@@ -386,6 +404,7 @@ final pendingReviewProvider = StreamProvider((ref) => ref.watch(trainingReposito
 /// Se recarga cuando cambia cualquier dato de entrada.
 final reportInputProvider = FutureProvider.family<ReportInput, (String, String)>((ref, range) async {
   // Dependencias explícitas: al cambiar cualquiera, el informe se regenera.
+  ref.watch(goalHistoryProvider);
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
   ref.watch(stepsHistoryProvider);

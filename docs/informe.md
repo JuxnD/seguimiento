@@ -191,3 +191,20 @@ de guardarla igual.
 ### Resultados de condición en1.21
 
 El contexto de sesiones mode=test conserva nombre de prueba, lado, valor y calidad. Vacíos siguen pendientes y un solo lado no produce dosis ni mejora bilateral. La duración figura sin medir (0), para no convertir el tiempo de la pantalla en kcal de ejercicio. El informe y sus consultas usan ese contexto local existente; no se añadió un endpoint.
+
+
+## Plan 011 local: radar y metas históricas en las gráficas
+
+Desde el enlace Tu progreso se ve el radar de seis pruebas, con inicio y última
+medición comparable, hasta el corte mostrado. Detalles/registro/referencias usan
+rutas existentes. No se infiere condición física universal, ni se sustituye una
+prueba limpia por una reciente dudosa. El rango del informe conecta proteína a
+su vigencia histórica; pasos muestra ausencia distinta de0 y referencia por día
+entre semana. Valores desconocidos no se dibujan como fallos. El resumen separa
+promedios de alimentación de cumplimiento con denominador conocido, y aplica el
+calendario sábado/domingo de kcal ya existente. [Contrato de métricas](progreso-metricas.md)
+y [recibo011](context/sessions/2026-10-10-011-radar-integrado.md).
+
+`ReportInput.goalOn` de compatibilidad y otros lectores globales no cambian en011;
+la reconciliación de presencia/legado de012 se evalúa sobre esta integración,
+no se presume resuelta en toda la app. No hay cambio de schema/deps ni APK.

@@ -1,0 +1,41 @@
+{
+  "base": "f34ab7c9fd4107ffc728e2b9bfdd2153e00315a4",
+  "schema": 22,
+  "sdk": "3.22.0/Dart3.4",
+  "productSourceDigest": "9d0bd2542195a845de35fe8edf6a3bff65feffddd47c4db3fe4a7d5043c93c13",
+  "sourceHashes": {
+    "lib/app/providers.dart": "2c2105de1b9bca9dda4cea6a4caeea3a66814b67fa28a9ef574b6d9da499fdc4",
+    "lib/data/repositories/personal_radar_repository.dart": "ec7328eeca916286fef9d6629b408ccc72f18b8244c367acb71b452d7c9002b8",
+    "lib/domain/chart_evidence.dart": "1c8d9b7cecccce98bcfa76595fb8d4f88e41f9856a350e63495b7c0d9bc229e0",
+    "lib/domain/report/period_summary.dart": "80fc4fd543ae5f5c076d397c8d01fbde36b55caa021e17150b2db238921fc94d",
+    "lib/domain/report/report_input.dart": "d17fe327bbd18891c04a276d034c8ea36e12289f905dfb51db445f64ee6be091",
+    "lib/features/body/test_results_screen.dart": "dd84834795ecffec81a99a2741707c921b19c42169f227990bc7c4e868f3e134",
+    "lib/features/report/charts.dart": "1e769187bcdfab7097b6a663825e45f3d10a0ee877446e09fec8d475bdfce5fe",
+    "lib/features/report/charts_section.dart": "66db8b752c2363284f6a35be063cf4f9fbe35695d2af0dcb211e33d49fa76f01",
+    "lib/features/report/personal_radar_section.dart": "55e60dd43baec5f1f135a08fd75b0164b8d686860b569a220c7696ffbe1ef470",
+    "lib/features/report/personal_radar_widget.dart": "2787648f8a748f067f37d3b9d69a9ca703aea2b9a750c3e8a4e72b11416af2fe",
+    "lib/features/report/radar_reference_dialog.dart": "3affad43393fd9f0f8998b9b1bf706e38dd9069e4161338d5dbb6f3bc6c88a0a",
+    "lib/features/report/report_screen.dart": "ae8b2581d9c6b7001a4cfa0046f3efaeee1d81b8909bea4d5411d2f260bf6960",
+    "lib/features/report/summary_screen.dart": "75ea43c6e849e476f8d63df4bd7184f3a4ba13aca8b8629163d73e555fab9794",
+    "lib/features/training/training_screen.dart": "ab416894a43f6164e4755680d20562ca0eae15b2fa920955ae0c45f49ab9ff77",
+    "test/data/personal_radar_repository_test.dart": "e476035713e36bb582872129afa9e18b370ef74aa08086297481523eea3162d1",
+    "test/domain/progress_nutrition_reference_test.dart": "774216cfaced633f7f9330991fbc3379c6ddb1325331d2026a721d8434632849",
+    "test/support/radar_sql_fixture.dart": "2f3f6f9df6d86c0591c79740c98e8f5af5488e5a3b36b29157526178ce292744",
+    "test/ui/personal_radar_integration_test.dart": "4cc1dd6867319b5ac6d424eb914932c968cd88242f7d478bc857f465fd341911"
+  },
+  "unchangedContracts": {
+    "lib/domain/progress_metrics.dart": "74fbd23b377446ca5111249eef83bb08912979bd192351869d917d4c15255b85",
+    "lib/domain/personal_radar.dart": "000f47c551ea76578a99af2d1af753c052d358bc26ab2f07f196fcca909d328c",
+    "lib/domain/cindy_protocol.dart": "7304fb8cc906b5ba5f190ee30d6656d091266c8580b8168a85d82d6649da53a1",
+    "lib/domain/fitness_test.dart": "37af9a35247b5a4a3ce3787e49d0310f33935d8ba7f4a2d5a2e66f4a6243413f",
+    "lib/domain/progress_evidence.dart": "acef863ac4a4790f57093f9d5f2c75f704554ceda6a2009d966cced301c77fbd",
+    "lib/features/training/v3_timers.dart": "6852606cb7ffc2f7c2420b5751a2f75b5d7799eb5a25eb42a6d871782a53f720",
+    "lib/data/guided_plan_snapshot.dart": "95da058192147a942a35752bd669e5d790abdf64838fb8f5585e7116c8a325a0",
+    "lib/domain/goal_history.dart": "eccda764739b764b72c9abe3a170f8bda2c6b64c6d714e72918724c16ec002fd",
+    "pubspec.yaml": "ac11c418d47c8fc20c584ea0a3d25e2a463b5132e1da8f2c45e0d1866dfd388f",
+    "pubspec.lock": "6d625acce6c72b2485197988d02d0ef85ad1fdc4ac6169b6381f422811d69c05"
+  },
+  "painterBodyMatchesBase": true,
+  "native": "NOT_EXECUTED",
+  "data": "SYNTHETIC_ONLY"
+}

@@ -99,7 +99,7 @@ class ChartsSection extends ConsumerWidget {
         title: Text(
             '${formatLong(day.date)} · ${day.value == null ? '—' : '${fmtDec(day.value!)} g'} · ${day.statusLabel}'),
         subtitle: Text(
-            '${day.evidence.isEmpty ? 'No hay comida registrada para este día.' : day.evidence}${goal == null ? '' : '\nMínimo documentado: ${fmtDec(goal.value)} g · ${goal.source} (${formatLong(goal.from)} a ${formatLong(goal.to)}).'}'));
+            '${day.evidence.isEmpty ? 'No hay comida registrada para este día.' : day.evidence}${goal == null ? '' : '\nMínimo documentado: ${fmtDec(goal.value)} g · ${goal.source} (${formatLong(goal.from)} a ${goal.to == null ? "sin fin registrado" : formatLong(goal.to!)}).'}'));
   }
 }
 

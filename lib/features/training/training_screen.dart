@@ -285,6 +285,14 @@ Future<void> _startResistance(
 /// Cindy o Tabata con foto en disco: si Android cierra la app a mitad, Hoy
 /// ofrece retomarlo donde iba. Al terminar se guarda (sin revisar) y se abre
 /// el formulario.
+/// Public route for progress: retains pending-session protection and timer flow.
+Future<void> startCindyTest(BuildContext context, WidgetRef ref) async {
+  final allowed = await _noPendingSession(context, ref);
+  if (!context.mounted || !allowed) return;
+  await _runTimer(context, ref, date: dateOnly(ref.read(decisionClockProvider)()),
+      mode: 'cindy', cindyTest: true);
+}
+
 Future<void> _runTimer(
   BuildContext context,
   WidgetRef ref, {

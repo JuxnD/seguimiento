@@ -83,3 +83,30 @@ GoalRepository.setReference aprobado y reutilizar rutas de TestResults/TestMode 
 Entreno con su lifecycle. No lanzar un timer aislado que pierda su draft.
 GoalHistory.on(proteinaMin, día).known será condición para el adaptador015;
 la vigencia abierta no se convertirá en una fecha de fin ficticia.
+
+
+## Integración 011 en Tu progreso
+
+Presentación compacta: radar y leyenda antes del resumen de actividad; detalle y
+acciones se abren al tocar un eje. `compact` es opcional y conserva el renderer
+standalone018 por defecto. “Cómo leer esta gráfica” explica la referencia común,
+huecos y fechas. Controles nativos, navegación existente y texto sin clamp.
+Naranja Actual / turquesa Inicio discontinuo; nombres junto a ejes en tamaño
+normal, números+leyenda a texto2 según el painter original. No hay tarjetas
+completas duplicadas por defecto. Los datos provienen de SQLite; sólo los ensayos
+y capturas usan fixtures ficticios. La captura inicial no usa scroll/ensureVisible.
+
+Diálogo tiene State propio: su controller vive hasta desmontar la ruta, incluida
+su animación de salida. Una recarga de datos conserva el eje seleccionado. El
+resumen usa tarjetas con altura natural (el GridView fijo desbordaba texto1.6/2).
+Mantiene detalle textual de TODA evidencia, semántica/teclado/touch y callbacks
+reales de registro/referencia. Las capturas son prueba de renderer, no aceptación
+humana ni dispositivo Android. El owner aún debe confirmar comprensión del
+cambio, qué falta y de qué evidencia depende.
+
+
+Cierre de decisión: el diálogo lee `decisionClockProvider` al confirmar. Si
+cruza medianoche, guarda la vigencia del día real de confirmación y la indica
+al guardar; no reutiliza la fecha de apertura. El origen de GoalVersion se
+muestra con rótulos humanos. El selector de período usa dropdown ancho en
+texto1.6/2, conserva escala/elección/rango sin partir Semana. Ver recibo011.

@@ -13,6 +13,7 @@ import '../../domain/report/period_summary.dart';
 import '../../ui/widgets.dart';
 import '../../ui/hero.dart';
 import 'charts_section.dart';
+import '../../data/repositories/personal_radar_repository.dart';
 import 'summary_screen.dart';
 import 'weekly_ai_screen.dart';
 import '../ai/ai_conversation_screen.dart';
@@ -181,7 +182,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                           context, ref, key, range.start, range.end),
                 ),
               ),
-              ChartsSection(range: key),
+              ChartsSection(range: key, goalResolver: ref.watch(goalHistoryProvider).valueOrNull == null ? null :
+                  (day, metric) => historicalChartGoal(ref.read(goalHistoryProvider).requireValue, day, metric)),
               if (_customRange == null) _WeekNotes(weekIndex: week),
               AppCard(
                 title: 'Markdown',
