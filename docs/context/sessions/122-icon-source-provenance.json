@@ -1,0 +1,23 @@
+{
+  "assets/icon/seguimiento_icon.svg": {
+    "checkout_raw_sha256": "af271886643b3920b6fc7d03501dd9499bf35ea87c4b87b60e1d882680347ef2",
+    "git_canonical_sha256": "38f62afcd3fee83620fe3f4909e209ce9c16781fcc2fabc1fe698a0885a19c8a",
+    "approved_receipt_sha256": "af271886643b3920b6fc7d03501dd9499bf35ea87c4b87b60e1d882680347ef2",
+    "checkout_normalized_matches_git": true,
+    "approved_matches_raw_or_canonical": true
+  },
+  "tool/icon_vector.py": {
+    "checkout_raw_sha256": "57ac16398b54a59539b7cf2eac2672859f43e38157a622b50f51d9743f073fe1",
+    "git_canonical_sha256": "ff319bb6bc042d1f9b89573ab6ba9bfb7d1a5811331edecb0ae675e533d51e04",
+    "approved_receipt_sha256": "ff319bb6bc042d1f9b89573ab6ba9bfb7d1a5811331edecb0ae675e533d51e04",
+    "checkout_normalized_matches_git": true,
+    "approved_matches_raw_or_canonical": true
+  },
+  "tool/icons.py": {
+    "checkout_raw_sha256": "2f4a3c70def8beb4ad79e99e7000acf66b1766f970aed1e161c673cf0290532e",
+    "git_canonical_sha256": "48665775b08ec828192d04241dcde5186f4eda962b74f7f045c498c42979f0ca",
+    "approved_receipt_sha256": "2f4a3c70def8beb4ad79e99e7000acf66b1766f970aed1e161c673cf0290532e",
+    "checkout_normalized_matches_git": true,
+    "approved_matches_raw_or_canonical": true
+  }
+}

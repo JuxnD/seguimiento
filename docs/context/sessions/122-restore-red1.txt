@@ -1,0 +1,93 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:02 +1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+00:04 +2: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+00:05 +3: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13142:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart:174:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _BackupCardState._progress (package:seguimiento/features/settings/settings_screen.dart:194:14)
+<asynchronous suspension>
+#10     _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:216:21)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:07 +4: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+00:07 +5: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: (tearDownAll)
+00:07 +5: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart
+00:09 +5: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: (setUpAll)
+00:09 +5: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:15 +6: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y confirma restauración
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <1>
+  Actual: <0>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart:116:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart line 116
+The test description was:
+  Ajustes recorre ZIP y confirma restauración
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:36 +6 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y confirma restauración [E]
+  Test failed. See exception logs above.
+  The test description was: Ajustes recorre ZIP y confirma restauración
+
+00:36 +6 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: (tearDownAll)
+01:06 +6 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart
+01:07 +6 -1: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: (setUpAll)
+01:07 +6 -1: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: el primer arranque respalda; hasta la semana siguiente no repite
+01:07 +7 -1: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: se queda solo con los más recientes
+01:09 +8 -1: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: el respaldo se puede restaurar y trae los datos de ese día
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13142:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart:62:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:10 +9 -1: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: archivos ajenos en la carpeta no se listan ni se borran
+01:10 +10 -1: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: (tearDownAll)
+01:10 +10 -1: loading C:/My Projects/seguimiento-122-integracion/test/tool/pilot_release_gate_test.dart
+01:11 +10 -1: C:/My Projects/seguimiento-122-integracion/test/tool/pilot_release_gate_test.dart: gate compara capturas y rechaza mutantes; fixtures no autorizan publicación
+01:31 +11 -1: Some tests failed.

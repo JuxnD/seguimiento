@@ -49,6 +49,7 @@ void main() {
   for (final confirm in [false, true]) {
     testWidgets('Ajustes recorre ZIP y ${confirm ? 'confirma restauración' : 'cancela sin tocar datos'}',
         (tester) async {
+      final deadline = Stopwatch()..start();
       late Directory root;
       late DatabaseHost a;
       late DatabaseHost b;
@@ -89,7 +90,8 @@ void main() {
         await tester.pump(const Duration(milliseconds: 20));
       }
       expect(find.text('Exportar registros y fotos'), findsOneWidget);
-      expect(find.textContaining('Solo contienen registros, sin fotos.'), findsOneWidget);
+      expect(find.textContaining('Contienen la base y el historial de IA, sin fotos ni licencia.'), findsOneWidget);
+      expect(find.textContaining('Una por semana, sin cifrar dentro de la app'), findsOneWidget);
       await tester.runAsync(() => tester.tap(find.text('Restaurar desde un respaldo')));
       for (var i = 0; i < 150 && find.text('¿Restaurar este respaldo?').evaluate().isEmpty; i++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
@@ -97,21 +99,44 @@ void main() {
       }
       expect(find.text('¿Restaurar este respaldo?'), findsOneWidget);
       expect(find.textContaining('las 1 fotos del ZIP'), findsOneWidget);
+      final container = ProviderScope.containerOf(tester.element(find.byType(SettingsScreen)), listen: false);
       await tester.runAsync(() => tester.tap(find.text(confirm ? 'Restaurar' : 'Cancelar')));
-      for (var i = 0; i < 100; i++) {
+      var completed = false;
+      // Espera la frontera real, no un número de frames: SQLite y las fotos
+      // siguen trabajando fuera del reloj falso. El timeout del test conserva
+      // sus 30 s; reservamos 5 s para releer datos y cerrar los recursos.
+      while (deadline.elapsed < const Duration(seconds: 25)) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
         await tester.pump(const Duration(milliseconds: 10));
-        if (find.text('¿Restaurar este respaldo?').evaluate().isEmpty &&
-            find.text('Restaurando respaldo').evaluate().isEmpty &&
-            find.widgetWithText(OutlinedButton, 'Restaurar desde un respaldo').evaluate().isNotEmpty &&
-            tester
-                    .widget<OutlinedButton>(find.widgetWithText(OutlinedButton, 'Restaurar desde un respaldo'))
-                    .onPressed !=
-                null) {
-          break;
+        expect(tester.takeException(), isNull);
+        final errors = tester
+            .widgetList<Text>(find.byType(Text))
+            .map((w) => w.data ?? '')
+            .where((text) => text.startsWith('Error:') || text.startsWith('No se pudo'));
+        expect(errors, isEmpty, reason: 'La restauración debe terminar sin error visible');
+        final snacks = tester
+            .widgetList<Text>(find.descendant(of: find.byType(SnackBar), matching: find.byType(Text)))
+            .map((w) => w.data ?? '')
+            .toList();
+        if (confirm && snacks.isNotEmpty) {
+          expect(snacks, ['Registros y 1 fotos restaurados']);
         }
+        // OutlinedButton.icon es un subtipo: byType(OutlinedButton) no lo
+        // encuentra y convertiría la espera en un bucle fijo inadvertido.
+        final restoreButtons = tester
+            .widgetList<OutlinedButton>(find.ancestor(
+                of: find.text('Restaurar desde un respaldo'),
+                matching: find.byWidgetPredicate((w) => w is OutlinedButton)))
+            .toList();
+        completed = find.text('¿Restaurar este respaldo?').evaluate().isEmpty &&
+            container.read(databaseGenerationProvider) == (confirm ? 1 : 0) &&
+            find.text('Restaurando respaldo').evaluate().isEmpty &&
+            restoreButtons.length == 1 &&
+            restoreButtons.single.onPressed != null &&
+            (!confirm || find.text('Registros y 1 fotos restaurados').evaluate().isNotEmpty);
+        if (completed) break;
       }
-      final container = ProviderScope.containerOf(tester.element(find.byType(SettingsScreen)), listen: false);
+      expect(completed, isTrue, reason: 'La operación debe cerrar su UI y renovar la base antes de releer');
       expect(container.read(databaseGenerationProvider), confirm ? 1 : 0);
       await tester.runAsync(() async {
         expect((await BodyRepository(b.db).watchWeights().first).map((w) => w.kg), [confirm ? 72 : 73]);
