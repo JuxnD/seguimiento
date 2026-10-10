@@ -1,0 +1,61 @@
+{
+  "sourceBase": "604af8257751ecab1cf477a6794d53ced2274925",
+  "isolatedHead": "8d4f76c6bb524d71dde690b477ade776f7ac69b3",
+  "productionChanges": false,
+  "harnessRestoredByteExact": true,
+  "originalTestSha256": "2984c15c3aec428f8fb91fe26fa93804e9646e62a2117b531ebed1fb2d7c9453",
+  "result": {
+    "exit": "WATCHDOG_90S",
+    "watchdog": "TRIGGERED",
+    "seconds": 90.83733310000389,
+    "pid": 50968,
+    "taskkillExit": 0,
+    "command": [
+      "cmd.exe",
+      "/d",
+      "/c",
+      "C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat",
+      "test",
+      "--no-pub",
+      "--concurrency=1",
+      "--reporter",
+      "expanded",
+      "--plain-name",
+      "SQL pendiente con Ajustes encima muestra el alta visible",
+      "test/ui/pilot_restore_route_test.dart"
+    ]
+  },
+  "lastBoundary": "sql-before",
+  "notReached": [
+    "sql-after",
+    "finally-before",
+    "close-before"
+  ],
+  "cause": "NOT_CONFIRMED",
+  "artifacts": {
+    "probe.log": {
+      "rawSha256": "7c88ffd3015da4077f74ea9c87b6789ff2acecd3de60e16181208d12680085f1",
+      "rawBytes": 781,
+      "gzip": "probe.log.gz",
+      "gzipSha256": "a67214335b5504e68b3b095d4daf75bd871a0af084d2b6f560683922b09bcb65"
+    },
+    "probe-result.json": {
+      "rawSha256": "0f62a069fd665e63ce1b75f5a125c50bf2a86fe8986520857c1e892deaa9ffa1",
+      "rawBytes": 471,
+      "gzip": "probe-result.json.gz",
+      "gzipSha256": "f8e828c320a57661dd9b7313a7c5a7fa27b0a5a3b97945c33c1eb5d90c6558db"
+    },
+    "watchdog-taskkill.log": {
+      "rawSha256": "b016113397b98a866ab85fd90628b1a27c4f7b3acf040a37ccf888a8b1342671",
+      "rawBytes": 540,
+      "gzip": "watchdog-taskkill.log.gz",
+      "gzipSha256": "378759d1818c8db1b1db437696f8081b418d5b9c63c869d514c96bb597be3722"
+    },
+    "instrumented-test.dart": {
+      "rawSha256": "63a6668ec5243f61ad6f9d5c632fd90491c5b5d521141b641b61e3f23a3327d6",
+      "rawBytes": 15338,
+      "gzip": "instrumented-test.dart.gz",
+      "gzipSha256": "5a8dfcaffb59e92e428310c6d6d86cd6f6af06f4edb99a7a1b89cf2bce713473"
+    }
+  }
+}
