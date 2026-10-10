@@ -1,5 +1,10 @@
 # Checkpoint122 · avisos de molestias y Cindy de prueba
 
+**Revisión independiente abierta:** el coordinador no aprueba aún el cierre
+completo del checkpoint. En HEAD9c0de20 obtuvo16 casos que pasan y2 fallos de
+snapshot histórico. La evidencia positiva previa se conserva como esa ejecución,
+no como aprobación vigente. Diagnóstico de la barrera de guardado abajo.
+
 Worktree `C:/My Projects/seguimiento-122-integracion`, rama
 `JuxnD/122-integracion`; base `f0df77c4f1220dd9fb8f8a859d37bced589bdb8a`.
 Tramo separado del [checkpoint015](2026-10-10-integracion-122-015.md).
@@ -108,6 +113,79 @@ Al archivar, `git diff --cached --check` detectó espacios finales emitidos por
 Flutter/Drift. Sólo se normalizaron esos espacios y UTF8/LF de los logs; no se
 quitaron warnings, assertions o fallos. [Hashes antes/después](122-warmup-log-normalization.json).
 No se ejecuta full hasta que el coordinador cierre la fuente candidata.
-Implementación integrada y positivos verificados localmente; sensibilidad
+Implementación integrada; la revisión de snapshots permanece abierta. Sensibilidad
 negativa de esta conexión NO_EVALUADO, APK,
 Manifest fusionado, continuidad instalada y comprensión humana siguen abiertos.
+
+## Revisión independiente: barrera UI→archivo
+
+El coordinador informó una repetición limpia en9c0de20, sesión37836, exit1:
+16 pasan y2 fallan. «Pasos con dosis» leyó `warmupDone:[]` aunque la pantalla
+ya marcaba2de7; «saltar» leyó `warmupSkipped:false` tras el botón. Este párrafo
+registra el resultado entregado porRoot; no inventa ni reconstruye un log
+completo que el coordinador no guardó. Coincide con la familia del primer fallo
+conservado y no se borra por la repetición local que había pasado.
+
+[Instrumentación aislada](122-warmup-store-race-diagnostic.dart.txt) sólo en
+el test: subclase deActiveSessionStore llama `super.save`, devuelve la misma
+Future, observa emitted/completion, instancia/ruta y archivo físico. No hace
+otro save, no reemplaza ni cambia el orden del writer de producción. Conserva
+el raw capturado tras el flush antiguo para la assertion original; una espera
+diagnóstica posterior, limitada5s, no sustituye ese raw por el nuevo.
+
+[Salida](122-warmup-store-race-diagnostic.txt), exit0,3 casos: el regex previsto
+para los dos históricos también seleccionó el legado por su nombre. No se
+declara como reproducer rojo del fallo justo después de20ticks. La traza sí
+expone una ventana real: emitted#3 ya contiene ambas marcas, pero completion#1
+conserva archivo vacío de marcas y pendientes2/3; completion#3 termina con ambas
+marcas. Para salto, emitted#2 estrue, completion#1 aúnfalse con2pendiente y
+completion#2 termina entrue. Instancia/ruta son las mismas, sin future-error
+y sin tmp residual al completion final. En esta corrida el flush antiguo ya
+alcanzó `pending:[]`, así no reproduce el punto exacto del fallo independiente
+ni atribuye su causa por la mera repetición verde.
+
+La ventana observada y la espera fija sin conocer completion son evidencia de
+que la barrera antigua no acredita persistencia. Error tragado o rename fallido
+no aparecieron en esta traza; no se afirma imposibilidad general. **Causa exacta
+de los fallos anteriores NO_CONFIRMADA.** El coordinador leyó el resultado y
+autorizó la barrera observable siguiente; mutante2DB BLOCKED sin reapertura.
+
+## Barrera observable autorizada en el harness
+
+`_ObservedStore.save` llama al escritor real y devuelve EXACTAMENTE la misma
+Future de `super.save`. Registra último id emitido/completado, Future emitida,
+pendientes y eventual error. No contiene archivo alterno ni otro guardado.
+`flushStore` reemplaza20ticks fijos por condición: al menos un save real emitido,
+último completado igual al emitido y conjunto pendiente vacío. Bombea el reloj
+fake y cede al IO sólo mientras esa condición esté pendiente; `Stopwatch` falla
+al llegar5s, dentro de la cota original del widgettest. No se amplió ningún
+timeout, no se suprimió el warningDrift ni se modifica writer/producción.
+
+Después de esa completion los casos siguen leyendo físicamente el archivo con
+`File.readAsString`; no usan el snapshot del spy ni un `load` sustituto. Se
+conservan EXACTAS las assertions de `aproximacion:Flexiones`, salto y draft.
+Si un save termina pero el archivo sigue viejo, esas assertions aún deben fallar;
+la barrera no fabrica el oráculo ni afirma que el writer tragado pueda validarse
+por la mera Future. Se aplica sólo a casos de este archivo que ya usabanflushStore.
+
+- [18 dirigidos](122-warmup-store-barrier-focused.txt), exit0, sin skips,
+  primera ejecución con la nueva barrera. No hubo reintentos hasta pasar.
+- [8 controlesStore/snapshot](122-warmup-store-barrier-controls.txt), exit0,
+  sin skips: última foto, clear, corrupción y serialización legada.
+- [Análisis](122-warmup-store-barrier-analyze.txt) exit0, sin incidencias, y
+  `git diff --check` exit0. Logs archivados sólo con espacios finales yUTF8/LF
+  normalizados; [hashes antes/después](122-warmup-store-log-normalization.json).
+  Sin full nuevo,
+  APK, AVD, teléfono, push o producción. Revisión independiente posterior
+  pendiente; no se hereda la aprobación de otra ejecución.
+
+Reejecución adicional:
+
+```powershell
+& 'C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat' test --no-pub --concurrency 1 --reporter expanded test/data/active_session_store_test.dart test/domain/active_session_test.dart
+& 'C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat' test --no-pub --reporter expanded test/ui/guided_warmup_test.dart --name 'calentamiento guiado:|saltar el calentamiento'
+```
+
+El segundo comando documenta la instrumentación archivada (3casos seleccionados);
+con el archivo actual ejecuta las mismas assertions mediante la nueva barrera.
+No se reconstruye un rojo anterior ni se reabre el mutante2DB.

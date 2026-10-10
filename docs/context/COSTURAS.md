@@ -216,3 +216,13 @@ NO_EVALUADO: diagnóstico de harness BLOCKED al cerrar la DB fuente, pese a
 que el montaje llega al oráculo y la DB vacía cierra. Se conserva salida de
 los intentos; no se declara rojo a una interrupción ni se infiere bug nativo
 del cierre de una prueba. Revisión final, full candidato e instalación pendientes.
+
+La repetición independiente deRoot en9c0de20 encontró2 snapshots históricos
+viejos (16casos pasan/2fallan), por lo que no aprobó el cierre completo. Traza
+aislada conserva emitted/completion/archivo de una misma instancia: foto vieja
+mientras quedaban saves nuevos pendientes; último completion deja foto correcta.
+No reproduce el fallo justo tras20ticks y su causa exacta sigueNO_CONFIRMADA.
+Se autorizó una barrera en el harness que espera las futures reales emitidas
+sin pendientes, cota5s dentro del timeout original y relectura física/assertions
+intactas.18dirigidos+8Store pasan con esa barrera; producción no cambia y la
+revisión independiente de esta fuente queda pendiente. Mutante2DB no se reabre.

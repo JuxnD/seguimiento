@@ -25,7 +25,10 @@ integra gráficas con rango/evidencia:44criterios y9controles compartidos pasan.
 Full combinado espera009 y los frentes011/012 pendientes;015 no añade radar.
 El [checkpointClaude de calentamiento](sessions/2026-10-10-integracion-122-warmup.md)
 integra avisos de molestias sin agregar ejercicios y checklist de Cindy de
-prueba:18casos y24controles compartidos pasan. Nueva costura SQLite→pantalla
+prueba:18casos y24controles compartidos pasaron localmente. La revisión
+independiente devolvió2 fallos de snapshot histórico; la barrera UI→archivo
+ahora espera completion real (18dirigidos/8Store pasan localmente), sin cambiar
+producción. Causa previa NO_CONFIRMADA y nueva revisión pendiente. Nueva costura SQLite→pantalla
 positiva probada; mutante de conexión NO_EVALUADO por cierre de harness detenido
 tras diagnóstico acotado. Esquema21; sin APK ni validación de teléfono.
 

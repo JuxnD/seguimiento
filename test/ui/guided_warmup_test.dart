@@ -23,6 +23,36 @@ import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interfac
 
 import '../support/sqlite_host.dart';
 
+/// Observa la completion del writer real, sin escribir otra foto ni cambiar
+/// la Future que devuelve a la pantalla.
+class _ObservedStore extends ActiveSessionStore {
+  _ObservedStore(super.file);
+
+  int lastEmitted = 0;
+  int lastCompleted = 0;
+  Future<void>? lastSave;
+  ActiveSession? lastSnapshot;
+  final pending = <int>{};
+  Object? saveError;
+
+  @override
+  Future<void> save(ActiveSession session) {
+    final id = ++lastEmitted;
+    lastSnapshot = session;
+    pending.add(id);
+    final future = super.save(session);
+    lastSave = future;
+    unawaited(future.then((_) {
+      lastCompleted = id;
+      pending.remove(id);
+    }, onError: (Object error, StackTrace stack) {
+      saveError = error;
+      pending.remove(id);
+    }));
+    return future;
+  }
+}
+
 /// Molestias sin base: el cronómetro de prueba congela el reloj.
 class _Sore extends RecoveryRepository {
   _Sore(this.byDay) : super(openInMemoryDatabase());
@@ -60,6 +90,7 @@ class _NoNotifications extends NotificationService {
 
 void main() {
   late Directory dir;
+  late _ObservedStore observedStore;
 
   setUpAll(useHostSqlite);
 
@@ -88,10 +119,11 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     final results = <SessionDraft?>[];
+    observedStore = _ObservedStore(File('${dir.path}/sesion.json'));
     await tester.pumpWidget(ProviderScope(
       overrides: [
         notificationServiceProvider.overrideWithValue(_NoNotifications()),
-        activeSessionStoreProvider.overrideWithValue(ActiveSessionStore(File('${dir.path}/sesion.json'))),
+        activeSessionStoreProvider.overrideWithValue(observedStore),
         latestWeightProvider.overrideWithValue(70),
         profileProvider.overrideWith((ref) => const Stream.empty()),
         trainingRepositoryProvider.overrideWith((ref) => training ?? (throw UnimplementedError('no se usa'))),
@@ -124,11 +156,27 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400)); // transición
   }
 
-  /// La foto se escribe en cola: avanzar los dos relojes hasta que llegue.
+  /// Bombea fake time e IO hasta que las futures emitidas por la pantalla
+  /// completan. No convierte una espera de N milisegundos en prueba durable.
   Future<void> flushStore(WidgetTester tester) async {
-    for (var i = 0; i < 20; i++) {
-      await tester.pump(const Duration(milliseconds: 5));
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+    final watch = Stopwatch()..start();
+    while (true) {
+      await tester.pump();
+      if (observedStore.saveError != null) {
+        fail('El writer real falló: ${observedStore.saveError}');
+      }
+      if (observedStore.lastEmitted > 0 &&
+          observedStore.lastCompleted == observedStore.lastEmitted &&
+          observedStore.pending.isEmpty) {
+        return;
+      }
+      if (watch.elapsed >= const Duration(seconds: 5)) {
+        fail('No completó el guardado real: emitido=${observedStore.lastEmitted}, '
+            'completo=${observedStore.lastCompleted}, pendientes=${observedStore.pending}, '
+            'última foto=${observedStore.lastSnapshot?.toJson()}');
+      }
+      // Cede al IO real sólo mientras la condición observable siga pendiente.
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 1)));
     }
   }
 
