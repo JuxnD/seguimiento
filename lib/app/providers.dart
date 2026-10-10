@@ -336,6 +336,12 @@ final coachSignalsProvider = StreamProvider<void>((ref) {
 /// notificaciones o sin canal, la app sigue igual.
 final rescheduleRemindersProvider = Provider<Future<void> Function()>((ref) => coalesce(() async {
       try {
+        // Plan 022: sin alta confirmada no hay avisos (p. ej. tras restaurar
+        // un respaldo pendiente con la app abierta): se retiran los propios.
+        if (!(await ref.read(profileRepositoryProvider).setupStatus()).ready) {
+          await ref.read(notificationServiceProvider).applySchedule(const []);
+          return;
+        }
         await ref.read(reminderSchedulerProvider).reschedule();
       } on Object {
         // Sin permiso o sin canal: no hay nada que reprogramar.
@@ -343,6 +349,10 @@ final rescheduleRemindersProvider = Provider<Future<void> Function()>((ref) => c
     }));
 
 final profileProvider = StreamProvider((ref) => ref.watch(profileRepositoryProvider).watch());
+
+/// Estado del alta (plan 022). Se recrea al restaurar (generación de la base);
+/// un origen/estado inválido llega como error.
+final setupStatusProvider = StreamProvider<SetupStatus>((ref) => ref.watch(profileRepositoryProvider).watchSetup());
 final exercisesProvider = StreamProvider((ref) => ref.watch(exerciseRepositoryProvider).watchAll());
 
 /// Una versión del plan completa. Es inmutable: se carga una vez y queda.

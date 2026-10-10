@@ -12,6 +12,7 @@ import '../domain/reminders.dart';
 import 'catalog_updates.dart';
 import 'catalog_patches.dart';
 import 'repositories/goal_repository.dart' show seedGoalVersions;
+import 'repositories/profile_repository.dart' show ProfileOrigin, SetupState;
 import 'seed_foods.dart';
 import 'tables.dart';
 
@@ -62,16 +63,19 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 22;
+  int get schemaVersion => 23;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
-          // El programa arranca el día de la instalación; se ajusta en Perfil.
-          await into(profiles).insert(ProfilesCompanion.insert(startDate: dayKey(DateTime.now())));
-          // Instalación nueva: sus metas rigen desde hoy (conocidas).
-          await seedGoalVersions(this, effectiveFrom: dateOnly(DateTime.now()), origin: GoalOrigin.inicio);
+          // Instalación nueva (plan 022): alta pendiente. Ninguna meta queda
+          // aceptada hasta confirmar; la fecha de inicio la elige el usuario.
+          await into(profiles).insert(ProfilesCompanion.insert(
+            startDate: dayKey(DateTime.now()),
+            profileOrigin: const Value(ProfileOrigin.newInstall),
+            setupState: const Value(SetupState.pending),
+          ));
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) {
@@ -237,6 +241,15 @@ class AppDatabase extends _$AppDatabase {
             await customStatement(
                 "UPDATE sessions SET total_sec=0, warmup_sec=0, cooldown_sec=0, rest_sec=0 WHERE mode='test'");
           }
+          if (from < 23) {
+            // v23 (plan 022): origen y estado del alta. Antes de cualquier
+            // lectura del perfil con la definición actual (la siembra de 22).
+            // Lo existente queda legacyUnknown/ready: no se infiere el dueño.
+            await m.addColumn(profiles, profiles.profileOrigin);
+            await m.addColumn(profiles, profiles.setupState);
+            await m.addColumn(profiles, profiles.setupConfirmedAt);
+            await m.addColumn(profiles, profiles.handoffConsentAt);
+          }
           if (from < 22) {
             // v22 (plan 009): metas con historia y propuestas del
             // acompañamiento, después del 21 de 010 (catálogo). Aditivo. Lo
@@ -247,6 +260,11 @@ class AppDatabase extends _$AppDatabase {
             // morning_checks nace en el 17 con la definición actual: antes
             // de eso la columna ya viene al crearla.
             if (from >= 17) await m.addColumn(morningChecks, morningChecks.feeling);
+            await seedGoalVersions(this, effectiveFrom: null, origin: GoalOrigin.legado);
+          }
+          if (from >= 22 && from < 23) {
+            // v23: el piso de kcal entra a la misma historia. Sólo la métrica
+            // que falte, como legado; lo de 009 no se duplica.
             await seedGoalVersions(this, effectiveFrom: null, origin: GoalOrigin.legado);
           }
           if (from < 16) {

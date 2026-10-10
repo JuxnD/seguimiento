@@ -97,13 +97,13 @@ void main() {
       List<Map<String, dynamic>>? firstGoals;
       for (var opening = 0; opening < 2; opening++) {
         db = AppDatabase(NativeDatabase(file));
-        expect(db.schemaVersion, 22);
+        expect(db.schemaVersion, 23);
         expect(
             (await db.customSelect('PRAGMA user_version').getSingle())
                 .data
                 .values
                 .single,
-            22);
+            23);
         final names = (await db
                 .customSelect(
                     "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
@@ -131,8 +131,18 @@ void main() {
                   .where((c) => !columns.contains(c['name']))
                   .map((c) => c['name'])
                   .toList(),
-              entry.key == 'morning_checks' ? ['feeling'] : <String>[],
-              reason: '${entry.key} only schema22 column');
+              switch (entry.key) {
+                'morning_checks' => ['feeling'],
+                // Plan 022 (esquema 23): origen y estado del alta.
+                'profiles' => [
+                    'profile_origin',
+                    'setup_state',
+                    'setup_confirmed_at',
+                    'handoff_consent_at'
+                  ],
+                _ => <String>[],
+              },
+              reason: '${entry.key} only schema22/23 columns');
           final fields = columns.map(_quoted).join(',');
           expect(
               (await db
@@ -157,10 +167,28 @@ void main() {
                 .get())
             .map((r) => r.data)
             .toList();
-        expect(goals, hasLength(10));
-        for (final entry
-            in (manifest['expectedGoalValues'] as Map<String, Object?>)
-                .entries) {
+        expect(
+            (await db
+                    .customSelect(
+                        'SELECT profile_origin, setup_state, setup_confirmed_at, handoff_consent_at FROM profiles')
+                    .getSingle())
+                .data,
+            {
+              'profile_origin': 'legacyUnknown',
+              'setup_state': 'ready',
+              'setup_confirmed_at': null,
+              'handoff_consent_at': null,
+            },
+            reason: 'base existente: no se infiere el dueño ni se pide alta');
+        expect(goals, hasLength(12));
+        final profileRow = (tables['profiles']!['rows'] as List<Object?>)
+            .cast<Map<String, Object?>>()
+            .single;
+        for (final entry in {
+          ...(manifest['expectedGoalValues'] as Map<String, Object?>),
+          // Piso de kcal (plan 022): el valor físico del perfil 21.
+          'kcalFloor': (profileRow['kcal_floor'] as int).toDouble(),
+        }.entries) {
           final rows = goals.where((r) => r['metric'] == entry.key).toList();
           expect(rows, hasLength(2), reason: entry.key);
           expect(rows.map((r) => r['value']), everyElement(entry.value));

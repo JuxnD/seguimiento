@@ -1,0 +1,31 @@
+Plan 022 — rojo funcional contra base f34ab7c9fd4107ffc728e2b9bfdd2153e00315a4
+Comando: C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat test test/data/pilot_profile_test.dart --reporter expanded
+(Drift generado antes con dart run build_runner build --delete-conflicting-outputs; sin cambios de lock.)
+Fuente de producción sin tocar; sólo existía el archivo de prueba nuevo con APIs de la base.
+
+00:00 +0: una instalación nueva no tiene vigencias aceptadas antes del alta
+00:00 +0 -1: una instalación nueva no tiene vigencias aceptadas antes del alta [E]
+  Expected: empty
+    Actual: [
+              GoalVersionRow(id: 1, metric: pasos, value: 5000.0, effectiveFrom: 2026-10-10, acceptedAt: 2026-10-10, origin: inicio, ...),
+              GoalVersionRow(id: 2, metric: proteinaMin, value: 130.0, effectiveFrom: 2026-10-10, ..., origin: inicio, ...),
+              GoalVersionRow(id: 3, metric: proteinaMax, value: 160.0, effectiveFrom: 2026-10-10, ..., origin: inicio, ...),
+              GoalVersionRow(id: 4, metric: kcal, value: 2400.0, effectiveFrom: 2026-10-10, ..., origin: inicio, ...),
+              GoalVersionRow(id: 5, metric: kcalFutbol, value: null, effectiveFrom: 2026-10-10, ..., origin: inicio, ...)
+            ]
+  pending: ninguna meta se acepta hasta confirmar el alta
+
+00:00 +0 -2: aplicar correcciones del traspaso sin consentimiento no escribe nada [E]
+  Expected: {sessions: 0, session_sets: 0, football_games: 0, measurements: 0, body_weights: 0,
+             daily_steps: 0, meals: 0, closed_days: 0, goal_versions: 5, plan_versions: 0}
+    Actual: {sessions: 20, session_sets: 197, football_games: 8, measurements: 9, body_weights: 3,
+             daily_steps: 1, meals: 0, closed_days: 0, goal_versions: 7, plan_versions: 0}
+     Which: at location ['sessions'] is <20> instead of <0>
+  ni nuevo ni legado autorizan sembrar sesiones/medidas/pasos
+
+00:00 +0 -2: Some tests failed.
+
+Lectura: en una base recién creada (instalación nueva) la base acepta 5 metas del dueño y
+applyPendingCorrections, sin consentimiento ni respaldo, siembra el historial ago–sep, la
+sesión del 2 oct, medidas del 3 oct, pesos/pasos del 5 oct y metas v3.1. Además main.dart:25
+llamaba seedIfEmpty (plan v1/v2 del dueño, inicio 2026-08-26) en cada arranque con plan vacío.

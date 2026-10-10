@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
 
 import '../domain/enums.dart';
 import 'database.dart';
 import 'history_import.dart' show corrections7Oct;
+import 'repositories/profile_repository.dart' show SetupStatus;
 
 // Correcciones de datos del traspaso del 29 sep 2026 (§17). Cada una busca el
 // registro **exacto** que describe el traspaso y solo lo toca si sigue como
@@ -21,6 +24,28 @@ enum CorrectionState {
   missing,
 }
 
+/// Aplicar una corrección sin consentimiento del traspaso original o sin
+/// respaldo previo (plan 022). El mensaje se muestra.
+class CorrectionsNotAuthorized implements Exception {
+  CorrectionsNotAuthorized(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
+}
+
+/// Lanza [CorrectionsNotAuthorized] si el perfil no tiene el consentimiento
+/// fechado del traspaso original. Ni el origen (nuevo o legado) ni los flags
+/// de "descartado" lo dan.
+Future<void> requireHandoffConsent(AppDatabase db) async {
+  final p = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
+  if (SetupStatus.parse(p).handoffConsentAt == null) {
+    throw CorrectionsNotAuthorized('Las correcciones son datos del traspaso original: '
+        'hace falta confirmar explícitamente que son tuyos antes de aplicarlas.');
+  }
+}
+
 class DataCorrection {
   const DataCorrection({
     required this.id,
@@ -28,8 +53,8 @@ class DataCorrection {
     required this.title,
     required this.change,
     required this.check,
-    required this.apply,
-  });
+    required Future<void> Function(AppDatabase db) apply,
+  }) : _apply = apply;
 
   final String id;
 
@@ -40,7 +65,13 @@ class DataCorrection {
   /// "RPE 10 → 4".
   final String change;
   final Future<CorrectionState> Function(AppDatabase db) check;
-  final Future<void> Function(AppDatabase db) apply;
+  final Future<void> Function(AppDatabase db) _apply;
+
+  /// Aplica sólo con el consentimiento del traspaso original (plan 022).
+  Future<void> apply(AppDatabase db) async {
+    await requireHandoffConsent(db);
+    await _apply(db);
+  }
 }
 
 /// Las correcciones del 29 sep, en el orden del traspaso.
@@ -61,7 +92,8 @@ final corrections29Sep = <DataCorrection>[
     },
     apply: (db) async {
       final s = (await _session(db, '2026-09-25', SessionType.progresion))!;
-      await (db.update(db.sessions)..where((t) => t.id.equals(s.id))).write(const SessionsCompanion(notes: Value(_notes25)));
+      await (db.update(db.sessions)..where((t) => t.id.equals(s.id)))
+          .write(const SessionsCompanion(notes: Value(_notes25)));
     },
   ),
   DataCorrection(
@@ -78,7 +110,8 @@ final corrections29Sep = <DataCorrection>[
     apply: (db) async {
       for (final s in await _plankSets(db)) {
         if (s.reps != 0) continue;
-        await (db.update(db.sessionSets)..where((t) => t.id.equals(s.id))).write(const SessionSetsCompanion(reps: Value(40)));
+        await (db.update(db.sessionSets)..where((t) => t.id.equals(s.id)))
+            .write(const SessionSetsCompanion(reps: Value(40)));
       }
     },
   ),
@@ -105,8 +138,8 @@ final corrections29Sep = <DataCorrection>[
       ));
     },
   ),
-  _retype('merienda-25', '2026-09-25', 'vie 25 sep', '16:47', MealSlot.merienda, MealSlot.desayuno,
-      'huevos + pan + leche'),
+  _retype(
+      'merienda-25', '2026-09-25', 'vie 25 sep', '16:47', MealSlot.merienda, MealSlot.desayuno, 'huevos + pan + leche'),
   DataCorrection(
     id: 'cena-27',
     date: 'dom 27 sep',
@@ -267,7 +300,8 @@ const _baseline3Oct = {
 const _notes25 = 'Flexiones y dominadas fáciles hasta R8, técnica constante';
 const _closeDays = ['2026-09-24', '2026-09-25', '2026-09-26', '2026-09-27', '2026-09-28'];
 
-DataCorrection _sessionRpe(String id, String day, String label, SessionType type, {required int? from, required int to}) =>
+DataCorrection _sessionRpe(String id, String day, String label, SessionType type,
+        {required int? from, required int to}) =>
     DataCorrection(
       id: id,
       date: label,
@@ -285,8 +319,7 @@ DataCorrection _sessionRpe(String id, String day, String label, SessionType type
       },
     );
 
-DataCorrection _retype(
-        String id, String day, String label, String time, MealSlot from, MealSlot to, String what) =>
+DataCorrection _retype(String id, String day, String label, String time, MealSlot from, MealSlot to, String what) =>
     DataCorrection(
       id: id,
       date: label,
@@ -306,13 +339,15 @@ DataCorrection _retype(
 Future<List<String>> _loggedCloseDays(AppDatabase db) async {
   final rows = await (db.select(db.meals)..where((t) => t.date.isIn(_closeDays))).get();
   final logged = {for (final m in rows) m.date};
-  return [for (final d in _closeDays) if (logged.contains(d)) d];
+  return [
+    for (final d in _closeDays)
+      if (logged.contains(d)) d
+  ];
 }
 
 /// La sesión de ese tipo en ese día, solo si es una.
 Future<SessionRow?> _session(AppDatabase db, String day, SessionType type) async {
-  final rows =
-      await (db.select(db.sessions)..where((t) => t.date.equals(day) & t.type.equalsValue(type))).get();
+  final rows = await (db.select(db.sessions)..where((t) => t.date.equals(day) & t.type.equalsValue(type))).get();
   return rows.length == 1 ? rows.single : null;
 }
 
@@ -344,9 +379,8 @@ Future<List<SessionSetRow>> _plankSets(AppDatabase db) async {
 Future<MealItemRow?> _salchichon28(AppDatabase db) async {
   final breakfasts = await _meals(db, '2026-09-28', MealSlot.desayuno);
   if (breakfasts.length != 1) return null;
-  final items = (await _items(db, breakfasts.single.id))
-      .where((i) => i.label.toLowerCase().contains('salchich'))
-      .toList();
+  final items =
+      (await _items(db, breakfasts.single.id)).where((i) => i.label.toLowerCase().contains('salchich')).toList();
   return items.length == 1 ? items.single : null;
 }
 
@@ -424,12 +458,20 @@ Future<Map<String, CorrectionState>> checkCorrections(AppDatabase db, [List<Data
     };
 
 /// Aplica las pendientes en una sola transacción. Devuelve cuántas aplicó.
-Future<int> applyPendingCorrections(AppDatabase db, [List<DataCorrection>? list]) => db.transaction(() async {
-      var n = 0;
-      for (final c in list ?? allCorrections) {
-        if (await c.check(db) != CorrectionState.pending) continue;
-        await c.apply(db);
-        n++;
-      }
-      return n;
-    });
+/// Exige el respaldo previo ya hecho ([backup]) y el consentimiento del
+/// traspaso, revalidado dentro de la transacción (plan 022).
+Future<int> applyPendingCorrections(AppDatabase db, [List<DataCorrection>? list, File? backup]) async {
+  if (backup == null || !backup.existsSync() || backup.lengthSync() < 512) {
+    throw CorrectionsNotAuthorized('No hay un respaldo previo válido: no se aplicó nada.');
+  }
+  return db.transaction(() async {
+    await requireHandoffConsent(db);
+    var n = 0;
+    for (final c in list ?? allCorrections) {
+      if (await c.check(db) != CorrectionState.pending) continue;
+      await c.apply(db);
+      n++;
+    }
+    return n;
+  });
+}

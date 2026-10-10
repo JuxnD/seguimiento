@@ -10,6 +10,7 @@ import 'package:seguimiento/domain/adaptive_coach.dart';
 import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/domain/goal_history.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 /// Plan 009: metas versionadas y propuestas sobre SQLite.
@@ -21,15 +22,22 @@ void main() {
 
   setUpAll(useHostSqlite);
 
-  setUp(() {
+  setUp(() async {
     db = openInMemoryDatabase();
     goals = GoalRepository(db);
+    // Quien ya usa la app, con sus metas vigentes desde hoy (plan 022: una
+    // instalación nueva no tiene ninguna hasta confirmar el alta).
+    await asExistingUser(db);
   });
 
   tearDown(() => db.close());
 
-  test('instalación nueva: base de 5.000 conocida desde hoy', () async {
-    final h = await goals.history();
+  test('instalación nueva: sin metas hasta el alta; la base de 5.000 rige desde la confirmación', () async {
+    final fresh = openInMemoryDatabase();
+    addTearDown(fresh.close);
+    expect((await GoalRepository(fresh).history()).versions, isEmpty);
+    await ProfileRepository(fresh).confirmSetup(SetupDraft(startDate: dateOnly(DateTime.now()))..clearNutrition());
+    final h = await GoalRepository(fresh).history();
     final steps = h.current(GoalMetric.pasos, DateTime.now())!;
     expect((steps.value, steps.origin, steps.legacy), (5000.0, GoalOrigin.inicio, false));
     expect(h.on(GoalMetric.pasos, dateOnly(DateTime.now()))!.known, isTrue);

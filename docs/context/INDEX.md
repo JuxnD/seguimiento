@@ -11,6 +11,14 @@ gate de piloto 012 y QA APK/upgrade/teléfono; no publicación ni cambio SDK.
 Las entradas siguientes conservan resultados y pendientes históricos de sus
 checkpoints, que no deben confundirse con este estado más reciente.
 
+**Plan022 local (Claude, 10oct):** [alta neutral y arranque protegido](../adr/0020-alta-neutral-y-arranque-protegido.md)
+y [recibo](sessions/2026-10-10-022-alta-neutral-claude.md), worktree
+`C:/My Projects/seguimiento-claude-022`, base f34. Esquema23: origen/estado del
+alta en `profiles`, `kcalFloor` en la misma historia, AppEntry antes de
+HomeShell, correcciones con consentimiento+respaldo y restauración común.
+Rojo f34 archivado; full 869/17/0, análisis 0. Sin integrar ni publicar:
+cierre 012 de lectores pendiente antes de activar usuarios nuevos.
+
 **Integración local122/018:** [componente de radar](sessions/2026-10-10-integracion-122-018.md)
 desde d108fafa,74dirigidos y análisis/diff0; receta extraída sin alterar019,
 checklistClaude o barrera de guardado784. Renderer360 texto1/1.6/2 probado,
@@ -176,13 +184,16 @@ no modifica la release1.21 ni equivale a una nueva publicación.
   sep 2026; desde la 1.6.1 CI firma y publica (huella verificada). Ver "La llave de las releases" en
   [actualizaciones.md](../actualizaciones.md).
 - Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, ventana de
-  medición) viven en la tabla `profiles` y se pueden editar en Ajustes.
+  medición) se editan en Ajustes. Desde 009/022 pasos, proteína, kcal, fútbol y
+  piso tienen historia en `goal_versions` (null conocido = «sin meta»); `profiles`
+  es la proyección. El alta (estado/origen) también vive en `profiles` (esquema 23).
 - El catálogo de alimentos y los combos se siembran en la primera apertura
   (`lib/data/seed_foods.dart`). Cada alimento dice si sus macros salen de una
   etiqueta o de una tabla de referencia, y el informe reporta esa proporción.
-- El plan que se siembra en la primera apertura está en `lib/data/seed_plan.dart`
-  (dos versiones: base y la que añade bloques de core, cuádriceps y hombro).
-  Editarlo desde la app crea versiones nuevas; la siembra no vuelve a correr.
+- El plan del dueño está en `lib/data/seed_plan.dart` (dos versiones: base y
+  la que añade bloques de core, cuádriceps y hombro). Desde el candidato 022 ya
+  **no se siembra** al arrancar: una instalación nueva empieza sin rutina y la
+  crea con el editor común; `seedIfEmpty` queda como fixture de pruebas.
 - Pasos: la app del reloj (Innova S-Watch, *Yo → Health Connect*) los escribe
   en Health Connect y esta app los trae al abrirse si se conectó en Ajustes
   ([ADR 0007](../adr/0007-pasos-por-health-connect-nativo.md)). También se

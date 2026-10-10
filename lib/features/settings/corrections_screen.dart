@@ -5,21 +5,25 @@ import '../../app/providers.dart';
 import '../../data/corrections_29sep.dart';
 import '../../data/history_import.dart' show corrections7Oct;
 import '../../data/local_flags.dart';
+import '../../domain/dates.dart' show formatLong;
 import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
 
 /// Estado de las correcciones del 29 sep. Se recalcula al aplicar.
-final correctionsProvider = FutureProvider<Map<String, CorrectionState>>(
-    (ref) => checkCorrections(ref.watch(databaseProvider)));
+final correctionsProvider =
+    FutureProvider<Map<String, CorrectionState>>((ref) => checkCorrections(ref.watch(databaseProvider)));
 
 /// Cuántas faltan por aplicar, sin contar los grupos que el usuario dijo que
 /// no quiere.
 final pendingCorrectionsProvider = Provider<int>((ref) {
+  // Plan 022: a una instalación nueva nunca se le ofrecen datos del traspaso
+  // original. El dueño (legado) conserva el aviso; aplicar exige consentimiento.
+  final setup = ref.watch(setupStatusProvider).valueOrNull;
+  if (setup == null || setup.isNewInstall) return 0;
   final flags = ref.watch(localFlagsProvider);
   final states = ref.watch(correctionsProvider).valueOrNull ?? const {};
-  int pending(List<DataCorrection> list, String dismissedKey) => flags.get<bool>(dismissedKey) == true
-      ? 0
-      : list.where((c) => states[c.id] == CorrectionState.pending).length;
+  int pending(List<DataCorrection> list, String dismissedKey) =>
+      flags.get<bool>(dismissedKey) == true ? 0 : list.where((c) => states[c.id] == CorrectionState.pending).length;
   return pending(corrections29Sep, FlagKeys.corrections29SepDismissed) +
       pending(corrections5Oct, FlagKeys.corrections5OctDismissed) +
       pending(corrections7Oct, FlagKeys.corrections7OctDismissed);
@@ -36,6 +40,7 @@ class CorrectionsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final states = ref.watch(correctionsProvider);
+    final consent = ref.watch(setupStatusProvider).valueOrNull?.handoffConsentAt;
     final text = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Correcciones del traspaso')),
@@ -55,8 +60,29 @@ class CorrectionsScreen extends ConsumerWidget {
                     style: text.bodyMedium,
                   ),
                   const SizedBox(height: 8),
-                  Text('Antes de aplicar se guarda un respaldo automático (Ajustes › Respaldo).',
+                  Text(
+                      'Antes de aplicar se guarda un respaldo automático (Ajustes › Respaldo). '
+                      'Si el respaldo falla, no se aplica nada.',
                       style: text.bodySmall),
+                ],
+              ),
+              AppCard(
+                title: 'Datos del traspaso original',
+                children: [
+                  Text(
+                    'Estas correcciones crean o cambian sesiones, medidas, pesos, pasos y metas de una persona '
+                    'concreta (agosto–octubre de 2026). Sólo aplícalas si esos registros son tuyos.',
+                    style: text.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  if (consent != null)
+                    Text('Confirmaste que son tuyos el ${formatLong(consent)}.', style: text.bodySmall)
+                  else
+                    OutlinedButton.icon(
+                      onPressed: () => _consent(context, ref),
+                      icon: const Icon(Icons.verified_user_outlined),
+                      label: const Text('Son míos: autorizar'),
+                    ),
                 ],
               ),
               AppCard(
@@ -68,11 +94,13 @@ class CorrectionsScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: FilledButton.icon(
-                  onPressed: pending == 0 ? null : () => _apply(context, ref, pending),
+                  onPressed: pending == 0 || consent == null ? null : () => _apply(context, ref, pending),
                   icon: const Icon(Icons.done_all),
                   label: Text(pending == 0
                       ? 'Nada pendiente'
-                      : 'Aplicar $pending ${pending == 1 ? 'corrección' : 'correcciones'}'),
+                      : consent == null
+                          ? 'Primero autoriza los datos del traspaso'
+                          : 'Aplicar $pending ${pending == 1 ? 'corrección' : 'correcciones'}'),
                 ),
               ),
             ],
@@ -82,13 +110,41 @@ class CorrectionsScreen extends ConsumerWidget {
     );
   }
 
+  /// Consentimiento explícito y fechado, con la vista previa de lo que se
+  /// crearía o cambiaría. No aplica nada.
+  Future<void> _consent(BuildContext context, WidgetRef ref) async {
+    final states = ref.read(correctionsProvider).valueOrNull ?? const {};
+    final preview = [
+      for (final c in allCorrections)
+        if (states[c.id] == CorrectionState.pending) '• ${c.date} · ${c.title}: ${c.change}',
+    ];
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        scrollable: true,
+        title: const Text('¿Estos registros son tuyos?'),
+        content: Text('Son los datos del traspaso original de una persona concreta. '
+            'Si los autorizas, al aplicar se crean o cambian:\n\n'
+            '${preview.isEmpty ? 'Nada pendiente por ahora.' : preview.join('\n')}\n\n'
+            'Autorizar no aplica nada todavía: después eliges «Aplicar», con respaldo previo.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('No son míos')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Son míos')),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    await guarded(context, () => ref.read(profileRepositoryProvider).recordHandoffConsent());
+  }
+
   Future<void> _apply(BuildContext context, WidgetRef ref, int pending) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('¿Aplicar las correcciones?'),
-        content: Text('Se cambian $pending ${pending == 1 ? 'registro' : 'registros'} de sesiones, comidas, peso y pasos. '
-            'Antes se guarda un respaldo para poder volver atrás.'),
+        content:
+            Text('Se cambian $pending ${pending == 1 ? 'registro' : 'registros'} de sesiones, comidas, peso y pasos. '
+                'Antes se guarda un respaldo para poder volver atrás.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
           FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Aplicar')),
@@ -99,8 +155,9 @@ class CorrectionsScreen extends ConsumerWidget {
     var applied = 0;
     final done = await guarded(context, () async {
       final backup = await ref.read(autoBackupProvider.future);
-      if (await backup.runNow() == null) throw StateError('No se pudo guardar el respaldo: no se aplicó nada.');
-      applied = await applyPendingCorrections(ref.read(databaseProvider));
+      final copy = await backup.runNow();
+      if (copy == null) throw StateError('No se pudo guardar el respaldo: no se aplicó nada.');
+      applied = await applyPendingCorrections(ref.read(databaseProvider), null, copy);
     });
     ref.invalidate(correctionsProvider);
     ref.invalidate(dashboardProvider);

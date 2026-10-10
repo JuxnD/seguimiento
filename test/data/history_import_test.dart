@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/data/corrections_29sep.dart';
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/history_import.dart';
 import 'package:seguimiento/data/repositories/exercise_repository.dart';
+import 'package:seguimiento/data/repositories/profile_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/domain/enums.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 /// Traspaso del 7 oct: historial del 26 ago al 21 sep y metas del v3.1 (§16.16).
@@ -16,13 +20,24 @@ void main() {
 
   setUpAll(useHostSqlite);
 
+  late Directory dir;
+  late File backup;
+
   setUp(() async {
     db = openInMemoryDatabase();
     training = TrainingRepository(db, ExerciseRepository(db));
     await db.into(db.profiles).insert(ProfilesCompanion.insert(startDate: '2026-09-22'));
+    // Plan 022: base del dueño con el traspaso autorizado y respaldo previo.
+    await asExistingUser(db, goals: false);
+    await ProfileRepository(db).recordHandoffConsent();
+    dir = Directory.systemTemp.createTempSync('seguimiento_hist7');
+    backup = await db.exportTo('${dir.path}/respaldo.sqlite');
   });
 
-  tearDown(() => db.close());
+  tearDown(() async {
+    await db.close();
+    dir.deleteSync(recursive: true);
+  });
 
   DataCorrection byId(String id) => corrections7Oct.firstWhere((c) => c.id == id);
 
@@ -86,9 +101,9 @@ void main() {
     expect(await goals.check(db), CorrectionState.pending);
     var profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
     expect((profile.proteinMin, profile.proteinMax), (160, 170));
-    expect(await applyPendingCorrections(db, [goals]), 1);
+    expect(await applyPendingCorrections(db, [goals], backup), 1);
     profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
     expect((profile.proteinMin, profile.proteinMax), (130, 160));
-    expect(await applyPendingCorrections(db, [goals]), 0);
+    expect(await applyPendingCorrections(db, [goals], backup), 0);
   });
 }

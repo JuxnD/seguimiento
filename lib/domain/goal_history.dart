@@ -12,6 +12,10 @@ enum GoalMetric {
   kcal('kcal entre semana', 'kcal'),
   kcalFutbol('kcal en días de fútbol', 'kcal'),
 
+  /// Piso de alerta de kcal (plan 022): opcional, misma historia. null
+  /// conocido = se decidió no tener piso.
+  kcalFloor('Piso de kcal', 'kcal'),
+
   // Referencias del radar (plan 011): opcionales, sin valor por defecto ni
   // proyección al perfil. null = sin referencia. Sólo con aceptación explícita.
   refDominadas('Dominadas estrictas', 'reps', reference: true),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/data/corrections_29sep.dart';
@@ -8,6 +10,9 @@ import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/nutrition.dart';
 
+import 'package:seguimiento/data/repositories/profile_repository.dart';
+
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 /// Correcciones de datos del traspaso del 29 sep (§17).
@@ -27,14 +32,26 @@ void main() {
 
   setUpAll(useHostSqlite);
 
+  late Directory dir;
+  late File backup;
+
   setUp(() async {
     db = openInMemoryDatabase();
     training = TrainingRepository(db, ExerciseRepository(db));
     nutrition = NutritionRepository(db);
     await db.into(db.profiles).insert(ProfilesCompanion.insert(startDate: '2026-08-26'));
+    // Plan 022: el dueño (base existente) autorizó los datos del traspaso y
+    // hay respaldo previo; sin eso nada se aplica (pilot_profile_test).
+    await asExistingUser(db, goals: false);
+    await ProfileRepository(db).recordHandoffConsent();
+    dir = Directory.systemTemp.createTempSync('seguimiento_corr29');
+    backup = await db.exportTo('${dir.path}/respaldo.sqlite');
   });
 
-  tearDown(() => db.close());
+  tearDown(() async {
+    await db.close();
+    dir.deleteSync(recursive: true);
+  });
 
   /// Los registros tal como estaban el 29 sep.
   Future<void> seedAsOn29Sep() async {
@@ -84,7 +101,7 @@ void main() {
 
   test('aplicarlas deja cada registro como pide el traspaso', () async {
     await seedAsOn29Sep();
-    expect(await applyPendingCorrections(db, corrections29Sep), corrections29Sep.length);
+    expect(await applyPendingCorrections(db, corrections29Sep, backup), corrections29Sep.length);
 
     expect((await session('2026-09-23')).rpe, 4);
     expect((await session('2026-09-24')).rpe, 6);
@@ -135,7 +152,7 @@ void main() {
 
     final again = await checkCorrections(db, corrections29Sep);
     expect(again.values.toSet(), {CorrectionState.done}, reason: '$again');
-    expect(await applyPendingCorrections(db, corrections29Sep), 0, reason: 'aplicar dos veces no cambia nada');
+    expect(await applyPendingCorrections(db, corrections29Sep, backup), 0, reason: 'aplicar dos veces no cambia nada');
   });
 
   test('lo que el usuario ya corrigió a mano distinto no se pisa', () async {
@@ -150,7 +167,7 @@ void main() {
     final states = await checkCorrections(db, corrections29Sep);
     expect(states['rpe-23'], CorrectionState.missing);
     expect(states['duplicado-29'], CorrectionState.done);
-    await applyPendingCorrections(db, corrections29Sep);
+    await applyPendingCorrections(db, corrections29Sep, backup);
 
     expect((await session('2026-09-23')).rpe, 5);
     expect(await nutrition.range(d(9, 29), d(9, 29)), hasLength(1), reason: 'otra hora: no es el duplicado');
@@ -163,12 +180,12 @@ void main() {
     expect(states['cerrar-24-28'], CorrectionState.missing, reason: 'sin comidas no hay días que cerrar');
     expect(states['sesion-2oct'], CorrectionState.pending, reason: 'no hay sesión el 2 oct: se recupera');
     expect(states['medidas-3oct'], CorrectionState.pending, reason: 'no hay medición el 3 oct: se carga');
-    expect(await applyPendingCorrections(db, corrections29Sep), 2);
+    expect(await applyPendingCorrections(db, corrections29Sep, backup), 2);
   });
 
   test('datos del 5 oct: tres pesajes de referencia y los pasos del reloj (§18.10)', () async {
     expect((await checkCorrections(db, corrections5Oct)).values.toSet(), {CorrectionState.pending});
-    expect(await applyPendingCorrections(db, corrections5Oct), 4);
+    expect(await applyPendingCorrections(db, corrections5Oct, backup), 4);
     final weights = await (db.select(db.bodyWeights)..where((t) => t.date.equals('2026-10-05'))).get();
     expect(weights.map((w) => (w.kg, w.fasted, w.moment)).toSet(), {
       (80.50, false, 'otro'),
@@ -177,6 +194,6 @@ void main() {
     });
     final steps = await (db.select(db.dailySteps)..where((t) => t.date.equals('2026-10-05'))).getSingle();
     expect((steps.steps, steps.source), (8514, 'manual'));
-    expect(await applyPendingCorrections(db, corrections5Oct), 0, reason: 'aplicar dos veces no duplica');
+    expect(await applyPendingCorrections(db, corrections5Oct, backup), 0, reason: 'aplicar dos veces no duplica');
   });
 }
