@@ -223,6 +223,7 @@ class DailyBarsChart extends StatelessWidget {
     this.emptyText = 'Sin comidas registradas en el rango.',
     this.days,
     this.goalResolver,
+    this.metric = 'proteinMin',
   });
 
   final List<SeriesPoint> points;
@@ -232,6 +233,7 @@ class DailyBarsChart extends StatelessWidget {
   final String emptyText;
   final List<ChartDay>? days;
   final ChartGoalResolver? goalResolver;
+  final String metric;
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +252,7 @@ class DailyBarsChart extends StatelessWidget {
     ];
     final goals = [
       for (final d in timeline)
-        documentedChartGoal(goalResolver, d, 'proteinMin', unit)
+        documentedChartGoal(goalResolver, d, metric, unit)
     ];
     final maxValue = goals.fold(seriesMax(points),
         (double high, g) => g != null && g.value > high ? g.value : high);
@@ -321,7 +323,7 @@ class DailyBarsChart extends StatelessWidget {
           barTouchData: BarTouchData(
             touchTooltipData: BarTouchTooltipData(
               getTooltipItem: (group, _, rod, rodIndex) => BarTooltipItem(
-                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : days?[group.x].statusLabel ?? ""}'
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : (metric == 'steps' ? (days?[group.x].evidence ?? "") : (days?[group.x].statusLabel ?? ""))}'
                     .trim(),
                 TextStyle(color: scheme.onSurface),
               ),

@@ -1,0 +1,732 @@
+{
+  "synthetic": true,
+  "asOf": "2026-10-10T00:00:00.000",
+  "axes": [
+    {
+      "axis": "pull",
+      "unit": "reps",
+      "referenceId": "fixture-pull",
+      "reference": 10.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 5.0,
+      "currentValue": 12.0,
+      "initialPercent": 50.0,
+      "currentPercent": 120.0,
+      "observations": [
+        {
+          "sourceKey": "test:pullup:T1",
+          "protocol": "test:pullup",
+          "value": 5.0,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T1 · Dominadas pronas estrictas: 5.0 reps · 2026-10-01",
+          "tests": [
+            {
+              "item": "pullup",
+              "round": 1,
+              "side": null,
+              "value": 5.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            }
+          ]
+        },
+        {
+          "sourceKey": "test:pullup:T2",
+          "protocol": "test:pullup",
+          "value": 12.0,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T2 · Dominadas pronas estrictas: 12.0 reps · 2026-10-09",
+          "tests": [
+            {
+              "item": "pullup",
+              "round": 2,
+              "side": null,
+              "value": 12.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "axis": "push",
+      "unit": "reps",
+      "referenceId": "fixture-push",
+      "reference": 30.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 15.0,
+      "currentValue": 20.0,
+      "initialPercent": 50.0,
+      "currentPercent": 66.66666666666666,
+      "observations": [
+        {
+          "sourceKey": "test:pushup:T1",
+          "protocol": "test:pushup",
+          "value": 15.0,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T1 · Flexiones normales: 15.0 reps · 2026-10-01",
+          "tests": [
+            {
+              "item": "pushup",
+              "round": 1,
+              "side": null,
+              "value": 15.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            }
+          ]
+        },
+        {
+          "sourceKey": "test:pushup:T2",
+          "protocol": "test:pushup",
+          "value": 20.0,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T2 · Flexiones normales: 20.0 reps · 2026-10-09",
+          "tests": [
+            {
+              "item": "pushup",
+              "round": 2,
+              "side": null,
+              "value": 20.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "axis": "core",
+      "unit": "s",
+      "referenceId": "fixture-core",
+      "reference": 45.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 25.0,
+      "currentValue": 35.0,
+      "initialPercent": 55.55555555555556,
+      "currentPercent": 77.77777777777779,
+      "observations": [
+        {
+          "sourceKey": "test:hollow_hold:T1",
+          "protocol": "test:hollow_hold",
+          "value": 25.0,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T1 · Hollow hold con la lumbar pegada: 25.0 s · 2026-10-01",
+          "tests": [
+            {
+              "item": "hollow_hold",
+              "round": 1,
+              "side": null,
+              "value": 25.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            }
+          ]
+        },
+        {
+          "sourceKey": "test:hollow_hold:T2",
+          "protocol": "test:hollow_hold",
+          "value": 35.0,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T2 · Hollow hold con la lumbar pegada: 35.0 s · 2026-10-09",
+          "tests": [
+            {
+              "item": "hollow_hold",
+              "round": 2,
+              "side": null,
+              "value": 35.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "axis": "legs",
+      "unit": "reps",
+      "referenceId": "fixture-legs",
+      "reference": 25.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 16.0,
+      "currentValue": 20.0,
+      "initialPercent": 64.0,
+      "currentPercent": 80.0,
+      "observations": [
+        {
+          "sourceKey": "test:bulgarian_split_squat:T1",
+          "protocol": "test:bulgarian_split_squat",
+          "value": 16.0,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T1 · Búlgara sin peso: I: 16.0 reps · 2026-10-01; D: 18.0 reps · 2026-10-01",
+          "tests": [
+            {
+              "item": "bulgarian_split_squat",
+              "round": 1,
+              "side": "I",
+              "value": 16.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            },
+            {
+              "item": "bulgarian_split_squat",
+              "round": 1,
+              "side": "D",
+              "value": 18.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            }
+          ]
+        },
+        {
+          "sourceKey": "test:bulgarian_split_squat:T2",
+          "protocol": "test:bulgarian_split_squat",
+          "value": 20.0,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T2 · Búlgara sin peso: I: 20.0 reps · 2026-10-09; D: 22.0 reps · 2026-10-09",
+          "tests": [
+            {
+              "item": "bulgarian_split_squat",
+              "round": 2,
+              "side": "I",
+              "value": 20.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            },
+            {
+              "item": "bulgarian_split_squat",
+              "round": 2,
+              "side": "D",
+              "value": 22.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "axis": "jump",
+      "unit": "cm",
+      "referenceId": "fixture-jump",
+      "reference": 200.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 165.0,
+      "currentValue": 180.0,
+      "initialPercent": 82.5,
+      "currentPercent": 90.0,
+      "observations": [
+        {
+          "sourceKey": "test:broad_jump:T1",
+          "protocol": "test:broad_jump",
+          "value": 165.0,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T1 · Salto largo desde parado: 165.0 cm · 2026-10-01",
+          "tests": [
+            {
+              "item": "broad_jump",
+              "round": 1,
+              "side": null,
+              "value": 165.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            }
+          ]
+        },
+        {
+          "sourceKey": "test:broad_jump:T2",
+          "protocol": "test:broad_jump",
+          "value": 180.0,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T2 · Salto largo desde parado: 180.0 cm · 2026-10-09",
+          "tests": [
+            {
+              "item": "broad_jump",
+              "round": 2,
+              "side": null,
+              "value": 180.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "axis": "circuit",
+      "unit": "rondas",
+      "referenceId": "fixture-circuit",
+      "reference": 10.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 6.5,
+      "currentValue": 8.5,
+      "initialPercent": 65.0,
+      "currentPercent": 85.0,
+      "observations": [
+        {
+          "sourceKey": "session:first",
+          "protocol": "cindy20-5-10-15-bodyweight",
+          "value": 6.5,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica/rango no declarados; aptitud del conteo y receta, no certificación técnica",
+          "reason": "",
+          "raw": "6 rondas + 15 reps · ventana 1200 s · Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo",
+          "tests": [],
+          "cindy": {
+            "id": "first",
+            "rounds": 6,
+            "extraReps": 15,
+            "totalSec": 1500,
+            "warmupSec": 180,
+            "cooldownSec": 120,
+            "imported": false,
+            "estimated": false,
+            "incomplete": false,
+            "techniqueOk": null,
+            "fullRange": null,
+            "sets": [
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              }
+            ]
+          }
+        },
+        {
+          "sourceKey": "session:s1",
+          "protocol": "cindy20-5-10-15-bodyweight",
+          "value": 8.5,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica/rango no declarados; aptitud del conteo y receta, no certificación técnica",
+          "reason": "",
+          "raw": "8 rondas + 15 reps · ventana 1200 s · Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo; Sentadillas:15, variante sin variante, lastre sin peso externo; Dominadas:5, variante sin variante, lastre sin peso externo; Flexiones:10, variante sin variante, lastre sin peso externo",
+          "tests": [],
+          "cindy": {
+            "id": "s1",
+            "rounds": 8,
+            "extraReps": 15,
+            "totalSec": 1500,
+            "warmupSec": 180,
+            "cooldownSec": 120,
+            "imported": false,
+            "estimated": false,
+            "incomplete": false,
+            "techniqueOk": null,
+            "fullRange": null,
+            "sets": [
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Sentadillas",
+                "reps": 15,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Dominadas",
+                "reps": 5,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              },
+              {
+                "exercise": "Flexiones",
+                "reps": 10,
+                "variant": null,
+                "loadKg": null,
+                "split": false,
+                "toFailure": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

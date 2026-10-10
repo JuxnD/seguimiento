@@ -301,3 +301,21 @@ RPE de recuperación del ADR 0016 se reconcilió sólo en docs: favorable única
 feeling 1–2 o recoveryOk=true en 3 días; negativo prevalece, faltante desconocido.
 Se mantienen RPE ≥ 9 como fatiga y política v1 experimental a revisar con el owner.
 011, alta/esquema 23 y gate 012 con candidato final siguen abiertos.
+
+
+## Plan011 local: SQLite → radar → referencias → registro
+
+| Frontera | Oráculo y límite |
+| --- | --- |
+| SQLite tests/sesiones/sets/nombres → DTO018 | Historial completo≤corte; bilateral parcial/dudas no tapan apta; fechas futuras excluidas, inválidas no normalizadas. Sets ID conserva DDFFSS; lote300 equivale a recorrido completo. Memoria O(observaciones+sets), no constante. |
+| GoalHistory → contornos/gráficas | Referencia única ambos contornos, vigencia conocida; null/ausente/legado sin coordenada. DatedChartGoal fin abierto null. Proteína por día; pasos sin meta fin de semana ni ausencia→0. |
+| UI diálogo → setReference → SQLite → Riverpod | Save/cancel con relectura; fecha real de decisión sin backdate; State del diálogo conserva controller hasta desmontaje; eje seleccionado conserva recarga. |
+| SQLite antigua / restore → conexión/providers | Edición/borrado fuera90d reactivos; ZIP restore relee referencia y databaseGeneration recrea streams reales. Warnings Drift conservados, no silenciados. |
+| PeriodSummary → alimentación |130→160:1/2 días con referencia conocida y promedio140 separado. Kcal sábado/domingo propia/heredada/ausente; null/legado separados, sin score0 falso. |
+| Eje → TestResults / Cindy real | T1/2/3+parte explícitas, calendario Previsto real. Abrir/cancelar no crea SQL; pendiente conserva selección/archivo, wrapper mantiene timer/checklist/snapshot019. |
+| DTO → renderer360/escala1/1.6/2 |Captura inicial sin scroll; detalle touch; painter018 intacto; oráculo píxel100% y mitad de ambos tramos, mutante sin tramos y restauración hash. Capturas ficticias, no native ni aceptación humana. |
+
+[Recibo y resultados finales](sessions/2026-10-10-011-radar-integrado.md).
+No se reabre launch/cleanup020 rechazados por policy ni se toca otro AVD,
+SDK/esquema/servicio/IA/datos reales.012 y022 consumen estos helpers después de
+la revisión raíz; no duplicar fórmula de kcal ni motor de metas.

@@ -1,5 +1,14 @@
 # Índice de contexto
 
+**Plan011 implementación local:** radar real en Tu progreso, referencias009 con
+vigencia y reactividad SQL, proteína/pasos por fecha, kcal con calendario
+existente y rutas protegidas. [Recibo011](sessions/2026-10-10-011-radar-integrado.md),
+[contrato](../progreso-metricas.md), [diseño](../design/radar-personal.md).
+Base f34ab7c, esquema22/SDK3.22 intactos; rama JuxnD/011-graficas-radar aislada.
+Gates finales se registran en el recibo; aceptación humana, APK/Android,
+presencia global012/alta022 y publicación siguen separados.
+
+
 **Estado actual del candidato local, 10 de octubre:** 009 aprobado como fuente y
 fusionado sobre e6b420a mediante merge 4f11d87, sin conflictos. Se conservan
 radar 018, medición/plural 019, checklist, barrera Future/archivo 784, catálogo 21,

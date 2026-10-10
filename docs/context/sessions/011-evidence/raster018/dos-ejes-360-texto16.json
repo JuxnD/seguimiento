@@ -1,0 +1,172 @@
+{
+  "synthetic": true,
+  "asOf": "2026-10-10T00:00:00.000",
+  "axes": [
+    {
+      "axis": "pull",
+      "unit": "reps",
+      "referenceId": "fixture-pull",
+      "reference": 10.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 5.0,
+      "currentValue": 8.0,
+      "initialPercent": 50.0,
+      "currentPercent": 80.0,
+      "observations": [
+        {
+          "sourceKey": "test:pullup:T1",
+          "protocol": "test:pullup",
+          "value": 5.0,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T1 · Dominadas pronas estrictas: 5.0 reps · 2026-10-01",
+          "tests": [
+            {
+              "item": "pullup",
+              "round": 1,
+              "side": null,
+              "value": 5.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            }
+          ]
+        },
+        {
+          "sourceKey": "test:pullup:T2",
+          "protocol": "test:pullup",
+          "value": 8.0,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T2 · Dominadas pronas estrictas: 8.0 reps · 2026-10-09",
+          "tests": [
+            {
+              "item": "pullup",
+              "round": 2,
+              "side": null,
+              "value": 8.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "axis": "push",
+      "unit": "reps",
+      "referenceId": "fixture-push",
+      "reference": 30.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": 15.0,
+      "currentValue": 20.0,
+      "initialPercent": 50.0,
+      "currentPercent": 66.66666666666666,
+      "observations": [
+        {
+          "sourceKey": "test:pushup:T1",
+          "protocol": "test:pushup",
+          "value": 15.0,
+          "date": "2026-10-01T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T1 · Flexiones normales: 15.0 reps · 2026-10-01",
+          "tests": [
+            {
+              "item": "pushup",
+              "round": 1,
+              "side": null,
+              "value": 15.0,
+              "clean": true,
+              "date": "2026-10-01T00:00:00.000"
+            }
+          ]
+        },
+        {
+          "sourceKey": "test:pushup:T2",
+          "protocol": "test:pushup",
+          "value": 20.0,
+          "date": "2026-10-09T00:00:00.000",
+          "eligible": true,
+          "quality": "Técnica declarada limpia",
+          "reason": "",
+          "raw": "T2 · Flexiones normales: 20.0 reps · 2026-10-09",
+          "tests": [
+            {
+              "item": "pushup",
+              "round": 2,
+              "side": null,
+              "value": 20.0,
+              "clean": true,
+              "date": "2026-10-09T00:00:00.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "axis": "core",
+      "unit": "s",
+      "referenceId": "fixture-core",
+      "reference": 45.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "legs",
+      "unit": "reps",
+      "referenceId": "fixture-legs",
+      "reference": 25.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "jump",
+      "unit": "cm",
+      "referenceId": "fixture-jump",
+      "reference": 200.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "circuit",
+      "unit": "rondas",
+      "referenceId": "fixture-circuit",
+      "reference": 10.0,
+      "referenceSource": "Referencia FICTICIA aceptada",
+      "referenceFrom": "2026-10-01T00:00:00.000",
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    }
+  ]
+}

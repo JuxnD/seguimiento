@@ -9,12 +9,9 @@ import '../../ui/widgets.dart';
 /// Standalone renderer; the caller owns evidence, references and navigation.
 class PersonalRadarWidget extends StatefulWidget {
   const PersonalRadarWidget(
-      {super.key,
-      required this.radar,
-      this.onRegister,
-      this.onConfigure,
-      this.onAxisSelected});
+      {super.key, required this.radar, this.onRegister, this.onConfigure, this.onAxisSelected, this.compact = false});
   final PersonalRadar radar;
+  final bool compact;
   final ValueChanged<RadarAxis>? onRegister, onConfigure, onAxisSelected;
   @override
   State<PersonalRadarWidget> createState() => _PersonalRadarWidgetState();
@@ -31,31 +28,28 @@ class _PersonalRadarWidgetState extends State<PersonalRadarWidget> {
   @override
   Widget build(BuildContext context) {
     final radar = widget.radar, scheme = Theme.of(context).colorScheme;
-    final current = RadarProfile(radar, initial: false),
-        initial = RadarProfile(radar, initial: true);
+    final current = RadarProfile(radar, initial: false), initial = RadarProfile(radar, initial: true);
     final count = current.fractions.where((v) => v != null).length;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      AppCard(title: 'Capacidades medidas', children: [
-        Text(
-            'Evidencia hasta ${formatLong(radar.asOf)}. No es una nota universal de condición física.'),
-        if (!radar.hasRecords)
-          const Text(
-              'Sin registros de pruebas. Sin medición no significa cero ni debilidad.'),
+      AppCard(title: widget.compact ? 'Tus capacidades' : 'Capacidades medidas', children: [
+        Text(widget.compact
+            ? 'Evolución hasta ${formatLong(radar.asOf)}, desde tu primera medición comparable.'
+            : 'Evidencia hasta ${formatLong(radar.asOf)}. No es una nota universal de condición física.'),
+        if (!radar.hasRecords) const Text('Sin registros de pruebas. Sin medición no significa cero ni debilidad.'),
         if (radar.hasRecords && count == 0)
           const Text(
               'Sin ejes normalizados: revisa mediciones y referencias personales. Los valores crudos siguen abajo.'),
         if (count > 0 && count < 6)
-          Text(
-              '$count de 6 ejes con medición apta y referencia. Los demás quedan sin coordenada.'),
+          Text('$count de 6 ejes con medición apta y referencia. Los demás quedan sin coordenada.'),
         Wrap(spacing: 16, runSpacing: 6, children: [
-          Text('Actual: última apta', style: TextStyle(color: scheme.primary)),
+          Text(widget.compact ? 'Actual' : 'Actual: última apta', style: TextStyle(color: scheme.primary)),
           if (_showInitial)
-            const Text('Inicio: primera apta (línea discontinua)',
-                style: TextStyle(color: RadarPainter.initialColor))
+            Text(widget.compact ? 'Inicio (discontinua)' : 'Inicio: primera apta (línea discontinua)',
+                style: const TextStyle(color: RadarPainter.initialColor))
         ]),
         SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Mostrar punto de partida'),
+            title: Text(widget.compact ? 'Mostrar inicio' : 'Mostrar punto de partida'),
             value: _showInitial,
             onChanged: (v) => setState(() => _showInitial = v)),
         LayoutBuilder(
@@ -68,9 +62,7 @@ class _PersonalRadarWidgetState extends State<PersonalRadarWidget> {
                       final size = Size.square(constraints.maxWidth);
                       var best = 0, distance = double.infinity;
                       for (var i = 0; i < 6; i++) {
-                        final d = (details.localPosition -
-                                RadarPainter.axisPoint(size, i, 1.4))
-                            .distance;
+                        final d = (details.localPosition - RadarPainter.axisPoint(size, i, 1.4)).distance;
                         if (d < distance) {
                           distance = d;
                           best = i;
@@ -87,20 +79,23 @@ class _PersonalRadarWidgetState extends State<PersonalRadarWidget> {
                                 showInitial: _showInitial,
                                 currentColor: scheme.primary,
                                 gridColor: scheme.outlineVariant,
-                                textStyle: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge!
-                                    .copyWith(fontSize: 16),
-                                textScaler:
-                                    MediaQuery.textScalerOf(context))))))),
-        const Text(
-            '100% equivale a la referencia personal mostrada abajo. Ambos contornos usan la misma referencia. Un hueco no se rellena con 0.'),
-        if (radar.freshness == null)
+                                textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(fontSize: 16),
+                                textScaler: MediaQuery.textScalerOf(context))))))),
+        if (!widget.compact)
+          const Text(
+              '100% equivale a la referencia personal mostrada abajo. Ambos contornos usan la misma referencia. Un hueco no se rellena con 0.'),
+        if (widget.compact)
+          const ExpansionTile(title: Text('Cómo leer esta gráfica'), children: [
+            Padding(
+                padding: EdgeInsets.all(12),
+                child: Text(
+                    '100% es tu referencia personal. Inicio y actual usan la misma referencia, incluso si la inicial es anterior. Los huecos significan que falta una medición comparable o referencia; no son ceros. Consulta las fechas al tocar cada eje.'))
+          ]),
+        if (radar.freshness == null && !widget.compact)
           const Text(
               'Sin ventana de actualidad definida: consulta fecha y antigüedad; la última prueba no describe necesariamente cómo estás hoy.')
-        else
-          Text(
-              'Ventana de actualidad: ${radar.freshness!.maxAgeDays} días · ${radar.freshness!.source}.'),
+        else if (radar.freshness != null)
+          Text('Ventana de actualidad: ${radar.freshness!.maxAgeDays} días · ${radar.freshness!.source}.'),
         Wrap(spacing: 8, runSpacing: 4, children: [
           for (final axis in RadarAxis.values)
             OutlinedButton(
@@ -109,27 +104,41 @@ class _PersonalRadarWidgetState extends State<PersonalRadarWidget> {
                 child: Text('${axis.index + 1}. ${axis.label}'))
         ]),
       ]),
+      if (widget.compact)
+        const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+                'Toca un eje para ver su fecha, evidencia y referencia. Una prueba antigua puede no reflejar cómo estás hoy.')),
       if (_selected != null)
         AppCard(title: 'Evidencia de ${_selected!.label}', children: [
           _details(radar.axis(_selected!)),
+          if (widget.compact) _actions(radar.axis(_selected!)),
         ]),
-      for (final axis in radar.axes)
-        AppCard(title: '${axis.axis.index + 1}. ${axis.axis.label}', children: [
-          _details(axis),
-          Wrap(spacing: 8, runSpacing: 6, children: [
-            if (widget.onRegister != null)
-              OutlinedButton(
-                  onPressed: () => widget.onRegister!(axis.axis),
-                  child: Text('Registrar ${axis.axis.label}')),
-            if (widget.onConfigure != null)
-              TextButton(
-                  onPressed: () => widget.onConfigure!(axis.axis),
-                  child: Text(
-                      '${axis.reference == null ? 'Definir' : 'Revisar'} referencia de ${axis.axis.label}'))
+      if (!widget.compact)
+        for (final axis in radar.axes)
+          AppCard(title: '${axis.axis.index + 1}. ${axis.axis.label}', children: [
+            _details(axis),
+            Wrap(spacing: 8, runSpacing: 6, children: [
+              if (widget.onRegister != null)
+                OutlinedButton(
+                    onPressed: () => widget.onRegister!(axis.axis), child: Text('Registrar ${axis.axis.label}')),
+              if (widget.onConfigure != null)
+                TextButton(
+                    onPressed: () => widget.onConfigure!(axis.axis),
+                    child: Text('${axis.reference == null ? 'Definir' : 'Revisar'} referencia de ${axis.axis.label}'))
+            ]),
           ]),
-        ]),
     ]);
   }
+
+  Widget _actions(RadarAxisEvidence axis) => Wrap(spacing: 8, runSpacing: 6, children: [
+        if (widget.onRegister != null)
+          OutlinedButton(onPressed: () => widget.onRegister!(axis.axis), child: Text('Registrar ${axis.axis.label}')),
+        if (widget.onConfigure != null)
+          TextButton(
+              onPressed: () => widget.onConfigure!(axis.axis),
+              child: Text('${axis.reference == null ? 'Definir' : 'Revisar'} referencia de ${axis.axis.label}')),
+      ]);
 
   Widget _details(RadarAxisEvidence axis) {
     final a = axis.axis, ref = axis.reference;
@@ -141,27 +150,20 @@ class _PersonalRadarWidgetState extends State<PersonalRadarWidget> {
             ? 'valor no resoluble'
             : '${fmtDec(o.value!)} ${a.unit}'
         : '${o.cindy!.rounds ?? '?'} rondas + ${o.cindy!.extraReps ?? '?'} reps';
-    final first = axis.firstEligible,
-        current = axis.current,
-        latest = axis.latestObserved;
+    final first = axis.firstEligible, current = axis.current, latest = axis.latestObserved;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Text('Protocolo: ${testProtocolName(a)}.'),
       if (first != null) Text('Inicio: ${value(first)} · ${date(first)}.'),
-      if (current != null)
-        Text('Última apta: ${value(current)} · ${date(current)}.'),
+      if (current != null) Text('Última apta: ${value(current)} · ${date(current)}.'),
       if (current != null) Text(current.quality),
       if (current == null) Text(axis.currentIssue),
       if (current == null && axis.lastEligible != null)
-        Text(
-            'Histórica apta: ${value(axis.lastEligible!)} · ${date(axis.lastEligible!)}.'),
-      if (ref == null)
-        Text(
-            '${axis.referenceIssue} Se conserva el valor crudo; no hay puntuación.'),
+        Text('Histórica apta: ${value(axis.lastEligible!)} · ${date(axis.lastEligible!)}.'),
+      if (ref == null) Text('${axis.referenceIssue} Se conserva el valor crudo; no hay puntuación.'),
       if (ref != null)
         Text(
             'Referencia común: ${fmtDec(ref.value)} ${ref.unit} · ${ref.source}. Vigente desde ${formatLong(ref.from)}${ref.until == null ? ', sin fin registrado' : ' hasta ${formatLong(ref.until!)}'}.'),
-      if (axis.initialPercent != null)
-        Text('Inicio hacia referencia: ${fmtDec(axis.initialPercent!)}%.'),
+      if (axis.initialPercent != null) Text('Inicio hacia referencia: ${fmtDec(axis.initialPercent!)}%.'),
       if (axis.currentPercent != null)
         Text(
             'Actual hacia referencia: ${fmtDec(axis.currentPercent!)}%${axis.currentPercent! > 100 ? ' (dibujo limitado a 100%; valor real conservado)' : ''}.'),
@@ -172,11 +174,9 @@ class _PersonalRadarWidgetState extends State<PersonalRadarWidget> {
                 ? 'Cambio porcentual desde 0: no calculable.'
                 : 'Cambio de la prueba: ${fmtDec(axis.changePercent!)}%; mismo protocolo.'),
       if (latest != null && latest != current)
-        Text(
-            'Último intento observado: ${value(latest)} · ${date(latest)}. ${latest.reason}'),
+        Text('Último intento observado: ${value(latest)} · ${date(latest)}. ${latest.reason}'),
       if (axis.observations.any((o) => o.orderDate == null))
-        const Text(
-            'Hay observaciones sin fecha; no se puede afirmar cuál fue la última.'),
+        const Text('Hay observaciones sin fecha; no se puede afirmar cuál fue la última.'),
       if (axis.observations.isNotEmpty)
         ExpansionTile(title: const Text('Ver intentos guardados'), children: [
           for (final o in axis.observations)
