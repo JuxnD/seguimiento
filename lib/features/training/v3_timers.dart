@@ -11,6 +11,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/widgets.dart';
+import 'pre_attempt_card.dart';
 
 // Cronómetros del Plan v3 (§18.2, §18.9, §18.10): Cindy (AMRAP 20 min),
 // Tabata (4 bloques de 8 × 20/10) y el EMOM de burpees del viernes. Todo se
@@ -125,11 +126,16 @@ class AmrapScreen extends StatefulWidget {
     this.warmupGoalSec = 480,
     this.resume,
     this.onSnapshot,
+    this.attempt = false,
   });
 
   final DateTime date;
   final int minutes;
   final int warmupGoalSec;
+
+  /// Cindy de prueba (línea base, cada 4 semanas o el viernes de pruebas):
+  /// calentamiento y checklist a la vista (§16.23).
+  final bool attempt;
 
   /// Cindy a mitad que Android cerró: se retoma donde iba.
   final TimerSnapshot? resume;
@@ -271,6 +277,31 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
         child: SizedBox(
           width: double.infinity,
           child: switch (_phase) {
+          // Cindy de prueba: tarjeta fija y desplazable; el botón no se tapa.
+          _Phase.calentamiento when widget.attempt => Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      const PreAttemptCard(torso: true),
+                      const SizedBox(height: 8),
+                      Text('Calentando ${formatDuration(warmupSec)} · meta ${formatDuration(widget.warmupGoalSec)}',
+                          textAlign: TextAlign.center, style: text.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(
+                          'Luego ${widget.minutes} min de 5 dominadas + 10 flexiones + 15 sentadillas, tantas rondas '
+                          'como puedas. Toca "+1 ronda" al cerrar cada una.',
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 64,
+                  child: FilledButton(onPressed: () => setState(_start), child: const Text('Empezar AMRAP')),
+                ),
+              ],
+            ),
           _Phase.calentamiento => _PhasePanel(
               title: 'Calentamiento',
               elapsed: warmupSec,

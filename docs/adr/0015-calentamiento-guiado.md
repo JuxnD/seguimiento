@@ -53,8 +53,9 @@ posterior necesitan consultarlo como dato, la migración puede leer la nota
   escapulares, Flexiones escapulares, Puente de glúteo y Dislocaciones con
   banda: tienen ficha (pasos y errores) y el visor declara la ausencia.
   Corresponde al frente de ilustraciones.
-- La Cindy de prueba y las pruebas del viernes (temporizadores) no muestran
-  aún el checklist.
+- La Cindy de prueba (línea base, cada 4 semanas y el viernes de pruebas)
+  muestra la misma tarjeta "Antes del intento" en su calentamiento; Tabata y
+  la Cindy normal no.
 
 
 Actualización10oct2026: el frente014 resuelve las seis ausencias visuales
