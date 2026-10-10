@@ -110,7 +110,7 @@ void main() {
       final r = read(today, steps);
       expect(r.state, CoachState.propuesta);
       expect((r.proposal!.from, r.proposal!.to), (5000, 6000), reason: 'promedio 6.490 → 6.000, nunca por encima');
-      expect(r.proposal!.id, 'pasos:5000>6000:p1');
+      expect(r.proposal!.id, 'pasos:5000>6000:legado:p1');
       expect(read(today, steps).proposal!.id, r.proposal!.id, reason: 'misma entrada, misma decisión');
       expect(read(addDays(today, 1), weekdays(addDays(today, 1), (i) => 6400 + i * 20)).proposal!.id, r.proposal!.id,
           reason: 'al día siguiente, misma evidencia: no es otra propuesta');
@@ -137,7 +137,7 @@ void main() {
     });
 
     test('un rechazo vale para su ventana: con una ventana nueva completa se reconsidera', () {
-      final rejected = ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.rechazada, decidedOn: today);
+      final rejected = ProposalRecord(id: 'pasos:5000>6000:legado:p1', status: ProposalStatus.rechazada, decidedOn: today);
       final steps = weekdays(today, (i) => 6400 + i * 20);
       expect(read(today, steps, last: rejected).state, CoachState.observar);
       final d13 = addDays(today, 13);
@@ -156,21 +156,21 @@ void main() {
     test('rechazada con la misma evidencia no insiste; pospuesta espera su fecha', () {
       final steps = weekdays(today, (i) => 6400 + i * 20);
       final rejected = read(today, steps,
-          last: const ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.rechazada));
+          last: const ProposalRecord(id: 'pasos:5000>6000:legado:p1', status: ProposalStatus.rechazada));
       expect(rejected.state, CoachState.observar);
       expect(rejected.reason, contains('rechazaste'));
 
-      final postponed = ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.pospuesta, reviewAfter: d(11, 5));
+      final postponed = ProposalRecord(id: 'pasos:5000>6000:legado:p1', status: ProposalStatus.pospuesta, reviewAfter: d(11, 5));
       expect(read(today, steps, last: postponed).state, CoachState.observar);
       expect(read(d(11, 5), weekdays(d(11, 5), (i) => 6400 + i * 20), last: postponed).state, CoachState.propuesta);
 
       final accepted = read(today, steps,
-          last: ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.aceptada, decidedOn: today));
+          last: ProposalRecord(id: 'pasos:5000>6000:legado:p1', status: ProposalStatus.aceptada, decidedOn: today));
       expect((accepted.state, accepted.proposal, accepted.nextReview), (CoachState.aceptada, null, d(11, 17)));
 
       final otherEvidence = read(today, weekdays(today, (i) => 7600 + i * 20),
-          last: const ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.rechazada));
-      expect(otherEvidence.proposal?.id, 'pasos:5000>7500:p1', reason: 'otra cifra es otra evidencia');
+          last: const ProposalRecord(id: 'pasos:5000>6000:legado:p1', status: ProposalStatus.rechazada));
+      expect(otherEvidence.proposal?.id, 'pasos:5000>7500:legado:p1', reason: 'otra cifra es otra evidencia');
     });
 
     test('meta recién cambiada: en prueba hasta su revisión; luego, si no se sostiene, revisar', () {

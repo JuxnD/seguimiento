@@ -142,6 +142,23 @@ class CoachRepository {
     return out;
   }
 
+  /// Decide la propuesta de pasos que se mostró con el día real de la
+  /// decisión (`now`), no el de la lectura (un diálogo abierto antes de
+  /// medianoche). Antes de escribir revalida: si la lectura de ese día ya no
+  /// ofrece la misma propuesta (otra ventana, ya decidida, recuperación
+  /// primero), no escribe nada y devuelve la lectura nueva. null = decidida;
+  /// la vigencia aceptada rige desde el día siguiente al real.
+  Future<CoachReading?> decideSteps(StepsProposal shown, ProposalStatus status,
+      {required DateTime now, int? acceptedValue}) async {
+    final day = dateOnly(now);
+    final fresh = await stepsReading(day);
+    final p = fresh.proposal;
+    if (fresh.state != CoachState.propuesta || p == null || p.id != shown.id) return fresh;
+    await GoalRepository(db).decideSteps(p, status,
+        today: day, acceptedValue: acceptedValue, evidence: fresh.evidence.join(' · '));
+    return null;
+  }
+
   Future<CoachReading> stepsReading(DateTime date, {LoadReading? load}) async {
     final d0 = dateOnly(date);
     final goals = GoalRepository(db);
@@ -163,6 +180,7 @@ class CoachRepository {
       steps: {for (final r in rows) parseDay(r.date): r.steps},
       goal: goal,
       goalSince: since,
+      goalFrom: current == null || current.legacy ? null : current.effectiveFrom,
       history: history,
       load: load ?? await this.load(d0),
       fatigue: await fatigue(d0),
@@ -178,6 +196,7 @@ CoachReading stepsReadingFrom({
   required Map<DateTime, int> steps,
   required int goal,
   DateTime? goalSince,
+  DateTime? goalFrom,
   required GoalHistory history,
   required LoadReading load,
   required bool fatigue,
@@ -189,6 +208,7 @@ CoachReading stepsReadingFrom({
       steps: steps,
       goal: goal,
       goalSince: goalSince,
+      goalFrom: goalFrom,
       stepsGoalOn: (day) {
         final at = history.on(GoalMetric.pasos, day);
         return at == null || !at.known ? null : at.value?.round();

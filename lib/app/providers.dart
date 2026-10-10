@@ -233,6 +233,11 @@ final measurementSeriesProvider = FutureProvider.family((ref, MeasureSite site) 
   return ref.watch(chartRepositoryProvider).measurements(site, unit: unit);
 });
 
+/// Reloj de las decisiones del acompañamiento (plan 009): una propuesta se
+/// decide con el día real en que se toca el botón, no con el de la lectura
+/// que la mostró. Las pruebas lo fijan.
+final decisionClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
 /// Día de hoy. Cambia sola a medianoche y cuando la app vuelve a primer plano
 /// (`refresh`), así que nada que dependa de ella se queda en "ayer" con la app
 /// abierta de un día para otro.

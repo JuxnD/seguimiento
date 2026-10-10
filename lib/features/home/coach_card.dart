@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
+import '../../data/repositories/coach_repository.dart';
 import '../../data/repositories/goal_repository.dart';
 import '../../domain/adaptive_coach.dart';
 import '../../domain/dates.dart';
@@ -21,19 +22,23 @@ class CoachCard extends ConsumerWidget {
 
   Future<void> _decide(BuildContext context, WidgetRef ref, ProposalStatus status, {int? value}) async {
     final p = reading.proposal!;
-    await GoalRepository(ref.read(databaseProvider)).decideSteps(
-      p,
-      status,
-      today: reading.evaluatedOn,
-      acceptedValue: value,
-      evidence: reading.evidence.join(' · '),
-    );
+    // El día real de la decisión: si el diálogo cruzó medianoche, se revalida
+    // con la lectura de hoy y la vigencia empieza mañana de verdad.
+    final now = ref.read(decisionClockProvider)();
+    final changed = await CoachRepository(ref.read(databaseProvider)).decideSteps(p, status, now: now, acceptedValue: value);
+    ref.read(todayProvider.notifier).refresh();
     ref.invalidate(dashboardProvider);
     if (!context.mounted) return;
+    if (changed != null) {
+      showSnack(context, 'La revisión cambió desde que la abriste (${changed.state.label.toLowerCase()}): no se guardó nada. Mírala de nuevo.');
+      return;
+    }
+    final starts = addDays(dateOnly(now), 1);
     showSnack(
       context,
       switch (status) {
-        ProposalStatus.aceptada => 'Meta de ${fmtInt(value ?? p.to)} pasos desde mañana. Se revisa en $coachReviewDays días.',
+        ProposalStatus.aceptada =>
+          'Meta de ${fmtInt(value ?? p.to)} pasos desde mañana (${formatShort(starts)}). Se revisa en $coachReviewDays días.',
         ProposalStatus.pospuesta => 'Se vuelve a mirar en $coachPostponeDays días.',
         ProposalStatus.rechazada => 'Se mantiene ${fmtInt(p.from)}. No vuelve a proponerse con esta evidencia.',
         ProposalStatus.pendiente => '',
@@ -46,7 +51,7 @@ class CoachCard extends ConsumerWidget {
       a.proposalId!,
       strengthProposalKind(a.exercise),
       status,
-      today: reading.evaluatedOn,
+      today: ref.read(decisionClockProvider)(),
       evidence: a.text,
     );
     ref.invalidate(dashboardProvider);

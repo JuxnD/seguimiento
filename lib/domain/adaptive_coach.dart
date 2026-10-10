@@ -75,16 +75,26 @@ class ProposalRecord {
 }
 
 class StepsProposal {
-  const StepsProposal({required this.from, required this.to, required this.average, required this.daysAtGoal});
+  const StepsProposal({
+    required this.from,
+    required this.to,
+    required this.average,
+    required this.daysAtGoal,
+    this.goalFrom,
+  });
 
   final int from;
   final int to;
   final int average;
   final int daysAtGoal;
 
-  /// Estable por evidencia y política: la misma propuesta no vuelve como
-  /// novedad cada mañana; otra cifra es otra evidencia.
-  String get id => 'pasos:$from>$to:p$coachPolicy';
+  /// Desde cuándo rige la meta que se revisa; null = legado. Volver a 5.000
+  /// después de aceptar 6.000 es otra vigencia y, por tanto, otro ciclo.
+  final DateTime? goalFrom;
+
+  /// Estable por evidencia, vigencia y política: la misma propuesta no
+  /// vuelve como novedad cada mañana; otra cifra u otra vigencia es otra.
+  String get id => 'pasos:$from>$to:${goalFrom == null ? 'legado' : dayKey(goalFrom!)}:p$coachPolicy';
 }
 
 class CoachReading {
@@ -145,6 +155,7 @@ CoachReading stepsReading({
   required Map<DateTime, int> steps,
   required int goal,
   DateTime? goalSince,
+  DateTime? goalFrom,
   required int? Function(DateTime day) stepsGoalOn,
   required LoadReading load,
   required bool fatigue,
@@ -241,7 +252,8 @@ CoachReading stepsReading({
         nextReview: addDays(d0, 1),
       );
     }
-    final p = StepsProposal(from: goal, to: candidate, average: average, daysAtGoal: atGoal);
+    final p = StepsProposal(
+        from: goal, to: candidate, average: average, daysAtGoal: atGoal, goalFrom: goalFrom ?? goalSince);
     var decided = last != null && last.id == p.id ? last : null;
     // Un rechazo vale para la ventana con la que se decidió; con una ventana
     // nueva completa (14 días después) se puede reconsiderar.

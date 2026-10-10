@@ -203,5 +203,40 @@ void main() {
       expect(await coach.recovery(today), RecoverySignal.desconocida);
     });
   });
-}
 
+  test('ciclo nuevo (R2): aceptar 5.000→6.000, volver a 5.000 a mano y cumplir otra vez vuelve a proponer', () async {
+    final goals = GoalRepository(db);
+    await fill((i) => 6400 + i * 20);
+    final first = (await coach.stepsReading(today)).proposal!;
+    expect(first.id, 'pasos:5000>6000:2026-09-01:p1');
+    await goals.decideSteps(first, ProposalStatus.aceptada, today: today);
+
+    // 6.000 rige desde el 3 nov; el lunes 16 la persona vuelve a 5.000 en Ajustes.
+    final back = d(11, 16);
+    await goals.projectDueGoals(back);
+    expect((await ProfileRepository(db).get()).stepsTarget, 6000);
+    await goals.updateProfile(const ProfilesCompanion(stepsTarget: Value(5000)), origin: GoalOrigin.perfil, now: back);
+
+    // Dos semanas cumpliendo holgado otra vez, con recuperación favorable.
+    final later = d(11, 30);
+    final w = coachWindow(later);
+    for (var i = 0; i < w.length; i++) {
+      await steps.setSteps(w[i], 6400 + i * 20);
+    }
+    await RecoveryRepository(db).setFeeling(d(11, 26), 2);
+    await RecoveryRepository(db).setFeeling(addDays(later, -1), 2);
+
+    final trial = await coach.stepsReading(d(11, 27));
+    expect(trial.state, CoachState.aceptada);
+    expect(trial.reason, 'Meta de 5.000 desde el 16 nov: se revisa el 30 nov.',
+        reason: 'la vigencia nueva está en prueba, no la aceptación vieja');
+    final again = await coach.stepsReading(later);
+    expect(again.state, CoachState.propuesta, reason: 'no la atrapa la decisión del ciclo anterior');
+    expect(again.proposal!.id, 'pasos:5000>6000:2026-11-16:p1');
+    expect((await goals.proposal(first.id))!.status, ProposalStatus.aceptada, reason: 'la decisión histórica se conserva');
+
+    // Contraprueba: la misma vigencia con su decisión sigue decidida.
+    await goals.decideSteps(again.proposal!, ProposalStatus.rechazada, today: later);
+    expect((await coach.stepsReading(later)).state, CoachState.observar);
+  });
+}
