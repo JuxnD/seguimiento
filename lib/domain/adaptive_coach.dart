@@ -1,5 +1,7 @@
 import 'dates.dart';
 import 'format.dart';
+import 'progress.dart' show strengthProgressionHint;
+import 'progress_evidence.dart';
 import 'recovery.dart' show LoadReading;
 import 'steps.dart' show stepsGoalFor;
 
@@ -282,3 +284,73 @@ CoachReading stepsReading({
     nextReview: addDays(d0, 1),
   );
 }
+
+// ---------------------------------------------------------------------------
+// Fuerza (plan 009 sobre la evidencia de 008): por ejercicio del día, si toca
+// subir y, si no, por qué. Reutiliza `strengthProgressionHint`; las causas
+// salen de lo guardado, nunca de la etiqueta ni del tiempo.
+// ---------------------------------------------------------------------------
+
+enum StrengthStatus { subir, mantener, sinDatos }
+
+class StrengthAdvice {
+  const StrengthAdvice(this.exercise, this.status, this.text);
+
+  final String exercise;
+  final StrengthStatus status;
+
+  /// Qué subir, o la causa de no subir.
+  final String text;
+}
+
+StrengthAdvice strengthAdvice({
+  required String exercise,
+  required StrengthSessionEvidence? evidence,
+  required DateTime date,
+  required int? repsMin,
+  required int? repsMax,
+  required int? plannedSets,
+  bool perSide = false,
+  int? planDayId,
+  String? mode,
+  bool tracksLoad = false,
+  List<String> chain = const [],
+}) {
+  StrengthAdvice keep(String why) => StrengthAdvice(exercise, StrengthStatus.mantener, why);
+  final e = evidence;
+  if (e == null) return StrengthAdvice(exercise, StrengthStatus.sinDatos, 'sin registro anterior');
+  final hint = strengthProgressionHint(
+    evidence: e,
+    date: date,
+    repsMin: repsMin,
+    repsMax: repsMax,
+    plannedSets: plannedSets,
+    perSide: perSide,
+    planDayId: planDayId,
+    mode: mode,
+    tracksLoad: tracksLoad,
+    chain: chain,
+  );
+  if (hint != null) return StrengthAdvice(exercise, StrengthStatus.subir, hint);
+  final when = 'el ${formatShort(e.date)}';
+  if (e.imported) return keep('lo anterior es historial importado');
+  if (e.mode == 'tecnica') return keep('la última ($when) fue sesión técnica');
+  if (e.mode != mode) return keep('la última ($when) fue otro protocolo');
+  if (perSide) return keep('por lado: no se puede comparar lado a lado con lo guardado');
+  if (e.incomplete) return keep('la sesión del ${formatShort(e.date)} quedó incompleta');
+  if (e.sets.any((x) => x.toFailure)) return keep('$when llegaste al fallo');
+  final split = e.sets.where((x) => x.split).firstOrNull;
+  if (split != null) return keep('$when hubo una serie partida${split.splitDetail == null ? '' : ' (${split.splitDetail})'}');
+  if (e.sets.any((x) => x.rir == 0)) return keep('$when una serie quedó a RIR 0');
+  if (e.sets.any((x) => x.variant != e.sets.first.variant || x.loadKg != e.sets.first.loadKg)) {
+    return keep('$when mezclaste variante o carga');
+  }
+  if (planDayId != null && e.planDayId != planDayId) return keep('la última fue en otro día del plan');
+  if (repsMax != null && e.sets.any((x) => x.reps < repsMax)) {
+    final best = e.sets.map((x) => x.reps).reduce((a, b) => a < b ? a : b);
+    return keep('todavía no todas las series llegan a $repsMax ($when la más baja: $best)');
+  }
+  if (plannedSets != null && e.sets.length < plannedSets) return keep('$when hiciste ${e.sets.length} de $plannedSets series');
+  return keep('se mantiene la dosis');
+}
+

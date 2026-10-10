@@ -135,5 +135,32 @@ void main() {
     expect((r.state, r.proposal), (CoachState.faltanDatos, null));
     expect(r.reason, contains('7 de 10'));
   });
+
+  test('fuerza en Hoy: una serie guardada al fallo frena la subida y lo dice', () async {
+    final plan = PlanRepository(db, ExerciseRepository(db));
+    await seedIfEmpty(db, plan);
+    await activatePlanV31(db, plan, d(10, 12));
+    final tuesday = (await plan.dayFor(d(10, 13)))!;
+    final training = TrainingRepository(db, ExerciseRepository(db));
+    Future<void> session({required bool failure}) => training.save(SessionDraft(
+          date: d(10, 13),
+          type: SessionType.trenSuperior,
+          planDayId: tuesday.dayId,
+          sets: [
+            for (var i = 0; i < 4; i++)
+              SetDraft(exercise: 'Fondos en barra', reps: 10, rir: 2, toFailure: failure && i == 3),
+          ],
+        ));
+    final dashboard = DashboardRepository(db, plan, NutritionRepository(db), ProfileRepository(db));
+
+    await session(failure: true);
+    var dips = (await dashboard.today(now: d(10, 20))).strength.firstWhere((a) => a.exercise == 'Fondos en barra');
+    expect((dips.status, dips.text.contains('llegaste al fallo')), (StrengthStatus.mantener, true));
+
+    await db.delete(db.sessions).go();
+    await session(failure: false);
+    dips = (await dashboard.today(now: d(10, 20))).strength.firstWhere((a) => a.exercise == 'Fondos en barra');
+    expect(dips.status, StrengthStatus.subir, reason: 'misma sesión sin el fallo: la regla existente sube');
+  });
 }
 

@@ -12,9 +12,12 @@ import '../../ui/widgets.dart';
 /// cuándo se revisa. Una propuesta se acepta (editable), se pospone o se
 /// rechaza; nunca se aplica sola.
 class CoachCard extends ConsumerWidget {
-  const CoachCard({super.key, required this.reading});
+  const CoachCard({super.key, required this.reading, this.strength = const []});
 
   final CoachReading reading;
+
+  /// Fuerza del día, por ejercicio.
+  final List<StrengthAdvice> strength;
 
   Future<void> _decide(BuildContext context, WidgetRef ref, ProposalStatus status, {int? value}) async {
     final p = reading.proposal!;
@@ -65,6 +68,34 @@ class CoachCard extends ConsumerWidget {
         ],
         if (r.nextReview != null && !compact)
           Text('Próxima revisión: ${formatShort(r.nextReview!)}', style: text.bodySmall),
+        if (strength.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text('Fuerza hoy', style: text.labelLarge),
+          for (final a in strength)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    switch (a.status) {
+                      StrengthStatus.subir => Icons.trending_up,
+                      StrengthStatus.mantener => Icons.pause_circle_outline,
+                      StrengthStatus.sinDatos => Icons.help_outline,
+                    },
+                    size: 18,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      '${a.exercise}: ${a.status == StrengthStatus.mantener ? 'no sube, ${a.text}' : a.text}',
+                      style: text.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
         if (r.proposal != null) ...[
           const SizedBox(height: 8),
           Wrap(

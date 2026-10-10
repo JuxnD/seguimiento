@@ -59,7 +59,11 @@ class TodayDashboard {
     this.fitnessTest,
     this.techniqueSuggested = false,
     this.coach,
+    this.strength = const [],
   });
+
+  /// Fuerza del día: qué subir o por qué no (plan 009 + evidencia de 008).
+  final List<StrengthAdvice> strength;
 
   /// Lectura del acompañamiento (plan 009): pasos según cobertura,
   /// cumplimiento y recuperación. null fuera de Hoy.
@@ -263,6 +267,9 @@ class DashboardRepository {
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
       fitnessTest: test,
       coach: coach,
+      strength: view == null || type == DayType.resistencia
+          ? const []
+          : await coachRepo.strengthAdvices(view.day, date, planDayId: view.dayId),
       techniqueSuggested: planSessions.isEmpty &&
           suggestTechniqueSession(
             deload: v3?.reducedVolume ?? false,

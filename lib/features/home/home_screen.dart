@@ -86,7 +86,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
-              if (d.coach case final coach?) CoachCard(reading: coach),
+              if (d.coach case final coach?) CoachCard(reading: coach, strength: d.strength),
               const _PendingReviewCard(),
               const _LadderStepUpCard(),
               _YesterdayCheckCard(today: today),

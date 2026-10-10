@@ -2,10 +2,15 @@ import 'package:drift/drift.dart';
 
 import '../../domain/adaptive_coach.dart';
 import '../../domain/dates.dart';
+import '../../domain/enums.dart';
 import '../../domain/goal_history.dart';
 import '../../domain/recovery.dart';
 import '../database.dart';
+import '../../domain/progress.dart' show progressionSteps;
+import 'exercise_repository.dart';
 import 'goal_repository.dart';
+import 'plan_repository.dart' show PlanDayDraft;
+import 'training_repository.dart';
 import 'recovery_repository.dart';
 
 /// Lectura del acompañamiento para un día (plan 009). Hoy y los avisos usan
@@ -65,6 +70,39 @@ class CoachRepository {
               t.rpe.isNotNull()))
         .get();
     return sessions.any((s) => s.rpe! <= 8);
+  }
+
+  /// Fuerza del día (sobre la evidencia de 008): por cada ejercicio
+  /// principal con rango de reps, si toca subir o por qué no. Los circuitos
+  /// se leen por rondas, no aquí.
+  Future<List<StrengthAdvice>> strengthAdvices(PlanDayDraft day, DateTime date, {int? planDayId, String? mode}) async {
+    if (day.type.isCircuit) return const [];
+    final exercises = ExerciseRepository(db);
+    final training = TrainingRepository(db, exercises);
+    final picks = [
+      for (final e in day.exercises)
+        if (e.block == null && e.repsMax != null && e.sets != null && (e.repsMax ?? 0) > (e.repsMin ?? 0)) e,
+    ];
+    if (picks.isEmpty) return const [];
+    final guides = await exercises.byNames(picks.map((e) => e.name));
+    final seen = <String>{};
+    return [
+      for (final e in picks)
+        if (seen.add(e.name))
+          strengthAdvice(
+            exercise: e.name,
+            evidence: await training.lastStrengthEvidence(e.name, date, mode: mode),
+            date: date,
+            repsMin: e.repsMin,
+            repsMax: e.repsMax,
+            plannedSets: e.perSide ? e.sets! * 2 : e.sets,
+            perSide: e.perSide,
+            planDayId: planDayId,
+            mode: mode,
+            tracksLoad: guides[e.name]?.tracksLoad ?? false,
+            chain: progressionSteps(guides[e.name]?.progressionNote),
+          ),
+    ];
   }
 
   Future<CoachReading> stepsReading(DateTime date, {LoadReading? load}) async {
