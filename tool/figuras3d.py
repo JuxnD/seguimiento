@@ -151,13 +151,16 @@ def export_frame(f):
     s = fg.solve(f)
     j = s['joints']
     out = {'caption': f['caption'], 'hip': list(f['hip']), 'torso': f['torso'], 'gaze': f.get('gaze', 0), 'limbs': {}}
+    if 'shoulderOffset' in f:
+        out['shoulderOffset'] = list(f['shoulderOffset'])
     for side in ('near', 'far'):
         for limb, mid, end, root in (('Leg', 'Knee', 'Ankle', 'hip'), ('Arm', 'Elbow', 'Hand', 'neck')):
             spec = f.get(side + limb)
             if not spec:
                 continue
             m, e = j[side + mid], j[side + end]
-            a1, a2 = _ang(j[root], m), _ang(m, e)
+            origin = j.get('shoulder', j['neck']) if limb == 'Arm' else j[root]
+            a1, a2 = _ang(origin, m), _ang(m, e)
             item = {'angles': [a1, a2]}
             if 'reach' in spec:
                 # Apoyo: la extremidad se sujeta ahí al animar (IK).
@@ -237,22 +240,10 @@ def build(ex):
 
 
 def main():
-    figures, problems = [], []
-    for ex in EXERCISES:
-        fig, probs = build(ex)
-        figures.append(fig)
-        problems += probs
-    if problems:
-        print('\n'.join(problems))
-        sys.exit(1)
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    target = os.path.join(root, 'assets', 'tecnica', 'figuras3d.json')
-    consts = {'T': fg.T, 'UA': fg.UA, 'FA': fg.FA, 'TH': fg.TH, 'SH': fg.SH, 'FT': fg.FT,
-              'HEAD_OFF': fg.HEAD_OFF, 'HEAD_R': fg.HEAD_R}
-    with open(target, 'w', encoding='utf-8') as fh:
-        json.dump({'version': 1, 'consts': consts, 'figures': fg._round(figures)}, fh,
-                  ensure_ascii=False, separators=(',', ':'))
-    print(f'{len(figures)} figuras 3D → {os.path.relpath(target, root)}')
+    # Única entrada pública: el catálogo completo. EXERCISES conserva las
+    # especificaciones originales reutilizadas por illustration_catalog.
+    from illustration_catalog import main as build_catalog
+    build_catalog()
 
 
 if __name__ == '__main__':

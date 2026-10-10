@@ -33,11 +33,26 @@ class Profiles extends Table {
   TextColumn get lengthUnit => textEnum<LengthUnit>().withDefault(const Constant('cm'))();
 
   /// Meta de pasos diarios entre semana.
-  IntColumn get stepsTarget => integer().withDefault(const Constant(7500))();
+  IntColumn get stepsTarget => integer().withDefault(const Constant(5000))();
 
   /// Meta de kcal de los días de fútbol (sábado y domingo, §19.3). null =
   /// la misma de entre semana (`kcalTarget`).
   IntColumn get kcalTargetFootball => integer().nullable()();
+
+  /// Alta (plan 022, esquema 23). Origen: 'new' (instalación nueva) o
+  /// 'legacyUnknown' (base migrada: no se infiere quién es). El valor por
+  /// defecto es el de la migración; `onCreate` escribe new/pending.
+  TextColumn get profileOrigin => text().withDefault(const Constant('legacyUnknown'))();
+
+  /// 'pending' hasta confirmar el alta; 'ready' después.
+  TextColumn get setupState => text().withDefault(const Constant('ready'))();
+
+  /// Momento real (ISO) en que se confirmó el alta. null si no la hubo.
+  TextColumn get setupConfirmedAt => text().nullable()();
+
+  /// Consentimiento explícito y fechado (ISO) para aplicar las correcciones
+  /// del traspaso original. Separado del alta: ni el origen ni un flag lo dan.
+  TextColumn get handoffConsentAt => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -296,6 +311,17 @@ class Foods extends Table {
   RealColumn get eggsPerUnit => real().nullable()();
 }
 
+/// Additive catalog patch identities travel inside SQLite backups. A null
+/// foodId is a tombstone: deletion/collision is not recreated on next launch.
+@DataClassName('CatalogPatchRow')
+class CatalogPatches extends Table {
+  TextColumn get sourceId => text()();
+  IntColumn get patchVersion => integer()();
+  IntColumn get foodId => integer().nullable().references(Foods, #id, onDelete: KeyAction.setNull)();
+  @override
+  Set<Column> get primaryKey => {sourceId};
+}
+
 /// Combos de un toque: lo que se repite (batido, cena base…). Guardan
 /// referencias al catálogo; los macros se calculan al registrarlos.
 @DataClassName('MealTemplateRow')
@@ -475,6 +501,10 @@ class MorningChecks extends Table {
   TextColumn get date => text()();
   IntColumn get restingHr => integer().nullable().check(restingHr.isBetweenValues(25, 220))();
 
+  /// Cómo amaneció (plan 009): 1 descansado, 2 normal, 3 cansado. null = no
+  /// respondió; no se toma como recuperado ni como fatiga.
+  IntColumn get feeling => integer().nullable().check(feeling.isBetweenValues(1, 3))();
+
   @override
   Set<Column> get primaryKey => {date};
 }
@@ -590,3 +620,47 @@ class AiMessages extends Table {
   IntColumn get contractVersion => integer()();
   IntColumn get createdAt => integer()();
 }
+
+/// Vigencias de las metas (plan 009, esquema 22). Cada día se evalúa con la
+/// que regía. `effective_from` null sólo en lo legado: la meta que había al
+/// migrar, sin fecha conocida.
+@DataClassName('GoalVersionRow')
+class GoalVersions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  /// `GoalMetric.name`: pasos, proteinaMin, proteinaMax, kcal, kcalFutbol.
+  TextColumn get metric => text()();
+  RealColumn get value => real().nullable()();
+  TextColumn get effectiveFrom => text().nullable()();
+  TextColumn get acceptedAt => text()();
+
+  /// legado, inicio, perfil, propuesta, plan.
+  TextColumn get origin => text()();
+  TextColumn get reason => text().nullable()();
+  IntColumn get policy => integer().withDefault(const Constant(1))();
+}
+
+/// Propuestas del acompañamiento y su decisión (plan 009). El ID es estable
+/// por evidencia y política: la misma no se repite como novedad.
+@DataClassName('CoachProposalRow')
+class CoachProposals extends Table {
+  TextColumn get id => text()();
+
+  /// 'pasos' por ahora.
+  TextColumn get kind => text()();
+
+  /// pendiente, aceptada, pospuesta, rechazada.
+  TextColumn get status => text()();
+  TextColumn get evidence => text()();
+  TextColumn get createdOn => text()();
+  TextColumn get decidedOn => text().nullable()();
+  TextColumn get reviewAfter => text().nullable()();
+
+  /// Valor aceptado (puede diferir del propuesto si la persona lo editó).
+  RealColumn get acceptedValue => real().nullable()();
+  IntColumn get policy => integer().withDefault(const Constant(1))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+

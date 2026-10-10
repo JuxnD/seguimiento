@@ -1,0 +1,3138 @@
+{
+  "source": "e6b420a66c55f0da82ee4dc97ebf31c7155ac98a",
+  "purpose": "Synthetic rows; generated with actual frozen source21 AppDatabase, not a public APK or production backup",
+  "fixtureSha256": "00ab5cd15636ed48cf41c3aabaf06f558b1014387b15f6efe9ac04b81e3c77c2",
+  "userVersionBeforeCurrentAppOpens": 21,
+  "noFutureTablesOrFeeling": true,
+  "expectedGoalValues": {
+    "pasos": 5000,
+    "proteinaMin": 130,
+    "proteinaMax": 160,
+    "kcal": 2400,
+    "kcalFutbol": null
+  },
+  "sourceDatabaseCanonicalSHA256": "5b45ef73358a86f173ec8791606090270ff11e19f9af51e7fbb1ece0734718b0",
+  "sourceTablesCanonicalSHA256": "00b02751b80cf2eb49bdf136a22b92283763da77f4e6dea77a8d4b2d4a724053",
+  "tables": {
+    "ai_conversations": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "kind",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "title",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "range_start",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "range_end",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "model",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "contract_version",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "sources_json",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "sources_hash",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "guide_context_json",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "guide_context_hash",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "created_at",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 9001,
+          "kind": "week",
+          "title": "Consulta ficticia 21",
+          "range_start": null,
+          "range_end": null,
+          "model": "modelo-ficticio",
+          "contract_version": 1,
+          "sources_json": "[]",
+          "sources_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "guide_context_json": null,
+          "guide_context_hash": null,
+          "created_at": 1791540000
+        }
+      ]
+    },
+    "ai_messages": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "conversation_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "role",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "message_text",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "citations_json",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "model",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "contract_version",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "created_at",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "conversation_id": 9001,
+          "role": "assistant",
+          "message_text": "Respuesta ficticia sin red",
+          "citations_json": "[]",
+          "model": "modelo-ficticio",
+          "contract_version": 1,
+          "created_at": 1791540001
+        }
+      ]
+    },
+    "body_weights": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "kg",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "fasted",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "moment",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "time",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "catalog_patches": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "source_id",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "patch_version",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "food_id",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "source_id": "catalog-v1:Aguacate",
+          "patch_version": 1,
+          "food_id": 21
+        },
+        {
+          "source_id": "catalog-v1:Almuerzo corriente (arroz + grano + carne + jugo)",
+          "patch_version": 1,
+          "food_id": 30
+        },
+        {
+          "source_id": "catalog-v1:Arroz blanco cocido",
+          "patch_version": 1,
+          "food_id": 8
+        },
+        {
+          "source_id": "catalog-v1:Atún en lata (escurrido)",
+          "patch_version": 1,
+          "food_id": 2
+        },
+        {
+          "source_id": "catalog-v1:Avena Alpina original (vaso)",
+          "patch_version": 1,
+          "food_id": 29
+        },
+        {
+          "source_id": "catalog-v1:Avena bebida (vaso 350 g)",
+          "patch_version": 1,
+          "food_id": 33
+        },
+        {
+          "source_id": "catalog-v1:Avena en hojuelas (seca)",
+          "patch_version": 1,
+          "food_id": 24
+        },
+        {
+          "source_id": "catalog-v1:Banano",
+          "patch_version": 1,
+          "food_id": 7
+        },
+        {
+          "source_id": "catalog-v1:Bollo de maíz",
+          "patch_version": 1,
+          "food_id": 17
+        },
+        {
+          "source_id": "catalog-v1:Carne de res (magra, cocida)",
+          "patch_version": 1,
+          "food_id": 11
+        },
+        {
+          "source_id": "catalog-v1:Chicharrón",
+          "patch_version": 1,
+          "food_id": 13
+        },
+        {
+          "source_id": "catalog-v1:Chorizo",
+          "patch_version": 1,
+          "food_id": 14
+        },
+        {
+          "source_id": "catalog-v1:Crema de maní",
+          "patch_version": 1,
+          "food_id": 27
+        },
+        {
+          "source_id": "catalog-v1:Ensalada (tomate, cebolla, lechuga)",
+          "patch_version": 1,
+          "food_id": 28
+        },
+        {
+          "source_id": "catalog-v1:Frijoles cocidos",
+          "patch_version": 1,
+          "food_id": 9
+        },
+        {
+          "source_id": "catalog-v1:Huevo (unidad)",
+          "patch_version": 1,
+          "food_id": 1
+        },
+        {
+          "source_id": "catalog-v1:Jugo de fruta",
+          "patch_version": 1,
+          "food_id": 25
+        },
+        {
+          "source_id": "catalog-v1:Leche Klim en polvo",
+          "patch_version": 1,
+          "food_id": 3
+        },
+        {
+          "source_id": "catalog-v1:Leche entera",
+          "patch_version": 1,
+          "food_id": 6
+        },
+        {
+          "source_id": "catalog-v1:Leche entera Colanta (bolsa)",
+          "patch_version": 1,
+          "food_id": 5
+        },
+        {
+          "source_id": "catalog-v1:Lentejas cocidas",
+          "patch_version": 1,
+          "food_id": 10
+        },
+        {
+          "source_id": "catalog-v1:Manzana",
+          "patch_version": 1,
+          "food_id": 26
+        },
+        {
+          "source_id": "catalog-v1:Nestum",
+          "patch_version": 1,
+          "food_id": 4
+        },
+        {
+          "source_id": "catalog-v1:Pan Mipan",
+          "patch_version": 1,
+          "food_id": 16
+        },
+        {
+          "source_id": "catalog-v1:Pan tajado",
+          "patch_version": 1,
+          "food_id": 15
+        },
+        {
+          "source_id": "catalog-v1:Papa frita",
+          "patch_version": 1,
+          "food_id": 20
+        },
+        {
+          "source_id": "catalog-v1:Pasta con queso y salchicha (plato grande)",
+          "patch_version": 1,
+          "food_id": 35
+        },
+        {
+          "source_id": "catalog-v1:Patacón / tajada de plátano frito",
+          "patch_version": 1,
+          "food_id": 18
+        },
+        {
+          "source_id": "catalog-v1:Pechuga de pollo (cocida)",
+          "patch_version": 1,
+          "food_id": 12
+        },
+        {
+          "source_id": "catalog-v1:Peto sin maíz (vaso)",
+          "patch_version": 1,
+          "food_id": 31
+        },
+        {
+          "source_id": "catalog-v1:Queso costeño",
+          "patch_version": 1,
+          "food_id": 22
+        },
+        {
+          "source_id": "catalog-v1:Salchichón de pollo",
+          "patch_version": 1,
+          "food_id": 32
+        },
+        {
+          "source_id": "catalog-v1:Sardinas en lata",
+          "patch_version": 1,
+          "food_id": 23
+        },
+        {
+          "source_id": "catalog-v1:Sopa de mondongo + arroz",
+          "patch_version": 1,
+          "food_id": 34
+        },
+        {
+          "source_id": "catalog-v1:Yogur Colanta arequipe",
+          "patch_version": 1,
+          "food_id": 36
+        },
+        {
+          "source_id": "catalog-v1:Yuca frita",
+          "patch_version": 1,
+          "food_id": 19
+        }
+      ]
+    },
+    "closed_days": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        }
+      ],
+      "rows": []
+    },
+    "custom_reminders": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "title",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "note",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "interval_days",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "hour",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "minute",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "start_date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "last_done",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "enabled",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "daily_steps": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "steps",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "source",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'manual'",
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "exercise_photos": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "name_key",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "relative_path",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "exercises": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "name",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "media_url",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "form_cues",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "progression_note",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "tracks_load",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "anchor",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 9001,
+          "name": "Ejercicio ficticio 21",
+          "media_url": null,
+          "form_cues": null,
+          "progression_note": null,
+          "tracks_load": 0,
+          "anchor": null
+        }
+      ]
+    },
+    "fitness_tests": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "round",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "item",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "side",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "value",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "clean",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "foods": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "name",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "basis",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "unit_label",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'unidad'",
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "kcal",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "protein",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "carbs",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": "0.0",
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "fat",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": "0.0",
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "default_quantity",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": "1.0",
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "serving_grams",
+          "type": "REAL",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "source",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'referencia'",
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "origin",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'usuario'",
+          "pk": 0
+        },
+        {
+          "cid": 12,
+          "name": "favorite",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 13,
+          "name": "eggs_per_unit",
+          "type": "REAL",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "name": "Huevo (unidad)",
+          "basis": "unit",
+          "unit_label": "unidad",
+          "kcal": 70.0,
+          "protein": 6.0,
+          "carbs": 0.4,
+          "fat": 5.0,
+          "default_quantity": 1.0,
+          "serving_grams": 55.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 2,
+          "name": "Atún en lata (escurrido)",
+          "basis": "unit",
+          "unit_label": "lata",
+          "kcal": 120.0,
+          "protein": 25.0,
+          "carbs": 0.0,
+          "fat": 1.5,
+          "default_quantity": 1.0,
+          "serving_grams": 120.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 3,
+          "name": "Leche Klim en polvo",
+          "basis": "unit",
+          "unit_label": "papeleta",
+          "kcal": 125.0,
+          "protein": 6.5,
+          "carbs": 9.5,
+          "fat": 6.5,
+          "default_quantity": 1.0,
+          "serving_grams": 25.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 4,
+          "name": "Nestum",
+          "basis": "unit",
+          "unit_label": "papeleta",
+          "kcal": 95.0,
+          "protein": 5.5,
+          "carbs": 17.0,
+          "fat": 1.0,
+          "default_quantity": 1.0,
+          "serving_grams": 25.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 5,
+          "name": "Leche entera Colanta (bolsa)",
+          "basis": "unit",
+          "unit_label": "bolsa",
+          "kcal": 122.0,
+          "protein": 6.5,
+          "carbs": 9.6,
+          "fat": 6.4,
+          "default_quantity": 1.0,
+          "serving_grams": 200.0,
+          "source": "etiqueta",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 6,
+          "name": "Leche entera",
+          "basis": "per100",
+          "unit_label": "ml",
+          "kcal": 61.0,
+          "protein": 3.2,
+          "carbs": 4.8,
+          "fat": 3.2,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "etiqueta",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 7,
+          "name": "Banano",
+          "basis": "unit",
+          "unit_label": "unidad",
+          "kcal": 105.0,
+          "protein": 1.3,
+          "carbs": 27.0,
+          "fat": 0.4,
+          "default_quantity": 1.0,
+          "serving_grams": 120.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 8,
+          "name": "Arroz blanco cocido",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 130.0,
+          "protein": 2.7,
+          "carbs": 28.0,
+          "fat": 0.3,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 9,
+          "name": "Frijoles cocidos",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 127.0,
+          "protein": 8.7,
+          "carbs": 22.8,
+          "fat": 0.5,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 10,
+          "name": "Lentejas cocidas",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 116.0,
+          "protein": 9.0,
+          "carbs": 20.0,
+          "fat": 0.4,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 11,
+          "name": "Carne de res (magra, cocida)",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 220.0,
+          "protein": 26.0,
+          "carbs": 0.0,
+          "fat": 12.0,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 12,
+          "name": "Pechuga de pollo (cocida)",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 165.0,
+          "protein": 31.0,
+          "carbs": 0.0,
+          "fat": 3.6,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 13,
+          "name": "Chicharrón",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 540.0,
+          "protein": 25.0,
+          "carbs": 0.0,
+          "fat": 48.0,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 14,
+          "name": "Chorizo",
+          "basis": "unit",
+          "unit_label": "unidad",
+          "kcal": 250.0,
+          "protein": 12.0,
+          "carbs": 1.0,
+          "fat": 22.0,
+          "default_quantity": 1.0,
+          "serving_grams": 70.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 15,
+          "name": "Pan tajado",
+          "basis": "unit",
+          "unit_label": "rebanada",
+          "kcal": 75.0,
+          "protein": 2.6,
+          "carbs": 14.0,
+          "fat": 1.0,
+          "default_quantity": 1.0,
+          "serving_grams": 28.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 16,
+          "name": "Pan Mipan",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 331.0,
+          "protein": 9.6,
+          "carbs": 58.0,
+          "fat": 7.2,
+          "default_quantity": 75.0,
+          "serving_grams": 100.0,
+          "source": "etiqueta",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 17,
+          "name": "Bollo de maíz",
+          "basis": "unit",
+          "unit_label": "unidad",
+          "kcal": 170.0,
+          "protein": 3.5,
+          "carbs": 36.0,
+          "fat": 1.5,
+          "default_quantity": 1.0,
+          "serving_grams": 120.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 18,
+          "name": "Patacón / tajada de plátano frito",
+          "basis": "unit",
+          "unit_label": "unidad",
+          "kcal": 110.0,
+          "protein": 0.7,
+          "carbs": 16.0,
+          "fat": 5.0,
+          "default_quantity": 1.0,
+          "serving_grams": 40.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 19,
+          "name": "Yuca frita",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 280.0,
+          "protein": 1.5,
+          "carbs": 38.0,
+          "fat": 13.0,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 20,
+          "name": "Papa frita",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 290.0,
+          "protein": 3.4,
+          "carbs": 37.0,
+          "fat": 14.0,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 21,
+          "name": "Aguacate",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 160.0,
+          "protein": 2.0,
+          "carbs": 8.5,
+          "fat": 15.0,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 22,
+          "name": "Queso costeño",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 320.0,
+          "protein": 22.0,
+          "carbs": 2.0,
+          "fat": 25.0,
+          "default_quantity": 50.0,
+          "serving_grams": 50.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 23,
+          "name": "Sardinas en lata",
+          "basis": "unit",
+          "unit_label": "lata",
+          "kcal": 200.0,
+          "protein": 20.0,
+          "carbs": 0.0,
+          "fat": 13.0,
+          "default_quantity": 1.0,
+          "serving_grams": 120.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 24,
+          "name": "Avena en hojuelas (seca)",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 375.0,
+          "protein": 12.5,
+          "carbs": 67.5,
+          "fat": 7.5,
+          "default_quantity": 40.0,
+          "serving_grams": 40.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 25,
+          "name": "Jugo de fruta",
+          "basis": "per100",
+          "unit_label": "ml",
+          "kcal": 48.0,
+          "protein": 0.2,
+          "carbs": 11.600000000000001,
+          "fat": 0.08000000000000002,
+          "default_quantity": 250.0,
+          "serving_grams": 250.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 26,
+          "name": "Manzana",
+          "basis": "unit",
+          "unit_label": "unidad",
+          "kcal": 95.0,
+          "protein": 0.5,
+          "carbs": 25.0,
+          "fat": 0.3,
+          "default_quantity": 1.0,
+          "serving_grams": 180.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 27,
+          "name": "Crema de maní",
+          "basis": "unit",
+          "unit_label": "cucharada",
+          "kcal": 95.0,
+          "protein": 4.0,
+          "carbs": 3.5,
+          "fat": 8.0,
+          "default_quantity": 1.0,
+          "serving_grams": 16.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 28,
+          "name": "Ensalada (tomate, cebolla, lechuga)",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 25.0,
+          "protein": 1.0,
+          "carbs": 5.0,
+          "fat": 0.2,
+          "default_quantity": 100.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 29,
+          "name": "Avena Alpina original (vaso)",
+          "basis": "unit",
+          "unit_label": "vaso",
+          "kcal": 173.0,
+          "protein": 5.0,
+          "carbs": 28.0,
+          "fat": 4.8,
+          "default_quantity": 1.0,
+          "serving_grams": 250.0,
+          "source": "etiqueta",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 30,
+          "name": "Almuerzo corriente (arroz + grano + carne + jugo)",
+          "basis": "unit",
+          "unit_label": "plato",
+          "kcal": 880.0,
+          "protein": 38.0,
+          "carbs": 100.0,
+          "fat": 34.0,
+          "default_quantity": 1.0,
+          "serving_grams": null,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 31,
+          "name": "Peto sin maíz (vaso)",
+          "basis": "unit",
+          "unit_label": "vaso",
+          "kcal": 190.0,
+          "protein": 7.0,
+          "carbs": 30.0,
+          "fat": 5.0,
+          "default_quantity": 1.0,
+          "serving_grams": 250.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 32,
+          "name": "Salchichón de pollo",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 200.0,
+          "protein": 13.0,
+          "carbs": 3.0,
+          "fat": 15.0,
+          "default_quantity": 22.0,
+          "serving_grams": 100.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 33,
+          "name": "Avena bebida (vaso 350 g)",
+          "basis": "unit",
+          "unit_label": "vaso",
+          "kcal": 280.0,
+          "protein": 7.0,
+          "carbs": 46.0,
+          "fat": 6.0,
+          "default_quantity": 1.0,
+          "serving_grams": 350.0,
+          "source": "referencia",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 34,
+          "name": "Sopa de mondongo + arroz",
+          "basis": "unit",
+          "unit_label": "plato",
+          "kcal": 650.0,
+          "protein": 34.0,
+          "carbs": 80.0,
+          "fat": 21.0,
+          "default_quantity": 1.0,
+          "serving_grams": null,
+          "source": "estimado",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 35,
+          "name": "Pasta con queso y salchicha (plato grande)",
+          "basis": "unit",
+          "unit_label": "plato",
+          "kcal": 1100.0,
+          "protein": 49.0,
+          "carbs": 135.0,
+          "fat": 40.0,
+          "default_quantity": 1.0,
+          "serving_grams": null,
+          "source": "estimado",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 36,
+          "name": "Yogur Colanta arequipe",
+          "basis": "unit",
+          "unit_label": "vaso",
+          "kcal": 139.0,
+          "protein": 4.2,
+          "carbs": 21.0,
+          "fat": 4.7,
+          "default_quantity": 1.0,
+          "serving_grams": 150.0,
+          "source": "etiqueta",
+          "origin": "semilla",
+          "favorite": 0,
+          "eggs_per_unit": null
+        },
+        {
+          "id": 9001,
+          "name": "Plato ficticio 21",
+          "basis": "per100",
+          "unit_label": "g",
+          "kcal": 500.0,
+          "protein": 20.0,
+          "carbs": 70.0,
+          "fat": 16.0,
+          "default_quantity": 1.0,
+          "serving_grams": null,
+          "source": "referencia",
+          "origin": "usuario",
+          "favorite": 0,
+          "eggs_per_unit": null
+        }
+      ]
+    },
+    "football_games": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "format",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "5",
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "minutes",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "steps",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "intensity",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "fatigue_after",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "knock",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "notes",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "weight_before_kg",
+          "type": "REAL",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "weight_after_kg",
+          "type": "REAL",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "fluid_ml",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 12,
+          "name": "imported",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "ladder_events": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "event_key",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "ladder",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 2
+        },
+        {
+          "cid": 2,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "step",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "ladder_states": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "ladder",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "step",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "since",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "lumbar_on",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "sessions_after",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "epoch",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "meal_items": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "meal_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "food_id",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "label",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "quantity",
+          "type": "REAL",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "quantity_unit",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "kcal",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "protein",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "carbs",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": "0.0",
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "fat",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": "0.0",
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "source_verified",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "meal_id": 9001,
+          "food_id": 9001,
+          "label": "Plato ficticio 21",
+          "quantity": 250.0,
+          "quantity_unit": "g",
+          "kcal": 1250.0,
+          "protein": 50.0,
+          "carbs": 175.0,
+          "fat": 40.0,
+          "source_verified": 0
+        }
+      ]
+    },
+    "meal_template_items": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "template_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "food_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "quantity",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "position",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "template_id": 1,
+          "food_id": 6,
+          "quantity": 400.0,
+          "position": 0
+        },
+        {
+          "id": 2,
+          "template_id": 1,
+          "food_id": 3,
+          "quantity": 1.0,
+          "position": 1
+        },
+        {
+          "id": 3,
+          "template_id": 1,
+          "food_id": 4,
+          "quantity": 1.0,
+          "position": 2
+        },
+        {
+          "id": 4,
+          "template_id": 1,
+          "food_id": 7,
+          "quantity": 1.0,
+          "position": 3
+        },
+        {
+          "id": 5,
+          "template_id": 2,
+          "food_id": 1,
+          "quantity": 3.0,
+          "position": 0
+        },
+        {
+          "id": 6,
+          "template_id": 2,
+          "food_id": 2,
+          "quantity": 1.0,
+          "position": 1
+        },
+        {
+          "id": 7,
+          "template_id": 3,
+          "food_id": 1,
+          "quantity": 4.0,
+          "position": 0
+        },
+        {
+          "id": 8,
+          "template_id": 3,
+          "food_id": 2,
+          "quantity": 1.0,
+          "position": 1
+        },
+        {
+          "id": 9,
+          "template_id": 3,
+          "food_id": 6,
+          "quantity": 400.0,
+          "position": 2
+        },
+        {
+          "id": 10,
+          "template_id": 3,
+          "food_id": 3,
+          "quantity": 1.0,
+          "position": 3
+        },
+        {
+          "id": 11,
+          "template_id": 3,
+          "food_id": 4,
+          "quantity": 1.0,
+          "position": 4
+        },
+        {
+          "id": 12,
+          "template_id": 3,
+          "food_id": 7,
+          "quantity": 1.0,
+          "position": 5
+        },
+        {
+          "id": 13,
+          "template_id": 4,
+          "food_id": 8,
+          "quantity": 150.0,
+          "position": 0
+        },
+        {
+          "id": 14,
+          "template_id": 4,
+          "food_id": 9,
+          "quantity": 100.0,
+          "position": 1
+        },
+        {
+          "id": 15,
+          "template_id": 4,
+          "food_id": 11,
+          "quantity": 150.0,
+          "position": 2
+        },
+        {
+          "id": 16,
+          "template_id": 4,
+          "food_id": 28,
+          "quantity": 100.0,
+          "position": 3
+        },
+        {
+          "id": 17,
+          "template_id": 5,
+          "food_id": 30,
+          "quantity": 1.0,
+          "position": 0
+        }
+      ]
+    },
+    "meal_templates": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "name",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "slot",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "position",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "name": "Batido estándar",
+          "slot": null,
+          "position": 0
+        },
+        {
+          "id": 2,
+          "name": "Cena base (3 huevos + atún)",
+          "slot": "cena",
+          "position": 1
+        },
+        {
+          "id": 3,
+          "name": "Cena completa (4 huevos + atún + batido)",
+          "slot": "cena",
+          "position": 2
+        },
+        {
+          "id": 4,
+          "name": "Almuerzo típico",
+          "slot": "almuerzo",
+          "position": 3
+        },
+        {
+          "id": 5,
+          "name": "Almuerzo corriente",
+          "slot": "almuerzo",
+          "position": 4
+        }
+      ]
+    },
+    "meals": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "time",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "slot",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "notes",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 9001,
+          "date": "2026-10-09",
+          "time": null,
+          "slot": "almuerzo",
+          "notes": "Comida ficticia"
+        }
+      ]
+    },
+    "measurements": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "fasted",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "site",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "value_cm",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "time",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "morning_checks": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "resting_hr",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "date": "2026-10-09",
+          "resting_hr": 58
+        }
+      ]
+    },
+    "plan_days": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "plan_version_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "weekday",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "type",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "target_rounds",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "rest_between_rounds_sec",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "notes",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "plan_exercises": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "plan_day_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "position",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "exercise_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "sets",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "reps_min",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "reps_max",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "rest_sec",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "rest_sec_max",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "grip",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "block",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "variant",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 12,
+          "name": "hold_sec_min",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 13,
+          "name": "hold_sec_max",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 14,
+          "name": "per_side",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 15,
+          "name": "rir_min",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 16,
+          "name": "rir_max",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 17,
+          "name": "notes",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 18,
+          "name": "superset_group",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "plan_versions": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "valid_from",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "notes",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "scheme",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "profiles": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "birth_date",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "height_cm",
+          "type": "REAL",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "start_date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "protein_min",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "130",
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "protein_max",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "160",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "kcal_target",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "2400",
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "kcal_floor",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "2000",
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "min_warmup_sec",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "360",
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "measure_interval_days",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "21",
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "measure_interval_max_days",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "28",
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "next_measurement_date",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 12,
+          "name": "cooldown_target_sec",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "180",
+          "pk": 0
+        },
+        {
+          "cid": 13,
+          "name": "never_to_failure",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 0
+        },
+        {
+          "cid": 14,
+          "name": "length_unit",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": "'cm'",
+          "pk": 0
+        },
+        {
+          "cid": 15,
+          "name": "steps_target",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "5000",
+          "pk": 0
+        },
+        {
+          "cid": 16,
+          "name": "kcal_target_football",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "birth_date": null,
+          "height_cm": null,
+          "start_date": "2026-10-10",
+          "protein_min": 130,
+          "protein_max": 160,
+          "kcal_target": 2400,
+          "kcal_floor": 2000,
+          "min_warmup_sec": 360,
+          "measure_interval_days": 21,
+          "measure_interval_max_days": 28,
+          "next_measurement_date": null,
+          "cooldown_target_sec": 180,
+          "never_to_failure": 1,
+          "length_unit": "cm",
+          "steps_target": 5000,
+          "kcal_target_football": null
+        }
+      ]
+    },
+    "progress_photos": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "angle",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "relative_path",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "fasted",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "notes",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "reminders": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "kind",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "enabled",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "1",
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "hour",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "minute",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "threshold",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "session_rounds": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "session_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "round_index",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "elapsed_sec",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "work_sec",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "rest_sec",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "session_sets": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "session_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "exercise_id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "set_index",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "reps",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "split",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "split_detail",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "to_failure",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "load_kg",
+          "type": "REAL",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "variant",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "rir",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "session_id": 9001,
+          "exercise_id": 9001,
+          "set_index": 1,
+          "reps": 15,
+          "split": 1,
+          "split_detail": "12+3",
+          "to_failure": 1,
+          "load_kg": 5.0,
+          "variant": "lastre",
+          "rir": null
+        }
+      ]
+    },
+    "sessions": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "id",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 2,
+          "name": "start_time",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 3,
+          "name": "type",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 4,
+          "name": "plan_day_id",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 5,
+          "name": "total_sec",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 6,
+          "name": "warmup_sec",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 7,
+          "name": "cooldown_sec",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 8,
+          "name": "rest_sec",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 9,
+          "name": "rounds_done",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 10,
+          "name": "rounds_estimated",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 11,
+          "name": "rpe",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 12,
+          "name": "limiting_exercise_id",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 13,
+          "name": "context",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 14,
+          "name": "notes",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 15,
+          "name": "out_of_plan",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 16,
+          "name": "incomplete",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 17,
+          "name": "planned_rounds",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 18,
+          "name": "technique_ok",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 19,
+          "name": "full_range",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 20,
+          "name": "recovery_ok",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 21,
+          "name": "pending_review",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 22,
+          "name": "mode",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 23,
+          "name": "extra_reps",
+          "type": "INTEGER",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        },
+        {
+          "cid": 24,
+          "name": "imported",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": "0",
+          "pk": 0
+        },
+        {
+          "cid": 25,
+          "name": "core_epochs",
+          "type": "TEXT",
+          "notnull": 0,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": 9001,
+          "date": "2026-10-09",
+          "start_time": null,
+          "type": "bloques",
+          "plan_day_id": null,
+          "total_sec": 2400,
+          "warmup_sec": 120,
+          "cooldown_sec": 180,
+          "rest_sec": 300,
+          "rounds_done": null,
+          "rounds_estimated": 0,
+          "rpe": 9,
+          "limiting_exercise_id": null,
+          "context": null,
+          "notes": "Fixture21: datos ficticios",
+          "out_of_plan": 0,
+          "incomplete": 0,
+          "planned_rounds": null,
+          "technique_ok": null,
+          "full_range": null,
+          "recovery_ok": null,
+          "pending_review": 0,
+          "mode": null,
+          "extra_reps": null,
+          "imported": 0,
+          "core_epochs": null
+        }
+      ]
+    },
+    "skill_achievements": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "skill",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "sleep_logs": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "hours",
+          "type": "REAL",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "soreness_logs": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "date",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "zone",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 2
+        },
+        {
+          "cid": 2,
+          "name": "level",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    },
+    "week_notes": {
+      "columns": [
+        {
+          "cid": 0,
+          "name": "week_index",
+          "type": "INTEGER",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 1
+        },
+        {
+          "cid": 1,
+          "name": "body",
+          "type": "TEXT",
+          "notnull": 1,
+          "dflt_value": null,
+          "pk": 0
+        }
+      ],
+      "rows": []
+    }
+  }
+}

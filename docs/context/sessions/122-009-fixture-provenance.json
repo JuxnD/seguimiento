@@ -1,0 +1,26 @@
+{
+  "source21": "e6b420a66c55f0da82ee4dc97ebf31c7155ac98a",
+  "frozenCopiedFiles": 159,
+  "allCopiedFilesStillExact": true,
+  "source21GeneratedDriftSha256": "f8c5081dd25a010b666e7d2a90eb27d93953722d1057d085c347271ad2b99bd0",
+  "candidateGeneratedDriftSha256": "eb2212fd09a0355bcb9e338683b92436ca7e01810893eabacea0a65bd6a4fe19",
+  "fixtureFinalSha256": "00ab5cd15636ed48cf41c3aabaf06f558b1014387b15f6efe9ac04b81e3c77c2",
+  "fixtureFinalBeforeVersion": 21,
+  "fixtureFinalUserTables": 33,
+  "firstSetupFailure": {
+    "observation": "manifest builder rejected catalog_patches empty before22 opened; original Python full raw traceback was not saved",
+    "seedRunExit": 0,
+    "originalSeedScript": "evidence/122-009/source21-seed-first.dart.txt",
+    "binaryIgnoredPath": "build/qa-122-009/fixture21-first-empty-catalog.sqlite",
+    "binarySha256": "5a3a72247b1b81d584045708a1ec8a09d9586cda314b75b0f670e254912a78d2",
+    "userVersion": 21,
+    "catalogPatchesRows": 0,
+    "diagnosedCause": "generator omitted actual seedFoodsIfEmpty; beforeOpen leaves catalog empty while foods empty",
+    "resolution": "actual source21 helper seeded catalog before fake rows; fixture frozen afterwards; no current22 downgrade"
+  },
+  "preservationHelperFailure": "first79 assertion mistakenly selected 2D15 JSON rather than3D79; source and assertions were not changed; subsequent correct3D comparison preserves79/73 hash1ee6",
+  "typingMetadata": "122-009-typing-reconciliation.json",
+  "candidateProductMerge": "4f11d87b6597264b860d7b1b2ff0b0abb2d63516",
+  "fullSource": "candidateProductMerge plus schema21-full-harness (before typing);829/17",
+  "finalExtraCase": "same fixture/assertions/SQL, explicitly typed;1/0; analyze0"
+}

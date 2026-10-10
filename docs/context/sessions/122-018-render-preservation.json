@@ -1,0 +1,37 @@
+[
+  {
+    "png": "build\\qa-018-integracion\\completo-360-texto1.0.png",
+    "sha256": "f436805647a74df42bfde39856420c6b31b14319b82a55df4b03388ab32eba2e",
+    "sourcePngIdentical": true,
+    "sourceJsonIdentical": true,
+    "jsonComparison": "parsed payload equality; not a working-byte hash claim"
+  },
+  {
+    "png": "build\\qa-018-integracion\\completo-360-texto1.6.png",
+    "sha256": "d2420c3af0b9d849843bc657c678a86148da5c540d12034d8c7a6df106a1b12d",
+    "sourcePngIdentical": true,
+    "sourceJsonIdentical": true,
+    "jsonComparison": "parsed payload equality; not a working-byte hash claim"
+  },
+  {
+    "png": "build\\qa-018-integracion\\completo-360-texto2.0.png",
+    "sha256": "36f23fe69d33905741513bd87d6338527cb5aac014fd0ff309bff93b2201a4b9",
+    "sourcePngIdentical": true,
+    "sourceJsonIdentical": true,
+    "jsonComparison": "parsed payload equality; not a working-byte hash claim"
+  },
+  {
+    "png": "build\\qa-018-integracion\\dos-ejes-360-texto16.png",
+    "sha256": "a18fc5bf782dcd4f035556f3aff66dfff6d35f9f7a44a5356fdf720820bb2e32",
+    "sourcePngIdentical": true,
+    "sourceJsonIdentical": true,
+    "jsonComparison": "parsed payload equality; not a working-byte hash claim"
+  },
+  {
+    "png": "build\\qa-018-integracion\\sin-datos-360-texto2.png",
+    "sha256": "95877be59cf28c0cac9bb2ab5b6531e5af8ae6d088a0f99182c02e2966a90c4e",
+    "sourcePngIdentical": true,
+    "sourceJsonIdentical": true,
+    "jsonComparison": "parsed payload equality; not a working-byte hash claim"
+  }
+]

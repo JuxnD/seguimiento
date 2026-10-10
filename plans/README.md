@@ -34,3 +34,20 @@ expresa de nueva versión. Límites de captura/privacy/incertidumbre no se elimi
 La aceptación en el teléfono del owner y la precisión con comidas reales siguen
 como gates humanos; no son pendientes de implementación ni de publicación.
 
+## Auditoría focalizada de recuperación y metas (9-oct-2026)
+
+| Orden | Plan | Prioridad | Estado | Dependencia |
+|---|---|---|---|---|
+| 7 | [007 Avisos veraces y base de 5.000 pasos](007-progreso-recuperacion-metas.md) | P1 | TODO | Pruebas de caracterización roja; conserva frente de ilustraciones |
+
+Se reprodujo la ventana de carga que muestra 7 cada mañana, una sesión moderada
+que no termina la racha y consejos de kcal con señales escasas o antiguas.
+[Casos sintéticos ejecutados](2026-10-09-adaptive-probes.dart.txt); 63 pruebas
+existentes del dominio pasan pero no cubren esos casos. El plan mantiene el perfil
+actual hasta aceptar un cambio explícito a 5.000; no convierte datos faltantes en
+prueba de recuperación ni permite subir cargas/metas automáticamente.
+
+Considerado y rechazado: congelación general por falta de actualización del día
+o de chequeo matutino. Ambas rutas se actualizan en el código actual. No se leyó
+el teléfono del owner, por lo que no se atribuye su aviso a registros concretos.
+

@@ -1,0 +1,52 @@
+00:00 +0: loading C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart
+00:00 +0: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: fixture sintética congelada 17 migra a 18 sin reconstruir el esquema
+00:00 +1: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 1 llega al 21 sin perder datos
+00:01 +2: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 1 llega al 21 sin perder datos
+00:01 +3: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:01 +4: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:01 +5: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:02 +6: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:02 +7: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:03 +8: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:03 +9: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:04 +10: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:04 +11: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:04 +12: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 21
+00:05 +13: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 21
+00:05 +14: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 21
+00:05 +15: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 9 llega al 21: pasos, golpe en el fútbol y alimentos marcados
+00:06 +16: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el manifiesto declara esquema, bytes y SHA-256 del archivo que viaja
+00:06 +17: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 10 llega al 21 con la tabla de fotos de referencia
+00:06 +18: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/../flags.json
+00:06 +19: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 11 llega al 21 con la tabla de recordatorios propios
+00:06 +20: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 11 llega al 21 con la tabla de recordatorios propios
+00:07 +21: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: /fotos/absolute.jpg
+00:07 +22: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 12 llega al 21: pan y salchichón por gramos
+00:07 +23: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: C:/fotos/absolute.jpg
+00:07 +24: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 13 llega al 21: las sesiones quedan revisadas
+00:07 +25: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a/../../escape.jpg
+00:08 +26: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 14 llega al 21: plan y sesiones listos para el v3
+00:08 +27: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a\..\escape.jpg
+00:08 +28: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 15 llega al 21: RIR, fútbol, sueño y meta de fútbol
+00:08 +29: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: flags.json
+00:08 +30: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 16 llega al 21: momento del pesaje, mañana y huevos por porción
+00:09 +31: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: duplicados exactos y por mayúsculas se rechazan antes de extraer
+00:09 +32: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: duplicados exactos y por mayúsculas se rechazan antes de extraer
+00:09 +33: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: una entrada symlink se rechaza sin escribir su destino
+00:09 +34: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: paquete sin manifest.json se rechaza y conserva B
+00:09 +35: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: paquete sin seguimiento.sqlite se rechaza y conserva B
+00:10 +36: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: paquete sin fotos/frente.jpg se rechaza y conserva B
+00:10 +37: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: foto con CRC válido pero SHA-256 distinto se rechaza
+00:10 +38: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: quitar foto y descriptor no oculta la referencia pendiente de la base
+00:11 +39: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: DB incompleta con hashes correctos en ZIP se rechaza sin tocar B
+00:11 +40: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: un esquema futuro y un manifiesto incoherente se rechazan
+00:12 +41: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: archivo ZIP truncado se rechaza sin cambiar B
+00:12 +42: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: tamaños declarados excesivos y DEFLATE con tamaño falso se rechazan
+00:13 +43: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: exportar fotos previamente ausentes declara incompleto; restaurarlo requiere confirmación
+00:13 +44: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: sin fotos todavía exporta y restaura un paquete completo
+00:13 +45: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: fallo al reabrir después de reemplazar fotos revierte DB y todas las fotos de B
+00:14 +46: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=false
+00:14 +47: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=true
+00:15 +48: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: (tearDownAll)
+00:15 +48: All tests passed!

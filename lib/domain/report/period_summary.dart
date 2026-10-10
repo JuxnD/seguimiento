@@ -10,6 +10,7 @@ import '../enums.dart';
 import '../session_math.dart';
 import 'report_input.dart';
 import 'report_stats.dart';
+import '../goal_history.dart';
 
 /// Total de un ejercicio en el periodo.
 class ExerciseTotal {
@@ -59,6 +60,8 @@ class PeriodSummary {
     required this.stepsDays,
     required this.bestStepsDay,
     required this.weekdaysAtGoal,
+    this.weekdaysGoalUnknown = 0,
+    this.weekdaysWithoutGoal = 0,
     required this.weekdaysWithSteps,
     required this.distanceKm,
     required this.kcalTraining,
@@ -69,6 +72,12 @@ class PeriodSummary {
     required this.avgProtein,
     required this.closedDays,
     required this.proteinDaysAtMin,
+    this.proteinDaysGoalUnknown = 0,
+    this.proteinDaysWithoutGoal = 0,
+    this.proteinGoal,
+    this.kcalGoal,
+    this.stepsGoal,
+    this.nutritionReferences = const [],
     required this.days,
     this.previous,
   });
@@ -105,6 +114,11 @@ class PeriodSummary {
   final int stepsDays;
   final (DateTime, int)? bestStepsDay;
   final int weekdaysAtGoal;
+
+  /// Días entre semana con pasos pero sin meta registrada ese día (plan 009):
+  /// no cuentan como cumplidos ni fallidos.
+  final int weekdaysGoalUnknown;
+  final int weekdaysWithoutGoal;
   final int weekdaysWithSteps;
   final double distanceKm;
 
@@ -119,6 +133,15 @@ class PeriodSummary {
   final double? avgProtein;
   final int closedDays;
   final int proteinDaysAtMin;
+  final int proteinDaysGoalUnknown;
+  final int proteinDaysWithoutGoal;
+
+  /// Las metas que regían en el período (plan 009): el resumen de una semana
+  /// pasada no se mide con la meta de hoy. null = construido sin entrada.
+  final GoalSpan? proteinGoal;
+  final GoalSpan? kcalGoal;
+  final GoalSpan? stepsGoal;
+  final List<({DateTime date, GoalAt protein, GoalAt kcal})> nutritionReferences;
   final List<DayActivity> days;
   final PeriodSummary? previous;
 
@@ -142,7 +165,8 @@ class PeriodSummary {
     return null;
   }
 
-  bool get isEmpty => trainingSessions == 0 && footballGames == 0 && mobilitySessions == 0 && stepsDays == 0 && closedDays == 0;
+  bool get isEmpty =>
+      trainingSessions == 0 && footballGames == 0 && mobilitySessions == 0 && stepsDays == 0 && closedDays == 0;
 }
 
 /// Arma el resumen del rango de `input` (y del anterior, si se cargó).
@@ -163,7 +187,8 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
   final activeByDay = <String, int>{};
   final trainedDays = <String>{};
   for (final s in input.sessions) {
-    final net = circuitNetSec(totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec, restSec: s.restSec);
+    final net =
+        circuitNetSec(totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec, restSec: s.restSec);
     trainingSec += s.totalSec;
     workSec += net;
     final k = dayKey(s.date);
@@ -181,7 +206,9 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
     for (final set in s.sets) {
       reps[set.exercise] = (reps[set.exercise] ?? 0) + set.reps;
       sets[set.exercise] = (sets[set.exercise] ?? 0) + 1;
-      if (!input.holdExercises.contains(set.exercise)) repsByDay[k] = (repsByDay[k] ?? 0) + set.reps;
+      if (!input.holdExercises.contains(set.exercise)) {
+        repsByDay[k] = (repsByDay[k] ?? 0) + set.reps;
+      }
     }
   }
   for (final m in input.mobility) {
@@ -209,9 +236,15 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
   // suman al gasto para no contar dos veces lo mismo.
   final inRange = {
     for (final e in input.steps.entries)
-      if (!e.key.isBefore(dateOnly(input.rangeStart)) && !e.key.isAfter(dateOnly(input.rangeEnd))) dayKey(e.key): e.value,
+      if (!e.key.isBefore(dateOnly(input.rangeStart)) && !e.key.isAfter(dateOnly(input.rangeEnd)))
+        dayKey(e.key): e.value,
   };
-  var stepsTotal = 0, stepsForKcal = 0, weekdaysAtGoal = 0, weekdaysWithSteps = 0;
+  var stepsTotal = 0,
+      stepsForKcal = 0,
+      weekdaysAtGoal = 0,
+      weekdaysWithSteps = 0,
+      weekdaysGoalUnknown = 0,
+      weekdaysWithoutGoal = 0;
   (DateTime, int)? best;
   for (final e in inRange.entries) {
     stepsTotal += e.value;
@@ -220,7 +253,15 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
     if (best == null || e.value > best.$2) best = (day, e.value);
     if (day.weekday <= DateTime.friday) {
       weekdaysWithSteps++;
-      if (e.value >= input.targets.stepsTarget) weekdaysAtGoal++;
+      final at = input.referenceOn(GoalMetric.pasos, day, input.targets.stepsTarget);
+      final goal = at.value;
+      if (!at.known) {
+        weekdaysGoalUnknown++;
+      } else if (goal == null || !goal.isFinite || goal <= 0) {
+        weekdaysWithoutGoal++;
+      } else if (e.value >= goal) {
+        weekdaysAtGoal++;
+      }
     }
   }
 
@@ -243,7 +284,18 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
     });
 
   final closed = stats.closedDays;
-  final proteinAtMin = closed.where((d) => stats.macrosOn(d)!.protein >= input.targets.proteinMin).length;
+  var proteinAtMin = 0, proteinGoalUnknown = 0, proteinWithoutGoal = 0;
+  for (final d in closed) {
+    final at = input.referenceOn(GoalMetric.proteinaMin, d, input.targets.proteinMin);
+    final goal = at.known ? at.value : null;
+    if (!at.known) {
+      proteinGoalUnknown++;
+    } else if (goal == null || !goal.isFinite || goal <= 0) {
+      proteinWithoutGoal++;
+    } else if (stats.macrosOn(d)!.protein >= goal) {
+      proteinAtMin++;
+    }
+  }
 
   return PeriodSummary(
     from: dateOnly(input.rangeStart),
@@ -264,6 +316,8 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
     stepsDays: inRange.length,
     bestStepsDay: best,
     weekdaysAtGoal: weekdaysAtGoal,
+    weekdaysGoalUnknown: weekdaysGoalUnknown,
+    weekdaysWithoutGoal: weekdaysWithoutGoal,
     weekdaysWithSteps: weekdaysWithSteps,
     distanceKm: stepsKm(stepsTotal, heightCm: heightCm),
     kcalTraining: kcalTraining,
@@ -274,6 +328,23 @@ PeriodSummary _summarize(ReportInput input, {double? heightCm, required bool wit
     avgProtein: stats.avgProtein,
     closedDays: closed.length,
     proteinDaysAtMin: proteinAtMin,
+    proteinDaysGoalUnknown: proteinGoalUnknown,
+    proteinDaysWithoutGoal: proteinWithoutGoal,
+    proteinGoal:
+        _referencesSpan(closed, (day) => input.referenceOn(GoalMetric.proteinaMin, day, input.targets.proteinMin)),
+    kcalGoal: _referencesSpan(closed, input.kcalReferenceOn),
+    nutritionReferences: [
+      for (final day in closed)
+        (
+          date: day,
+          protein: input.referenceOn(GoalMetric.proteinaMin, day, input.targets.proteinMin),
+          kcal: input.kcalReferenceOn(day)
+        )
+    ],
+    stepsGoal: _referencesSpan([
+      for (final k in inRange.keys)
+        if (parseDay(k).weekday <= DateTime.friday) parseDay(k)
+    ], (day) => input.referenceOn(GoalMetric.pasos, day, input.targets.stepsTarget)),
     days: [
       for (final d in stats.days)
         DayActivity(
@@ -297,3 +368,8 @@ double? _weightFor(ReportInput input) {
   }
   return input.baselineWeight?.kg;
 }
+
+/// Compresses already resolved daily evidence; no current-profile substitution.
+GoalSpan _referencesSpan(Iterable<DateTime> days, GoalAt Function(DateTime) resolve) {
+  return GoalSpan.fromReferences(days, resolve);
+    }

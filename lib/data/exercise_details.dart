@@ -584,4 +584,63 @@ const exerciseDetails = <String, ExerciseDetail>{
     mistakes: ['Acelerar al final de la bajada.'],
     note: 'Peldaño 4 del V-up.',
   ),
+
+  // Calentamiento guiado (§16.23).
+  'Círculos de hombros': ExerciseDetail(
+    muscles: 'Hombros, escápulas',
+    steps: [
+      'De pie, brazos relajados a los lados.',
+      'Mueve los hombros en círculos suaves: arriba, atrás, abajo y al frente.',
+      'Mantén los brazos colgando y cambia el sentido; no son círculos grandes de brazos.',
+    ],
+    mistakes: ['Encoger el cuello.', 'Ir rápido y con tirones.'],
+  ),
+  'Balanceos de pierna': ExerciseDetail(
+    muscles: 'Cadera, isquios, flexores de cadera',
+    steps: [
+      'Apóyate con una mano en la pared.',
+      'Balancea una pierna adelante y atrás, relajada, cada vez un poco más alto.',
+      'Luego de lado a lado por delante del cuerpo. Cambia de pierna.',
+    ],
+    mistakes: ['Arquear la espalda baja para subir más.', 'Patear con fuerza desde el primer balanceo.'],
+  ),
+  'Retracciones escapulares': ExerciseDetail(
+    muscles: 'Trapecio medio e inferior, romboides',
+    steps: [
+      'Colgado de la barra con los brazos estirados.',
+      'Sin doblar los codos, baja los hombros y júntalos atrás: el cuerpo sube unos centímetros.',
+      'Vuelve despacio a colgado pasivo.',
+    ],
+    mistakes: ['Doblar los codos (se vuelve una dominada).', 'Balancearse.'],
+    easier: 'Con los pies apoyados en el suelo o en una silla.',
+  ),
+  'Flexiones escapulares': ExerciseDetail(
+    muscles: 'Serrato, escápulas',
+    steps: [
+      'En plancha alta, brazos bloqueados.',
+      'Sin doblar los codos, deja que el pecho baje entre los hombros.',
+      'Empuja el suelo y redondea un poco la espalda alta.',
+    ],
+    mistakes: ['Doblar los codos.', 'Dejar caer la cadera.'],
+    easier: 'De rodillas o con las manos en una mesa.',
+  ),
+  'Puente de glúteo': ExerciseDetail(
+    muscles: 'Glúteo, isquios',
+    steps: [
+      'Boca arriba, rodillas dobladas y pies apoyados al ancho de la cadera.',
+      'Aprieta el glúteo y sube la cadera hasta formar una línea de hombros a rodillas.',
+      'Pausa 1 s arriba y baja despacio.',
+    ],
+    mistakes: ['Arquear la espalda baja en lugar de usar el glúteo.', 'Empujar con los dedos de los pies.'],
+  ),
+  'Dislocaciones con banda': ExerciseDetail(
+    muscles: 'Hombros, pecho, espalda alta',
+    steps: [
+      'Toma la banda con las manos bien abiertas, brazos estirados al frente.',
+      'Pásala por encima de la cabeza y llévala atrás sólo hasta donde estés cómodo, sin forzar ni doblar los codos.',
+      'Vuelve al frente igual de lento.',
+    ],
+    mistakes: ['Forzar el recorrido o agarrar demasiado cerrado.', 'Arquear la espalda baja.'],
+    note: 'Es un pase de banda, no una luxación. Mantén un recorrido cómodo; detente si duele.',
+  ),
 };

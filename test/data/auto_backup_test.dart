@@ -8,6 +8,7 @@ import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/local_flags.dart';
 import 'package:seguimiento/data/repositories/body_repository.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 void main() {
@@ -17,9 +18,11 @@ void main() {
   late DatabaseHost host;
   late AutoBackup backup;
 
-  setUp(() {
+  setUp(() async {
     dir = Directory.systemTemp.createTempSync('seguimiento_auto');
     host = DatabaseHost(File('${dir.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
+    // Alta ya pasada (plan 022): el respaldo semanal vive en HomeShell.
+    await asExistingUser(host.db, goals: false);
     backup = AutoBackup(
       host: host,
       flags: LocalFlags(File('${dir.path}/flags.json')),

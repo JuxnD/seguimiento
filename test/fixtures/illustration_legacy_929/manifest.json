@@ -1,0 +1,13 @@
+{
+  "sourceSha": "929f2897c73a86760cc73ce228a89f3aaa3789a8",
+  "sourcePath": "lib/ui/exercise_figure_3d.dart",
+  "originalSourceSha256": "0fd1b6b9dcd4d284f8d7c36ddeef4a3a08a527a5e0b92c54425289f6e56bd7fd",
+  "referenceSourceSha256": "f1bfe944999ddbb33be4b9b17f5465ee409d8e5c48427f52edc41b92c4e5bf84",
+  "sourceAssetSha256": "a50f9c8db7ebff2ad2a2a354341db9a95ec60fb15330673ed105af4b8513cbbc",
+  "transformation": {
+    "from": "import '../domain/search.dart';",
+    "to": "import 'package:seguimiento/domain/search.dart';",
+    "occurrences": 1
+  },
+  "samplesPerFigure": 61
+}

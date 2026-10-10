@@ -1,0 +1,90 @@
+{
+  "synthetic": true,
+  "asOf": "2026-10-10T00:00:00.000",
+  "axes": [
+    {
+      "axis": "pull",
+      "unit": "reps",
+      "referenceId": null,
+      "reference": null,
+      "referenceSource": null,
+      "referenceFrom": null,
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "push",
+      "unit": "reps",
+      "referenceId": null,
+      "reference": null,
+      "referenceSource": null,
+      "referenceFrom": null,
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "core",
+      "unit": "s",
+      "referenceId": null,
+      "reference": null,
+      "referenceSource": null,
+      "referenceFrom": null,
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "legs",
+      "unit": "reps",
+      "referenceId": null,
+      "reference": null,
+      "referenceSource": null,
+      "referenceFrom": null,
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "jump",
+      "unit": "cm",
+      "referenceId": null,
+      "reference": null,
+      "referenceSource": null,
+      "referenceFrom": null,
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    },
+    {
+      "axis": "circuit",
+      "unit": "rondas",
+      "referenceId": null,
+      "reference": null,
+      "referenceSource": null,
+      "referenceFrom": null,
+      "referenceUntil": null,
+      "initialValue": null,
+      "currentValue": null,
+      "initialPercent": null,
+      "currentPercent": null,
+      "observations": []
+    }
+  ]
+}

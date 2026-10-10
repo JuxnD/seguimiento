@@ -1,7 +1,7 @@
 name: seguimiento
 description: "Seguimiento de entrenamiento, comidas y medidas con informe semanal en Markdown."
 publish_to: 'none'
-version: 1.21.0+29
+version: 1.23.0+31
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -52,5 +52,5 @@ flutter:
   assets:
     # Ilustraciones de técnica; se regeneran con `python tool/figuras.py`.
     - assets/tecnica/figuras.json
-    # Maniquí 3D (por ahora tres ejercicios); `python tool/figuras3d.py`.
+    # Catálogo 3D completo, incluidos movilidad y peldaños; `python tool/figuras3d.py`.
     - assets/tecnica/figuras3d.json

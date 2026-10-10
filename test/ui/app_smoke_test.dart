@@ -26,6 +26,7 @@ import 'package:seguimiento/domain/reminders.dart';
 import 'package:seguimiento/domain/steps.dart';
 import 'package:seguimiento/features/meals/meal_form_screen.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 /// Notificaciones sin plataforma: la prueba no tiene Android debajo.
@@ -96,6 +97,9 @@ void main() {
     tester.view.physicalSize = const Size(1400, 6000);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
+    // Persona que ya usa la app (plan 022): el alta pendiente se prueba en
+    // pilot_onboarding_test.
+    await asExistingUser(db);
     await ReminderRepository(db).ensureDefaults();
     final flags = LocalFlags(File('${dir.path}/flags.json'));
     // Permiso ya pedido y respaldo de hoy ya hecho: la app no abre diálogos

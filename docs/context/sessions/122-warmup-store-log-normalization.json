@@ -1,0 +1,32 @@
+[
+  {
+    "file": "122-warmup-store-barrier-analyze.txt",
+    "rawSha256": "b868e97914d41262905e95d583359a1fd294aac0a49b08437c2be015f7e158e8",
+    "archivedSha256": "6813ab38cbc5c8a6e8a7f4b9d0ba855a089394f805c8e578eea7aa180e529418",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings, failures and assertions retained"
+  },
+  {
+    "file": "122-warmup-store-barrier-controls.txt",
+    "rawSha256": "98191f9523425ce234220b32a7e2caf3a85b566b530ccd13aeafb96d441c770a",
+    "archivedSha256": "98191f9523425ce234220b32a7e2caf3a85b566b530ccd13aeafb96d441c770a",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings, failures and assertions retained"
+  },
+  {
+    "file": "122-warmup-store-barrier-focused.txt",
+    "rawSha256": "4bee5ea659f0f8868aa360498b6e5007103f08dee92d2df1243be27f814b043d",
+    "archivedSha256": "a48f6b51249b4663509c0076d86e9236c0ef63d5a1ac13a487b266458f73ddc5",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings, failures and assertions retained"
+  },
+  {
+    "file": "122-warmup-store-race-diagnostic.dart.txt",
+    "rawSha256": "1e0ad4d5779c000a97a9e47c5858e2b15d506bc227ef6dc1872ef25891b6abc0",
+    "archivedSha256": "1e0ad4d5779c000a97a9e47c5858e2b15d506bc227ef6dc1872ef25891b6abc0",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings, failures and assertions retained"
+  },
+  {
+    "file": "122-warmup-store-race-diagnostic.txt",
+    "rawSha256": "6ac2b560450a1fe3c0e97ef51052bec10fdfc928f0c0765f26771a5090e20954",
+    "archivedSha256": "6ac2b560450a1fe3c0e97ef51052bec10fdfc928f0c0765f26771a5090e20954",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings, failures and assertions retained"
+  }
+]

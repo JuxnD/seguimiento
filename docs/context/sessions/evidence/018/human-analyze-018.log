@@ -1,0 +1,5 @@
+Analyzing seguimiento-018-radar...
+
+   info - Use interpolation to compose strings and values - test\ui\personal_radar_test.dart:76:30 - prefer_interpolation_to_compose_strings
+
+1 issue found. (ran in 3.8s)

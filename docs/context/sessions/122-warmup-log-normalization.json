@@ -1,0 +1,86 @@
+[
+  {
+    "file": "122-warmup-analyze-final.txt",
+    "rawSha256": "ec3b8254d1ee121e9ab45ee7c1fa4f65e111b9623eacc3f3c5190f814359289d",
+    "archivedSha256": "3212212322dd8da5254c5b0f4152d090f80e46c4225689e798ac6bb30e2d7ef3",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-analyze.txt",
+    "rawSha256": "ca364378492d063a08a8ee93ca9b45128b42449a2697bfde1f70a7300d36843f",
+    "archivedSha256": "18d6e6cb07b9b49c3dd755eccbc2322ea622a5da852db53492c440520eb73fa6",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-connection-mutant-close-diagnostic.dart.txt",
+    "rawSha256": "5d68dee05bbf7e7b734af6373cdba9c86844babe4fa5b5014a6c8b73f0cb6452",
+    "archivedSha256": "0a8b490508586e498bb4629922b76a571bf45db3605a97453512a807261fcf39",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-connection-mutant-close-diagnostic.txt",
+    "rawSha256": "8c1058eb149223873ef8402b0c308872bbd22320f3a9f4b9e948f62a38cdb950",
+    "archivedSha256": "2a6fbd9721ea37e6679841b0e7054c29ce5491041f4e61509ebeef718d2c4ea9",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-connection-mutant-first.dart.txt",
+    "rawSha256": "4e9d7b8aa3c1e94b8f86bbbb6b946677e3bfa74fe925de4686f1c632b8c561a7",
+    "archivedSha256": "2985acd84abcda6a4b2731cc4ee9044d6d3f64d6e1ca0e876789788aa2cc1b48",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-connection-mutant-initialized-red.txt",
+    "rawSha256": "b5899b98766d179d9690f65a738d2c34300a34c4b10f6e26b37ae582ac940cc3",
+    "archivedSha256": "18ef91343808d9bf659c43b4b38674ab618d1e8ae55c8aff236efd5d78d51bb0",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-connection-mutant-red.txt",
+    "rawSha256": "14da07b60228268f16ff9c18d3bfcaf2455b7b23884b4fd7d0099b05b8bbef05",
+    "archivedSha256": "330613b5c0afafdb6ea61cf85be00cf203d8c809796f5809a20a4a0af5ddd609",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-connection-mutant.dart.txt",
+    "rawSha256": "3b92ecbf6cb1b3d9c9b4f42918033c7c99ee68cfe1baf99a05335ba74803aa4b",
+    "archivedSha256": "7aaec24bf11e0103648d49bde64fff71ec053befa2f7a6cad9dc11632ad26e6d",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-focused-final.txt",
+    "rawSha256": "3a5d959a00aa417196d1a908ec2a8bfc4437e3867270910891741ed76d7436d0",
+    "archivedSha256": "4fcda2b7a3696bb8d379f5a087972a2bfd465938767e2b9e84287d6977a9cdce",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-focused.txt",
+    "rawSha256": "d8ee5f7fc6b6112e44569df752fee4ce81dbcb576bd24b0a3aa82617a239bb12",
+    "archivedSha256": "8268a6ac683f51479fcfcf3be20ac129b099ddb89b5fbcc9f6244ef5f270dc0c",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-icons.txt",
+    "rawSha256": "da57198aae2110adefa6bfc4b7f084c85a64a74320dcdd45964577717ff4635c",
+    "archivedSha256": "da57198aae2110adefa6bfc4b7f084c85a64a74320dcdd45964577717ff4635c",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-shared-controls.txt",
+    "rawSha256": "d0804309880ce3c680411e8d7223c0810f287f6939e2f485e5f3ddb3d1b076c3",
+    "archivedSha256": "d0804309880ce3c680411e8d7223c0810f287f6939e2f485e5f3ddb3d1b076c3",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-sqlite-close-diagnostic.txt",
+    "rawSha256": "386eb7280c9b2921a27d85a579296e906715fb1c01352084a959d79dac4f5458",
+    "archivedSha256": "386eb7280c9b2921a27d85a579296e906715fb1c01352084a959d79dac4f5458",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  },
+  {
+    "file": "122-warmup-sqlite-diagnostic.txt",
+    "rawSha256": "dd6baf8a304617c1062118bc580827fde9ef9e38040e2cf3a25fc257a4af6ac1",
+    "archivedSha256": "dd6baf8a304617c1062118bc580827fde9ef9e38040e2cf3a25fc257a4af6ac1",
+    "transformation": "UTF8, remove trailing whitespace only; assertions and warnings retained"
+  }
+]

@@ -15,6 +15,7 @@ dependencia a un proyecto fijado en Flutter 3.22.
 from pathlib import Path
 
 from PIL import Image
+from icon_vector import generate_sources
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / 'assets' / 'icon'
@@ -28,14 +29,18 @@ def save(img: Image.Image, path: Path, size: int) -> None:
 
 
 def main() -> None:
+    # One editable source now drives every consumer, including status/mono.
+    generate_sources(SRC / 'seguimiento_icon.svg', SRC)
     legacy = Image.open(SRC / 'icono_1024.png').convert('RGBA')
     fg = Image.open(SRC / 'ic_launcher_foreground_432.png').convert('RGBA')
     bg = Image.open(SRC / 'ic_launcher_background_432.png').convert('RGBA')
+    mono = Image.open(SRC / 'ic_launcher_monochrome_432.png').convert('RGBA')
 
     for name, f in DENSITIES.items():
         save(legacy, RES / f'mipmap-{name}' / 'ic_launcher.png', round(48 * f))
         save(fg, RES / f'mipmap-{name}' / 'ic_launcher_foreground.png', round(108 * f))
         save(bg, RES / f'mipmap-{name}' / 'ic_launcher_background.png', round(108 * f))
+        save(mono, RES / f'mipmap-{name}' / 'ic_launcher_monochrome.png', round(108 * f))
 
     adaptive = RES / 'mipmap-anydpi-v26' / 'ic_launcher.xml'
     adaptive.parent.mkdir(parents=True, exist_ok=True)
@@ -44,24 +49,16 @@ def main() -> None:
         '<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n'
         '    <background android:drawable="@mipmap/ic_launcher_background"/>\n'
         '    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n'
-        '    <monochrome android:drawable="@mipmap/ic_launcher_foreground"/>\n'
+        '    <monochrome android:drawable="@mipmap/ic_launcher_monochrome"/>\n'
         '</adaptive-icon>\n',
         encoding='utf-8',
     )
 
-    # Barra de estado: la zona segura del adaptable (72 de 108 dp) en blanco,
-    # solo lo claro (figura y segmentos encendidos).
+    # Barra de estado: mismo símbolo en blanco, sólo alpha (sin umbral de
+    # luminancia que pierda colores al cambiar la marca).
     side = fg.width * 72 // 108
     off = (fg.width - side) // 2
-    crop = fg.crop((off, off, off + side, off + side))
-    status = Image.new('RGBA', crop.size, (255, 255, 255, 0))
-    px, out = crop.load(), status.load()
-    for y in range(crop.height):
-        for x in range(crop.width):
-            r, g, b, a = px[x, y]
-            luminance = 0.299 * r + 0.587 * g + 0.114 * b
-            if a > 0 and luminance > 90:
-                out[x, y] = (255, 255, 255, a)
+    status = mono.crop((off, off, off + side, off + side))
     for name, f in DENSITIES.items():
         save(status, RES / f'drawable-{name}' / 'ic_stat_seguimiento.png', round(24 * f))
     print('íconos generados')

@@ -5,7 +5,9 @@ import '../../app/providers.dart';
 import '../../domain/dates.dart';
 import '../../domain/format.dart';
 import '../../domain/recovery.dart';
+import '../../domain/sleep_entry.dart';
 import '../../ui/widgets.dart';
+import 'sleep_hours_dialog.dart';
 
 /// Registro de la mañana (§16.15, §19.6) en una sola pantalla: peso en
 /// ayunas, pulso en reposo al despertar, horas en cama y molestias por zona.
@@ -24,10 +26,13 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   final _kg = TextEditingController();
   final _hr = TextEditingController();
   double? _sleep;
+
+  /// Cómo amaneció (plan 009): 1 descansado, 2 normal, 3 cansado; null sin
+  /// responder.
+  int? _feeling;
   final _sore = <String, int>{};
   bool _loading = true;
 
-  static const _sleepOptions = [6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0];
 
   @override
   void initState() {
@@ -48,6 +53,7 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
     final weights = await ref.read(bodyRepositoryProvider).weightsOn(_date);
     final fasted = weights.where((w) => weighMomentOf(w.moment, fasted: w.fasted) == WeighMoment.ayunas).firstOrNull;
     final hr = await ref.read(recoveryRepositoryProvider).restingHrOn(_date);
+    final feeling = await ref.read(recoveryRepositoryProvider).feelingOn(_date);
     final sleep = (await ref.read(sleepRepositoryProvider).range(_date, _date))[dayKey(_date)];
     final sore = (await ref.read(recoveryRepositoryProvider).sorenessRange(_date, days: 1))[_date] ?? const {};
     if (!mounted) return;
@@ -55,6 +61,7 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
       _kg.text = fasted == null ? '' : fmtDec(fasted.kg);
       _hr.text = hr?.toString() ?? '';
       _sleep = sleep;
+      _feeling = feeling;
       _sore
         ..clear()
         ..addAll(sore);
@@ -77,6 +84,7 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
             .addWeight(_date, kg, moment: WeighMoment.ayunas, time: timeKey(now.hour, now.minute));
       }
       await ref.read(recoveryRepositoryProvider).setRestingHr(_date, hr);
+      await ref.read(recoveryRepositoryProvider).setFeeling(_date, _feeling);
       if (_sleep != null) await ref.read(sleepRepositoryProvider).set(_date, _sleep!);
       await ref.read(recoveryRepositoryProvider).setSoreness(_date, _sore);
     }, ok: 'Registro de la mañana guardado');
@@ -118,18 +126,45 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                   ],
                 ),
                 AppCard(
+                  title: '¿Cómo amaneciste?',
+                  children: [
+                    Wrap(
+                      spacing: 6,
+                      children: [
+                        for (final (v, label) in const [(1, 'Descansado'), (2, 'Normal'), (3, 'Cansado')])
+                          ChoiceChip(
+                            label: Text(label),
+                            selected: _feeling == v,
+                            onSelected: (_) => setState(() => _feeling = _feeling == v ? null : v),
+                          ),
+                      ],
+                    ),
+                    Text('"Cansado" pone la recuperación primero en Hoy. Sin respuesta no se toma como descanso.',
+                        style: text.bodySmall),
+                  ],
+                ),
+                AppCard(
                   title: 'Horas en cama anoche',
                   children: [
                     Wrap(
                       spacing: 6,
                       runSpacing: 4,
                       children: [
-                        for (final h in _sleepOptions)
+                        for (final h in sleepOptions)
                           ChoiceChip(
                             label: Text(fmtDec(h)),
                             selected: _sleep == h,
                             onSelected: (_) => setState(() => _sleep = _sleep == h ? null : h),
                           ),
+                        // Lo que no es un botón (10 h 11 min) se escribe y se ve aquí.
+                        ChoiceChip(
+                          label: Text(_sleep != null && !isSleepOption(_sleep) ? 'Otro: ${formatSleepHours(_sleep!)}' : 'Otro'),
+                          selected: _sleep != null && !isSleepOption(_sleep),
+                          onSelected: (_) async {
+                            final hours = await askSleepHours(context, initial: isSleepOption(_sleep) ? null : _sleep);
+                            if (hours != null && mounted) setState(() => _sleep = hours);
+                          },
+                        ),
                       ],
                     ),
                   ],

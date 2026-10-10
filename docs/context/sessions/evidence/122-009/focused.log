@@ -1,0 +1,587 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: metas con historia un día anterior al cambio no se reclasifica con la meta nueva
+00:00 +1: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: metas con historia mismo día: gana la última registrada; la anterior queda para volver
+00:00 +2: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: metas con historia una vigencia futura no rige hoy
+00:00 +3: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos nuevo perfil sin datos: faltan datos, sin éxitos inventados
+00:00 +4: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos pocos días registrados: faltan datos aunque los que hay sean buenos
+00:00 +5: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos racha intensa o cansancio declarado: recuperación primero, sin presión de caminatas
+00:00 +6: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos diez rondas sin chequeo: no presume cansancio ni recuperación
+00:00 +7: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos cumple holgado: propone subir a su promedio redondeado, con ID estable
+00:00 +8: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos sin ninguna señal de recuperación conocida no se propone subir
+00:00 +9: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos carga alta hoy (90 min a RPE 8) o dos sesiones hoy frenan la propuesta ese día
+00:00 +10: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos un rechazo vale para su ventana: con una ventana nueva completa se reconsidera
+00:00 +11: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos cumple justo: se mantiene, no propone
+00:00 +12: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos rechazada con la misma evidencia no insiste; pospuesta espera su fecha
+00:00 +13: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos meta recién cambiada: en prueba hasta su revisión; luego, si no se sostiene, revisar
+00:00 +14: C:/My Projects/seguimiento-122-integracion/test/domain/adaptive_coach_test.dart: lectura de pasos días con meta histórica no registrada no se clasifican
+00:00 +15: loading C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart
+00:00 +15: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: limpio y al tope: sube con la regla existente
+00:00 +16: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: cada causa de no subir sale de lo guardado
+00:00 +17: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: por lado no se compara: lo guardado no conserva el lado
+00:00 +18: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: sin registro anterior lo dice, no inventa
+00:00 +19: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) variante: la siguiente de la cadena, guardada y leída de vuelta sin texto
+00:00 +20: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) banda o pausa: no se registran, así que no se afirma la subida
+00:00 +21: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) lo guardado que no es una dosis completa no se interpreta
+00:00 +22: C:/My Projects/seguimiento-122-integracion/test/domain/strength_advice_test.dart: revisión con la dosis guardada (R2) carga: +2 kg con otra variante no es la misma progresión; RIR sin anotar no se certifica
+00:00 +23: loading C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart
+00:01 +23: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: 145 g con mínimo vigente 130: cumple, sin alerta, y el informe dice 130–160, no 160–180
+00:01 +24: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: contraprueba: con el mismo 145 g y mínimo vigente 160 sí alerta
+00:01 +25: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: sin historia cargada: la de Targets, como antes
+00:01 +26: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: la meta cambió dentro del período: cada día con la suya y el cambio explícito
+00:01 +27: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: legado desconocido: sin alerta concluyente, la incertidumbre dicha
+00:01 +28: C:/My Projects/seguimiento-122-integracion/test/domain/report_goal_history_test.dart: parte del período sin vigencia registrada: se juzga sólo lo conocido
+00:01 +29: loading C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart
+00:02 +29: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión avisa 15 minutos antes y dice qué toca
+00:02 +30: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión un día de bloques nombra el trabajo del día
+00:02 +31: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión no avisa en día de fútbol ni de descanso
+00:02 +32: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión si la sesión ya está registrada, callado
+00:02 +33: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: sesión el aviso de sesión sin registrar va a su hora
+00:02 +34: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: proteína avisa con lo que llevas y lo que falta
+00:02 +35: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: proteína por encima del umbral no molesta
+00:02 +36: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: comidas programa las franjas activadas
+00:02 +37: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: comidas lo apagado no se programa
+00:02 +38: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición usa la fecha acordada si existe
+00:02 +39: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición si no, cuenta el intervalo desde la última toma
+00:02 +40: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición una medición vencida se recuerda a la mañana siguiente
+00:02 +41: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: medición sin línea base no inventa un aviso
+00:02 +42: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales nada se programa en el pasado
+00:02 +43: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales los avisos salen ordenados por hora
+00:02 +44: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales cada aviso tiene un id estable por tipo y día
+00:02 +45: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: reglas generales programa varios días por adelantado
+00:02 +46: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) meta 1.000, 1.500 pasos, umbral 4.000: no avisa "Faltan -500"
+00:02 +47: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) contraprueba: meta 5.000, 1.500 pasos, umbral 4.000: avisa lo que falta
+00:02 +48: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) el umbral configurado se respeta: meta 5.000, 4.200 pasos, umbral 4.000: no avisa
+00:02 +49: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) sin anotar sigue avisando aunque la meta sea baja
+00:02 +50: C:/My Projects/seguimiento-122-integracion/test/domain/reminders_test.dart: meta cumplida bajo el umbral (plan 009, R2) proteína y kcal: meta baja ya cumplida bajo el umbral no avisa; si falta, sí
+00:02 +51: loading C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart
+00:02 +51: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: cuenta las repeticiones de cada ejercicio de la semana
+00:02 +52: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: compara cada ejercicio contra la semana anterior
+00:02 +53: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: suma pasos, kilómetros y el mejor día
+00:02 +54: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: el gasto suma entrenamiento, fútbol y caminar sin contar dos veces el partido
+00:02 +55: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: sin peso no inventa el gasto
+00:02 +56: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: tiempo activo: sesiones, movilidad y fútbol
+00:02 +57: C:/My Projects/seguimiento-122-integracion/test/domain/period_summary_test.dart: un periodo vacío lo dice
+00:02 +58: loading C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart
+00:04 +58: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: (setUpAll)
+00:04 +58: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: instalación nueva: base de 5.000 conocida desde hoy
+00:04 +59: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: guardar el perfil crea una vigencia sólo para lo que cambió
+00:04 +60: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: ProfileRepository.save pasa por la historia
+00:04 +61: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: activar el v3.1 deja sus metas con vigencia de plan
+00:04 +62: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: aceptar una propuesta rige desde mañana, una sola vez aunque se acepte dos veces
+00:04 +63: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: base migrada: pasado incierto, el mismo valor conocido desde la migración
+00:04 +64: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: referencias del radar: sin defaults, con vigencia, sin tocar el perfil
+00:04 +65: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: posponer guarda la fecha de revisión; rechazar persiste
+00:04 +66: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: kcal de fútbol: una vigencia futura se proyecta al llegar, también de vuelta a null
+00:04 +67: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: updateProfile no acepta una vigencia futura: para eso está scheduleGoal
+00:04 +68: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: referencia del radar: null o cifra finita mayor que 0
+00:04 +69: C:/My Projects/seguimiento-122-integracion/test/data/goal_history_test.dart: (tearDownAll)
+00:04 +69: loading C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart
+00:05 +69: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: (setUpAll)
+00:05 +69: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: pasos holgados: propone; aceptar desde Hoy rige mañana y Hoy cambia a "en prueba"
+00:05 +70: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: "cansado" al despertar o RPE 9: recuperación primero en Hoy y sin aviso de pasos
+00:05 +71: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: el pulso del registro de la mañana no borra cómo amaneció, y al revés
+00:05 +72: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: Hoy trae la lectura del acompañamiento
+00:05 +73: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: informe: cada día con su meta; lo anterior a toda vigencia no se clasifica
+00:05 +74: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: borrar los pasos que sostenían la propuesta la retira con su razón
+00:05 +75: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: fuerza en Hoy: una serie guardada al fallo frena la subida y lo dice
+00:05 +76: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) recoveryOk=false con RPE 7 bloquea la propuesta
+00:06 +77: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) todo null con RPE 7 no demuestra buena recuperación
+00:06 +78: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) recoveryOk=true permite proponer si cobertura y carga son favorables
+00:06 +79: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) test e importado no cuentan como señal de recuperación
+00:06 +80: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: ciclo nuevo (R2): aceptar 5.000→6.000, volver a 5.000 a mano y cumplir otra vez vuelve a proponer
+00:06 +81: C:/My Projects/seguimiento-122-integracion/test/data/adaptive_coach_data_test.dart: (tearDownAll)
+00:06 +81: loading C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart
+00:06 +81: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: (setUpAll)
+00:06 +81: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: dominio IDs estables por evidencia y visibilidad de la decisión
+00:07 +82: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza mantener oculta la subida para esa evidencia; otra sesión es otra propuesta
+00:07 +83: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza "hoy no" vale sólo hoy: el próximo martes vuelve
+00:07 +84: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza R2 aceptar no prueba subida si la sesión siguiente mantiene carga y variante
+00:07 +85: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza R2 una sola serie de las cuatro previstas no sostiene la dosis subida
+00:07 +86: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza R2 control: carga mayor con cuatro series limpias sí se sostiene
+00:08 +87: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza R2 carga con otra variante y dosis guardada incompleta: no se afirma ni se rompe Hoy
+00:08 +88: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:08 +89: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: rondas "hoy no" deja las rondas de la última vez hoy; el viernes siguiente vuelve
+00:08 +90: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: escaleras "en 7 días" oculta la propuesta de subir en Hoy hasta su fecha; subir sigue en la confirmación existente
+00:09 +91: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) un fallo entre registrar y subir no deja aceptación sin peldaño
+00:09 +92: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) doble toque: sube uno, una sola aceptación
+00:09 +93: C:/My Projects/seguimiento-122-integracion/test/data/proposal_tracking_test.dart: (tearDownAll)
+00:09 +93: loading C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart
+00:09 +93: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: (setUpAll)
+00:09 +93: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 130 no queda bajo mínimo
+00:10 +94: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 160 sí queda bajo mínimo
+00:10 +95: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 historia: 145 g cumplieron 130 aunque el mínimo actual sea 160
+R2 histórico: [] | - Proteína promedio: 145 g (meta 130–160) · kcal promedio: 2.500 (meta 2.400) · días cerrados: 7/7
+00:10 +96: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: R2 desconocido: 145 g no prueban incumplir una meta histórica sin fecha
+R2 desconocido: [] | - Proteína promedio: 145 g (meta histórica no registrada) · kcal promedio: 2.500 (meta histórica no registrada entre semana, histórica no registrada fútbol) · días cerrados: 7/7
+00:10 +97: C:/My Projects/seguimiento-122-integracion/test/data/report_goal_history_review_test.dart: (tearDownAll)
+00:10 +97: loading C:/My Projects/seguimiento-122-integracion/test/data/coach_reminder_sync_test.dart
+00:10 +97: C:/My Projects/seguimiento-122-integracion/test/data/coach_reminder_sync_test.dart: (setUpAll)
+00:10 +97: C:/My Projects/seguimiento-122-integracion/test/data/coach_reminder_sync_test.dart: al despertar: guardar "cansado" retira el aviso; editar a "normal" o borrar lo vuelve a programar
+00:11 +98: C:/My Projects/seguimiento-122-integracion/test/data/coach_reminder_sync_test.dart: recoveryOk=false al cerrar la sesión retira el aviso; corregirla o borrarla lo devuelve
+00:11 +99: C:/My Projects/seguimiento-122-integracion/test/data/coach_reminder_sync_test.dart: una meta futura no cambia el aviso de hoy; cuando rige, el aviso usa la nueva
+00:11 +100: C:/My Projects/seguimiento-122-integracion/test/data/coach_reminder_sync_test.dart: (tearDownAll)
+00:11 +100: loading C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart
+00:12 +100: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: (setUpAll)
+00:12 +100: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: el aviso de sesión dice lo que toca ese día
+00:12 +101: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: un martes de bloques nombra los ejercicios del bloque
+00:12 +102: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: registrar la sesión calla los avisos de ese día
+00:12 +103: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: el aviso de proteína usa lo comido hoy
+00:12 +104: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: con la proteína cubierta no se programa ese aviso
+00:12 +105: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: la medición usa la fecha acordada del perfil
+00:13 +106: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: tras medir, el siguiente aviso sale del intervalo
+00:13 +107: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: apagar un recordatorio lo saca de la cola
+00:13 +108: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: programa varios días y respeta el fútbol del sábado
+00:13 +109: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: lo programado llega al sistema de notificaciones
+00:13 +110: C:/My Projects/seguimiento-122-integracion/test/data/reminder_scheduler_test.dart: (tearDownAll)
+00:13 +110: loading C:/My Projects/seguimiento-122-integracion/test/data/coach_backup_roundtrip_test.dart
+00:14 +110: C:/My Projects/seguimiento-122-integracion/test/data/coach_backup_roundtrip_test.dart: (setUpAll)
+00:14 +110: C:/My Projects/seguimiento-122-integracion/test/data/coach_backup_roundtrip_test.dart: vigencias y decisiones exactas tras ZIP, restauración y reapertura
+00:14 +111: C:/My Projects/seguimiento-122-integracion/test/data/coach_backup_roundtrip_test.dart: (tearDownAll)
+00:14 +111: loading C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart
+00:15 +111: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: (setUpAll)
+00:15 +111: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+previa: 5188643 µs por lectura (1143 registros, windows 16 núcleos)
+actual: 62497 µs por lectura (1143 registros, windows 16 núcleos)
+00:21 +112: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: repositorio: 1.000 días en SQLite, dos consultas y la misma lectura
+repositorio: 2 consultas, 139 ms (1.000 sesiones)
+00:22 +113: C:/My Projects/seguimiento-122-integracion/test/data/coach_load_1000_days_test.dart: (tearDownAll)
+00:22 +113: loading C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart
+00:23 +113: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: (setUpAll)
+00:23 +113: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: fixture sintética congelada 17 migra a 18 sin reconstruir el esquema
+00:23 +114: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 1 llega al 22 sin perder datos
+00:24 +115: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 2 llega al 22 conservando el catálogo
+00:24 +116: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 7 llega al 22 con guías, catálogo nuevo y rondas sin separar
+00:24 +117: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: del esquema 8 al 9 los recordatorios vuelven a los valores acordados
+00:25 +118: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 6 llega al 22: las sesiones viejas quedan con descanso 0
+00:25 +119: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados
+00:26 +120: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 10 llega al 22 con la tabla de fotos de referencia
+00:26 +121: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 11 llega al 22 con la tabla de recordatorios propios
+00:27 +122: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 22: pan y salchichón por gramos
+00:27 +123: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 13 llega al 22: las sesiones quedan revisadas
+00:27 +124: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 14 llega al 22: plan y sesiones listos para el v3
+00:28 +125: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 15 llega al 22: RIR, fútbol, sueño y meta de fútbol
+00:28 +126: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción
+00:28 +127: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 22: historial importado, tests y escaleras
+00:28 +128: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 20 llega al 22: metas legadas sin fecha, sin propuestas
+00:29 +129: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: (tearDownAll)
+00:29 +129: loading C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart
+00:29 +129: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: (setUpAll)
+00:29 +129: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: schema20→21 adds missing references, preserves custom homonym and history
+00:30 +130: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: first install records identities after combos and does not duplicate
+00:30 +131: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:26:89)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:131:15)
+<asynchronous suspension>
+#8      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#9      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#10     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:152:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:152:5)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:132:16)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:106:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:152:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:157:20)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:31 +132: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: (tearDownAll)
+00:31 +132: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart
+00:32 +132: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: (setUpAll)
+00:32 +132: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:33 +133: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: SQLite legacy sigue restaurando solo los registros y conserva las fotos locales
+00:33 +134: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 22
+00:34 +135: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el manifiesto declara esquema, bytes y SHA-256 del archivo que viaja
+00:34 +136: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/../flags.json
+00:34 +137: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: ../escape.jpg
+00:34 +138: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: /fotos/absolute.jpg
+00:35 +139: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: C:/fotos/absolute.jpg
+00:35 +140: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a/../../escape.jpg
+00:35 +141: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a\..\escape.jpg
+00:36 +142: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: flags.json
+00:36 +143: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: duplicados exactos y por mayúsculas se rechazan antes de extraer
+00:36 +144: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: una entrada symlink se rechaza sin escribir su destino
+00:37 +145: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: paquete sin manifest.json se rechaza y conserva B
+00:37 +146: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: paquete sin seguimiento.sqlite se rechaza y conserva B
+00:37 +147: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: paquete sin fotos/frente.jpg se rechaza y conserva B
+00:38 +148: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: foto con CRC válido pero SHA-256 distinto se rechaza
+00:38 +149: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: quitar foto y descriptor no oculta la referencia pendiente de la base
+00:38 +150: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: DB incompleta con hashes correctos en ZIP se rechaza sin tocar B
+00:39 +151: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: un esquema futuro y un manifiesto incoherente se rechazan
+00:39 +152: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: archivo ZIP truncado se rechaza sin cambiar B
+00:39 +153: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: tamaños declarados excesivos y DEFLATE con tamaño falso se rechazan
+00:40 +154: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: exportar fotos previamente ausentes declara incompleto; restaurarlo requiere confirmación
+00:41 +155: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: sin fotos todavía exporta y restaura un paquete completo
+00:41 +156: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: fallo al reabrir después de reemplazar fotos revierte DB y todas las fotos de B
+00:41 +157: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=false
+00:42 +158: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=true
+00:42 +159: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: (tearDownAll)
+00:42 +159: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart
+00:43 +159: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: (setUpAll)
+00:43 +159: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:45 +160: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y confirma restauración
+00:47 +161: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: (tearDownAll)
+00:47 +161: loading C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart
+00:48 +161: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: (setUpAll)
+00:48 +161: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: el primer arranque respalda; hasta la semana siguiente no repite
+00:48 +162: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: se queda solo con los más recientes
+00:48 +163: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: el respaldo se puede restaurar y trae los datos de ese día
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart:62:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:49 +164: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: archivos ajenos en la carpeta no se listan ni se borran
+00:49 +165: C:/My Projects/seguimiento-122-integracion/test/data/auto_backup_test.dart: (tearDownAll)
+00:49 +165: loading C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart
+00:50 +165: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: (setUpAll)
+00:50 +165: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: aceptar con otra cifra: rige desde mañana con lo elegido
+00:52 +166: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: diálogo abierto el lunes, aceptado el martes 00:05: rige el miércoles, como dice el texto
+00:53 +167: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: cruza medianoche y la lectura del día nuevo ya no la ofrece: no se guarda nada
+00:55 +168: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: una cifra fuera de rango no se acepta
+00:56 +169: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: posponer guarda la revisión en 7 días y no toca la meta
+00:57 +170: C:/My Projects/seguimiento-122-integracion/test/ui/adaptive_coach_test.dart: (tearDownAll)
+00:57 +170: loading C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart
+00:58 +170: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: (setUpAll)
+00:58 +170: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: calentamiento guiado: pasos con su dosis, reloj por paso y lo marcado queda anotado
+01:00 +171: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: saltar el calentamiento queda registrado y no pregunta
+01:00 +172: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: molestia en el registro: aviso visible y los mismos pasos
+01:01 +173: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:300:39)
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart:262:16)
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#9      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:01 +174: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: foto vieja sin calentamiento guiado: nada marcado, no se rompe
+01:01 +175: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: (tearDownAll)
+01:01 +175: loading C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart
+01:02 +175: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: sin archivo no hay sesión
+01:02 +176: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+01:02 +177: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: clear después de save no deja nada
+01:02 +178: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: un archivo dañado se ignora
+01:02 +179: loading C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart
+01:02 +179: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+01:02 +180: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+01:02 +181: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+01:02 +182: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+01:02 +183: loading C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart
+01:03 +183: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: (setUpAll)
+01:03 +183: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: fixture is genuinely frozen schema18, pinned and independently checked
+01:03 +184: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+01:04 +185: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: negative controls reject changed source, removed citation and lost row
+01:04 +186: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: (tearDownAll)
+01:04 +186: loading C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart
+01:05 +186: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: (setUpAll)
+01:05 +186: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: genuine19 fixture freezes test, ladder, imports and wallclock
+01:05 +187: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+01:06 +188: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: normalizing the clock cannot erase regular training time or ladder dates
+01:06 +189: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: (tearDownAll)
+01:06 +189: loading C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart
+01:07 +189: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: una sola fecha apta no demuestra un cambio entre fechas
+01:07 +190: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: sólo un prefijo parcial no demuestra el denominador de Cindy
+01:07 +191: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: conteo extremo no acredita receta por overflow de entero
+01:07 +192: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: helper extraído conserva receta y export público del timer
+01:07 +193: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: referencias inválidas no producen coordenada ni defaults
+01:07 +194: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: cambio de referencia escala ambos perfiles; no cambia delta crudo
+01:07 +195: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: política documentada separa histórica de actual; sin política no caduca
+01:07 +196: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: inválidos, fechas desconocidas y bilateral mixto conservan payload
+01:07 +197: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: Cindy importada/estimada/cortada/30min/Tabata/dudas sigue observada
+01:07 +198: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: receta distinta/lastre/variante/partial desconocido no normaliza
+01:07 +199: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+01:07 +200: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+01:07 +201: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+01:07 +202: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+01:07 +203: C:/My Projects/seguimiento-122-integracion/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+01:07 +204: loading C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart
+01:07 +204: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: (setUpAll)
+01:07 +204: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: cero real frente a ausentes y callbacks sin escritura/rutas
+01:08 +205: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: dos ejes no rellenan huecos y sin refs mantiene crudo
+01:09 +206: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: SQLite→008→núcleo→UI conserva dudas/fecha/bilateral
+01:09 +207: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: touch canvas, teclado, semántica y mostrar inicio
+01:09 +208: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: renderer real360 texto1.0, >100 conserva crudo
+01:09 +209: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: renderer real360 texto1.6, >100 conserva crudo
+01:09 +210: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: renderer real360 texto2.0, >100 conserva crudo
+01:09 +211: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: widget muestra valor/ref común y tap evidencia sin rutas
+01:09 +212: C:/My Projects/seguimiento-122-integracion/test/ui/personal_radar_test.dart: (tearDownAll)
+01:10 +212: loading C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart
+01:10 +212: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy completa con fracciones no inventa un segundo de circuito
+01:11 +213: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy completa con segundos enteros conserva sus tiempos
+01:11 +214: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy cortada mide 2:00 reales con fracciones y conserva la foto
+01:12 +215: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy sin inicio de trabajo no convierte el cap en tiempo hecho
+01:12 +216: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy conserva ventana medida distinta del cap sin normalizarla
+01:12 +217: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Tabata conserva su cálculo y dosis sin composición de Cindy
+01:13 +218: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: la foto de Cindy o Tabata vuelve igual tras pasar por JSON
+01:13 +219: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy de prueba: calentamiento y checklist a la vista; la normal no los muestra
+01:13 +220: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy retomada sigue con sus rondas y su reloj
+01:13 +221: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy que terminó con la app cerrada pide la ronda a medias
+01:13 +222: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Tabata retomado sigue en el bloque en que iba
+01:13 +223: loading C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart
+01:14 +223: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) semanas y fases desde el lunes de inicio
+01:14 +224: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) fechas clave: mediciones 6 nov y 4 dic, test 18 dic
+01:14 +225: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) volumen reducido: semanas 4 y 8, y la 10 hasta el miércoles
+01:14 +226: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) miércoles: Cindy impares, Tabata pares; la 4 y la 10 Cindy, la 8 por tiempo
+01:14 +227: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) burpees EMOM por fase, sin burpees en descarga ni en la semana del test (§18.10)
+01:14 +228: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) el v3 arranca en lunes
+01:14 +229: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) tipos de día y esquema
+01:14 +230: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) jueves: curl y extensión van en superserie y el cronómetro los alterna
+01:14 +231: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) viernes: 6 rondas de circuito y después L-sit y toes-to-bar
+01:14 +232: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) descarga: una serie menos en los ejercicios de series; el circuito no cambia
+01:14 +233: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Tabata: 4 × 8 de 20/10 con 1 min entre bloques = 16:10
+01:14 +234: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Cindy: la ronda a medias se reparte en orden
+01:14 +235: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros EMOM: un minuto fallado baja al escalón anterior
+01:14 +236: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: PlanExerciseDraft.copyWith conserva la superserie
+01:14 +237: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: variantes: la cadena de progresión se parte en escalones (§18.4)
+01:14 +238: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: el informe nombra el formato de resistencia y la variante de cada serie
+01:14 +239: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: los ejercicios por lado salen por serie con cada pierna (§16.6.2)
+01:14 +240: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: una Cindy cortada dice lo que duró y que no es marca
+01:14 +241: loading C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart
+01:14 +241: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio las semanas van de lunes a domingo; la 1 empieza el lunes del inicio (§16.8)
+01:14 +242: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio fechas previas al inicio dan semana ≤ 0 sin error
+01:14 +243: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: duraciones parse y formato
+01:14 +244: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión circuito neto = total − cal − enf, nunca negativo
+01:15 +245: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión estimación de rondas por tiempo
+01:15 +246: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión vueltas del contador
+01:15 +247: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades macros por unidad y por 100 g
+01:15 +248: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades pulgadas se guardan en cm
+01:15 +249: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: formato es-CO miles y decimales
+01:15 +250: loading C:/My Projects/seguimiento-122-integracion/test/domain/progress_evidence_test.dart
+01:15 +250: C:/My Projects/seguimiento-122-integracion/test/domain/progress_evidence_test.dart: duraciones una vez, protocolo y base explícitos
+01:15 +251: C:/My Projects/seguimiento-122-integracion/test/domain/progress_evidence_test.dart: mantiene política RIR ausente, bloquea fallo, partición y mezcla
+01:15 +252: C:/My Projects/seguimiento-122-integracion/test/domain/progress_evidence_test.dart: observado visible, apto exige fecha, ambos lados y limpio; T3 parcial no oculta T2
+01:15 +253: loading C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart
+01:16 +253: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (setUpAll)
+01:16 +253: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: SQLite marcas→duraciones65 sin doble conversión, trabajo vs vueltas
+01:16 +254: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: SQLite flags→política no aumenta mochila con fallo/12+3
+01:16 +255: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: fecha real releída, parcial bilateral y dudas no reemplazan referencia apta
+01:16 +256: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: historial técnico RIR4 no sustituye la última fuerza normal apta
+01:16 +257: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (tearDownAll)
+01:16 +257: loading C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart
+01:17 +257: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: (setUpAll)
+01:17 +257: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: SQLite→Cuerpo: T3 parcial visible conserva dosis T2, dudas no dan dosis
+01:18 +258: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: SQLite→guía: serie manual con fallo no sugiere subir mochila
+01:18 +259: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: nuevo test usa hoy real; editar conserva fecha original
+01:20 +260: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: fecha legacy desconocida inválida no se reemplaza por hoy al editar
+01:20 +261: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: fecha legacy 2026-02-30 inválida no se reemplaza por hoy al editar
+01:21 +262: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/desconocida exige confirmar todas antes de guardar
+01:23 +263: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/2026-02-30 exige confirmar todas antes de guardar
+01:24 +264: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/2026-10-07 exige confirmar todas antes de guardar
+01:25 +265: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2026-10-05/2027-01-05 exige confirmar todas antes de guardar
+01:27 +266: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: parte con fechas 2027-01-05/2027-01-05 exige confirmar todas antes de guardar
+01:28 +267: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado null → guía tecnica: subida false
+01:28 +268: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado tecnica → guía null: subida false
+01:29 +269: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado null → guía null: subida true
+01:29 +270: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: (tearDownAll)
+01:29 +270: loading C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart
+01:30 +270: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: (setUpAll)
+01:30 +270: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: condiciones declaradas: medida ayunas/noayunas y peso antes/después fútbol
+01:30 +271: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: peso antes/después fútbol y momento desconocido son registros distintos
+01:30 +272: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: Cindy20 y30min separadas; warmup/cooldown no cambian ventana real20
+01:30 +273: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: rango en todas las consultas, una medida, límite SQL y última fecha
+01:30 +274: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: nutrición nullable y cierre coinciden con informe, observado0 sobrevive
+01:30 +275: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: firma real separa dosis/técnica; importada/estimada/cortada/Cindy no son marca
+01:30 +276: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: metas requieren vigencia, unidad, fuente y cifra finita
+01:30 +277: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: sin registro no es cero de proteína observado
+01:30 +278: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: formato y calidad no desaparecen bajo mismo nombre Circuito
+01:30 +279: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: (tearDownAll)
+01:30 +279: loading C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart
+01:31 +279: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: (setUpAll)
+01:31 +279: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: registro antiguo fuera de ventanas90/60 se actualiza en rango activo
+01:32 +280: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: único cero cerrado tiene eje positivo; todas ausentes no dibujan cifra
+01:32 +281: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: selector explica dosis/carga/ventana20vs30 antes de escoger
+01:33 +282: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: barras: ausencia sin rod,0 observado, meta sólo en fecha documentada
+01:33 +283: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: SQLite→rango/tipo/tabla/evidencia y cierre reactivo a360 con texto1.6
+01:33 +284: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: X distingue un día de un mes, sin suavizado artificial
+01:33 +285: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: rango de informe filtra peso real, incluida una toma sola
+01:33 +286: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: (tearDownAll)
+01:33 +286: loading C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart
+01:34 +286: C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart: (setUpAll)
+01:34 +286: C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart: Hoy propone el v3.1 desde el próximo lunes, sin esperar a las 10 limpias (§19)
+01:34 +287: C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart: activarlo: el v2 sigue hasta el domingo, el lunes 12 es tren superior A en semana 1
+01:35 +288: C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart: editar el v3 a mitad de bloque no reinicia las semanas
+01:35 +289: C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart: semana 4: Hoy avisa la descarga y el miércoles toca Cindy
+01:35 +290: C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart: una sesión de Cindy guarda formato y reps sueltas
+01:35 +291: C:/My Projects/seguimiento-122-integracion/test/data/plan_v3_data_test.dart: (tearDownAll)
+01:35 +291: loading C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart
+01:36 +291: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: (setUpAll)
+01:36 +291: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: activarlo: semana 1, metas de §19.3 y abdomen el sábado 17
+01:36 +292: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: un v3 activado para el mismo lunes queda reemplazado por el v3.1
+01:36 +293: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: el viernes es circuito hasta las 10 limpias; después Cindy de prueba
+01:36 +294: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: 10 rondas sin los criterios no cuentan como limpias
+01:36 +295: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: partido entre semana: el viernes metabólico lo avisa
+01:36 +296: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: RIR por serie y últimas series de fuerza del mismo día de la semana
+01:37 +297: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: medir en una fecha del v3.1 corre la próxima a la siguiente
+01:37 +298: C:/My Projects/seguimiento-122-integracion/test/data/plan_v31_data_test.dart: (tearDownAll)
+01:37 +298: loading C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart
+01:38 +298: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: (setUpAll)
+01:38 +298: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: terminar antes guarda solo lo hecho y la marca como incompleta
+01:39 +299: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: cada ronda separa su trabajo del descanso que la precede
+01:40 +300: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: un doble toque en "Hecho" no salta el descanso ni la parada siguiente
+01:40 +301: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: el cierre de un circuito pide técnica, rango y recuperación
+01:41 +302: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: al terminar el enfriamiento la sesión queda guardada sin revisar (§16.9)
+01:41 +303: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: el acumulado de reps es por ejercicio
+01:42 +304: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: un aguante por lado: derecho, luego izquierdo, con cronómetro y descanso entre series
+01:43 +305: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: (tearDownAll)
+01:43 +305: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart
+01:44 +305: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: (setUpAll)
+01:44 +305: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+01:46 +306: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+01:47 +307: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+01:48 +308: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart:179:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _BackupCardState._progress (package:seguimiento/features/settings/settings_screen.dart:198:14)
+<asynchronous suspension>
+#10     _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:220:21)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:50 +309: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+01:51 +310: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: (tearDownAll)
+01:51 +310: All tests passed!

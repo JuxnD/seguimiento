@@ -1,0 +1,20 @@
+Analyzing seguimiento-014-calentamiento...
+
+   info - Don't invoke 'print' in production code - build\warmup_diagnostic_test.dart:13:3 - avoid_print
+   info - Method invocation or property access on a 'dynamic' target - build\warmup_radius_clearance_test.dart:7:12 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\warmup_radius_clearance_test.dart:7:52 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\warmup_radius_clearance_test.dart:8:22 - avoid_dynamic_calls
+  error - The type 'dynamic' used in the 'for' loop must implement 'Iterable' - build\warmup_radius_clearance_test.dart:8:22 - for_in_of_invalid_type
+   info - Method invocation or property access on a 'dynamic' target - build\warmup_radius_clearance_test.dart:8:47 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\warmup_radius_clearance_test.dart:8:47 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\warmup_radius_clearance_test.dart:8:73 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\warmup_radius_clearance_test.dart:8:89 - avoid_dynamic_calls
+   info - Don't invoke 'print' in production code - build\warmup_radius_clearance_test.dart:16:3 - avoid_print
+   info - Unnecessary use of double quotes - test\ui\illustration_mockup_render_test.dart:75:44 - prefer_single_quotes
+warning - The '!' will have no effect because the receiver can't be null - test\ui\illustration_mockup_render_test.dart:111:30 - unnecessary_non_null_assertion
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter_test/flutter_test.dart' - test\ui\illustration_warmup_rig_test.dart:3:8 - unnecessary_import
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_warmup_rig_test.dart:190:28 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_warmup_rig_test.dart:192:8 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_warmup_rig_test.dart:192:8 - avoid_dynamic_calls
+
+16 issues found. (ran in 31.9s)

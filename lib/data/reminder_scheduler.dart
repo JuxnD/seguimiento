@@ -13,6 +13,9 @@ import 'repositories/nutrition_repository.dart';
 import 'repositories/plan_repository.dart';
 import 'repositories/profile_repository.dart';
 import 'repositories/reminder_repository.dart';
+import 'repositories/coach_repository.dart';
+import 'repositories/goal_repository.dart';
+import '../domain/goal_history.dart';
 
 /// Junta lo que hay en la base con las reglas de `domain/reminders.dart` y
 /// deja programados los avisos de los próximos días.
@@ -40,8 +43,14 @@ class ReminderScheduler {
   Future<List<PlannedNotification>> reschedule({int horizonDays = 7, DateTime? now}) async {
     final moment = now ?? DateTime.now();
     final today = dateOnly(moment);
+    // Lo que ya rige hoy pasa al perfil antes de leerlo (plan 009).
+    await GoalRepository(db).projectDueGoals(today);
     final settings = await reminders.settings();
     final p = await profile.get();
+    final history = await GoalRepository(db).history();
+    final protein = goalReferenceOn(history, GoalMetric.proteinaMin, today);
+    final kcal = kcalGoalReferenceOn(history, today);
+    final stepsGoal = goalReferenceOn(history, GoalMetric.pasos, today);
 
     final days = <ReminderDay>[];
     for (var i = 0; i < horizonDays; i++) {
@@ -76,12 +85,13 @@ class ReminderScheduler {
       days: days,
       settings: settings,
       proteinToday: totals.protein,
-      proteinMin: p.proteinMin,
+      proteinMin: protein.comparable ? protein.value!.round() : null,
       kcalToday: totals.kcal,
-      kcalTarget: dailyKcalTarget(day: today, weekdayTarget: p.kcalTarget, footballTarget: p.kcalTargetFootball),
+      kcalTarget: kcal.comparable ? kcal.value!.round() : null,
       missingMealsToday: missing,
       stepsToday: steps?.steps,
-      stepsTarget: p.stepsTarget,
+      stepsTarget: stepsGoal.comparable ? stepsGoal.value!.round() : null,
+      stepsRecoveryFirst: (await CoachRepository(db).stepsReading(today)).recoveryFirst,
       custom: await CustomReminderRepository(db).all(),
       lastMeasurement: lastMeasurement,
       measureIntervalDays: p.measureIntervalDays,

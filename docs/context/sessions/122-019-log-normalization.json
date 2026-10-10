@@ -1,0 +1,20 @@
+[
+  {
+    "file": "122-019-analyze.txt",
+    "rawSha256": "7625eb9e04c5d3091f57aae256767a287f34bd05b88a11929c6ef1c65cb61e68",
+    "archivedSha256": "dce390cc61942713341ee645ab794d183f9dbbc6210e7336a4f3d3f268a5b27d",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings and assertions retained"
+  },
+  {
+    "file": "122-019-focused.txt",
+    "rawSha256": "48795fe3a1249c12a14d7009669b26955f66c8ef423ddaf5f069e0b620abcb08",
+    "archivedSha256": "11f934868566fe276e27764fe1e99bb9ee84d8c7e1073806dee9c38cd6ae7e2f",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings and assertions retained"
+  },
+  {
+    "file": "122-019-icons.txt",
+    "rawSha256": "da57198aae2110adefa6bfc4b7f084c85a64a74320dcdd45964577717ff4635c",
+    "archivedSha256": "da57198aae2110adefa6bfc4b7f084c85a64a74320dcdd45964577717ff4635c",
+    "transformation": "UTF8 LF and trailing whitespace only; warnings and assertions retained"
+  }
+]

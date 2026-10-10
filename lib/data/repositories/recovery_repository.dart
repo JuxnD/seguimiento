@@ -12,12 +12,29 @@ class RecoveryRepository {
 
   // ---------- Pulso en reposo ----------
 
-  /// null borra la lectura del día.
-  Future<void> setRestingHr(DateTime day, int? bpm) => bpm == null
-      ? (db.delete(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).go()
-      : db.into(db.morningChecks).insertOnConflictUpdate(
-            MorningChecksCompanion.insert(date: dayKey(day), restingHr: Value(bpm)),
-          );
+  /// null borra la lectura del día (la fila se va si tampoco hay cómo
+  /// amaneció).
+  Future<void> setRestingHr(DateTime day, int? bpm) =>
+      _setMorning(day, MorningChecksCompanion(restingHr: Value(bpm)));
+
+  /// Cómo amaneció (plan 009): 1 descansado, 2 normal, 3 cansado; null borra.
+  Future<void> setFeeling(DateTime day, int? feeling) =>
+      _setMorning(day, MorningChecksCompanion(feeling: Value(feeling)));
+
+  Future<int?> feelingOn(DateTime day) async =>
+      (await (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull())?.feeling;
+
+  Future<void> _setMorning(DateTime day, MorningChecksCompanion change) => db.transaction(() async {
+        final key = dayKey(day);
+        await db
+            .into(db.morningChecks)
+            .insert(MorningChecksCompanion.insert(date: key), mode: InsertMode.insertOrIgnore);
+        await (db.update(db.morningChecks)..where((t) => t.date.equals(key))).write(change);
+        final row = await (db.select(db.morningChecks)..where((t) => t.date.equals(key))).getSingle();
+        if (row.restingHr == null && row.feeling == null) {
+          await (db.delete(db.morningChecks)..where((t) => t.date.equals(key))).go();
+        }
+      });
 
   Future<int?> restingHrOn(DateTime day) async =>
       (await (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull())?.restingHr;

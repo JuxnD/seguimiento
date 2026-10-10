@@ -22,6 +22,12 @@ jobs:
           channel: stable
           cache: true
 
+      # El verificador de recursos Android usa Pillow también en CI.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install Pillow==12.2.0
+
       # Las pruebas abren SQLite del sistema (ver test/support/sqlite_host.dart).
       - run: sudo apt-get update && sudo apt-get install -y libsqlite3-0
       - run: flutter pub get
@@ -41,7 +47,7 @@ jobs:
 
       - run: flutter analyze
       # El timeout evita que una prueba colgada queme 10 minutos de runner.
-      - run: flutter test --timeout 90s
+      - run: flutter test --timeout 90s --concurrency 1
       # Un cambio de Gradle, del manifiesto o de un plugin nativo no lo ve
       # ninguna prueba de Dart: sin esto se descubría al etiquetar la release.
       - name: Compilar APK (debug)

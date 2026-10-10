@@ -22,14 +22,20 @@ import '../../domain/energy.dart';
 import '../../domain/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
+import '../../domain/progress_evidence.dart';
 import '../../domain/report/report_input.dart' show Targets;
-import '../../domain/session_math.dart' show lapDurations, meanSec, roundWork;
+import '../../domain/session_math.dart' show lapDurations, roundWork;
 import '../../domain/session_script.dart';
+import '../../domain/mobility.dart' show legRecovery, mobilityNight;
+import '../../domain/recovery.dart' show sorenessZones;
+import '../../domain/warmup.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../../ui/theme.dart';
 import 'technique_sheet.dart';
+import '../../data/repositories/goal_repository.dart';
+import '../../domain/adaptive_coach.dart' show ProposalRecord, proposalHidden, strengthProposalId;
 
 /// Convierte el día del plan en algo que el guion entiende.
 ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
@@ -144,6 +150,89 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   void _setRir(int doneIndex, int? rir) {
     setState(() => _done[doneIndex] = _done[doneIndex].withRir(rir));
     _persist();
+  }
+
+  /// Calentamiento guiado (§16.23): pasos marcados, si se saltó, el paso con
+  /// reloj en marcha y el descanso tras la aproximación.
+  late final _warmupMarked = <String>{...?widget.resume?.warmupDone};
+  late bool _warmupSkipped = widget.resume?.warmupSkipped ?? false;
+  Map<String, int> _soreZones = const {};
+  late final List<WarmupItem> _warmupItems = _buildWarmup();
+  String? _warmupTimerKey;
+  DateTime? _warmupTimerEnds;
+  DateTime? _approachRestEnds;
+
+  List<WarmupItem> _buildWarmup() => buildWarmup(scriptDayFrom(widget.day), ownWarmup: _warmupExercises.isNotEmpty);
+
+  /// Molestias de hoy o ayer (≥ 3): se avisan arriba del calentamiento.
+  Future<void> _loadSoreness() async {
+    try {
+      final byDay = await ref.read(recoveryRepositoryProvider).sorenessRange(widget.date);
+      final d0 = dateOnly(widget.date);
+      final zones = <String, int>{};
+      for (final e in byDay.entries) {
+        if (e.key.isBefore(addDays(d0, -1)) || e.key.isAfter(d0)) continue;
+        for (final z in e.value.entries) {
+          if (z.value > (zones[z.key] ?? 0)) zones[z.key] = z.value;
+        }
+      }
+      if (!mounted || zones.isEmpty) return;
+      setState(() => _soreZones = zones);
+    } on Object {/* Sin molestias legibles, no hay aviso. */}
+  }
+
+  void _toggleWarmup(WarmupItem item) {
+    setState(() {
+      if (!_warmupMarked.remove(item.key)) _warmupMarked.add(item.key);
+      if (_warmupTimerKey == item.key) {
+        _warmupTimerKey = null;
+        _warmupTimerEnds = null;
+      }
+      _armApproachRest();
+    });
+    _persist();
+  }
+
+  void _startWarmupTimer(WarmupItem item) => setState(() {
+        _warmupTimerKey = item.key;
+        _warmupTimerEnds = clock.now().add(Duration(seconds: item.seconds!));
+      });
+
+  /// Al marcar toda la aproximación corren los 2 min antes de la primera
+  /// serie que cuenta.
+  void _armApproachRest() {
+    final approach = _warmupItems.where((i) => i.stage == WarmupStage.aproximacion);
+    final complete = approach.isNotEmpty && approach.every((i) => _warmupMarked.contains(i.key));
+    if (!complete) {
+      _approachRestEnds = null;
+    } else {
+      _approachRestEnds ??= clock.now().add(const Duration(seconds: warmupApproachRestSec));
+    }
+  }
+
+  void _tickWarmup() {
+    final end = _warmupTimerEnds;
+    if (end != null && !clock.now().isBefore(end)) {
+      _alertRestOver();
+      _warmupMarked.add(_warmupTimerKey!);
+      _warmupTimerKey = null;
+      _warmupTimerEnds = null;
+      _armApproachRest();
+      _persist();
+    }
+  }
+
+  int get _warmupMarkedCount => _warmupItems.where((i) => _warmupMarked.contains(i.key)).length;
+
+  /// Una clave de técnica para el paso: de la ficha, de la movilidad o del
+  /// catálogo, en ese orden.
+  List<String> _warmupCues(String name) {
+    final detail = exerciseDetail(name);
+    if (detail != null && detail.steps.isNotEmpty) return detail.steps;
+    for (final e in [...mobilityNight.exercises, ...legRecovery.exercises]) {
+      if (e.name == name && e.formCues.isNotEmpty) return e.formCues;
+    }
+    return _guides[name]?.cues ?? const [];
   }
 
   /// Escaleras con molestia lumbar marcada en esta sesión (una vez basta).
@@ -265,6 +354,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     _notifications = ref.read(notificationServiceProvider);
     unawaited(_loadGuides());
     unawaited(_restoreLumbar());
+    unawaited(_loadSoreness());
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     WakelockPlus.enable();
     // Una sesión retomada en mitad de un descanso vuelve a programar su aviso.
@@ -285,7 +375,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       if (!mounted || events.isEmpty) return;
       setState(() => _lumbar.addAll(events));
       _persist();
-    } on Object {/* Snapshot conserva las marcas si no se puede releer la BD. */}
+    } on Object {
+      /* Snapshot conserva las marcas si no se puede releer la BD. */
+    }
   }
 
   /// Foto del estado en disco: si Android mata la app, se retoma desde aquí.
@@ -315,6 +407,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         note: widget.note,
         mode: widget.mode,
         lumbar: List.of(_lumbar),
+        warmupDone: List.of(_warmupMarked),
+        warmupSkipped: _warmupSkipped,
       )));
 
   /// Claves de técnica y última carga usada de cada ejercicio del guion.
@@ -332,17 +426,27 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       for (final e in widget.day.exercises) {
         if (e.repsMax == null || e.sets == null || hints.containsKey(e.name)) continue;
         if (widget.day.type.isCircuit && e.block == null) continue;
-        final last = await training.lastStrengthSets(e.name, widget.date);
-        final hint = doubleProgressionHint(
+        final last = await training.lastStrengthEvidence(e.name, widget.date, mode: widget.mode);
+        final hint = strengthProgressionHint(
+          evidence: last,
+          date: widget.date,
+          perSide: e.perSide,
+          planDayId: widget.planDayId,
+          mode: widget.mode,
           repsMin: e.repsMin,
           repsMax: e.repsMax,
           plannedSets: e.perSide ? e.sets! * 2 : e.sets,
-          lastSets: [for (final s in last) (reps: s.reps, rir: s.rir)],
           tracksLoad: guides[e.name]?.tracksLoad ?? false,
           chain: progressionSteps(guides[e.name]?.progressionNote),
-          lastVariant: last.isEmpty ? null : last.last.variant,
         );
-        if (hint != null) hints[e.name] = hint;
+        // "Hoy no" o "mantener" en Hoy (plan 009): el cronómetro no empuja.
+        ProposalRecord? decided;
+        if (hint != null && last != null) {
+          try {
+            decided = await GoalRepository(ref.read(databaseProvider)).proposal(strengthProposalId(e.name, last.sessionId));
+          } on Object {/* Sin base legible no hay decisión: queda la regla de 008. */}
+        }
+        if (hint != null && !proposalHidden(decided, widget.date)) hints[e.name] = hint;
       }
       final loads = <String, double>{};
       for (final g in guides.values.where((g) => g.tracksLoad)) {
@@ -477,6 +581,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   int get _holdElapsed => _holdStartedAt == null ? 0 : (_holdSinceStart - _holdLeadInSec).clamp(0, 1 << 30);
 
   void _tick() {
+    if (_phase == GuidedPhase.calentamiento) _tickWarmup();
     final step = _current;
     if (step is RestStep && _restStartedAt != null && _restRemaining <= 0) {
       _alertRestOver();
@@ -514,6 +619,25 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// Empezar antes de la meta de calentamiento se puede, pero se avisa: con
   /// 4–5 min se rinde peor.
   Future<void> _tryStartWork() async {
+    if (_warmupItems.isNotEmpty) {
+      final done = _warmupMarkedCount;
+      if (done < _warmupItems.length) {
+        final ok = await showDialog<bool>(
+          context: context,
+          builder: (c) => AlertDialog(
+            title: const Text('Calentamiento a medias'),
+            content: Text('Marcaste $done de ${_warmupItems.length} pasos. Queda anotado tal cual en la sesión.'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Empezar igual')),
+              FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir calentando')),
+            ],
+          ),
+        );
+        if (ok != true || !mounted) return;
+      }
+      _startWork();
+      return;
+    }
     if (_warmupSec < _warmupGoalSec) {
       final ok = await showDialog<bool>(
         context: context,
@@ -678,6 +802,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       if (widget.light) 'Versión ligera (venía cargado del día anterior)',
       if (widget.note != null) widget.note!,
       for (final l in _lumbar) 'Molestia lumbar: $l',
+      if (_warmupItems.isNotEmpty && _workStartedAt != null)
+        warmupRecord(
+            done: _warmupMarkedCount, total: _warmupItems.length, seconds: _warmupSec, skipped: _warmupSkipped),
     ];
     return parts.isEmpty ? null : parts.join('. ');
   }
@@ -782,6 +909,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       );
 
   Widget _body(bool finished) {
+    if (_phase == GuidedPhase.calentamiento && _warmupItems.isNotEmpty) return _guidedWarmup();
     if (_phase == GuidedPhase.calentamiento) {
       return _PhasePanel(
         title: 'Calentando',
@@ -1010,6 +1138,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         progressionNote: guide.progressionNote,
         mediaUrl: guide.mediaUrl,
         grip: step?.grip,
+        side: step?.side,
         loaded: step == null ? null : !step.isRound && guide.tracksLoad && _loadFor(step.exercise) != null,
       );
 
@@ -1097,6 +1226,132 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         Text(widget.day.type.isCircuit ? '$done de $total ejercicios hechos' : '$done de $total series hechas',
             textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
       ],
+    );
+  }
+
+  /// Calentamiento guiado (§16.23): movilidad, activación, molestias y
+  /// aproximación, cada paso con su clave. Se marcan a mano; saltarlo queda
+  /// anotado.
+  Widget _guidedWarmup() {
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final total = _warmupItems.length;
+    final done = _warmupMarkedCount;
+    final restLeft = _approachRestEnds?.difference(clock.now()).inSeconds;
+    final stages = [for (final s in WarmupStage.values) if (_warmupItems.any((i) => i.stage == s)) s];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text('CALENTAMIENTO', textAlign: TextAlign.center, style: text.titleMedium?.copyWith(letterSpacing: 2)),
+        Text('${formatDuration(_warmupSec)} · $done de $total pasos', textAlign: TextAlign.center, style: text.bodyMedium),
+        const SizedBox(height: 8),
+        Expanded(
+          child: ListView(
+            key: const ValueKey('warmup-list'),
+            children: [
+              for (final note in soreWarmupNotes(_soreZones, order: sorenessZones))
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.healing_outlined, size: 18, color: scheme.error),
+                      const SizedBox(width: 6),
+                      Expanded(child: Text(note, style: text.bodySmall)),
+                    ],
+                  ),
+                ),
+              for (final w in _warmupExercises)
+                ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.directions_run),
+                  title: Text('Primero: ${w.name}${w.holdSecMin == null ? '' : ' (${w.holdSecMin! ~/ 60} min)'}'),
+                  trailing: _guides[w.name] == null
+                      ? null
+                      : TextButton(onPressed: () => _showGuide(_guides[w.name]!), child: const Text('Cómo')),
+                ),
+              for (final stage in stages) ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 2),
+                  child: Text(
+                      stage == WarmupStage.activacion
+                          ? '${stage.label} · ${warmupFocusFor(scriptDayFrom(widget.day)).label}'
+                          : stage == WarmupStage.aproximacion
+                              ? '${stage.label} · ~40 % de hoy'
+                              : stage.label,
+                      style: text.labelLarge),
+                ),
+                for (final item in _warmupItems.where((i) => i.stage == stage)) _warmupTile(item, scheme, text),
+              ],
+              if (restLeft != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    restLeft > 0
+                        ? 'Descansa ${formatDuration(restLeft)} antes de la primera serie que cuenta'
+                        : 'Listo: ya puedes empezar',
+                    textAlign: TextAlign.center,
+                    style: text.titleSmall?.copyWith(color: restLeft > 0 ? scheme.primary : AppColors.body),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            TextButton(
+              onPressed: () {
+                setState(() => _warmupSkipped = true);
+                _startWork();
+              },
+              child: const Text('Saltar calentamiento'),
+            ),
+            const Spacer(),
+            TextButton(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                builder: (_) => SafeArea(child: Padding(padding: const EdgeInsets.all(12), child: _planPreview())),
+              ),
+              child: const Text('Lo que viene'),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 90,
+          child: _BigButton(
+            label: 'Empezar ${widget.day.type.label.toLowerCase()}',
+            icon: Icons.play_arrow,
+            onTap: _tryStartWork,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _warmupTile(WarmupItem item, ColorScheme scheme, TextTheme text) {
+    final marked = _warmupMarked.contains(item.key);
+    final running = _warmupTimerKey == item.key && _warmupTimerEnds != null;
+    final cues = _warmupCues(item.exercise);
+    final left = running ? _warmupTimerEnds!.difference(clock.now()).inSeconds.clamp(0, item.seconds ?? 0) : null;
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 3),
+      child: ListTile(
+        key: ValueKey('warmup-${item.key}'),
+        leading: Checkbox(value: marked, onChanged: (_) => _toggleWarmup(item)),
+        title: Text('${item.exercise} · ${item.dose}'),
+        subtitle: Text([if (item.note != null) item.note!, if (cues.isNotEmpty) cues.first].join(' · '),
+            maxLines: 2, overflow: TextOverflow.ellipsis),
+        onTap: () => showTechniqueSheet(context, exercise: item.exercise, cues: cues),
+        trailing: item.seconds == null || marked
+            ? null
+            : running
+                ? Text(formatDuration(left!), style: text.titleMedium?.copyWith(color: scheme.primary))
+                : IconButton(
+                    tooltip: 'Empezar ${item.seconds} s',
+                    icon: const Icon(Icons.timer_outlined),
+                    onPressed: () => _startWarmupTimer(item),
+                  ),
+      ),
     );
   }
 
@@ -1606,20 +1861,34 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
   Future<SessionComparison> _compare() async {
     final d = widget.draft;
     final repo = ref.read(trainingRepositoryProvider);
-    final previous = await repo.previousOfType(d.type, d.date);
+    final previous = await repo.previousTiming(d.type, d.date, planDayId: d.planDayId, mode: d.mode);
     final best = d.type.isCircuit ? await repo.bestRounds() : null;
     // Misma regla que Hoy y el informe: cuentan las rondas hechas, aunque la
     // sesión se cerrara antes; no cuentan las estimadas.
-    final record = d.type.isCircuit && d.roundsDone != null && !d.roundsEstimated && isRecord(d.roundsDone!, best);
-    return SessionComparison(
-      rounds: d.roundsDone,
+    final record =
+        d.type.isCircuit && d.roundsDone != null && !d.roundsEstimated && isRecord(d.roundsDone!, best);
+    final current = RoundTimingEvidence(
+        sessionId: d.id,
+        date: d.date,
+        type: d.type,
+        planDayId: d.planDayId,
+        mode: d.mode,
+        exerciseProtocol: d.exerciseProtocol,
+        rounds: d.roundsDone,
+        basis: d.roundRestSec.length == d.roundMarksSec.length && d.roundMarksSec.isNotEmpty
+            ? TimingBasis.work
+            : TimingBasis.lap,
+        durationsSec: widget.lapsSec,
+        imported: d.imported,
+        estimated: d.roundsEstimated,
+        incomplete: d.incomplete);
+    return timedSessionComparison(
+      current: current,
+      previous: previous,
       plannedRounds: d.plannedRounds,
-      meanLapSec: meanSec(widget.lapsSec),
-      previousRounds: previous?.$2,
-      previousMeanLapSec: previous == null ? null : meanSec(lapDurations(previous.$3)),
-      previousDateLabel:
-          previous == null ? null : 'el ${weekdayLong(previous.$1.weekday).toLowerCase()} ${previous.$1.day}',
-      incomplete: d.incomplete,
+      previousDateLabel: previous == null
+          ? null
+          : 'el ${weekdayLong(previous.date.weekday).toLowerCase()} ${previous.date.day}',
       isRecord: record,
     );
   }

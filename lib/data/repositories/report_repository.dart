@@ -12,6 +12,7 @@ import 'exercise_repository.dart';
 import 'nutrition_repository.dart';
 import 'profile_repository.dart';
 import 'training_repository.dart';
+import 'goal_repository.dart';
 
 /// Arma el `ReportInput` desde la base. Toda la lógica de negocio vive en
 /// `domain/report`; aquí solo se consulta y se mapea.
@@ -248,6 +249,7 @@ class ReportRepository {
             if (s.holdMin != null) s.exercise,
       },
       dataStart: await firstDataDay(db),
+      goals: await GoalRepository(db).history(),
       perSideExercises: {
         for (final pe in await (db.select(db.planExercises)..where((x) => x.perSide.equals(true))).get())
           if (names[pe.exerciseId] case final name?) name,

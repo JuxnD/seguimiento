@@ -1,0 +1,1124 @@
+00:00 +0: loading C:/My Projects/seguimiento-010-luna/test/app/android_manifest_test.dart
+00:00 +0: C:/My Projects/seguimiento-010-luna/test/app/android_manifest_test.dart: una sola tarea: singleTask y sin afinidad vacía (§16.13)
+00:00 +1: C:/My Projects/seguimiento-010-luna/test/app/android_manifest_test.dart: puede leer el nombre de la app del reloj (§16.14)
+00:00 +2: loading C:/My Projects/seguimiento-010-luna/test/app/coalesce_test.dart
+00:02 +2: C:/My Projects/seguimiento-010-luna/test/app/coalesce_test.dart: nunca corre dos veces a la vez
+00:02 +3: C:/My Projects/seguimiento-010-luna/test/app/coalesce_test.dart: un pedido durante la ejecución no se pierde
+00:02 +4: C:/My Projects/seguimiento-010-luna/test/app/coalesce_test.dart: tras terminar, un pedido nuevo vuelve a correr
+00:02 +5: C:/My Projects/seguimiento-010-luna/test/app/coalesce_test.dart: si la tarea falla, el siguiente pedido corre igual
+00:02 +6: loading C:/My Projects/seguimiento-010-luna/test/data/active_session_store_test.dart
+00:04 +6: C:/My Projects/seguimiento-010-luna/test/data/active_session_store_test.dart: sin archivo no hay sesión
+00:04 +7: C:/My Projects/seguimiento-010-luna/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+00:04 +8: C:/My Projects/seguimiento-010-luna/test/data/active_session_store_test.dart: clear después de save no deja nada
+00:05 +9: C:/My Projects/seguimiento-010-luna/test/data/active_session_store_test.dart: un archivo dañado se ignora
+00:05 +10: loading C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart
+00:07 +10: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: (setUpAll)
+00:07 +10: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: crea al validar, relee snapshot/hash/cita y borra mensajes en cascada
+00:08 +11: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: rechaza citas ajenas o inventadas sin persistir ni crear conversación vacía
+00:08 +12: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: append vuelve a validar contra fuentes guardadas y no cambia el snapshot
+00:08 +13: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: el límite de veinte turnos se anuncia y nunca borra los anteriores
+00:08 +14: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: el límite persistente de cien no oculta ni borra conversaciones
+00:09 +15: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: respuesta v2 con dígitos y snapshot alterado fallan cerrados
+00:09 +16: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: read rechaza citas guardadas que no pertenecen al snapshot
+00:09 +17: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: el snapshot copia la lista de fuentes y congela el hash
+00:09 +18: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: reabre metadata exacta de guía y detecta cambios en ella
+00:09 +19: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: metadata de guía valida enum local y coincide con la fuente
+00:09 +20: C:/My Projects/seguimiento-010-luna/test/data/ai_conversation_repository_test.dart: (tearDownAll)
+00:09 +20: loading C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart
+00:11 +20: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: envía JSON grande como un único campo multipart sin perder bytes
+00:11 +21: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: decide multipart por bytes UTF-8 y conserva el texto Unicode
+00:11 +22: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: usa solo el endpoint v2 fijo y valida el envelope
+00:11 +23: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: rechaza status, contract, task, model y result inesperados
+00:12 +24: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: 429 conserva solo una cuota válida y no filtra detalle remoto
+00:12 +25: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: status consulta sin datos y expone activación y cuota válidas
+00:12 +26: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: status 503 falla cerrado y conserva la cuota remota permitida
+00:12 +27: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: cuota malformada no reemplaza una lectura válida
+00:12 +28: C:/My Projects/seguimiento-010-luna/test/data/ai_gateway_test.dart: respuesta sobredimensionada y timeout fallan de forma acotada
+00:12 +29: loading C:/My Projects/seguimiento-010-luna/test/data/auto_backup_test.dart
+00:14 +29: C:/My Projects/seguimiento-010-luna/test/data/auto_backup_test.dart: (setUpAll)
+00:14 +29: C:/My Projects/seguimiento-010-luna/test/data/auto_backup_test.dart: el primer arranque respalda; hasta la semana siguiente no repite
+00:15 +30: C:/My Projects/seguimiento-010-luna/test/data/auto_backup_test.dart: se queda solo con los más recientes
+00:15 +31: C:/My Projects/seguimiento-010-luna/test/data/auto_backup_test.dart: el respaldo se puede restaurar y trae los datos de ese día
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/auto_backup_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/auto_backup_test.dart:62:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:16 +32: C:/My Projects/seguimiento-010-luna/test/data/auto_backup_test.dart: archivos ajenos en la carpeta no se listan ni se borran
+00:17 +33: C:/My Projects/seguimiento-010-luna/test/data/auto_backup_test.dart: (tearDownAll)
+00:17 +33: loading C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart
+00:19 +33: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: (setUpAll)
+00:19 +33: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:21 +34: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: SQLite legacy sigue restaurando solo los registros y conserva las fotos locales
+00:22 +35: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 21
+00:24 +36: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: el manifiesto declara esquema, bytes y SHA-256 del archivo que viaja
+00:25 +37: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/../flags.json
+00:25 +38: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: ../escape.jpg
+00:26 +39: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: /fotos/absolute.jpg
+00:27 +40: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: C:/fotos/absolute.jpg
+00:28 +41: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a/../../escape.jpg
+00:29 +42: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a\..\escape.jpg
+00:29 +43: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: flags.json
+00:30 +44: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: duplicados exactos y por mayúsculas se rechazan antes de extraer
+00:31 +45: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: una entrada symlink se rechaza sin escribir su destino
+00:32 +46: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: paquete sin manifest.json se rechaza y conserva B
+00:33 +47: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: paquete sin seguimiento.sqlite se rechaza y conserva B
+00:34 +48: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: paquete sin fotos/frente.jpg se rechaza y conserva B
+00:35 +49: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: foto con CRC válido pero SHA-256 distinto se rechaza
+00:36 +50: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: quitar foto y descriptor no oculta la referencia pendiente de la base
+00:36 +51: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: DB incompleta con hashes correctos en ZIP se rechaza sin tocar B
+00:37 +52: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: un esquema futuro y un manifiesto incoherente se rechazan
+00:39 +53: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: archivo ZIP truncado se rechaza sin cambiar B
+00:39 +54: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: tamaños declarados excesivos y DEFLATE con tamaño falso se rechazan
+00:41 +55: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: exportar fotos previamente ausentes declara incompleto; restaurarlo requiere confirmación
+00:42 +56: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: sin fotos todavía exporta y restaura un paquete completo
+00:43 +57: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: fallo al reabrir después de reemplazar fotos revierte DB y todas las fotos de B
+00:44 +58: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=false
+00:44 +59: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=true
+00:45 +60: C:/My Projects/seguimiento-010-luna/test/data/backup_archive_test.dart: (tearDownAll)
+00:45 +60: loading C:/My Projects/seguimiento-010-luna/test/data/backup_settings_test.dart
+00:47 +60: C:/My Projects/seguimiento-010-luna/test/data/backup_settings_test.dart: (setUpAll)
+00:47 +60: C:/My Projects/seguimiento-010-luna/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:55 +61: C:/My Projects/seguimiento-010-luna/test/data/backup_settings_test.dart: Ajustes recorre ZIP y confirma restauración
+00:59 +62: C:/My Projects/seguimiento-010-luna/test/data/backup_settings_test.dart: (tearDownAll)
+00:59 +62: loading C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart
+01:01 +62: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: (setUpAll)
+01:02 +62: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: schema20→21 adds missing references, preserves custom homonym and history
+01:02 +63: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: first install records identities after combos and does not duplicate
+01:03 +64: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:26:89)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:127:15)
+<asynchronous suspension>
+#8      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#9      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#10     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:106:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:153:20)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:05 +65: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: (tearDownAll)
+01:05 +65: loading C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart
+01:07 +65: C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart: (setUpAll)
+01:07 +65: C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart: con los datos del 29 sep, todas quedan por aplicar
+01:07 +66: C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart: aplicarlas deja cada registro como pide el traspaso
+01:08 +67: C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart: lo que el usuario ya corrigió a mano distinto no se pisa
+01:08 +68: C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart: sin esos registros no se toca nada
+01:08 +69: C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart: datos del 5 oct: tres pesajes de referencia y los pasos del reloj (§18.10)
+01:08 +70: C:/My Projects/seguimiento-010-luna/test/data/corrections_29sep_test.dart: (tearDownAll)
+01:08 +70: loading C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart
+01:10 +70: C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart: (setUpAll)
+01:10 +70: C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart: optional remembered250g retains per100 and homonym/combo/snapshot unchanged
+01:11 +71: C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart: (tearDownAll)
+01:11 +71: loading C:/My Projects/seguimiento-010-luna/test/data/free_entry_replace_test.dart
+01:13 +71: C:/My Projects/seguimiento-010-luna/test/data/free_entry_replace_test.dart: (setUpAll)
+01:13 +71: C:/My Projects/seguimiento-010-luna/test/data/free_entry_replace_test.dart: un alimento por 100 g no se puede actualizar como porción: el combo no cambia
+01:13 +72: C:/My Projects/seguimiento-010-luna/test/data/free_entry_replace_test.dart: un alimento por unidad tampoco: 1 huevo no pasa a ser 1 porción
+01:13 +73: C:/My Projects/seguimiento-010-luna/test/data/free_entry_replace_test.dart: una entrada libre por porción sí se actualiza y sus combos siguen en porciones
+01:13 +74: C:/My Projects/seguimiento-010-luna/test/data/free_entry_replace_test.dart: un combo que ya quedó inflado se marca para revisar; uno normal no
+01:14 +75: C:/My Projects/seguimiento-010-luna/test/data/free_entry_replace_test.dart: (tearDownAll)
+01:14 +75: loading C:/My Projects/seguimiento-010-luna/test/data/gateway_estimate_interop_test.dart
+01:16 +75: C:/My Projects/seguimiento-010-luna/test/data/gateway_estimate_interop_test.dart: Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)
+01:16 +76: loading C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart
+01:18 +76: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: (setUpAll)
+01:18 +76: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: el historial trae 27 entradas: 19 sesiones y 8 días de fútbol
+01:19 +77: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: importarlo marca todo como importado y no repite al aplicarlo otra vez
+01:19 +78: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: lo importado no es récord; lo registrado en la app sí
+01:20 +79: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: un día ya registrado en la app no se llena con el historial
+01:20 +80: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: metas del v3.1 desde ya, mínimo 130 y techo 160 según el handoff actualizado
+01:20 +81: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: revisar las metas anteriores no las cambia sin confirmar y aplicar es idempotente
+01:20 +82: C:/My Projects/seguimiento-010-luna/test/data/history_import_test.dart: (tearDownAll)
+01:26 +82: loading C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart
+01:28 +82: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: (setUpAll)
+01:28 +82: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: el lunes trae el peldaño del dragon flag y el jueves el del V-up, antes de lo opcional
+01:29 +83: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: peldaño 1 desde el lunes del v3.1; sube tras 2 sesiones limpias y 2 semanas
+01:30 +84: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: molestia lumbar: baja un peldaño y esa sesión no cuenta como limpia
+01:30 +85: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: día de test: el lunes de la semana 1 en Hoy, y al guardarlo cuenta como entrenado
+01:31 +86: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: el informe no toma el Tabata por aguantes; sí la vela y el hollow
+01:31 +87: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: martes del 6 oct: el v3.1 nuevo ya lo trae; uno activado antes se corrige
+01:32 +88: C:/My Projects/seguimiento-010-luna/test/data/ladders_and_tests_data_test.dart: (tearDownAll)
+01:32 +88: loading C:/My Projects/seguimiento-010-luna/test/data/local_flags_test.dart
+01:34 +88: C:/My Projects/seguimiento-010-luna/test/data/local_flags_test.dart: sin archivo, todo es null
+01:34 +89: C:/My Projects/seguimiento-010-luna/test/data/local_flags_test.dart: guarda y lee valores y fechas
+01:34 +90: C:/My Projects/seguimiento-010-luna/test/data/local_flags_test.dart: un tipo distinto al pedido devuelve null, no revienta
+01:34 +91: C:/My Projects/seguimiento-010-luna/test/data/local_flags_test.dart: un archivo dañado se trata como vacío
+01:34 +92: loading C:/My Projects/seguimiento-010-luna/test/data/meal_assistant_test.dart
+01:36 +92: C:/My Projects/seguimiento-010-luna/test/data/meal_assistant_test.dart: (setUpAll)
+01:36 +92: C:/My Projects/seguimiento-010-luna/test/data/meal_assistant_test.dart: frase manda catálogo reducido y calcula con respuesta tipada
+01:37 +93: C:/My Projects/seguimiento-010-luna/test/data/meal_assistant_test.dart: cantidad ausente se conserva nula; id ajeno y cantidad inválida se rechazan
+01:37 +94: C:/My Projects/seguimiento-010-luna/test/data/meal_assistant_test.dart: etiqueta envía solo foto y conserva base, porción, nulos e incertidumbres
+01:37 +95: C:/My Projects/seguimiento-010-luna/test/data/meal_assistant_test.dart: base/unidad sin leer y energía solo en kJ quedan nulas, nunca convertidas
+01:37 +96: C:/My Projects/seguimiento-010-luna/test/data/meal_assistant_test.dart: (tearDownAll)
+01:37 +96: loading C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart
+01:39 +96: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: cliente status real sin cambio desdea0521c8 acepta tarea nueva
+01:40 +97: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: desconocido requiere porción o deja pendiente explícito
+01:40 +98: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: 4 huevos pan leche350ml Milo preservan componentes sin doble contar
+01:40 +99: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: rechaza parcial, ID ajeno, unidad incorrecta, cantidad perdida y macros imposibles
+01:40 +100: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: catálogo 1000 conserva alimento nombrado fuera de primeros200
+01:40 +101: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: texto largo no llama; JSON truncado no crea propuesta
+01:40 +102: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: cobertura de caracteres no permite arroz chino bajo huevo conocido
+01:40 +103: loading C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart
+01:42 +103: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: (setUpAll)
+01:42 +103: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: relectura SQLite conserva porciones, cifras y origen estimado sin crear catálogo
+01:43 +104: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: foto reencodificada sin datos anexos y resolución limitada
+01:43 +105: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: solamente imagen y activación al endpoint fijo; todo queda estimado
+01:43 +106: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: salida imposible, vacía o de otro modelo falla antes de formar borrador
+01:43 +107: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: limita strings por puntos Unicode y acepta texto con emojis válido
+01:43 +108: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: fallo de proveedor no filtra cuerpo ni reintenta; timeout acotado
+01:43 +109: C:/My Projects/seguimiento-010-luna/test/data/meal_photo_ai_test.dart: (tearDownAll)
+01:43 +109: loading C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart
+01:45 +109: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: (setUpAll)
+01:45 +109: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: fixture sintética congelada 17 migra a 18 sin reconstruir el esquema
+01:45 +110: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 1 llega al 21 sin perder datos
+01:48 +111: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 2 llega al 21 conservando el catálogo
+01:49 +112: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 7 llega al 21 con guías, catálogo nuevo y rondas sin separar
+01:50 +113: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: del esquema 8 al 9 los recordatorios vuelven a los valores acordados
+01:52 +114: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 6 llega al 21: las sesiones viejas quedan con descanso 0
+01:53 +115: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 9 llega al 21: pasos, golpe en el fútbol y alimentos marcados
+01:54 +116: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 10 llega al 21 con la tabla de fotos de referencia
+01:55 +117: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 11 llega al 21 con la tabla de recordatorios propios
+01:57 +118: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 12 llega al 21: pan y salchichón por gramos
+01:58 +119: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 13 llega al 21: las sesiones quedan revisadas
+01:58 +120: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 14 llega al 21: plan y sesiones listos para el v3
+01:59 +121: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 15 llega al 21: RIR, fútbol, sueño y meta de fútbol
+02:00 +122: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 16 llega al 21: momento del pesaje, mañana y huevos por porción
+02:01 +123: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: una base del esquema 18 llega al 21: historial importado, tests y escaleras
+02:02 +124: C:/My Projects/seguimiento-010-luna/test/data/migration_test.dart: (tearDownAll)
+02:02 +124: loading C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart
+02:04 +124: C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart: (setUpAll)
+02:04 +124: C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart: una espalda subida como perfil se pasa a espalda
+02:04 +125: C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart: cambiar la fecha la mueve de toma
+02:04 +126: C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart: detecta la foto que ya ocupa el destino y mueve la nueva allí
+02:04 +127: C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart: quitar y deshacer devuelve la misma foto
+02:04 +128: C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart: una ruta que sale de la carpeta de fotos no se borra
+02:04 +129: C:/My Projects/seguimiento-010-luna/test/data/photo_repository_test.dart: (tearDownAll)
+02:04 +129: loading C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart
+02:06 +129: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: (setUpAll)
+02:06 +129: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: activarlo: semana 1, metas de §19.3 y abdomen el sábado 17
+02:07 +130: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: un v3 activado para el mismo lunes queda reemplazado por el v3.1
+02:08 +131: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: el viernes es circuito hasta las 10 limpias; después Cindy de prueba
+02:08 +132: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: 10 rondas sin los criterios no cuentan como limpias
+02:09 +133: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: partido entre semana: el viernes metabólico lo avisa
+02:09 +134: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: RIR por serie y últimas series de fuerza del mismo día de la semana
+02:09 +135: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: medir en una fecha del v3.1 corre la próxima a la siguiente
+02:09 +136: C:/My Projects/seguimiento-010-luna/test/data/plan_v31_data_test.dart: (tearDownAll)
+02:09 +136: loading C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart
+02:12 +136: C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart: (setUpAll)
+02:12 +136: C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart: Hoy propone el v3.1 desde el próximo lunes, sin esperar a las 10 limpias (§19)
+02:13 +137: C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart: activarlo: el v2 sigue hasta el domingo, el lunes 12 es tren superior A en semana 1
+02:13 +138: C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart: editar el v3 a mitad de bloque no reinicia las semanas
+02:14 +139: C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart: semana 4: Hoy avisa la descarga y el miércoles toca Cindy
+02:14 +140: C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart: una sesión de Cindy guarda formato y reps sueltas
+02:14 +141: C:/My Projects/seguimiento-010-luna/test/data/plan_v3_data_test.dart: (tearDownAll)
+02:14 +141: loading C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart
+02:16 +141: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: (setUpAll)
+02:16 +141: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: peso con momento: uno por día salvo "otro"; solo en ayunas cuenta
+02:17 +142: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: día con circuito y fútbol intenso: Hoy dice día completo y avisa la carga
+02:18 +143: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: racha real crece más allá de7días y un moderado la corta
+02:18 +144: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: molestia en la pierna ayer y día de piernas: plan B
+02:18 +145: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: pulso alto 3 días seguidos llega a Hoy
+02:19 +146: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: planche: martes del v3.1 empieza con el bloque; el tuck entra con 3 × 30 s
+02:19 +147: C:/My Projects/seguimiento-010-luna/test/data/recovery_data_test.dart: (tearDownAll)
+02:19 +147: loading C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart
+02:21 +147: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: (setUpAll)
+02:21 +147: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: A1: una prueba guardada no equivale a test completo
+02:22 +148: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: A2: pruebas de piernas no sustituyen la sesión normal
+02:23 +149: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: A3: valores no finitos no llegan a resultados persistidos
+02:23 +150: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: A4: un solo lado no determina el lado más débil
+02:23 +151: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja
+02:24 +152: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida
+02:24 +153: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes
+02:25 +154: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=true
+02:25 +155: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=false
+02:25 +156: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: rechazo atomico reps NaN conserva resultado anterior
+02:26 +157: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: rechazo atomico reps Infinity conserva resultado anterior
+02:26 +158: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: rechazo atomico reps -Infinity conserva resultado anterior
+02:26 +159: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: rechazo atomico reps -1.0 conserva resultado anterior
+02:26 +160: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: rechazo atomico reps 1.5 conserva resultado anterior
+02:26 +161: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos
+02:27 +162: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+02:27 +163: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: lumbar durable idempotente con mismo evento y separado por sesion
+02:27 +164: C:/My Projects/seguimiento-010-luna/test/data/release121_contracts_test.dart: (tearDownAll)
+02:27 +164: loading C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart
+02:29 +164: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: (setUpAll)
+02:29 +164: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: el aviso de sesión dice lo que toca ese día
+02:30 +165: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: un martes de bloques nombra los ejercicios del bloque
+02:31 +166: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: registrar la sesión calla los avisos de ese día
+02:31 +167: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: el aviso de proteína usa lo comido hoy
+02:31 +168: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: con la proteína cubierta no se programa ese aviso
+02:32 +169: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: la medición usa la fecha acordada del perfil
+02:32 +170: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: tras medir, el siguiente aviso sale del intervalo
+02:32 +171: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: apagar un recordatorio lo saca de la cola
+02:32 +172: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: programa varios días y respeta el fútbol del sábado
+02:33 +173: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: lo programado llega al sistema de notificaciones
+02:33 +174: C:/My Projects/seguimiento-010-luna/test/data/reminder_scheduler_test.dart: (tearDownAll)
+02:33 +174: loading C:/My Projects/seguimiento-010-luna/test/data/report_meal_provider_test.dart
+02:35 +174: C:/My Projects/seguimiento-010-luna/test/data/report_meal_provider_test.dart: (setUpAll)
+02:35 +174: C:/My Projects/seguimiento-010-luna/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+02:37 +175: C:/My Projects/seguimiento-010-luna/test/data/report_meal_provider_test.dart: (tearDownAll)
+02:37 +175: loading C:/My Projects/seguimiento-010-luna/test/data/report_sleep_provider_test.dart
+02:39 +175: C:/My Projects/seguimiento-010-luna/test/data/report_sleep_provider_test.dart: (setUpAll)
+02:39 +175: C:/My Projects/seguimiento-010-luna/test/data/report_sleep_provider_test.dart: el informe se refresca al anotar o quitar sueño actual y previo
+02:41 +176: C:/My Projects/seguimiento-010-luna/test/data/report_sleep_provider_test.dart: (tearDownAll)
+02:41 +176: loading C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart
+02:43 +176: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: (setUpAll)
+02:43 +176: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: perfil por defecto: el programa arranca el día de la instalación
+02:44 +177: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: ejercicios: mismo nombre sin importar mayúsculas ni espacios
+02:44 +178: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: plan versionado: editar crea versión nueva y la vigente depende de la fecha
+02:44 +179: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: sesión: guardar, recargar con series partidas y vueltas, editar
+02:44 +180: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: comidas: macros congelados aunque cambie el catálogo; copiar comida
+02:44 +181: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: medidas: una toma por día, reemplazable
+02:44 +182: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: informe de extremo a extremo desde la base
+02:45 +183: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: editar una toma y cambiarle la fecha no la duplica
+02:45 +184: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: guardar la misma fecha al editar reemplaza, no suma
+02:45 +185: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: récord: las rondas estimadas no cuentan, las de una sesión incompleta sí
+02:45 +186: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: el plan no se guarda con rangos al revés ni ceros
+02:45 +187: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: un día del plan se relee por id aunque después haya versiones nuevas
+02:45 +188: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: borrar un alimento: se sabe qué combos lo usan
+02:45 +189: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: pesaje: uno por día y condición
+02:45 +190: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: el descanso de la sesión se guarda y se relee
+02:45 +191: C:/My Projects/seguimiento-010-luna/test/data/repositories_test.dart: (tearDownAll)
+02:45 +191: loading C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart
+02:47 +191: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: (setUpAll)
+02:47 +191: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: restaurar devuelve los datos del respaldo y descarta los posteriores
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:21:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:43:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+02:49 +192: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: un respaldo sin recordatorios queda con los de por defecto
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:21:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:54:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+02:49 +193: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: el perfil restaurado es el del respaldo, no el actual
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:21:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:66:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+02:50 +194: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: un archivo que no es un respaldo se rechaza y no toca la base
+02:50 +195: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: una base sqlite ajena se rechaza por no tener las tablas
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:83:19)
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:88:17)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+02:51 +196: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: si la base restaurada no abre, vuelve la anterior con todo lo registrado
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:108:14)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#11     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#13     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#14     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/restore_test.dart:111:5)
+<asynchronous suspension>
+#15     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#16     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#17     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+02:52 +197: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: un archivo inexistente se rechaza con mensaje claro
+02:52 +198: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: un respaldo al que le falta una tabla se rechaza y conserva la base actual
+02:52 +199: C:/My Projects/seguimiento-010-luna/test/data/restore_test.dart: (tearDownAll)
+02:52 +199: loading C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart
+02:54 +199: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: (setUpAll)
+02:55 +199: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: fixture is genuinely frozen schema18, pinned and independently checked
+02:55 +200: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+02:57 +201: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: negative controls reject changed source, removed citation and lost row
+02:58 +202: C:/My Projects/seguimiento-010-luna/test/data/schema18_121_migration_test.dart: (tearDownAll)
+02:58 +202: loading C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart
+03:00 +202: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: (setUpAll)
+03:00 +202: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: genuine19 fixture freezes test, ladder, imports and wallclock
+03:00 +203: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+03:02 +204: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: normalizing the clock cannot erase regular training time or ladder dates
+03:03 +205: C:/My Projects/seguimiento-010-luna/test/data/schema19_121_migration_test.dart: (tearDownAll)
+03:03 +205: loading C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart
+03:05 +205: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: (setUpAll)
+03:05 +205: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: siembra el catálogo completo una sola vez
+03:06 +206: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: lo que se mide en unidades guarda los macros de una unidad
+03:06 +207: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: lo que se mide en g/ml se normaliza a 100 y prefija la porción
+03:06 +208: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: marca qué viene de etiqueta y qué es referencia
+03:07 +209: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos el batido suma lo que suman sus alimentos
+03:07 +210: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos la cena completa trae el batido expandido, sin anidar combos
+03:07 +211: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos el almuerzo típico usa las cantidades en gramos
+03:07 +212: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos registrar un combo crea la comida con sus alimentos
+03:07 +213: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos el ítem recuerda si sus macros venían de etiqueta
+03:07 +214: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos la comida guarda los macros del momento, no la receta
+03:07 +215: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos creados desde la app guardar un combo nuevo y registrarlo en un toque
+03:07 +216: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos creados desde la app guardar con el mismo nombre reemplaza, no duplica
+03:08 +217: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos creados desde la app borrar un combo no toca las comidas ya registradas
+03:08 +218: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: combos creados desde la app un alimento creado en el registro queda en el catálogo
+03:08 +219: C:/My Projects/seguimiento-010-luna/test/data/seed_foods_test.dart: (tearDownAll)
+03:08 +219: loading C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart
+03:10 +219: C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart: (setUpAll)
+03:10 +219: C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart: siembra las dos versiones y el perfil
+03:11 +220: C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart: v1 rige hasta el 27 sep y v2 desde el 28
+03:11 +221: C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart: v1: la semana queda como el plan real
+03:11 +222: C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart: v2: añade los bloques y protege jueves y viernes
+03:11 +223: C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart: sembrar es idempotente: no duplica el plan
+03:11 +224: C:/My Projects/seguimiento-010-luna/test/data/seed_plan_test.dart: (tearDownAll)
+03:11 +224: loading C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart
+03:13 +224: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: (setUpAll)
+03:14 +224: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: qué cifra queda en un día vacío toma lo del reloj; del reloj se actualiza; a mano solo si el reloj va más alto
+03:14 +225: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: último registro por el canal lee hora (epoch ms), paquete y nombre
+03:14 +226: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: último registro por el canal sin registros o sin Android devuelve null
+03:14 +227: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: sincronización sin conectar en Ajustes no toca nada
+03:14 +228: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: sincronización conectado trae los días y respeta lo anotado a mano si es mayor
+03:14 +229: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: sincronización guarda quién escribió el último registro y a qué hora (§16.14)
+03:14 +230: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: sincronización sin permiso o sin Health Connect lo dice y no lanza
+03:14 +231: C:/My Projects/seguimiento-010-luna/test/data/steps_sync_test.dart: (tearDownAll)
+03:14 +231: loading C:/My Projects/seguimiento-010-luna/test/data/update_launcher_test.dart
+03:16 +231: C:/My Projects/seguimiento-010-luna/test/data/update_launcher_test.dart: pide abrir la descarga con la URL del APK
+03:17 +232: C:/My Projects/seguimiento-010-luna/test/data/update_launcher_test.dart: si Android no pudo o no hay Android debajo, devuelve false para abrirla como antes
+03:17 +233: loading C:/My Projects/seguimiento-010-luna/test/data/update_service_test.dart
+03:19 +233: C:/My Projects/seguimiento-010-luna/test/data/update_service_test.dart: lectura de la release toma la etiqueta, las notas y el APK adjunto
+03:19 +234: C:/My Projects/seguimiento-010-luna/test/data/update_service_test.dart: lectura de la release sin APK adjunto queda solo la página
+03:19 +235: C:/My Projects/seguimiento-010-luna/test/data/update_service_test.dart: lectura de la release respuesta inesperada devuelve null en vez de reventar
+03:19 +236: C:/My Projects/seguimiento-010-luna/test/data/update_service_test.dart: consulta de actualización anuncia solo si la publicada es más nueva
+03:19 +237: C:/My Projects/seguimiento-010-luna/test/data/update_service_test.dart: consulta de actualización sin releases publicadas informa, no falla
+03:19 +238: C:/My Projects/seguimiento-010-luna/test/data/update_service_test.dart: consulta de actualización un error de red se reporta como texto
+03:19 +239: loading C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart
+03:21 +239: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: (setUpAll)
+03:21 +239: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy un partido registrado hoy marca el día como hecho
+03:22 +240: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy en un día de circuito el partido no da por hecha la sesión, pero suma racha
+03:22 +241: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy la racha incluye los días de fútbol
+03:22 +242: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy el informe de la semana 23–29 sep cuenta el partido del domingo
+03:22 +243: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy el partido guarda el día elegido, no el de hoy
+03:22 +244: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy tras un domingo intenso o con golpe, el lunes avisa que baje
+03:22 +245: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.2 récord de 11 un circuito guardado en día de bloques se señala y al corregirlo sale del récord
+03:23 +246: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.2 récord de 11 un récord en día de circuito no se señala
+03:23 +247: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo el pan Mipan y los platos que se repiten vienen sembrados
+03:23 +248: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo el nombre se compara sin mayúsculas, tildes ni espacios de sobra
+03:23 +249: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo una entrada libre queda como alimento estimado de una porción
+03:23 +250: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo actualizar valores reescribe el alimento; guardar como nuevo busca otro nombre
+03:23 +251: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo sugerencias: favoritos, luego personalizados, luego lo sembrado
+03:23 +252: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo un alimento se convierte en combo de un toque
+03:23 +253: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo dos cifras escritas a mano del mismo plato son la misma
+03:23 +254: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §14 pasos diarios anotar otra vez el mismo día reemplaza; Hoy muestra la cifra y la meta
+03:24 +255: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §14 pasos diarios el informe trae el promedio semanal y lo compara con la semana anterior
+03:24 +256: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: §13 movilidad es opcional: no marca Hoy, no sostiene la racha y va aparte en el informe
+03:24 +257: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: aguantes en segundos (28 sep) el informe muestra la plancha en segundos, no en repeticiones
+03:24 +258: C:/My Projects/seguimiento-010-luna/test/data/uso_real_27sep_test.dart: (tearDownAll)
+03:24 +258: loading C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart
+03:26 +258: C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart: (setUpAll)
+03:26 +258: C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+03:27 +259: C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza con técnica, rango y recuperación en sí, Hoy propone 9
+03:27 +260: C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza un criterio en "no" mantiene la meta aunque los demás estén bien
+03:27 +261: C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza un día que no es de progresión sigue con la meta del plan
+03:27 +262: C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza una progresión cortada en la ronda 1 de 8 no baja la meta a 1
+03:27 +263: C:/My Projects/seguimiento-010-luna/test/data/uso_real_2oct_test.dart: (tearDownAll)
+03:27 +263: loading C:/My Projects/seguimiento-010-luna/test/data/weekly_ai_test.dart
+03:29 +263: C:/My Projects/seguimiento-010-luna/test/data/weekly_ai_test.dart: solo envía informe elegido al endpoint fijo, sin clave de OpenAI
+03:29 +264: C:/My Projects/seguimiento-010-luna/test/data/weekly_ai_test.dart: rechaza cita inventada, cifras en explicación y tipo no permitido
+03:29 +265: C:/My Projects/seguimiento-010-luna/test/data/weekly_ai_test.dart: mide texto y cita en puntos Unicode, incluidos emojis
+03:29 +266: C:/My Projects/seguimiento-010-luna/test/data/weekly_ai_test.dart: errores no filtran respuesta remota ni licencia
+03:29 +267: C:/My Projects/seguimiento-010-luna/test/data/weekly_ai_test.dart: timeout y fallo al leer respuesta se consideran error
+03:30 +268: C:/My Projects/seguimiento-010-luna/test/data/weekly_ai_test.dart: vacío o muy largo nunca llama al servidor
+03:30 +269: loading C:/My Projects/seguimiento-010-luna/test/domain/active_session_test.dart
+03:31 +269: C:/My Projects/seguimiento-010-luna/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+03:31 +270: C:/My Projects/seguimiento-010-luna/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+03:31 +271: C:/My Projects/seguimiento-010-luna/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+03:31 +272: C:/My Projects/seguimiento-010-luna/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+03:31 +273: loading C:/My Projects/seguimiento-010-luna/test/domain/adaptive_progress_regression_test.dart
+03:33 +273: C:/My Projects/seguimiento-010-luna/test/domain/adaptive_progress_regression_test.dart: una sesión moderada registrada hoy corta la racha intensa previa
+03:33 +274: C:/My Projects/seguimiento-010-luna/test/domain/adaptive_progress_regression_test.dart: un pesaje aislado por semana no justifica ajustar comida o pasos
+03:33 +275: C:/My Projects/seguimiento-010-luna/test/domain/adaptive_progress_regression_test.dart: cintura de enero no produce reducción con pesos de octubre
+03:34 +276: loading C:/My Projects/seguimiento-010-luna/test/domain/ai_report_sources_test.dart
+03:36 +276: C:/My Projects/seguimiento-010-luna/test/domain/ai_report_sources_test.dart: conserva exactamente el informe seleccionado por defecto
+03:36 +277: C:/My Projects/seguimiento-010-luna/test/domain/ai_report_sources_test.dart: cita peso actual sin poder atribuir el del periodo anterior
+03:36 +278: C:/My Projects/seguimiento-010-luna/test/domain/ai_report_sources_test.dart: añade comparación del periodo previo solo si se elige
+03:36 +279: loading C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart
+03:38 +279: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: escaleras empiezan en el peldaño 1: dragon flag el lunes, V-up el jueves
+03:38 +280: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: escaleras sube con el criterio en 2 sesiones seguidas y 2 semanas en el peldaño
+03:38 +281: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: escaleras nunca antes de 2 semanas en el peldaño
+03:38 +282: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: escaleras la última sesión sin el criterio corta la racha; el hollow también cuenta
+03:38 +283: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: escaleras por lado: 3 × 8 en cada lado
+03:38 +284: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: escaleras el último peldaño no propone subir
+03:38 +285: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: escaleras el hollow no es de ninguna escalera; los peldaños sí
+03:38 +286: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: test de condición Test 1 el lun 12 y el mié 14; Test 2 en la descarga; Test 3 con las pruebas del 11 dic
+03:38 +287: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: test de condición 12 pruebas de torso y 4 de piernas
+03:38 +288: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: test de condición dosis inicial: reps al 70–75 %, aguantes al 50–60 %
+03:38 +289: C:/My Projects/seguimiento-010-luna/test/domain/core_ladders_test.dart: test de condición por lado cuenta el más débil; mejora contra el Test 1
+03:38 +290: loading C:/My Projects/seguimiento-010-luna/test/domain/custom_reminders_test.dart
+03:40 +290: C:/My Projects/seguimiento-010-luna/test/domain/custom_reminders_test.dart: se cuenta desde la última vez hecho, o desde el inicio
+03:40 +291: C:/My Projects/seguimiento-010-luna/test/domain/custom_reminders_test.dart: avisa el día que toca y cada día después hasta marcarlo
+03:40 +292: C:/My Projects/seguimiento-010-luna/test/domain/custom_reminders_test.dart: repositorio (setUpAll)
+03:40 +292: C:/My Projects/seguimiento-010-luna/test/domain/custom_reminders_test.dart: repositorio crear, marcar hecho, deshacer, apagar y borrar
+03:41 +293: C:/My Projects/seguimiento-010-luna/test/domain/custom_reminders_test.dart: repositorio (tearDownAll)
+03:41 +293: loading C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart
+03:43 +293: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: semana anclada al inicio las semanas van de lunes a domingo; la 1 empieza el lunes del inicio (§16.8)
+03:43 +294: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: semana anclada al inicio fechas previas al inicio dan semana ≤ 0 sin error
+03:43 +295: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: duraciones parse y formato
+03:43 +296: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: sesión circuito neto = total − cal − enf, nunca negativo
+03:43 +297: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: sesión estimación de rondas por tiempo
+03:43 +298: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: sesión vueltas del contador
+03:43 +299: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: nutrición y unidades macros por unidad y por 100 g
+03:43 +300: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: nutrición y unidades pulgadas se guardan en cm
+03:43 +301: C:/My Projects/seguimiento-010-luna/test/domain/domain_test.dart: formato es-CO miles y decimales
+03:43 +302: loading C:/My Projects/seguimiento-010-luna/test/domain/energy_test.dart
+03:46 +302: C:/My Projects/seguimiento-010-luna/test/domain/energy_test.dart: sin peso no hay estimación
+03:46 +303: C:/My Projects/seguimiento-010-luna/test/domain/energy_test.dart: circuito de 20 min a 70 kg ≈ 187 kcal de trabajo
+03:46 +304: C:/My Projects/seguimiento-010-luna/test/domain/energy_test.dart: cada fase suma con su propio MET
+03:46 +305: C:/My Projects/seguimiento-010-luna/test/domain/energy_test.dart: descansar gasta menos que trabajar el mismo tiempo
+03:46 +306: C:/My Projects/seguimiento-010-luna/test/domain/energy_test.dart: un circuito ligero gasta menos que uno vigoroso
+03:46 +307: loading C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart
+03:48 +307: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: huevos enteros: por unidad, por gramos y sin contar las claras
+03:48 +308: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: huevos dentro de platos: el número del nombre o los huevos por porción (§16.15)
+03:48 +309: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: hidratación: tasa de sudor y cuánto reponer
+03:48 +310: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: sueño: promedio y noches en la meta
+03:48 +311: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) baja más de 0,7 kg/sem: subir
+03:48 +312: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) baja 0,5 kg/sem: no cambiar
+03:48 +313: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) casi no baja y la cintura quieta 3 semanas: −150 kcal o +2.000 pasos
+03:48 +314: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) casi no baja pero la cintura sí: no cambiar
+03:48 +315: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) pesajes viejos: pide pesarse de nuevo
+03:48 +316: C:/My Projects/seguimiento-010-luna/test/domain/habits_test.dart: regla de las 2 semanas (§19.3) la semana en curso no cuenta y sin la de 2 semanas antes faltan datos
+03:48 +317: loading C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart
+03:50 +317: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: trabajo por ronda cada vuelta pierde el descanso que la precede
+03:50 +318: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: trabajo por ronda sin descansos medidos no inventa el trabajo
+03:50 +319: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: día cerrado con desayuno, almuerzo y cena, o cerrado a mano
+03:50 +320: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: propuesta de progresión con los cinco criterios cumplidos propone una ronda más
+03:50 +321: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: propuesta de progresión si algo falla mantiene la meta y dice qué
+03:50 +322: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: propuesta de progresión sin completar la meta no sube
+03:50 +323: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: avisos nuevos calorías a las 20:00 si va por debajo del umbral
+03:50 +324: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: avisos nuevos comidas sin registrar a las 22:00 nombra las que faltan
+03:50 +325: C:/My Projects/seguimiento-010-luna/test/domain/handoff_v2_test.dart: la escala RPE dice cuántas quedaban
+03:50 +326: loading C:/My Projects/seguimiento-010-luna/test/domain/light_version_test.dart
+03:52 +326: C:/My Projects/seguimiento-010-luna/test/domain/light_version_test.dart: Hoy muestra el core además del circuito, una línea por variante
+03:52 +327: C:/My Projects/seguimiento-010-luna/test/domain/light_version_test.dart: la versión ligera: 5 rondas, elevaciones 2×8–10 y hollow 2×20–30 s
+03:52 +328: C:/My Projects/seguimiento-010-luna/test/domain/light_version_test.dart: el guion de la versión ligera tiene 5 rondas y el core recortado
+03:52 +329: C:/My Projects/seguimiento-010-luna/test/domain/light_version_test.dart: un día de bloques pierde una serie en lo que tiene 3 o más
+03:52 +330: C:/My Projects/seguimiento-010-luna/test/domain/light_version_test.dart: retomar una sesión ligera la reconstruye ligera
+03:53 +331: loading C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart
+03:54 +331: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: franja por hora cada hora cae en su franja
+03:54 +332: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: franja por hora la madrugada sigue siendo cena
+03:54 +333: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: franja por hora los bordes caen en la franja que empieza
+03:54 +334: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: aviso de hora que no cuadra un desayuno a las 14:57 sugiere almuerzo
+03:54 +335: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: aviso de hora que no cuadra una cena a las 13:00 sugiere almuerzo
+03:54 +336: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: aviso de hora que no cuadra dentro de la franja no avisa
+03:54 +337: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: aviso de hora que no cuadra media hora de margen en los bordes
+03:54 +338: C:/My Projects/seguimiento-010-luna/test/domain/meal_slots_test.dart: aviso de hora que no cuadra "otro" y sin hora nunca avisan
+03:54 +339: loading C:/My Projects/seguimiento-010-luna/test/domain/missing_data_actions_test.dart
+03:57 +339: C:/My Projects/seguimiento-010-luna/test/domain/missing_data_actions_test.dart: emite acciones tipadas con fecha histórica sin escribir datos
+03:57 +340: C:/My Projects/seguimiento-010-luna/test/domain/missing_data_actions_test.dart: respeta pesaje en rango, días cerrados y evita fechas futuras
+03:57 +341: loading C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart
+03:59 +341: C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart: cuenta las repeticiones de cada ejercicio de la semana
+03:59 +342: C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart: compara cada ejercicio contra la semana anterior
+03:59 +343: C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart: suma pasos, kilómetros y el mejor día
+03:59 +344: C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart: el gasto suma entrenamiento, fútbol y caminar sin contar dos veces el partido
+03:59 +345: C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart: sin peso no inventa el gasto
+03:59 +346: C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart: tiempo activo: sesiones, movilidad y fútbol
+03:59 +347: C:/My Projects/seguimiento-010-luna/test/domain/period_summary_test.dart: un periodo vacío lo dice
+03:59 +348: loading C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart
+04:03 +348: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: calendario (§19.4) 9 semanas: bloque 1 de 5, descarga en la 6, bloque 2 de 3
+04:03 +349: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: calendario (§19.4) pruebas el viernes 11 dic; abdomen cada 2 semanas en sábado
+04:03 +350: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: calendario (§19.4) el día dice semana, fase y la nota de la descarga
+04:03 +351: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: viernes (§19.1) sin 10 rondas limpias es el circuito de progresión
+04:03 +352: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: viernes (§19.1) desde el viernes siguiente a las 10 limpias: Cindy y Tabata alternos, Cindy de prueba cada 4 semanas
+04:03 +353: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: viernes (§19.1) las 10 limpias de un viernes cambian el siguiente, no el mismo
+04:03 +354: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: viernes (§19.1) el viernes de pruebas siempre es Cindy
+04:03 +355: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: semana tipo (§19.1) tipos por día y esquema
+04:03 +356: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: semana tipo (§19.1) lunes: pino primero, luego dominadas; remo y laterales en superserie
+04:03 +357: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: semana tipo (§19.1) miércoles: el FIFA 11+ es el calentamiento, no un paso
+04:03 +358: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: semana tipo (§19.1) viernes: pino, 10 rondas y habilidades; el Tabata no entra al cronómetro
+04:03 +359: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: semana tipo (§19.1) jueves: compresión (A) o L-sit (B)
+04:03 +360: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: semana tipo (§19.1) descarga del v3.1: la mitad de las series, redondeando hacia arriba
+04:03 +361: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: doble progresión (§19.2) todas al tope sin fallo: con lastre, +2–5 kg
+04:03 +362: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: doble progresión (§19.2) sin lastre: el siguiente escalón de la cadena
+04:03 +363: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: doble progresión (§19.2) no toca: una serie por debajo, una al fallo o faltan series
+04:03 +364: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: Tabata cortado: solo cuentan las pausas que llegaron
+04:03 +365: C:/My Projects/seguimiento-010-luna/test/domain/plan_v31_test.dart: meta de kcal: sábado y domingo usan la de fútbol (§19.3)
+04:03 +366: loading C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart
+04:05 +366: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: periodización (§18.6) semanas y fases desde el lunes de inicio
+04:05 +367: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: periodización (§18.6) fechas clave: mediciones 6 nov y 4 dic, test 18 dic
+04:05 +368: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: periodización (§18.6) volumen reducido: semanas 4 y 8, y la 10 hasta el miércoles
+04:05 +369: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: periodización (§18.6) miércoles: Cindy impares, Tabata pares; la 4 y la 10 Cindy, la 8 por tiempo
+04:05 +370: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: periodización (§18.6) burpees EMOM por fase, sin burpees en descarga ni en la semana del test (§18.10)
+04:05 +371: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: periodización (§18.6) el v3 arranca en lunes
+04:05 +372: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: semana tipo (§18.2) tipos de día y esquema
+04:05 +373: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: semana tipo (§18.2) jueves: curl y extensión van en superserie y el cronómetro los alterna
+04:05 +374: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: semana tipo (§18.2) viernes: 6 rondas de circuito y después L-sit y toes-to-bar
+04:05 +375: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: semana tipo (§18.2) descarga: una serie menos en los ejercicios de series; el circuito no cambia
+04:05 +376: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: cronómetros Tabata: 4 × 8 de 20/10 con 1 min entre bloques = 16:10
+04:05 +377: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: cronómetros Cindy: la ronda a medias se reparte en orden
+04:05 +378: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: cronómetros EMOM: un minuto fallado baja al escalón anterior
+04:05 +379: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: PlanExerciseDraft.copyWith conserva la superserie
+04:05 +380: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: variantes: la cadena de progresión se parte en escalones (§18.4)
+04:05 +381: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: el informe nombra el formato de resistencia y la variante de cada serie
+04:06 +382: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: los ejercicios por lado salen por serie con cada pierna (§16.6.2)
+04:06 +383: C:/My Projects/seguimiento-010-luna/test/domain/plan_v3_test.dart: una Cindy cortada dice lo que duró y que no es marca
+04:06 +384: loading C:/My Projects/seguimiento-010-luna/test/domain/progress_denominator_test.dart
+04:08 +384: C:/My Projects/seguimiento-010-luna/test/domain/progress_denominator_test.dart: mes en curso: los días hábiles hasta hoy, no los del mes entero
+04:08 +385: C:/My Projects/seguimiento-010-luna/test/domain/progress_denominator_test.dart: los días antes del primer dato en la app no son faltas
+04:08 +386: C:/My Projects/seguimiento-010-luna/test/domain/progress_denominator_test.dart: una sesión importada suma a totales pero no es marca
+04:08 +387: loading C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart
+04:09 +387: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: racha cuenta días seguidos con sesión
+04:09 +388: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: racha un día de entrenamiento sin sesión la corta
+04:09 +389: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: racha un día de descanso no la corta ni la suma
+04:09 +390: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: racha hoy sin entrenar todavía no rompe lo de ayer
+04:09 +391: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: racha sin sesiones la racha es cero
+04:09 +392: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: progreso hacia la meta se acota entre 0 y 1
+04:09 +393: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: récord hay que superar, no igualar
+04:09 +394: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: récord la primera sesión con rondas ya es récord
+04:09 +395: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: series para las gráficas suma lo del mismo día y ordena
+04:09 +396: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: series para las gráficas los días sin dato quedan en cero, sin inventar pendientes
+04:09 +397: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: series para las gráficas el máximo escala el eje sin dividir por cero
+04:09 +398: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: mensaje de cierre el récord manda sobre todo lo demás
+04:09 +399: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: mensaje de cierre subir de ronda respecto a la anterior se celebra con el dato
+04:09 +400: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: mensaje de cierre mismas rondas pero más rápido
+04:09 +401: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: mensaje de cierre una diferencia de 1 s no se vende como mejora
+04:09 +402: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: mensaje de cierre incompleta: registrada, sin culpa y con el dato
+04:09 +403: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: mensaje de cierre una sola ronda se dice en singular
+04:09 +404: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: mensaje de cierre sin comparación posible, igual cierra en positivo
+04:09 +405: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: cuándo medir sin medidas ni fecha acordada no hay cálculo
+04:09 +406: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: cuándo medir antes de la ventana faltan días
+04:09 +407: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: cuándo medir dentro de la ventana toca medir sin ir atrasado
+04:09 +408: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: cuándo medir pasada la ventana va atrasado
+04:09 +409: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: cuándo medir la fecha acordada manda mientras no se haya medido
+04:09 +410: C:/My Projects/seguimiento-010-luna/test/domain/progress_test.dart: cuándo medir una fecha acordada ya cumplida se ignora
+04:09 +411: loading C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart
+04:10 +411: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: pesaje los pesajes viejos toman el momento de "en ayunas"
+04:10 +412: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: molestias no baja en 3 días o sube: avisa
+04:10 +413: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: pulso en reposo 3 días seguidos 5 lpm por encima de la media: recuperación baja
+04:10 +414: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: carga circuito y fútbol intenso el mismo día: dos sesiones, otra sesión pide confirmar
+04:10 +415: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: carga sin nada hoy, la racha cuenta desde ayer
+04:10 +416: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: carga plan B: día con pierna y 3 días intensos o molestia en la pierna
+04:10 +417: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: planche (§19.7) martes con pseudo-planche; jueves sin; lunes nada
+04:10 +418: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: planche (§19.7) en descarga, solo inclinaciones
+04:10 +419: C:/My Projects/seguimiento-010-luna/test/domain/recovery_test.dart: hoja de habilidades: ventanas desde oct 2026
+04:10 +420: loading C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart
+04:11 +420: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: sesión avisa 15 minutos antes y dice qué toca
+04:11 +421: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: sesión un día de bloques nombra el trabajo del día
+04:11 +422: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: sesión no avisa en día de fútbol ni de descanso
+04:11 +423: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: sesión si la sesión ya está registrada, callado
+04:11 +424: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: sesión el aviso de sesión sin registrar va a su hora
+04:11 +425: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: proteína avisa con lo que llevas y lo que falta
+04:11 +426: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: proteína por encima del umbral no molesta
+04:11 +427: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: comidas programa las franjas activadas
+04:11 +428: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: comidas lo apagado no se programa
+04:11 +429: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: medición usa la fecha acordada si existe
+04:11 +430: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: medición si no, cuenta el intervalo desde la última toma
+04:11 +431: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: medición una medición vencida se recuerda a la mañana siguiente
+04:11 +432: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: medición sin línea base no inventa un aviso
+04:11 +433: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: reglas generales nada se programa en el pasado
+04:11 +434: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: reglas generales los avisos salen ordenados por hora
+04:11 +435: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: reglas generales cada aviso tiene un id estable por tipo y día
+04:11 +436: C:/My Projects/seguimiento-010-luna/test/domain/reminders_test.dart: reglas generales programa varios días por adelantado
+04:11 +437: loading C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart
+04:12 +437: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: estadísticas sesiones esperadas usan la versión vigente de cada día
+04:12 +438: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: estadísticas promedios solo sobre días registrados
+04:12 +439: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: alertas detecta las reglas del plan
+04:12 +440: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: alertas medición antes de tiempo
+04:12 +441: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: alertas sin alerta de intervalo cuando se respeta el mínimo
+04:12 +442: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del tipo fuera de plan y de la sesión incompleta
+04:12 +443: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del enfriamiento corto
+04:12 +444: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: sesiones fuera de plan e incompletas la tabla muestra rondas hechas sobre planificadas
+04:12 +445: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: sesiones fuera de plan e incompletas una sesión fuera de plan se marca en la tabla
+04:12 +446: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: regla de progresión subir de ronda con series partidas genera alerta
+04:12 +447: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: regla de progresión subir de ronda limpio no genera alerta
+04:12 +448: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: regla de progresión técnica o recuperación marcadas en no también bloquean
+04:12 +449: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: semana en curso a mitad de semana, los días que no han llegado no son faltas
+04:12 +450: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: semana en curso un día de entrenamiento ya cerrado sin sesión sí es falta
+04:12 +451: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: semana en curso una ronda estimada no es récord
+04:12 +452: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown una semana del programa va de lunes a domingo y se titula como semana (§16.8)
+04:12 +453: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown con 1 de 5 hecha hoy quedan 4, no 5 (§16.8)
+04:12 +454: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown encabezado, resumen y secciones
+04:13 +455: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown medidas en la unidad elegida con Δ vs línea base
+04:13 +456: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown el descanso va en su columna y no cuenta como trabajo neto
+04:13 +457: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown dice de dónde salen las kcal
+04:13 +458: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown trabajo por ronda sin descanso, R1→Rn y descansos aparte
+04:13 +459: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown sin descansos medidos las vueltas dicen que los llevan dentro
+04:13 +460: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown un día sin desayuno, almuerzo y cena no entra al promedio ni a las alertas
+04:13 +461: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown cerrar el día a mano lo cuenta aunque falte una comida
+04:13 +462: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown volumen por ejercicio contra la semana anterior
+04:13 +463: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown flexiones peores el viernes tras una semana con pike push-ups sugiere bajar a 2 series
+04:13 +464: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown RPE 9 o 10 en circuito ligero se señala
+04:13 +465: C:/My Projects/seguimiento-010-luna/test/domain/report_test.dart: informe markdown rango vacío no revienta
+04:13 +466: loading C:/My Projects/seguimiento-010-luna/test/domain/search_test.dart
+04:13 +466: C:/My Projects/seguimiento-010-luna/test/domain/search_test.dart: sin tildes ni mayúsculas
+04:13 +467: C:/My Projects/seguimiento-010-luna/test/domain/search_test.dart: palabras en cualquier orden
+04:13 +468: C:/My Projects/seguimiento-010-luna/test/domain/search_test.dart: consulta vacía o con espacios coincide con todo
+04:14 +469: loading C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart
+04:15 +469: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: circuito cada ronda recorre los tres ejercicios seguidos
+04:15 +470: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: circuito no hay descanso dentro de la ronda, solo al cerrarla
+04:15 +471: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: circuito la última ronda no termina en descanso
+04:15 +472: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: circuito se puede bajar el objetivo de rondas del día
+04:15 +473: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: bloques agota un ejercicio antes de pasar al siguiente
+04:15 +474: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: bloques el descanso sale del plan y anuncia qué sigue
+04:15 +475: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: bloques la última serie del último ejercicio no lleva descanso
+04:15 +476: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: bloques el objetivo de cada serie viene del plan
+04:15 +477: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: bloques extra del plan v2 van después del circuito y solo la variante elegida
+04:15 +478: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: bloques extra del plan v2 los sostenes se muestran en segundos y por lado
+04:15 +479: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: cierre anticipado cuenta solo las rondas completas
+04:15 +480: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: cierre anticipado una ronda a medias no cuenta
+04:15 +481: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: cierre anticipado en bloques no se reportan rondas
+04:15 +482: C:/My Projects/seguimiento-010-luna/test/domain/session_script_test.dart: core del lunes: transición, lados por separado y descanso entre series
+04:15 +483: loading C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart
+04:16 +483: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: la meta es solo entre semana
+04:16 +484: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: el resumen promedia solo los días registrados
+04:16 +485: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: aviso de las 18:00 entre semana suena si va por debajo o si no se anotaron
+04:16 +486: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: aviso de las 18:00 no suena si ya pasó el umbral ni el fin de semana
+04:16 +487: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) hora de 12 horas
+04:16 +488: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) la línea dice la app y la hora; ayer u otro día, con el día
+04:16 +489: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) sin nombre visible usa uno conocido o el paquete
+04:16 +490: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) más de 6 h sin registros pide abrir la app del reloj
+04:16 +491: C:/My Projects/seguimiento-010-luna/test/domain/steps_test.dart: de dónde vienen los pasos (§16.14) se guarda y se lee igual en las banderas
+04:16 +492: loading C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart
+04:17 +492: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente marca R3 y nada más
+04:17 +493: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente propone pasar 30 s al descanso, sin dejar la ronda bajo la mediana
+04:17 +494: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente un descanso corto con una ronda normal no es sospechoso
+04:17 +495: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: descanso de 0:00 que infla la ronda siguiente con pocas rondas no hay mediana fiable
+04:17 +496: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: el informe marca la ronda y la deja fuera de la media y del R1→Rn
+04:17 +497: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: semana en curso: el volumen se compara con el mismo punto de la anterior (§16.8)
+04:17 +498: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: medidas: después de comer contra ayunas se marca, y sale el índice hombros ÷ cintura (§16.10)
+04:17 +499: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: traspaso del 4 oct día cerrado por regla alternativa: 3 comidas o 1.800 kcal (§16.6.3)
+04:17 +500: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: traspaso del 4 oct caminatas de 10 min que faltan para la meta (§18.10)
+04:17 +501: C:/My Projects/seguimiento-010-luna/test/domain/uso_real_3oct_test.dart: traspaso del 4 oct peso: promedio semanal de lunes a domingo, solo en ayunas (§18.10)
+04:17 +502: loading C:/My Projects/seguimiento-010-luna/test/domain/version_test.dart
+04:18 +502: C:/My Projects/seguimiento-010-luna/test/domain/version_test.dart: comparación de versiones ordena por major, minor y patch
+04:18 +503: C:/My Projects/seguimiento-010-luna/test/domain/version_test.dart: comparación de versiones tolera el prefijo v, el build y las versiones cortas
+04:18 +504: C:/My Projects/seguimiento-010-luna/test/domain/version_test.dart: comparación de versiones ante texto raro no anuncia actualización
+04:18 +505: loading C:/My Projects/seguimiento-010-luna/test/ui/ai_actions_render_test.dart
+04:19 +505: C:/My Projects/seguimiento-010-luna/test/ui/ai_actions_render_test.dart: captura IA respuesta 1.0
+04:19 +505 ~1: C:/My Projects/seguimiento-010-luna/test/ui/ai_actions_render_test.dart: captura IA comida 1.0
+04:19 +505 ~2: C:/My Projects/seguimiento-010-luna/test/ui/ai_actions_render_test.dart: captura IA respuesta 1.6
+04:19 +505 ~3: C:/My Projects/seguimiento-010-luna/test/ui/ai_actions_render_test.dart: captura IA comida 1.6
+04:19 +505 ~4: loading C:/My Projects/seguimiento-010-luna/test/ui/ai_activation_screen_test.dart
+04:21 +505 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_activation_screen_test.dart: guarda y olvida licencia por el bridge inyectado
+04:23 +506 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_activation_screen_test.dart: descarta status tardío si se olvida otra licencia
+04:23 +507 ~4: loading C:/My Projects/seguimiento-010-luna/test/ui/ai_conversation_screen_test.dart
+04:24 +507 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_conversation_screen_test.dart: (setUpAll)
+04:24 +507 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_conversation_screen_test.dart: consentimiento y respuesta válida llegan a persistencia sin secretos
+04:27 +508 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_conversation_screen_test.dart: cita inventada queda visible como error y no crea historial
+04:27 +509 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_conversation_screen_test.dart: respuesta vieja de status no pisa nueva licencia ni cuota
+04:28 +510 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_conversation_screen_test.dart: (tearDownAll)
+04:28 +510 ~4: loading C:/My Projects/seguimiento-010-luna/test/ui/ai_history_render_test.dart
+04:29 +510 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_history_render_test.dart: (setUpAll)
+04:29 +510 ~4: C:/My Projects/seguimiento-010-luna/test/ui/ai_history_render_test.dart: captura IA pregunta 1.0
+04:29 +510 ~5: C:/My Projects/seguimiento-010-luna/test/ui/ai_history_render_test.dart: captura IA historial 1.0
+04:29 +510 ~6: C:/My Projects/seguimiento-010-luna/test/ui/ai_history_render_test.dart: captura IA pregunta 1.6
+04:29 +510 ~7: C:/My Projects/seguimiento-010-luna/test/ui/ai_history_render_test.dart: captura IA historial 1.6
+04:29 +510 ~8: C:/My Projects/seguimiento-010-luna/test/ui/ai_history_render_test.dart: (tearDownAll)
+04:29 +510 ~8: loading C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart
+04:31 +510 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: (setUpAll)
+04:31 +510 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: los pasos se traen solos cada 2 min y al deslizar Hoy hacia abajo
+04:34 +511 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: un recordatorio propio que toca hoy sale en Hoy y se marca hecho
+04:35 +512 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: anotar los pasos desde el anillo de Hoy
+04:36 +513 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: arranca en Hoy y abre todas las pestañas
+04:37 +514 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: Comidas muestra lo registrado hoy
+04:38 +515 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: Comidas: tocar lo de ayer no lo repite y "Repetir hoy" avisa si ya hay uno
+04:39 +516 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: Comidas muestra la fecha en las tarjetas de otro día
+04:40 +517 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: Registrar en "Ayer" abre el formulario con la fecha de ayer (§16.12)
+04:41 +518 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: el informe se genera con lo registrado
+04:42 +519 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: Ajustes abre con el perfil y las copias automáticas
+04:42 +520 ~8: C:/My Projects/seguimiento-010-luna/test/ui/app_smoke_test.dart: (tearDownAll)
+04:42 +520 ~8: loading C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart
+04:43 +520 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: cada ejercicio del plan y de la movilidad tiene figura
+04:44 +521 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: se busca sin mayúsculas ni tildes
+04:44 +522 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: los errores a evitar van marcados
+04:44 +523 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: todas las figuras se pintan sin errores
+04:44 +524 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: foto de referencia (setUpAll)
+04:44 +524 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: foto de referencia se guarda, se reemplaza borrando la anterior y se quita
+04:45 +525 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: foto de referencia una ruta fuera de la carpeta de fotos no se borra
+04:45 +526 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_art_test.dart: foto de referencia (tearDownAll)
+04:45 +526 ~8: loading C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart
+04:46 +526 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F01: el pino no atraviesa la pared el caso de la auditoría: tobillo a 0,75 delante de la cara de la pared
+04:46 +527 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F01: el pino no atraviesa la pared ninguna articulación cruza la pared en todo el recorrido (pasos de 0,01)
+04:46 +528 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F01: el pino no atraviesa la pared los pies siguen apoyados en la pared mientras suben (de la L al pino)
+04:46 +529 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F01: el pino no atraviesa la pared la animación es continua: a 60 fps nada salta de un cuadro al siguiente
+04:46 +530 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F01: el pino no atraviesa la pared ninguna figura con pared la atraviesa
+04:46 +531 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión las variantes generan agarre y carga propios en 3D
+04:46 +532 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión guía extensa conserva lectura y rechaza solo la consulta de IA
+04:48 +533 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión supina sin carga (jueves): 3D sin mochila
+04:48 +534 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión prona sin carga (circuito): 3D sin mochila
+04:48 +535 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión supina con carga: 3D con mochila
+04:48 +536 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión prona con mochila (lunes): el maniquí 3D
+04:48 +537 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión sin contexto (catálogo): el maniquí 3D
+04:48 +538 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+05:00 +539 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+05:15 +540 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+05:31 +541 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px ampliar una animación conserva el momento que se estaba viendo
+05:31 +542 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px ampliar en una transición conserva la pose intermedia
+05:32 +543 ~8: loading C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_render_test.dart
+05:35 +543 ~8: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_render_test.dart: renders del maniquí 3D
+05:35 +543 ~9: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_render_test.dart: hoja de técnica en un teléfono
+05:35 +543 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart
+05:38 +543 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: datos los tres ejercicios de la iteración, con inicio, medio y final
+05:38 +544 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: datos los momentos clave reproducen los apoyos del generador
+05:39 +545 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: interpolación lerpAngle va por el camino corto
+05:39 +546 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: interpolación en los extremos coincide con los momentos clave
+05:39 +547 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: interpolación a mitad de camino los segmentos conservan su largo
+05:39 +548 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: interpolación las manos no se sueltan de la barra al animar la dominada
+05:39 +549 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: interpolación en el nórdico la cadera gira alrededor de las rodillas, que no se mueven
+05:39 +550 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: interpolación nada atraviesa el suelo en ningún punto del recorrido
+05:39 +551 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: interpolación loopProgress va y vuelve con pausas en cada momento
+05:39 +552 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: paso a 3D el lado cercano va a +z y el lejano a -z; las manos al ancho del agarre
+05:39 +553 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: paso a 3D las extremidades conservan su largo en 3D y los codos salen hacia afuera
+05:39 +554 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: paso a 3D ikJoint respeta largos y sale hacia el polo
+05:39 +555 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: paso a 3D la cara flexora del muslo arrodillado mira hacia atrás (isquios)
+05:39 +556 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: paso a 3D en el pino el pecho y la cara miran a la pared
+05:39 +557 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: cámara el centro cae en el centro de la pantalla y lo cercano se ve más grande
+05:39 +558 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: cámara girar 90° pone el eje x de frente a la cámara
+05:39 +559 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: cámara inclinar mira desde arriba: se ve el suelo y la profundidad horizontal no cambia con la altura
+05:39 +560 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: orden de pintado de lejos a cerca, y los empates en el orden de llegada
+05:39 +561 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: orden de pintado de perfil, el brazo cercano se pinta después del torso y el lejano antes
+05:39 +562 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+05:40 +563 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: hoja de técnica con figura 3D: tres momentos grandes que se pasan de lado
+05:43 +564 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: hoja de técnica "Ver movimiento" anima en el mismo cuadro y vuelve a los momentos
+05:43 +565 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: hoja de técnica tocar un momento lo abre en grande; arrastrar gira y se vuelve de perfil
+05:47 +566 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: hoja de técnica ejercicio personalizado sin ilustración declara la ausencia
+05:47 +567 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_figure_3d_test.dart: el giro máximo es simétrico y la vista inicial cabe en él
+05:47 +568 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/exercise_library_test.dart
+05:50 +568 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_library_test.dart: buscar sin tildes, consultar ambos lados y ampliar sin crear sesión
+05:54 +569 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_library_test.dart: la variante supina con mochila se refleja en la figura consultada
+05:56 +570 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_library_test.dart: búsqueda vacía explica el resultado; texto ampliado conserva consulta
+05:58 +571 ~10: C:/My Projects/seguimiento-010-luna/test/ui/exercise_library_test.dart: biblioteca en tableta mantiene figuras y búsqueda
+05:58 +572 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart
+06:02 +572 ~10: C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart: (setUpAll)
+06:02 +572 ~10: C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+06:05 +573 ~10: C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart: editor rechaza rangos de sostén y RIR inválidos antes de escribir
+06:06 +574 ~10: C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart: guía conserva pasos y claves personales, deduplica y distingue búsqueda de video
+06:06 +575 ~10: C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart: sin guía fija muestra claves únicas y conserva el video exacto
+06:06 +576 ~10: C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart: Hoy muestra CTA antes de la rutina larga y conserva expansión y día completo
+06:07 +577 ~10: C:/My Projects/seguimiento-010-luna/test/ui/experience_test.dart: (tearDownAll)
+06:07 +577 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart
+06:09 +577 ~10: C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart: (setUpAll)
+06:09 +577 ~10: C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart: porción 30 g se convierte localmente y el borrador mantiene lectura original
+06:11 +578 ~10: C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart: FoodDialog deja incompletos vacíos y etiqueta requiere checkbox explícito
+06:12 +579 ~10: C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart: base y unidad no identificadas exigen elección explícita antes de guardar
+06:12 +580 ~10: C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart: repetir base manual o importada no vacía la selección y cancelar no devuelve cambios
+06:13 +581 ~10: C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart: cancelar alimento manual o importado no escribe en catálogo
+06:14 +582 ~10: C:/My Projects/seguimiento-010-luna/test/ui/food_label_screen_test.dart: (tearDownAll)
+06:14 +582 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart
+06:16 +582 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: (setUpAll)
+06:16 +582 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: terminar antes guarda solo lo hecho y la marca como incompleta
+06:19 +583 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: cada ronda separa su trabajo del descanso que la precede
+06:21 +584 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: un doble toque en "Hecho" no salta el descanso ni la parada siguiente
+06:21 +585 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: el cierre de un circuito pide técnica, rango y recuperación
+06:22 +586 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: al terminar el enfriamiento la sesión queda guardada sin revisar (§16.9)
+06:22 +587 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: el acumulado de reps es por ejercicio
+06:23 +588 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: un aguante por lado: derecho, luego izquierdo, con cronómetro y descanso entre series
+06:23 +589 ~10: C:/My Projects/seguimiento-010-luna/test/ui/guided_session_test.dart: (tearDownAll)
+06:23 +589 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/illustration_catalog_coverage_test.dart
+06:24 +589 ~10: C:/My Projects/seguimiento-010-luna/test/ui/illustration_catalog_coverage_test.dart: cada guía, peldaño y ejercicio de movilidad tiene su propia ilustración
+06:24 +590 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/illustration_geometry_test.dart
+06:25 +590 ~10: C:/My Projects/seguimiento-010-luna/test/ui/illustration_geometry_test.dart: alcances 3D conservan largos de brazos y piernas en los momentos clave
+06:26 +591 ~10: C:/My Projects/seguimiento-010-luna/test/ui/illustration_geometry_test.dart: elevaciones laterales usan el plano frontal y 90/90 conserva pelvis sentada
+06:26 +592 ~10: C:/My Projects/seguimiento-010-luna/test/ui/illustration_geometry_test.dart: figura4 apoya el tobillo en la rodilla opuesta; carrera no alcanza sobre la cabeza
+06:26 +593 ~10: C:/My Projects/seguimiento-010-luna/test/ui/illustration_geometry_test.dart: la plancha lateral apila hombros; el pike no apoya los codos
+06:26 +594 ~10: loading C:/My Projects/seguimiento-010-luna/test/ui/illustration_mockup_render_test.dart
+06:27 +594 ~10: C:/My Projects/seguimiento-010-luna/test/ui/illustration_mockup_render_test.dart: mockups del catálogo y visor reales, sin renderer paralelo
+06:27 +594 ~11: C:/My Projects/seguimiento-010-luna/test/ui/illustration_mockup_render_test.dart: hoja legible en teléfono con texto grande
+06:27 +594 ~12: loading C:/My Projects/seguimiento-010-luna/test/ui/illustration_supports_test.dart
+06:28 +594 ~12: C:/My Projects/seguimiento-010-luna/test/ui/illustration_supports_test.dart: vela y dragon mantienen cabeza horizontal junto a los hombros
+06:28 +595 ~12: C:/My Projects/seguimiento-010-luna/test/ui/illustration_supports_test.dart: cuadriceps y piernas en pared mantienen el pie transversal a la tibia
+06:28 +596 ~12: C:/My Projects/seguimiento-010-luna/test/ui/illustration_supports_test.dart: manos conservan contacto con barra y borde de mesa durante el recorrido
+06:28 +597 ~12: C:/My Projects/seguimiento-010-luna/test/ui/illustration_supports_test.dart: flexion unilateral mantiene solamente la mano de trabajo apoyada
+06:28 +598 ~12: C:/My Projects/seguimiento-010-luna/test/ui/illustration_supports_test.dart: plancha inversa y pike mantienen palmas apoyadas al cambiar de momento
+06:28 +599 ~12: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_assistant_render_test.dart
+06:29 +599 ~12: C:/My Projects/seguimiento-010-luna/test/ui/meal_assistant_render_test.dart: captura IA frase 1.0
+06:29 +599 ~13: C:/My Projects/seguimiento-010-luna/test/ui/meal_assistant_render_test.dart: captura IA etiqueta 1.0
+06:29 +599 ~14: C:/My Projects/seguimiento-010-luna/test/ui/meal_assistant_render_test.dart: captura IA frase 1.6
+06:29 +599 ~15: C:/My Projects/seguimiento-010-luna/test/ui/meal_assistant_render_test.dart: captura IA etiqueta 1.6
+06:29 +599 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart
+06:30 +599 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: (setUpAll)
+06:30 +599 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: estimación de 250 g no permite convertir la unidad a porción o ml
+06:32 +600 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: IA→revisión/exclusión→borrador→Guardar→SQLite; no crea catálogo antes de Guardar
+06:38 +601 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: volver con Recordar elegido no guarda comida ni catálogo
+06:40 +602 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: fallo de red conserva frase y registro manual; cero escrituras
+06:42 +603 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: (tearDownAll)
+06:42 +603 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_edit_test.dart
+06:51 +603 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_edit_test.dart: (setUpAll)
+06:51 +603 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_edit_test.dart: editar una estimación coincidente no enlaza ni verifica catálogo antes de Guardar
+06:54 +604 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_edit_test.dart: (tearDownAll)
+06:54 +604 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_replace_test.dart
+06:55 +604 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_replace_test.dart: (setUpAll)
+06:55 +604 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+06:58 +605 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_form_free_replace_test.dart: (tearDownAll)
+06:59 +605 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_photo_screen_test.dart
+07:00 +605 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_photo_screen_test.dart: foto consentida → revisión de porción → borrador; ningún guardado automático
+07:02 +606 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_photo_screen_test.dart: cancelar descarta respuesta tardía; cambiar foto pide consentimiento nuevo
+07:02 +607 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_text_screen_test.dart
+07:03 +607 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_text_screen_test.dart: consentimiento ligado a frase y macro local llega solo al borrador
+07:05 +608 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_text_screen_test.dart: no pierde propuesta ambigua ni acepta parcialmente; quitar y resolver son explícitos
+07:06 +609 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_text_screen_test.dart: reanálisis descarta confirmaciones de cantidad de la propuesta anterior
+07:06 +610 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_text_screen_test.dart: editar frase descarta resultado viejo y exige consentimiento nuevo
+07:06 +611 ~16: C:/My Projects/seguimiento-010-luna/test/ui/meal_text_screen_test.dart: respuesta tardía de status de licencia anterior no habilita ni reemplaza cuota
+07:07 +612 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/missing_data_actions_surface_test.dart
+07:08 +612 ~16: C:/My Projects/seguimiento-010-luna/test/ui/missing_data_actions_surface_test.dart: (setUpAll)
+07:08 +612 ~16: C:/My Projects/seguimiento-010-luna/test/ui/missing_data_actions_surface_test.dart: conversación histórica recalcula faltante, respeta fecha y solo guarda al confirmar
+07:10 +613 ~16: C:/My Projects/seguimiento-010-luna/test/ui/missing_data_actions_surface_test.dart: respuesta Weekly muestra accesos del rango actual
+07:11 +614 ~16: C:/My Projects/seguimiento-010-luna/test/ui/missing_data_actions_surface_test.dart: (tearDownAll)
+07:11 +614 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/mobility_screen_test.dart
+07:12 +614 ~16: C:/My Projects/seguimiento-010-luna/test/ui/mobility_screen_test.dart: el guion recorre cada lado y cada serie en orden
+07:12 +615 ~16: C:/My Projects/seguimiento-010-luna/test/ui/mobility_screen_test.dart: lo que va por tiempo avanza solo y lo de repeticiones con "Hecho"
+07:15 +616 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart
+07:16 +616 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: (setUpAll)
+07:16 +616 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+07:20 +617 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial
+07:22 +618 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash
+07:23 +619 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: consumer advice cambia tras guardar editar y borrar sin reiniciar
+07:24 +620 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: legado1.20 conserva secuencia e indice sin agregar escalera; guion malformado se descarta
+07:24 +621 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+07:24 +622 ~16: C:/My Projects/seguimiento-010-luna/test/ui/release121_flows_test.dart: (tearDownAll)
+07:25 +622 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/steps_base_settings_test.dart
+07:26 +622 ~16: C:/My Projects/seguimiento-010-luna/test/ui/steps_base_settings_test.dart: (setUpAll)
+07:26 +622 ~16: C:/My Projects/seguimiento-010-luna/test/ui/steps_base_settings_test.dart: base5000 requiere guardar; abrir y seleccionar no cambia el perfil
+07:29 +623 ~16: C:/My Projects/seguimiento-010-luna/test/ui/steps_base_settings_test.dart: (tearDownAll)
+07:29 +623 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/steps_source_line_test.dart
+07:31 +623 ~16: C:/My Projects/seguimiento-010-luna/test/ui/steps_source_line_test.dart: al día: solo la app y la hora
+07:32 +624 ~16: C:/My Projects/seguimiento-010-luna/test/ui/steps_source_line_test.dart: más de 6 h o sin registros: pide abrir la app del reloj
+07:32 +625 ~16: C:/My Projects/seguimiento-010-luna/test/ui/steps_source_line_test.dart: sin Health Connect conectado no dice nada
+07:32 +626 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/v3_timers_test.dart
+07:33 +626 ~16: C:/My Projects/seguimiento-010-luna/test/ui/v3_timers_test.dart: la foto de Cindy o Tabata vuelve igual tras pasar por JSON
+07:33 +627 ~16: C:/My Projects/seguimiento-010-luna/test/ui/v3_timers_test.dart: Cindy retomada sigue con sus rondas y su reloj
+07:34 +628 ~16: C:/My Projects/seguimiento-010-luna/test/ui/v3_timers_test.dart: Cindy que terminó con la app cerrada pide la ronda a medias
+07:35 +629 ~16: C:/My Projects/seguimiento-010-luna/test/ui/v3_timers_test.dart: Tabata retomado sigue en el bloque en que iba
+07:35 +630 ~16: loading C:/My Projects/seguimiento-010-luna/test/ui/weekly_ai_screen_test.dart
+07:36 +630 ~16: C:/My Projects/seguimiento-010-luna/test/ui/weekly_ai_screen_test.dart: (setUpAll)
+07:36 +630 ~16: C:/My Projects/seguimiento-010-luna/test/ui/weekly_ai_screen_test.dart: la respuesta permite seleccionar, copiar y compartir con evidencia
+07:37 +631 ~16: C:/My Projects/seguimiento-010-luna/test/ui/weekly_ai_screen_test.dart: sin consentimiento no envía; preview coincide y cancelar descarta respuesta tardía
+07:37 +632 ~16: C:/My Projects/seguimiento-010-luna/test/ui/weekly_ai_screen_test.dart: un segundo análisis fallido no enlaza la conversación anterior
+07:38 +633 ~16: C:/My Projects/seguimiento-010-luna/test/ui/weekly_ai_screen_test.dart: (tearDownAll)
+07:38 +633 ~16: All tests passed!

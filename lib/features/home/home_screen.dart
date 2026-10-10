@@ -18,7 +18,10 @@ import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../plan/v3_activation.dart';
+import '../plan/plan_edit_screen.dart' show PlanEditScreen;
+import '../../data/repositories/plan_repository.dart' show PlanDraft;
 import '../../domain/progress.dart';
+import '../../domain/sleep_entry.dart';
 import '../../domain/mobility.dart' show legRecovery;
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
@@ -27,7 +30,9 @@ import '../body/body_screen.dart' show addWeightDialog;
 import '../body/ladders_screen.dart';
 import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
+import 'coach_card.dart';
 import 'morning_check_screen.dart';
+import 'sleep_hours_dialog.dart';
 import 'steps_source_line.dart';
 import 'walk_screen.dart';
 import '../report/summary_screen.dart';
@@ -42,6 +47,8 @@ import '../training/mobility_screen.dart';
 import '../training/test_mode_screen.dart';
 import '../training/training_screen.dart';
 import '../../ui/theme.dart';
+import '../../data/repositories/goal_repository.dart';
+import '../../domain/adaptive_coach.dart';
 
 /// Pantalla de entrada: qué toca hoy, cómo voy y cómo registrarlo rápido.
 class HomeScreen extends ConsumerWidget {
@@ -51,6 +58,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final today = ref.watch(todayProvider);
     final dashboard = ref.watch(dashboardProvider);
+    // Plan 022: sin ninguna versión del plan no hay "descanso": hay una
+    // rutina por configurar. Una instalación nueva no recibe el v3.1 del dueño.
+    final noVersions = ref.watch(planVersionsProvider).valueOrNull?.isEmpty ?? false;
+    final newInstall = ref.watch(setupStatusProvider).valueOrNull?.isNewInstall ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -66,40 +77,74 @@ class HomeScreen extends ConsumerWidget {
       body: dashboard.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
-        data: (d) => RefreshIndicator(
-          // Deslizar hacia abajo trae los pasos del reloj al instante.
-          onRefresh: () async {
-            await ref.read(syncStepsProvider)();
-            ref.invalidate(dashboardProvider);
-          },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: 24),
-            children: [
-              const ActiveSessionBanner(),
-              UpdateBanner(
-                onOpenSettings: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
-              ),
-              _PlanHero(dashboard: d),
-              _RingsCard(dashboard: d),
-              const _PendingReviewCard(),
-              const _LadderStepUpCard(),
-              _YesterdayCheckCard(today: today),
-              const _CorrectionsBanner(),
-              const TodayCustomRemindersCard(),
-              _WeekGlanceCard(today: today),
-              if (d.v3Suggestion != null) _V3SuggestionCard(monday: d.v3Suggestion!),
-              _ActionsCard(
-                date: today,
-                dayType: d.dayType,
-                burpees: d.dayType == DayType.densidad ? d.v3?.burpees : null,
-              ),
-              if (d.measurement != null) _MeasurementCard(due: d.measurement!),
-            ],
-          ),
-        ),
+        data: (d) {
+          final noRoutine = noVersions && d.planVersion == null;
+          return RefreshIndicator(
+            // Deslizar hacia abajo trae los pasos del reloj al instante.
+            onRefresh: () async {
+              await ref.read(syncStepsProvider)();
+              ref.invalidate(dashboardProvider);
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 24),
+              children: [
+                const ActiveSessionBanner(),
+                UpdateBanner(
+                  onOpenSettings: () =>
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+                ),
+                if (noRoutine) _NoRoutineCard(today: today) else _PlanHero(dashboard: d),
+                _RingsCard(dashboard: d),
+                if (d.coach case final coach?) CoachCard(reading: coach, strength: d.strength),
+                const _PendingReviewCard(),
+                const _LadderStepUpCard(),
+                _YesterdayCheckCard(today: today),
+                const _CorrectionsBanner(),
+                const TodayCustomRemindersCard(),
+                _WeekGlanceCard(today: today),
+                if (d.v3Suggestion != null && !noRoutine && !newInstall) _V3SuggestionCard(monday: d.v3Suggestion!),
+                _ActionsCard(
+                  date: today,
+                  dayType: d.dayType,
+                  burpees: d.dayType == DayType.densidad ? d.v3?.burpees : null,
+                ),
+                if (d.measurement != null) _MeasurementCard(due: d.measurement!),
+              ],
+            ),
+          );
+        },
       ),
+    );
+  }
+}
+
+/// Sin rutina (plan 022): ausencia y acción, no un día de descanso ni racha.
+/// Se configura con el editor común del plan.
+class _NoRoutineCard extends StatelessWidget {
+  const _NoRoutineCard({required this.today});
+
+  final DateTime today;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return AppCard(
+      children: [
+        Text('${weekdayLong(today.weekday)} ${formatShort(today)}'.toUpperCase(),
+            style: text.labelSmall?.copyWith(letterSpacing: 1)),
+        const SizedBox(height: 8),
+        Text('Sin rutina configurada', style: text.titleLarge),
+        const SizedBox(height: 4),
+        const Text('Todavía no hay un plan semanal: hoy no cuenta como descanso ni como día de entreno.'),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          onPressed: () => Navigator.push(
+              context, MaterialPageRoute(builder: (_) => PlanEditScreen(draft: PlanDraft.empty(dateOnly(today))))),
+          icon: const Icon(Icons.edit_calendar),
+          label: const Text('Configurar mi rutina'),
+        ),
+      ],
     );
   }
 }
@@ -195,7 +240,7 @@ class _PlanHero extends StatelessWidget {
                 ),
               ),
             if (dashboard.proposal case final p? when !dashboard.trained)
-              _ProposalLine(proposal: p, date: dashboard.date, color: style.color),
+              _ProposalLine(proposal: p, date: dashboard.date, color: style.color, decision: dashboard.roundsDecision),
             if (dashboard.v3 case final v3?) _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
             if (dashboard.restingHrWarning case final hr?)
               Padding(
@@ -365,6 +410,15 @@ class _StartButtons extends ConsumerWidget {
             label: const Text('Aplicar versión ligera'),
           ),
         ],
+        // §16.21: moverse sin gastar fuerza (descarga, víspera de test, plan B).
+        if (d.techniqueSuggested) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => startTechniqueSession(context, ref),
+            icon: const Icon(Icons.self_improvement),
+            label: const Text('Sesión técnica (RIR 4)'),
+          ),
+        ],
       ],
     );
   }
@@ -446,6 +500,7 @@ class _PlanBCard extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
     final why = dashboard.load.threeIntense
         ? '${dashboard.load.intenseStreak} días intensos seguidos'
+            '${dashboard.load.streakThrough == null ? '' : ' hasta el ${formatShort(dashboard.load.streakThrough!)}'}'
         : 'molestia en la pierna';
     return Container(
       padding: const EdgeInsets.all(12),
@@ -458,7 +513,7 @@ class _PlanBCard extends ConsumerWidget {
         children: [
           Text('Plan B: solo torso', style: text.titleSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
           Text(
-              'Por $why, hoy sin pierna (vuelve en 48 h). Supinas, flexiones, pike, remo, plancha lateral y '
+              'Por $why, considera hoy el plan de torso. Revisa mañana el esfuerzo y las molestias antes de volver a piernas. Supinas, flexiones, pike, remo, plancha lateral y '
               'hollow, todo a RIR 2.',
               style: text.bodySmall),
           const SizedBox(height: 6),
@@ -484,10 +539,19 @@ class _LadderStepUpCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final advice = ref.watch(ladderAdviceProvider).valueOrNull ?? const {};
+    final decisions = ref.watch(ladderDecisionsProvider).valueOrNull ?? const {};
+    final today = ref.watch(todayProvider);
     final ready = [
       for (final l in coreLadders)
-        if (advice[l.id] case final a? when a.canStepUp) (l, a),
+        if (advice[l.id] case final a? when a.canStepUp && !proposalHidden(decisions[l.id]?.decision, today)) (l, a),
     ];
+    Future<void> decide(CoreLadder l, ProposalStatus status) async {
+      final id = decisions[l.id]?.id;
+      if (id == null) return;
+      await GoalRepository(ref.read(databaseProvider)).decideProposal(id, 'escalera:${l.id}', status,
+          today: today, postponeDays: coachPostponeDays);
+      ref.invalidate(ladderDecisionsProvider);
+    }
     if (ready.isEmpty) return const SizedBox.shrink();
     return AppCard(
       title: 'Escaleras de core',
@@ -501,16 +565,28 @@ class _LadderStepUpCard extends ConsumerWidget {
           const SizedBox(height: 4),
           Align(
             alignment: Alignment.centerLeft,
-            child: FilledButton.tonal(
-              onPressed: () async {
-                final step = await ref.read(ladderRepositoryProvider).stepUp(l, ref.read(todayProvider));
-                ref.invalidate(ladderAdviceProvider);
-                ref.invalidate(dashboardProvider);
-                if (context.mounted) {
-                  showSnack(context, '${l.name}: peldaño $step, ${l.stepAt(step).exercise}.');
-                }
-              },
-              child: Text('Subir a ${l.stepAt(a.step.step + 1).exercise}'),
+            child: Wrap(
+              spacing: 8,
+              children: [
+                FilledButton.tonal(
+                  onPressed: () async {
+                    // Aceptar y subir son una sola escritura (R2).
+                    final step = await ref.read(ladderRepositoryProvider).acceptStepUp(l, ref.read(todayProvider));
+                    ref.invalidate(ladderDecisionsProvider);
+                    ref.invalidate(ladderAdviceProvider);
+                    ref.invalidate(dashboardProvider);
+                    if (context.mounted) {
+                      showSnack(context, '${l.name}: peldaño $step, ${l.stepAt(step).exercise}.');
+                    }
+                  },
+                  child: Text('Subir a ${l.stepAt(a.step.step + 1).exercise}'),
+                ),
+                TextButton(
+                  onPressed: () => decide(l, ProposalStatus.pospuesta),
+                  child: const Text('En $coachPostponeDays días'),
+                ),
+                TextButton(onPressed: () => decide(l, ProposalStatus.rechazada), child: const Text('Mantener')),
+              ],
             ),
           ),
         ],
@@ -684,11 +760,25 @@ class _GlanceNumber extends StatelessWidget {
 /// Día de progresión: de dónde sale la meta. Si la regla no deja subir solo
 /// porque faltó anotar cómo fue la última, se anota aquí mismo.
 class _ProposalLine extends ConsumerWidget {
-  const _ProposalLine({required this.proposal, required this.date, required this.color});
+  const _ProposalLine({required this.proposal, required this.date, required this.color, this.decision});
 
   final ProgressionProposal proposal;
   final DateTime date;
   final Color color;
+
+  /// Lo decidido sobre esta propuesta (plan 009); null = sin decidir.
+  final ProposalStatus? decision;
+
+  Future<void> _decide(WidgetRef ref, ProposalStatus status) async {
+    final p = proposal;
+    await GoalRepository(ref.read(databaseProvider)).decideProposal(
+      roundsProposalId(fromRounds: p.lastRounds, toRounds: p.rounds, sessionId: p.sessionId!),
+      'rondas',
+      status,
+      today: date,
+    );
+    ref.invalidate(dashboardProvider);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -707,6 +797,11 @@ class _ProposalLine extends ConsumerWidget {
                 : 'Se mantiene en ${p.rounds} ($last: ${p.unmet.join(', ')}).',
             style: text.bodyMedium?.copyWith(color: p.canProgress ? color : null),
           ),
+          if (p.canProgress && p.sessionId != null && decision == null)
+            Wrap(spacing: 8, children: [
+              TextButton(onPressed: () => _decide(ref, ProposalStatus.pospuesta), child: const Text('Hoy no')),
+              TextButton(onPressed: () => _decide(ref, ProposalStatus.rechazada), child: const Text('Mantener')),
+            ]),
           if (missing && p.sessionId != null)
             TextButton.icon(
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -742,7 +837,7 @@ class _RingsCard extends StatelessWidget {
               size: size,
               progress: d.proteinProgress,
               value: fmtInt(d.macros.protein),
-              sublabel: 'de ${d.proteinMin}',
+              sublabel: d.proteinMin == null ? null : 'de ${d.proteinMin}',
               label: 'Proteína',
               color: AppColors.protein,
             ),
@@ -750,7 +845,8 @@ class _RingsCard extends StatelessWidget {
               size: size,
               progress: d.kcalProgress,
               value: fmtInt(d.macros.kcal),
-              sublabel: 'de ${fmtInt(d.kcalTarget)}',
+              sublabel:
+                  d.kcalTarget == null ? null : 'de ${fmtInt(d.kcalTarget!)}',
               label: 'kcal',
               color: AppColors.kcal,
             ),
@@ -783,6 +879,18 @@ class _RingsCard extends StatelessWidget {
               ),
           ],
         ),
+        if (d.proteinMin == null || d.kcalTarget == null || d.stepsGoal == null) ...[
+          const SizedBox(height: 8),
+          Text(
+              'Proteína: ${d.proteinMin == null ? d.proteinReference?.absenceLabel ?? 'Sin meta' : 'meta registrada'} · '
+              'kcal: ${d.kcalTarget == null ? d.kcalReference?.absenceLabel ?? 'Sin meta' : 'meta registrada'}'),
+          if (d.stepsGoal == null) Text('Pasos: ${d.stepsReference?.absenceLabel ?? 'Sin meta'}'),
+          TextButton(
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen())),
+            child: const Text('Definir metas'),
+          ),
+        ],
         if (d.roundsRecord != null) ...[
           const SizedBox(height: 12),
           Row(
@@ -824,8 +932,6 @@ class _SleepLine extends ConsumerWidget {
 
   final DateTime date;
 
-  static const _options = [6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0];
-
   Future<void> _set(WidgetRef ref, double hours) => ref.read(sleepRepositoryProvider).set(date, hours);
 
   @override
@@ -843,7 +949,7 @@ class _SleepLine extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                    'Anoche: ${fmtDec(hours)} h en cama${hours >= sleepGoalHours ? '' : ' · meta ${fmtInt(sleepGoalHours)} h'}',
+                    'Anoche: ${isSleepOption(hours) ? '${fmtDec(hours)} h' : formatSleepHours(hours)} en cama${hours >= sleepGoalHours ? '' : ' · meta ${fmtInt(sleepGoalHours)} h'}',
                     style: text.bodyMedium),
               ),
             ],
@@ -867,7 +973,14 @@ class _SleepLine extends ConsumerWidget {
             spacing: 6,
             runSpacing: 4,
             children: [
-              for (final h in _options) ActionChip(label: Text(fmtDec(h)), onPressed: () => _set(ref, h)),
+              for (final h in sleepOptions) ActionChip(label: Text(fmtDec(h)), onPressed: () => _set(ref, h)),
+              ActionChip(
+                label: const Text('Otro'),
+                onPressed: () async {
+                  final hours = await askSleepHours(context);
+                  if (hours != null) await _set(ref, hours);
+                },
+              ),
             ],
           ),
         ],
@@ -957,7 +1070,8 @@ class _StepsRing extends ConsumerWidget {
         size: size,
         progress: d.stepsProgress,
         value: d.stepsToday == null ? '—' : compactSteps(d.stepsToday!),
-        sublabel: d.stepsGoal == null ? 'sin meta' : 'de ${compactSteps(d.stepsGoal!)}',
+        sublabel: d.stepsGoal == null ? null
+            : 'de ${compactSteps(d.stepsGoal!)}',
         label: 'Pasos',
         color: AppColors.steps,
       ),
@@ -1444,6 +1558,25 @@ class _WalksLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final goal = dashboard.stepsGoal;
     if (goal == null) return const SizedBox.shrink();
+    // Recuperación primero (plan 009): sin cuenta de caminatas pendientes.
+    if (dashboard.coach?.recoveryFirst ?? false) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: Row(
+          children: [
+            const Icon(Icons.self_improvement, size: 18, color: AppColors.steps),
+            const SizedBox(width: 8),
+            Expanded(
+              // La acción compartida y la señal que la motiva (R2).
+              child: Text(
+                  '${dashboard.coach!.action ?? 'Pasos suaves, en llano.'} '
+                  'Por qué: ${dashboard.coach!.evidence.join('; ')}.',
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ),
+          ],
+        ),
+      );
+    }
     final left = walksLeft(dashboard.stepsToday ?? 0, goal);
     if (left == 0) return const SizedBox.shrink();
     return Padding(

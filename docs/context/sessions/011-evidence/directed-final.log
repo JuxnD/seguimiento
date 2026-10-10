@@ -1,0 +1,175 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart
+00:00 +0: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: una sola fecha apta no demuestra un cambio entre fechas
+00:00 +1: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: sólo un prefijo parcial no demuestra el denominador de Cindy
+00:00 +2: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: conteo extremo no acredita receta por overflow de entero
+00:00 +3: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: helper extraído conserva receta y export público del timer
+00:00 +4: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: referencias inválidas no producen coordenada ni defaults
+00:00 +5: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: cambio de referencia escala ambos perfiles; no cambia delta crudo
+00:00 +6: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: política documentada separa histórica de actual; sin política no caduca
+00:00 +7: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: inválidos, fechas desconocidas y bilateral mixto conservan payload
+00:00 +8: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: Cindy importada/estimada/cortada/30min/Tabata/dudas sigue observada
+00:00 +9: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: receta distinta/lastre/variante/partial desconocido no normaliza
+00:00 +10: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+00:00 +11: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+00:00 +12: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+00:00 +13: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+00:00 +14: C:/My Projects/seguimiento-011-radar/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+00:00 +15: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart
+00:00 +15: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: (setUpAll)
+00:00 +15: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: cero real frente a ausentes y callbacks sin escritura/rutas
+00:01 +16: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: dos ejes no rellenan huecos y sin refs mantiene crudo
+00:01 +17: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: SQLite→008→núcleo→UI conserva dudas/fecha/bilateral
+00:02 +18: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: touch canvas, teclado, semántica y mostrar inicio
+00:02 +19: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: renderer real360 texto1.0, >100 conserva crudo
+00:02 +20: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: renderer real360 texto1.6, >100 conserva crudo
+00:02 +21: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: renderer real360 texto2.0, >100 conserva crudo
+00:02 +22: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: widget muestra valor/ref común y tap evidencia sin rutas
+00:02 +23: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_test.dart: (tearDownAll)
+00:02 +23: loading C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart
+00:03 +23: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy completa con fracciones no inventa un segundo de circuito
+00:04 +24: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy completa con segundos enteros conserva sus tiempos
+00:04 +25: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy cortada mide 2:00 reales con fracciones y conserva la foto
+00:04 +26: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy sin inicio de trabajo no convierte el cap en tiempo hecho
+00:04 +27: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy conserva ventana medida distinta del cap sin normalizarla
+00:05 +28: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Tabata conserva su cálculo y dosis sin composición de Cindy
+00:05 +29: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: la foto de Cindy o Tabata vuelve igual tras pasar por JSON
+00:05 +30: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy de prueba: calentamiento y checklist a la vista; la normal no los muestra
+00:05 +31: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy retomada sigue con sus rondas y su reloj
+00:05 +32: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Cindy que terminó con la app cerrada pide la ronda a medias
+00:05 +33: C:/My Projects/seguimiento-011-radar/test/ui/v3_timers_test.dart: Tabata retomado sigue en el bloque en que iba
+00:05 +34: loading C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart
+00:06 +34: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: (setUpAll)
+00:06 +34: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: instalación nueva: base de 5.000 conocida desde hoy
+00:06 +35: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: guardar el perfil crea una vigencia sólo para lo que cambió
+00:06 +36: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: ProfileRepository.save pasa por la historia
+00:06 +37: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: activar el v3.1 deja sus metas con vigencia de plan
+00:06 +38: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: aceptar una propuesta rige desde mañana, una sola vez aunque se acepte dos veces
+00:06 +39: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: base migrada: pasado incierto, el mismo valor conocido desde la migración
+00:06 +40: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: referencias del radar: sin defaults, con vigencia, sin tocar el perfil
+00:06 +41: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: posponer guarda la fecha de revisión; rechazar persiste
+00:06 +42: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: kcal de fútbol: una vigencia futura se proyecta al llegar, también de vuelta a null
+00:06 +43: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: updateProfile no acepta una vigencia futura: para eso está scheduleGoal
+00:06 +44: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: referencia del radar: null o cifra finita mayor que 0
+00:06 +45: C:/My Projects/seguimiento-011-radar/test/data/goal_history_test.dart: (tearDownAll)
+00:06 +45: loading C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart
+00:07 +45: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: (setUpAll)
+00:07 +45: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: condiciones declaradas: medida ayunas/noayunas y peso antes/después fútbol
+00:07 +46: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: peso antes/después fútbol y momento desconocido son registros distintos
+00:07 +47: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: Cindy20 y30min separadas; warmup/cooldown no cambian ventana real20
+00:07 +48: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: rango en todas las consultas, una medida, límite SQL y última fecha
+00:07 +49: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: nutrición nullable y cierre coinciden con informe, observado0 sobrevive
+00:07 +50: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: firma real separa dosis/técnica; importada/estimada/cortada/Cindy no son marca
+00:07 +51: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: metas requieren vigencia, unidad, fuente y cifra finita
+00:07 +52: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: sin registro no es cero de proteína observado
+00:07 +53: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: formato y calidad no desaparecen bajo mismo nombre Circuito
+00:07 +54: C:/My Projects/seguimiento-011-radar/test/data/chart_evidence_test.dart: (tearDownAll)
+00:07 +54: loading C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart
+00:09 +54: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: (setUpAll)
+00:09 +54: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+00:14 +55: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial
+00:17 +56: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash
+00:19 +57: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: consumer advice cambia tras guardar editar y borrar sin reiniciar
+00:21 +58: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: legado1.20 conserva secuencia e indice sin agregar escalera; guion malformado se descarta
+00:22 +59: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+00:23 +60: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: (tearDownAll)
+00:23 +60: loading C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart
+00:24 +60: C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart: cuenta las repeticiones de cada ejercicio de la semana
+00:24 +61: C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart: compara cada ejercicio contra la semana anterior
+00:24 +62: C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart: suma pasos, kilómetros y el mejor día
+00:24 +63: C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart: el gasto suma entrenamiento, fútbol y caminar sin contar dos veces el partido
+00:24 +64: C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart: sin peso no inventa el gasto
+00:24 +65: C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart: tiempo activo: sesiones, movilidad y fútbol
+00:24 +66: C:/My Projects/seguimiento-011-radar/test/domain/period_summary_test.dart: un periodo vacío lo dice
+00:24 +67: loading C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart
+00:25 +67: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: (setUpAll)
+00:25 +67: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: registro antiguo fuera de ventanas90/60 se actualiza en rango activo
+00:25 +68: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: único cero cerrado tiene eje positivo; todas ausentes no dibujan cifra
+00:25 +69: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: selector explica dosis/carga/ventana20vs30 antes de escoger
+00:26 +70: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: barras: ausencia sin rod,0 observado, meta sólo en fecha documentada
+00:26 +71: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: SQLite→rango/tipo/tabla/evidencia y cierre reactivo a360 con texto1.6
+00:26 +72: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: X distingue un día de un mes, sin suavizado artificial
+00:26 +73: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: rango de informe filtra peso real, incluida una toma sola
+00:27 +74: C:/My Projects/seguimiento-011-radar/test/ui/progress_charts_test.dart: (tearDownAll)
+00:27 +74: loading C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart
+00:27 +74: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (setUpAll)
+00:27 +74: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: SQLite completo, corte y referencia común desde vigencia real
+00:27 +75: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: bilateral parcial, futuro e inválido no ocultan apta anterior
+00:27 +76: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: Cindy flags/ventana/receta y orden DDFFSS son observaciones
+00:28 +77: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: 300 sesiones por lotes equivalen a core completo sin perder inicio
+00:28 +78: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: ZIP restore SQLite y databaseGeneration releen referencias del radar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:153:70)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:164:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:153:70)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:164:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:28 +79: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: providers observan editar/borrar evidencia antigua y referencias sin invalidación manual
+00:29 +80: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (tearDownAll)
+00:29 +80: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+00:29 +80: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: (setUpAll)
+00:29 +80: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados
+00:31 +81: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: SQL→Tu progreso viewport inicial360 texto1.0 y detalle
+00:32 +82: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: SQL→Tu progreso viewport inicial360 texto1.6 y detalle
+00:32 +83: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: SQL→Tu progreso viewport inicial360 texto2.0 y detalle
+00:33 +84: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: dos ejes/sin referencia y pasado no cambia por decisión de hoy
+00:33 +85: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: Cindy cancelada conserva pendiente y no crea sesión nueva
+00:34 +86: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: pasos ausentes≠0 y adaptador proteína histórica por día
+00:34 +87: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: Cindy abre cronómetro real con checklist y cancelar no escribe SQLite
+00:35 +88: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: anillo proteína variable muestra días1/2 y kcal conserva promedio
+00:35 +89: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: Tu progreso conecta radar real incluso sin pruebas
+00:35 +90: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: (tearDownAll)
+00:35 +90: loading C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart
+00:36 +90: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: proteína130→160 distingue promedio140 de días1/2
+00:36 +91: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: null explícito de proteína/pasos no es un día fallido ni legado
+00:36 +92: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: kcal calendario real propia/heredada/ausente sin fallback cargado
+00:36 +93: All tests passed!

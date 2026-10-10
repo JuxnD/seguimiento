@@ -1,0 +1,55 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: condiciones declaradas: medida ayunas/noayunas y peso antes/después fútbol
+00:00 +1: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: peso antes/después fútbol y momento desconocido son registros distintos
+00:00 +2: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: Cindy20 y30min separadas; warmup/cooldown no cambian ventana real20
+00:00 +3: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: rango en todas las consultas, una medida, límite SQL y última fecha
+00:00 +4: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: nutrición nullable y cierre coinciden con informe, observado0 sobrevive
+00:00 +5: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: firma real separa dosis/técnica; importada/estimada/cortada/Cindy no son marca
+00:00 +6: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: metas requieren vigencia, unidad, fuente y cifra finita
+00:00 +7: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: sin registro no es cero de proteína observado
+00:00 +8: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: formato y calidad no desaparecen bajo mismo nombre Circuito
+00:00 +9: C:/My Projects/seguimiento-122-integracion/test/data/chart_evidence_test.dart: (tearDownAll)
+00:00 +9: loading C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart
+00:04 +9: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: (setUpAll)
+00:04 +9: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: registro antiguo fuera de ventanas90/60 se actualiza en rango activo
+00:05 +10: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: único cero cerrado tiene eje positivo; todas ausentes no dibujan cifra
+00:05 +11: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: selector explica dosis/carga/ventana20vs30 antes de escoger
+00:06 +12: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: barras: ausencia sin rod,0 observado, meta sólo en fecha documentada
+00:06 +13: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: SQLite→rango/tipo/tabla/evidencia y cierre reactivo a360 con texto1.6
+00:06 +14: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: X distingue un día de un mes, sin suavizado artificial
+00:06 +15: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: rango de informe filtra peso real, incluida una toma sola
+00:06 +16: C:/My Projects/seguimiento-122-integracion/test/ui/progress_charts_test.dart: (tearDownAll)
+00:06 +16: loading C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart
+00:07 +16: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha cuenta días seguidos con sesión
+00:07 +17: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha un día de entrenamiento sin sesión la corta
+00:07 +18: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha un día de descanso no la corta ni la suma
+00:07 +19: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha hoy sin entrenar todavía no rompe lo de ayer
+00:07 +20: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: racha sin sesiones la racha es cero
+00:07 +21: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: progreso hacia la meta se acota entre 0 y 1
+00:07 +22: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: récord hay que superar, no igualar
+00:07 +23: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: récord la primera sesión con rondas ya es récord
+00:07 +24: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: series para las gráficas suma lo del mismo día y ordena
+00:07 +25: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: series para las gráficas los días sin dato quedan en cero, sin inventar pendientes
+00:07 +26: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: series para las gráficas el máximo escala el eje sin dividir por cero
+00:07 +27: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre el récord manda sobre todo lo demás
+00:07 +28: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre subir de ronda respecto a la anterior se celebra con el dato
+00:07 +29: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre mismas rondas pero más rápido
+00:07 +30: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre una diferencia de 1 s no se vende como mejora
+00:07 +31: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre incompleta: registrada, sin culpa y con el dato
+00:07 +32: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre una sola ronda se dice en singular
+00:07 +33: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: mensaje de cierre sin comparación posible, igual cierra en positivo
+00:07 +34: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir sin medidas ni fecha acordada no hay cálculo
+00:07 +35: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir antes de la ventana faltan días
+00:07 +36: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir dentro de la ventana toca medir sin ir atrasado
+00:07 +37: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir pasada la ventana va atrasado
+00:07 +38: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir la fecha acordada manda mientras no se haya medido
+00:07 +39: C:/My Projects/seguimiento-122-integracion/test/domain/progress_test.dart: cuándo medir una fecha acordada ya cumplida se ignora
+00:07 +40: loading C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart
+00:08 +40: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (setUpAll)
+00:08 +40: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: SQLite marcas→duraciones65 sin doble conversión, trabajo vs vueltas
+00:08 +41: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: SQLite flags→política no aumenta mochila con fallo/12+3
+00:08 +42: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: fecha real releída, parcial bilateral y dudas no reemplazan referencia apta
+00:08 +43: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: historial técnico RIR4 no sustituye la última fuerza normal apta
+00:08 +44: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (tearDownAll)
+00:08 +44: All tests passed!

@@ -1,0 +1,85 @@
+{
+  "base": "d108fafa3aae364c273c30f38d06e17cf2807f72",
+  "draft019LiteralPreserved": true,
+  "draftSha256": "681a4c4cc8843edb5d28132eb2c2955dd7306adab244b2bab8e2cb294f067777",
+  "recipeLiteralMoved": true,
+  "sourceChecks": [
+    {
+      "path": "lib/domain/progress_metrics.dart",
+      "sourceGitOid": "ee18c79a6dc2fda40b8d2e390e86a05100727314",
+      "integratedGitOid": "ee18c79a6dc2fda40b8d2e390e86a05100727314",
+      "identical": true
+    },
+    {
+      "path": "lib/domain/personal_radar.dart",
+      "sourceGitOid": "504cdd28b0112d6c1281cee7bdf9cb1f96ff6902",
+      "integratedGitOid": "504cdd28b0112d6c1281cee7bdf9cb1f96ff6902",
+      "identical": true
+    },
+    {
+      "path": "lib/domain/cindy_protocol.dart",
+      "sourceGitOid": "ae7fab0af5b574156fdbdd7d76dc5bb489b28d6e",
+      "integratedGitOid": "ae7fab0af5b574156fdbdd7d76dc5bb489b28d6e",
+      "identical": true
+    },
+    {
+      "path": "lib/features/report/personal_radar_widget.dart",
+      "sourceGitOid": "04ca1f38bf2968ea17f16425bbd12877d92021d0",
+      "integratedGitOid": "04ca1f38bf2968ea17f16425bbd12877d92021d0",
+      "identical": true
+    },
+    {
+      "path": "lib/features/training/v3_timers.dart",
+      "sourceGitOid": "e02f36d73a96cb085f2a6502ea4bffbf33f3ae97",
+      "integratedGitOid": "dafb45c3cb91e3e2c12131bc33e31c3d283c4aa8",
+      "identical": false
+    },
+    {
+      "path": "test/domain/progress_metrics_test.dart",
+      "sourceGitOid": "db58854ae945f3f66ea2a67df238787696f52968",
+      "integratedGitOid": "db58854ae945f3f66ea2a67df238787696f52968",
+      "identical": true
+    },
+    {
+      "path": "test/ui/personal_radar_test.dart",
+      "sourceGitOid": "0833a7b0d73d6749cad51ebd14af88ba18c41ed2",
+      "integratedGitOid": "0833a7b0d73d6749cad51ebd14af88ba18c41ed2",
+      "identical": true
+    },
+    {
+      "path": "test/support/radar_fixture.dart",
+      "sourceGitOid": "421bced3c5fbba4532a35bafb7fa59ca41ddaf3e",
+      "integratedGitOid": "421bced3c5fbba4532a35bafb7fa59ca41ddaf3e",
+      "identical": true
+    },
+    {
+      "path": "lib/domain/fitness_test.dart",
+      "sourceGitOid": "69600324ed4944cad240a3ec8ab88917fb858a44",
+      "integratedGitOid": "69600324ed4944cad240a3ec8ab88917fb858a44",
+      "identical": true
+    },
+    {
+      "path": "lib/domain/progress_evidence.dart",
+      "sourceGitOid": "237b5d8a8c2bf4a0949242a0aaddaade80d06437",
+      "integratedGitOid": "237b5d8a8c2bf4a0949242a0aaddaade80d06437",
+      "identical": true
+    },
+    {
+      "path": "lib/domain/session_math.dart",
+      "sourceGitOid": "c77817b5969f17bb20795ad2db7872bded165464",
+      "integratedGitOid": "c77817b5969f17bb20795ad2db7872bded165464",
+      "identical": true
+    }
+  ],
+  "expectedTimerCompositionAndChecklistDifference": [
+    "lib/features/training/v3_timers.dart"
+  ],
+  "protectedFilesIdentical": [
+    "lib/data/active_session_store.dart",
+    "test/ui/guided_warmup_test.dart",
+    "lib/features/training/training_screen.dart",
+    "lib/data/database.dart",
+    "pubspec.yaml",
+    "pubspec.lock"
+  ]
+}

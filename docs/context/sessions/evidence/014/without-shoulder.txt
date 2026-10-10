@@ -1,0 +1,13 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart
+00:00 +0: calentamiento conserva apoyos y brazos rectos en 61 muestras
+00:00 +0 -1: calentamiento conserva apoyos y brazos rectos en 61 muestras [E]
+  Expected: a value less than <0.02>
+    Actual: <0.03999999999999204>
+     Which: is not a value less than <0.02>
+  Retracciones escapulares/1: apoyo fijo
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_supports_test.dart 117:13      main.<fn>
+
+00:00 +0 -1: Some tests failed.

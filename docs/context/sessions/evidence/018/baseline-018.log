@@ -1,0 +1,45 @@
+00:00 +0: loading C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart
+00:00 +0: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: el lunes trae el peldaño del dragon flag y el jueves el del V-up, antes de lo opcional
+00:00 +1: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: peldaño 1 desde el lunes del v3.1; sube tras 2 sesiones limpias y 2 semanas
+00:00 +2: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: molestia lumbar: baja un peldaño y esa sesión no cuenta como limpia
+00:00 +3: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: día de test: el lunes de la semana 1 en Hoy, y al guardarlo cuenta como entrenado
+00:00 +4: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: el informe no toma el Tabata por aguantes; sí la vela y el hollow
+00:00 +5: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: martes del 6 oct: el v3.1 nuevo ya lo trae; uno activado antes se corrige
+00:00 +6: C:/My Projects/seguimiento-018-radar/test/data/ladders_and_tests_data_test.dart: (tearDownAll)
+00:00 +6: loading C:/My Projects/seguimiento-018-radar/test/domain/progress_evidence_test.dart
+00:01 +6: C:/My Projects/seguimiento-018-radar/test/domain/progress_evidence_test.dart: duraciones una vez, protocolo y base explícitos
+00:01 +7: C:/My Projects/seguimiento-018-radar/test/domain/progress_evidence_test.dart: mantiene política RIR ausente, bloquea fallo, partición y mezcla
+00:01 +8: C:/My Projects/seguimiento-018-radar/test/domain/progress_evidence_test.dart: observado visible, apto exige fecha, ambos lados y limpio; T3 parcial no oculta T2
+00:01 +9: loading C:/My Projects/seguimiento-018-radar/test/data/progress_evidence_test.dart
+00:02 +9: C:/My Projects/seguimiento-018-radar/test/data/progress_evidence_test.dart: (setUpAll)
+00:02 +9: C:/My Projects/seguimiento-018-radar/test/data/progress_evidence_test.dart: SQLite marcas→duraciones65 sin doble conversión, trabajo vs vueltas
+00:02 +10: C:/My Projects/seguimiento-018-radar/test/data/progress_evidence_test.dart: SQLite flags→política no aumenta mochila con fallo/12+3
+00:02 +11: C:/My Projects/seguimiento-018-radar/test/data/progress_evidence_test.dart: fecha real releída, parcial bilateral y dudas no reemplazan referencia apta
+00:02 +12: C:/My Projects/seguimiento-018-radar/test/data/progress_evidence_test.dart: historial técnico RIR4 no sustituye la última fuerza normal apta
+00:02 +13: C:/My Projects/seguimiento-018-radar/test/data/progress_evidence_test.dart: (tearDownAll)
+00:02 +13: loading C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart
+00:07 +13: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: periodización (§18.6) semanas y fases desde el lunes de inicio
+00:07 +14: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: periodización (§18.6) fechas clave: mediciones 6 nov y 4 dic, test 18 dic
+00:07 +15: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: periodización (§18.6) volumen reducido: semanas 4 y 8, y la 10 hasta el miércoles
+00:07 +16: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: periodización (§18.6) miércoles: Cindy impares, Tabata pares; la 4 y la 10 Cindy, la 8 por tiempo
+00:07 +17: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: periodización (§18.6) burpees EMOM por fase, sin burpees en descarga ni en la semana del test (§18.10)
+00:08 +18: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: periodización (§18.6) el v3 arranca en lunes
+00:08 +19: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: semana tipo (§18.2) tipos de día y esquema
+00:08 +20: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: semana tipo (§18.2) jueves: curl y extensión van en superserie y el cronómetro los alterna
+00:08 +21: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: semana tipo (§18.2) viernes: 6 rondas de circuito y después L-sit y toes-to-bar
+00:08 +22: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: semana tipo (§18.2) descarga: una serie menos en los ejercicios de series; el circuito no cambia
+00:08 +23: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: cronómetros Tabata: 4 × 8 de 20/10 con 1 min entre bloques = 16:10
+00:08 +24: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: cronómetros Cindy: la ronda a medias se reparte en orden
+00:08 +25: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: cronómetros EMOM: un minuto fallado baja al escalón anterior
+00:08 +26: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: PlanExerciseDraft.copyWith conserva la superserie
+00:08 +27: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: variantes: la cadena de progresión se parte en escalones (§18.4)
+00:08 +28: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: el informe nombra el formato de resistencia y la variante de cada serie
+00:08 +29: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: los ejercicios por lado salen por serie con cada pierna (§16.6.2)
+00:08 +30: C:/My Projects/seguimiento-018-radar/test/domain/plan_v3_test.dart: una Cindy cortada dice lo que duró y que no es marca
+00:08 +31: loading C:/My Projects/seguimiento-018-radar/test/ui/v3_timers_test.dart
+00:08 +31: C:/My Projects/seguimiento-018-radar/test/ui/v3_timers_test.dart: la foto de Cindy o Tabata vuelve igual tras pasar por JSON
+00:08 +32: C:/My Projects/seguimiento-018-radar/test/ui/v3_timers_test.dart: Cindy retomada sigue con sus rondas y su reloj
+00:09 +33: C:/My Projects/seguimiento-018-radar/test/ui/v3_timers_test.dart: Cindy que terminó con la app cerrada pide la ronda a medias
+00:09 +34: C:/My Projects/seguimiento-018-radar/test/ui/v3_timers_test.dart: Tabata retomado sigue en el bloque en que iba
+00:09 +35: All tests passed!

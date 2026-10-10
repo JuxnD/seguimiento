@@ -17,6 +17,7 @@ import 'package:seguimiento/domain/nutrition.dart';
 import 'package:seguimiento/domain/reminders.dart';
 
 import '../support/sqlite_host.dart';
+import '../support/ready_profile.dart';
 
 /// Recibe lo programado sin tocar el sistema de notificaciones.
 class _FakeSink implements NotificationSink {
@@ -39,7 +40,9 @@ void main() {
   final lunes = DateTime(2026, 9, 28, 9);
 
   setUp(() async {
-    db = openInMemoryDatabase();
+    // Estas metas son conocidas antes del lunes del escenario; no se usan
+    // objetivos actuales para clasificar una fecha anterior a su vigencia.
+    db = await asExistingUser(openInMemoryDatabase(), since: DateTime(2026, 9, 1));
     final exercises = ExerciseRepository(db);
     final plan = PlanRepository(db, exercises);
     nutrition = NutritionRepository(db);

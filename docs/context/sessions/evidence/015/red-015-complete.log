@@ -1,0 +1,78 @@
+00:00 +0: loading C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart
+00:00 +0: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: sin registro no es cero de proteína observado
+00:00 +0 -1: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: sin registro no es cero de proteína observado [E]
+  Expected: [2]
+    Actual: MappedListIterable<SeriesPoint, int>:[1, 2, 3]
+     Which: at location [0] is <1> instead of <2>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\chart_evidence_test.dart 24:5             main.<fn>
+
+00:00 +0 -1: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: formato y calidad no desaparecen bajo mismo nombre Circuito
+00:00 +0 -2: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: formato y calidad no desaparecen bajo mismo nombre Circuito [E]
+  Expected: not 'Circuito'
+    Actual: 'Circuito'
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\chart_evidence_test.dart 37:5             main.<fn>
+
+00:00 +0 -2: C:/My Projects/seguimiento-015-graficas/test/data/chart_evidence_test.dart: (tearDownAll)
+00:00 +0 -2: loading C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart
+00:11 +0 -2: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: (setUpAll)
+00:11 +0 -2: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: X distingue un día de un mes, sin suavizado artificial
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: [0, 1, 31]
+  Actual: MappedListIterable<FlSpot, double>:[0.0, 1.0, 2.0]
+   Which: at location [2] is <2.0> instead of <31>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart:31:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart line 31
+The test description was:
+  X distingue un día de un mes, sin suavizado artificial
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:13 +0 -3: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: X distingue un día de un mes, sin suavizado artificial [E]
+  Test failed. See exception logs above.
+  The test description was: X distingue un día de un mes, sin suavizado artificial
+
+00:13 +0 -3: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: rango de informe filtra peso real, incluida una toma sola
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: [9]
+  Actual: MappedListIterable<SeriesPoint, int>:[1, 1, 9]
+   Which: at location [0] is <1> instead of <9>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart:60:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart line 60
+The test description was:
+  rango de informe filtra peso real, incluida una toma sola
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:14 +0 -4: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: rango de informe filtra peso real, incluida una toma sola [E]
+  Test failed. See exception logs above.
+  The test description was: rango de informe filtra peso real, incluida una toma sola
+
+00:14 +0 -4: C:/My Projects/seguimiento-015-graficas/test/ui/progress_charts_test.dart: (tearDownAll)
+00:14 +0 -4: Some tests failed.

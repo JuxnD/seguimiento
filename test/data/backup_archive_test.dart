@@ -15,6 +15,7 @@ import 'package:seguimiento/data/repositories/body_repository.dart';
 import 'package:seguimiento/data/repositories/ai_conversation_repository.dart';
 import 'package:seguimiento/domain/ai_context.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 void main() {
@@ -40,6 +41,9 @@ void main() {
     b = DatabaseHost(File('${dirB.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
     archiveA = BackupArchive(host: a, documents: dirA);
     archiveB = BackupArchive(host: b, documents: dirB);
+    // A y B ya usan la app: alta pasada (plan 022).
+    await asExistingUser(a.db, goals: false);
+    await asExistingUser(b.db, goals: false);
     await BodyRepository(a.db).addWeight(DateTime(2026, 10, 1), 72);
     await BodyRepository(b.db).addWeight(DateTime(2026, 10, 2), 73);
     for (final e in photos.entries) {
@@ -160,7 +164,7 @@ void main() {
     expect(File('${b.file.parent.path}/fotos/vieja.jpg').readAsBytesSync(), [99]);
   });
 
-  test('el ZIP lleva el snapshot y la base 17 restaurada migra a 20', () async {
+  test('el ZIP lleva el snapshot y la base 17 restaurada migra a 23', () async {
     final repository = AiConversationRepository(a.db);
     final snapshot = AiConversationSnapshot(
       kind: AiConversationKind.reportQuestion,
@@ -202,7 +206,7 @@ void main() {
             .customSelect('pragma user_version')
             .map((row) => row.data.values.first as int)
             .getSingle(),
-        20);
+        23);
     expect(await AiConversationRepository(b.db).count(), 0);
     expect(
         (await BodyRepository(b.db).watchWeights().first).map((row) => row.kg),

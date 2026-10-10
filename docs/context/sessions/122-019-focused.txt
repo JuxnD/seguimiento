@@ -1,0 +1,77 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy completa con fracciones no inventa un segundo de circuito
+00:00 +1: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy completa con segundos enteros conserva sus tiempos
+00:00 +2: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy cortada mide 2:00 reales con fracciones y conserva la foto
+00:01 +3: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy sin inicio de trabajo no convierte el cap en tiempo hecho
+00:01 +4: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy conserva ventana medida distinta del cap sin normalizarla
+00:01 +5: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Tabata conserva su cálculo y dosis sin composición de Cindy
+00:01 +6: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: la foto de Cindy o Tabata vuelve igual tras pasar por JSON
+00:01 +7: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy de prueba: calentamiento y checklist a la vista; la normal no los muestra
+00:02 +8: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy retomada sigue con sus rondas y su reloj
+00:02 +9: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Cindy que terminó con la app cerrada pide la ronda a medias
+00:02 +10: C:/My Projects/seguimiento-122-integracion/test/ui/v3_timers_test.dart: Tabata retomado sigue en el bloque en que iba
+00:02 +11: loading C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart
+00:02 +11: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) semanas y fases desde el lunes de inicio
+00:02 +12: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) fechas clave: mediciones 6 nov y 4 dic, test 18 dic
+00:02 +13: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) volumen reducido: semanas 4 y 8, y la 10 hasta el miércoles
+00:02 +14: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) miércoles: Cindy impares, Tabata pares; la 4 y la 10 Cindy, la 8 por tiempo
+00:02 +15: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) burpees EMOM por fase, sin burpees en descarga ni en la semana del test (§18.10)
+00:03 +16: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: periodización (§18.6) el v3 arranca en lunes
+00:03 +17: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) tipos de día y esquema
+00:03 +18: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) jueves: curl y extensión van en superserie y el cronómetro los alterna
+00:03 +19: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) viernes: 6 rondas de circuito y después L-sit y toes-to-bar
+00:03 +20: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: semana tipo (§18.2) descarga: una serie menos en los ejercicios de series; el circuito no cambia
+00:03 +21: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Tabata: 4 × 8 de 20/10 con 1 min entre bloques = 16:10
+00:03 +22: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros Cindy: la ronda a medias se reparte en orden
+00:03 +23: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: cronómetros EMOM: un minuto fallado baja al escalón anterior
+00:03 +24: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: PlanExerciseDraft.copyWith conserva la superserie
+00:03 +25: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: variantes: la cadena de progresión se parte en escalones (§18.4)
+00:03 +26: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: el informe nombra el formato de resistencia y la variante de cada serie
+00:03 +27: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: los ejercicios por lado salen por serie con cada pierna (§16.6.2)
+00:03 +28: C:/My Projects/seguimiento-122-integracion/test/domain/plan_v3_test.dart: una Cindy cortada dice lo que duró y que no es marca
+00:03 +29: loading C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart
+00:03 +29: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio las semanas van de lunes a domingo; la 1 empieza el lunes del inicio (§16.8)
+00:03 +30: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: semana anclada al inicio fechas previas al inicio dan semana ≤ 0 sin error
+00:03 +31: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: duraciones parse y formato
+00:03 +32: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión circuito neto = total − cal − enf, nunca negativo
+00:03 +33: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión estimación de rondas por tiempo
+00:03 +34: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: sesión vueltas del contador
+00:03 +35: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades macros por unidad y por 100 g
+00:03 +36: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: nutrición y unidades pulgadas se guardan en cm
+00:03 +37: C:/My Projects/seguimiento-122-integracion/test/domain/domain_test.dart: formato es-CO miles y decimales
+00:03 +38: loading C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart
+00:04 +38: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: (setUpAll)
+00:04 +38: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: calentamiento guiado: pasos con su dosis, reloj por paso y lo marcado queda anotado
+00:06 +39: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: saltar el calentamiento queda registrado y no pregunta
+00:06 +40: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: molestia en el registro: aviso visible y los mismos pasos
+00:06 +41: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:282:39)
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart:262:16)
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#9      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:06 +42: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: foto vieja sin calentamiento guiado: nada marcado, no se rompe
+00:06 +43: C:/My Projects/seguimiento-122-integracion/test/ui/guided_warmup_test.dart: (tearDownAll)
+00:06 +43: loading C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart
+00:07 +43: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+00:07 +44: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+00:07 +45: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+00:07 +46: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+00:07 +47: loading C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart
+00:08 +47: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: sin archivo no hay sesión
+00:08 +48: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+00:08 +49: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: clear después de save no deja nada
+00:08 +50: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: un archivo dañado se ignora
+00:08 +51: All tests passed!

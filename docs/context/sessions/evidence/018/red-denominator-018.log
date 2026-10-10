@@ -1,0 +1,11 @@
+00:00 +0: loading C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart
+00:00 +0: sólo un prefijo parcial no demuestra el denominador de Cindy
+00:00 +0 -1: sólo un prefijo parcial no demuestra el denominador de Cindy [E]
+  Expected: null
+    Actual: <1.0>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 18:5         main.<fn>
+
+00:00 +0 -1: Some tests failed.

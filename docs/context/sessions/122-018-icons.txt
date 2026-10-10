@@ -1,0 +1,1 @@
+VALIDATED_RESOURCE_INPUTS :25nativePNGs,5sourcePNGs;alpha,safezone,resource names OK

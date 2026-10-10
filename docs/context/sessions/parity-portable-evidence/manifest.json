@@ -1,0 +1,53 @@
+{
+  "base": "604af8257751ecab1cf477a6794d53ced2274925",
+  "host": "Windows",
+  "sdk": "Flutter3.22.0/Dart3.4",
+  "scope": "test-only same-host exact legacy coordinates",
+  "oldReference": "929f2897c73a86760cc73ce228a89f3aaa3789a8",
+  "figures": 73,
+  "samplesPerFigure": 61,
+  "logs": {
+    "parity-windows-control.log": {
+      "rawSha256": "931a15b39bc62c812f39e8e5cbbbe6fb373c12afb85a4ad0c672bac000a41189",
+      "rawBytes": 222,
+      "gzip": "parity-windows-control.log.gz",
+      "gzipSha256": "c90ca864c9bf9301c47442afc8836ccf8f276e1a7e34643279e6fc23b34521a9"
+    },
+    "parity-portable.log": {
+      "rawSha256": "931a15b39bc62c812f39e8e5cbbbe6fb373c12afb85a4ad0c672bac000a41189",
+      "rawBytes": 222,
+      "gzip": "parity-portable.log.gz",
+      "gzipSha256": "c90ca864c9bf9301c47442afc8836ccf8f276e1a7e34643279e6fc23b34521a9"
+    },
+    "parity-analyze.log": {
+      "rawSha256": "2ec50103fee61a58ad9f3489daa22c6f067e6567fc95eb0682b6bee6c5d1198e",
+      "rawBytes": 99,
+      "gzip": "parity-analyze.log.gz",
+      "gzipSha256": "fa7c9228226514b719d07d429d45bbffe948e63680f3946673d09ca1e720ed1a"
+    },
+    "parity-negative.log": {
+      "rawSha256": "c7b94a654cab63c2cb10f6c78614d03e8df23b487f5f6ab2dd5e62b3a8cb6551",
+      "rawBytes": 2871,
+      "gzip": "parity-negative.log.gz",
+      "gzipSha256": "432e00ebf8ee2f2a8672f7bc6e17820d97d965a0ea763955b4b25983c6457776"
+    },
+    "123-ci-cancelled.txt": {
+      "rawSha256": "f4b5a17fb54d93f05629a1afb2b1f3d202e137ee92d81d9851e1feb414d49643",
+      "rawBytes": 150144,
+      "gzip": "123-ci-cancelled.txt.gz",
+      "gzipSha256": "98b9df705abf10c53302ecfa9eb0793cbe62ba9462d22fd2146da8bfc0c59e7c",
+      "source": "008 downloaded CI38089569310; read-only reused"
+    }
+  },
+  "oldGoldenSha256": "72afd85bd6a1070ba588ce995f4beb980b73885ca9f2e628b2d5966b7599dd76",
+  "productionChanged": false,
+  "sql024Probe": "NOT_EXECUTED",
+  "testSha256": "28c7486d6acaf0737682617070240cfe6c4cbcd7b9b8e9f117e68731e3f599bc",
+  "negativeControl": {
+    "mutation": "test-only actual body X +1",
+    "exit": 1,
+    "assertion": "coordenadas 3D exactas",
+    "restoredByteExact": true
+  },
+  "sharedSearchGitBlob": "03a2e19b18e50fd5b354512454bea895c6fa7efc"
+}

@@ -112,3 +112,26 @@ APK público firmado e instalado sobre1.20 en QA sin pérdida de231registros
 originales; reanudación verificada tras reinicio.
 [Recibo final](context/sessions/2026-10-07-handoff-publicacion-121.md).
 Los nuevos apartados del handoff listados arriba siguen pendientes.
+
+## Candidata1.22 — ilustraciones y acompañamiento (9oct)
+
+En construcción local:73entradas ilustradas y biblioteca consultable, variantes,
+orientación/apoyos y movilidad en visor compartido. [Contrato y revisión](design/ilustraciones-renovacion.md).
+La publicada sigue1.21; no se publicó1.22 ni se actualizó teléfono del owner.
+
+Se corrigen racha truncada a7, corte después de sesión moderada, fecha de la
+racha y texto48h/viernes sin estado real; consejo de metas exige3pesajes por
+semana y abdomen reciente/comparable. Nueva base5000 entre semana; perfil
+existente conserva su valor hasta seleccionar y guardar5.000 en Ajustes.
+La cifra7.500 en el handoff anterior queda como referencia histórica superada
+por el pedido9oct, no como objetivo obligatorio de esta fase.
+
+Pendiente de implementación, petición explícita del owner: metas adaptables
+con vigencia/historial, revisión de recuperación/cansancio/RPE/sueño/molestias,
+propuestas semanales revisables y no aumentar pasos por días sin registros.
+[Plan007 y matriz sintética](../plans/007-progreso-recuperacion-metas.md).
+Una sesión RPE10/30min da300unidades y queda bajo umbral600: la política actual
+no modela por sí sola agotamiento. Definir/revisar esa política con registros
+válidos y demostrar cada cambio en semanas ficticias antes de automatizarlo.
+Informes históricos deben comparar contra meta vigente de entonces, no la
+actual. No declarar adaptación completa por corregir el contador.

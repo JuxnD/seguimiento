@@ -33,7 +33,7 @@ class UpdatesCard extends ConsumerWidget {
           data: (result) {
             if (result.error != null) return Text(result.error!);
             final release = result.release;
-            if (release == null) return const Text('Estás en la última versión publicada.');
+            if (release == null) return const Text('No hay una actualización más nueva disponible.');
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

@@ -1,0 +1,89 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart
+00:00 +0: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +3: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +4: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +5: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +6: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +7: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +8: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +9: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +10: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +11: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +12: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +13: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:00 +14: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+A SemanticsHandle was active at the end of the test.
+All SemanticsHandle instances must be disposed by calling dispose() on the SemanticsHandle.
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester._verifySemanticsHandlesWereDisposed (package:flutter_test/src/widget_tester.dart:1072:7)
+#1      WidgetTester._endOfTestVerifications (package:flutter_test/src/widget_tester.dart:1063:5)
+#2      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1029:22)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  CTA completa y accesible en360px texto1.6
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +14 -1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6 [E]
+  Test failed. See exception logs above.
+  The test description was: CTA completa y accesible en360px texto1.6
+
+00:00 +14 -1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+A SemanticsHandle was active at the end of the test.
+All SemanticsHandle instances must be disposed by calling dispose() on the SemanticsHandle.
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester._verifySemanticsHandlesWereDisposed (package:flutter_test/src/widget_tester.dart:1072:7)
+#1      WidgetTester._endOfTestVerifications (package:flutter_test/src/widget_tester.dart:1063:5)
+#2      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1029:22)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  CTA completa y accesible en360px texto2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +14 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: CTA completa y accesible en360px texto2.0
+
+00:01 +14 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:01 +15 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:01 +16 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:01 +17 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:01 +18 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:01 +19 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:07 +20 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: datos los tres ejercicios de la iteración, con inicio, medio y final
+00:07 +21 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: datos los momentos clave reproducen los apoyos del generador
+00:07 +22 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación lerpAngle va por el camino corto
+00:07 +23 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación en los extremos coincide con los momentos clave
+00:07 +24 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación a mitad de camino los segmentos conservan su largo
+00:07 +25 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación las manos no se sueltan de la barra al animar la dominada
+00:07 +26 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación en el nórdico la cadera gira alrededor de las rodillas, que no se mueven
+00:07 +27 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación nada atraviesa el suelo en ningún punto del recorrido
+00:07 +28 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación loopProgress va y vuelve con pausas en cada momento
+00:07 +29 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D el lado cercano va a +z y el lejano a -z; las manos al ancho del agarre
+00:07 +30 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D las extremidades conservan su largo en 3D y los codos salen hacia afuera
+00:07 +31 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D ikJoint respeta largos y sale hacia el polo
+00:07 +32 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D la cara flexora del muslo arrodillado mira hacia atrás (isquios)
+00:07 +33 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D en el pino el pecho y la cara miran a la pared
+00:07 +34 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: cámara el centro cae en el centro de la pantalla y lo cercano se ve más grande
+00:07 +35 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: cámara girar 90° pone el eje x de frente a la cámara
+00:07 +36 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: cámara inclinar mira desde arriba: se ve el suelo y la profundidad horizontal no cambia con la altura
+00:07 +37 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: orden de pintado de lejos a cerca, y los empates en el orden de llegada
+00:07 +38 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: orden de pintado de perfil, el brazo cercano se pinta después del torso y el lejano antes
+00:07 +39 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:09 +40 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica con figura 3D: tres momentos grandes que se pasan de lado
+00:09 +41 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica "Ver movimiento" anima en el mismo cuadro y vuelve a los momentos
+00:09 +42 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica tocar un momento lo abre en grande; arrastrar gira y se vuelve de perfil
+00:10 +43 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica ejercicio personalizado sin ilustración declara la ausencia
+00:10 +44 -2: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: el giro máximo es simétrico y la vista inicial cabe en él
+00:10 +45 -2: Some tests failed.

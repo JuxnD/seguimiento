@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/goal_history.dart';
+import '../settings/settings_screen.dart';
 
 import '../../app/providers.dart';
 import '../../data/database.dart';
@@ -38,6 +40,7 @@ class MealFormScreen extends ConsumerStatefulWidget {
 class _MealFormScreenState extends ConsumerState<MealFormScreen> {
   late final MealDraft d = widget.draft;
   late final _notes = TextEditingController(text: d.notes ?? '');
+  final _rememberEstimates = <MealItemDraft>{};
 
   @override
   void dispose() {
@@ -83,7 +86,13 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
                 widget.textScreenBuilder?.call(foods) ??
                 MealTextScreen(foods: foods)));
     if (result != null && mounted && result.isNotEmpty) {
-      setState(() => d.items.addAll(result));
+      setState(() {
+        d.items.addAll(result);
+        if (result is MealTextSelection) {
+          _notes.text = [_notes.text.trim(), result.notes].where((s) => s.isNotEmpty).join('\n\n');
+          _rememberEstimates.addAll(result.remember);
+        }
+      });
     }
   }
 
@@ -131,9 +140,26 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
           builder: (_) => _FreeItemDialog(initial: item, suggestions: foods));
       // Editing an existing free/photo/AI estimate changes this draft only.
       // It must not rewrite a same-named catalog food or upgrade its source.
-      if (entry != null) updated = entry.toDraft();
+      if (entry != null) {
+        updated = entry.toDraft();
+        // A text estimate may be measured in g/ml or another explicit unit.
+        // The free editor's multiplier applies to that measured reference;
+        // it never silently converts 250g into one generic portion.
+        if (item.quantity != null && item.quantityUnit != null &&
+            item.quantityUnit != 'porción') {
+          updated.quantity = item.quantity! * entry.multiplier;
+          updated.quantityUnit = item.quantityUnit;
+        }
+      }
     }
-    if (updated != null) setState(() => d.items[index] = updated!);
+    if (updated != null) {
+      setState(() {
+        if (_rememberEstimates.remove(item)) {
+          _rememberEstimates.add(updated!);
+        }
+        d.items[index] = updated!;
+      });
+    }
   }
 
   /// Guarda los alimentos del catálogo de esta comida como combo de un toque.
@@ -203,8 +229,9 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
               ListTile(
                 leading: const Icon(Icons.bolt),
                 title: Text(t.name),
-                subtitle: Text(
-                    '${fmtInt(t.macros.kcal)} kcal · P ${fmtInt(t.macros.protein)} g'),
+                subtitle: Text(t.impossibleQuantity == null
+                    ? '${fmtInt(t.macros.kcal)} kcal · P ${fmtInt(t.macros.protein)} g'
+                    : 'Revisa en Comidas → Atajos: ${t.impossibleQuantity}'),
                 onTap: () => Navigator.pop(context, t),
               ),
           ],
@@ -240,6 +267,9 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     FoodRow? replacing;
     var name = e.label;
     if (existing != null) {
+      // Solo un alimento que ya va por porción admite cifras de una porción:
+      // cambiarle la base a uno por 100 g o por unidad descuadraba sus combos.
+      final updatable = canUpdateAsPortion(existing);
       final choice = await showDialog<String>(
         context: context,
         builder: (c) => AlertDialog(
@@ -247,17 +277,22 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
           content: Text('Guardado: ${_macroLine(existing.portionMacros)} '
               '(${fmtDec(existing.defaultQuantity)} ${existing.unitLabel}).\n'
               'Ahora: ${_macroLine(e.perPortion)} (1 porción).\n\n'
-              '¿Actualizo las cifras guardadas o lo guardo como otro alimento?'),
+              '${updatable ? '¿Actualizo las cifras guardadas o lo guardo como otro alimento?' : 'El guardado va por ${existing.unitLabel}, no por porción; sus cifras se cambian en el catálogo. ¿Lo registro solo esta vez o lo guardo como otro alimento?'}'),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(c, 'once'),
                 child: const Text('Solo esta vez')),
-            TextButton(
-                onPressed: () => Navigator.pop(c, 'new'),
-                child: const Text('Guardar como nuevo')),
-            FilledButton(
-                onPressed: () => Navigator.pop(c, 'update'),
-                child: const Text('Actualizar')),
+            if (updatable) ...[
+              TextButton(
+                  onPressed: () => Navigator.pop(c, 'new'),
+                  child: const Text('Guardar como nuevo')),
+              FilledButton(
+                  onPressed: () => Navigator.pop(c, 'update'),
+                  child: const Text('Actualizar')),
+            ] else
+              FilledButton(
+                  onPressed: () => Navigator.pop(c, 'new'),
+                  child: const Text('Guardar como nuevo')),
           ],
         ),
       );
@@ -317,7 +352,10 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
         );
         if (choice == null || !mounted) return;
         if (choice == 'fusionar') {
-          final ok = await guarded(context, () => repo.mergeInto(other.id, d),
+          final ok = await guarded(context, () => repo.db.transaction(() async {
+            await repo.mergeInto(other.id, d);
+            await _rememberReviewed(repo);
+          }),
               ok: 'Comidas fusionadas');
           if (ok && mounted) Navigator.pop(context, true);
           return;
@@ -325,8 +363,17 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       }
     }
     if (!mounted) return;
-    final ok = await guarded(context, () => repo.saveMeal(d));
+    final ok = await guarded(context, () => repo.db.transaction(() async {
+      await repo.saveMeal(d);
+      await _rememberReviewed(repo);
+    }));
     if (ok && mounted) Navigator.pop(context, true);
+  }
+
+  Future<void> _rememberReviewed(NutritionRepository repo) async {
+    for (final item in _rememberEstimates.where(d.items.contains)) {
+      await repo.rememberReviewedEstimate(item);
+    }
   }
 
   /// Guarda los cambios del combo (nombre, franja y cantidades).
@@ -868,13 +915,18 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
               ],
             ),
             const SizedBox(height: 12),
+            if (widget.initial?.quantity != null &&
+                widget.initial?.quantityUnit != null &&
+                widget.initial?.quantityUnit != 'porción')
+              Text('Referencia: ${widget.initial!.quantityLabel}. ×1 conserva esa cantidad; los multiplicadores la escalan sin cambiar la unidad.'),
             _PortionChips(
                 selected: _mult, onSelected: (m) => setState(() => _mult = m)),
             const SizedBox(height: 8),
             Text(
                 'Total: ${fmtInt(total.kcal)} kcal · P ${fmtDec(total.protein)} g',
                 style: text.bodyMedium),
-            Text('Se guarda en el catálogo para la próxima vez.',
+            Text(widget.initial == null ? 'Se guarda en el catálogo para la próxima vez.' :
+                'Solo cambia este borrador; no sobrescribe tu catálogo.',
                 style: text.bodySmall),
           ],
         ),
@@ -978,29 +1030,33 @@ class _DayTotals extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final meals =
         ref.watch(mealsForDayProvider(dayKey(draft.date))).value ?? const [];
-    final profile = ref.watch(profileProvider).value;
+    final history = ref.watch(goalHistoryProvider).valueOrNull;
     final others = Macros.sum(
         meals.where((m) => m.meal.id != draft.id).map((m) => m.macros));
     final day = others + draft.macros;
-    final kcalTarget = dailyKcalTarget(
-        day: draft.date,
-        weekdayTarget: profile?.kcalTarget ?? 2400,
-        footballTarget: profile?.kcalTargetFootball);
-    final proteinMin = profile?.proteinMin ?? 130;
+    final kcal = history == null
+        ? const GoalAt(null, known: false)
+        : kcalGoalReferenceOn(history, draft.date);
+    final protein = history == null
+        ? const GoalAt(null, known: false)
+        : goalReferenceOn(history, GoalMetric.proteinaMin, draft.date);
     final text = Theme.of(context).textTheme;
-    String left(double have, num goal, String unit) {
-      final missing = goal - have;
+    String left(double have, GoalAt goal, String unit) {
+      if (!goal.comparable) return goal.absenceLabel;
+      final missing = goal.value! - have;
       return missing <= 0 ? 'meta cumplida' : 'faltan ${fmtInt(missing)} $unit';
     }
 
     return AppCard(
       title: 'El día con esta comida',
       children: [
-        Text('${fmtInt(day.kcal)} kcal · ${left(day.kcal, kcalTarget, 'kcal')}',
+        Text('${fmtInt(day.kcal)} kcal · ${left(day.kcal, kcal, 'kcal')}',
             style: text.titleSmall),
-        Text(
-            'P ${fmtInt(day.protein)} g · ${left(day.protein, proteinMin, 'g')}',
+        Text('P ${fmtInt(day.protein)} g · ${left(day.protein, protein, 'g')}',
             style: text.titleSmall),
+        if (!protein.comparable || !kcal.comparable)
+          TextButton(onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen())), child: const Text('Definir metas')),
       ],
     );
   }

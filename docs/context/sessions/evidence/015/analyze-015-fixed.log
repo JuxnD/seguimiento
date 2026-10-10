@@ -1,0 +1,7 @@
+Analyzing seguimiento-015-graficas...
+
+  error - The name 'isNull' is defined in the libraries 'package:drift/src/runtime/query_builder/query_builder.dart (via package:drift/drift.dart)' and 'package:matcher/src/core_matchers.dart' - test\data\chart_evidence_test.dart:139:9 - ambiguous_import
+  error - The name 'isNull' is defined in the libraries 'package:drift/src/runtime/query_builder/query_builder.dart (via package:drift/drift.dart)' and 'package:matcher/src/core_matchers.dart' - test\data\chart_evidence_test.dart:140:69 - ambiguous_import
+  error - The name 'isNull' is defined in the libraries 'package:drift/src/runtime/query_builder/query_builder.dart (via package:drift/drift.dart)' and 'package:matcher/src/core_matchers.dart' - test\data\chart_evidence_test.dart:141:63 - ambiguous_import
+
+3 issues found. (ran in 9.8s)

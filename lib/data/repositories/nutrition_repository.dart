@@ -103,7 +103,31 @@ class MealTemplate {
       [for (final (food, quantity) in items) MealItemDraft.fromFood(food, quantity)];
 
   Macros get macros => Macros.sum(toDrafts().map((i) => i.macros));
+
+  /// Cantidad sospechosa de un alimento por porción (≥ 20): lo que dejó C01
+  /// cuando un alimento por gramos pasó a porción y el combo conservó los
+  /// gramos (150 g → 150 porciones). null si el combo se ve bien.
+  String? get impossibleQuantity {
+    for (final (food, quantity) in items) {
+      if (canUpdateAsPortion(food) && quantity >= impossiblePortions) {
+        return '${fmtQuantity(quantity)} porciones de ${food.name}';
+      }
+    }
+    return null;
+  }
 }
+
+/// Señal para revisar unidades de combos legacy; no límite universal de consumo.
+const impossiblePortions = 20;
+
+String fmtQuantity(double q) => q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
+
+/// ¿Se pueden reemplazar sus cifras por las de una porción a ojo? Solo si ya
+/// se mide en porciones. Un alimento por 100 g o por unidad (huevo, lata) que
+/// pasara a "porción" haría que los combos que lo usan cuenten 150 porciones
+/// donde había 150 g (C01, auditoría del 9 oct).
+bool canUpdateAsPortion(FoodRow food) =>
+    food.basis == FoodBasis.unit && food.unitLabel == 'porción' && food.defaultQuantity == 1;
 
 class NutritionRepository {
   NutritionRepository(this.db);
@@ -177,12 +201,10 @@ class NutritionRepository {
       source: const Value(MacroSource.estimado),
     );
     if (replacing != null) {
-      await (db.update(db.foods)..where((t) => t.id.equals(replacing.id))).write(values.copyWith(
-        basis: const Value(FoodBasis.unit),
-        unitLabel: const Value('porción'),
-        defaultQuantity: const Value(1),
-        servingGrams: const Value(null),
-      ));
+      if (!canUpdateAsPortion(replacing)) {
+        throw ArgumentError.value(replacing.name, 'replacing', 'no se mide en porciones');
+      }
+      await (db.update(db.foods)..where((t) => t.id.equals(replacing.id))).write(values);
       return replacing.id;
     }
     final clean = name.trim();
@@ -193,6 +215,26 @@ class NutritionRepository {
           defaultQuantity: const Value(1),
           origin: const Value(FoodOrigin.entradaLibre),
         ));
+  }
+
+  /// Explicit optional learning after review, never automatic or overwriting a
+  /// homonym. Preserve g/ml basis and estimated source; meal snapshot is separate.
+  Future<int> rememberReviewedEstimate(MealItemDraft draft) async {
+    final quantity = draft.quantity;
+    final unit = draft.quantityUnit;
+    if (!draft.isFree || quantity == null || !quantity.isFinite || quantity <= 0 ||
+        unit == null || unit.trim().isEmpty || !validEstimatedMacros(draft.macros)) {
+      throw ArgumentError('Estimación no revisable');
+    }
+    final exists = await foodNamed(draft.label);
+    final name = exists == null ? draft.label : await freeFoodName(draft.label);
+    final bulk = unit == 'g' || unit == 'ml';
+    final macros = draft.macros.scale((bulk ? 100 : 1) / quantity);
+    return db.into(db.foods).insert(FoodsCompanion.insert(name: name,
+      basis: bulk ? FoodBasis.per100 : FoodBasis.unit, unitLabel: Value(unit),
+      defaultQuantity: Value(quantity), kcal: macros.kcal, protein: macros.protein,
+      carbs: Value(macros.carbs), fat: Value(macros.fat),
+      source: const Value(MacroSource.estimado), origin: const Value(FoodOrigin.usuario)));
   }
 
   /// Nombre libre en el catálogo a partir de uno ocupado: "Pasta (2)", "(3)"…

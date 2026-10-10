@@ -1,0 +1,12 @@
+{
+  "generatorAllStringLiteralValuesIdentical": true,
+  "generatorStringTokens": 37,
+  "expectCallsUnchanged": 32,
+  "fullHarnessBeforeTypingSHA256": "93e92115de17137da1f006eef69548d253e6cbb9d0a64c86eeaaa73fa461b67d",
+  "finalTypedHarnessSHA256": "4f301faee0d77effa44d55f6650f412aa45cee53064eab98e8a59561f2278479",
+  "fixtureNotRegeneratedSHA256": "00ab5cd15636ed48cf41c3aabaf06f558b1014387b15f6efe9ac04b81e3c77c2",
+  "testTypingDiffRequiresManualReview": "only Map/List object annotations and casts; values, expect and SQL unchanged",
+  "fullHarnessArchivedCanonicalLF_SHA256": "93e92115de17137da1f006eef69548d253e6cbb9d0a64c86eeaaa73fa461b67d",
+  "finalTypedHarnessCanonicalLF_SHA256": "71ddaccf0d2189604a75fec22a45fea88906f27318de4ff87b065492e3561ef9",
+  "workingEolFinal": "CRLF; canonical Git LF digest distinct from raw finalTypedHarnessSHA256; raw digest retained"
+}

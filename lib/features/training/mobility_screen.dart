@@ -11,7 +11,7 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/mobility.dart';
-import '../../ui/exercise_figure.dart';
+import '../../ui/exercise_figure_3d_view.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
@@ -224,7 +224,7 @@ class _MobilityScreenState extends State<MobilityScreen> {
         AppCard(
           title: 'Técnica',
           children: [
-            ExerciseArtView(exercise: step.exercise.name, frameHeight: 124),
+            ExerciseFigureView(exercise: step.exercise.name, side: step.side),
             const SizedBox(height: 14),
             for (final cue in step.exercise.formCues)
               Padding(

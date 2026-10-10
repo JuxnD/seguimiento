@@ -16,6 +16,7 @@ import '../../domain/progress.dart';
 import '../../domain/recovery.dart' show planBTorso;
 import '../../domain/session_math.dart';
 import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
+import '../../domain/technique_session.dart';
 import '../../ui/hero.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
@@ -23,12 +24,15 @@ import '../../data/repositories/plan_repository.dart';
 import '../../data/seed_plan.dart';
 import '../plan/plan_screen.dart';
 import 'active_session_banner.dart';
+import 'exercise_library_screen.dart';
 import 'football_form_screen.dart';
 import 'guided_session_screen.dart';
 import 'mobility_screen.dart';
 import 'round_counter_screen.dart';
 import 'session_form_screen.dart';
 import 'v3_timers.dart';
+import '../../data/repositories/goal_repository.dart';
+import '../../domain/adaptive_coach.dart';
 
 /// Arranca el cronómetro con el plan del día ya cargado: si toca circuito
 /// cuenta rondas, si tocan bloques cuenta series. Sin plan, cae al cronómetro
@@ -96,8 +100,19 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
   final variants = adjusted.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
   // El día de progresión propone la meta según la regla; no la sube solo.
-  final proposal =
+  var proposal =
       planDay.type == DayType.progresion ? await ref.read(trainingRepositoryProvider).progressionProposal(day) : null;
+  // Lo decidido en Hoy sobre esta misma propuesta (plan 009): "hoy no" o
+  // "mantener" dejan las rondas de la última vez.
+  String? roundsId;
+  if (proposal != null && proposal.canProgress && proposal.sessionId != null) {
+    roundsId = roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
+    final decided = await GoalRepository(ref.read(databaseProvider)).proposal(roundsId);
+    if (proposalHidden(decided, day)) {
+      proposal = heldProposal(proposal, decided!.status);
+      roundsId = null;
+    }
+  }
   if (!context.mounted) return;
   final suggestLight = light ?? await ref.read(dashboardRepositoryProvider).hardGameBefore(day);
   if (!context.mounted) return;
@@ -112,6 +127,12 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
     ),
   );
   if (setup == null || !context.mounted) return;
+  // Empezar con las rondas que propuso la regla es aceptarlas (confirmación
+  // existente del diálogo; plan 009 la registra).
+  if (roundsId != null && proposal != null && setup.rounds == proposal.rounds) {
+    await GoalRepository(ref.read(databaseProvider)).decideProposal(roundsId, 'rondas', ProposalStatus.aceptada, today: day);
+  }
+  if (!context.mounted) return;
 
   await _runGuided(
     context,
@@ -157,6 +178,48 @@ Future<void> startPlanB(BuildContext context, WidgetRef ref) async {
       date: day,
       sessionType: SessionType.trenSuperior,
       note: 'Plan B (solo torso): carga alta o molestia en la pierna; piernas hasta 48 h después',
+    ),
+  );
+}
+
+/// Guion de la sesión técnica (§16.21) para `day`.
+PlanDayDraft techniqueDayDraft(DateTime day) => PlanDayDraft(
+      weekday: day.weekday,
+      type: DayType.trenSuperior,
+      notes: techniqueNote,
+      exercises: [
+        for (final (name, sets, reps, hold, rest, perSide, grip, block) in techniqueTemplate)
+          PlanExerciseDraft(
+            name: name,
+            sets: sets,
+            repsMin: reps,
+            repsMax: reps,
+            holdSecMin: hold,
+            holdSecMax: hold,
+            restSec: rest,
+            perSide: perSide,
+            grip: grip,
+            block: block,
+            rirMin: reps == null ? null : techniqueRir,
+            rirMax: reps == null ? null : techniqueRir,
+          ),
+      ],
+    );
+
+/// Sesión técnica (§16.21): alternativa corta a RIR 4. Se registra aparte
+/// (`mode = 'tecnica'`) y el guion se guarda entero para poder retomarla.
+Future<void> startTechniqueSession(BuildContext context, WidgetRef ref) async {
+  final canStart = await _noPendingSession(context, ref);
+  if (!canStart || !context.mounted) return;
+  final day = dateOnly(DateTime.now());
+  await _runGuided(
+    context,
+    GuidedSessionScreen(
+      day: techniqueDayDraft(day),
+      date: day,
+      mode: techniqueMode,
+      sessionType: SessionType.trenSuperior,
+      note: 'Sesión técnica (RIR 4)',
     ),
   );
 }
@@ -222,6 +285,14 @@ Future<void> _startResistance(
 /// Cindy o Tabata con foto en disco: si Android cierra la app a mitad, Hoy
 /// ofrece retomarlo donde iba. Al terminar se guarda (sin revisar) y se abre
 /// el formulario.
+/// Public route for progress: retains pending-session protection and timer flow.
+Future<void> startCindyTest(BuildContext context, WidgetRef ref) async {
+  final allowed = await _noPendingSession(context, ref);
+  if (!context.mounted || !allowed) return;
+  await _runTimer(context, ref, date: dateOnly(ref.read(decisionClockProvider)()),
+      mode: 'cindy', cindyTest: true);
+}
+
 Future<void> _runTimer(
   BuildContext context,
   WidgetRef ref, {
@@ -241,7 +312,7 @@ Future<void> _runTimer(
   void save(TimerSnapshot s) => unawaited(store.save(s));
   final draft = await nav.push<SessionDraft>(MaterialPageRoute(
     builder: (_) => mode == 'cindy'
-        ? AmrapScreen(date: date, resume: resume, onSnapshot: save)
+        ? AmrapScreen(date: date, resume: resume, onSnapshot: save, attempt: cindyTest)
         : TabataScreen(date: date, exercises: exercises, resume: resume, onSnapshot: save),
   ));
   await _clearActive(container);
@@ -372,6 +443,35 @@ String describeActiveSession(ActiveSession s) {
 Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSession session) async {
   switch (session) {
     case final GuidedSnapshot s:
+      // Plan B y sesión técnica no salen del plan (planDayId -1): se retoman
+      // con el guion que quedó guardado entero.
+      if (s.planDayId < 0 && s.effectiveDay != null) {
+        PlanDayDraft day;
+        try {
+          day = thawGuidedDay(s.effectiveDay!);
+        } on Object {
+          if (!context.mounted) return;
+          showSnack(context, 'La sesión guardada tiene un guion inválido; se descarta para poder empezar otra.');
+          await _clearActive(ProviderScope.containerOf(context, listen: false));
+          return;
+        }
+        if (!context.mounted) return;
+        await _runGuided(
+          context,
+          GuidedSessionScreen(
+            day: day,
+            note: s.note,
+            mode: s.mode,
+            date: parseDay(s.date),
+            sessionType: s.sessionType,
+            coreVariant: s.coreVariant,
+            roundsOverride: s.roundsOverride,
+            light: s.light,
+            resume: s,
+          ),
+        );
+        return;
+      }
       final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
       if (!context.mounted) return;
       if (view == null) {
@@ -759,6 +859,12 @@ class TrainingScreen extends ConsumerWidget {
         title: const Text('Entreno'),
         actions: [
           IconButton(
+            tooltip: 'Guías de ejercicios',
+            icon: const Icon(Icons.menu_book_outlined),
+            onPressed: () =>
+                Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ExerciseLibraryScreen())),
+          ),
+          IconButton(
             tooltip: 'Plan semanal',
             icon: const Icon(Icons.calendar_view_week),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlanScreen())),
@@ -769,6 +875,15 @@ class TrainingScreen extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 96),
         children: [
           const ActiveSessionBanner(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.menu_book_outlined),
+              label: const Text('Consultar guías de ejercicios'),
+              onPressed: () =>
+                  Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ExerciseLibraryScreen())),
+            ),
+          ),
           HeroCard(
             color: style.color,
             overline: dashboard == null ? 'Hoy' : 'Hoy · semana ${dashboard.weekIndex}',

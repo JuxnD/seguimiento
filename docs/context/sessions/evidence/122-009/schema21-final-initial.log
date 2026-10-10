@@ -1,0 +1,44 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/data/schema21_122_integration_test.dart
+test/data/schema21_122_integration_test.dart:35:35: Error: The operator '[]' isn't defined for the class 'Object'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+        (tables['morning_checks']!['columns'] as List<Object?>)
+                                  ^
+test/data/schema21_122_integration_test.dart:50:27: Error: The operator '[]' isn't defined for the class 'Object'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+      expect(tables[name]!['rows'], isNotEmpty, reason: name);
+                          ^
+test/data/schema21_122_integration_test.dart:69:39: Error: The operator '[]' isn't defined for the class 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+          final columns = (entry.value['columns'] as List<Object?>)
+                                      ^
+test/data/schema21_122_integration_test.dart:78:26: Error: The operator '[]' isn't defined for the class 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+              entry.value['columns'],
+                         ^
+test/data/schema21_122_integration_test.dart:87:26: Error: The operator '[]' isn't defined for the class 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+              entry.value['rows'],
+                         ^
+test/data/schema21_122_integration_test.dart:116:39: Error: The operator '[]' isn't defined for the class 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+          final columns = (entry.value['columns'] as List<Object?>)
+                                      ^
+test/data/schema21_122_integration_test.dart:126:26: Error: The operator '[]' isn't defined for the class 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+              entry.value['columns'],
+                         ^
+test/data/schema21_122_integration_test.dart:143:26: Error: The operator '[]' isn't defined for the class 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the operator to an existing operator, or defining a '[]' operator.
+              entry.value['rows'],
+                         ^
+00:00 +0 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/schema21_122_integration_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-122-integracion/test/data/schema21_122_integration_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-122-integracion/test/data/schema21_122_integration_test.dart
+00:00 +0 -1: Some tests failed.

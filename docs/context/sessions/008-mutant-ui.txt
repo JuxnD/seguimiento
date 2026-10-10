@@ -1,0 +1,33 @@
+00:00 +0: loading C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: SQLite→guía: serie manual con fallo no sugiere subir mochila
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TextContainingWidgetFinder:<Found 1 widget with text containing +2–5 kg: [
+            Text("Toca subir: +2–5 kg de mochila y vuelve a 10", dependencies:
+[DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart:150:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart line 150
+The test description was:
+  SQLite→guía: serie manual con fallo no sugiere subir mochila
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: SQLite→guía: serie manual con fallo no sugiere subir mochila [E]
+  Test failed. See exception logs above.
+  The test description was: SQLite→guía: serie manual con fallo no sugiere subir mochila
+
+00:01 +0 -1: (tearDownAll)
+00:01 +0 -1: Some tests failed.

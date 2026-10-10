@@ -1,0 +1,145 @@
+00:00 +0: loading C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart
+00:00 +0: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: schema20→21 adds missing references, preserves custom homonym and history
+00:00 +1: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: first install records identities after combos and does not duplicate
+00:00 +2: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:26:89)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:127:15)
+<asynchronous suspension>
+#8      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#9      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#10     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:106:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart:153:20)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:01 +3: C:/My Projects/seguimiento-010-luna/test/data/catalog_upgrade_test.dart: (tearDownAll)
+00:01 +3: loading C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart
+00:02 +3: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: cliente status real sin cambio desdea0521c8 acepta tarea nueva
+00:02 +4: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: desconocido requiere porción o deja pendiente explícito
+00:02 +5: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: 4 huevos pan leche350ml Milo preservan componentes sin doble contar
+00:02 +6: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: rechaza parcial, ID ajeno, unidad incorrecta, cantidad perdida y macros imposibles
+00:02 +7: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: catálogo 1000 conserva alimento nombrado fuera de primeros200
+00:02 +8: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: texto largo no llama; JSON truncado no crea propuesta
+00:02 +9: C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart: cobertura de caracteres no permite arroz chino bajo huevo conocido
+00:03 +10: loading C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart
+00:04 +10: C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart: (setUpAll)
+00:04 +10: C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart: optional remembered250g retains per100 and homonym/combo/snapshot unchanged
+00:04 +11: C:/My Projects/seguimiento-010-luna/test/data/food_basis_regression_test.dart: (tearDownAll)
+00:04 +11: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart
+00:05 +11: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: (setUpAll)
+00:05 +11: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: IA→revisión/exclusión→borrador→Guardar→SQLite; no crea catálogo antes de Guardar
+00:09 +12: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: volver con Recordar elegido no guarda comida ni catálogo
+00:09 +13: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: fallo de red conserva frase y registro manual; cero escrituras
+00:10 +14: C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart: (tearDownAll)
+00:10 +14: loading C:/My Projects/seguimiento-010-luna/test/data/gateway_estimate_interop_test.dart
+00:11 +14: C:/My Projects/seguimiento-010-luna/test/data/gateway_estimate_interop_test.dart: Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)
+00:11 +15: All tests passed!

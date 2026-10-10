@@ -1,6 +1,7 @@
 import '../dates.dart';
 import '../enums.dart';
 import '../format.dart';
+import '../goal_history.dart';
 import 'report_input.dart';
 import 'report_stats.dart';
 
@@ -22,12 +23,32 @@ List<String> buildAlerts(ReportStats s) {
   }
 
   for (final streak in s.lowKcalStreaks.where((st) => st.length >= 2)) {
-    out.add('${streak.length} días seguidos bajo ${fmtInt(t.kcalFloor)} kcal (${_days(streak)})');
+    out.add(
+        '${streak.length} días seguidos bajo ${s.floorSpan(streak).label(fmtInt)} kcal (${_days(streak)})');
   }
 
+  // Cada día con el mínimo que regía ese día (plan 009): una meta nueva no
+  // vuelve falta lo que cumplía la anterior.
   final p = s.avgProtein;
-  if (p != null && p < t.proteinMin) {
-    out.add('Proteína promedio ${fmtInt(p)} g, bajo el mínimo de ${t.proteinMin} g');
+  if (p != null) {
+    final span = GoalSpan.over(s.input.goals, GoalMetric.proteinaMin, s.closedDays, fallback: t.proteinMin);
+    if (span.single case final min?) {
+      if (p < min) out.add('Proteína promedio ${fmtInt(p)} g, bajo el mínimo de ${fmtInt(min)} g');
+    } else if (span.segments.isEmpty) {
+      // Sin alerta concluyente: se dice la incertidumbre, no una falta.
+      out.add('Mínimo de proteína de esos días no registrado: el promedio de ${fmtInt(p)} g no se compara');
+    } else {
+      final judged = [
+        for (final d in s.closedDays)
+          if (s.input.goalOn(GoalMetric.proteinaMin, d, t.proteinMin) case final goal?) (d, goal),
+      ];
+      final below = [for (final (d, goal) in judged) if (s.macrosOn(d)!.protein < goal) d];
+      if (below.isNotEmpty) {
+        out.add('Proteína bajo el mínimo que regía en ${below.length} de ${judged.length} '
+            '${judged.length == 1 ? 'día cerrado' : 'días cerrados'} (${_days(below)}); '
+            'mínimo del período: ${span.label((v) => '${fmtInt(v)} g')}');
+      }
+    }
   }
 
   // Solo días ya cerrados: a mitad de semana no es una falta lo que aún no llega.
@@ -168,4 +189,3 @@ List<String> interferenceNotes(ReportStats s) {
 }
 
 String _days(List<DateTime> days) => days.map((d) => '${weekdayShort(d.weekday)} ${d.day}').join(', ');
-

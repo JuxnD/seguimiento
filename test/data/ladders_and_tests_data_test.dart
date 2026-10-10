@@ -16,6 +16,7 @@ import 'package:seguimiento/domain/core_ladders.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/fitness_test.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 /// Escaleras de core (§19.10), test de condición (§19.11) y el martes del
@@ -140,6 +141,9 @@ void main() {
     await plan.saveAsNewVersion(old);
     expect(await fix.check(db), CorrectionState.pending);
 
+    // Plan 022: sólo con el consentimiento fechado del traspaso original.
+    await asExistingUser(db, goals: false);
+    await ProfileRepository(db).recordHandoffConsent();
     await fix.apply(db);
     expect(await fix.check(db), CorrectionState.done);
     final fixed = (await plan.dayFor(d(10, 13)))!.day.exercises.map((e) => e.name);

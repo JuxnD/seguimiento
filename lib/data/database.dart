@@ -7,8 +7,12 @@ import 'package:path_provider/path_provider.dart';
 
 import '../domain/dates.dart';
 import '../domain/enums.dart';
+import '../domain/goal_history.dart' show GoalOrigin;
 import '../domain/reminders.dart';
 import 'catalog_updates.dart';
+import 'catalog_patches.dart';
+import 'repositories/goal_repository.dart' show seedGoalVersions;
+import 'repositories/profile_repository.dart' show ProfileOrigin, SetupState;
 import 'seed_foods.dart';
 import 'tables.dart';
 
@@ -27,6 +31,7 @@ const databaseFileName = 'seguimiento.sqlite';
   SessionSets,
   FootballGames,
   Foods,
+  CatalogPatches,
   Meals,
   MealItems,
   MealTemplates,
@@ -49,6 +54,8 @@ const databaseFileName = 'seguimiento.sqlite';
   FitnessTests,
   LadderStates,
   LadderEvents,
+  GoalVersions,
+  CoachProposals,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -56,14 +63,19 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 20;
+  int get schemaVersion => 23;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
-          // El programa arranca el día de la instalación; se ajusta en Perfil.
-          await into(profiles).insert(ProfilesCompanion.insert(startDate: dayKey(DateTime.now())));
+          // Instalación nueva (plan 022): alta pendiente. Ninguna meta queda
+          // aceptada hasta confirmar; la fecha de inicio la elige el usuario.
+          await into(profiles).insert(ProfilesCompanion.insert(
+            startDate: dayKey(DateTime.now()),
+            profileOrigin: const Value(ProfileOrigin.newInstall),
+            setupState: const Value(SetupState.pending),
+          ));
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) {
@@ -182,6 +194,7 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessions, sessions.mode);
             await m.addColumn(sessions, sessions.extraReps);
           }
+          if (from < 21) await m.createTable(catalogPatches);
           if (from < 16) {
             // v16: Plan v3.1 (§19): RIR por serie, meta de kcal de los días de
             // fútbol, hidratación del partido y horas de sueño.
@@ -228,6 +241,32 @@ class AppDatabase extends _$AppDatabase {
             await customStatement(
                 "UPDATE sessions SET total_sec=0, warmup_sec=0, cooldown_sec=0, rest_sec=0 WHERE mode='test'");
           }
+          if (from < 23) {
+            // v23 (plan 022): origen y estado del alta. Antes de cualquier
+            // lectura del perfil con la definición actual (la siembra de 22).
+            // Lo existente queda legacyUnknown/ready: no se infiere el dueño.
+            await m.addColumn(profiles, profiles.profileOrigin);
+            await m.addColumn(profiles, profiles.setupState);
+            await m.addColumn(profiles, profiles.setupConfirmedAt);
+            await m.addColumn(profiles, profiles.handoffConsentAt);
+          }
+          if (from < 22) {
+            // v22 (plan 009): metas con historia y propuestas del
+            // acompañamiento, después del 21 de 010 (catálogo). Aditivo. Lo
+            // que había en el perfil se copia como legado: no se sabe desde
+            // cuándo regía, sí desde la migración.
+            await m.createTable(goalVersions);
+            await m.createTable(coachProposals);
+            // morning_checks nace en el 17 con la definición actual: antes
+            // de eso la columna ya viene al crearla.
+            if (from >= 17) await m.addColumn(morningChecks, morningChecks.feeling);
+            await seedGoalVersions(this, effectiveFrom: null, origin: GoalOrigin.legado);
+          }
+          if (from >= 22 && from < 23) {
+            // v23: el piso de kcal entra a la misma historia. Sólo la métrica
+            // que falte, como legado; lo de 009 no se duplica.
+            await seedGoalVersions(this, effectiveFrom: null, origin: GoalOrigin.legado);
+          }
           if (from < 16) {
             // Guías del catálogo con todas las columnas ya creadas: las de
             // antes del 8 y las del v3.1 (dominadas con carga, ejercicios
@@ -237,6 +276,7 @@ class AppDatabase extends _$AppDatabase {
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');
+          await applyCatalogPatchV1(this);
         },
       );
 

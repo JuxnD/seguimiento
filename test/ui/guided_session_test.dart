@@ -122,12 +122,12 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400)); // transición
   }
 
-  /// Empieza el circuito sin calentar: el aviso de calentamiento corto sale y
-  /// se acepta.
+  /// Empieza el circuito sin calentar: el aviso de calentamiento a medias
+  /// (§16.23: cuenta pasos marcados, no tiempo) sale y se acepta.
   Future<void> startNow(WidgetTester tester) async {
     await tester.tap(find.text('Empezar circuito'));
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('Calentamiento corto'), findsOneWidget);
+    expect(find.text('Calentamiento a medias'), findsOneWidget);
     await tester.tap(find.text('Empezar igual'));
     await step(tester);
   }

@@ -1,0 +1,74 @@
+00:00 +0: loading C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart
+00:00 +0: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+00:00 +0 -1: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo [E]
+  Expected: <10>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 15:5         main.<fn>
+
+00:00 +0 -1: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+00:00 +0 -2: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta [E]
+  Expected: <20>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 34:5         main.<fn>
+
+00:00 +0 -2: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+00:00 +0 -3: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado [E]
+  Expected: <0>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 48:5         main.<fn>
+
+00:00 +0 -3: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+00:00 +0 -4: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20 [E]
+  Expected: <6.1>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 59:5         main.<fn>
+
+00:00 +0 -4: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+00:00 +0 -5: C:/My Projects/seguimiento-018-radar/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias [E]
+  Expected: <8>
+    Actual: <null>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\progress_metrics_test.dart 67:5         main.<fn>
+
+00:00 +0 -5: loading C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart
+00:00 +0 -5: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: widget muestra valor/ref común y tap evidencia sin rutas
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing 8 reps: []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart:21:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart line 21
+The test description was:
+  widget muestra valor/ref común y tap evidencia sin rutas
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -6: C:/My Projects/seguimiento-018-radar/test/ui/personal_radar_test.dart: widget muestra valor/ref común y tap evidencia sin rutas [E]
+  Test failed. See exception logs above.
+  The test description was: widget muestra valor/ref común y tap evidencia sin rutas
+
+00:01 +0 -6: Some tests failed.

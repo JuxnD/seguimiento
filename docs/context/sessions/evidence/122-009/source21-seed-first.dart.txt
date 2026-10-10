@@ -1,0 +1,47 @@
+import 'dart:io';
+
+import 'package:drift/native.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/data/database.dart';
+
+import 'support/sqlite_host.dart';
+
+void main() {
+  setUpAll(useHostSqlite);
+
+  test('source e6 real schema21 generates only a fictitious fixture', () async {
+    final file = File('../fixture21.sqlite');
+    expect(file.existsSync(), isFalse);
+    final db = AppDatabase(NativeDatabase(file));
+    try {
+      expect(db.schemaVersion, 21);
+      expect((await db.customSelect('PRAGMA user_version').getSingle()).data.values.single, 21);
+      await db.customStatement("INSERT INTO exercises(id,name) VALUES(9001,'Ejercicio ficticio 21')");
+      await db.customStatement("INSERT INTO sessions(id,date,type,total_sec,warmup_sec,cooldown_sec,rest_sec,rpe,notes) "
+          "VALUES(9001,'2026-10-09','bloques',2400,120,180,300,9,'Fixture21: datos ficticios')");
+      await db.customStatement("INSERT INTO session_sets(session_id,exercise_id,set_index,reps,split,split_detail,to_failure,load_kg,variant) "
+          "VALUES(9001,9001,1,15,1,'12+3',1,5,'lastre')");
+      await db.customStatement("INSERT INTO foods(id,name,basis,unit_label,kcal,protein,carbs,fat,origin) "
+          "VALUES(9001,'Plato ficticio 21','per100','g',500,20,70,16,'usuario')");
+      await db.customStatement("INSERT INTO meals(id,date,slot,notes) VALUES(9001,'2026-10-09','almuerzo','Comida ficticia')");
+      await db.customStatement("INSERT INTO meal_items(meal_id,food_id,label,quantity,quantity_unit,kcal,protein,carbs,fat,source_verified) "
+          "VALUES(9001,9001,'Plato ficticio 21',250,'g',1250,50,175,40,0)");
+      await db.customStatement("INSERT INTO morning_checks(date,resting_hr) VALUES('2026-10-09',58)");
+      await db.customStatement("INSERT INTO ai_conversations(id,kind,title,model,contract_version,sources_json,sources_hash,created_at) "
+          "VALUES(9001,'week','Consulta ficticia 21','modelo-ficticio',1,'[]',?,1791540000)", ['a' * 64]);
+      await db.customStatement("INSERT INTO ai_messages(conversation_id,role,message_text,citations_json,model,contract_version,created_at) "
+          "VALUES(9001,'assistant','Respuesta ficticia sin red','[]','modelo-ficticio',1,1791540001)");
+      final names = (await db.customSelect("SELECT name FROM sqlite_master WHERE type='table'").get())
+          .map((r) => r.data['name']).toSet();
+      expect(names, contains('catalog_patches'));
+      expect(names, isNot(contains('goal_versions')));
+      expect(names, isNot(contains('coach_proposals')));
+      expect((await db.customSelect('PRAGMA table_info(morning_checks)').get()).map((r) => r.data['name']),
+          isNot(contains('feeling')));
+      expect(await db.customSelect('PRAGMA foreign_key_check').get(), isEmpty);
+      expect((await db.customSelect('PRAGMA integrity_check').getSingle()).data.values.single, 'ok');
+    } finally {
+      await db.close();
+    }
+  });
+}

@@ -56,7 +56,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **18**. Al cambiar una tabla:
+`schemaVersion` vale **23** en el candidato local del plan 022 (ver al final). Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -161,3 +161,70 @@ rechaza: es de una versión más nueva y restaurarlo rompería los datos.
 - La validación del repositorio rechaza antes de escribir valores no finitos,
   negativos, reps decimales, lados/ítems/rondas incoherentes y claves duplicadas.
   Los datos heredados inválidos no rompen el formateador ni alimentan dosis.
+
+## Esquema 21 (plan010, candidato local)
+
+- `catalog_patches`: source_id como clave primaria estable de fuente,
+  patch_version y food_id nullable con ON DELETE SET NULL. El source_id no es
+  el nombre actual que edita el usuario. Las claves fuente del parche1 quedan
+  congeladas en catalog_patches.dart. Un null registra colisión/deleción y no
+  recrea el alimento; un renombre no pierde la identidad.
+- 20→21 sólo añade esta tabla. No convierte ni divide cantidades históricas.
+  Antes de abrir, parche1 registra36 fuentes ya existentes y añade únicamente
+  referencias antiguas ausentes; conserva toda fila personalizada, sus macros,
+  favoritos, IDs, combos y snapshots. Semilla nueva conserva sus combos.
+- La decisión humana de recordar una estimación crea una ficha estimada nueva
+  después de revisión, al Guardar/Fusionar, sin sobrescribir homónimos. g/ml
+  siguen por100; la porción revisada y las notas originales van en la comida.
+- `MealTextSelection.notes` conserva frase, dudas, supuestos, porción, macros
+  revisados y motivos de exclusión en `meals.notes`; el informe ya lee este
+  campo y el ZIP copia SQLite completo. No contiene licencias ni proveedor key.
+- Oráculos: `catalog_upgrade_test`, `food_basis_regression_test`,
+  `meal_estimate_flow_test`; fixtures18/19 y manifests permanecen congelados.
+  [Decisión y límites](adr/0017-comidas-estimadas-y-catalogo-aditivo.md).
+
+## Esquema 22 (plan 009, candidato local)
+
+- `goal_versions`: una fila por vigencia de meta (`metric` = `GoalMetric.name`:
+  pasos, proteinaMin, proteinaMax, kcal, kcalFutbol y las seis referencias
+  del radar `ref*`), `value` (null = sin meta/referencia), `effective_from`
+  (null sólo en el legado), `accepted_at`, `origin` (legado, inicio, perfil,
+  propuesta, plan), `reason`, `policy`. Cada día se evalúa con la vigente; lo
+  anterior a la primera conocida es "meta histórica no registrada".
+- Migración: el perfil se copia como legado **sin fecha** y el mismo valor
+  **conocido desde el día de la migración**. Instalación nueva: conocida
+  desde hoy. `profiles` sigue existiendo como **proyección** de lo vigente
+  (`GoalRepository.projectDueGoals`); las referencias del radar no se
+  proyectan.
+- `coach_proposals`: ID estable (`pasos:A>B:p1`), `kind`, `status`
+  (pendiente, aceptada, pospuesta, rechazada), evidencia, fechas de creación,
+  decisión y revisión, `accepted_value`, `policy`.
+- `morning_checks.feeling` (1 descansado, 2 normal, 3 cansado; null = sin
+  respuesta). Se añade sólo si `from >= 17`: antes la tabla nace con ella.
+- Toda escritura de metas pasa por `GoalRepository.updateProfile` o
+  `scheduleGoal`. Oráculos: `goal_history_test`, `adaptive_coach_data_test`,
+  `migration_test` (20 → 22). [ADR 0016](adr/0016-acompanamiento-y-metas-con-historia.md).
+
+## Esquema 23 (plan 022, candidato local sin publicar)
+
+- `profiles.profile_origin` (`new` | `legacyUnknown`), `setup_state`
+  (`pending` | `ready`), `setup_confirmed_at` (ISO, null sin alta) y
+  `handoff_consent_at` (ISO, consentimiento separado y fechado para las
+  correcciones del traspaso original). Valores fuera de contrato son error
+  visible (`SetupStatus.parse`), nunca se corrigen ni se infieren.
+- `onCreate`: perfil `new/pending`, **cero** vigencias (antes sembraba cinco).
+  Al confirmar el alta se aceptan seis métricas (pasos, proteinaMin,
+  proteinaMax, kcal, kcalFutbol, **kcalFloor**) con vigencia = fecha real de
+  confirmación, también las null y las iguales al ejemplo.
+- Migración 20/21/22 → 23: columnas con defaults `legacyUnknown/ready`, sin
+  inferir dueño por ID 1, licencia, tabla vacía ni flags. Se añaden antes de la
+  siembra del 22. `seedGoalVersions` trabaja **por métrica faltante**: desde 22
+  sólo añade `kcalFloor` (legado sin fecha + conocido desde la migración); no
+  duplica historia 009, referencias ni propuestas.
+- Contrato pendiente: si `pending`, ninguna tabla personal tiene filas
+  (`personalTablesWithRows`; compartidas = profiles, exercises, foods,
+  catalog_patches, meal_templates, meal_template_items, reminders). Lo valida
+  `DatabaseHost.checkComplete` en la apertura de prueba de un respaldo, antes de
+  tocar base y fotos. Oráculos: `pilot_profile_test`, `migration_test`
+  (20/21/22 → 23 por tabla/columna/fila), `schema21_122_integration_test`.
+  [ADR 0020](adr/0020-alta-neutral-y-arranque-protegido.md).

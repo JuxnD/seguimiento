@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'exercise_figure.dart';
 import 'exercise_figure_3d.dart';
 
 /// Catálogo de figuras 3D, leído una vez del asset.
@@ -16,7 +15,7 @@ const _bg = Color(0xFF0B0806);
 const _muscle = Color(0xFFF08A34);
 
 /// Alto de cada momento en la hoja de técnica: grande en el teléfono.
-const figure3dHeight = 260.0;
+const figure3dHeight = 330.0;
 
 class Figure3DPainter extends CustomPainter {
   Figure3DPainter(this.figure, this.progress, {this.yaw, this.pitch});
@@ -48,7 +47,7 @@ String momentLabel(Figure3D fig, int i) {
 
 /// Posición del recorrido en el segundo `t` de la animación en bucle: va
 /// del primer momento al último y vuelve, con una pausa en cada uno.
-double loopProgress(double t, int keys, {double hold = 0.6, double move = 1.2}) {
+double loopProgress(double t, int keys, {double hold = 0.6, double move = 2.4}) {
   if (keys < 2) return 0;
   final steps = keys - 1;
   final cycle = hold + 2 * steps * (move + hold);
@@ -74,7 +73,7 @@ double loopProgress(double t, int keys, {double hold = 0.6, double move = 1.2}) 
 /// Figura de técnica: el maniquí 3D si el ejercicio lo tiene y enseña la
 /// variante que pide la sesión; si no, las figuras planas de siempre.
 class ExerciseFigureView extends ConsumerWidget {
-  const ExerciseFigureView({super.key, required this.exercise, this.grip, this.loaded});
+  const ExerciseFigureView({super.key, required this.exercise, this.grip, this.loaded, this.side});
 
   final String exercise;
 
@@ -83,14 +82,23 @@ class ExerciseFigureView extends ConsumerWidget {
   /// enseñaría otra cosa.
   final String? grip;
   final bool? loaded;
+  final String? side;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final catalog = ref.watch(figure3dProvider);
     // Mientras carga no se muestra la 2D: evita un parpadeo de figura a figura.
     if (catalog.isLoading && !catalog.hasValue) return const SizedBox.shrink();
-    final fig = catalog.valueOrNull?.forExercise(exercise);
-    if (fig == null || !fig.matches(grip: grip, loaded: loaded)) return ExerciseArtView(exercise: exercise);
+    if (catalog.hasError) {
+      return Column(children: [
+        const Text('No se pudo cargar la ilustración.'),
+        TextButton(onPressed: () => ref.invalidate(figure3dProvider), child: const Text('Reintentar')),
+      ]);
+    }
+    final fig = catalog.valueOrNull?.forExercise(exercise, grip: grip, loaded: loaded, side: side);
+    if (fig == null) {
+      return const Text('Este ejercicio todavía no tiene una ilustración. Puedes añadir una foto de referencia.');
+    }
     return Figure3DMoments(figure: fig);
   }
 }
@@ -130,6 +138,26 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
     _ticker = AnimationController(vsync: this, duration: const Duration(hours: 1));
   }
 
+  @override
+  void didUpdateWidget(covariant Figure3DMoments oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.figure != fig) {
+      _ticker.stop();
+      _playing = false;
+      _page = 0;
+      if (_pages.hasClients) _pages.jumpToPage(0);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context) && _playing) {
+      _ticker.stop();
+      _playing = false;
+    }
+  }
+
   /// Alto del pie más alto con el ancho y la escala de texto reales: con
   /// texto grande el pie ocupa más líneas y el cuadro crece en vez de
   /// desbordar. Se mide en el ancho de una página (el más angosto).
@@ -158,6 +186,7 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
   }
 
   void _toggle() {
+    if (!fig.continuous || MediaQuery.disableAnimationsOf(context)) return;
     setState(() => _playing = !_playing);
     if (_playing) {
       _ticker.repeat();
@@ -241,32 +270,33 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
             child: stage,
           ),
         ),
-        Row(
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 4,
           children: [
-            const SizedBox(width: 4),
             if (!_playing)
-              for (var i = 0; i < _n; i++)
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.only(right: 6),
-                  width: i == _page ? 18 : 7,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    color: i == _page ? scheme.primary : scheme.outline,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-            // El botón toma su ancho natural; solo se recorta si no cabe.
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TextButton.icon(
-                  onPressed: _toggle,
-                  icon: Icon(_playing ? Icons.pause_circle_outline : Icons.play_circle_outline),
-                  label: Text(_playing ? 'Ver momentos' : 'Ver movimiento', overflow: TextOverflow.ellipsis),
-                ),
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                for (var i = 0; i < _n; i++)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.only(right: 6),
+                    width: i == _page ? 18 : 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      color: i == _page ? scheme.primary : scheme.outline,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  )
+              ]),
+            // Reflow preserves the full action label with large text.
+            if (fig.continuous)
+              TextButton.icon(
+                onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
+                icon: Icon(_playing ? Icons.pause_circle_outline : Icons.play_circle_outline),
+                label: Text(_playing ? 'Ver momentos' : 'Ver movimiento', maxLines: 2, textAlign: TextAlign.center),
               ),
-            ),
             IconButton(
               tooltip: 'Ampliar y girar',
               icon: const Icon(Icons.open_in_full),
@@ -275,21 +305,22 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
             ),
           ],
         ),
-        Row(
-          children: [
-            Container(width: 10, height: 10, decoration: const BoxDecoration(color: _muscle, shape: BoxShape.circle)),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text.rich(
-                TextSpan(children: [
-                  const TextSpan(text: 'Trabaja: '),
-                  TextSpan(text: fig.muscles, style: const TextStyle(fontWeight: FontWeight.w600)),
-                ]),
-                style: text.bodyMedium,
+        if (fig.muscles.isNotEmpty)
+          Row(
+            children: [
+              Container(width: 10, height: 10, decoration: const BoxDecoration(color: _muscle, shape: BoxShape.circle)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text.rich(
+                  TextSpan(children: [
+                    const TextSpan(text: 'Trabaja: '),
+                    TextSpan(text: fig.muscles, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  ]),
+                  style: text.bodyMedium,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
       ],
     );
   }
@@ -325,6 +356,15 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context) && _playing) {
+      _ticker.stop();
+      _playing = false;
+    }
+  }
+
+  @override
   void dispose() {
     _ticker.dispose();
     super.dispose();
@@ -336,6 +376,7 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
       });
 
   void _toggle() {
+    if (!fig.continuous || MediaQuery.disableAnimationsOf(context)) return;
     setState(() => _playing = !_playing);
     if (_playing) {
       _ticker.repeat();
@@ -359,7 +400,7 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
             TextButton.icon(
               onPressed: _reset,
               icon: const Icon(Icons.restart_alt),
-              label: const Text('De perfil'),
+              label: const Text('Restablecer vista'),
             ),
         ],
       ),
@@ -371,7 +412,7 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                 key: const ValueKey('figura3d-giro'),
                 onPanUpdate: (d) => setState(() {
                   _yaw = (_yaw + d.delta.dx * 0.4).clamp(-maxYaw, maxYaw);
-                  _pitch = (_pitch + d.delta.dy * 0.2).clamp(0, 35);
+                  _pitch = (_pitch + d.delta.dy * 0.2).clamp(0, 85);
                 }),
                 onDoubleTap: _reset,
                 child: AnimatedBuilder(
@@ -392,44 +433,73 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-              child: Text(
-                _playing ? 'En movimiento' : fig.frames[key].caption,
-                textAlign: TextAlign.center,
-                style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (var i = 0; i < _n; i++)
-                    ChoiceChip(
-                      label: Text(momentLabel(fig, i)),
-                      selected: !_playing && key == i,
-                      onSelected: (_) => setState(() {
-                        if (_playing) _toggle();
-                        _progress = _n < 2 ? 0 : i / (_n - 1);
-                      }),
-                    ),
-                  ActionChip(
-                    avatar: Icon(_playing ? Icons.pause : Icons.play_arrow, size: 18),
-                    label: Text(_playing ? 'Pausa' : 'Movimiento'),
-                    onPressed: _toggle,
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: math.min(350, MediaQuery.sizeOf(context).height * .4)),
+              child: SingleChildScrollView(
+                  child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                  child: Text(
+                    _playing ? 'En movimiento' : fig.frames[key].caption,
+                    textAlign: TextAlign.center,
+                    style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: Text(
-                'Arrastra para girar · doble toque para volver de perfil',
-                style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      for (var i = 0; i < _n; i++)
+                        ChoiceChip(
+                          label: Text(momentLabel(fig, i)),
+                          selected: !_playing && key == i,
+                          onSelected: (_) => setState(() {
+                            if (_playing) _toggle();
+                            _progress = _n < 2 ? 0 : i / (_n - 1);
+                          }),
+                        ),
+                      if (fig.continuous)
+                        ActionChip(
+                          avatar: Icon(_playing ? Icons.pause : Icons.play_arrow, size: 18),
+                          label: Text(_playing ? 'Pausa' : 'Movimiento'),
+                          onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
+                        ),
+                    ],
+                  ),
+                ),
+                Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 4, children: [
+                  TextButton(onPressed: _reset, child: const Text('Vista inicial')),
+                  TextButton(
+                      onPressed: () => setState(() {
+                            _yaw = 0;
+                            _pitch = 8;
+                          }),
+                      child: const Text('De perfil')),
+                  TextButton(
+                      onPressed: () => setState(() {
+                            final body = liftSkeleton(fig.skeletonAt(_progress), fig);
+                            final front = body.front;
+                            if (front.y > .2) {
+                              _yaw = 0;
+                              _pitch = 75;
+                            } else {
+                              _yaw = math.atan2(front.x, front.z) * 180 / math.pi;
+                              _pitch = (-math.asin(front.y.clamp(-1, 1)) * 180 / math.pi).clamp(0, 85);
+                            }
+                          }),
+                      child: const Text('Ver apoyos')),
+                ]),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                  child: Text(
+                    'Arrastra para girar · doble toque para volver de perfil',
+                    style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                  ),
+                ),
+              ])),
             ),
           ],
         ),

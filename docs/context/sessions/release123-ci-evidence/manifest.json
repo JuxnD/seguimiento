@@ -1,0 +1,54 @@
+{
+  "sourceSha": "37e2d02e79bf60c94f085da9205cd149a86380ed",
+  "ciRun": 38091191660,
+  "ciConclusion": "failure",
+  "ciTests": {
+    "passed": 907,
+    "failed": 6,
+    "skipped": 17
+  },
+  "directedWorkingHashes": {
+    "test/data/personal_radar_repository_test.dart": "7658867cbc2f0229d3c57c5409a8843da584b7559f42748b229e7fe3f1d1f493",
+    "test/data/uso_real_27sep_test.dart": "c360451955c28538b2f3bb6c6a5569df66d5cf10e75b50a066b4b1035c301a74",
+    ".github/workflows/ci.yml": "0437e1b6fc6d820594bd5c6a545e247a9d8355b5cfd402c332656e0aae8b03ae",
+    ".github/workflows/release.yml": "df773aac9306591c1ed9b82bc6db4214dce5e379545bb06fd7ef2a952c1ee0a9"
+  },
+  "directedTests": {
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0
+  },
+  "analyzeExit": 0,
+  "records": [
+    {
+      "file": "123-ci-second-failed.txt.gz",
+      "rawBytes": 557457,
+      "rawSha256": "8653be14526b440c3cb0ce5a021cfa4fc2fab1ba42652f155fd85fe338e84bfa",
+      "gzipSha256": "d57d329f016d4317d3645d1398abaf18410bc2201130eaa8a7f4ea6a3a22f370"
+    },
+    {
+      "file": "123-radar-zip-fixture.log.gz",
+      "rawBytes": 5410,
+      "rawSha256": "666b75ab3e8ee3e9b5b609f7bae701a4a7a1b8ce3026db1e84a9e45b71430810",
+      "gzipSha256": "30abdc908a1d83df31500428740509f8b24403d70811e2cd6b811120b880ece0"
+    },
+    {
+      "file": "123-radar-zip-fixture-fixed.log.gz",
+      "rawBytes": 4719,
+      "rawSha256": "0c5591112dd397e3c5130fd625d79fec7bda9b1dd81f8a9ae46727a9c890b2f9",
+      "gzipSha256": "719b28889ab4a802fbe1956b2cde0c46b743ba7cca0f7fc5b14582c4c80bc452"
+    },
+    {
+      "file": "123-ci-fixtures-directed.log.gz",
+      "rawBytes": 9903,
+      "rawSha256": "e915f13cce289e79c5614e8fed0523e9fac8bdfdd19d69754930061ab6e071cf",
+      "gzipSha256": "73aa861facb6205ec4530f5d77424171bc35618cf13512eb534c88bc7cf95ac2"
+    },
+    {
+      "file": "123-ci-fixtures-analyze.log.gz",
+      "rawBytes": 99,
+      "rawSha256": "8c68a1cba5eab947ae1570e9e209f466be3c0031eda65aa12d1edcec38154570",
+      "gzipSha256": "5ad2cea4cca6915d8936cd7f4fbd1eaa20a4ab24c0c7193f0f668746deae4ece"
+    }
+  ]
+}

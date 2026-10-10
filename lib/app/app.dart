@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/body/body_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/meals/meals_screen.dart';
+import '../features/onboarding/app_entry.dart';
 import '../features/report/report_screen.dart';
 import '../features/training/training_screen.dart';
 import '../data/local_flags.dart';
@@ -31,7 +32,8 @@ class SeguimientoApp extends StatelessWidget {
       theme: buildGymTheme(),
       darkTheme: buildGymTheme(),
       themeMode: ThemeMode.dark,
-      home: const HomeShell(),
+      // Plan 022: el alta pendiente no monta HomeShell ni sus efectos.
+      home: const AppEntry(),
     );
   }
 }

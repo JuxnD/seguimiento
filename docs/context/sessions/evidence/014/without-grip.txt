@@ -1,0 +1,12 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart
+00:00 +0: calentamiento conserva apoyos y brazos rectos en 61 muestras
+00:00 +0 -1: calentamiento conserva apoyos y brazos rectos en 61 muestras [E]
+  Expected: 'handle'
+    Actual: <null>
+     Which: not an <Instance of 'String'>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_supports_test.dart 119:13      main.<fn>
+
+00:00 +0 -1: Some tests failed.

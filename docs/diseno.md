@@ -10,10 +10,20 @@ del logo: fondo `#0B0806`, superficies `#150F0B` y `#241A13`, naranja base
 `#F08A34` (profundo `#E4661F`) reservado para lo accionable y el dato en foco,
 texto `#FFF6EC`. Todo lo demás son neutros cálidos.
 
-**Ícono**: anillo de 10 segmentos (la meta de 10 rondas) con la figura colgada
-de la barra. Los originales están en `assets/icon/`; `python tool/icons.py`
-genera el ícono clásico, el adaptable (con capa monocroma para los íconos
-temáticos) y el de la barra de estado.
+**Ícono de la candidata013**: S en movimiento, una única ruta naranja con la
+inicial de Seguimiento. Conserva la paleta y elimina la asociación fija a diez
+rondas del ícono anterior (anillo segmentado y figura en la barra). El SVG
+editable en `assets/icon/` es fuente única; `python tool/icons.py` regenera
+clásico, tienda, capas adaptables/monocroma y barra de estado.
+Direcciones, comparación en pequeño y límites de validación:
+[logo013](design/logo-013.md). No se cambió nombre, paquete ni firma; revisión
+del owner e ícono en APK integrado pendientes.
+
+**Arranque016:** reutiliza ese foreground013, cuadrado108dp y centrado en
+legacy; icono nativo31+ y fondo`#0B0806` también en NormalTheme/día/noche.
+No imagen nueva ni espera artificial.30PNG originales se conservan; XML y
+referencias se verifican en fuente. Arranque frío/transición del APK exacto y
+lectura del owner pendientes: [ADR0018](adr/0018-arranque-y-respaldo-android.md).
 
 ### Color por tipo de día
 
@@ -112,14 +122,19 @@ incompleta: un récord tiene que ser contado.
 
 | Gráfica | Qué muestra |
 |---|---|
-| Rondas por sesión | Evolución de las sesiones de circuito: la línea que debe subir |
-| Proteína por día | Barras del rango del informe con la línea del mínimo; los días por debajo se ven apagados |
-| Peso | Evolución, solo con pesajes en ayunas si los hay |
-| Medidas | Una línea por sitio, con selector; solo aparecen los sitios con al menos dos tomas |
+| Rondas por sesión | Datos del rango; selector de tipo y condiciones guardadas. Dosis, variante, lastre y ventana explican qué se está comparando |
+| Proteína por día | Barras de días observados; sin registro, incompleto y cerrado se distinguen con texto. Una meta sólo se muestra si tiene fuente y vigencia documentadas |
+| Peso | Pesajes del rango separados por momento declarado; las referencias fuera de ayunas conservan su evidencia |
+| Medidas | Sitios con alguna toma en el rango; unidad visible y condiciones de ayuno separadas |
 
-Los días sin dato se dibujan en cero en vez de unirse con una pendiente
-inventada. El eje de rondas solo muestra enteros y se deja margen para que la
-última fecha no se corte.
+Las fechas ocupan su distancia real de calendario. No se suavizan curvas ni se
+unen protocolos distintos u observaciones dudosas. Un dato aislado muestra
+fecha y valor; tocar un punto o abrir los registros permite revisar la evidencia.
+El cero observado se conserva, y un día sin registro carece de barra numérica.
+Los controles y la tabla usan el tema existente y admiten texto ampliado.
+El perfil actual no se presenta como historia de metas. Contrato y límites:
+[progreso-metricas.md](progreso-metricas.md); verificación local:
+[recibo015](context/sessions/2026-10-10-015-graficas-evidencia.md).
 
 ## Fotos de progreso
 
@@ -133,70 +148,36 @@ Las fotos se copian al directorio de la app y la base guarda la ruta relativa
 **Las fotos no van en el respaldo**: el archivo exportado es la base de datos.
 Ver [roadmap](roadmap.md).
 
-## Figuras de técnica en 3D (iteración 1)
+## Figuras de técnica: publicada y candidato de renovación
 
-Primera iteración de un **maniquí compartido** en 3D, validado en tres
-ejercicios antes de llevarlo al catálogo: *Pino pecho a la pared*, *Nórdico
-(isquios)* y *Dominadas* (la del lunes, con mochila). El resto sigue con las
-figuras planas; la hoja de técnica elige sola.
+La1.21 pública contiene tres3D (pino, nórdico, dominadas pronas con mochila);
+las otras figuras siguen planas. El candidato local1.22 renueva73entradas
+entre guías, alias, movilidad y escaleras, con biblioteca consultable desde
+Entreno. No equivale a73ejercicios diferentes ni a aceptación del owner.
 
-**Cómo funciona.** [`tool/figuras3d.py`](../tool/figuras3d.py) reutiliza la
-cinemática de perfil de `tool/figuras.py` (mismos largos de segmento, misma
-IK) y exporta a `assets/tecnica/figuras3d.json` la postura de cada momento
-clave: cadera, ángulo del torso, ángulos de cada extremidad, apoyos (mano en
-la barra, en el suelo), orientación de pies y manos, zonas musculares, props
-y la vista inicial. La app ([`lib/ui/exercise_figure_3d.dart`](../lib/ui/exercise_figure_3d.dart))
-sube esa postura a 3D (lado cercano en z = +ancho, lejano en z = −ancho; los
-codos con IK 3D hacia afuera), interpola entre momentos (ángulos por el camino
-corto, apoyos sujetos con IK, la cadera del nórdico girando sobre las
-rodillas, los pies del pino deslizándose por la pared en vez de atravesarla
-y, como con el suelo, nada cruza una pared) y pinta con Canvas en orden de
-profundidad. Sin dependencias nuevas.
+Fuente editable: `tool/illustration_catalog.py`; entrada única pública
+`python tool/figuras3d.py` genera el catálogo completo. No editarJSON a mano
+ni regenerar solamente los treslegacy. La geometría se reusa en Canvas,
+mockups y app; no hay motor paralelo ni imágenes remotas.
 
-**Qué hace reconocible al maniquí** (la crítica de la primera maqueta):
+Figura humana simplificada, piel mate, frente/espalda diferenciados, pelo,
+ropa azul, dedos y suela visibles. Contactos y agarres sobre el equipo;
+variantes de lado, supina/prona y mochila se pasan desde sesión o biblioteca.
+Rig comparte longitudes, IK3D, plano frontal, pelvis y rotación lateral.
+Nombres personalizados sin figura muestran ausencia y admiten foto propia.
 
-| Pedido | Cómo se resolvió |
-|---|---|
-| Cabeza y hacia dónde mira | Esfera con nariz, ojo y oreja visibles solo del lado de la cámara, y pelo oscuro en nuca y coronilla |
-| Pecho y espalda | La espalda es un tono más oscura que el pecho; glúteos y pecho marcan el perfil; línea del esternón cuando el frente da a la cámara |
-| Pelvis | Pantaloneta azul en cadera y arranque del muslo |
-| Manos y pies | Mitones con pulgar (o puño cerrado sobre la barra) y zapatos en cuña con suela clara: se ve hacia dónde apuntan los dedos |
-| Lado cercano y lejano | El lejano más oscuro y apagado, con contorno más fino |
-| Naranja = un músculo | Una cara del segmento, no el cilindro: isquios (atrás del muslo), deltoides (casquete del hombro) y tríceps, dorsal (triángulo de la axila a la cintura) |
-| Apoyos | Sombras de contacto bajo manos, rodillas y pies; el sofá se pinta en corte sobre los pies, con una marca turquesa donde empuja el talón |
+Guía: momentos grandes330dp con pie adaptable al texto; ampliar y girar±180°,
+vista inicial, perfil y apoyos. Las posturas cíclicas se animan lentamente;
+calentamiento compuesto, saltos, carrera, burpees, cambios90/90 y variantes
+hollow se consultan por pasos sin interpolación ficticia. Reducir movimiento
+inhabilita animación. Los controles de pantalla completa se desplazan en
+paisaje/texto ampliado en vez de desbordar.
 
-**Presentación.** En la hoja de técnica, tres momentos grandes (inicio,
-medio, final) que se pasan de lado, casi a todo el ancho y 260 dp de alto,
-con su pie debajo. *Ver movimiento* los anima en el mismo cuadro (va y
-vuelve, con una pausa en cada momento). Tocar un momento lo abre en pantalla
-completa: ahí arrastrar gira la figura (±60°) y *De perfil* o un doble toque
-la devuelven a la vista inicial; ampliar mientras se anima abre la pose que se
-estaba viendo. El pie de cada momento crece con el texto del sistema (se mide,
-no se reserva un alto fijo). La vista inicial es de perfil con una leve
-inclinación; el pino arranca 15° desde atrás (para ver la pared de frente y
-que la nuca da a la sala) y la dominada 14° desde adelante (de perfil exacto
-la barra se ve de punta).
-
-**Variante.** Una figura puede declarar la variante que dibuja (`variant` en
-`tool/figuras3d.py`: la dominada es prona con mochila). El cronómetro pasa a la
-hoja el agarre del paso y si va con carga; si no coincide (jueves supina,
-circuito sin mochila) se muestra la figura plana, y el paso de la mochila de
-la guía escrita se omite. Desde el catálogo, sin contexto, se ve la 3D.
-
-**Agregar un ejercicio.** Copiar una entrada de `EXERCISES` en
-`tool/figuras3d.py` con el mismo nombre del catálogo (se busca sin tildes ni
-mayúsculas), tres momentos y sus pies (`Inicio: …`, `Medio: …`, `Final: …`),
-`regions` con la cara del músculo, los `props` y, si algo se esconde de
-perfil, `view`. Correr `python tool/figuras3d.py` (avisa si algo queda bajo
-el suelo o un apoyo no se alcanza) y revisar a ojo con
-`FIG3D_OUT=<carpeta> flutter test test/ui/exercise_figure_3d_render_test.dart`,
-que escribe los PNG de cada momento, girados y la hoja completa.
-
-**Límites conocidos.** Es un maniquí de cápsulas: no hay manos con dedos ni
-músculos con volumen propio. El orden de pintado es por pieza, así que en
-giros extremos una pieza puede tapar mal a otra. Las posturas son de perfil:
-lo que pasa en el plano frontal (codos abiertos de la dominada) se aproxima
-con la IK 3D de los codos. El bíceps de la dominada no se resalta porque casi
-nunca da a la cámara. En la caja de 260 dp las figuras altas (pino,
-dominada) quedan más chicas; la pantalla completa lo compensa.
-
+Ver [contrato, cobertura y revisión](design/ilustraciones-renovacion.md).
+Galería local regenerable: `ILLUSTRATION_OUT=build/mockups/renovacion`,
+`ILLUSTRATION_ALL=1`, Fluttertest illustration_mockup_render_test.dart;
+`python tool/illustration_gallery.py` construyeHTML desde esosPNG.
+Tests prueban cobertura/geometría/flujo; no certifican técnica deportiva ni
+comprensión por usuario. Orden por piezas puede ocultar contactos en giros
+extremos: conserva vista inicial y permite volver a ella. No publicar sin
+verificarAPK, firma, upgrade y pendientes explícitos de revisión.

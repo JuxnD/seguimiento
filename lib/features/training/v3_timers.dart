@@ -9,30 +9,17 @@ import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/cindy_protocol.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/widgets.dart';
+import 'pre_attempt_card.dart';
+
+export '../../domain/cindy_protocol.dart' show cindyRound, splitPartialRound;
 
 // Cronómetros del Plan v3 (§18.2, §18.9, §18.10): Cindy (AMRAP 20 min),
 // Tabata (4 bloques de 8 × 20/10) y el EMOM de burpees del viernes. Todo se
 // mide con marcas de reloj: si la pantalla se apaga, al volver el tiempo
 // sigue bien.
-
-/// La ronda de Cindy: 5 dominadas, 10 flexiones, 15 sentadillas.
-const cindyRound = [('Dominadas', 5), ('Flexiones', 10), ('Sentadillas', 15)];
-
-/// Reparte las repeticiones de la ronda a medias en orden: primero las
-/// dominadas, luego flexiones, luego sentadillas.
-List<(String, int)> splitPartialRound(int reps) {
-  final out = <(String, int)>[];
-  var left = reps;
-  for (final (name, n) in cindyRound) {
-    if (left <= 0) break;
-    final take = left < n ? left : n;
-    out.add((name, take));
-    left -= take;
-  }
-  return out;
-}
 
 void _beep({bool strong = false}) {
   unawaited(SystemSound.play(SystemSoundType.alert));
@@ -125,11 +112,16 @@ class AmrapScreen extends StatefulWidget {
     this.warmupGoalSec = 480,
     this.resume,
     this.onSnapshot,
+    this.attempt = false,
   });
 
   final DateTime date;
   final int minutes;
   final int warmupGoalSec;
+
+  /// Cindy de prueba (línea base, cada 4 semanas o el viernes de pruebas):
+  /// calentamiento y checklist a la vista (§16.23).
+  final bool attempt;
 
   /// Cindy a mitad que Android cerró: se retoma donde iba.
   final TimerSnapshot? resume;
@@ -233,6 +225,7 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
 
   SessionDraft _draft() {
     final rounds = _roundMarks.length;
+    final roundsLabel = '$rounds ${rounds == 1 ? 'ronda' : 'rondas'}';
     final partial = _partial ?? 0;
     // Cortado antes de los 20 min: no es una marca comparable.
     final cut = _workElapsed < _capSec;
@@ -241,7 +234,9 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
       startTime: timeKey(startedAt.hour, startedAt.minute),
       type: SessionType.resistencia,
       mode: 'cindy',
-      totalSec: totalSec,
+      // Sumar fases ya truncadas conserva la ventana de trabajo medida:
+      // truncar también el total por separado puede añadir un segundo.
+      totalSec: warmupSec + _workElapsed + cooldownSec,
       warmupSec: warmupSec,
       cooldownSec: cooldownSec,
       roundsDone: rounds,
@@ -249,8 +244,8 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
       incomplete: cut,
       roundMarksSec: List.of(_roundMarks),
       context: cut
-          ? 'Cindy cortada: $rounds rondas + $partial reps en ${formatDuration(_workElapsed)} de ${widget.minutes} min'
-          : 'Cindy: $rounds rondas + $partial reps en ${widget.minutes} min',
+          ? 'Cindy cortada: $roundsLabel + $partial reps en ${formatDuration(_workElapsed)} de ${widget.minutes} min'
+          : 'Cindy: $roundsLabel + $partial reps en ${widget.minutes} min',
       sets: [
         for (var r = 0; r < rounds; r++)
           for (final (name, reps) in cindyRound) SetDraft(exercise: name, reps: reps),
@@ -271,6 +266,31 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
         child: SizedBox(
           width: double.infinity,
           child: switch (_phase) {
+          // Cindy de prueba: tarjeta fija y desplazable; el botón no se tapa.
+          _Phase.calentamiento when widget.attempt => Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      const PreAttemptCard(torso: true),
+                      const SizedBox(height: 8),
+                      Text('Calentando ${formatDuration(warmupSec)} · meta ${formatDuration(widget.warmupGoalSec)}',
+                          textAlign: TextAlign.center, style: text.titleMedium),
+                      const SizedBox(height: 4),
+                      Text(
+                          'Luego ${widget.minutes} min de 5 dominadas + 10 flexiones + 15 sentadillas, tantas rondas '
+                          'como puedas. Toca "+1 ronda" al cerrar cada una.',
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 64,
+                  child: FilledButton(onPressed: () => setState(_start), child: const Text('Empezar AMRAP')),
+                ),
+              ],
+            ),
           _Phase.calentamiento => _PhasePanel(
               title: 'Calentamiento',
               elapsed: warmupSec,

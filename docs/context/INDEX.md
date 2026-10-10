@@ -1,5 +1,146 @@
 # Índice de contexto
 
+**Entrega personal1.23.0+31 (10oct):** 023/024/025 integrados, esquema23.
+[Recibo de release](sessions/2026-10-10-release-1-23.md) y
+[manifiesto/evidencia](sessions/release123-evidence/manifest.json): conservación
+genuina18/19/20/21, análisis y compilación/firma local pasan. EnsayoUI integrado
+local interrumpido por hang, causa NO_CONFIRMADA; todos los tests de CI/release
+siguen obligatorios con concurrency1/90s. Publicación y APK público aún pendientes.
+QA ampliada/Android/teléfono NOT_EXECUTED_OWNER_DEFERRED por autorización owner;
+la prueba del teléfono corresponde al owner. Los apartados siguientes son históricos.
+
+**Base de construcción local 011+022, 10 de octubre:** fuentes aprobadas
+2f29/8872 integradas sin conflictos en `5352440`, esquema 23. Radar/historia de
+metas y API de alta disponibles para cerrar lectores 023 en paralelo.
+[Recibo combinado](sessions/2026-10-10-integracion-122-011-022-base.md).
+022 global, barrera de rutas 024, continuidad genuina, suite final y QA APK
+siguen abiertos; esta base no se declara publicable. Los checkpoints siguientes
+conservan su alcance histórico, anterior a estas APIs.
+
+**Corrección025 local:** la tarjeta de actualizaciones sólo indica si existe una
+versión más nueva; no acredita que el APK instalado esté publicado. Reutiliza
+UpdateService/comparador/canal de descarga y conserva errores.
+[Recibo y pruebas025](sessions/2026-10-10-025-version-visible.md).
+Sin cambio de versión, SDK, datos, SettingsScreen012 ni AVD.
+
+**Cierre012/023 local (10oct):** [metas por fecha y presencia](sessions/2026-10-10-023-presencia-metas.md)
+en `C:/My Projects/seguimiento-012-presencia`, base integrada5352440/schema23.
+Historia única gobierna Hoy, comidas, Ajustes, avisos e informe/nueva fuenteIA;
+plantillas del nuevo perfil requieren exploración explícita.90mínimos pasan,
+análisis0; pruebas ampliadas/capturas/full aplazadas por instrucción del owner
+de priorizar publicación. Integración024, CI/APK/firma/upgrade y teléfono son
+gates separados del coordinador; versión/empaquetado1.23+31 fuera de este tramo.
+
+**Plan011 implementación local:** radar real en Tu progreso, referencias009 con
+vigencia y reactividad SQL, proteína/pasos por fecha, kcal con calendario
+existente y rutas protegidas. [Recibo011](sessions/2026-10-10-011-radar-integrado.md),
+[contrato](../progreso-metricas.md), [diseño](../design/radar-personal.md).
+Base f34ab7c, esquema22/SDK3.22 intactos; rama JuxnD/011-graficas-radar aislada.
+Gates finales se registran en el recibo; aceptación humana, APK/Android,
+presencia global012/alta022 y publicación siguen separados.
+
+
+**Estado actual del candidato local, 10 de octubre:** 009 aprobado como fuente y
+fusionado sobre e6b420a mediante merge 4f11d87, sin conflictos. Se conservan
+radar 018, medición/plural 019, checklist, barrera Future/archivo 784, catálogo 21,
+79/73 figuras y 30 PNG; metas con historia en esquema 22. [Recibo combinado](sessions/2026-10-10-integracion-122-009.md):
+310 dirigidos existentes y nuevo cruce real 21→22 pasan. Full propia 829/17 sobre
+producto final y harness anterior al tipado; caso 21 tipado y análisis final 0.
+Política v1 experimental, aceptación humana pendiente. Siguen 011, alta/esquema 23,
+gate de piloto 012 y QA APK/upgrade/teléfono; no publicación ni cambio SDK.
+Las entradas siguientes conservan resultados y pendientes históricos de sus
+checkpoints, que no deben confundirse con este estado más reciente.
+
+**Plan022 local (Claude, 10oct):** [alta neutral y arranque protegido](../adr/0020-alta-neutral-y-arranque-protegido.md)
+y [recibo](sessions/2026-10-10-022-alta-neutral-claude.md), worktree
+`C:/My Projects/seguimiento-claude-022`, base f34. Esquema23: origen/estado del
+alta en `profiles`, `kcalFloor` en la misma historia, AppEntry antes de
+HomeShell, correcciones con consentimiento+respaldo y restauración común.
+Rojo f34 archivado; full 869/17/0, análisis 0. Sin integrar ni publicar:
+cierre 012 de lectores pendiente antes de activar usuarios nuevos.
+[Reparación024](sessions/2026-10-10-024-ruta-restaurar.md): restaurar un alta
+pendiente desde Ajustes ahora cierra las rutas abiertas; rojo ZIP real en 8872
+archivado; sólo AppEntry/restore_access y pruebas. Aislado verde 5/5; full
+872/17/2 con los 2 fallos en esperas de 20 s de la prueba nueva bajo carga (STOP, NO_CONFIRMADO).
+
+**Integración local122/018:** [componente de radar](sessions/2026-10-10-integracion-122-018.md)
+desde d108fafa,74dirigidos y análisis/diff0; receta extraída sin alterar019,
+checklistClaude o barrera de guardado784. Renderer360 texto1/1.6/2 probado,
+5PNG/JSON sintéticos idénticos a fuente aprobada; schema21/SDK/79/73/30PNG
+intactos. No conecta011 ni metas009/rutas/alta. Full, APK y comprensión del
+owner pendientes;698/16 previos al último copy018 no acreditan este árbol.
+
+**Plan019 local (10oct):** [ventana medida de Cindy](../cronometro.md#ventana-medida-de-cindy-plan-019)
+y [recibo](sessions/2026-10-10-019-cindy-window.md), worktree aislado
+`C:/My Projects/seguimiento-019-cindy`, base `238ef85`. Nuevos drafts suman
+fases para conservar el circuito medido, sin normalizar historias ni cambiar
+comparabilidad/Tabata. [Integración local122](sessions/2026-10-10-integracion-122-019.md)
+desde7843732:51dirigidos, análisis/diff0, checklistClaude y barrera deFuture
+reales intactos. Schema21 y recursos79/73/30PNG conservados. APK, teléfono,
+full candidato y revisión posterior quedan pendientes.
+
+**Núcleo/widget local018 (10oct):** [radar personal explicable](../design/radar-personal.md)
+y [recibo](sessions/2026-10-10-018-radar-core.md), base238ef85f en
+`C:/My Projects/seguimiento-018-radar`. Seis mediciones, primera/última apta,
+último intento separado y referencias explícitas comunes; sin defaults ni
+persistencia/rutas nuevas.011 espera009 aprobado e integración del coordinador.
+
+**Plan015 implementado localmente (10oct):** [gráficas con rango y evidencia](../progreso-metricas.md)
+y [recibo](sessions/2026-10-10-015-graficas-evidencia.md), worktree aislado
+`C:/My Projects/seguimiento-015-graficas`, base de integración122 `bf1da688`.
+Selección, resumen y registros comparten rango/protocolo; ausencia no es cero.
+No completa011 ni añade radar o historial de metas: la conexión con009 es una
+interfaz opcional, sin persistencia nueva. APK y aceptación humana pendientes.
+
+**Integración local122:** [baseClaude929 + evidencia008](sessions/2026-10-09-integracion-122-base-evidencia.md)
+en `C:/My Projects/seguimiento-122-integracion`. Reconciliación de protocolo
+de fuerza/técnica sin migración en ese tramo; sin publicación.
+El [tramo012/013 revisado](sessions/2026-10-10-integracion-122-012-013.md)
+integra divulgación de respaldos/IA, preparación de piloto y logo desde SVG;
+39controles y4capturas pasan,30PNG preservados. Esquema20; sin APK ni instalación.
+La [integración010](sessions/2026-10-10-integracion-122-010.md) añade catálogo
+revisable y esquema21:83controles pasan con interopPHP local ficticio, migración
+y ZIP. Se conservan008/mode/warmup/snapshot y012/013;009/22 y los demás frentes
+siguen pendientes. Sin APK, backend desplegado ni teléfono probado.
+El [checkpoint014/016](sessions/2026-10-10-integracion-122-014-016.md)
+añade las seis figuras de calentamiento y el arranque/políticaAndroid revisados.
+79entradas/73anteriores intactas,76controles dirigidos y4mutantes rechazados;
+esquema21 y SDK3.22 conservados. El [checkpoint015](sessions/2026-10-10-integracion-122-015.md)
+integra gráficas con rango/evidencia:44criterios y9controles compartidos pasan.
+Full combinado espera009 y los frentes011/012 pendientes;015 no añade radar.
+El [checkpointClaude de calentamiento](sessions/2026-10-10-integracion-122-warmup.md)
+integra avisos de molestias sin agregar ejercicios y checklist de Cindy de
+prueba:18casos y24controles compartidos pasaron localmente. La revisión
+independiente devolvió2 fallos de snapshot histórico; la barrera UI→archivo
+ahora espera completion real (18dirigidos/8Store pasan localmente), sin cambiar
+producción. Causa previa NO_CONFIRMADA y nueva revisión pendiente. Nueva costura SQLite→pantalla
+positiva probada; mutante de conexión NO_EVALUADO por cierre de harness detenido
+tras diagnóstico acotado. Esquema21; sin APK ni validación de teléfono.
+
+**Slice016 aislado:** [arranque y política Android](../adr/0018-arranque-y-respaldo-android.md)
+en `seguimiento-016-android`, basec04b2a9. Misma S013, reglas de exclusión
+cloud/D2D y divulgación en Ajustes; ZIP/local conservados. Verificación fuente
+no equivale a Manifest fusionado, APK ni respaldo observado en un teléfono.
+[Recibo016 y gates](sessions/2026-10-10-016-android.md):15testsPython,
+8testsFlutter, análisis/diff0; sin cambiar los30PNG originales.
+
+**Implementación local plan008 (9oct):** [contrato de evidencia de progreso](progress-evidence.md)
+y [recibo de pruebas](sessions/2026-10-09-008-evidencia.md). Worktree aislado
+`C:/My Projects/seguimiento-008-evidencia`; no equivale a publicación.009/011
+deben consumir los DTO/resolvers compartidos y conservar observaciones dudosas
+sin convertirlas en aptitud para aumentar dosis.
+La [revisión de fecha de toda la parte](sessions/2026-10-09-008-fecha-parte.md)
+añade confirmación ante fechas mezcladas, inválidas o futuras.
+
+**Candidato local plan010 (9-oct):** comidas conocidas/nuevas con estimación
+revisable, cobertura de toda la descripción y aprendizaje opcional al Guardar.
+Esquema21 añade registro de parches de catálogo sin convertir unidades ni
+reescribir comidas. Mantiene `meal_text` antiguo; el gateway requiere desplegar
+`meal_estimate` antes de que la pantalla use esa tarea. Precisión/coste reales
+NO_EVALUADO; no se tocó teléfono ni producción.
+[ADR0017](../adr/0017-comidas-estimadas-y-catalogo-aditivo.md) y
+[recibo local](sessions/2026-10-09-plan010-comidas-local.md).
+
 Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
@@ -26,6 +167,11 @@ Utilidad/precisión con comidas reales y aceptación de figuras siguen pendiente
 Las ampliaciones §16.19–22 (pasos/sueño, comidaIA, técnica y guía con historial)
 están en [roadmap](../roadmap.md). §16.17 espera permisos/fuentes de Innova;
 §16.18 requiere ampliar el contrato del gateway para la propuesta semanal.
+
+**Trabajo activo (9oct):** [renovación integral de ilustraciones](../design/ilustraciones-renovacion.md),
+worktree `C:/My Projects/seguimiento-ilustraciones`, rama
+`JuxnD/ilustraciones-completas`. Incluye guías faltantes y biblioteca consultable;
+no modifica la release1.21 ni equivale a una nueva publicación.
 
 | Tema | Documento | Cuándo se actualiza |
 |---|---|---|
@@ -82,18 +228,21 @@ están en [roadmap](../roadmap.md). §16.17 espera permisos/fuentes de Innova;
   sep 2026; desde la 1.6.1 CI firma y publica (huella verificada). Ver "La llave de las releases" en
   [actualizaciones.md](../actualizaciones.md).
 - Las metas (proteína, kcal, piso de alerta, calentamiento mínimo, ventana de
-  medición) viven en la tabla `profiles` y se pueden editar en Ajustes.
+  medición) se editan en Ajustes. Desde 009/022 pasos, proteína, kcal, fútbol y
+  piso tienen historia en `goal_versions` (null conocido = «sin meta»); `profiles`
+  es la proyección. El alta (estado/origen) también vive en `profiles` (esquema 23).
 - El catálogo de alimentos y los combos se siembran en la primera apertura
   (`lib/data/seed_foods.dart`). Cada alimento dice si sus macros salen de una
   etiqueta o de una tabla de referencia, y el informe reporta esa proporción.
-- El plan que se siembra en la primera apertura está en `lib/data/seed_plan.dart`
-  (dos versiones: base y la que añade bloques de core, cuádriceps y hombro).
-  Editarlo desde la app crea versiones nuevas; la siembra no vuelve a correr.
+- El plan del dueño está en `lib/data/seed_plan.dart` (dos versiones: base y
+  la que añade bloques de core, cuádriceps y hombro). Desde el candidato 022 ya
+  **no se siembra** al arrancar: una instalación nueva empieza sin rutina y la
+  crea con el editor común; `seedIfEmpty` queda como fixture de pruebas.
 - Pasos: la app del reloj (Innova S-Watch, *Yo → Health Connect*) los escribe
   en Health Connect y esta app los trae al abrirse si se conectó en Ajustes
   ([ADR 0007](../adr/0007-pasos-por-health-connect-nativo.md)). También se
-  anotan a mano; se queda la cifra mayor. La meta (7.500) es solo entre
-  semana. Innova escribe por lotes al sincronizar, con esa hora: Hoy muestra
+  anotan a mano; se queda la cifra mayor. La meta personal es entre semana. En candidata1.22 la base inicial es5.000;
+  actualizar conserva el perfil existente y ofrece cambiarlo al guardar. Innova escribe por lotes al sincronizar, con esa hora: Hoy muestra
   quién escribió el último registro y cuándo, y pide abrir la app del reloj
   si pasaron más de 6 h (§16.14).
 - El emulador se prueba con APK debug, que no recorta recursos: lo que toque
@@ -151,3 +300,40 @@ Esta adaptación no duplica autoridad en páginas con nombres genéricos. El
 validador estructural global exige esos nombres y encabezados literales en
 inglés; sus incompatibilidades con esta biblioteca se declaran aparte y no
 son evidencia de que la app funcione ni de que deje de funcionar.
+
+
+Recibo de la renovación1.22 y feedback Cuádriceps/Vela:
+[sessions/2026-10-09-ilustraciones-y-recuperacion.md](sessions/2026-10-09-ilustraciones-y-recuperacion.md).
+Fuente funcional7fa8099; revisión humana de comprensión permanece abierta.
+
+## Preparación independiente del piloto (9 de octubre)
+
+Plan012, worktree `C:/My Projects/seguimiento-012-piloto`, base d2d3070.
+Cambios acotados: inventario de exportación/restauración (incluye IA y archivo
+sin cifrar), alcance veraz de borrado, herramientas de gate con artefactos
+sintéticos y documentación. No se implementó alta nueva, migración, política
+Android ni cambio SDK/workflow. Depende de integrar008–011 antes del ensayo.
+[Caso viable](../CASO.md), [piloto](../piloto.md),
+[matriz de compatibilidad](../piloto-compatibilidad.md),
+[contrato del gate](../runbooks/pilot-release-gate.md).
+Piloto externo, baseline, umbrales, participantes y QA nativa nuevos pendientes;
+preparación parcial no es publicación ni validación comercial.
+Evidencia local: [sesión012](sessions/2026-10-09-012-preparacion-piloto.md).
+
+## Logo: preparación013 (9 de octubre)
+
+Worktree `C:/My Projects/seguimiento-013-logo`, base d2d3070: S en movimiento,
+paleta existente y fuenteSVG única con PNGs/recursos Android regenerados.
+No cambian nombre, paquete, firma, SDK, versión ni pantallas. [Diseño y comparación](../design/logo-013.md),
+[fuente/pipeline](../../assets/icon/LEEME.md),
+[recibo](sessions/2026-10-09-013-logo.md).
+Validación de entradas PNG/safezone/alpha y revisión técnica en pequeño;
+APK integrado, permisos/notificación/temático y aceptación humana pendientes.
+
+
+Frente014: seis nuevas guías de calentamiento tienen figura explícita,
+79entradas de catálogo (73 anteriores+6 nuevas). Contrato `shoulderOffset`
+y `keepReachRadius` opt-in, recorridos y comprensión pendiente:
+[Diseño014](../design/calentamiento-014.md) y
+[recibo014](sessions/2026-10-10-014-calentamiento.md).
+No atribuir estas figuras a unAPK anterior ni a la instalación del owner.

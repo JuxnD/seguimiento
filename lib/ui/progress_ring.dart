@@ -16,8 +16,8 @@ class ProgressRing extends StatelessWidget {
     this.stroke = 9,
   });
 
-  /// 0 a 1.
-  final double progress;
+  /// 0 a 1. null = sin referencia: sólo pista neutral, no cumplimiento0%.
+  final double? progress;
 
   /// Número grande dentro del anillo.
   final String value;
@@ -38,7 +38,7 @@ class ProgressRing extends StatelessWidget {
           width: size,
           height: size,
           child: TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: progress.clamp(0, 1)),
+            tween: Tween(begin: 0, end: progress?.clamp(0, 1) ?? 0),
             duration: const Duration(milliseconds: 600),
             curve: Curves.easeOutCubic,
             builder: (context, animated, _) => CustomPaint(

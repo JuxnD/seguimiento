@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart' show TableUpdateQuery;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,6 +19,8 @@ import '../data/local_flags.dart';
 import '../data/update_service.dart';
 import '../data/repositories/body_repository.dart';
 import '../data/repositories/chart_repository.dart';
+import '../data/repositories/personal_radar_repository.dart';
+import '../domain/progress_metrics.dart';
 import '../data/repositories/dashboard_repository.dart';
 import '../data/repositories/exercise_repository.dart';
 import '../data/repositories/fitness_test_repository.dart';
@@ -42,6 +45,9 @@ import '../domain/report/period_summary.dart';
 import '../domain/report/report_builder.dart';
 import '../domain/report/report_input.dart';
 import '../domain/steps.dart';
+import '../data/repositories/goal_repository.dart';
+import '../domain/adaptive_coach.dart' show ladderProposalId;
+import '../domain/core_ladders.dart' show coreLadders;
 
 /// Se sobreescribe en `main` con la base ya abierta.
 final databaseHostProvider = Provider<DatabaseHost>((ref) => throw UnimplementedError());
@@ -114,9 +120,39 @@ final ladderAdviceProvider = StreamProvider.autoDispose((ref) {
   return repo.watchAdvice(today);
 });
 
+/// Lo decidido sobre cada propuesta de subir peldaño (plan 009), por escalera.
+final ladderDecisionsProvider = FutureProvider.autoDispose((ref) async {
+  final advice = await ref.watch(ladderAdviceProvider.future);
+  final goals = GoalRepository(ref.watch(databaseProvider));
+  final today = ref.watch(todayProvider);
+  return {
+    for (final l in coreLadders)
+      if (advice[l.id] case final a? when a.canStepUp)
+        l.id: (
+          id: ladderProposalId(l.id, a.step.step, addDays(dateOnly(today), -a.daysOnStep)),
+          decision: await goals.proposal(ladderProposalId(l.id, a.step.step, addDays(dateOnly(today), -a.daysOnStep))),
+        ),
+  };
+});
+
 /// Test de condición (§19.11).
 final fitnessTestRepositoryProvider = Provider((ref) => FitnessTestRepository(ref.watch(databaseProvider)));
 final fitnessTestsProvider = FutureProvider.autoDispose((ref) => ref.watch(fitnessTestRepositoryProvider).all());
+
+/// Shared history reader: reference edits and restores invalidate all consumers.
+final goalHistoryProvider = StreamProvider((ref) => GoalRepository(ref.watch(databaseProvider)).watchHistory());
+final radarSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables(
+      [db.fitnessTests, db.sessions, db.sessionSets, db.exercises]));
+});
+final personalRadarProvider = FutureProvider.family<PersonalRadar, String>((ref, end) async {
+  ref.watch(radarSignalsProvider);
+  final today = ref.watch(todayProvider);
+  final history = await ref.watch(goalHistoryProvider.future);
+  return PersonalRadarRepository(ref.watch(databaseProvider)).load(
+      end: parseDay(end), today: today, history: history);
+});
 
 /// Horas en cama anotadas la mañana de ese día (`YYYY-MM-DD`).
 final sleepDayProvider =
@@ -187,33 +223,53 @@ final photoCheckInsProvider = StreamProvider((ref) => ref.watch(photoRepositoryP
 final chartRepositoryProvider =
     Provider((ref) => ChartRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));
 
-/// Rondas de cada sesión de circuito: la línea que debe subir.
-final roundsSeriesProvider = FutureProvider((ref) {
+/// Observations of the selected report period; protocol decides comparison.
+final roundsSeriesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(sessionsProvider);
-  return ref.watch(chartRepositoryProvider).rounds();
+  return ref
+      .watch(chartRepositoryProvider)
+      .rounds(from: parseDay(range.$1), to: parseDay(range.$2));
 });
 
 /// Proteína por día del rango del informe.
-final proteinSeriesProvider = FutureProvider.family((ref, (String, String) range) {
+final proteinSeriesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(mealsRangeRefreshProvider(range));
-  return ref.watch(chartRepositoryProvider).nutritionDaily(parseDay(range.$1), parseDay(range.$2));
+  ref.watch(closedDaysRangeProvider(range));
+  return ref
+      .watch(chartRepositoryProvider)
+      .nutritionDays(parseDay(range.$1), parseDay(range.$2));
 });
 
-final weightSeriesProvider = FutureProvider((ref) {
+final weightSeriesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(weightsProvider);
-  return ref.watch(chartRepositoryProvider).weights();
+  return ref
+      .watch(chartRepositoryProvider)
+      .weights(from: parseDay(range.$1), to: parseDay(range.$2));
 });
 
-final measurementSitesProvider = FutureProvider((ref) {
+final measurementSitesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(checkInsProvider);
-  return ref.watch(chartRepositoryProvider).sitesWithHistory();
+  return ref
+      .watch(chartRepositoryProvider)
+      .sitesWithHistory(from: parseDay(range.$1), to: parseDay(range.$2));
 });
 
-final measurementSeriesProvider = FutureProvider.family((ref, MeasureSite site) {
+final measurementSeriesProvider =
+    FutureProvider.family((ref, (MeasureSite, String, String) key) {
   ref.watch(checkInsProvider);
   final unit = ref.watch(profileProvider).value?.lengthUnit ?? LengthUnit.cm;
-  return ref.watch(chartRepositoryProvider).measurements(site, unit: unit);
+  return ref.watch(chartRepositoryProvider).measurements(key.$1,
+      unit: unit, from: parseDay(key.$2), to: parseDay(key.$3));
 });
+
+/// Reloj de las decisiones del acompañamiento (plan 009): una propuesta se
+/// decide con el día real en que se toca el botón, no con el de la lectura
+/// que la mostró. Las pruebas lo fijan.
+final decisionClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
 
 /// Día de hoy. Cambia sola a medianoche y cuando la app vuelve a primer plano
 /// (`refresh`), así que nada que dependa de ella se queda en "ayer" con la app
@@ -248,6 +304,7 @@ class TodayNotifier extends Notifier<DateTime> {
 /// Resumen de Hoy. Se recalcula cuando cambia cualquier dato que muestre.
 final dashboardProvider = FutureProvider((ref) {
   final today = ref.watch(todayProvider);
+  ref.watch(goalHistoryProvider);
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
   ref.watch(planVersionsProvider);
@@ -280,13 +337,29 @@ final reminderSyncProvider = Provider<void>((ref) {
   ref.listen(dayClosedProvider(dayKey(today)), (_, __) => run());
   ref.listen(stepsDayProvider(dayKey(today)), (_, __) => run());
   ref.listen(reminderSchedulerProvider, (_, __) => run());
+  ref.listen(coachSignalsProvider, (_, __) => run());
   run();
+});
+
+/// Lo que cambia la lectura del acompañamiento sin pasar por los providers de
+/// arriba (plan 009, R2): cómo amaneció, fútbol, vigencias y decisiones. Un
+/// cambio guardado reprograma o retira el aviso de pasos.
+final coachSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables(
+      [db.morningChecks, db.footballGames, db.goalVersions, db.coachProposals, db.dailySteps]));
 });
 
 /// Única puerta para reprogramar los avisos. Nunca lanza: sin permiso de
 /// notificaciones o sin canal, la app sigue igual.
 final rescheduleRemindersProvider = Provider<Future<void> Function()>((ref) => coalesce(() async {
       try {
+        // Plan 022: sin alta confirmada no hay avisos (p. ej. tras restaurar
+        // un respaldo pendiente con la app abierta): se retiran los propios.
+        if (!(await ref.read(profileRepositoryProvider).setupStatus()).ready) {
+          await ref.read(notificationServiceProvider).applySchedule(const []);
+          return;
+        }
         await ref.read(reminderSchedulerProvider).reschedule();
       } on Object {
         // Sin permiso o sin canal: no hay nada que reprogramar.
@@ -294,6 +367,10 @@ final rescheduleRemindersProvider = Provider<Future<void> Function()>((ref) => c
     }));
 
 final profileProvider = StreamProvider((ref) => ref.watch(profileRepositoryProvider).watch());
+
+/// Estado del alta (plan 022). Se recrea al restaurar (generación de la base);
+/// un origen/estado inválido llega como error.
+final setupStatusProvider = StreamProvider<SetupStatus>((ref) => ref.watch(profileRepositoryProvider).watchSetup());
 final exercisesProvider = StreamProvider((ref) => ref.watch(exerciseRepositoryProvider).watchAll());
 
 /// Una versión del plan completa. Es inmutable: se carga una vez y queda.
@@ -337,6 +414,7 @@ final pendingReviewProvider = StreamProvider((ref) => ref.watch(trainingReposito
 /// Se recarga cuando cambia cualquier dato de entrada.
 final reportInputProvider = FutureProvider.family<ReportInput, (String, String)>((ref, range) async {
   // Dependencias explícitas: al cambiar cualquiera, el informe se regenera.
+  ref.watch(goalHistoryProvider);
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
   ref.watch(stepsHistoryProvider);

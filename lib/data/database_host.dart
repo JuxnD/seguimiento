@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 
 import 'database.dart';
+import 'repositories/profile_repository.dart' show InvalidSetupException, validateSetup;
 import 'repositories/reminder_repository.dart';
 
 /// Error de restauración con mensaje listo para mostrar.
@@ -245,6 +246,13 @@ class DatabaseHost {
     final profile = await db.customSelect('select id from profiles').get();
     if (profile.length != 1 || profile.single.data['id'] != 1) {
       throw RestoreException('El respaldo no contiene un perfil válido.');
+    }
+    // Plan 022: origen y estado del alta con el mismo contrato que la app
+    // abierta. Corre en la apertura de prueba, antes de tocar base y fotos.
+    try {
+      await validateSetup(db);
+    } on InvalidSetupException catch (e) {
+      throw RestoreException('El respaldo tiene un alta inválida: ${e.message}');
     }
   }
 

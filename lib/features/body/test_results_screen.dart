@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:clock/clock.dart';
 
 import '../../app/providers.dart';
 import '../../domain/fitness_test.dart';
+import '../../domain/dates.dart' show dayKey;
 import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
 import '../training/test_mode_screen.dart';
@@ -10,7 +12,8 @@ import '../training/test_mode_screen.dart';
 /// Test 1 / Test 2 / Test 3 con el % de mejora (§19.11) y la dosis inicial
 /// que sale del último test.
 class TestResultsScreen extends ConsumerWidget {
-  const TestResultsScreen({super.key});
+  const TestResultsScreen({super.key, this.focusPart});
+  final TestPart? focusPart;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,24 +26,27 @@ class TestResultsScreen extends ConsumerWidget {
         data: (r) => ListView(
           padding: const EdgeInsets.only(bottom: 32),
           children: [
-            const AppCard(
-              children: [
-                Text('Test 1 en la semana 1 del v3.1, Test 2 en la descarga (16–22 nov) y Test 3 con las pruebas '
-                    'del 11 dic. Por lado cuenta el más débil. Lo marcado "con dudas" lleva *.'),
-              ],
-            ),
+            const AppCard(children: [
+              Text(
+                  'Elige Test 1, 2 o 3 y la parte que quieras registrar. Por lado cuenta el más débil. Lo marcado "con dudas" lleva *. Abrir una prueba no guarda resultados.')
+            ]),
+            FutureBuilder<List<String>>(
+                future: _planned(ref),
+                builder: (_, dates) => dates.data == null || dates.data!.isEmpty
+                    ? const SizedBox.shrink()
+                    : AppCard(title: 'Calendario previsto', children: [for (final label in dates.data!) Text(label)])),
             AppCard(title: 'Abrir o continuar', children: [
               Wrap(spacing: 8, children: [
                 for (final round in [1, 2, 3])
-                  for (final part in TestPart.values)
+                  for (final part in [
+                    if (focusPart != null) focusPart!,
+                    ...TestPart.values.where((p) => p != focusPart)
+                  ])
                     OutlinedButton(
                         onPressed: () async {
-                          final date = await ref.read(fitnessTestRepositoryProvider).dateFor(round, part);
+                          final date =
+                              await ref.read(fitnessTestRepositoryProvider).recordedDateFor(round, part) ?? clock.now();
                           if (!context.mounted) return;
-                          if (date == null) {
-                            showSnack(context, 'Activa el plan v3.1 para programar los tests.');
-                            return;
-                          }
                           await Navigator.push(context,
                               MaterialPageRoute(builder: (_) => TestModeScreen(date: date, round: round, part: part)));
                         },
@@ -48,7 +54,7 @@ class TestResultsScreen extends ConsumerWidget {
               ]),
             ]),
             if (r.isEmpty)
-              const AppCard(children: [Text('Aún no hay resultados: el Test 1 es el lunes de la semana 1.')])
+              const AppCard(children: [Text('Aún no hay resultados. Elige una prueba cuando quieras medirla.')])
             else ...[
               AppCard(title: 'Torso, core y habilidades', children: [TestTable(results: r, items: torsoTests)]),
               AppCard(title: 'Piernas', children: [TestTable(results: r, items: legTests)]),
@@ -59,13 +65,30 @@ class TestResultsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  Future<List<String>> _planned(WidgetRef ref) async {
+    final repo = ref.read(fitnessTestRepositoryProvider);
+    final labels = <String>[];
+    for (final round in [1, 2, 3]) {
+      for (final part in TestPart.values) {
+        final day = await repo.plannedDateFor(round, part);
+        if (day != null) {
+          labels.add('Previsto: T$round ${part == TestPart.torso ? 'torso' : 'piernas'} · ${dayKey(day)}');
+        }
+      }
+    }
+    return labels;
+  }
 }
 
-/// Último test con resultado de una prueba.
+/// Último test completo y limpio; conservar parciales en las columnas.
 int? lastRound(List<TestResult> results, String item) {
   int? last;
   for (final r in results) {
-    if (r.item == item && (last == null || r.round > last)) last = r.round;
+    if (r.item == item &&
+        testValue(results, r.round, item) != null &&
+        !results.any((x) => x.round == r.round && x.item == item && !x.clean) &&
+        (last == null || r.round > last)) last = r.round;
   }
   return last;
 }
@@ -88,7 +111,8 @@ class TestTable extends StatelessWidget {
             : '${partial.map((r) => '${r.side}: ${formatTestValue(t, r.value)}${r.clean ? '' : '*'}').join('\n')}\nParcial';
       }
       final doubtful = results.any((r) => r.round == round && r.item == t.id && !r.clean);
-      return '${formatTestValue(t, v)}${doubtful ? '*' : ''}';
+      final date = results.firstWhere((r) => r.round == round && r.item == t.id).date;
+      return '${formatTestValue(t, v)}${doubtful ? '*' : ''}\n${date == null ? 'Fecha sin registrar' : dayKey(date)}';
     }
 
     final rows = [
@@ -112,10 +136,11 @@ class TestTable extends StatelessWidget {
             ),
             for (final round in [1, 2, 3]) Text(cell(t, round), style: text.bodySmall),
             Builder(builder: (_) {
-              final last = lastRound(results, t.id);
+              final last = latestEligibleTestRound(results, t.id, asOf: clock.now());
               final pct = last == null || last == 1
                   ? null
-                  : improvement(testValue(results, 1, t.id), testValue(results, last, t.id));
+                  : improvement(eligibleTestValue(results, 1, t.id, asOf: clock.now()),
+                      eligibleTestValue(results, last, t.id, asOf: clock.now()));
               return Text(
                 pct == null ? '—' : '${pct >= 0 ? '+' : ''}${pct.round()} %',
                 style: text.bodySmall?.copyWith(
@@ -139,9 +164,10 @@ class TestDoses extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final lines = [
       for (final t in allTests)
-        if (lastRound(results, t.id) case final round?)
-          if (testValue(results, round, t.id) case final v?)
-            if (initialDose(t, v) case final dose?) '${t.name}: $dose${t.perSide ? ' por lado' : ''}',
+        if (latestEligibleTestRound(results, t.id, asOf: clock.now()) case final round?)
+          if (eligibleTestValue(results, round, t.id, asOf: clock.now()) case final v?)
+            if (initialDose(t, v) case final dose?)
+              '${t.name}: $dose${t.perSide ? ' por lado' : ''} (T$round)',
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,6 +175,8 @@ class TestDoses extends StatelessWidget {
         Text('Reps: el tope del rango al 70–75 % del máximo. Aguantes: series del 50–60 % del tiempo máximo.',
             style: text.bodySmall),
         const SizedBox(height: 6),
+        const Text(
+            'Sólo resultados completos y limpios con fecha registrada. Los parciales o con dudas siguen visibles; no aumentan la dosis.'),
         for (final l in lines) Text('• $l', style: text.bodyMedium),
       ],
     );

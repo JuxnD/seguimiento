@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show Value;
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
@@ -12,12 +11,14 @@ import 'package:share_plus/share_plus.dart';
 import '../../app/providers.dart';
 import '../../data/backup_archive.dart';
 import '../../data/database.dart';
-import '../../data/database_host.dart';
+import '../../data/repositories/goal_repository.dart';
 import '../../data/repositories/profile_repository.dart';
+import '../../domain/goal_history.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import 'corrections_screen.dart';
+import 'restore_access.dart';
 import '../../ui/widgets.dart';
 import '../meals/foods_screen.dart';
 import '../plan/plan_screen.dart';
@@ -41,7 +42,22 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             // La clave recrea la tarjeta al restaurar: si no, mostraría (y al
             // guardar escribiría) el perfil anterior.
-            _ProfileCard(key: ValueKey(ref.watch(databaseGenerationProvider)), profile: p),
+            ref.watch(goalHistoryProvider).when(
+                  loading: () =>
+                      const AppCard(children: [Text('Consultando metas…')]),
+                  error: (e, _) => AppCard(children: [
+                    Text('No se pudieron consultar las metas: $e')
+                  ]),
+                  data: (history) => _ProfileCard(key: ValueKey((ref.watch(databaseGenerationProvider),
+                        p,
+                        ref.watch(todayProvider),
+                        history.versions
+                            .map((v) => '${v.id}:${v.value}:${v.effectiveFrom}')
+                            .join('|')
+                      )), profile: p,
+                      history: history,
+                      day: ref.watch(todayProvider)),
+                ),
             const HealthConnectCard(),
             AppCard(
               title: 'Catálogos',
@@ -111,8 +127,15 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
   Widget build(BuildContext context) => AppCard(
         title: 'Respaldo',
         children: [
-          const Text('Exporta un ZIP con tus registros y fotos de progreso y ejercicios. '
-              'Guárdalo fuera del teléfono para poder recuperarlo si lo pierdes.'),
+          const Text('Exporta un ZIP con tus registros, historial de IA '
+              '(preguntas, respuestas y contexto) y fotos de progreso y ejercicios. '
+              'El archivo se guarda sin cifrar: quien lo reciba puede leer esos datos. '
+              'Guárdalo en un lugar privado fuera del teléfono para recuperarlo si lo pierdes. '
+              'La licencia de IA no se incluye.'),
+          const SizedBox(height: 8),
+          const Text('Esta app está configurada para excluir sus datos de copias automáticas de Android '
+              'y del traslado entre teléfonos. Usa el ZIP. No borra copias previas '
+              'ni controla herramientas del fabricante o de terceros.'),
           const SizedBox(height: 8),
           FilledButton.tonalIcon(
             onPressed: _busy ? null : () => _export(context, ref),
@@ -127,13 +150,16 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8),
-            child:
-                Text('Un ZIP reemplaza registros y fotos. Los respaldos antiguos .sqlite solo reemplazan registros.'),
+            child: Text('Un ZIP reemplaza registros, historial de IA y fotos. '
+                'Los respaldos antiguos .sqlite reemplazan la base, incluido el historial de IA '
+                'que contengan; conservan las fotos actuales. No reemplazan el cronómetro en curso ni los permisos.'),
           ),
           const SizedBox(height: 12),
           Text('Copias automáticas', style: Theme.of(context).textTheme.titleSmall),
-          const Text('Una por semana, dentro de la app; se guardan las 4 últimas. '
-              'Solo contienen registros, sin fotos. Sirven para deshacer un error; '
+          const Text('Una por semana, sin cifrar dentro de la app; se guardan las 4 últimas. '
+              'Contienen la base y el historial de IA, sin fotos ni licencia. '
+              'Al restaurarlas pueden recuperar conversaciones borradas después de la copia. '
+              'Sirven para deshacer un error; '
               'si pierdes el teléfono se pierden también. Para cambiar de teléfono, exporta el ZIP.'),
           ref.watch(autoBackupsProvider).when(
                 loading: () => const LinearProgressIndicator(),
@@ -149,7 +175,8 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
                             contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.history),
                             title: Text('${weekdayLong(b.date.weekday)} ${formatLong(b.date)}'),
-                            subtitle: Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB · registros sin fotos'),
+                            subtitle:
+                                Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB · base e historial IA, sin fotos'),
                             trailing: TextButton(
                               onPressed: _busy
                                   ? null
@@ -190,62 +217,19 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
     }
   }
 
-  /// Reemplaza registros y, para ZIP, fotos. Pide
-  /// confirmación explícita porque borra lo registrado desde ese respaldo.
-  Future<void> _restore(BuildContext context, WidgetRef ref) async {
-    final picked = await FilePicker.platform.pickFiles(withData: false);
-    final path = picked?.files.single.path;
-    if (path == null || !context.mounted) return;
-    await _restoreFile(context, ref, File(path), p.basename(path));
-  }
+  /// Reemplaza registros y, para ZIP, fotos, con el acceso común de
+  /// restauración (también lo usa el alta).
+  Future<void> _restore(BuildContext context, WidgetRef ref) => _whileBusy(() => pickAndRestoreBackup(context, ref));
 
-  Future<void> _restoreFile(BuildContext context, WidgetRef ref, File file, String label) async {
+  Future<void> _restoreFile(BuildContext context, WidgetRef ref, File file, String label) =>
+      _whileBusy(() => restoreBackupFile(context, ref, file, label));
+
+  Future<void> _whileBusy(Future<Object?> Function() action) async {
     if (_busy) return;
     setState(() => _busy = true);
-    PreparedBackup? prepared;
-    var replaced = false;
     try {
-      final archive = await _archive(ref);
-      final ready = await _progress('Verificando respaldo', () => archive.prepare(file));
-      prepared = ready;
-      if (!context.mounted) return;
-      final legacy = ready.legacy;
-      final missing = ready.missingPhotos.length;
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (c) => AlertDialog(
-          title: const Text('¿Restaurar este respaldo?'),
-          content: Text('Respaldo: $label\n\n'
-              'Se reemplazan todas las sesiones, comidas y medidas actuales por las del respaldo. '
-              '${legacy ? 'Es un respaldo antiguo: NO contiene fotos. Las fotos actuales se conservan.' : 'Se reemplazan también las fotos actuales por las ${ready.photoCount} fotos del ZIP.'}\n\n'
-              '${missing == 0 ? '' : 'RESPALDO INCOMPLETO: $missing fotos ya faltaban al exportarlo y no se pueden recuperar.\n\n'}'
-              'Esto no se puede deshacer.\n\n'
-              'Si lo de ahora te sirve, exporta primero.'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
-            FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Restaurar')),
-          ],
-        ),
-      );
-      if (confirmed != true || !context.mounted) return;
-      replaced = true;
-      await _progress('Restaurando respaldo', () => archive.restore(ready, allowMissingPhotos: true));
-      if (context.mounted) {
-        showSnack(
-            context,
-            legacy
-                ? 'Registros restaurados; fotos actuales conservadas'
-                : 'Registros y ${ready.photoCount} fotos restaurados${missing == 0 ? '' : '; $missing fotos faltantes'}');
-      }
-    } on RestoreException catch (e) {
-      if (context.mounted) showSnack(context, e.message);
-    } on Object catch (e) {
-      if (context.mounted) showSnack(context, 'No se pudo restaurar: $e');
+      await action();
     } finally {
-      // Siempre: aunque falle, la conexión pudo cerrarse y reabrirse en el
-      // rollback. Sin esto, repositorios y streams quedan sobre la vieja.
-      if (replaced) ref.read(databaseGenerationProvider.notifier).state++;
-      await prepared?.dispose();
       if (mounted) setState(() => _busy = false);
     }
   }
@@ -254,6 +238,22 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
     if (_busy) return;
     setState(() => _busy = true);
     try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          scrollable: true,
+          title: const Text('Antes de exportar'),
+          content: const Text('El ZIP incluye perfil, plan, sesiones, comidas, medidas, catálogos, '
+              'fotos de progreso y ejercicios, e historial de IA con preguntas, respuestas y contexto.\n\n'
+              'Se guarda sin cifrar. Compártelo sólo donde quieras conservar esos datos privados. '
+              'No incluye la licencia, los permisos ni el cronómetro en curso.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancelar')),
+            FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Crear respaldo')),
+          ],
+        ),
+      );
+      if (confirmed != true || !context.mounted) return;
       final dir = await getTemporaryDirectory();
       final path =
           p.join(dir.path, 'seguimiento-${dayKey(DateTime.now())}-${DateTime.now().microsecondsSinceEpoch}.zip');
@@ -292,9 +292,13 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
 }
 
 class _ProfileCard extends ConsumerStatefulWidget {
-  const _ProfileCard({super.key, required this.profile});
+  const _ProfileCard({super.key, required this.profile,
+      required this.history,
+      required this.day});
 
   final ProfileRow profile;
+  final GoalHistory history;
+  final DateTime day;
 
   @override
   ConsumerState<_ProfileCard> createState() => _ProfileCardState();
@@ -303,66 +307,138 @@ class _ProfileCard extends ConsumerStatefulWidget {
 class _ProfileCardState extends ConsumerState<_ProfileCard> {
   late final p = widget.profile;
   late final _height = TextEditingController(text: p.heightCm == null ? '' : fmtDec(p.heightCm!));
-  late final _proteinMin = TextEditingController(text: '${p.proteinMin}');
-  late final _proteinMax = TextEditingController(text: '${p.proteinMax}');
-  late final _kcal = TextEditingController(text: '${p.kcalTarget}');
-  late final _kcalFloor = TextEditingController(text: '${p.kcalFloor}');
-  late final _kcalFootball = TextEditingController(text: p.kcalTargetFootball == null ? '' : '${p.kcalTargetFootball}');
+  late final _proteinMin = TextEditingController(text: _goalText(GoalMetric.proteinaMin));
+  late final _proteinMax = TextEditingController(text: _goalText(GoalMetric.proteinaMax));
+  late final _kcal = TextEditingController(text: _goalText(GoalMetric.kcal));
+  late final _kcalFloor = TextEditingController(text: _goalText(GoalMetric.kcalFloor));
+  late final _kcalFootball = TextEditingController(text: _goalText(GoalMetric.kcalFutbol));
   late final _warmup = TextEditingController(text: formatDuration(p.minWarmupSec));
   late final _interval = TextEditingController(text: '${p.measureIntervalDays}');
   late final _intervalMax = TextEditingController(text: '${p.measureIntervalMaxDays}');
   late final _cooldown = TextEditingController(text: formatDuration(p.cooldownTargetSec));
-  late final _steps = TextEditingController(text: '${p.stepsTarget}');
+  late final _steps = TextEditingController(text: _goalText(GoalMetric.pasos));
   late DateTime _start = p.programStart;
   late DateTime? _birth = p.birthDate == null ? null : parseDay(p.birthDate!);
   late DateTime? _nextMeasurement = p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!);
   late LengthUnit _unit = p.lengthUnit;
   late bool _neverToFailure = p.neverToFailure;
 
+  late final _goalFields = {
+    GoalMetric.proteinaMin: _proteinMin,
+    GoalMetric.proteinaMax: _proteinMax,
+    GoalMetric.kcal: _kcal,
+    GoalMetric.kcalFloor: _kcalFloor,
+    GoalMetric.kcalFutbol: _kcalFootball,
+    GoalMetric.pasos: _steps,
+  };
+
+  GoalAt _at(GoalMetric metric) =>
+      goalReferenceOn(widget.history, metric, widget.day);
+  String _goalText(GoalMetric metric) =>
+      _at(metric).comparable ? '${_at(metric).value!.round()}' : '';
+  String _label(GoalMetric metric, String label) => _at(metric).comparable
+      ? label
+      : '$label (${_at(metric).absenceLabel.toLowerCase()})';
+
+  Future<void> _removeGoal(GoalMetric metric) async {
+    final football = metric == GoalMetric.kcalFutbol;
+    final ok = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+              title: Text(football
+                  ? '¿Usar la meta semanal en fútbol?'
+                  : '¿Quitar ${metric.label.toLowerCase()}?'),
+              content: Text(football
+                  ? 'Desde la confirmación se usa la meta semanal si está definida. Los registros anteriores se conservan.'
+                  : 'Desde la confirmación queda sin meta. Se conservan registros y metas anteriores; puedes definirla después.'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(c, false),
+                    child: const Text('Cancelar')),
+                FilledButton(
+                    onPressed: () => Navigator.pop(c, true),
+                    child: Text(football ? 'Usar la misma' : 'Quitar meta')),
+              ],
+            ));
+    if (ok != true || !mounted) return;
+    await guarded(
+        context,
+        () => GoalRepository(ref.read(databaseProvider)).setPersonalGoals(
+            {metric: null},
+            now: ref.read(decisionClockProvider)()),
+        ok: football ? 'Se usa la meta semanal' : 'Meta quitada');
+      }
+
   @override
   void dispose() {
-    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _kcalFootball, _warmup, _interval, _intervalMax, _cooldown, _steps]) {
+    for (final c in [
+      _height,
+      _proteinMin,
+      _proteinMax,
+      _kcal,
+      _kcalFloor,
+      _kcalFootball,
+      _warmup,
+      _interval,
+      _intervalMax,
+      _cooldown,
+      _steps
+    ]) {
       c.dispose();
     }
     super.dispose();
   }
 
   Future<void> _save() async {
-    final proteinMin = int.tryParse(_proteinMin.text) ?? p.proteinMin;
-    final proteinMax = int.tryParse(_proteinMax.text) ?? p.proteinMax;
-    final kcal = int.tryParse(_kcal.text) ?? p.kcalTarget;
-    final kcalFloor = int.tryParse(_kcalFloor.text) ?? p.kcalFloor;
+    final selections = <GoalMetric, double?>{};
+    for (final entry in _goalFields.entries) {
+      final raw = entry.value.text.trim();
+      if (raw.isEmpty) {
+        if (_at(entry.key).comparable) {
+          showSnack(context,
+              'Para quitar ${entry.key.label.toLowerCase()}, usa su acción explícita; no se guardó nada.');
+          return;
+        }
+        continue;
+      }
+      final value = _positiveInt(raw);
+      if (value == null) {
+        showSnack(context,
+            'Revisa ${entry.key.label.toLowerCase()}: escribe una cifra entera positiva.');
+        return;
+      }
+      if (!_at(entry.key).known || _at(entry.key).value != value)
+      {
+        selections[entry.key] = value.toDouble();
+      }
+    }
     final interval = int.tryParse(_interval.text) ?? p.measureIntervalDays;
     final intervalMax = int.tryParse(_intervalMax.text) ?? p.measureIntervalMaxDays;
-    final problem = proteinMin > proteinMax
-        ? 'La proteína mínima no puede ser mayor que la máxima'
-        : kcalFloor > kcal
-            ? 'El piso de alerta no puede ser mayor que las kcal objetivo'
-            : interval <= 0 || intervalMax < interval
+    final problem = interval <= 0 || intervalMax < interval
                 ? 'La ventana de medición va de un mínimo (> 0) a un máximo mayor o igual'
                 : null;
     if (problem != null) {
       showSnack(context, problem);
       return;
     }
-    await guarded(context, () => ref.read(profileRepositoryProvider).save(ProfilesCompanion(
-          birthDate: Value(_birth == null ? null : dayKey(_birth!)),
-          heightCm: Value(parseNum(_height.text)),
-          startDate: Value(dayKey(_start)),
-          proteinMin: Value(proteinMin),
-          proteinMax: Value(proteinMax),
-          kcalTarget: Value(kcal),
-          kcalFloor: Value(kcalFloor),
-          kcalTargetFootball: Value(_positiveInt(_kcalFootball.text)),
-          minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
-          measureIntervalDays: Value(interval),
-          measureIntervalMaxDays: Value(intervalMax),
-          nextMeasurementDate: Value(_nextMeasurement == null ? null : dayKey(_nextMeasurement!)),
-          cooldownTargetSec: Value(parseDuration(_cooldown.text) ?? p.cooldownTargetSec),
-          neverToFailure: Value(_neverToFailure),
-          stepsTarget: Value(_positiveInt(_steps.text) ?? p.stepsTarget),
-          lengthUnit: Value(_unit),
-        )), ok: 'Perfil guardado');
+    await guarded(
+        context,
+        () => GoalRepository(ref.read(databaseProvider)).setPersonalGoals(
+            selections,
+            profileChanges: ProfilesCompanion(
+              birthDate: Value(_birth == null ? null : dayKey(_birth!)),
+              heightCm: Value(parseNum(_height.text)),
+              startDate: Value(dayKey(_start)),
+              minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
+              measureIntervalDays: Value(interval),
+              measureIntervalMaxDays: Value(intervalMax),
+              nextMeasurementDate: Value(_nextMeasurement == null ? null : dayKey(_nextMeasurement!)),
+              cooldownTargetSec: Value(parseDuration(_cooldown.text) ?? p.cooldownTargetSec),
+              neverToFailure: Value(_neverToFailure),
+              lengthUnit: Value(_unit),
+            ),
+            now: ref.read(decisionClockProvider)()),
+        ok: 'Perfil guardado');
   }
 
   @override
@@ -397,23 +473,44 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: NumberField(controller: _proteinMin, label: 'Proteína mín', suffix: 'g')),
+            Expanded(
+                child: NumberField(
+                    controller: _proteinMin, label: _label(GoalMetric.proteinaMin, 'Proteína mín'), suffix: 'g')),
             const SizedBox(width: 8),
-            Expanded(child: NumberField(controller: _proteinMax, label: 'Proteína máx', suffix: 'g')),
+            Expanded(
+                child: NumberField(
+                    controller: _proteinMax, label: _label(GoalMetric.proteinaMax, 'Proteína máx'), suffix: 'g')),
           ],
         ),
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(child: NumberField(controller: _kcal, label: 'kcal objetivo')),
+            Expanded(child: NumberField(controller: _kcal, label: _label(GoalMetric.kcal, 'kcal objetivo'))),
             const SizedBox(width: 8),
-            Expanded(child: NumberField(controller: _kcalFloor, label: 'Piso de alerta kcal')),
+            Expanded(
+                child: NumberField(controller: _kcalFloor, label: _label(GoalMetric.kcalFloor, 'Piso de alerta kcal'))),
           ],
         ),
         const SizedBox(height: 8),
         NumberField(controller: _kcalFootball, label: 'kcal en días de fútbol (sáb y dom; vacío = la misma)'),
+        const Text(
+            'En fútbol, «la misma» hereda la meta semanal si está definida. Vaciar un número no lo cambia.'),
+        Wrap(spacing: 8, runSpacing: 4, children: [
+          for (final metric in _goalFields.keys
+              .where((m) => m != GoalMetric.pasos && _at(m).comparable))
+            TextButton(
+                onPressed: () => _removeGoal(metric),
+                child: Text(metric == GoalMetric.kcalFutbol
+                    ? 'Fútbol: usar la misma'
+                    : 'Quitar ${metric.label.toLowerCase()}')),
+        ]),
         const SizedBox(height: 8),
         NumberField(controller: _steps, label: 'Pasos diarios entre semana', suffix: 'pasos'),
+        if (p.stepsTarget == 7500) ...[
+          const Text('Puedes adoptar el mínimo inicial de 5.000 pasos. El cambio se aplica al guardar el perfil.'),
+          TextButton(
+              onPressed: () => setState(() => _steps.text = '5000'), child: const Text('Usar 5.000 pasos como base')),
+        ],
         const SizedBox(height: 8),
         Row(
           children: [

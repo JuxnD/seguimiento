@@ -1,5 +1,33 @@
 # Registro de comidas
 
+## Descripción con IA: candidato plan010
+
+Si el servidor anuncia la tarea nueva, reconoce catálogo y propone estimaciones
+para comidas nuevas. Cada alimento muestra cantidad, unidad, porción/supuestos y
+cifras revisables. Un pendiente pide aclaración: se puede corregir la descripción,
+elegir catálogo, registrar una estimación manual o excluir con un motivo.
+No permite Añadir hasta revisar cada alimento y confirmar que la lista contiene
+toda la comida, bebidas y añadidos. «350ml de leche con Milo» conserva350ml;
+Milo no se sustituye por leche ni se cuenta dos veces como bebida preparada.
+
+Las cifras de una estimación corresponden a la porción propuesta y son aproximadas.
+Cambiar cantidad las escala en la misma unidad, que queda fija para la propuesta
+IA; editar las cifras cambia esa referencia. Otra unidad requiere aclarar y
+consultar de nuevo o volver al registro manual. No hay
+equivalencia universal de tazas/cucharadas: confirmar por alimento o preguntar.
+Los nombres de recetas frecuentes no son fichas con macros verificados.
+
+Añadir devuelve un borrador con notas de procedencia; sólo Guardar/Fusionar
+registra. «Recordar este alimento estimado» es opcional y se realiza al guardar,
+creando una ficha nueva si el nombre ya existe. No modifica las cantidades de
+combos ni los snapshots de comidas anteriores. Cancelar no guarda ni aprende.
+Servidor anterior mantiene flujo de catálogo y registro manual.
+
+El catálogo se consulta completo localmente, aunque sólo se envían hasta200
+candidatos por nombre/aliases, favoritos y uso reciente. La actualización añade
+únicamente referencias antiguas ausentes y conserva modificaciones personales.
+[ADR0017](adr/0017-comidas-estimadas-y-catalogo-aditivo.md).
+
 Meta: una comida arbitraria en pocos toques, con la app sumando sola.
 
 ## Formas de registrar
@@ -84,6 +112,14 @@ alimento **personalizado** de una porción (`origin = entradaLibre`, fuente
   de sobra. Si ya existe con las mismas cifras (±0,5), se usa ese alimento. Si
   existe con otras, pregunta: *Actualizar* (reescribe las cifras), *Guardar
   como nuevo* ("Pasta (2)") o *Solo esta vez* (no toca el catálogo).
+  *Actualizar* sólo aparece si el guardado ya va **por porción**. Uno por
+  100 g/ml o por unidad no cambia de base: sus combos lo usan en gramos o
+  unidades, y pasarlo a porción convertía 150 g en 150 porciones (C01, 9 oct).
+  Sus cifras se cambian en el catálogo.
+- **Combos con cantidades sospechosas** (≥ 20 porciones de un alimento por
+  porción, lo que dejó C01): Atajos dice "Revisa: 150 porciones de …" y al
+  tocarlo pregunta *Corregir combo* o *Registrar igual*. Es una sospecha, no
+  una prueba: no bloquea una cantidad que sea real.
 - **En el informe sigue siendo estimado**: un alimento a ojo guardado no se
   vuelve "referencia"; cuenta en la procedencia como entrada libre.
 - **Gestión** en Comidas → Catálogo: filtro *Personalizados* y *Favoritos*,

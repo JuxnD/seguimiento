@@ -1,0 +1,9 @@
+00:00 +0: loading C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: parte con fechas 2026-10-05/desconocida exige confirmar todas antes de guardar
+00:03 +1: parte con fechas 2026-10-05/2026-02-30 exige confirmar todas antes de guardar
+00:04 +2: parte con fechas 2026-10-05/2026-10-07 exige confirmar todas antes de guardar
+00:05 +3: parte con fechas 2026-10-05/2027-01-05 exige confirmar todas antes de guardar
+00:06 +4: parte con fechas 2027-01-05/2027-01-05 exige confirmar todas antes de guardar
+00:07 +5: (tearDownAll)
+00:07 +5: All tests passed!

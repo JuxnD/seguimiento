@@ -1,9 +1,11 @@
 import '../dates.dart';
 import '../enums.dart';
 import '../format.dart';
+import '../goal_history.dart';
 import '../habits.dart';
 import '../nutrition.dart';
 import '../session_math.dart';
+import '../steps.dart';
 import 'alerts.dart';
 import 'period_summary.dart';
 import 'report_input.dart';
@@ -96,22 +98,45 @@ void _summary(StringBuffer b, ReportStats s) {
   } else {
     final prev = s.previous;
     String vs(double now, double? before) => before == null ? '' : ' (${fmtDelta(now - before, decimals: 0)} vs semana anterior)';
-    b.writeln('- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta ${t.proteinMin}–${t.proteinMax})'
+    // Las metas que regían en estos días (plan 009), no las de hoy.
+    final goals = s.input.goals;
+    final days = s.closedDays;
+    final pMin = GoalSpan.over(goals, GoalMetric.proteinaMin, days, fallback: t.proteinMin);
+    final pMax = GoalSpan.over(goals, GoalMetric.proteinaMax, days, fallback: t.proteinMax);
+    final proteinGoal = pMin.single != null && pMax.single != null
+        ? '${fmtInt(pMin.single!)}–${fmtInt(pMax.single!)}'
+        : pMin.segments.isEmpty && pMax.segments.isEmpty
+            ? 'histórica no registrada'
+            : 'mínimo ${pMin.label(fmtInt)}, máximo ${pMax.label(fmtInt)}';
+    final kcal = GoalSpan.fromReferences(days, s.input.kcalReferenceOn);
+    b.writeln('- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta $proteinGoal)'
         '${vs(s.avgProtein!, prev?.avgProtein)} · '
-        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${fmtInt(t.kcalTarget)}'
-        '${t.kcalTargetFootball == null ? '' : ' entre semana, ${fmtInt(t.kcalTargetFootball!)} fútbol'})'
+        'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${kcal.label(fmtInt)})'
         '${vs(s.avgKcal!, prev?.avgKcal)} · '
         'días cerrados: $closed/$elapsed');
-    b.writeln('- Días bajo ${fmtInt(t.kcalFloor)} kcal: ${s.daysBelowFloor.length}');
+    final floor = s.floorSpan(days);
+    if (floor.single case final value?) {
+      b.writeln(
+          '- Días bajo ${fmtInt(value)} kcal: ${s.daysBelowFloor.length}');
+    } else {
+      final judged = days.where((d) => s.floorOn(d).comparable).length;
+    b.writeln('- Piso de alerta kcal: ${floor.label(fmtInt)} · '
+          '${s.daysBelowFloor.length}/$judged días bajo piso con referencia válida');
+    }
   }
 
   final steps = s.steps;
+  final stepsGoal = GoalSpan.over(s.input.goals, GoalMetric.pasos,
+      [for (final d in s.input.steps.keys) if (stepsGoalFor(dateOnly(d), t.stepsTarget) != null) d],
+      fallback: t.stepsTarget);
   if (steps != null) {
     final n = steps.days;
     final weekday = steps.weekdayAverage == null
         ? ''
-        : ' · entre semana ${fmtInt(steps.weekdayAverage!)} (meta ${fmtInt(t.stepsTarget)}, '
-            '${steps.weekdaysAtGoal}/${steps.weekdayDays} ${steps.weekdayDays == 1 ? 'día' : 'días'} en meta)';
+        : ' · entre semana ${fmtInt(steps.weekdayAverage!)} (meta ${stepsGoal.label(fmtInt)}, '
+            '${steps.weekdaysAtGoal}/${steps.weekdayDays - steps.weekdaysGoalUnknown} '
+            '${steps.weekdayDays - steps.weekdaysGoalUnknown == 1 ? 'día' : 'días'} en meta'
+            '${steps.weekdaysGoalUnknown == 0 ? '' : '; ${steps.weekdaysGoalUnknown} con meta histórica no registrada'})';
     final before = s.previous?.steps?.average;
     final vs = before == null ? '' : ' (${fmtDelta(steps.average - before, decimals: 0)} vs semana anterior)';
     b.writeln('- Pasos: ${fmtInt(steps.average)}/día ($n ${n == 1 ? 'día registrado' : 'días registrados'})'
@@ -216,9 +241,8 @@ void _sessions(StringBuffer b, ReportStats s) {
     for (final e in byExercise.entries) {
       final sets = [...e.value]..sort((a, c) => a.setIndex.compareTo(c.setIndex));
       final hold = s.input.holdExercises.contains(e.key);
-      b.writeln('- ${e.key}: ${s.input.perSideExercises.contains(e.key) && sets.length.isEven
-          ? _perSideLabel(sets, seconds: hold)
-          : sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
+      b.writeln(
+          '- ${e.key}: ${s.input.perSideExercises.contains(e.key) && sets.length.isEven ? _perSideLabel(sets, seconds: hold) : sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
     }
     final extra = [
       if (x.limitingExercise != null && x.limitingExercise!.isNotEmpty) 'Limitante: ${x.limitingExercise}',
@@ -331,7 +355,7 @@ void _nutrition(StringBuffer b, ReportStats s) {
     });
     final total = s.macrosOn(d);
     final closed = s.isClosed(d);
-    final flag = closed && total != null && total.kcal < s.input.targets.kcalFloor ? ' ⚠' : '';
+    final flag = closed && total != null && s.belowFloorOn(d) ? ' ⚠' : '';
     final open = total != null && !closed ? ' (incompleto)' : '';
     b.writeln('| ${_dayLabel(d, null)} | ${cells.join(' | ')} | '
         '${total == null ? 'sin registro' : '${fmtInt(total.kcal)}$flag$open'} | '

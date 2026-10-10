@@ -1,0 +1,27 @@
+from pathlib import Path
+import json,subprocess,hashlib
+p=Path('assets/tecnica/figuras3d.json'); original=p.read_bytes(); verdicts=[]
+wall='balanceos distingue pierna móvil, pie fijo y mano en pared lateral'
+support='calentamiento conserva apoyos y brazos rectos en 61 muestras'
+cases=[('without-radius','Balanceos de pierna',wall),('without-shoulder','Retracciones escapulares',support),('without-grip','Dislocaciones con banda',support),('inverted-foot','Balanceos de pierna',wall)]
+try:
+ for label,name,test in cases:
+  source=json.loads(original); figure=next(f for f in source['figures'] if f['name']==name)
+  for frame in figure['frames']:
+   if label=='without-radius': frame['limbs']['nearLeg'].pop('keepReachRadius',None)
+   elif label=='without-shoulder': frame.pop('shoulderOffset',None)
+   elif label=='without-grip':
+    for side in ('nearArm','farArm'): frame['limbs'][side].pop('grip',None)
+   elif label=='inverted-foot': frame['limbs']['farLeg']['foot']=90
+  p.write_text(json.dumps(source,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+  log=Path('build/122-014-mutant-'+label+'.txt')
+  with log.open('w',encoding='utf-8') as out:
+   result=subprocess.run(['C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat','test','--no-pub','test/ui/illustration_supports_test.dart','--plain-name',test,'--reporter','expanded'],stdout=out,stderr=subprocess.STDOUT)
+  text=log.read_text(encoding='utf-8')
+  assert result.returncode==1 and 'Expected:' in text and 'Actual:' in text and test+' [E]' in text,(label,result.returncode,text[-1800:])
+  verdicts.append({'mutant':label,'target':name,'test':test,'exitCode':result.returncode,'verdict':'REJECTED_BY_ASSERTION'})
+finally:
+ p.write_bytes(original)
+assert p.read_bytes()==original
+Path('build/122-014-mutants.json').write_text(json.dumps({'verdicts':verdicts,'restoredSha256':hashlib.sha256(original).hexdigest(),'footMutation':'farLeg.foot=90 (invalid fixed-foot orientation)'},indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+print(json.dumps(verdicts,ensure_ascii=False))

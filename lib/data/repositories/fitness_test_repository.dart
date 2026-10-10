@@ -13,8 +13,15 @@ class FitnessTestRepository {
   final AppDatabase db;
 
   Future<List<TestResult>> all() async => [
-        for (final r in await (db.select(db.fitnessTests)..orderBy([(t) => OrderingTerm(expression: t.id)])).get())
-          TestResult(round: r.round, item: r.item, value: r.value, side: r.side, clean: r.clean),
+        for (final r
+            in await (db.select(db.fitnessTests)..orderBy([(t) => OrderingTerm(expression: t.id)])).get())
+          TestResult(
+              round: r.round,
+              item: r.item,
+              value: r.value,
+              side: r.side,
+              clean: r.clean,
+              date: recordedTestDate(r.date)),
       ];
 
   /// Completo sólo cuando están todos los intentos, incluidos ambos lados.
@@ -31,12 +38,22 @@ class FitnessTestRepository {
 
   /// Editar desde Cuerpo conserva el día original; no crea actividad hoy.
   Future<DateTime?> dateFor(int round, TestPart part) async {
+    final recorded = await recordedDateFor(round, part);
+    if (recorded != null) return recorded;
+    return plannedDateFor(round, part);
+  }
+
+  Future<DateTime?> recordedDateFor(int round, TestPart part) async {
     final row = await (db.select(db.fitnessTests)
           ..where((t) => t.round.equals(round) & t.item.isIn(itemsFor(part).map((t) => t.id)))
           ..orderBy([(t) => OrderingTerm(expression: t.id)])
           ..limit(1))
         .getSingleOrNull();
-    if (row != null) return parseDay(row.date);
+    return row == null ? null : recordedTestDate(row.date);
+  }
+
+  /// Calendario previsto, nunca la fecha de un intento nuevo.
+  Future<DateTime?> plannedDateFor(int round, TestPart part) async {
     final plan = await (db.select(db.planVersions)
           ..where((t) => t.scheme.equals(v31Scheme))
           ..orderBy([(t) => OrderingTerm(expression: t.validFrom)])

@@ -1,0 +1,63 @@
+// Auditoría de sólo lectura: datos ficticios; no DB, Flutter, red ni perfil.
+import 'dart:convert';
+import '../lib/domain/dates.dart';
+import '../lib/domain/recovery.dart';
+import '../lib/domain/steps.dart';
+import '../lib/domain/progress.dart';
+import '../lib/domain/habits.dart';
+
+void main() {
+  final today = DateTime(2026, 10, 9);
+  final rows = <Map<String, Object?>>[];
+  void record(String id, Object? actual, String interpretation) => rows.add({
+    'case': id, 'actual': actual, 'interpretation': interpretation,
+  });
+  List<LoadItem> intenseBefore(DateTime day, int count) => [
+    for (var i = 1; i <= count; i++)
+      LoadItem(date: addDays(day, -i), minutes: 30, effort: 8),
+  ];
+  final seven = intenseBefore(today, 7);
+  record('7_intensos_antes_de_entrenar', loadReading(seven, today).intenseStreak,
+    'Correcto: antes de entrenar hoy se informa la racha terminada ayer.');
+  record('racha_larga_ventana_dashboard', [
+    for (var n = 0; n < 4; n++) () {
+      final day = addDays(today, n);
+      final all = intenseBefore(day, 20);
+      final queried = all.where((s) => !s.date.isBefore(addDays(day, -7))).toList();
+      return loadReading(queried, day).intenseStreak;
+    }(),
+  ], 'Antes de entrenar, 20 días consecutivos se muestran como 7 todos los días por límite de consulta.');
+  record('sesion_moderada_hoy_no_corta', loadReading([
+    ...seven, LoadItem(date: today, minutes: 30, effort: 4),
+  ], today).intenseStreak, 'Desvía el comentario público: sólo debía volver a ayer si hoy no había nada.');
+  record('dos_dias_descanso', loadReading(seven, addDays(today, 1)).intenseStreak,
+    'La racha sale de pantalla al segundo día sin actividad intensa; no es un mensaje perpetuo.');
+  final exhausted = loadReading([LoadItem(date: today, minutes: 30, effort: 10)], today);
+  record('sesion_30_min_rpe10', {
+    'load': exhausted.todayLoad, 'warning': exhausted.warnAnotherSession,
+    'stepsGoal': stepsGoalFor(today, 7500),
+  }, 'Un esfuerzo máximo aislado no llega al umbral600 ni afecta los pasos: gap de acompañamiento.');
+  record('pasos_perfil5000', stepsGoalFor(today, 5000),
+    'La app sí permite meta personal: cambiar el perfil a5000 se refleja en Hoy; cambiar sólo default no cambia perfil existente.');
+  record('doble_progresion_rir_desconocido', doubleProgressionHint(
+    repsMin: 8, repsMax: 12, plannedSets: 3,
+    lastSets: [(reps: 12, rir: null), (reps: 12, rir: null), (reps: 12, rir: null)],
+    tracksLoad: true,
+  ), 'Por diseño actual RIR desconocido permite recomendar más dificultad; incertidumbre no frena.');
+  final lowData = twoWeekRule(
+    weeks: [WeekAverage(DateTime(2026, 9, 21), 80, 1), WeekAverage(DateTime(2026, 10, 5), 78, 1)],
+    abdomen: const [], today: DateTime(2026, 10, 13),
+  );
+  record('regla_peso_un_pesaje_por_semana', {
+    'action': lowData.action.name, 'message': lowData.message,
+  }, 'El texto exige mínimo3pesajes pero la función no usa count: recomienda ajustar con sólo1porsemana.');
+  final staleWaist = twoWeekRule(
+    weeks: [WeekAverage(DateTime(2026, 9, 21), 80, 3), WeekAverage(DateTime(2026, 10, 5), 79.9, 3)],
+    abdomen: [(DateTime(2026, 1, 1), 91), (DateTime(2026, 1, 22), 91)],
+    today: DateTime(2026, 10, 13),
+  );
+  record('regla_cintura_nueve_meses_vieja', {
+    'action': staleWaist.action.name, 'message': staleWaist.message,
+  }, '_waistStill ignora today y acepta dos medidas viejas como si fueran las últimas3semanas.');
+  print(const JsonEncoder.withIndent('  ').convert(rows));
+}

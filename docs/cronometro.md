@@ -29,9 +29,18 @@ perfil (calentamiento mínimo y meta de enfriamiento; 6 y 3 min por defecto,
 editables en Ajustes) y un botón grande para cerrarlas; nada se salta por
 accidente.
 
-- **Calentamiento**: debajo del reloj, "Lo que viene" con los ejercicios, el
-  objetivo y el agarre del plan. Empezar antes de la meta pide confirmar
-  ("Calentamiento corto"): se puede, pero con 4–5 min se rinde peor.
+- **Calentamiento guiado** (§16.23, [ADR 0015](adr/0015-calentamiento-guiado.md)):
+  lista de pasos con su dosis y una clave de técnica (tocar abre la guía):
+  movilidad general 4 × 30 s, activación según el día (tirón, empuje o
+  piernas), un aviso si hay molestia (no agrega ejercicios), y la ronda de
+  aproximación al 40 % del primer ejercicio (en circuito, una ronda). Se
+  marcan a mano; los de tiempo tienen reloj propio y se marcan al terminarlo.
+  Toda la aproximación marcada arma 2 min de descanso antes de la primera
+  serie. "Empezar" con pasos sin marcar pregunta ("Calentamiento a medias");
+  "Saltar calentamiento" no pregunta. La sesión anota "Calentamiento: 7 de 9
+  pasos (5:40)" o "Calentamiento saltado"; `warmupSec` sigue siendo el tiempo
+  real. El miércoles el FIFA 11+ hace de movilidad y activación. "Lo que
+  viene" sigue disponible con su botón.
 - **Trabajo**: contador ("RONDA 3/7" o "SERIE 2/4"), ejercicio, agarre si el
   plan lo pide, y un **anillo con las repeticiones** que se llena al llegar al
   objetivo; −/+ a los lados si hiciste otra cosa. Debajo del ejercicio,
@@ -88,7 +97,9 @@ Si la app muere, Hoy y Entreno muestran **"Sesión sin terminar"** con Retomar y
 Descartar; empezar otra sesión pregunta antes de pisarla. Al retomar, el reloj
 ya contó el tiempo que la app estuvo cerrada (todo son marcas de reloj) y un
 descanso en curso vuelve a programar su aviso. El cronómetro libre funciona
-igual. La foto se borra al guardar o descartar la sesión.
+igual. La foto se borra al guardar o descartar la sesión. Las marcas del
+calentamiento también se retoman. Plan B y sesión técnica (fuera del plan)
+se retoman con el guion guardado; antes se descartaban.
 
 Al terminar el enfriamiento la sesión **se guarda sola** como "sin revisar"
 (`sessions.pending_review`, esquema 14): cuenta en Hoy y en el informe desde
@@ -242,3 +253,24 @@ se puede recuperar una selección de escalera que nunca se guardó; los
 DoneSteps y tiempos se conservan. Un mapa efectivo malformado se descarta
 con mensaje para permitir empezar una sesión nueva. El incidente lumbar también
 se relee de SQLite si Android cerró entre el commit del evento y el snapshot.
+
+### Ventana medida de Cindy (plan 019)
+
+Al guardar una Cindy nueva, el total se compone de los segundos enteros de
+calentamiento, la ventana medida entre inicio y final del trabajo y los
+segundos de enfriamiento. Así, al restar calentamiento y enfriamiento, una
+ventana de 20:00 sigue siendo 1.200 segundos: truncar cada fase y el total de
+reloj por separado podía añadir un segundo ficticio al circuito.
+
+Las fases se guardan con precisión de segundos enteros; la suma puede ser
+ligeramente menor que el total de reloj truncado por separado. No se reparte
+esa diferencia como trabajo. Una Cindy cortada conserva su duración medida,
+su marca de incompleta, rondas, repeticiones extra y dosis; retomar por JSON
+conserva sus marcas de reloj. El cap prescrito no sustituye tiempo medido.
+El contexto usa «1 ronda» y conserva «0 rondas»/«2 rondas» tanto en una
+Cindy completa como cortada; no cambian las cantidades ni las repeticiones.
+No se reescriben sesiones antiguas, no se añade tolerancia de comparación y
+no cambia el cálculo de Tabata. Una observación antigua de 1.201 segundos no
+demuestra por sí sola que proceda de este fallo.
+
+Ver [recibo local y límites](context/sessions/2026-10-10-019-cindy-window.md).

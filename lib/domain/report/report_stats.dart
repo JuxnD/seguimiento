@@ -3,6 +3,7 @@ import '../enums.dart';
 import '../nutrition.dart';
 import '../steps.dart';
 import 'report_input.dart';
+import '../goal_history.dart' show GoalMetric, GoalAt, GoalSpan;
 
 /// Métricas derivadas del rango. Alertas e informe leen de aquí para que un
 /// número nunca se calcule de dos formas distintas.
@@ -35,7 +36,7 @@ class ReportStats {
             ))
         .toList();
     incompleteDays = loggedDays.where((d) => !closedDays.contains(d)).toList();
-    daysBelowFloor = closedDays.where((d) => dayMacros[dayKey(d)]!.kcal < input.targets.kcalFloor).toList();
+    daysBelowFloor = closedDays.where(belowFloorOn).toList();
 
     final sortedPlans = [...input.planVersions]..sort((a, b) => a.validFrom.compareTo(b.validFrom));
     _plans = sortedPlans;
@@ -178,7 +179,8 @@ class ReportStats {
     return (label, reference, free);
   }
 
-  late final StepsSummary? steps = summarizeSteps(input.steps, input.targets.stepsTarget);
+  late final StepsSummary? steps = summarizeSteps(input.steps, input.targets.stepsTarget,
+      goalOn: input.goals == null ? null : (d) => input.goalOn(GoalMetric.pasos, d, input.targets.stepsTarget));
 
   double? get avgKcal => closedDays.isEmpty ? null : _avg((m) => m.kcal);
   double? get avgProtein => closedDays.isEmpty ? null : _avg((m) => m.protein);
@@ -220,8 +222,7 @@ class ReportStats {
     final streaks = <List<DateTime>>[];
     var current = <DateTime>[];
     for (final d in days) {
-      final m = isClosed(d) ? macrosOn(d) : null;
-      if (m != null && m.kcal < input.targets.kcalFloor) {
+      if (isClosed(d) && belowFloorOn(d)) {
         current.add(d);
       } else {
         if (current.isNotEmpty) streaks.add(current);
@@ -231,6 +232,17 @@ class ReportStats {
     if (current.isNotEmpty) streaks.add(current);
     return streaks;
   }
+
+  GoalAt floorOn(DateTime day) =>
+      input.referenceOn(GoalMetric.kcalFloor, day, input.targets.kcalFloor);
+
+  bool belowFloorOn(DateTime day) {
+    final floor = floorOn(day), macros = macrosOn(day);
+    return floor.comparable && macros != null && macros.kcal < floor.value!;
+  }
+
+  GoalSpan floorSpan(Iterable<DateTime> days) =>
+      GoalSpan.fromReferences(days, floorOn);
 }
 
 /// Sesiones de circuito que subieron de ronda sin cumplir la regla de

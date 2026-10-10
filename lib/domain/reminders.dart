@@ -131,7 +131,8 @@ class ReminderContext {
     this.kcalTarget = 2400,
     this.missingMealsToday = const [],
     this.stepsToday,
-    this.stepsTarget = 7500,
+    this.stepsTarget = 5000,
+    this.stepsRecoveryFirst = false,
     this.custom = const [],
     this.lastMeasurement,
     this.measureIntervalDays = 21,
@@ -144,16 +145,19 @@ class ReminderContext {
   final List<ReminderDay> days;
   final Map<ReminderKind, ReminderSetting> settings;
   final double proteinToday;
-  final int proteinMin;
+  final int? proteinMin;
   final double kcalToday;
-  final int kcalTarget;
+  final int? kcalTarget;
 
   /// Comidas principales que faltan hoy; vacío si el día está cerrado.
   final List<MealSlot> missingMealsToday;
 
   /// Pasos registrados hoy; null = aún no se anotan.
   final int? stepsToday;
-  final int stepsTarget;
+  final int? stepsTarget;
+
+  /// El acompañamiento pone hoy la recuperación primero (plan 009).
+  final bool stepsRecoveryFirst;
 
   /// Recordatorios propios del usuario.
   final List<CustomReminder> custom;
@@ -180,12 +184,10 @@ List<PlannedNotification> planReminders(ReminderContext ctx) {
   out.addAll(_steps(ctx));
   out.addAll(_measurement(ctx));
 
-  return out.where((n) => n.when.isAfter(ctx.now)).toList()
-    ..sort((a, b) => a.when.compareTo(b.when));
+  return out.where((n) => n.when.isAfter(ctx.now)).toList()..sort((a, b) => a.when.compareTo(b.when));
 }
 
-DateTime _at(DateTime day, ReminderSetting s) =>
-    DateTime(day.year, day.month, day.day, s.hour ?? 0, s.minute ?? 0);
+DateTime _at(DateTime day, ReminderSetting s) => DateTime(day.year, day.month, day.day, s.hour ?? 0, s.minute ?? 0);
 
 Iterable<PlannedNotification> _sessionReminder(ReminderContext ctx, ReminderDay day) sync* {
   final s = ctx.setting(ReminderKind.sesion);
@@ -233,9 +235,12 @@ Iterable<PlannedNotification> _protein(ReminderContext ctx) sync* {
   final s = ctx.setting(ReminderKind.proteina);
   if (s == null || !s.enabled) return;
   final threshold = s.threshold ?? 100;
+  final goal = ctx.proteinMin;
+  if (goal == null) return;
   // Solo tiene sentido con los datos de hoy: mañana serán otros.
-  if (ctx.proteinToday >= threshold) return;
-  final missing = (ctx.proteinMin - ctx.proteinToday).round();
+  // Con la meta ya cumplida no hay nada pendiente, aunque esté bajo el umbral.
+  if (ctx.proteinToday >= threshold || ctx.proteinToday >= goal) return;
+  final missing = (goal - ctx.proteinToday).round();
   yield PlannedNotification(
     kind: ReminderKind.proteina,
     when: _at(ctx.now, s),
@@ -248,8 +253,10 @@ Iterable<PlannedNotification> _calories(ReminderContext ctx) sync* {
   final s = ctx.setting(ReminderKind.calorias);
   if (s == null || !s.enabled) return;
   final threshold = s.threshold ?? 1800;
-  if (ctx.kcalToday >= threshold) return;
-  final missing = (ctx.kcalTarget - ctx.kcalToday).round();
+  final goal = ctx.kcalTarget;
+  if (goal == null) return;
+  if (ctx.kcalToday >= threshold || ctx.kcalToday >= goal) return;
+  final missing = (goal - ctx.kcalToday).round();
   yield PlannedNotification(
     kind: ReminderKind.calorias,
     when: _at(ctx.now, s),
@@ -274,18 +281,23 @@ Iterable<PlannedNotification> _missingMeals(ReminderContext ctx) sync* {
 Iterable<PlannedNotification> _steps(ReminderContext ctx) sync* {
   final s = ctx.setting(ReminderKind.pasos);
   if (s == null || !s.enabled) return;
+  // Misma lectura que Hoy (plan 009): con la recuperación primero no se
+  // empuja a caminar por la meta.
+  if (ctx.stepsRecoveryFirst) return;
   // Solo entre semana: sábado y domingo son de fútbol y no tienen meta.
-  if (stepsGoalFor(ctx.now, ctx.stepsTarget) == null) return;
+  final goal = ctx.stepsTarget;
+  if (goal == null || stepsGoalFor(ctx.now, goal) == null) return;
   final threshold = s.threshold ?? 4000;
   final steps = ctx.stepsToday;
-  if (steps != null && steps >= threshold) return;
+  // Meta cumplida (p. ej. meta 1.000 bajo un umbral de 4.000): nada pendiente.
+  if (steps != null && (steps >= threshold || steps >= goal)) return;
   yield PlannedNotification(
     kind: ReminderKind.pasos,
     when: _at(ctx.now, s),
     title: steps == null ? 'Pasos: sin anotar hoy' : 'Pasos: ${fmtInt(steps)}',
     body: steps == null
-        ? 'Mira el reloj y anótalos en Hoy. La meta es ${fmtInt(ctx.stepsTarget)}; una caminata de 20 min son ~2.000.'
-        : 'Faltan ${fmtInt(ctx.stepsTarget - steps)} para ${fmtInt(ctx.stepsTarget)}. '
+        ? 'Mira el reloj y anótalos en Hoy. La meta es ${fmtInt(goal)}; una caminata de 20 min son ~2.000.'
+        : 'Faltan ${fmtInt(goal - steps)} para ${fmtInt(goal)}. '
             'Una caminata de 20 min son ~2.000.',
   );
 }

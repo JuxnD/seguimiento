@@ -9,6 +9,8 @@ import '../../domain/format.dart';
 import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/progress.dart';
+import '../../domain/goal_history.dart';
+import '../settings/settings_screen.dart';
 import '../../ui/hero.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/widgets.dart';
@@ -38,7 +40,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
     });
     final today = ref.watch(todayProvider);
     final meals = ref.watch(mealsForDayProvider(dayKey(_day)));
-    final profile = ref.watch(profileProvider).value;
+    final history = ref.watch(goalHistoryProvider).valueOrNull;
 
     return Scaffold(
       appBar: AppBar(
@@ -110,26 +112,37 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                 error: (e, _) => Text('Error: $e'),
                 data: (list) {
                   final total = Macros.sum(list.map((m) => m.macros));
-                  final kcalTarget = dailyKcalTarget(
-                      day: _day, weekdayTarget: profile?.kcalTarget ?? 2400, footballTarget: profile?.kcalTargetFootball);
-                  final proteinMin = profile?.proteinMin ?? 130;
+                  final kcal = history == null
+                      ? const GoalAt(null, known: false)
+                      : kcalGoalReferenceOn(history, _day);
+                  final protein = history == null
+                      ? const GoalAt(null, known: false)
+                      : goalReferenceOn(history, GoalMetric.proteinaMin, _day);
                   return Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ProgressRing(
-                            progress: goalProgress(total.protein, proteinMin),
+                            progress: protein.comparable
+                                ? goalProgress(total.protein, protein.value!)
+                                : null,
                             value: fmtInt(total.protein),
-                            sublabel: 'de $proteinMin',
+                            sublabel: protein.comparable
+                                ? 'de ${fmtInt(protein.value!)}'
+                                : null,
                             label: 'Proteína (g)',
                             color: AppColors.protein,
                             size: 104,
                           ),
                           ProgressRing(
-                            progress: goalProgress(total.kcal, kcalTarget),
+                            progress: kcal.comparable
+                                ? goalProgress(total.kcal, kcal.value!)
+                                : null,
                             value: fmtInt(total.kcal),
-                            sublabel: 'de ${fmtInt(kcalTarget)}',
+                            sublabel: kcal.comparable
+                                ? 'de ${fmtInt(kcal.value!)}'
+                                : null,
                             label: 'kcal',
                             color: AppColors.kcal,
                             size: 104,
@@ -137,6 +150,17 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
+                      if (!protein.comparable || !kcal.comparable) ...[
+                        Text(
+                            'Proteína: ${protein.comparable ? 'meta registrada' : protein.absenceLabel} · '
+                            'kcal: ${kcal.comparable ? 'meta registrada' : kcal.absenceLabel}'),
+                        TextButton(
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const SettingsScreen())),
+                            child: const Text('Definir metas')),
+                      ],
                       Text('Carbos ${fmtInt(total.carbs)} g · Grasa ${fmtInt(total.fat)} g',
                           style: Theme.of(context).textTheme.bodySmall),
                       if (!_day.isAfter(today) && list.isNotEmpty)
@@ -302,10 +326,15 @@ class _Shortcuts extends ConsumerWidget {
                         icon: Icons.bolt,
                         color: _mealColor,
                         title: t.name,
-                        subtitle: 'P ${fmtInt(t.macros.protein)} g · toca para registrar',
+                        subtitle: t.impossibleQuantity == null
+                            ? 'P ${fmtInt(t.macros.protein)} g · toca para registrar'
+                            : 'Revisa: ${t.impossibleQuantity} (¿eran gramos?)',
                         value: fmtInt(t.macros.kcal),
                         valueLabel: 'kcal',
-                        onTap: () => _logTemplate(context, ref, t),
+                        // Cantidad sospechosa: se pregunta, no se bloquea (puede ser real).
+                        onTap: () => t.impossibleQuantity == null
+                            ? _logTemplate(context, ref, t)
+                            : _reviewSuspicious(context, ref, t),
                         trailing: IconButton(
                           tooltip: 'Ajustar o borrar',
                           icon: const Icon(Icons.tune),
@@ -382,6 +411,39 @@ class _Shortcuts extends ConsumerWidget {
     }
   }
 
+  /// Un combo con una cantidad sospechosa (C01) pregunta antes de
+  /// registrarse: corregirlo o registrarlo tal cual.
+  Future<void> _reviewSuspicious(BuildContext context, WidgetRef ref, MealTemplate template) async {
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('¿Revisar «${template.name}»?'),
+        content: Text('Tiene ${template.impossibleQuantity}: '
+            '${fmtInt(template.macros.kcal)} kcal. Si eran gramos, corrígelo; si es así, regístralo igual.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, 'log'), child: const Text('Registrar igual')),
+          FilledButton(onPressed: () => Navigator.pop(c, 'edit'), child: const Text('Corregir combo')),
+        ],
+      ),
+    );
+    if (!context.mounted || choice == null) return;
+    if (choice == 'edit') {
+      await _editTemplate(context, template);
+    } else {
+      await _logTemplate(context, ref, template);
+    }
+  }
+
+  Future<void> _editTemplate(BuildContext context, MealTemplate template) => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MealFormScreen(
+            template: template,
+            draft: MealDraft(date: day, slot: template.row.slot ?? MealSlot.otro, items: template.toDrafts()),
+          ),
+        ),
+      );
+
   Future<void> _templateMenu(BuildContext context, WidgetRef ref, MealTemplate template) async {
     final action = await showModalBottomSheet<String>(
       context: context,
@@ -428,15 +490,7 @@ class _Shortcuts extends ConsumerWidget {
         ),
       );
     } else if (action == 'editar') {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MealFormScreen(
-            template: template,
-            draft: MealDraft(date: day, slot: template.row.slot ?? MealSlot.otro, items: template.toDrafts()),
-          ),
-        ),
-      );
+      await _editTemplate(context, template);
     } else if (action == 'borrar') {
       if (await confirmDelete(context, 'el combo "${template.name}"') && context.mounted) {
         await guarded(context, () => repo.deleteTemplate(template.row.id), failure: 'No se pudo borrar');

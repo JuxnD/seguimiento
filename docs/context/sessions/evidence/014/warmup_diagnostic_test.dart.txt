@@ -1,0 +1,14 @@
+import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/ui/exercise_figure_3d.dart';
+void main(){test('read-only witnesses',(){
+  final catalog=Figure3DCatalog.fromJsonString(File(Figure3DCatalog.asset).readAsStringSync());
+  final fig=catalog.forExercise('Balanceos de pierna')!;
+  var maximum=0.0;var witness=0;
+  for(var i=0;i<=60;i++){
+    final p=liftSkeleton(fig.skeletonAt(i/60),fig).p;
+    final shin=(p['nearAnkle']!-p['nearKnee']!).unit,foot=(p['nearToe']!-p['nearAnkle']!).unit;
+    if(shin.dot(foot).abs()>maximum){maximum=shin.dot(foot).abs();witness=i;}
+  }
+  print('Maximum tibia-foot dot=$maximum at $witness/60;interval=${witness/60*(fig.frames.length-1)}');
+});}

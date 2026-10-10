@@ -159,6 +159,9 @@ void main() {
 
   Finder field(String item, [String side = '']) => find.byKey(ValueKey('test-value-$item-$side'));
   testWidgets('reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha', (t) async {
+    // The scenario is October26 (_Today); execution dates must use that same
+    // clock, not the host day, otherwise October12 becomes a future fixture.
+    await withClock(Clock.fixed(DateTime(2026,10,26)), () async {
     try {
       final repo = FitnessTestRepository(db);
       await io(
@@ -185,6 +188,7 @@ void main() {
     } finally {
       await cleanup(t);
     }
+    });
   });
   testWidgets('validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial', (t) async {
     try {

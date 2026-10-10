@@ -55,6 +55,11 @@ def solve(frame, view='side'):
     neck = add(hip, dirv(frame['torso']), tlen)
     head = add(neck, dirv(frame['torso']), HEAD_OFF)
     joints = {'hip': hip, 'neck': neck, 'head': head}
+    shoulder = neck
+    if 'shoulderOffset' in frame:
+        forward, longitudinal = frame['shoulderOffset']
+        shoulder = add(add(neck, dirv(frame['torso']+90), forward), dirv(frame['torso']), longitudinal)
+        joints['shoulder'] = shoulder
     segs = {}
     for side in ('near', 'far'):
         leg = frame.get(side + 'Leg')
@@ -69,9 +74,9 @@ def solve(frame, view='side'):
                 segs[side + 'Foot'] = (ankle, toe)
         arm = frame.get(side + 'Arm')
         if arm:
-            elbow, hand = two_link(neck, arm, UA, FA)
+            elbow, hand = two_link(shoulder, arm, UA, FA)
             joints[side + 'Elbow'], joints[side + 'Hand'] = elbow, hand
-            segs[side + 'UpperArm'] = (neck, elbow)
+            segs[side + 'UpperArm'] = (shoulder, elbow)
             segs[side + 'Forearm'] = (elbow, hand)
     segs['torso'] = (hip, neck)
     return {'joints': joints, 'segs': segs}

@@ -1,0 +1,30 @@
+{
+  "status": "VALIDATED_SOURCE_POLICY",
+  "violations": [],
+  "sourceSha256": {
+    "android/app/src/main/AndroidManifest.xml": "9e2bf438051624cb81e32f0fbc96875687f657275b5498fd2253621615a4232f",
+    "android/app/src/main/res/xml/backup_rules.xml": "2cdbe625c1a7831b3c9457e7193f62cbe6b1c4a3373c04e0e680a250db9e154c",
+    "android/app/src/main/res/xml/data_extraction_rules.xml": "682b4b0af531c273be52d50fda763e702623f3cc5f997d32282dbc90b8095dbe",
+    "android/app/src/main/res/values/colors.xml": "c34c82a71a37beabbae2288712cf370c5c324f2c2957fe874768ef3cd01b893b",
+    "android/app/src/main/res/drawable/launch_background.xml": "35262a553b9bc9e38c060b4546036a71083d4e2d3222864508a7d24bd5bc3df5",
+    "android/app/src/main/res/drawable-v21/launch_background.xml": "35262a553b9bc9e38c060b4546036a71083d4e2d3222864508a7d24bd5bc3df5",
+    "android/app/src/main/res/values/styles.xml": "32654d8e1c4f7df39aaa1e923ced82e928e432c9c124ef71a429666d8c88fd4d",
+    "android/app/src/main/res/values-night/styles.xml": "6d9099c623724b010dc9b907b9b235269fbb95ff7c652301960537060bbc33c9",
+    "android/app/src/main/res/values-v31/styles.xml": "a42b0db51b55dd4f1999abadb2b68c16c53a0cef40c7c1bf52edcd37d80b4432",
+    "android/app/src/main/res/values-night-v31/styles.xml": "48e9751998357ec787e3bf56f87016889d238e051274b67e056fd57d38ddc6d4"
+  },
+  "nativeValidation": "PENDING_MERGED_XML_APK_STARTUP_AND_TRANSPORT",
+  "sourceGitCanonicalSha256": {
+    "android/app/src/main/AndroidManifest.xml": "c3f62a13de088798c4e3a2d756f1964ce6ba04645c9878e228011d5b5a2660b2",
+    "android/app/src/main/res/xml/backup_rules.xml": "b6d71489f24216beeaccfe5b6fe352fbb1453b5947f829bcfe337da007f53941",
+    "android/app/src/main/res/xml/data_extraction_rules.xml": "2f9f15f5c2f1c058cf52db566aea87ccb204fa3778f02d97be1f3782f519daf7",
+    "android/app/src/main/res/values/colors.xml": "a1a35e9b74e528ca33d6b5bf29428d5b8f0b7686495d8ace2295c262c441adbf",
+    "android/app/src/main/res/drawable/launch_background.xml": "e7ebd8aceaf6c7bc0287de9136b530d8ce7b063ffe3ae063c49a061ed385f3b5",
+    "android/app/src/main/res/drawable-v21/launch_background.xml": "e7ebd8aceaf6c7bc0287de9136b530d8ce7b063ffe3ae063c49a061ed385f3b5",
+    "android/app/src/main/res/values/styles.xml": "c0081c90fbd50bf7d1f56cbb1a3317656031515095d3cedbec3d15a3450f75ed",
+    "android/app/src/main/res/values-night/styles.xml": "3a952b063e821e8cfdf38dcc9c561a4334f646206a3295e20f47891453cff3fa",
+    "android/app/src/main/res/values-v31/styles.xml": "f4344235279aa9a96c82b4776df69ddc7099d8a7ed55ac9d50e2332eb2a33d78",
+    "android/app/src/main/res/values-night-v31/styles.xml": "bbf829635168489957281f68fad1b14ebe2671d43e6f37cd9db92c7b754d384f"
+  },
+  "hashProvenance": "sourceSha256: checkout bytes; sourceGitCanonicalSha256: Git staged blobs, CRLF normalized; not APK identity"
+}

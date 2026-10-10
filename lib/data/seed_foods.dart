@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../domain/enums.dart';
 import 'catalog_updates.dart';
 import 'database.dart';
+import 'catalog_patches.dart';
 
 /// Catálogo inicial y combos frecuentes.
 ///
@@ -166,10 +167,14 @@ const initialTemplates = <(String, MealSlot?, List<(String, double)>)>[
 ];
 
 /// Siembra catálogo y combos la primera vez. Idempotente: si ya hay
-/// alimentos, no toca nada.
+/// alimentos, conserva filas presentes y completa sólo referencias del parche
+/// aditivo; no vuelve a sembrar combos ni sobrescribe modificaciones.
 Future<bool> seedFoodsIfEmpty(AppDatabase db) async {
   final existing = await db.select(db.foods).get();
-  if (existing.isNotEmpty) return false;
+  if (existing.isNotEmpty) {
+    await applyCatalogPatchV1(db);
+    return false;
+  }
 
   final idsByName = <String, int>{};
   for (final food in initialFoods) {
@@ -180,5 +185,6 @@ Future<bool> seedFoodsIfEmpty(AppDatabase db) async {
   for (final (name, slot, items) in initialTemplates) {
     await insertTemplate(db, name, slot, items, idsByName, position: position++);
   }
+  await applyCatalogPatchV1(db);
   return true;
 }

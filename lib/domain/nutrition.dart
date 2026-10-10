@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'enums.dart';
 
 /// Meta de kcal del día (§19.3): los días de fútbol (sábado y domingo)
@@ -22,6 +24,17 @@ class Macros {
 
   static Macros sum(Iterable<Macros> all) => all.fold(zero, (a, b) => a + b);
 }
+
+/// Same coherence gate for photo/text estimates. Not a nutrition accuracy test.
+bool validEstimatedMacros(Macros m) =>
+    [m.kcal, m.protein, m.carbs, m.fat].every((v) => v.isFinite && v >= 0) &&
+    m.kcal > 0 &&
+    m.kcal <= 2000 &&
+    m.protein <= 200 &&
+    m.carbs <= 400 &&
+    m.fat <= 200 &&
+    (m.kcal - (4 * m.protein + 4 * m.carbs + 9 * m.fat)).abs() <=
+        math.max(100, m.kcal * .35);
 
 /// Macros de una cantidad de un alimento del catálogo.
 /// `unit`: cantidad en unidades. `per100`: cantidad en g/ml.
@@ -62,5 +75,7 @@ bool isDayClosed(Set<MealSlot> slots, {bool manuallyClosed = false, int mealCoun
     manuallyClosed || mainMealSlots.every(slots.contains) || mealCount >= closeByMealCount || kcal >= closeByKcal;
 
 /// Comidas principales que faltan en un día.
-List<MealSlot> missingMainMeals(Set<MealSlot> slots) =>
-    [for (final s in mainMealSlots) if (!slots.contains(s)) s];
+List<MealSlot> missingMainMeals(Set<MealSlot> slots) => [
+      for (final s in mainMealSlots)
+        if (!slots.contains(s)) s
+    ];
