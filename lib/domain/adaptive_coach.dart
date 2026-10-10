@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'dates.dart';
 import 'format.dart';
 import 'progress.dart' show ProgressionProposal, strengthProgressionHint;
@@ -66,12 +68,15 @@ enum CoachState {
 enum ProposalStatus { pendiente, aceptada, pospuesta, rechazada }
 
 class ProposalRecord {
-  const ProposalRecord({required this.id, required this.status, this.reviewAfter, this.decidedOn});
+  const ProposalRecord({required this.id, required this.status, this.reviewAfter, this.decidedOn, this.evidence});
 
   final String id;
   final ProposalStatus status;
   final DateTime? reviewAfter;
   final DateTime? decidedOn;
+
+  /// Lo guardado con la decisión (en fuerza, la dosis en JSON).
+  final String? evidence;
 }
 
 class StepsProposal {
@@ -333,7 +338,8 @@ CoachReading stepsReading({
 enum StrengthStatus { subir, mantener, sinDatos }
 
 class StrengthAdvice {
-  const StrengthAdvice(this.exercise, this.status, this.text, {this.sessionId, this.decision, this.review});
+  const StrengthAdvice(this.exercise, this.status, this.text,
+      {this.sessionId, this.decision, this.review, this.dose});
 
   final String exercise;
   final StrengthStatus status;
@@ -347,14 +353,186 @@ class StrengthAdvice {
   /// Lo decidido sobre esta misma propuesta, si se decidió.
   final ProposalStatus? decision;
 
-  /// Tras aceptar una subida: si se sostuvo en la sesión siguiente.
+  /// Tras aceptar una subida: si se intentó y se sostuvo en la sesión siguiente.
   final String? review;
+
+  /// La subida que propone la regla, estructurada: es lo que se guarda al
+  /// aceptarla y contra lo que se revisa la sesión siguiente.
+  final StrengthDose? dose;
 
   String? get proposalId => sessionId == null ? null : strengthProposalId(exercise, sessionId!);
 
   StrengthAdvice copyWith({StrengthStatus? status, String? text, ProposalStatus? decision, String? review}) =>
       StrengthAdvice(exercise, status ?? this.status, text ?? this.text,
-          sessionId: sessionId, decision: decision ?? this.decision, review: review ?? this.review);
+          sessionId: sessionId, decision: decision ?? this.decision, review: review ?? this.review, dose: dose);
+}
+
+/// Qué sube la regla de 008 (`doubleProgressionHint`): carga (+2–5 kg),
+/// la variante siguiente de la cadena, o banda/pausa (que no se registra).
+enum DoseKind { carga, variante, otra }
+
+/// La dosis de una subida propuesta, con lo que hace falta para revisarla
+/// sin leer texto: desde qué carga o variante, cuántas series, qué piso de
+/// reps, protocolo y día del plan. Se guarda como JSON en la decisión.
+class StrengthDose {
+  const StrengthDose({
+    required this.kind,
+    required this.sessionId,
+    this.fromLoadKg,
+    this.fromVariant,
+    this.toVariant,
+    this.sets,
+    this.repsMin,
+    this.mode,
+    this.planDayId,
+  });
+
+  /// Lo que sube la regla con carga: entre 2 y 5 kg (no se inventa otra cifra).
+  static const minLoadStepKg = 2.0, maxLoadStepKg = 5.0;
+
+  final DoseKind kind;
+
+  /// Sesión cuya evidencia propuso la subida.
+  final int sessionId;
+  final double? fromLoadKg;
+  final String? fromVariant;
+  final String? toVariant;
+  final int? sets;
+  final int? repsMin;
+  final String? mode;
+  final int? planDayId;
+
+  Map<String, Object?> toJson() => {
+        'v': 1,
+        'kind': kind.name,
+        'sessionId': sessionId,
+        'fromLoadKg': fromLoadKg,
+        'fromVariant': fromVariant,
+        'toVariant': toVariant,
+        'sets': sets,
+        'repsMin': repsMin,
+        'mode': mode,
+        'planDayId': planDayId,
+      };
+
+  String encode() => jsonEncode(toJson());
+
+  /// null si lo guardado no es una dosis (p. ej. una decisión anterior que
+  /// sólo guardó el texto): entonces no se revisa.
+  static StrengthDose? decode(String? raw) {
+    if (raw == null || !raw.startsWith('{')) return null;
+    try {
+      final j = jsonDecode(raw) as Map<String, Object?>;
+      if (j['v'] != 1) return null;
+      return StrengthDose(
+        kind: DoseKind.values.byName(j['kind']! as String),
+        sessionId: j['sessionId']! as int,
+        fromLoadKg: (j['fromLoadKg'] as num?)?.toDouble(),
+        fromVariant: j['fromVariant'] as String?,
+        toVariant: j['toVariant'] as String?,
+        sets: j['sets'] as int?,
+        repsMin: j['repsMin'] as int?,
+        mode: j['mode'] as String?,
+        planDayId: j['planDayId'] as int?,
+      );
+    } on Object {
+      return null;
+    }
+  }
+}
+
+/// La dosis que corresponde a la subida que propone la regla (mismas ramas
+/// que `doubleProgressionHint`). Sólo cuando la regla propone subir.
+StrengthDose strengthDose({
+  required StrengthSessionEvidence evidence,
+  required int? repsMin,
+  required int? plannedSets,
+  bool tracksLoad = false,
+  List<String> chain = const [],
+  String? mode,
+  int? planDayId,
+}) {
+  final last = evidence.sets.last;
+  final current = last.variant == null ? 0 : chain.indexOf(last.variant!);
+  final kind = tracksLoad
+      ? DoseKind.carga
+      : (chain.isNotEmpty && current >= 0 && current + 1 < chain.length ? DoseKind.variante : DoseKind.otra);
+  return StrengthDose(
+    kind: kind,
+    sessionId: evidence.sessionId,
+    fromLoadKg: evidence.sets.first.loadKg,
+    fromVariant: last.variant,
+    toVariant: kind == DoseKind.variante ? chain[current + 1] : null,
+    sets: plannedSets,
+    repsMin: repsMin,
+    mode: mode,
+    planDayId: planDayId,
+  );
+}
+
+/// Revisión de una subida aceptada contra la sesión que la intentó (R2).
+/// Sólo dice "subiste" si lo guardado lo demuestra: carga o variante
+/// acordada en todas las series esperadas, mismo protocolo y día del plan.
+String strengthReview(StrengthDose dose, StrengthSessionEvidence later) {
+  final when = 'el ${formatShort(later.date)}';
+  if (later.imported) return 'aceptaste subir; $when es historial importado: no demuestra la subida';
+  if (later.mode != dose.mode) return 'aceptaste subir; $when fue otro protocolo: no demuestra la subida';
+  if (dose.planDayId != null && later.planDayId != dose.planDayId) {
+    return 'aceptaste subir; $when fue otro día del plan: no demuestra la subida';
+  }
+  if (dose.kind == DoseKind.otra) {
+    return 'aceptaste subir (más banda o pausa arriba); la banda y la pausa no se registran: no se puede demostrar';
+  }
+  double load(StrengthSetEvidence s) => s.loadKg ?? 0;
+  final from = dose.fromLoadKg ?? 0;
+  bool atDose(StrengthSetEvidence s) => switch (dose.kind) {
+        DoseKind.carga => load(s) - from >= StrengthDose.minLoadStepKg - 1e-9 &&
+            load(s) - from <= StrengthDose.maxLoadStepKg + 1e-9,
+        DoseKind.variante => s.variant == dose.toVariant,
+        DoseKind.otra => false,
+      };
+  String kg(double v) => v == 0 ? 'peso corporal' : '${fmtDec(v)} kg';
+  final target = dose.kind == DoseKind.carga ? '+2–5 kg de mochila' : dose.toVariant!;
+  final done = later.sets.where(atDose).toList();
+  if (done.isEmpty) {
+    final s = later.sets.first;
+    final same = dose.kind == DoseKind.carga ? load(s) == from : s.variant == dose.fromVariant;
+    if (same) {
+      return 'aceptaste subir; $when repetiste ${dose.kind == DoseKind.carga ? kg(from) : (dose.fromVariant ?? 'la misma variante')}: '
+          'no demuestra la subida';
+    }
+    return 'aceptaste subir ($target); $when usaste '
+        '${dose.kind == DoseKind.carga ? kg(load(s)) : (s.variant ?? 'otra variante')}: no es la subida acordada';
+  }
+  final expected = dose.sets ?? later.sets.length;
+  final label = dose.kind == DoseKind.carga ? kg(load(done.first)) : dose.toVariant!;
+  if (done.length < expected || done.length < later.sets.length) {
+    return 'aceptaste subir a $label; $when sólo ${done.length} de $expected series con la subida: no demostrada';
+  }
+  String? cause;
+  if (later.incomplete) {
+    cause = 'la sesión quedó incompleta';
+  } else if (done.any((s) => s.toFailure)) {
+    cause = 'llegaste al fallo';
+  } else if (done.firstWhereOrNull((s) => s.split) case final s?) {
+    cause = 'hubo una serie partida${s.splitDetail == null ? '' : ' (${s.splitDetail})'}';
+  } else if (done.any((s) => s.rir == 0)) {
+    cause = 'una serie quedó a RIR 0';
+  } else if (dose.repsMin != null && done.any((s) => s.reps < dose.repsMin!)) {
+    final low = done.map((s) => s.reps).reduce((a, b) => a < b ? a : b);
+    cause = 'la más baja fue $low, bajo el piso de ${dose.repsMin}';
+  }
+  if (cause != null) return 'subiste a $label; $when no se sostuvo: $cause';
+  return 'subiste a $label y se sostuvo $when (${done.length} series limpias)';
+}
+
+extension<T> on List<T> {
+  T? firstWhereOrNull(bool Function(T) test) {
+    for (final x in this) {
+      if (test(x)) return x;
+    }
+    return null;
+  }
 }
 
 StrengthAdvice strengthAdvice({
@@ -385,7 +563,18 @@ StrengthAdvice strengthAdvice({
     tracksLoad: tracksLoad,
     chain: chain,
   );
-  if (hint != null) return StrengthAdvice(exercise, StrengthStatus.subir, hint, sessionId: e.sessionId);
+  if (hint != null) {
+    return StrengthAdvice(exercise, StrengthStatus.subir, hint,
+        sessionId: e.sessionId,
+        dose: strengthDose(
+            evidence: e,
+            repsMin: repsMin,
+            plannedSets: plannedSets,
+            tracksLoad: tracksLoad,
+            chain: chain,
+            mode: mode,
+            planDayId: planDayId));
+  }
   final when = 'el ${formatShort(e.date)}';
   if (e.imported) return keep('lo anterior es historial importado');
   if (e.mode == 'tecnica') return keep('la última ($when) fue sesión técnica');

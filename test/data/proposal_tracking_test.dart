@@ -59,15 +59,17 @@ void main() {
   });
 
   group('fuerza', () {
-    Future<int> tuesdaySession(DateTime date, {int reps = 10, bool failure = false}) async {
+    Future<int> tuesdaySession(DateTime date,
+        {int reps = 10, bool failure = false, double? loadKg, int sets = 4, String? mode}) async {
       final tuesday = (await plan.dayFor(date))!;
       return training.save(SessionDraft(
         date: date,
         type: SessionType.trenSuperior,
         planDayId: tuesday.dayId,
+        mode: mode,
         sets: [
-          for (var i = 0; i < 4; i++)
-            SetDraft(exercise: 'Fondos en barra', reps: reps, rir: 2, toFailure: failure && i == 3),
+          for (var i = 0; i < sets; i++)
+            SetDraft(exercise: 'Fondos en barra', reps: reps, rir: 2, toFailure: failure && i == sets - 1, loadKg: loadKg),
         ],
       ));
     }
@@ -95,23 +97,42 @@ void main() {
       expect((await dips(d(10, 27))).status, StrengthStatus.subir, reason: 'martes siguiente, misma evidencia');
     });
 
-    test('subida aceptada: la sesión siguiente dice si se sostuvo', () async {
+    /// Martes 13 con 4×10 limpias: la regla propone +2–5 kg; se acepta el 20
+    /// con la dosis guardada y la sesión del 20 la intenta (o no).
+    Future<String?> reviewAfter(Future<void> Function() attempt, {bool withDose = true}) async {
+      await db.delete(db.sessions).go();
+      await db.delete(db.coachProposals).go();
       await tuesdaySession(d(10, 13));
       final a = await dips(d(10, 20));
-      await goals.decideProposal(a.proposalId!, strengthProposalKind(a.exercise), ProposalStatus.aceptada, today: d(10, 20));
+      expect((a.status, a.dose?.kind, a.dose?.sets), (StrengthStatus.subir, DoseKind.carga, 4));
+      await goals.decideProposal(a.proposalId!, strengthProposalKind(a.exercise), ProposalStatus.aceptada,
+          today: d(10, 20), evidence: withDose ? a.dose!.encode() : a.text);
       expect((await dips(d(10, 20))).decision, ProposalStatus.aceptada);
+      expect((await dips(d(10, 20))).review, isNull, reason: 'sin sesión todavía no hay revisión');
+      await attempt();
+      return (await dips(d(10, 27))).review;
+    }
 
-      await tuesdaySession(d(10, 20), reps: 7);
-      final held = await dips(d(10, 27));
-      expect(held.review, 'subiste y se sostuvo el 20 oct', reason: '7 ≥ piso 6 y serie limpia');
-
-      await db.delete(db.sessions).go();
-      await tuesdaySession(d(10, 13));
-      await goals.decideProposal(a.proposalId!, strengthProposalKind(a.exercise), ProposalStatus.aceptada, today: d(10, 20));
-      await tuesdaySession(d(10, 20), reps: 7, failure: true);
-      final notHeld = await dips(d(10, 27));
-      expect(notHeld.review, startsWith('subiste; el 20 oct no se sostuvo'));
-      expect(notHeld.review, contains('llegaste al fallo'));
+    test('subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra', () async {
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 10)),
+          'aceptaste subir; el 20 oct repetiste peso corporal: no demuestra la subida',
+          reason: 'mismo peso: aceptar "Lo intento hoy" no es subir');
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4)),
+          'subiste a 4 kg y se sostuvo el 20 oct (4 series limpias)');
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4, sets: 1)),
+          'aceptaste subir a 4 kg; el 20 oct sólo 1 de 4 series con la subida: no demostrada');
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4, failure: true)),
+          'subiste a 4 kg; el 20 oct no se sostuvo: llegaste al fallo');
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 5, loadKg: 4)),
+          'subiste a 4 kg; el 20 oct no se sostuvo: la más baja fue 5, bajo el piso de 6');
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4, mode: 'tecnica')),
+          'aceptaste subir; el 20 oct fue otro protocolo: no demuestra la subida');
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 10)),
+          'aceptaste subir (+2–5 kg de mochila); el 20 oct usaste 10 kg: no es la subida acordada',
+          reason: 'no se inventa otra cifra de subida');
+      expect(await reviewAfter(() => tuesdaySession(d(10, 20), reps: 7, loadKg: 4), withDose: false),
+          'aceptaste subir; no quedó guardada la dosis acordada: no se puede revisar',
+          reason: 'no se infiere la dosis desde el texto');
     });
   });
 

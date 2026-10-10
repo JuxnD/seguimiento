@@ -69,4 +69,53 @@ void main() {
   test('sin registro anterior lo dice, no inventa', () {
     expect(advise(null).status, StrengthStatus.sinDatos);
   });
+
+  group('revisión con la dosis guardada (R2)', () {
+    StrengthSessionEvidence later(List<StrengthSetEvidence> sets, {String? mode, int? planDayId = 7}) =>
+        StrengthSessionEvidence(
+            sessionId: 2,
+            date: d(10, 20),
+            type: SessionType.trenSuperior,
+            exercise: 'Remo invertido',
+            sets: sets,
+            planDayId: planDayId,
+            mode: mode);
+    final chain = ['Remo con rodillas dobladas', 'Remo con piernas rectas', 'Remo con pies elevados'];
+    StrengthDose variantDose() => strengthDose(
+        evidence: StrengthSessionEvidence(
+            sessionId: 1,
+            date: d(10, 13),
+            type: SessionType.trenSuperior,
+            exercise: 'Remo invertido',
+            planDayId: 7,
+            sets: [for (var i = 0; i < 3; i++) const StrengthSetEvidence(reps: 12, rir: 2, variant: 'Remo con piernas rectas')]),
+        repsMin: 8,
+        plannedSets: 3,
+        chain: chain,
+        planDayId: 7);
+
+    test('variante: la siguiente de la cadena, guardada y leída de vuelta sin texto', () {
+      final dose = StrengthDose.decode(variantDose().encode())!;
+      expect((dose.kind, dose.fromVariant, dose.toVariant, dose.sets), (DoseKind.variante, 'Remo con piernas rectas', 'Remo con pies elevados', 3));
+      List<StrengthSetEvidence> at(String v, {int n = 3}) => [for (var i = 0; i < n; i++) StrengthSetEvidence(reps: 9, rir: 2, variant: v)];
+      expect(strengthReview(dose, later(at('Remo con pies elevados'))), 'subiste a Remo con pies elevados y se sostuvo el 20 oct (3 series limpias)');
+      expect(strengthReview(dose, later(at('Remo con piernas rectas'))), 'aceptaste subir; el 20 oct repetiste Remo con piernas rectas: no demuestra la subida');
+      expect(strengthReview(dose, later(at('Remo con pies elevados', n: 2))),
+          'aceptaste subir a Remo con pies elevados; el 20 oct sólo 2 de 3 series con la subida: no demostrada');
+      expect(strengthReview(dose, later(at('Remo con pies elevados'), planDayId: 9)),
+          'aceptaste subir; el 20 oct fue otro día del plan: no demuestra la subida');
+    });
+
+    test('banda o pausa: no se registran, así que no se afirma la subida', () {
+      final dose = strengthDose(evidence: ev(clean()), repsMin: 6, plannedSets: 4, planDayId: 7);
+      expect(dose.kind, DoseKind.otra);
+      expect(strengthReview(dose, later(clean(8))), startsWith('aceptaste subir (más banda o pausa arriba)'));
+    });
+
+    test('lo guardado que no es una dosis no se interpreta', () {
+      expect(StrengthDose.decode('+2–5 kg de mochila y vuelve a 6'), isNull);
+      expect(StrengthDose.decode('{"v":2}'), isNull);
+      expect(StrengthDose.decode(null), isNull);
+    });
+  });
 }

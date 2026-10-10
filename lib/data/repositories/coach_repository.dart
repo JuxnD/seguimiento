@@ -7,6 +7,7 @@ import '../../domain/goal_history.dart';
 import '../../domain/recovery.dart';
 import '../database.dart';
 import '../../domain/progress.dart' show progressionSteps;
+import '../../domain/progress_evidence.dart';
 import 'exercise_repository.dart';
 import 'goal_repository.dart';
 import 'plan_repository.dart' show PlanDayDraft;
@@ -122,24 +123,65 @@ class CoachRepository {
           a = a.copyWith(decision: decided.status);
         }
       }
-      // Tras aceptar una subida, la sesión siguiente dice si se sostuvo.
+      // Tras aceptar una subida: la primera sesión desde ese día con el
+      // ejercicio, comparada con la dosis guardada (R2). Sin dosis guardada
+      // no se revisa; sin sesión todavía, no hay revisión.
       final last = await goals.lastDecision(strengthProposalKind(e.name));
-      if (last != null && last.$2.status == ProposalStatus.aceptada && evidence != null) {
-        final acceptedFrom = proposalSessionId(last.$1);
-        if (acceptedFrom != null && evidence.sessionId != acceptedFrom) {
-          final held = evidence.usableBefore(date, perSide: e.perSide, mode: mode) &&
-              evidence.sets.every((s) => s.reps >= (e.repsMin ?? 0));
-          final when = formatShort(evidence.date);
+      if (last != null && last.$2.status == ProposalStatus.aceptada && last.$2.decidedOn != null) {
+        final dose = StrengthDose.decode(last.$2.evidence);
+        final attempt = await _firstSessionWith(e.name, from: last.$2.decidedOn!, before: date, notId: dose?.sessionId);
+        if (attempt != null) {
           a = a.copyWith(
-            review: held
-                ? 'subiste y se sostuvo el $when'
-                : 'subiste; el $when no se sostuvo${a.status == StrengthStatus.mantener ? ' (${a.text})' : ''}',
-          );
+              review: dose == null
+                  ? 'aceptaste subir; no quedó guardada la dosis acordada: no se puede revisar'
+                  : strengthReview(dose, attempt));
         }
       }
       out.add(a);
     }
     return out;
+  }
+
+  /// Primera sesión (cualquier protocolo) con `exercise` desde `from` y antes
+  /// de `before`: la que intentó la subida aceptada.
+  Future<StrengthSessionEvidence?> _firstSessionWith(String exercise,
+      {required DateTime from, required DateTime before, int? notId}) async {
+    final exId = await ExerciseRepository(db).idOf(exercise);
+    if (exId == null) return null;
+    final rows = await (db.select(db.sessions)
+          ..where((t) =>
+              t.date.isBiggerOrEqualValue(dayKey(from)) & t.date.isSmallerThanValue(dayKey(before)) & db.trainingSessions)
+          ..orderBy([(t) => OrderingTerm(expression: t.date), (t) => OrderingTerm(expression: t.id)]))
+        .get();
+    for (final row in rows.where((r) => r.id != notId)) {
+      final sets = await (db.select(db.sessionSets)
+            ..where((t) => t.sessionId.equals(row.id) & t.exerciseId.equals(exId))
+            ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+          .get();
+      if (sets.isEmpty) continue;
+      return StrengthSessionEvidence(
+        sessionId: row.id,
+        date: parseDay(row.date),
+        type: row.type,
+        exercise: exercise,
+        planDayId: row.planDayId,
+        mode: row.mode,
+        incomplete: row.incomplete,
+        imported: row.imported,
+        sets: [
+          for (final s in sets)
+            StrengthSetEvidence(
+                reps: s.reps,
+                rir: s.rir,
+                split: s.split,
+                splitDetail: s.splitDetail,
+                toFailure: s.toFailure,
+                loadKg: s.loadKg,
+                variant: s.variant),
+        ],
+      );
+    }
+    return null;
   }
 
   /// Decide la propuesta de pasos que se mostró con el día real de la

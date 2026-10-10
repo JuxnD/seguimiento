@@ -52,7 +52,8 @@ class CoachCard extends ConsumerWidget {
       strengthProposalKind(a.exercise),
       status,
       today: ref.read(decisionClockProvider)(),
-      evidence: a.text,
+      // La dosis estructurada, no el texto: es contra lo que se revisa.
+      evidence: a.dose?.encode() ?? '',
     );
     ref.invalidate(dashboardProvider);
   }

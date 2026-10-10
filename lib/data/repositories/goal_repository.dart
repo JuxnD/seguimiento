@@ -179,6 +179,7 @@ class GoalRepository {
         status: ProposalStatus.values.byName(r.status),
         reviewAfter: r.reviewAfter == null ? null : parseDay(r.reviewAfter!),
         decidedOn: r.decidedOn == null ? null : parseDay(r.decidedOn!),
+        evidence: r.evidence,
       );
 
   /// Decide una propuesta de rondas, fuerza o escalera (criterios existentes).
