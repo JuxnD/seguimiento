@@ -9,8 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
 import 'package:seguimiento/data/active_session_store.dart';
+import 'package:seguimiento/data/database.dart' show openInMemoryDatabase;
 import 'package:seguimiento/data/notification_service.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
+import 'package:seguimiento/data/repositories/recovery_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/reminders.dart';
@@ -20,6 +22,16 @@ import 'package:wakelock_plus/wakelock_plus.dart' as wakelock;
 import 'package:wakelock_plus_platform_interface/wakelock_plus_platform_interface.dart';
 
 import '../support/sqlite_host.dart';
+
+/// Molestias sin base: el cronómetro de prueba congela el reloj.
+class _Sore extends RecoveryRepository {
+  _Sore(this.byDay) : super(openInMemoryDatabase());
+
+  final Map<DateTime, Map<String, int>> byDay;
+
+  @override
+  Future<Map<DateTime, Map<String, int>>> sorenessRange(DateTime today, {int days = 7}) async => byDay;
+}
 
 /// La pantalla no apaga nada de verdad en una prueba.
 class _NoWakelock extends WakelockPlusPlatformInterface {
@@ -68,7 +80,8 @@ void main() {
   });
 
   /// Monta el cronómetro detrás de una ruta que recoge lo que devuelve.
-  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester, {PlanDayDraft? day, TrainingRepository? training}) async {
+  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester,
+      {PlanDayDraft? day, TrainingRepository? training, RecoveryRepository? recovery}) async {
     // Alta para que quepa todo y ancha porque la fuente de prueba dibuja cada
     // letra como un cuadrado (ver app_smoke_test.dart).
     tester.view.physicalSize = const Size(1400, 3000);
@@ -82,6 +95,7 @@ void main() {
         latestWeightProvider.overrideWithValue(70),
         profileProvider.overrideWith((ref) => const Stream.empty()),
         trainingRepositoryProvider.overrideWith((ref) => training ?? (throw UnimplementedError('no se usa'))),
+        if (recovery != null) recoveryRepositoryProvider.overrideWithValue(recovery),
       ],
       child: MaterialApp(
         home: Builder(
@@ -183,6 +197,17 @@ void main() {
     expect(snap.warmupSkipped, isTrue);
     await finish(tester);
     expect(results.single!.context, contains('Calentamiento saltado'));
+  });
+
+  testWidgets('molestia en el registro: aviso visible y los mismos pasos', (tester) async {
+    // Lo que devuelve el repositorio con hombro 5/10 y rodilla 2/10 ayer (la
+    // lectura SQLite real está en test/data/warmup_soreness_data_test.dart).
+    await pumpGuided(tester, day: push(), recovery: _Sore({DateTime(2026, 9, 23): {'Hombro': 5, 'Rodilla': 2}}));
+    await flushStore(tester);
+    expect(find.textContaining('Molestia en hombro (5/10)'), findsOneWidget);
+    expect(find.textContaining('Molestia en rodilla'), findsNothing, reason: '2/10 no llega al umbral');
+    expect(find.textContaining('0 de 7 pasos'), findsOneWidget, reason: 'la molestia no agrega ejercicios');
+    expect(find.text('Dislocaciones con banda · 30 s'), findsNothing);
   });
 
   testWidgets('foto vieja sin calentamiento guiado: nada marcado, no se rompe', (tester) async {

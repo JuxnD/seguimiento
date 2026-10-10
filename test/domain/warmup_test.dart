@@ -48,7 +48,6 @@ void main() {
   });
 
   test('una molestia se avisa, no agrega un ejercicio', () {
-    expect(buildWarmup(push).length, buildWarmup(push).length);
     final notes = soreWarmupNotes({'Hombro': 5, 'Rodilla': 2, 'Codo': 3}, order: ['Rodilla', 'Hombro', 'Codo']);
     expect(notes, hasLength(2), reason: 'rodilla 2/10 no llega al umbral');
     expect(notes.first, startsWith('Molestia en hombro (5/10)'));
