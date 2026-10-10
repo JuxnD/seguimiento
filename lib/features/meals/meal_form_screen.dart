@@ -38,6 +38,7 @@ class MealFormScreen extends ConsumerStatefulWidget {
 class _MealFormScreenState extends ConsumerState<MealFormScreen> {
   late final MealDraft d = widget.draft;
   late final _notes = TextEditingController(text: d.notes ?? '');
+  final _rememberEstimates = <MealItemDraft>{};
 
   @override
   void dispose() {
@@ -83,7 +84,13 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
                 widget.textScreenBuilder?.call(foods) ??
                 MealTextScreen(foods: foods)));
     if (result != null && mounted && result.isNotEmpty) {
-      setState(() => d.items.addAll(result));
+      setState(() {
+        d.items.addAll(result);
+        if (result is MealTextSelection) {
+          _notes.text = [_notes.text.trim(), result.notes].where((s) => s.isNotEmpty).join('\n\n');
+          _rememberEstimates.addAll(result.remember);
+        }
+      });
     }
   }
 
@@ -131,9 +138,26 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
           builder: (_) => _FreeItemDialog(initial: item, suggestions: foods));
       // Editing an existing free/photo/AI estimate changes this draft only.
       // It must not rewrite a same-named catalog food or upgrade its source.
-      if (entry != null) updated = entry.toDraft();
+      if (entry != null) {
+        updated = entry.toDraft();
+        // A text estimate may be measured in g/ml or another explicit unit.
+        // The free editor's multiplier applies to that measured reference;
+        // it never silently converts 250g into one generic portion.
+        if (item.quantity != null && item.quantityUnit != null &&
+            item.quantityUnit != 'porción') {
+          updated.quantity = item.quantity! * entry.multiplier;
+          updated.quantityUnit = item.quantityUnit;
+        }
+      }
     }
-    if (updated != null) setState(() => d.items[index] = updated!);
+    if (updated != null) {
+      setState(() {
+        if (_rememberEstimates.remove(item)) {
+          _rememberEstimates.add(updated!);
+        }
+        d.items[index] = updated!;
+      });
+    }
   }
 
   /// Guarda los alimentos del catálogo de esta comida como combo de un toque.
@@ -326,7 +350,10 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
         );
         if (choice == null || !mounted) return;
         if (choice == 'fusionar') {
-          final ok = await guarded(context, () => repo.mergeInto(other.id, d),
+          final ok = await guarded(context, () => repo.db.transaction(() async {
+            await repo.mergeInto(other.id, d);
+            await _rememberReviewed(repo);
+          }),
               ok: 'Comidas fusionadas');
           if (ok && mounted) Navigator.pop(context, true);
           return;
@@ -334,8 +361,17 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       }
     }
     if (!mounted) return;
-    final ok = await guarded(context, () => repo.saveMeal(d));
+    final ok = await guarded(context, () => repo.db.transaction(() async {
+      await repo.saveMeal(d);
+      await _rememberReviewed(repo);
+    }));
     if (ok && mounted) Navigator.pop(context, true);
+  }
+
+  Future<void> _rememberReviewed(NutritionRepository repo) async {
+    for (final item in _rememberEstimates.where(d.items.contains)) {
+      await repo.rememberReviewedEstimate(item);
+    }
   }
 
   /// Guarda los cambios del combo (nombre, franja y cantidades).
@@ -877,13 +913,18 @@ class _FreeItemDialogState extends State<_FreeItemDialog> {
               ],
             ),
             const SizedBox(height: 12),
+            if (widget.initial?.quantity != null &&
+                widget.initial?.quantityUnit != null &&
+                widget.initial?.quantityUnit != 'porción')
+              Text('Referencia: ${widget.initial!.quantityLabel}. ×1 conserva esa cantidad; los multiplicadores la escalan sin cambiar la unidad.'),
             _PortionChips(
                 selected: _mult, onSelected: (m) => setState(() => _mult = m)),
             const SizedBox(height: 8),
             Text(
                 'Total: ${fmtInt(total.kcal)} kcal · P ${fmtDec(total.protein)} g',
                 style: text.bodyMedium),
-            Text('Se guarda en el catálogo para la próxima vez.',
+            Text(widget.initial == null ? 'Se guarda en el catálogo para la próxima vez.' :
+                'Solo cambia este borrador; no sobrescribe tu catálogo.',
                 style: text.bodySmall),
           ],
         ),

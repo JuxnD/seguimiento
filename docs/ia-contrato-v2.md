@@ -83,3 +83,38 @@ final (hwid, license) = await AiActivation().read();
 El identificador se puede copiar para asignar la licencia a la cuenta y al canal
 correctos. La licencia permanece en el almacenamiento Keystore ya existente.
 No registrar errores crudos, cuerpo remoto, licencia, HWID, informes o imágenes.
+
+## Extensión compatible local: meal_estimate (9-oct, plan010)
+
+La versión del envelope sigue2. `status.tasks` añade `meal_estimate`. El cliente
+viejo de status (blob3969149f3d918adfa6b15d4ad59692d89b2ef38a) acepta la tarea
+extra; el código de ai_gateway.dart permanece idéntico a a0521c8. Ninguna tarea
+previa cambia su JSON, prompt, límites ni nombre del schema. No se desplegó este
+cambio en producción durante la ejecución local.
+
+Entrada `{text,catalog}` con los mismos límites2000puntosUnicode/200candidatos.
+Salida exacta `{items,coverage,uncertainties}`. Hasta8items,24segmentos y8dudas.
+Cada item requiere exactamente `kind,label,food_id,quantity,unit,portion,kcal,
+protein,carbs,fat,question,assumptions`:
+
+- known: ID del catálogo enviado, cantidad positiva≤5000 y unidad exacta.
+  Portion/question/macros son null; la app calcula macros con su catálogo.
+- estimated: food_id/question null; cantidad, unidad y descripción de porción
+  explícitas, macros de TODA esa porción y1–6supuestos. No son valores por100
+  implícitos ni una etiqueta verificada. Límites comunes con foto: kcal≤2000,
+  P≤200/C≤400/G≤200, finitos/no negativos, kcal>0 y coherencia energética.
+- unresolved: food_id/quantity/unit/portion/macros null y pregunta concreta.
+
+Coverage: hasta24`{text,item_index}` (indexbase0); concatenación exacta de todos
+los segmentos reproduce la descripción original. Cada item tiene cobertura.
+Cantidad explícita única en g/ml por fragmento debe conservarse. Preparaciones
+frecuentes y Milo no pueden desaparecer bajo un nombre de catálogo distinto.
+Este vocabulario es finito; la pantalla exige confirmar toda la comida y no
+declara prueba general de comprensión semántica. Plato compuesto puede ocupar
+una fila; bebida preparada no se duplica con sus ingredientes.
+
+Errores/refusal/JSONtruncado fallan sin guardar y no incluyen cuerpo privado.
+La pantalla usa la tarea anterior si status no anuncia nueva capacidad; una
+falla conserva descripción y opción manual. Sin reintento automático.
+Proveedor gpt-6-luna, store=false,3200tokens de salida sólo para esta tarea;
+auth/cuota/timeout/transporte heredados intactos. Precisión/coste real NO_EVALUADO.

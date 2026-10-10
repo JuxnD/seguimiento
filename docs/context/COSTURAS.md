@@ -108,3 +108,20 @@ No hay nuevo porcentaje global: el inventario histórico permanece ligado a sus
 artefactos. El recibo de herramientas no atestigua que un dispositivo ejecutó
 comandos; procedencia del collector debe ser revisada antes de aceptar captura
 nativa. SDK/tienda, alta aislada y ensayo humano siguen abiertos.
+
+## Plan010: comidas estimadas y catálogo (9oct)
+
+Fuente aislada `seguimiento-010-luna` sobre a0521c8 (C01 incluido). Gateway local
+`control360i-010-estimate` commit3f4bff14. [Recibo](sessions/2026-10-09-plan010-comidas-local.md).
+Esta evidencia no se atribuye al APK publicado ni a un servidor desplegado.
+
+| Cruce | Evidencia / gate restante |
+|---|---|
+| Catálogo completo → candidatos≤200 → transporte | Nombre fuera de primeros200 en1000; rojo con parser anterior y verde por selección local |
+| DTO Dart → schema PHP → respuesta → parser Dart | Interop de ambos runtimes reales con proveedor ficticio; cliente antiguo status intacto y154checks legacy; remoto pendiente |
+| Unidad porción → escala → borrador | Unidad IA fija, guard rechaza g→ml/porción;125g escala250kcal;250g se conserva al editar/Guardar; rojos archivados |
+| known+unknown → revisión → Guardar → SQLite/informe | Pendiente impide aceptar; exclusión con motivo o resolución humana; notas/dudas se releen; cancelar/red fallida0escrituras |
+| Aprendizaje opcional → catálogo/combos/snapshots | Sólo al Guardar, ficha nueva ante homónimo, conserva base/unidad y cantidades originales |
+| SQLite20 →21 → parche → renombre/borrado → ZIP/reapertura | Tabla/mappings/36source IDs/version comprobados aparte; sin sobrescribir ediciones; idempotencia y tombstones; registry y notas exactos en ZIP |
+| Propuesta sintética → precisión/coste Luna real | NO_EVALUADO; coherencia aritmética y cobertura textual no equivalen a precisión semántica |
+| Fuente nueva → APK integrado → actualización/teléfono | Pendiente del coordinador; no se tocó teléfono/producción ni se publicaron cambios |

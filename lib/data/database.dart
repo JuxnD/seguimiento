@@ -9,6 +9,7 @@ import '../domain/dates.dart';
 import '../domain/enums.dart';
 import '../domain/reminders.dart';
 import 'catalog_updates.dart';
+import 'catalog_patches.dart';
 import 'seed_foods.dart';
 import 'tables.dart';
 
@@ -27,6 +28,7 @@ const databaseFileName = 'seguimiento.sqlite';
   SessionSets,
   FootballGames,
   Foods,
+  CatalogPatches,
   Meals,
   MealItems,
   MealTemplates,
@@ -56,7 +58,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 20;
+  int get schemaVersion => 21;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -182,6 +184,7 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessions, sessions.mode);
             await m.addColumn(sessions, sessions.extraReps);
           }
+          if (from < 21) await m.createTable(catalogPatches);
           if (from < 16) {
             // v16: Plan v3.1 (§19): RIR por serie, meta de kcal de los días de
             // fútbol, hidratación del partido y horas de sueño.
@@ -237,6 +240,7 @@ class AppDatabase extends _$AppDatabase {
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');
+          await applyCatalogPatchV1(this);
         },
       );
 

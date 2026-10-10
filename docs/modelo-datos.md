@@ -161,3 +161,24 @@ rechaza: es de una versión más nueva y restaurarlo rompería los datos.
 - La validación del repositorio rechaza antes de escribir valores no finitos,
   negativos, reps decimales, lados/ítems/rondas incoherentes y claves duplicadas.
   Los datos heredados inválidos no rompen el formateador ni alimentan dosis.
+
+## Esquema 21 (plan010, candidato local)
+
+- `catalog_patches`: source_id como clave primaria estable de fuente,
+  patch_version y food_id nullable con ON DELETE SET NULL. El source_id no es
+  el nombre actual que edita el usuario. Las claves fuente del parche1 quedan
+  congeladas en catalog_patches.dart. Un null registra colisión/deleción y no
+  recrea el alimento; un renombre no pierde la identidad.
+- 20→21 sólo añade esta tabla. No convierte ni divide cantidades históricas.
+  Antes de abrir, parche1 registra36 fuentes ya existentes y añade únicamente
+  referencias antiguas ausentes; conserva toda fila personalizada, sus macros,
+  favoritos, IDs, combos y snapshots. Semilla nueva conserva sus combos.
+- La decisión humana de recordar una estimación crea una ficha estimada nueva
+  después de revisión, al Guardar/Fusionar, sin sobrescribir homónimos. g/ml
+  siguen por100; la porción revisada y las notas originales van en la comida.
+- `MealTextSelection.notes` conserva frase, dudas, supuestos, porción, macros
+  revisados y motivos de exclusión en `meals.notes`; el informe ya lee este
+  campo y el ZIP copia SQLite completo. No contiene licencias ni proveedor key.
+- Oráculos: `catalog_upgrade_test`, `food_basis_regression_test`,
+  `meal_estimate_flow_test`; fixtures18/19 y manifests permanecen congelados.
+  [Decisión y límites](adr/0017-comidas-estimadas-y-catalogo-aditivo.md).

@@ -15,6 +15,15 @@ sin convertirlas en aptitud para aumentar dosis.
 La [revisión de fecha de toda la parte](sessions/2026-10-09-008-fecha-parte.md)
 añade confirmación ante fechas mezcladas, inválidas o futuras.
 
+**Candidato local plan010 (9-oct):** comidas conocidas/nuevas con estimación
+revisable, cobertura de toda la descripción y aprendizaje opcional al Guardar.
+Esquema21 añade registro de parches de catálogo sin convertir unidades ni
+reescribir comidas. Mantiene `meal_text` antiguo; el gateway requiere desplegar
+`meal_estimate` antes de que la pantalla use esa tarea. Precisión/coste reales
+NO_EVALUADO; no se tocó teléfono ni producción.
+[ADR0017](../adr/0017-comidas-estimadas-y-catalogo-aditivo.md) y
+[recibo local](sessions/2026-10-09-plan010-comidas-local.md).
+
 Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
