@@ -1,5 +1,13 @@
 # Índice de contexto
 
+**Base de construcción local 011+022, 10 de octubre:** fuentes aprobadas
+2f29/8872 integradas sin conflictos en `5352440`, esquema 23. Radar/historia de
+metas y API de alta disponibles para cerrar lectores 023 en paralelo.
+[Recibo combinado](sessions/2026-10-10-integracion-122-011-022-base.md).
+022 global, barrera de rutas 024, continuidad genuina, suite final y QA APK
+siguen abiertos; esta base no se declara publicable. Los checkpoints siguientes
+conservan su alcance histórico, anterior a estas APIs.
+
 **Plan011 implementación local:** radar real en Tu progreso, referencias009 con
 vigencia y reactividad SQL, proteína/pasos por fecha, kcal con calendario
 existente y rutas protegidas. [Recibo011](sessions/2026-10-10-011-radar-integrado.md),

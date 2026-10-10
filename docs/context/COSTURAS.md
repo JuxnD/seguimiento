@@ -337,3 +337,10 @@ Se mantienen RPE ≥ 9 como fatiga y política v1 experimental a revisar con el 
 No se reabre launch/cleanup020 rechazados por policy ni se toca otro AVD,
 SDK/esquema/servicio/IA/datos reales.012 y022 consumen estos helpers después de
 la revisión raíz; no duplicar fórmula de kcal ni motor de metas.
+# Checkpoint de construcción 011+022 (10 de octubre)
+
+API de radar/historia 011 y setup/origen 022 se combinan mediante merges locales
+sin conflictos, fuente5352440 y esquema23. GeneraciónDrift/analyze/diff pasan;
+no es evidencia de una suite final combinada. Barrera Navigator tras ZIPpending
+024 sigue NO_EVALUADA; cierre de lectores023 y continuidad genuina18/20/22→23
+pendientes. [Recibo](sessions/2026-10-10-integracion-122-011-022-base.md).
