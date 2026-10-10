@@ -10,6 +10,7 @@ import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/repositories/fitness_test_repository.dart';
 import 'package:seguimiento/data/repositories/goal_repository.dart';
 import 'package:seguimiento/data/repositories/personal_radar_repository.dart';
+import 'package:seguimiento/data/repositories/profile_repository.dart';
 import 'package:seguimiento/domain/goal_history.dart';
 import 'package:seguimiento/domain/progress_metrics.dart';
 import '../support/sqlite_host.dart';
@@ -151,6 +152,12 @@ void main() {
     final data = Directory('${dir.path}/data')..createSync();
     final host =
         DatabaseHost(File('${data.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)), initial: db);
+    // El ZIP representa un usuario que confirmó el alta; pending no admite
+    // registros personales. No se salta ni modifica el guard de restauración.
+    final profile = ProfileRepository(db);
+    final setup = SetupDraft(startDate: DateTime(2026, 9, 1), stepsTarget: 5000)..clearNutrition();
+    expect(await profile.confirmSetup(setup, now: radarDay), isTrue);
+    expect((await profile.setupStatus()).ready, isTrue);
     await seedRadarSql(db);
     final archive = BackupArchive(host: host, documents: data);
     final saved = await archive.exportTo('${dir.path}/saved.zip');
@@ -174,6 +181,7 @@ void main() {
       container.dispose();
     }
     // Preserve synthetic capsule under QA output; no owner paths involved.
+    await Directory('build/qa/011').create(recursive: true);
     await saved.file.copy('build/qa/011/refs-roundtrip.zip');
   });
   test('providers observan editar/borrar evidencia antigua y referencias sin invalidación manual', () async {

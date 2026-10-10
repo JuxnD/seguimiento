@@ -35,7 +35,10 @@ void main() {
     training = TrainingRepository(db, exercises);
     final nutrition = NutritionRepository(db);
     dashboard = DashboardRepository(db, plan, nutrition, ProfileRepository(db));
-    await ProfileRepository(db).save(const ProfilesCompanion(startDate: Value('2026-08-26')));
+    // Esta fixture representa al usuario que ya confirmó su alta y sus pasos
+    // antes de crear el plan; el pasado no hereda una meta que nunca aceptó.
+    final setup = SetupDraft(startDate: d(8, 26), stepsTarget: 5000)..clearNutrition();
+    expect(await ProfileRepository(db).confirmSetup(setup, now: d(8, 26)), isTrue);
 
     // Semana del plan real: lun circuito, mar bloques, mié ligero, jue
     // bloques, vie progresión, sáb y dom fútbol.
