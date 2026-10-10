@@ -100,6 +100,8 @@ class GuidedSnapshot extends ActiveSession {
     this.note,
     this.mode,
     this.lumbar = const [],
+    this.warmupDone = const [],
+    this.warmupSkipped = false,
   });
 
   /// Referencia al plan base. Las sesiones nuevas además conservan el día
@@ -142,6 +144,11 @@ class GuidedSnapshot extends ActiveSession {
   final String? mode;
   final List<String> lumbar;
 
+  /// Pasos del calentamiento guiado marcados (claves de `WarmupItem`) y si se
+  /// saltó (§16.23). Faltan en fotos anteriores: nada marcado.
+  final List<String> warmupDone;
+  final bool warmupSkipped;
+
   @override
   Map<String, Object?> toJson() => {
         'kind': 'guided',
@@ -170,6 +177,8 @@ class GuidedSnapshot extends ActiveSession {
         'note': note,
         'mode': mode,
         'lumbar': lumbar,
+        'warmupDone': warmupDone,
+        'warmupSkipped': warmupSkipped,
       };
 
   static GuidedSnapshot _fromJson(Map<String, Object?> j) => GuidedSnapshot(
@@ -198,6 +207,8 @@ class GuidedSnapshot extends ActiveSession {
         note: j['note'] as String?,
         mode: j['mode'] as String?,
         lumbar: [for (final x in (j['lumbar'] as List?) ?? const []) x as String],
+        warmupDone: [for (final x in (j['warmupDone'] as List?) ?? const []) x as String],
+        warmupSkipped: j['warmupSkipped'] == true,
       );
 }
 

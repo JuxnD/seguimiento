@@ -9,6 +9,7 @@ import '../../app/providers.dart';
 import '../../domain/dates.dart' show formatDuration;
 import '../../domain/fitness_test.dart';
 import '../../ui/widgets.dart';
+import 'pre_attempt_card.dart';
 
 /// Modo test (§19.11): lista guiada, un resultado por prueba (por lado si
 /// toca), calidad limpia / con dudas y cronómetro de 3 min entre pruebas.
@@ -208,6 +209,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                       ),
                     ],
                   ),
+                  PreAttemptCard(torso: torso),
                   for (final (i, t) in _items.indexed) _itemCard(context, i + 1, t, previous),
                 ],
               ),
