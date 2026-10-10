@@ -75,6 +75,7 @@ class StrengthSessionEvidence {
       required this.exercise,
       required List<StrengthSetEvidence> sets,
       this.planDayId,
+      this.mode,
       this.incomplete = false,
       this.imported = false})
       : sets = List.unmodifiable(sets);
@@ -84,12 +85,18 @@ class StrengthSessionEvidence {
   final String exercise;
   final List<StrengthSetEvidence> sets;
   final int? planDayId;
+
+  /// Actual persisted protocol: null is normal, 'tecnica' is practice.
+  /// Never inferred from RIR, labels or the exercise name.
+  final String? mode;
   final bool incomplete, imported;
 
   /// SQLite does not store side on strength sets. Bilateral identity cannot
   /// be reconstructed from ordering and must not be asserted by this DTO.
-  bool usableBefore(DateTime date, {bool perSide = false}) =>
+  bool usableBefore(DateTime date, {bool perSide = false, String? mode}) =>
       !perSide &&
+      this.mode == mode &&
+      mode != 'tecnica' &&
       !incomplete &&
       !imported &&
       this.date.isBefore(dateOnly(date)) &&

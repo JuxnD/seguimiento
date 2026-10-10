@@ -90,4 +90,42 @@ void main() {
     expect(await repo.recordedDateFor(3, TestPart.piernas), DateTime(2026, 10, 7));
     expect(await repo.recordedDateFor(1, TestPart.torso), isNull);
   });
+  test('historial técnico RIR4 no sustituye la última fuerza normal apta', () async {
+    await training.save(SessionDraft(
+        date: DateTime(2026, 10, 5),
+        type: SessionType.bloques,
+        sets: [SetDraft(exercise: 'Flexiones', reps: 15, rir: 4, loadKg: 5)]));
+    await training.save(SessionDraft(
+        date: DateTime(2026, 10, 12),
+        type: SessionType.bloques,
+        mode: 'tecnica',
+        sets: [SetDraft(exercise: 'Flexiones', reps: 15, rir: 4, loadKg: 5)]));
+    final evidence = await training.lastStrengthEvidence('Flexiones', DateTime(2026, 10, 19));
+    expect(evidence!.date, DateTime(2026, 10, 5), reason: 'Modo se toma de SQLite, no de RIR o nombre');
+    expect(evidence.mode, isNull, reason: 'RIR4 normal no se etiqueta como técnica');
+    final technical =
+        (await training.lastStrengthEvidence('Flexiones', DateTime(2026, 10, 19), mode: 'tecnica'))!;
+    expect(technical.mode, 'tecnica');
+    expect(technical.date, DateTime(2026, 10, 12));
+    expect(
+        strengthProgressionHint(
+            evidence: technical,
+            date: DateTime(2026, 10, 19),
+            mode: 'tecnica',
+            repsMin: 10,
+            repsMax: 15,
+            plannedSets: 1,
+            tracksLoad: true),
+        isNull);
+    expect(
+        strengthProgressionHint(
+            evidence: evidence,
+            date: DateTime(2026, 10, 19),
+            repsMin: 10,
+            repsMax: 15,
+            plannedSets: 1,
+            tracksLoad: true),
+        isNotNull);
+    expect((await db.select(db.sessions).get()).map((r) => r.mode), [null, 'tecnica']);
+  });
 }

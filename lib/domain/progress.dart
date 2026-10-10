@@ -119,9 +119,10 @@ String? strengthProgressionHint(
     required int? plannedSets,
     bool perSide = false,
     int? planDayId,
+    String? mode,
     bool tracksLoad = false,
     List<String> chain = const []}) {
-  if (evidence == null || !evidence.usableBefore(date, perSide: perSide)) return null;
+  if (evidence == null || !evidence.usableBefore(date, perSide: perSide, mode: mode)) return null;
   if (planDayId != null && evidence.planDayId != planDayId) return null;
   if (chain.isNotEmpty &&
       evidence.sets.first.variant != null &&

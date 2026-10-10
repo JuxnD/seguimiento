@@ -1,0 +1,10 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: historial técnico RIR4 no sustituye la última fuerza normal apta
+00:00 +1: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (tearDownAll)
+00:02 +1: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: (setUpAll)
+00:02 +1: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado null → guía tecnica: subida false
+00:07 +2: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado tecnica → guía null: subida false
+00:08 +3: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado null → guía null: subida true
+00:09 +4: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: (tearDownAll)
+00:09 +4: All tests passed!

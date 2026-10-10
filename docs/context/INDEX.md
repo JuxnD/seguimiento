@@ -1,5 +1,9 @@
 # Índice de contexto
 
+**Integración local122:** [baseClaude929 + evidencia008](sessions/2026-10-09-integracion-122-base-evidencia.md)
+en `C:/My Projects/seguimiento-122-integracion`. Reconciliación de protocolo
+de fuerza/técnica sin migración; resto de frentes pendiente y sin publicación.
+
 **Implementación local plan008 (9oct):** [contrato de evidencia de progreso](progress-evidence.md)
 y [recibo de pruebas](sessions/2026-10-09-008-evidencia.md). Worktree aislado
 `C:/My Projects/seguimiento-008-evidencia`; no equivale a publicación.009/011

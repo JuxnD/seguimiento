@@ -427,12 +427,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       for (final e in widget.day.exercises) {
         if (e.repsMax == null || e.sets == null || hints.containsKey(e.name)) continue;
         if (widget.day.type.isCircuit && e.block == null) continue;
-        final last = await training.lastStrengthEvidence(e.name, widget.date);
+        final last = await training.lastStrengthEvidence(e.name, widget.date, mode: widget.mode);
         final hint = strengthProgressionHint(
           evidence: last,
           date: widget.date,
           perSide: e.perSide,
           planDayId: widget.planDayId,
+          mode: widget.mode,
           repsMin: e.repsMin,
           repsMax: e.repsMax,
           plannedSets: e.perSide ? e.sets! * 2 : e.sets,

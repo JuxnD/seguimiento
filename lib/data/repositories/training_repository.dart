@@ -496,13 +496,14 @@ class TrainingRepository {
 
   /// Same weekday limits weekly protocol changes; explicit session/plan and
   /// set provenance remain available to the policy instead of being discarded.
-  Future<StrengthSessionEvidence?> lastStrengthEvidence(String exercise, DateTime date) async {
+  Future<StrengthSessionEvidence?> lastStrengthEvidence(String exercise, DateTime date, {String? mode}) async {
     final exId = await exercises.idOf(exercise);
     if (exId == null) return null;
     final circuit =
         SessionType.values.where((t) => t.isCircuit || t == SessionType.resistencia).map((t) => t.name);
     final rows = await (db.select(db.sessions)
-          ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.isNotIn(circuit))
+          ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.isNotIn(circuit) &
+            (mode == null ? t.mode.isNull() : t.mode.equals(mode)))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)
@@ -520,6 +521,7 @@ class TrainingRepository {
           type: row.type,
           exercise: exercise,
           planDayId: row.planDayId,
+          mode: row.mode,
           incomplete: row.incomplete,
           imported: row.imported,
           sets: [

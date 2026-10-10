@@ -251,4 +251,46 @@ void main() {
       });
     });
   }
+  for (final modes in [(null, 'tecnica', false), ('tecnica', null, false), (null, null, true)]) {
+    testWidgets('modo registrado ${modes.$1} → guía ${modes.$2}: subida ${modes.$3}', (t) async {
+      try {
+        final exercises = ExerciseRepository(db);
+        final training = TrainingRepository(db, exercises);
+        await io(t, () async {
+          await training.save(SessionDraft(
+              date: DateTime(2026, 10, 5),
+              type: SessionType.bloques,
+              mode: modes.$1,
+              sets: [
+                SetDraft(exercise: 'Flexiones', reps: 15, rir: modes.$1 == 'tecnica' ? 4 : 2, loadKg: 5)
+              ]));
+          final id = await exercises.idOf('Flexiones');
+          await (db.update(db.exercises)..where((x) => x.id.equals(id!)))
+              .write(const ExercisesCompanion(tracksLoad: Value(true)));
+        });
+        final original = await io(t, () => db.select(db.sessions).get());
+        await mount(
+            t,
+            GuidedSessionScreen(
+                date: DateTime(2026, 10, 12),
+                mode: modes.$2,
+                day: PlanDayDraft(
+                    weekday: 1,
+                    type: DayType.bloques,
+                    exercises: [PlanExerciseDraft(name: 'Flexiones', sets: 1, repsMin: 10, repsMax: 15)])));
+        await t.tap(find.text('Empezar bloques'));
+        await t.pump(const Duration(milliseconds: 400));
+        expect(find.text('Calentamiento a medias'), findsOneWidget);
+        await t.tap(find.text('Empezar igual'));
+        await t.pump(const Duration(milliseconds: 400));
+        expect(find.text('Hecho'), findsOneWidget);
+        expect(find.textContaining('+2–5 kg'), modes.$3 ? findsOneWidget : findsNothing);
+        expect(find.text('Carga 5 kg'), findsOneWidget, reason: 'Carga observada no se elimina');
+        expect(await io(t, () => db.select(db.sessions).get()), original,
+            reason: 'No reescribir historia por modo');
+      } finally {
+        await close(t);
+      }
+    });
+  }
 }

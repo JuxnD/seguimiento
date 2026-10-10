@@ -86,3 +86,8 @@ Entorno autorizado: SQLite en memoria y flutter_test, fuente aislada en
 
 Cuatro cruces locales cubiertos y uno declarado en este alcance. El denominador
 es este inventario, no todo el producto. No hereda QA de APK anteriores.
+
+En [integración122](sessions/2026-10-09-integracion-122-base-evidencia.md),
+la costura serie→SQLite→DTO→guía conserva también mode real. Técnica no permite
+subida ni se mezcla con normal; normal/normal mantiene consejo y observación.
+Rojo del automerge y verde del ajuste cruzan la pantalla y la base reales.

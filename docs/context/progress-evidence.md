@@ -27,6 +27,16 @@ fallo explícito, partición, RIR0, sesión cortada/importada, fecha futura, con
 de carga/variante mezclados y plan conocido incompatible. `session_sets` no
 guarda lado: no reconstruir I/D por orden ni proponer aumento bilateral con esa
 evidencia. No se alteran dosis, fórmulas clínicas ni registros antiguos.
+En la integración122, `StrengthSessionEvidence.mode` porta el valor real de
+SQLite: null en fuerza normal, `tecnica` en práctica. Nunca se infiere de RIR,
+RPE, nombre ni etiqueta. `lastStrengthEvidence(exercise,date,{mode})` consulta
+ese protocolo explícito; omitirlo conserva null compatible con los callers
+anteriores. `strengthProgressionHint(...,{mode})` y `usableBefore(...,{mode})`
+rechazan protocolos distintos y no proponen subida en técnica, incluso si fue
+limpia. Una sesión normal conRIR4 sigue siendo normal y conserva su consejo.
+Las observaciones de carga/historial permanecen consultables y sin reescritura.
+La guía pasa `widget.mode` a ambos extremos. [Recibo de integración](sessions/2026-10-09-integracion-122-base-evidencia.md).
+
 `lastStrengthEvidence` no conserva el cap arbitrario de40sesiones del adaptador
 antiguo: hoy consulta el historial antes de la fecha y filtra día de semana.
 009 debe consolidar/optimizar consultas con igual semántica, sin ocultar una
