@@ -1,5 +1,14 @@
 # Índice de contexto
 
+**Entrega personal1.23.0+31 (10oct):** 023/024/025 integrados, esquema23.
+[Recibo de release](sessions/2026-10-10-release-1-23.md) y
+[manifiesto/evidencia](sessions/release123-evidence/manifest.json): conservación
+genuina18/19/20/21, análisis y compilación/firma local pasan. EnsayoUI integrado
+local interrumpido por hang, causa NO_CONFIRMADA; todos los tests de CI/release
+siguen obligatorios con concurrency1/90s. Publicación y APK público aún pendientes.
+QA ampliada/Android/teléfono NOT_EXECUTED_OWNER_DEFERRED por autorización owner;
+la prueba del teléfono corresponde al owner. Los apartados siguientes son históricos.
+
 **Base de construcción local 011+022, 10 de octubre:** fuentes aprobadas
 2f29/8872 integradas sin conflictos en `5352440`, esquema 23. Radar/historia de
 metas y API de alta disponibles para cerrar lectores 023 en paralelo.

@@ -40,7 +40,7 @@ jobs:
         run: flutter analyze
 
       - name: Probar
-        run: flutter test --timeout 90s
+        run: flutter test --timeout 90s --concurrency 1
 
       - name: Comprobar que la etiqueta coincide con pubspec
         run: |

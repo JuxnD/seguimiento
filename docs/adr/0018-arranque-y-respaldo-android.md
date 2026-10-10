@@ -46,3 +46,21 @@ Antes de distribuir: comprobar Manifest fusionado y recursos del APK exacto,
 arranque frío/transición en día/noche y transferencia/backup en QA sintético.
 El responsable de release conserva esos gates; datos existentes y aceptación
 del owner no se heredan de estos verdes locales.
+
+## Compatibilidad de lint y entrega personal 1.23 (10 de octubre)
+
+La compilación real con el AGP fijado reportó doce errores FullBackupContent:
+su enumeración omitía device_root/device_file/device_database/device_sharedpref.
+Los cuatro son válidos en ambos formatos según la documentación oficial citada.
+Se conserva EXACTAMENTE la política de nueve dominios. Sólo esos doce excludes
+llevan tools:ignore=FullBackupContent; no hay baseline global, abortOnError ni
+cambio de SDK, AGP o timeout. LintVital sigue activo para el resto. El verificador
+estricto y sus quince pruebas pasan; el rebuild real también pasa. El APK leído
+mantiene nueve excludes legacy, nueve cloud y nueve device-transfer, además de
+allowBackup=false y las dos referencias del Manifest.
+
+El owner autorizó publicar esta entrega personal y probarla él en su teléfono.
+La matriz ampliada de arranque/transporte/Android se registra como
+NOT_EXECUTED_OWNER_DEFERRED; no es validación Android/OEM ni aceptación del teléfono.
+Se mantienen como gates mínimos obligatorios la conservación offline, análisis,
+compilación, identidad/firma del APK y todos los tests de CI/release.

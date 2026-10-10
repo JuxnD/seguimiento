@@ -41,7 +41,7 @@ jobs:
 
       - run: flutter analyze
       # El timeout evita que una prueba colgada queme 10 minutos de runner.
-      - run: flutter test --timeout 90s
+      - run: flutter test --timeout 90s --concurrency 1
       # Un cambio de Gradle, del manifiesto o de un plugin nativo no lo ve
       # ninguna prueba de Dart: sin esto se descubría al etiquetar la release.
       - name: Compilar APK (debug)

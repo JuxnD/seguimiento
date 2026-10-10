@@ -374,3 +374,22 @@ de texto/alertas/ratios, sin fallback por ausencia en historia cargada.
 
 [Recibo023 y rawlogs comprimidos](sessions/2026-10-10-023-presencia-metas.md).
 90mínimos/análisis0 no sustituyen CI/artefacto exacto,024 ni prueba del teléfono.
+
+## Release personal1.23: mínimos y contrato de evidencia
+
+023/024/025 integrados. Cápsula AppDatabase20 pública auténtica (no downgrade23)
+compara32tablas/124filas/todascolumnas, multiplicidad, datos personales exactos,
+fotos/flags/guion y restoreZIP/reopen hacia23; fixtures genuinos18/19/21 pasan.
+Perfil legacyUnknown/ready conserva proyecciones previas. Licencia real/Keystore
+no observado; contrato ZIP la excluye y bridge/firma históricos permanecen.
+
+Primer build bloqueó12dominiosdevice_* válidos según Android; sólo esas alertas
+lint reciben anotación puntual, manteniendo9dominios/15policytests/lintVital.
+APK real identifica31/min26/target34/cert diario y consumidores27excludes.
+Ensayo UI local integrado interrumpido sin resultado y causa NO_CONFIRMADA;
+CI/release obligatorios conservan todos los tests y90s, concurrency1. Full024
+previa872/17/2 queda como fallo histórico, nunca como suite verde del candidato.
+
+[Recibo/identidad](sessions/2026-10-10-release-1-23.md). Owner aplaza matriz
+ampliada y operación Android/teléfono: NOT_EXECUTED_OWNER_DEFERRED. No inferir
+operación nativa de pruebas host ni compatibilidad binaria de sólo hashes fuente.
