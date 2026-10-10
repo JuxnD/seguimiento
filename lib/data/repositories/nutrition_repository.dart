@@ -104,7 +104,7 @@ class MealTemplate {
 
   Macros get macros => Macros.sum(toDrafts().map((i) => i.macros));
 
-  /// Cantidad imposible de un alimento por porción (≥ 20): lo que dejó C01
+  /// Cantidad sospechosa de un alimento por porción (≥ 20): lo que dejó C01
   /// cuando un alimento por gramos pasó a porción y el combo conservó los
   /// gramos (150 g → 150 porciones). null si el combo se ve bien.
   String? get impossibleQuantity {
@@ -117,7 +117,8 @@ class MealTemplate {
   }
 }
 
-/// Nadie come 20 porciones de algo en una comida.
+/// Umbral de sospecha, no prueba: 20 porciones de algo en una comida casi
+/// siempre eran gramos. Se pregunta, no se bloquea.
 const impossiblePortions = 20;
 
 String fmtQuantity(double q) => q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
