@@ -210,6 +210,48 @@ void main() {
     expect(find.text('Dislocaciones con banda · 30 s'), findsNothing);
   });
 
+  testWidgets('SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque', (tester) async {
+    final db = openInMemoryDatabase();
+    final recovery = RecoveryRepository(db);
+    try {
+      await tester.runAsync(() async {
+        await recovery.setSoreness(DateTime(2026, 9, 23), {'Hombro': 5, 'Rodilla': 2});
+        await recovery.setSoreness(DateTime(2026, 9, 20), {'Codo': 6});
+      });
+
+      await pumpGuided(tester, day: push(), recovery: recovery);
+      await flushStore(tester);
+      expect(find.textContaining('Molestia en hombro (5/10)'), findsOneWidget);
+      expect(find.textContaining('Molestia en rodilla'), findsNothing, reason: '2/10 no llega al umbral');
+      expect(find.textContaining('Molestia en codo'), findsNothing, reason: 'el registro es de hace cuatro días');
+      expect(find.textContaining('0 de 7 pasos'), findsOneWidget);
+      expect(find.text('Dislocaciones con banda · 30 s'), findsNothing);
+      for (final label in const [
+        'Círculos de hombros · 30 s',
+        'Rotación torácica en cuatro apoyos · 30 s',
+        'Balanceos de pierna · 30 s',
+        'Movilidad de tobillo contra la pared · 30 s',
+        'Flexiones escapulares · 2 × 8',
+        'Muñecas (planche) · 30 s',
+        'Flexiones · 4',
+      ]) {
+        expect(find.text(label), findsOneWidget, reason: 'se conserva el bloque de empuje');
+      }
+      final raw = (await tester.runAsync(() => File('${dir.path}/sesion.json').readAsString()))!;
+      final snap = ActiveSession.fromJson(jsonDecode(raw) as Map<String, Object?>)! as GuidedSnapshot;
+      expect(snap.warmupDone, isEmpty, reason: 'leer una molestia no equivale a completar un paso');
+      expect(snap.warmupSkipped, isFalse);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      final closing = db.close();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      await closing;
+    }
+  });
+
   testWidgets('foto vieja sin calentamiento guiado: nada marcado, no se rompe', (tester) async {
     final legacy = GuidedSnapshot(
         date: '2026-09-24', startedAt: DateTime(2026, 9, 24, 7), planDayId: 1, phase: GuidedPhase.calentamiento, index: 0);

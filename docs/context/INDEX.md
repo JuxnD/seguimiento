@@ -23,6 +23,11 @@ añade las seis figuras de calentamiento y el arranque/políticaAndroid revisado
 esquema21 y SDK3.22 conservados. El [checkpoint015](sessions/2026-10-10-integracion-122-015.md)
 integra gráficas con rango/evidencia:44criterios y9controles compartidos pasan.
 Full combinado espera009 y los frentes011/012 pendientes;015 no añade radar.
+El [checkpointClaude de calentamiento](sessions/2026-10-10-integracion-122-warmup.md)
+integra avisos de molestias sin agregar ejercicios y checklist de Cindy de
+prueba:18casos y24controles compartidos pasan. Nueva costura SQLite→pantalla
+positiva probada; mutante de conexión NO_EVALUADO por cierre de harness detenido
+tras diagnóstico acotado. Esquema21; sin APK ni validación de teléfono.
 
 **Slice016 aislado:** [arranque y política Android](../adr/0018-arranque-y-respaldo-android.md)
 en `seguimiento-016-android`, basec04b2a9. Misma S013, reglas de exclusión

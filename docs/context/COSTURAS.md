@@ -171,9 +171,9 @@ Checkpoint122 con014/016:[recibo integrado](sessions/2026-10-10-integracion-122-
 Generación repetida idéntica,73objetos/hashgeometrías legacy conservados,76gates
 dirigidos verdes y4mutantes del JSON rechazados por assertions reales. Después
 de restaurar bytes,10controles de apoyos/paridad verdes. SDK/schema/firma no
-cambian; native/OEM/owner y full candidato siguen pendientes. Al llegar009,
-la cobertura014 debe consumir fuentes seguras reales, sin reconstruir el mapa
-warmupForZone retirado por la política de dolor.
+cambian; native/OEM/owner y full candidato siguen pendientes. En el checkpoint
+Claude posterior se adaptó la cobertura014 a las fuentes reales, sin reconstruir
+el mapa warmupForZone retirado por la política de dolor.
 
 ## Plan015 local: gráficas con rango y evidencia (10oct)
 
@@ -202,3 +202,17 @@ cruzan unidad de comida, paridad geométrica, controles grandes y divulgación.
 No se cambió comportamiento para integrar; catálogo79/73 y30PNG preservados.
 Rango/protocolo comparten el mismo read-model; metas históricas y radar siguen
 pendientes de sus adaptadores, no se fabrican a partir del perfil actual.
+
+## CheckpointClaude en122: molestiasSQLite y Cindy de prueba
+
+[Recibo separado](sessions/2026-10-10-integracion-122-warmup.md). El nuevo caso
+SQLite→RecoveryRepository→GuidedSessionScreen exige aviso de Hombro5 reciente,
+excluye Rodilla2/Codo antiguo, conserva siete dosis y relee snapshot sin pasos
+completos.18casos pasan, junto con24controles de figuras/guía/snapshots; esquema21,
+paridad79/73 y30PNG intactos. Las notas son avisos, no recetas ni completitud.
+
+La sensibilidad negativa a provider conectado a otraDB vacía queda
+NO_EVALUADO: diagnóstico de harness BLOCKED al cerrar la DB fuente, pese a
+que el montaje llega al oráculo y la DB vacía cierra. Se conserva salida de
+los intentos; no se declara rojo a una interrupción ni se infiere bug nativo
+del cierre de una prueba. Revisión final, full candidato e instalación pendientes.

@@ -1,0 +1,34 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/ui/illustration_catalog_coverage_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_catalog_coverage_test.dart: cada guía, peldaño y ejercicio de movilidad tiene su propia ilustración
+00:00 +1: loading C:/My Projects/seguimiento-122-integracion/test/ui/illustration_controls_readability_test.dart
+00:03 +1: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:07 +2: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto2.0
+00:08 +3: loading C:/My Projects/seguimiento-122-integracion/test/ui/illustration_warmup_rig_test.dart
+00:11 +3: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_warmup_rig_test.dart: torso sube sin mover manos ni doblar codos en los 61 puntos del recorrido
+00:12 +4: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_warmup_rig_test.dart: mutante sin desplazamiento escapular pierde contacto: el oráculo detecta el fallo
+00:12 +5: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_warmup_rig_test.dart: radio declarado conserva arco de pierna; el default mantiene la cuerda antigua
+00:12 +6: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_warmup_rig_test.dart: radio opt-in maneja antipodales por plano explícito y rechaza degeneración
+00:12 +7: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_warmup_rig_test.dart: omitir radio en artefacto generado reproduce pie fuera de rango entre claves
+00:12 +8: loading C:/My Projects/seguimiento-122-integracion/test/ui/illustration_legacy_parity_test.dart
+00:14 +8: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:16 +9: loading C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart
+00:19 +9: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: (setUpAll)
+00:19 +9: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: terminar antes guarda solo lo hecho y la marca como incompleta
+00:25 +10: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: cada ronda separa su trabajo del descanso que la precede
+00:26 +11: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: un doble toque en "Hecho" no salta el descanso ni la parada siguiente
+00:28 +12: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: el cierre de un circuito pide técnica, rango y recuperación
+00:29 +13: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: al terminar el enfriamiento la sesión queda guardada sin revisar (§16.9)
+00:31 +14: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: el acumulado de reps es por ejercicio
+00:32 +15: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: un aguante por lado: derecho, luego izquierdo, con cronómetro y descanso entre series
+00:34 +16: C:/My Projects/seguimiento-122-integracion/test/ui/guided_session_test.dart: (tearDownAll)
+00:34 +16: loading C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart
+00:36 +16: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+00:36 +17: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+00:36 +18: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+00:36 +19: C:/My Projects/seguimiento-122-integracion/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+00:36 +20: loading C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart
+00:39 +20: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: sin archivo no hay sesión
+00:39 +21: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+00:39 +22: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: clear después de save no deja nada
+00:39 +23: C:/My Projects/seguimiento-122-integracion/test/data/active_session_store_test.dart: un archivo dañado se ignora
+00:39 +24: All tests passed!

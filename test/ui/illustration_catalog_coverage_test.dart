@@ -19,7 +19,8 @@ void main() {
       ...mobilityNight.exercises.map((e) => e.name),
       ...legRecovery.exercises.map((e) => e.name),
       ...warmupMobility.map((e) => e.$1),
-      ...warmupForZone.values,
+      // La molestia sólo genera un aviso. Los movimientos exigidos se leen
+      // de las guías y los bloques reales, no de una receta por zona retirada.
       for (final type in [DayType.circuito, DayType.bloques])
         for (final exercise in ['Dominadas', 'Flexiones', 'Sentadillas'])
           ...buildWarmup(ScriptDay(type: type, exercises: [ScriptExercise(name: exercise)])).map((e) => e.exercise),
