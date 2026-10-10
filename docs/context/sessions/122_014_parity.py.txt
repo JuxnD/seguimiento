@@ -1,0 +1,14 @@
+from pathlib import Path
+import subprocess,json,hashlib
+p=Path('assets/tecnica/figuras3d.json'); first=p.read_bytes()
+original=json.loads(subprocess.run(['git','show','929f2897c73a86760cc73ce228a89f3aaa3789a8:assets/tecnica/figuras3d.json'],check=True,stdout=subprocess.PIPE).stdout)
+current=json.loads(first)
+by_name={f['name']:f for f in current['figures']}
+assert len(current['figures'])==79 and len(original['figures'])==73
+assert all(by_name[f['name']]==f for f in original['figures'])
+subprocess.run(['python','tool/figuras3d.py'],check=True,stdout=subprocess.PIPE)
+assert first==p.read_bytes()
+result={'entries':79,'legacyEntries':73,'legacyObjectsIdentical':True,'deterministicBytes':True,'sha256':hashlib.sha256(first).hexdigest(),'reference':'929f2897c73a86760cc73ce228a89f3aaa3789a8'}
+assert result['sha256']=='1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a'
+Path('build/122-014-generation.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+print(json.dumps(result))

@@ -10,6 +10,10 @@ La [integración010](sessions/2026-10-10-integracion-122-010.md) añade catálog
 revisable y esquema21:83controles pasan con interopPHP local ficticio, migración
 y ZIP. Se conservan008/mode/warmup/snapshot y012/013;009/22 y los demás frentes
 siguen pendientes. Sin APK, backend desplegado ni teléfono probado.
+El [checkpoint014/016](sessions/2026-10-10-integracion-122-014-016.md)
+añade las seis figuras de calentamiento y el arranque/políticaAndroid revisados.
+79entradas/73anteriores intactas,76controles dirigidos y4mutantes rechazados;
+esquema21 y SDK3.22 conservados. Full combinado espera009/015 final.
 
 **Slice016 aislado:** [arranque y política Android](../adr/0018-arranque-y-respaldo-android.md)
 en `seguimiento-016-android`, basec04b2a9. Misma S013, reglas de exclusión

@@ -1,0 +1,12 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart
+00:00 +0: balanceos distingue pierna móvil, pie fijo y mano en pared lateral
+00:00 +0 -1: balanceos distingue pierna móvil, pie fijo y mano en pared lateral [E]
+  Expected: a numeric value within <0.01> of <-1>
+    Actual: <-0.5999999999999996>
+     Which:  differs by <0.40000000000000036>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_supports_test.dart 143:9       main.<fn>
+
+00:00 +0 -1: Some tests failed.

@@ -1,0 +1,34 @@
+{
+  "verdicts": [
+    {
+      "mutant": "without-radius",
+      "target": "Balanceos de pierna",
+      "test": "balanceos distingue pierna móvil, pie fijo y mano en pared lateral",
+      "exitCode": 1,
+      "verdict": "REJECTED_BY_ASSERTION"
+    },
+    {
+      "mutant": "without-shoulder",
+      "target": "Retracciones escapulares",
+      "test": "calentamiento conserva apoyos y brazos rectos en 61 muestras",
+      "exitCode": 1,
+      "verdict": "REJECTED_BY_ASSERTION"
+    },
+    {
+      "mutant": "without-grip",
+      "target": "Dislocaciones con banda",
+      "test": "calentamiento conserva apoyos y brazos rectos en 61 muestras",
+      "exitCode": 1,
+      "verdict": "REJECTED_BY_ASSERTION"
+    },
+    {
+      "mutant": "inverted-foot",
+      "target": "Balanceos de pierna",
+      "test": "balanceos distingue pierna móvil, pie fijo y mano en pared lateral",
+      "exitCode": 1,
+      "verdict": "REJECTED_BY_ASSERTION"
+    }
+  ],
+  "restoredSha256": "1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a",
+  "footMutation": "farLeg.foot=90 (invalid fixed-foot orientation)"
+}

@@ -1,0 +1,13 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: vela y dragon mantienen cabeza horizontal junto a los hombros
+00:00 +1: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: cuadriceps y piernas en pared mantienen el pie transversal a la tibia
+00:00 +2: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: manos conservan contacto con barra y borde de mesa durante el recorrido
+00:00 +3: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: flexion unilateral mantiene solamente la mano de trabajo apoyada
+00:00 +4: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: plancha inversa y pike mantienen palmas apoyadas al cambiar de momento
+00:00 +5: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: calentamiento conserva apoyos y brazos rectos en 61 muestras
+00:00 +6: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: balanceos distingue pierna móvil, pie fijo y mano en pared lateral
+00:00 +7: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: puente conserva hombros, cabeza horizontal, palmas y ambos pies
+00:00 +8: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_supports_test.dart: retracciones deja volumen de zapatos claramente libre del suelo en61muestras
+00:00 +9: loading C:/My Projects/seguimiento-122-integracion/test/ui/illustration_legacy_parity_test.dart
+00:00 +9: C:/My Projects/seguimiento-122-integracion/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:01 +10: All tests passed!

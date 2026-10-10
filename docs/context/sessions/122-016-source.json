@@ -1,0 +1,17 @@
+{
+  "status": "VALIDATED_SOURCE_POLICY",
+  "violations": [],
+  "sourceSha256": {
+    "android/app/src/main/AndroidManifest.xml": "9e2bf438051624cb81e32f0fbc96875687f657275b5498fd2253621615a4232f",
+    "android/app/src/main/res/xml/backup_rules.xml": "2cdbe625c1a7831b3c9457e7193f62cbe6b1c4a3373c04e0e680a250db9e154c",
+    "android/app/src/main/res/xml/data_extraction_rules.xml": "682b4b0af531c273be52d50fda763e702623f3cc5f997d32282dbc90b8095dbe",
+    "android/app/src/main/res/values/colors.xml": "c34c82a71a37beabbae2288712cf370c5c324f2c2957fe874768ef3cd01b893b",
+    "android/app/src/main/res/drawable/launch_background.xml": "35262a553b9bc9e38c060b4546036a71083d4e2d3222864508a7d24bd5bc3df5",
+    "android/app/src/main/res/drawable-v21/launch_background.xml": "35262a553b9bc9e38c060b4546036a71083d4e2d3222864508a7d24bd5bc3df5",
+    "android/app/src/main/res/values/styles.xml": "32654d8e1c4f7df39aaa1e923ced82e928e432c9c124ef71a429666d8c88fd4d",
+    "android/app/src/main/res/values-night/styles.xml": "6d9099c623724b010dc9b907b9b235269fbb95ff7c652301960537060bbc33c9",
+    "android/app/src/main/res/values-v31/styles.xml": "a42b0db51b55dd4f1999abadb2b68c16c53a0cef40c7c1bf52edcd37d80b4432",
+    "android/app/src/main/res/values-night-v31/styles.xml": "48e9751998357ec787e3bf56f87016889d238e051274b67e056fd57d38ddc6d4"
+  },
+  "nativeValidation": "PENDING_MERGED_XML_APK_STARTUP_AND_TRANSPORT"
+}

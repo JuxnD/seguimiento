@@ -166,3 +166,11 @@ sobrebasee35a; aceptación humana yAPK pendientes.
 Decisión y autoridad:[ADR0018](../adr/0018-arranque-y-respaldo-android.md).
 No transforma una política fuente en promesa de eliminación de copias previas
 ni de control de terceros; no toma verdes de APK anteriores para este slice.
+
+Checkpoint122 con014/016:[recibo integrado](sessions/2026-10-10-integracion-122-014-016.md).
+Generación repetida idéntica,73objetos/hashgeometrías legacy conservados,76gates
+dirigidos verdes y4mutantes del JSON rechazados por assertions reales. Después
+de restaurar bytes,10controles de apoyos/paridad verdes. SDK/schema/firma no
+cambian; native/OEM/owner y full candidato siguen pendientes. Al llegar009,
+la cobertura014 debe consumir fuentes seguras reales, sin reconstruir el mapa
+warmupForZone retirado por la política de dolor.
