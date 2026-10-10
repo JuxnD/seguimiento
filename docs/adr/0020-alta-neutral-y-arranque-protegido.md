@@ -54,6 +54,25 @@ traspaso. El shell (permisos, pasos, respaldo, avisos) se montaba siempre.
   registros se rechaza con 0 cambios de base, fotos y flags. ZIP/SQLite 20–22
   migran a legacyUnknown/ready. La licencia no entra al ZIP ni se hereda.
 
+## Revisión 024: rutas abiertas al dejar de estar listo
+
+Rojo real en `8872`: restaurar un ZIP pendiente desde Ajustes completaba la
+restauración (generación 1, SQLite new/pending, 0 metas, efectos detenidos,
+avisos retirados) pero Ajustes seguía visible encima: AppEntry sólo cambia el
+`home`. Contrato de navegación:
+
+- AppEntry, al pasar de **listo** a pendiente o a error (estado `AsyncData`
+  no listo o `AsyncError`), retira avisos (sólo pendiente) y cierra las rutas
+  sobre la raíz con `Navigator.of(context).popUntil(isFirst)` desde su propio
+  contexto. Sin `navigatorKey` global ni cambio de `app.dart`.
+- Listo → listo (restaurar otro respaldo listo) y cancelación/rollback no tocan
+  la navegación: Ajustes sigue abierto y relee por generación.
+- `restoreBackupFile` captura host, documentos y el notifier de generación
+  antes de cualquier `await`; los diálogos de confirmación y progreso se cierran
+  como antes (el cambio de alta llega después de la generación, ya sin diálogos).
+- Nuevas pantallas sobre el shell no necesitan nada: se cierran solas al
+  dejar de estar listo.
+
 ## API para 012/011 (contrato concreto)
 
 ```dart

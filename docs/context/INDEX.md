@@ -35,6 +35,10 @@ alta en `profiles`, `kcalFloor` en la misma historia, AppEntry antes de
 HomeShell, correcciones con consentimiento+respaldo y restauración común.
 Rojo f34 archivado; full 869/17/0, análisis 0. Sin integrar ni publicar:
 cierre 012 de lectores pendiente antes de activar usuarios nuevos.
+[Reparación024](sessions/2026-10-10-024-ruta-restaurar.md): restaurar un alta
+pendiente desde Ajustes ahora cierra las rutas abiertas; rojo ZIP real en 8872
+archivado; sólo AppEntry/restore_access y pruebas. Aislado verde 5/5; full
+872/17/2 con los 2 fallos en esperas de 20 s de la prueba nueva bajo carga (STOP, NO_CONFIRMADO).
 
 **Integración local122/018:** [componente de radar](sessions/2026-10-10-integracion-122-018.md)
 desde d108fafa,74dirigidos y análisis/diff0; receta extraída sin alterar019,

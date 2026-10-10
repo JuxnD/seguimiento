@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -88,10 +88,8 @@ class _Backup extends AutoBackup {
 }
 
 void main() {
-  setUpAll(() {
-    useHostSqlite();
-    driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
-  });
+  // Sin suprimir el aviso de Drift (plan 024): bases múltiples quedan visibles.
+  setUpAll(useHostSqlite);
 
   late Directory dir;
   late AppDatabase db;

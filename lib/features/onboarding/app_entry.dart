@@ -17,12 +17,16 @@ class AppEntry extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Listo → pendiente con la app abierta (restaurar un alta pendiente): los
-    // avisos que programó el perfil anterior se retiran.
+    // Listo → pendiente o inválido con la app abierta (restaurar desde
+    // Ajustes): los avisos del perfil anterior se retiran y las rutas abiertas
+    // sobre el shell (Ajustes, editores) se cierran, para que el alta o el
+    // error queden visibles (plan 024). Listo → listo no toca la navegación.
     ref.listen<AsyncValue<SetupStatus>>(setupStatusProvider, (prev, next) {
-      if (prev?.valueOrNull?.ready == true && next.valueOrNull?.pending == true) {
-        ref.read(rescheduleRemindersProvider)();
-      }
+      final wasReady = prev?.valueOrNull?.ready == true;
+      final leftReady = next is AsyncError || (next is AsyncData<SetupStatus> && !next.value.ready);
+      if (!wasReady || !leftReady) return;
+      if (next is AsyncData<SetupStatus>) ref.read(rescheduleRemindersProvider)();
+      Navigator.of(context).popUntil((route) => route.isFirst);
     });
     return ref.watch(setupStatusProvider).when(
           // Al cambiar de base se conserva lo que había hasta saber el nuevo

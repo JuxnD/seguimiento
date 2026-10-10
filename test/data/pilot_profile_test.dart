@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/data/backup_archive.dart';
@@ -23,10 +23,8 @@ import '../support/sqlite_host.dart';
 /// Plan 022: un usuario nuevo no hereda nada del dueño y el existente sigue
 /// igual. SQLite real (AppDatabase) con personas ficticias.
 void main() {
-  setUpAll(() {
-    useHostSqlite();
-    driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
-  });
+  // Sin suprimir el aviso de Drift (plan 024): bases múltiples quedan visibles.
+  setUpAll(useHostSqlite);
 
   final confirmedAt = DateTime(2026, 10, 10, 9, 30);
   final today = dateOnly(confirmedAt);

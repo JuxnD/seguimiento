@@ -27,12 +27,17 @@ Future<bool> pickAndRestoreBackup(BuildContext context, WidgetRef ref) async {
 /// Verifica, pide confirmación explícita (borra lo registrado desde ese
 /// respaldo) y restaura. true si la base quedó reemplazada.
 Future<bool> restoreBackupFile(BuildContext context, WidgetRef ref, File file, String label) async {
+  // Antes de cualquier await (plan 024): si la ruta que llamó se cierra al
+  // cambiar el alta, el WidgetRef ya no se puede usar, pero la generación
+  // igual tiene que avanzar.
+  final host = ref.read(databaseHostProvider);
+  final documents = ref.read(documentsDirProvider.future);
+  final generation = ref.read(databaseGenerationProvider.notifier);
   PreparedBackup? prepared;
   var replaced = false;
   var restored = false;
   try {
-    final archive =
-        BackupArchive(host: ref.read(databaseHostProvider), documents: await ref.read(documentsDirProvider.future));
+    final archive = BackupArchive(host: host, documents: await documents);
     if (!context.mounted) return false;
     final ready = await _progress(context, 'Verificando respaldo', () => archive.prepare(file));
     prepared = ready;
@@ -78,7 +83,7 @@ Future<bool> restoreBackupFile(BuildContext context, WidgetRef ref, File file, S
   } finally {
     // Siempre: aunque falle, la conexión pudo cerrarse y reabrirse en el
     // rollback. Sin esto, repositorios y streams quedan sobre la vieja.
-    if (replaced) ref.read(databaseGenerationProvider.notifier).state++;
+    if (replaced) generation.state++;
     await prepared?.dispose();
   }
   return restored;
