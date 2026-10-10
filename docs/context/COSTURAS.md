@@ -69,3 +69,20 @@ Comprensión humana/publicación pendientes. Recibo: [sesión](sessions/2026-10-
 Las pruebas y recapturas prueban las fronteras enumeradas. No afirman que todo
 el entrenamiento sea seguro, que el owner lo comprenda o que las metas ya se
 adapten longitudinalmente; esto último queda enPlan007.
+
+## Plan008 local: evidencia de progreso (9oct)
+
+Entorno autorizado: SQLite en memoria y flutter_test, fuente aislada en
+`seguimiento-008-evidencia`. [Contrato](progress-evidence.md),
+[recibo](sessions/2026-10-09-008-evidencia.md).
+
+| Cruce enumerado | Estado y evidencia |
+|---|---|
+| Marcas acumuladas → SQLite → DTO → consumidor del cierre | Cubierto local:60/125/195→60/65/70→media65; work/lap separados y protocolo distinto/unknown no compara |
+| Serie manual con split/fallo → SQLite → DTO → guía siguiente | Cubierto local:12+3/fallo no muestra+kg; mutante de pérdida de flags en la proyección produce rojo en esa UI |
+| Tests parciales/dudosos → SQLite → tabla/dosis | Cubierto local:T3 parcial visible conservaT2 limpio; dudoso observado no aumenta dosis; unknown/futuro/inválido no aptos |
+| Fecha prevista vs real → pantalla → SQLite → reentrada | Cubierto local:nuevo usa9oct pese previsto11dic; edición conserva9oct |
+| Fuente integrada con Claude → APK → uso del owner | Declarado: repetir gates sobre candidato integrado y APK; no observado por este worktree |
+
+Cuatro cruces locales cubiertos y uno declarado en este alcance. El denominador
+es este inventario, no todo el producto. No hereda QA de APK anteriores.

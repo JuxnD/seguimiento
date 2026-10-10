@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
-import '../../domain/dates.dart' show formatDuration;
+import '../../domain/dates.dart' show formatDuration, dateOnly, dayKey;
 import '../../domain/fitness_test.dart';
 import '../../ui/widgets.dart';
 import 'pre_attempt_card.dart';
@@ -37,6 +37,9 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   DateTime? _restEndsAt;
   Timer? _ticker;
   bool _saving = false;
+  late DateTime _executionDate;
+  bool _editing = false;
+  bool _dateNeedsConfirmation = false;
 
   String _key(TestItem t, String side) => '${t.id}|$side';
   List<String> _sides(TestItem t) => t.perSide ? const ['I', 'D'] : const [''];
@@ -61,6 +64,11 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   Future<void> _load() async {
     final rows = await ref.read(fitnessTestRepositoryProvider).all();
     if (!mounted) return;
+    final original =
+        rows.where((r) => r.round == widget.round && _items.any((t) => t.id == r.item)).firstOrNull;
+    _editing = original != null;
+    _dateNeedsConfirmation = original != null && original.date == null;
+    _executionDate = dateOnly(original?.date ?? clock.now());
     for (final t in _items) {
       for (final side in _sides(t)) {
         final r = rows.where((r) => r.round == widget.round && r.item == t.id && (r.side ?? '') == side).firstOrNull;
@@ -138,7 +146,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     final ok = await guarded(
       context,
       () => ref.read(fitnessTestRepositoryProvider).save(
-            date: widget.date,
+            date: _executionDate,
             round: widget.round,
             part: widget.part,
             results: results,
@@ -191,6 +199,25 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                 children: [
                   AppCard(
                     children: [
+                      Text(_dateNeedsConfirmation ? 'Fecha del intento sin confirmar: el registro original no tiene fecha válida.' :
+                        'Fecha del intento: ${dayKey(_executionDate)}${_editing ? ' (conservada)' : ''}'),
+                      if (!_editing || _dateNeedsConfirmation)
+                        TextButton(
+                            onPressed: () async {
+                              final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: _executionDate,
+                                  firstDate: DateTime(2000),
+                                  lastDate: dateOnly(clock.now()));
+                              if (picked != null && mounted) {
+                                setState(() {
+                                  _executionDate = picked;
+                                  _dateNeedsConfirmation = false;
+                                  _changed = true;
+                                });
+                              }
+                            },
+                            child: const Text('Confirmar o cambiar fecha')),
                       Text(
                         torso
                             ? (widget.date.weekday == DateTime.monday
@@ -234,7 +261,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: _loaded && _hasAny && !_saving ? _save : null,
+                    onPressed: _loaded && _hasAny && !_saving && !_dateNeedsConfirmation ? _save : null,
                     icon: const Icon(Icons.check),
                     label: const Text('Guardar test'),
                   ),

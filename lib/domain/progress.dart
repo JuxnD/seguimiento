@@ -3,6 +3,7 @@
 library;
 
 import 'dates.dart';
+import 'progress_evidence.dart';
 
 /// Racha de días entrenados hasta hoy. Un día de entrenamiento sin sesión la
 /// corta; un día de descanso o fútbol no la corta ni la alarga.
@@ -108,6 +109,35 @@ String? doubleProgressionHint({
   return 'más banda o pausa arriba $back';
 }
 
+/// Conserva la política histórica de RIR ausente, pero un fallo/partición
+/// explícito, sesión cortada o protocolos mezclados jamás habilitan subida.
+String? strengthProgressionHint(
+    {required StrengthSessionEvidence? evidence,
+    required DateTime date,
+    required int? repsMin,
+    required int? repsMax,
+    required int? plannedSets,
+    bool perSide = false,
+    int? planDayId,
+    bool tracksLoad = false,
+    List<String> chain = const []}) {
+  if (evidence == null || !evidence.usableBefore(date, perSide: perSide)) return null;
+  if (planDayId != null && evidence.planDayId != planDayId) return null;
+  if (chain.isNotEmpty &&
+      evidence.sets.first.variant != null &&
+      !chain.contains(evidence.sets.first.variant)) {
+    return null;
+  }
+  return doubleProgressionHint(
+      repsMin: repsMin,
+      repsMax: repsMax,
+      plannedSets: plannedSets,
+      lastSets: [for (final s in evidence.sets) (reps: s.reps, rir: s.rir)],
+      tracksLoad: tracksLoad,
+      chain: chain,
+      lastVariant: evidence.sets.last.variant);
+}
+
 /// Promedio de peso de una semana (lunes a domingo).
 class WeekAverage {
   const WeekAverage(this.monday, this.kg, this.count);
@@ -164,6 +194,26 @@ class SessionComparison {
   final String? previousDateLabel;
   final bool incomplete;
   final bool isRecord;
+}
+
+/// Completion uses this exact boundary: previous durations already have their
+/// basis and protocol. A second mark conversion cannot hide in a UI tuple.
+SessionComparison timedSessionComparison(
+    {required RoundTimingEvidence current,
+    RoundTimingEvidence? previous,
+    int? plannedRounds,
+    bool isRecord = false,
+    String? previousDateLabel}) {
+  final comparable = previous != null && current.comparableTo(previous);
+  return SessionComparison(
+      rounds: current.rounds,
+      plannedRounds: plannedRounds,
+      meanLapSec: current.meanDurationSec,
+      previousRounds: comparable ? previous.rounds : null,
+      previousMeanLapSec: comparable ? previous.meanDurationSec : null,
+      previousDateLabel: comparable ? previousDateLabel : null,
+      incomplete: current.incomplete,
+      isRecord: isRecord);
 }
 
 /// Titular y frase de cierre. Siempre dice algo verdadero y concreto: nada de

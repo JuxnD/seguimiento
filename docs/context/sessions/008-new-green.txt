@@ -1,0 +1,17 @@
+00:00 +0: loading C:/My Projects/seguimiento-008-evidencia/test/domain/progress_evidence_test.dart
+00:00 +0: C:/My Projects/seguimiento-008-evidencia/test/domain/progress_evidence_test.dart: duraciones una vez, protocolo y base explícitos
+00:00 +1: C:/My Projects/seguimiento-008-evidencia/test/domain/progress_evidence_test.dart: mantiene política RIR ausente, bloquea fallo, partición y mezcla
+00:00 +2: C:/My Projects/seguimiento-008-evidencia/test/domain/progress_evidence_test.dart: observado visible, apto exige fecha, ambos lados y limpio; T3 parcial no oculta T2
+00:00 +3: C:/My Projects/seguimiento-008-evidencia/test/data/progress_evidence_test.dart: (setUpAll)
+00:00 +3: C:/My Projects/seguimiento-008-evidencia/test/data/progress_evidence_test.dart: SQLite marcas→duraciones65 sin doble conversión, trabajo vs vueltas
+00:00 +4: C:/My Projects/seguimiento-008-evidencia/test/data/progress_evidence_test.dart: SQLite flags→política no aumenta mochila con fallo/12+3
+00:04 +5: C:/My Projects/seguimiento-008-evidencia/test/data/progress_evidence_test.dart: fecha real releída, parcial bilateral y dudas no reemplazan referencia apta
+00:04 +6: C:/My Projects/seguimiento-008-evidencia/test/data/progress_evidence_test.dart: (tearDownAll)
+00:09 +6: C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart: (setUpAll)
+00:09 +6: C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart: SQLite→Cuerpo: T3 parcial visible conserva dosis T2, dudas no dan dosis
+00:10 +7: C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart: SQLite→guía: serie manual con fallo no sugiere subir mochila
+00:10 +8: C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart: nuevo test usa hoy real; editar conserva fecha original
+00:13 +9: C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart: fecha legacy desconocida inválida no se reemplaza por hoy al editar
+00:14 +10: C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart: fecha legacy 2026-02-30 inválida no se reemplaza por hoy al editar
+00:15 +11: C:/My Projects/seguimiento-008-evidencia/test/ui/progress_evidence_test.dart: (tearDownAll)
+00:15 +11: All tests passed!

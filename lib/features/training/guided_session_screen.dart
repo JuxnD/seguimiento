@@ -22,8 +22,9 @@ import '../../domain/energy.dart';
 import '../../domain/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
+import '../../domain/progress_evidence.dart';
 import '../../domain/report/report_input.dart' show Targets;
-import '../../domain/session_math.dart' show lapDurations, meanSec, roundWork;
+import '../../domain/session_math.dart' show lapDurations, roundWork;
 import '../../domain/session_script.dart';
 import '../../domain/mobility.dart' show legRecovery, mobilityNight;
 import '../../domain/recovery.dart' show sorenessZones;
@@ -426,15 +427,17 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       for (final e in widget.day.exercises) {
         if (e.repsMax == null || e.sets == null || hints.containsKey(e.name)) continue;
         if (widget.day.type.isCircuit && e.block == null) continue;
-        final last = await training.lastStrengthSets(e.name, widget.date);
-        final hint = doubleProgressionHint(
+        final last = await training.lastStrengthEvidence(e.name, widget.date);
+        final hint = strengthProgressionHint(
+          evidence: last,
+          date: widget.date,
+          perSide: e.perSide,
+          planDayId: widget.planDayId,
           repsMin: e.repsMin,
           repsMax: e.repsMax,
           plannedSets: e.perSide ? e.sets! * 2 : e.sets,
-          lastSets: [for (final s in last) (reps: s.reps, rir: s.rir)],
           tracksLoad: guides[e.name]?.tracksLoad ?? false,
           chain: progressionSteps(guides[e.name]?.progressionNote),
-          lastVariant: last.isEmpty ? null : last.last.variant,
         );
         if (hint != null) hints[e.name] = hint;
       }
@@ -1839,20 +1842,34 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
   Future<SessionComparison> _compare() async {
     final d = widget.draft;
     final repo = ref.read(trainingRepositoryProvider);
-    final previous = await repo.previousOfType(d.type, d.date);
+    final previous = await repo.previousTiming(d.type, d.date, planDayId: d.planDayId, mode: d.mode);
     final best = d.type.isCircuit ? await repo.bestRounds() : null;
     // Misma regla que Hoy y el informe: cuentan las rondas hechas, aunque la
     // sesión se cerrara antes; no cuentan las estimadas.
-    final record = d.type.isCircuit && d.roundsDone != null && !d.roundsEstimated && isRecord(d.roundsDone!, best);
-    return SessionComparison(
-      rounds: d.roundsDone,
+    final record =
+        d.type.isCircuit && d.roundsDone != null && !d.roundsEstimated && isRecord(d.roundsDone!, best);
+    final current = RoundTimingEvidence(
+        sessionId: d.id,
+        date: d.date,
+        type: d.type,
+        planDayId: d.planDayId,
+        mode: d.mode,
+        exerciseProtocol: d.exerciseProtocol,
+        rounds: d.roundsDone,
+        basis: d.roundRestSec.length == d.roundMarksSec.length && d.roundMarksSec.isNotEmpty
+            ? TimingBasis.work
+            : TimingBasis.lap,
+        durationsSec: widget.lapsSec,
+        imported: d.imported,
+        estimated: d.roundsEstimated,
+        incomplete: d.incomplete);
+    return timedSessionComparison(
+      current: current,
+      previous: previous,
       plannedRounds: d.plannedRounds,
-      meanLapSec: meanSec(widget.lapsSec),
-      previousRounds: previous?.$2,
-      previousMeanLapSec: previous == null ? null : meanSec(lapDurations(previous.$3)),
-      previousDateLabel:
-          previous == null ? null : 'el ${weekdayLong(previous.$1.weekday).toLowerCase()} ${previous.$1.day}',
-      incomplete: d.incomplete,
+      previousDateLabel: previous == null
+          ? null
+          : 'el ${weekdayLong(previous.date.weekday).toLowerCase()} ${previous.date.day}',
       isRecord: record,
     );
   }

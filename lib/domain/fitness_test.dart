@@ -70,7 +70,9 @@ List<TestItem> itemsFor(TestPart part) => part == TestPart.torso ? torsoTests : 
 String? testResultError(TestItem item, double? value) {
   if (value == null || !value.isFinite) return 'Escribe un número finito';
   if (value < 0) return 'El valor no puede ser negativo';
-  if (item.unit == TestUnit.reps && value != value.roundToDouble()) return 'Las repeticiones deben ser enteras';
+  if (item.unit == TestUnit.reps && value != value.roundToDouble()) {
+    return 'Las repeticiones deben ser enteras';
+  }
   return null;
 }
 
@@ -93,13 +95,29 @@ String? testResultError(TestItem item, double? value) {
 
 /// Un resultado: el valor de una prueba (un lado, si es por lado).
 class TestResult {
-  const TestResult({required this.round, required this.item, required this.value, this.side, this.clean = true});
+  const TestResult(
+      {required this.round,
+      required this.item,
+      required this.value,
+      this.side,
+      this.clean = true,
+      this.date});
 
   final int round;
   final String item;
   final String? side;
   final double value;
   final bool clean;
+
+  /// Día realmente guardado; null en evidencia sin procedencia temporal.
+  final DateTime? date;
+}
+
+/// SQLite contract is YYYY-MM-DD. tryParse alone normalizes e.g. February30;
+/// a roundtrip prevents a legacy typo from becoming a different real date.
+DateTime? recordedTestDate(String raw) {
+  final parsed = DateTime.tryParse(raw);
+  return parsed != null && dayKey(parsed) == raw ? parsed : null;
 }
 
 /// Lo que cuenta de una prueba en un test: la suma no, el lado más débil
@@ -117,6 +135,38 @@ double? testValue(List<TestResult> results, int round, String item) {
   final xs = rows.map((r) => r.value).toList();
   if (xs.isEmpty) return null;
   return xs.reduce((a, b) => a < b ? a : b);
+}
+
+/// Observado no significa apto: conservar las dudas visibles sin aumentar
+/// dosis ni comparar un intento futuro o con fecha desconocida.
+double? eligibleTestValue(List<TestResult> results, int round, String item,
+    {DateTime? asOf, int? maxAgeDays}) {
+  final value = testValue(results, round, item);
+  if (value == null) return null;
+  final rows = results.where((r) => r.round == round && r.item == item).toList();
+  if (rows.any((r) =>
+      !r.clean ||
+      r.date == null ||
+      (asOf != null &&
+          (dateOnly(r.date!).isAfter(dateOnly(asOf)) ||
+              (maxAgeDays != null && daysBetween(r.date!, asOf) > maxAgeDays))))) return null;
+  // I/D guardados en fechas distintas no prueban un único intento bilateral.
+  if (rows.map((r) => dayKey(r.date!)).toSet().length != 1) return null;
+  return value;
+}
+
+int? latestEligibleTestRound(List<TestResult> results, String item, {DateTime? asOf, int? maxAgeDays}) {
+  final rounds = results.where((r) => r.item == item).map((r) => r.round).toSet().toList()..sort();
+  final eligible = rounds
+      .where((round) => eligibleTestValue(results, round, item, asOf: asOf, maxAgeDays: maxAgeDays) != null)
+      .toList();
+  eligible.sort((a, b) {
+    final da = results.firstWhere((r) => r.round == a && r.item == item).date!;
+    final db = results.firstWhere((r) => r.round == b && r.item == item).date!;
+    final cmp = da.compareTo(db);
+    return cmp == 0 ? a.compareTo(b) : cmp;
+  });
+  return eligible.lastOrNull;
 }
 
 /// % de mejora respecto del Test 1.
