@@ -182,3 +182,25 @@ rechaza: es de una versión más nueva y restaurarlo rompería los datos.
 - Oráculos: `catalog_upgrade_test`, `food_basis_regression_test`,
   `meal_estimate_flow_test`; fixtures18/19 y manifests permanecen congelados.
   [Decisión y límites](adr/0017-comidas-estimadas-y-catalogo-aditivo.md).
+
+## Esquema 22 (plan 009, candidato local)
+
+- `goal_versions`: una fila por vigencia de meta (`metric` = `GoalMetric.name`:
+  pasos, proteinaMin, proteinaMax, kcal, kcalFutbol y las seis referencias
+  del radar `ref*`), `value` (null = sin meta/referencia), `effective_from`
+  (null sólo en el legado), `accepted_at`, `origin` (legado, inicio, perfil,
+  propuesta, plan), `reason`, `policy`. Cada día se evalúa con la vigente; lo
+  anterior a la primera conocida es "meta histórica no registrada".
+- Migración: el perfil se copia como legado **sin fecha** y el mismo valor
+  **conocido desde el día de la migración**. Instalación nueva: conocida
+  desde hoy. `profiles` sigue existiendo como **proyección** de lo vigente
+  (`GoalRepository.projectDueGoals`); las referencias del radar no se
+  proyectan.
+- `coach_proposals`: ID estable (`pasos:A>B:p1`), `kind`, `status`
+  (pendiente, aceptada, pospuesta, rechazada), evidencia, fechas de creación,
+  decisión y revisión, `accepted_value`, `policy`.
+- `morning_checks.feeling` (1 descansado, 2 normal, 3 cansado; null = sin
+  respuesta). Se añade sólo si `from >= 17`: antes la tabla nace con ella.
+- Toda escritura de metas pasa por `GoalRepository.updateProfile` o
+  `scheduleGoal`. Oráculos: `goal_history_test`, `adaptive_coach_data_test`,
+  `migration_test` (20 → 22). [ADR 0016](adr/0016-acompanamiento-y-metas-con-historia.md).

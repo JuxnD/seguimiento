@@ -11,6 +11,9 @@ import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlo
 import '../../domain/steps.dart';
 import '../../domain/technique_session.dart';
 import '../database.dart';
+import '../../domain/adaptive_coach.dart';
+import 'coach_repository.dart';
+import 'goal_repository.dart';
 import 'exercise_repository.dart';
 import 'fitness_test_repository.dart';
 import 'nutrition_repository.dart';
@@ -48,6 +51,7 @@ class TodayDashboard {
     this.v3Suggestion,
     required this.measurement,
     this.proposal,
+    this.roundsDecision,
     this.midweekGame = false,
     this.load = const LoadReading(todayLoad: 0, todayCount: 0, intenseStreak: 0),
     this.restingHrWarning,
@@ -55,7 +59,16 @@ class TodayDashboard {
     this.planB = false,
     this.fitnessTest,
     this.techniqueSuggested = false,
+    this.coach,
+    this.strength = const [],
   });
+
+  /// Fuerza del día: qué subir o por qué no (plan 009 + evidencia de 008).
+  final List<StrengthAdvice> strength;
+
+  /// Lectura del acompañamiento (plan 009): pasos según cobertura,
+  /// cumplimiento y recuperación. null fuera de Hoy.
+  final CoachReading? coach;
 
   /// Ofrecer la sesión técnica (§16.21): descarga, víspera de test o de las
   /// pruebas, o con plan B. Alternativa, no reemplazo.
@@ -145,6 +158,9 @@ class TodayDashboard {
   /// aquí y no del plan, que tiene un número fijo y no avanzaba (§16.9).
   final ProgressionProposal? proposal;
 
+  /// Lo decidido sobre la propuesta de rondas de hoy (plan 009).
+  final ProposalStatus? roundsDecision;
+
   /// Lo del día está hecho. Un partido lo cumple en días de fútbol o descanso;
   /// en un día de entrenamiento no reemplaza la sesión del plan (la racha sí
   /// lo cuenta).
@@ -175,6 +191,8 @@ class DashboardRepository {
   /// `planche`: llegaron las mini paralelas (§19.7).
   Future<TodayDashboard> today({DateTime? now, bool planche = false}) async {
     final date = dateOnly(now ?? DateTime.now());
+    // Lo que ya rige hoy pasa al perfil antes de leerlo (plan 009).
+    await GoalRepository(db).projectDueGoals(date);
     final p = await profile.get();
     final view = await plan.dayFor(date);
     final training = TrainingRepository(db, ExerciseRepository(db));
@@ -182,7 +200,15 @@ class DashboardRepository {
     // El viernes del v3.1 deja de ser circuito cuando ya salieron 10 limpias.
     final type =
         v3 != null && v3.isV31 && v3.resistance != null ? DayType.resistencia : view?.day.type ?? DayType.descanso;
-    final proposal = type == DayType.progresion ? await training.progressionProposal(date) : null;
+    var proposal = type == DayType.progresion ? await training.progressionProposal(date) : null;
+    // Lo decidido sobre esa misma propuesta de rondas (plan 009).
+    ProposalStatus? roundsDecision;
+    if (proposal != null && proposal.canProgress && proposal.sessionId != null) {
+      final id = roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
+      final decided = await GoalRepository(db).proposal(id);
+      roundsDecision = decided?.status;
+      if (proposalHidden(decided, date)) proposal = heldProposal(proposal, decided!.status);
+    }
 
     final sessions =
         await (db.select(db.sessions)..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions)).get();
@@ -200,20 +226,11 @@ class DashboardRepository {
         .map((r) => r.read(maxRounds))
         .getSingle();
 
-    // Carga y racha real hasta hoy: no truncar una racha al límite de7días.
-    final throughToday = dayKey(date);
-    final recentSessions = await (db.select(db.sessions)
-          ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & db.trainingSessions & t.imported.equals(false)))
-        .get();
-    final recentGames = await (db.select(db.footballGames)
-          ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & t.imported.equals(false)))
-        .get();
-    final load = loadReading([
-      for (final s in recentSessions.where((s) => s.mode != 'test'))
-        LoadItem(date: parseDay(s.date), minutes: (s.totalSec - s.warmupSec - s.cooldownSec) ~/ 60, effort: s.rpe),
-      for (final g in recentGames)
-        LoadItem(date: parseDay(g.date), minutes: g.minutes, effort: g.intensity, isFootball: true),
-    ], date);
+    // Carga y racha real hasta hoy (sin truncar a 7 días), la misma que lee
+    // el acompañamiento y los avisos (plan 009).
+    final coachRepo = CoachRepository(db);
+    final load = await coachRepo.load(date);
+    final coach = await coachRepo.stepsReading(date, load: load);
     final recovery = RecoveryRepository(db);
     final soreness = await recovery.sorenessRange(date);
     final dayHasLegs = view != null &&
@@ -242,6 +259,7 @@ class DashboardRepository {
       soreZones: persistentSoreness(soreness, date),
       planB: planB,
       targetRounds: proposal?.rounds ?? view?.day.targetRounds,
+      roundsDecision: roundsDecision,
       proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
       sessionsToday: planSessions.length + (torsoComplete ? 1 : 0),
@@ -261,6 +279,10 @@ class DashboardRepository {
       v3: v3,
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
       fitnessTest: test,
+      coach: coach,
+      strength: view == null || type == DayType.resistencia
+          ? const []
+          : await coachRepo.strengthAdvices(view.day, date, planDayId: view.dayId),
       techniqueSuggested: planSessions.isEmpty &&
           suggestTechniqueSession(
             deload: v3?.reducedVolume ?? false,

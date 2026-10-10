@@ -32,6 +32,10 @@ void main() {
         origin: const Value(FoodOrigin.usuario),
         favorite: const Value(true)));
     await db.customStatement('DROP TABLE catalog_patches');
+    // Esquema 20 fiel: tampoco existe lo del 22 (plan 009, integración).
+    await db.customStatement('DROP TABLE goal_versions');
+    await db.customStatement('DROP TABLE coach_proposals');
+    await db.customStatement('ALTER TABLE morning_checks DROP COLUMN feeling');
     await db.customStatement('PRAGMA user_version=20');
     await db.close();
     db = AppDatabase(NativeDatabase(file));

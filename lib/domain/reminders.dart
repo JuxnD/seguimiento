@@ -132,6 +132,7 @@ class ReminderContext {
     this.missingMealsToday = const [],
     this.stepsToday,
     this.stepsTarget = 5000,
+    this.stepsRecoveryFirst = false,
     this.custom = const [],
     this.lastMeasurement,
     this.measureIntervalDays = 21,
@@ -154,6 +155,9 @@ class ReminderContext {
   /// Pasos registrados hoy; null = aún no se anotan.
   final int? stepsToday;
   final int stepsTarget;
+
+  /// El acompañamiento pone hoy la recuperación primero (plan 009).
+  final bool stepsRecoveryFirst;
 
   /// Recordatorios propios del usuario.
   final List<CustomReminder> custom;
@@ -232,7 +236,8 @@ Iterable<PlannedNotification> _protein(ReminderContext ctx) sync* {
   if (s == null || !s.enabled) return;
   final threshold = s.threshold ?? 100;
   // Solo tiene sentido con los datos de hoy: mañana serán otros.
-  if (ctx.proteinToday >= threshold) return;
+  // Con la meta ya cumplida no hay nada pendiente, aunque esté bajo el umbral.
+  if (ctx.proteinToday >= threshold || ctx.proteinToday >= ctx.proteinMin) return;
   final missing = (ctx.proteinMin - ctx.proteinToday).round();
   yield PlannedNotification(
     kind: ReminderKind.proteina,
@@ -246,7 +251,7 @@ Iterable<PlannedNotification> _calories(ReminderContext ctx) sync* {
   final s = ctx.setting(ReminderKind.calorias);
   if (s == null || !s.enabled) return;
   final threshold = s.threshold ?? 1800;
-  if (ctx.kcalToday >= threshold) return;
+  if (ctx.kcalToday >= threshold || ctx.kcalToday >= ctx.kcalTarget) return;
   final missing = (ctx.kcalTarget - ctx.kcalToday).round();
   yield PlannedNotification(
     kind: ReminderKind.calorias,
@@ -272,11 +277,15 @@ Iterable<PlannedNotification> _missingMeals(ReminderContext ctx) sync* {
 Iterable<PlannedNotification> _steps(ReminderContext ctx) sync* {
   final s = ctx.setting(ReminderKind.pasos);
   if (s == null || !s.enabled) return;
+  // Misma lectura que Hoy (plan 009): con la recuperación primero no se
+  // empuja a caminar por la meta.
+  if (ctx.stepsRecoveryFirst) return;
   // Solo entre semana: sábado y domingo son de fútbol y no tienen meta.
   if (stepsGoalFor(ctx.now, ctx.stepsTarget) == null) return;
   final threshold = s.threshold ?? 4000;
   final steps = ctx.stepsToday;
-  if (steps != null && steps >= threshold) return;
+  // Meta cumplida (p. ej. meta 1.000 bajo un umbral de 4.000): nada pendiente.
+  if (steps != null && (steps >= threshold || steps >= ctx.stepsTarget)) return;
   yield PlannedNotification(
     kind: ReminderKind.pasos,
     when: _at(ctx.now, s),

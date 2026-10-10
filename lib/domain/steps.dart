@@ -17,6 +17,7 @@ class StepsSummary {
     required this.weekdayDays,
     this.weekdayAverage,
     required this.weekdaysAtGoal,
+    this.weekdaysGoalUnknown = 0,
   });
 
   final int days;
@@ -24,9 +25,14 @@ class StepsSummary {
   final int weekdayDays;
   final int? weekdayAverage;
   final int weekdaysAtGoal;
+
+  /// Días entre semana sin meta registrada ese día (plan 009).
+  final int weekdaysGoalUnknown;
 }
 
-StepsSummary? summarizeSteps(Map<DateTime, int> byDay, int weekdayTarget) {
+/// `goalOn`: la meta de cada día (plan 009); null = meta histórica no
+/// registrada, no se clasifica. Sin ella, `weekdayTarget` para todos.
+StepsSummary? summarizeSteps(Map<DateTime, int> byDay, int weekdayTarget, {double? Function(DateTime day)? goalOn}) {
   if (byDay.isEmpty) return null;
   final weekdays = {
     for (final e in byDay.entries)
@@ -38,7 +44,11 @@ StepsSummary? summarizeSteps(Map<DateTime, int> byDay, int weekdayTarget) {
     average: avg(byDay.values),
     weekdayDays: weekdays.length,
     weekdayAverage: weekdays.isEmpty ? null : avg(weekdays.values),
-    weekdaysAtGoal: weekdays.values.where((s) => s >= weekdayTarget).length,
+    weekdaysAtGoal: weekdays.entries.where((e) {
+      final goal = goalOn == null ? weekdayTarget.toDouble() : goalOn(dateOnly(e.key));
+      return goal != null && e.value >= goal;
+    }).length,
+    weekdaysGoalUnknown: goalOn == null ? 0 : weekdays.keys.where((d) => goalOn(dateOnly(d)) == null).length,
   );
 }
 

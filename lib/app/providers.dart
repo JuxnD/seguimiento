@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart' show TableUpdateQuery;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,6 +43,9 @@ import '../domain/report/period_summary.dart';
 import '../domain/report/report_builder.dart';
 import '../domain/report/report_input.dart';
 import '../domain/steps.dart';
+import '../data/repositories/goal_repository.dart';
+import '../domain/adaptive_coach.dart' show ladderProposalId;
+import '../domain/core_ladders.dart' show coreLadders;
 
 /// Se sobreescribe en `main` con la base ya abierta.
 final databaseHostProvider = Provider<DatabaseHost>((ref) => throw UnimplementedError());
@@ -112,6 +116,21 @@ final ladderAdviceProvider = StreamProvider.autoDispose((ref) {
   final repo = ref.watch(ladderRepositoryProvider);
   final today = ref.watch(todayProvider);
   return repo.watchAdvice(today);
+});
+
+/// Lo decidido sobre cada propuesta de subir peldaño (plan 009), por escalera.
+final ladderDecisionsProvider = FutureProvider.autoDispose((ref) async {
+  final advice = await ref.watch(ladderAdviceProvider.future);
+  final goals = GoalRepository(ref.watch(databaseProvider));
+  final today = ref.watch(todayProvider);
+  return {
+    for (final l in coreLadders)
+      if (advice[l.id] case final a? when a.canStepUp)
+        l.id: (
+          id: ladderProposalId(l.id, a.step.step, addDays(dateOnly(today), -a.daysOnStep)),
+          decision: await goals.proposal(ladderProposalId(l.id, a.step.step, addDays(dateOnly(today), -a.daysOnStep))),
+        ),
+  };
 });
 
 /// Test de condición (§19.11).
@@ -230,6 +249,11 @@ final measurementSeriesProvider =
       unit: unit, from: parseDay(key.$2), to: parseDay(key.$3));
 });
 
+/// Reloj de las decisiones del acompañamiento (plan 009): una propuesta se
+/// decide con el día real en que se toca el botón, no con el de la lectura
+/// que la mostró. Las pruebas lo fijan.
+final decisionClockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
 /// Día de hoy. Cambia sola a medianoche y cuando la app vuelve a primer plano
 /// (`refresh`), así que nada que dependa de ella se queda en "ayer" con la app
 /// abierta de un día para otro.
@@ -295,7 +319,17 @@ final reminderSyncProvider = Provider<void>((ref) {
   ref.listen(dayClosedProvider(dayKey(today)), (_, __) => run());
   ref.listen(stepsDayProvider(dayKey(today)), (_, __) => run());
   ref.listen(reminderSchedulerProvider, (_, __) => run());
+  ref.listen(coachSignalsProvider, (_, __) => run());
   run();
+});
+
+/// Lo que cambia la lectura del acompañamiento sin pasar por los providers de
+/// arriba (plan 009, R2): cómo amaneció, fútbol, vigencias y decisiones. Un
+/// cambio guardado reprograma o retira el aviso de pasos.
+final coachSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables(
+      [db.morningChecks, db.footballGames, db.goalVersions, db.coachProposals, db.dailySteps]));
 });
 
 /// Única puerta para reprogramar los avisos. Nunca lanza: sin permiso de

@@ -8,6 +8,8 @@ import 'repositories/exercise_repository.dart';
 import 'repositories/plan_repository.dart';
 import 'seed_plan.dart' show planV31, v31KcalFootball, v31KcalWeekday, v31ProteinMax, v31ProteinMin, v31ProteinGoal;
 import '../domain/plan_v3.dart' show v31Scheme;
+import 'repositories/goal_repository.dart';
+import '../domain/goal_history.dart' show GoalOrigin;
 
 // Traspaso del 7 oct (§16.16, punto 0): el historial anterior a la app y las
 // metas del v3.1 aplicadas ya, sin esperar a activar el plan. Se aplican desde
@@ -153,12 +155,16 @@ final corrections7Oct = <DataCorrection>[
           p.proteinMax == v31ProteinMax;
       return done ? CorrectionState.done : CorrectionState.pending;
     },
-    apply: (db) => (db.update(db.profiles)..where((t) => t.id.equals(1))).write(const ProfilesCompanion(
-          kcalTarget: Value(v31KcalWeekday),
-          kcalTargetFootball: Value(v31KcalFootball),
-          proteinMin: Value(v31ProteinMin),
-          proteinMax: Value(v31ProteinMax),
-        )),
+    apply: (db) => GoalRepository(db).updateProfile(
+          origin: GoalOrigin.plan,
+          reason: 'Correcciones del traspaso (metas del v3.1)',
+          const ProfilesCompanion(
+            kcalTarget: Value(v31KcalWeekday),
+            kcalTargetFootball: Value(v31KcalFootball),
+            proteinMin: Value(v31ProteinMin),
+            proteinMax: Value(v31ProteinMax),
+          ),
+        ),
   ),
   DataCorrection(
     id: 'historial-ago-sep',

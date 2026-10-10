@@ -7,9 +7,11 @@ import 'package:path_provider/path_provider.dart';
 
 import '../domain/dates.dart';
 import '../domain/enums.dart';
+import '../domain/goal_history.dart' show GoalOrigin;
 import '../domain/reminders.dart';
 import 'catalog_updates.dart';
 import 'catalog_patches.dart';
+import 'repositories/goal_repository.dart' show seedGoalVersions;
 import 'seed_foods.dart';
 import 'tables.dart';
 
@@ -51,6 +53,8 @@ const databaseFileName = 'seguimiento.sqlite';
   FitnessTests,
   LadderStates,
   LadderEvents,
+  GoalVersions,
+  CoachProposals,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -58,7 +62,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 21;
+  int get schemaVersion => 22;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -66,6 +70,8 @@ class AppDatabase extends _$AppDatabase {
           await m.createAll();
           // El programa arranca el día de la instalación; se ajusta en Perfil.
           await into(profiles).insert(ProfilesCompanion.insert(startDate: dayKey(DateTime.now())));
+          // Instalación nueva: sus metas rigen desde hoy (conocidas).
+          await seedGoalVersions(this, effectiveFrom: dateOnly(DateTime.now()), origin: GoalOrigin.inicio);
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) {
@@ -230,6 +236,18 @@ class AppDatabase extends _$AppDatabase {
             // inferida para no producir energía ficticia.
             await customStatement(
                 "UPDATE sessions SET total_sec=0, warmup_sec=0, cooldown_sec=0, rest_sec=0 WHERE mode='test'");
+          }
+          if (from < 22) {
+            // v22 (plan 009): metas con historia y propuestas del
+            // acompañamiento, después del 21 de 010 (catálogo). Aditivo. Lo
+            // que había en el perfil se copia como legado: no se sabe desde
+            // cuándo regía, sí desde la migración.
+            await m.createTable(goalVersions);
+            await m.createTable(coachProposals);
+            // morning_checks nace en el 17 con la definición actual: antes
+            // de eso la columna ya viene al crearla.
+            if (from >= 17) await m.addColumn(morningChecks, morningChecks.feeling);
+            await seedGoalVersions(this, effectiveFrom: null, origin: GoalOrigin.legado);
           }
           if (from < 16) {
             // Guías del catálogo con todas las columnas ya creadas: las de

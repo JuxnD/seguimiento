@@ -175,4 +175,49 @@ void main() {
       expect(sesiones.last.when, DateTime(2026, 9, 24, 14, 45));
     });
   });
+
+  group('meta cumplida bajo el umbral (plan 009, R2)', () {
+    // Miércoles 23 sep 2026, 8:00; avisos a las 18:00.
+    ReminderContext goals({int? steps, int stepsTarget = 1000, double protein = 0, int proteinMin = 130, double kcal = 0, int kcalTarget = 2400}) =>
+        ReminderContext(
+          now: DateTime(2026, 9, 23, 8),
+          days: const [],
+          settings: {
+            ReminderKind.pasos: on_(ReminderKind.pasos, 18, 0, 4000),
+            ReminderKind.proteina: on_(ReminderKind.proteina, 18, 0, 100),
+            ReminderKind.calorias: on_(ReminderKind.calorias, 18, 0, 1800),
+          },
+          stepsToday: steps,
+          stepsTarget: stepsTarget,
+          proteinToday: protein,
+          proteinMin: proteinMin,
+          kcalToday: kcal,
+          kcalTarget: kcalTarget,
+        );
+    List<PlannedNotification> of(ReminderContext c, ReminderKind k) => planReminders(c).where((n) => n.kind == k).toList();
+
+    test('meta 1.000, 1.500 pasos, umbral 4.000: no avisa "Faltan -500"', () {
+      expect(of(goals(steps: 1500), ReminderKind.pasos), isEmpty);
+    });
+
+    test('contraprueba: meta 5.000, 1.500 pasos, umbral 4.000: avisa lo que falta', () {
+      final n = of(goals(steps: 1500, stepsTarget: 5000), ReminderKind.pasos).single;
+      expect(n.body, startsWith('Faltan 3.500 para 5.000.'));
+    });
+
+    test('el umbral configurado se respeta: meta 5.000, 4.200 pasos, umbral 4.000: no avisa', () {
+      expect(of(goals(steps: 4200, stepsTarget: 5000), ReminderKind.pasos), isEmpty);
+    });
+
+    test('sin anotar sigue avisando aunque la meta sea baja', () {
+      expect(of(goals(), ReminderKind.pasos).single.title, 'Pasos: sin anotar hoy');
+    });
+
+    test('proteína y kcal: meta baja ya cumplida bajo el umbral no avisa; si falta, sí', () {
+      expect(of(goals(protein: 90, proteinMin: 80), ReminderKind.proteina), isEmpty);
+      expect(of(goals(protein: 90, proteinMin: 130), ReminderKind.proteina).single.body, 'Faltan 40 g para el mínimo de 130 g.');
+      expect(of(goals(kcal: 1600, kcalTarget: 1500), ReminderKind.calorias), isEmpty);
+      expect(of(goals(kcal: 1600, kcalTarget: 2400), ReminderKind.calorias).single.body, startsWith('Faltan 800 kcal'));
+    });
+  });
 }

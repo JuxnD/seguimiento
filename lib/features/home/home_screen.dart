@@ -28,6 +28,7 @@ import '../body/body_screen.dart' show addWeightDialog;
 import '../body/ladders_screen.dart';
 import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
+import 'coach_card.dart';
 import 'morning_check_screen.dart';
 import 'sleep_hours_dialog.dart';
 import 'steps_source_line.dart';
@@ -44,6 +45,8 @@ import '../training/mobility_screen.dart';
 import '../training/test_mode_screen.dart';
 import '../training/training_screen.dart';
 import '../../ui/theme.dart';
+import '../../data/repositories/goal_repository.dart';
+import '../../domain/adaptive_coach.dart';
 
 /// Pantalla de entrada: qué toca hoy, cómo voy y cómo registrarlo rápido.
 class HomeScreen extends ConsumerWidget {
@@ -85,6 +88,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
+              if (d.coach case final coach?) CoachCard(reading: coach, strength: d.strength),
               const _PendingReviewCard(),
               const _LadderStepUpCard(),
               _YesterdayCheckCard(today: today),
@@ -197,7 +201,7 @@ class _PlanHero extends StatelessWidget {
                 ),
               ),
             if (dashboard.proposal case final p? when !dashboard.trained)
-              _ProposalLine(proposal: p, date: dashboard.date, color: style.color),
+              _ProposalLine(proposal: p, date: dashboard.date, color: style.color, decision: dashboard.roundsDecision),
             if (dashboard.v3 case final v3?) _V3Strip(v3: v3, dashboard: dashboard, color: style.color),
             if (dashboard.restingHrWarning case final hr?)
               Padding(
@@ -496,10 +500,19 @@ class _LadderStepUpCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final advice = ref.watch(ladderAdviceProvider).valueOrNull ?? const {};
+    final decisions = ref.watch(ladderDecisionsProvider).valueOrNull ?? const {};
+    final today = ref.watch(todayProvider);
     final ready = [
       for (final l in coreLadders)
-        if (advice[l.id] case final a? when a.canStepUp) (l, a),
+        if (advice[l.id] case final a? when a.canStepUp && !proposalHidden(decisions[l.id]?.decision, today)) (l, a),
     ];
+    Future<void> decide(CoreLadder l, ProposalStatus status) async {
+      final id = decisions[l.id]?.id;
+      if (id == null) return;
+      await GoalRepository(ref.read(databaseProvider)).decideProposal(id, 'escalera:${l.id}', status,
+          today: today, postponeDays: coachPostponeDays);
+      ref.invalidate(ladderDecisionsProvider);
+    }
     if (ready.isEmpty) return const SizedBox.shrink();
     return AppCard(
       title: 'Escaleras de core',
@@ -513,16 +526,28 @@ class _LadderStepUpCard extends ConsumerWidget {
           const SizedBox(height: 4),
           Align(
             alignment: Alignment.centerLeft,
-            child: FilledButton.tonal(
-              onPressed: () async {
-                final step = await ref.read(ladderRepositoryProvider).stepUp(l, ref.read(todayProvider));
-                ref.invalidate(ladderAdviceProvider);
-                ref.invalidate(dashboardProvider);
-                if (context.mounted) {
-                  showSnack(context, '${l.name}: peldaño $step, ${l.stepAt(step).exercise}.');
-                }
-              },
-              child: Text('Subir a ${l.stepAt(a.step.step + 1).exercise}'),
+            child: Wrap(
+              spacing: 8,
+              children: [
+                FilledButton.tonal(
+                  onPressed: () async {
+                    // Aceptar y subir son una sola escritura (R2).
+                    final step = await ref.read(ladderRepositoryProvider).acceptStepUp(l, ref.read(todayProvider));
+                    ref.invalidate(ladderDecisionsProvider);
+                    ref.invalidate(ladderAdviceProvider);
+                    ref.invalidate(dashboardProvider);
+                    if (context.mounted) {
+                      showSnack(context, '${l.name}: peldaño $step, ${l.stepAt(step).exercise}.');
+                    }
+                  },
+                  child: Text('Subir a ${l.stepAt(a.step.step + 1).exercise}'),
+                ),
+                TextButton(
+                  onPressed: () => decide(l, ProposalStatus.pospuesta),
+                  child: const Text('En $coachPostponeDays días'),
+                ),
+                TextButton(onPressed: () => decide(l, ProposalStatus.rechazada), child: const Text('Mantener')),
+              ],
             ),
           ),
         ],
@@ -696,11 +721,25 @@ class _GlanceNumber extends StatelessWidget {
 /// Día de progresión: de dónde sale la meta. Si la regla no deja subir solo
 /// porque faltó anotar cómo fue la última, se anota aquí mismo.
 class _ProposalLine extends ConsumerWidget {
-  const _ProposalLine({required this.proposal, required this.date, required this.color});
+  const _ProposalLine({required this.proposal, required this.date, required this.color, this.decision});
 
   final ProgressionProposal proposal;
   final DateTime date;
   final Color color;
+
+  /// Lo decidido sobre esta propuesta (plan 009); null = sin decidir.
+  final ProposalStatus? decision;
+
+  Future<void> _decide(WidgetRef ref, ProposalStatus status) async {
+    final p = proposal;
+    await GoalRepository(ref.read(databaseProvider)).decideProposal(
+      roundsProposalId(fromRounds: p.lastRounds, toRounds: p.rounds, sessionId: p.sessionId!),
+      'rondas',
+      status,
+      today: date,
+    );
+    ref.invalidate(dashboardProvider);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -719,6 +758,11 @@ class _ProposalLine extends ConsumerWidget {
                 : 'Se mantiene en ${p.rounds} ($last: ${p.unmet.join(', ')}).',
             style: text.bodyMedium?.copyWith(color: p.canProgress ? color : null),
           ),
+          if (p.canProgress && p.sessionId != null && decision == null)
+            Wrap(spacing: 8, children: [
+              TextButton(onPressed: () => _decide(ref, ProposalStatus.pospuesta), child: const Text('Hoy no')),
+              TextButton(onPressed: () => _decide(ref, ProposalStatus.rechazada), child: const Text('Mantener')),
+            ]),
           if (missing && p.sessionId != null)
             TextButton.icon(
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -1461,6 +1505,25 @@ class _WalksLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final goal = dashboard.stepsGoal;
     if (goal == null) return const SizedBox.shrink();
+    // Recuperación primero (plan 009): sin cuenta de caminatas pendientes.
+    if (dashboard.coach?.recoveryFirst ?? false) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: Row(
+          children: [
+            const Icon(Icons.self_improvement, size: 18, color: AppColors.steps),
+            const SizedBox(width: 8),
+            Expanded(
+              // La acción compartida y la señal que la motiva (R2).
+              child: Text(
+                  '${dashboard.coach!.action ?? 'Pasos suaves, en llano.'} '
+                  'Por qué: ${dashboard.coach!.evidence.join('; ')}.',
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ),
+          ],
+        ),
+      );
+    }
     final left = walksLeft(dashboard.stepsToday ?? 0, goal);
     if (left == 0) return const SizedBox.shrink();
     return Padding(
