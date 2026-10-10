@@ -8,6 +8,12 @@ metas y API de alta disponibles para cerrar lectores 023 en paralelo.
 siguen abiertos; esta base no se declara publicable. Los checkpoints siguientes
 conservan su alcance histórico, anterior a estas APIs.
 
+**Corrección025 local:** la tarjeta de actualizaciones sólo indica si existe una
+versión más nueva; no acredita que el APK instalado esté publicado. Reutiliza
+UpdateService/comparador/canal de descarga y conserva errores.
+[Recibo y pruebas025](sessions/2026-10-10-025-version-visible.md).
+Sin cambio de versión, SDK, datos, SettingsScreen012 ni AVD.
+
 **Plan011 implementación local:** radar real en Tu progreso, referencias009 con
 vigencia y reactividad SQL, proteína/pasos por fecha, kcal con calendario
 existente y rutas protegidas. [Recibo011](sessions/2026-10-10-011-radar-integrado.md),

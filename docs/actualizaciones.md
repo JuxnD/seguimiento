@@ -144,6 +144,13 @@ abrir la descarga del APK. **No instala nada sola**: la instalación la haces t�
 Si el repositorio no está configurado o la consulta falla, la tarjeta lo dice y
 la app sigue funcionando: el chequeo nunca bloquea nada.
 
+Cuando la consulta no ofrece una versión más nueva, la tarjeta informa
+«No hay una actualización más nueva disponible». Eso no demuestra que el APK
+instalado esté publicado ni que tenga los mismos bytes que una release. Un
+build local más reciente también cumple ese caso; la versión instalada sigue
+mostrándose por separado. No cambia el comparador ni la descarga manual.
+[Regresión025](context/sessions/2026-10-10-025-version-visible.md).
+
 ### Una sola "Seguimiento" en recientes (§16.13, 5 oct 2026)
 
 Al actualizar desde *Ajustes → Descargar APK* quedaban dos tarjetas de la app

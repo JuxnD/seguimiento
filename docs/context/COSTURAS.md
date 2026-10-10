@@ -1,5 +1,15 @@
 # Costuras verificadas de la candidata 1.21
 
+## Corrección025 local: consulta → comparación → tarjeta
+
+UpdateService real con HTTP simulado → providers reales → UpdatesCard real:
+1.22 instalada/pública1.21 no acredita publicación. Rojo de la conclusión vieja;
+verde20/20 incluye igualdad, versión anterior,404/503,360dp texto1/2 y descarga
+sólo tras toque con URL exacta (canal nativo simulado). Timeout/comparador/canal
+se reutilizan. No es comprobación GitHub vivo, APK ni Android instalado.
+[Recibo025 y evidencia raw](sessions/2026-10-10-025-version-visible.md).
+
+
 ## Plan022 local: alta neutral → SQLite → AppEntry → shell/restaurar
 
 Base `f34ab7c`, worktree `seguimiento-claude-022`, Flutter3.22/Dart3.4, esquema23.
