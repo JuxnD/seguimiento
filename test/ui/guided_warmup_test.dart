@@ -110,12 +110,23 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400)); // transición
   }
 
-  /// La foto se escribe en cola: avanzar los dos relojes hasta que llegue.
-  Future<void> flushStore(WidgetTester tester) async {
-    for (var i = 0; i < 20; i++) {
-      await tester.pump(const Duration(milliseconds: 5));
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+  /// Lee la foto cuando ya trae lo esperado. Con el equipo cargado la cola de
+  /// escritura tarda más que un tiempo fijo. Se lee pocas veces y tras dejar
+  /// correr la cola: en Windows, leer mientras se renombra encima hace fallar
+  /// ese guardado (que la app descarta en silencio) y la foto queda vieja.
+  Future<String> snapshotWhere(WidgetTester tester, bool Function(String json) ready) async {
+    final file = File('${dir.path}/sesion.json');
+    var last = '';
+    for (var attempt = 0; attempt < 8; attempt++) {
+      for (var i = 0; i < 40; i++) {
+        await tester.pump(const Duration(milliseconds: 5));
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 25)));
+      }
+      final text = await tester.runAsync<String>(() async => file.existsSync() ? await file.readAsString() : '');
+      last = text ?? '';
+      if (ready(last)) return last;
     }
+    return last;
   }
 
   /// Bloques de empuje: dos series de flexiones.
@@ -155,8 +166,7 @@ void main() {
     await tester.tap(find.descendant(of: find.byKey(const ValueKey('warmup-aproximacion:Flexiones')), matching: find.byType(Checkbox)));
     await step(tester, const Duration(seconds: 1));
     expect(find.textContaining('antes de la primera serie que cuenta'), findsOneWidget);
-    await flushStore(tester);
-    final snap = await tester.runAsync(() => File('${dir.path}/sesion.json').readAsString());
+    final snap = await snapshotWhere(tester, (j) => j.contains('aproximacion:Flexiones'));
     expect(snap, contains('aproximacion:Flexiones'), reason: 'retomar conserva lo marcado');
 
     await tester.tap(find.text('Empezar bloques'));
@@ -177,8 +187,7 @@ void main() {
     await tester.tap(find.text('Saltar calentamiento'));
     await step(tester, const Duration(seconds: 1));
     expect(find.text('Calentamiento a medias'), findsNothing);
-    await flushStore(tester);
-    final raw = (await tester.runAsync(() => File('${dir.path}/sesion.json').readAsString()))!;
+    final raw = await snapshotWhere(tester, (j) => j.contains('"warmupSkipped":true'));
     final snap = ActiveSession.fromJson(jsonDecode(raw) as Map<String, Object?>)! as GuidedSnapshot;
     expect(snap.warmupSkipped, isTrue);
     await finish(tester);

@@ -35,7 +35,7 @@ class LadderRepository {
   Stream<Map<String, LadderAdvice>> watchAdvice(DateTime today) => db
       .customSelect(
         'SELECT 1',
-        readsFrom: {db.sessions, db.sessionSets, db.exercises, db.ladderStates, db.planVersions},
+        readsFrom: {db.sessions, db.sessionSets, db.exercises, db.ladderStates, db.planVersions, db.coachProposals},
       )
       .watch()
       .asyncMap((_) async => {for (final l in coreLadders) l.id: await advice(l, today)});

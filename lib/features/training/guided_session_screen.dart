@@ -34,6 +34,8 @@ import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../../ui/theme.dart';
 import 'technique_sheet.dart';
+import '../../data/repositories/goal_repository.dart';
+import '../../domain/adaptive_coach.dart' show ProposalRecord, proposalHidden, strengthProposalId;
 
 /// Convierte el día del plan en algo que el guion entiende.
 ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
@@ -440,7 +442,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           tracksLoad: guides[e.name]?.tracksLoad ?? false,
           chain: progressionSteps(guides[e.name]?.progressionNote),
         );
-        if (hint != null) hints[e.name] = hint;
+        // "Hoy no" o "mantener" en Hoy (plan 009): el cronómetro no empuja.
+        ProposalRecord? decided;
+        if (hint != null && last != null) {
+          try {
+            decided = await GoalRepository(ref.read(databaseProvider)).proposal(strengthProposalId(e.name, last.sessionId));
+          } on Object {/* Sin base legible no hay decisión: queda la regla de 008. */}
+        }
+        if (hint != null && !proposalHidden(decided, widget.date)) hints[e.name] = hint;
       }
       final loads = <String, double>{};
       for (final g in guides.values.where((g) => g.tracksLoad)) {

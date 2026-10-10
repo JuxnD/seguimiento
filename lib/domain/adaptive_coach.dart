@@ -1,6 +1,6 @@
 import 'dates.dart';
 import 'format.dart';
-import 'progress.dart' show strengthProgressionHint;
+import 'progress.dart' show ProgressionProposal, strengthProgressionHint;
 import 'progress_evidence.dart';
 import 'recovery.dart' show LoadReading;
 import 'steps.dart' show stepsGoalFor;
@@ -13,6 +13,12 @@ import 'steps.dart' show stepsGoalFor;
 
 /// Versión de la política; va en cada lectura y propuesta.
 const coachPolicy = 1;
+
+/// La política v1 es **experimental**: sus umbrales (cobertura 8/10, 80 %,
+/// 50 %, RPE ≥ 9, ventana de 3 días, redondeo de 500) están pendientes de
+/// confirmar con el owner (ADR 0016). Son una revisión de metas que la
+/// persona elige, no una prescripción: nada se aplica sin su decisión.
+const coachPolicyExperimental = true;
 
 /// Ventana: los últimos 10 días entre semana cerrados (2 semanas, como la
 /// regla de 2 semanas y las escaleras).
@@ -271,8 +277,8 @@ CoachReading stepsReading({
     return CoachReading(
       evaluatedOn: d0,
       state: CoachState.propuesta,
-      reason: 'Cumpliste la meta $atGoal de ${judged.length} días con un promedio de ${fmtInt(average)}. '
-          'Podrías subirla a ${fmtInt(candidate)}; tú decides.',
+      reason: 'Revisión de tu meta: la cumpliste $atGoal de ${judged.length} días con un promedio de '
+          '${fmtInt(average)}. Podrías subirla a ${fmtInt(candidate)}; tú decides.',
       evidence: evidence,
       action: 'Revisa la propuesta: puedes ajustar la cifra, posponer o rechazar.',
       proposal: p,
@@ -309,13 +315,28 @@ CoachReading stepsReading({
 enum StrengthStatus { subir, mantener, sinDatos }
 
 class StrengthAdvice {
-  const StrengthAdvice(this.exercise, this.status, this.text);
+  const StrengthAdvice(this.exercise, this.status, this.text, {this.sessionId, this.decision, this.review});
 
   final String exercise;
   final StrengthStatus status;
 
   /// Qué subir, o la causa de no subir.
   final String text;
+
+  /// Sesión que sostiene la lectura (la evidencia de 008).
+  final int? sessionId;
+
+  /// Lo decidido sobre esta misma propuesta, si se decidió.
+  final ProposalStatus? decision;
+
+  /// Tras aceptar una subida: si se sostuvo en la sesión siguiente.
+  final String? review;
+
+  String? get proposalId => sessionId == null ? null : strengthProposalId(exercise, sessionId!);
+
+  StrengthAdvice copyWith({StrengthStatus? status, String? text, ProposalStatus? decision, String? review}) =>
+      StrengthAdvice(exercise, status ?? this.status, text ?? this.text,
+          sessionId: sessionId, decision: decision ?? this.decision, review: review ?? this.review);
 }
 
 StrengthAdvice strengthAdvice({
@@ -331,8 +352,8 @@ StrengthAdvice strengthAdvice({
   bool tracksLoad = false,
   List<String> chain = const [],
 }) {
-  StrengthAdvice keep(String why) => StrengthAdvice(exercise, StrengthStatus.mantener, why);
   final e = evidence;
+  StrengthAdvice keep(String why) => StrengthAdvice(exercise, StrengthStatus.mantener, why, sessionId: e?.sessionId);
   if (e == null) return StrengthAdvice(exercise, StrengthStatus.sinDatos, 'sin registro anterior');
   final hint = strengthProgressionHint(
     evidence: e,
@@ -346,7 +367,7 @@ StrengthAdvice strengthAdvice({
     tracksLoad: tracksLoad,
     chain: chain,
   );
-  if (hint != null) return StrengthAdvice(exercise, StrengthStatus.subir, hint);
+  if (hint != null) return StrengthAdvice(exercise, StrengthStatus.subir, hint, sessionId: e.sessionId);
   final when = 'el ${formatShort(e.date)}';
   if (e.imported) return keep('lo anterior es historial importado');
   if (e.mode == 'tecnica') return keep('la última ($when) fue sesión técnica');
@@ -368,4 +389,54 @@ StrengthAdvice strengthAdvice({
   if (plannedSets != null && e.sets.length < plannedSets) return keep('$when hiciste ${e.sets.length} de $plannedSets series');
   return keep('se mantiene la dosis');
 }
+
+// ---------------------------------------------------------------------------
+// Seguimiento de propuestas con criterios existentes (rondas de §2, fuerza de
+// 008, escaleras de §19.10). No crea incrementos: registra la decisión sobre
+// lo que esas reglas ya proponen. ID estable por evidencia: otra sesión u
+// otro peldaño es otra propuesta.
+// ---------------------------------------------------------------------------
+
+/// "Hoy no" oculta la propuesta sólo ese día (la regla vuelve a ofrecerla en
+/// la próxima sesión con la misma evidencia).
+const proposalTodayOnlyDays = 1;
+
+String roundsProposalId({required int fromRounds, required int toRounds, required int sessionId}) =>
+    'rondas:$fromRounds>$toRounds:s$sessionId:p$coachPolicy';
+
+String strengthProposalId(String exercise, int sessionId) => 'fuerza:$exercise:s$sessionId:p$coachPolicy';
+
+String strengthProposalKind(String exercise) => 'fuerza:$exercise';
+
+/// Escalera: identidad por peldaño y desde cuándo se está en él (subir o
+/// bajar abre otra propuesta).
+String ladderProposalId(String ladder, int step, DateTime since) =>
+    'escalera:$ladder:$step>${step + 1}:${dayKey(since)}:p$coachPolicy';
+
+/// ¿La decisión oculta hoy la propuesta? Rechazada: sí, para esa evidencia.
+/// Pospuesta: hasta su fecha. Aceptada o sin decidir: no.
+bool proposalHidden(ProposalRecord? r, DateTime day) {
+  if (r == null) return false;
+  if (r.status == ProposalStatus.rechazada) return true;
+  if (r.status == ProposalStatus.pospuesta) {
+    return r.reviewAfter == null || dateOnly(day).isBefore(dateOnly(r.reviewAfter!));
+  }
+  return false;
+}
+
+/// Sesión de la que salió una propuesta de fuerza (`...:s123:p1`).
+int? proposalSessionId(String id) {
+  final m = RegExp(r':s(\d+):p\d+$').firstMatch(id);
+  return m == null ? null : int.parse(m.group(1)!);
+}
+
+/// La propuesta de rondas cuando la persona decidió no subir: se mantiene en
+/// las de la última vez, con la razón a la vista.
+ProgressionProposal heldProposal(ProgressionProposal p, ProposalStatus status) => ProgressionProposal(
+      rounds: p.lastRounds,
+      lastRounds: p.lastRounds,
+      lastDate: p.lastDate,
+      sessionId: p.sessionId,
+      unmet: [status == ProposalStatus.rechazada ? 'decidiste mantener con esta evidencia' : 'hoy no (lo pospusiste)'],
+    );
 

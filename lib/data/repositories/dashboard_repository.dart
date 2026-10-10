@@ -51,6 +51,7 @@ class TodayDashboard {
     this.v3Suggestion,
     required this.measurement,
     this.proposal,
+    this.roundsDecision,
     this.midweekGame = false,
     this.load = const LoadReading(todayLoad: 0, todayCount: 0, intenseStreak: 0),
     this.restingHrWarning,
@@ -157,6 +158,9 @@ class TodayDashboard {
   /// aquí y no del plan, que tiene un número fijo y no avanzaba (§16.9).
   final ProgressionProposal? proposal;
 
+  /// Lo decidido sobre la propuesta de rondas de hoy (plan 009).
+  final ProposalStatus? roundsDecision;
+
   /// Lo del día está hecho. Un partido lo cumple en días de fútbol o descanso;
   /// en un día de entrenamiento no reemplaza la sesión del plan (la racha sí
   /// lo cuenta).
@@ -196,7 +200,15 @@ class DashboardRepository {
     // El viernes del v3.1 deja de ser circuito cuando ya salieron 10 limpias.
     final type =
         v3 != null && v3.isV31 && v3.resistance != null ? DayType.resistencia : view?.day.type ?? DayType.descanso;
-    final proposal = type == DayType.progresion ? await training.progressionProposal(date) : null;
+    var proposal = type == DayType.progresion ? await training.progressionProposal(date) : null;
+    // Lo decidido sobre esa misma propuesta de rondas (plan 009).
+    ProposalStatus? roundsDecision;
+    if (proposal != null && proposal.canProgress && proposal.sessionId != null) {
+      final id = roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
+      final decided = await GoalRepository(db).proposal(id);
+      roundsDecision = decided?.status;
+      if (proposalHidden(decided, date)) proposal = heldProposal(proposal, decided!.status);
+    }
 
     final sessions =
         await (db.select(db.sessions)..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions)).get();
@@ -247,6 +259,7 @@ class DashboardRepository {
       soreZones: persistentSoreness(soreness, date),
       planB: planB,
       targetRounds: proposal?.rounds ?? view?.day.targetRounds,
+      roundsDecision: roundsDecision,
       proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
       sessionsToday: planSessions.length + (torsoComplete ? 1 : 0),

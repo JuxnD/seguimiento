@@ -88,24 +88,58 @@ class CoachRepository {
     ];
     if (picks.isEmpty) return const [];
     final guides = await exercises.byNames(picks.map((e) => e.name));
+    final goals = GoalRepository(db);
     final seen = <String>{};
-    return [
-      for (final e in picks)
-        if (seen.add(e.name))
-          strengthAdvice(
-            exercise: e.name,
-            evidence: await training.lastStrengthEvidence(e.name, date, mode: mode),
-            date: date,
-            repsMin: e.repsMin,
-            repsMax: e.repsMax,
-            plannedSets: e.perSide ? e.sets! * 2 : e.sets,
-            perSide: e.perSide,
-            planDayId: planDayId,
-            mode: mode,
-            tracksLoad: guides[e.name]?.tracksLoad ?? false,
-            chain: progressionSteps(guides[e.name]?.progressionNote),
-          ),
-    ];
+    final out = <StrengthAdvice>[];
+    for (final e in picks) {
+      if (!seen.add(e.name)) continue;
+      final evidence = await training.lastStrengthEvidence(e.name, date, mode: mode);
+      var a = strengthAdvice(
+        exercise: e.name,
+        evidence: evidence,
+        date: date,
+        repsMin: e.repsMin,
+        repsMax: e.repsMax,
+        plannedSets: e.perSide ? e.sets! * 2 : e.sets,
+        perSide: e.perSide,
+        planDayId: planDayId,
+        mode: mode,
+        tracksLoad: guides[e.name]?.tracksLoad ?? false,
+        chain: progressionSteps(guides[e.name]?.progressionNote),
+      );
+      // Lo decidido sobre esta misma propuesta.
+      if (a.status == StrengthStatus.subir && a.proposalId != null) {
+        final decided = await goals.proposal(a.proposalId!);
+        if (proposalHidden(decided, date)) {
+          a = a.copyWith(
+            status: StrengthStatus.mantener,
+            decision: decided!.status,
+            text: decided.status == ProposalStatus.rechazada
+                ? 'decidiste mantener la dosis con esta evidencia'
+                : 'hoy no (lo pospusiste)',
+          );
+        } else if (decided != null) {
+          a = a.copyWith(decision: decided.status);
+        }
+      }
+      // Tras aceptar una subida, la sesión siguiente dice si se sostuvo.
+      final last = await goals.lastDecision(strengthProposalKind(e.name));
+      if (last != null && last.$2.status == ProposalStatus.aceptada && evidence != null) {
+        final acceptedFrom = proposalSessionId(last.$1);
+        if (acceptedFrom != null && evidence.sessionId != acceptedFrom) {
+          final held = evidence.usableBefore(date, perSide: e.perSide, mode: mode) &&
+              evidence.sets.every((s) => s.reps >= (e.repsMin ?? 0));
+          final when = formatShort(evidence.date);
+          a = a.copyWith(
+            review: held
+                ? 'subiste y se sostuvo el $when'
+                : 'subiste; el $when no se sostuvo${a.status == StrengthStatus.mantener ? ' (${a.text})' : ''}',
+          );
+        }
+      }
+      out.add(a);
+    }
+    return out;
   }
 
   Future<CoachReading> stepsReading(DateTime date, {LoadReading? load}) async {

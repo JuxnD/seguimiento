@@ -41,6 +41,17 @@ class CoachCard extends ConsumerWidget {
     );
   }
 
+  Future<void> _decideStrength(WidgetRef ref, StrengthAdvice a, ProposalStatus status) async {
+    await GoalRepository(ref.read(databaseProvider)).decideProposal(
+      a.proposalId!,
+      strengthProposalKind(a.exercise),
+      status,
+      today: reading.evaluatedOn,
+      evidence: a.text,
+    );
+    ref.invalidate(dashboardProvider);
+  }
+
   Future<void> _accept(BuildContext context, WidgetRef ref) async {
     final p = reading.proposal!;
     final value = await showDialog<int>(context: context, builder: (_) => _AcceptDialog(proposal: p));
@@ -87,9 +98,31 @@ class CoachCard extends ConsumerWidget {
                   ),
                   const SizedBox(width: 6),
                   Expanded(
-                    child: Text(
-                      '${a.exercise}: ${a.status == StrengthStatus.mantener ? 'no sube, ${a.text}' : a.text}',
-                      style: text.bodySmall,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${a.exercise}: ${a.status == StrengthStatus.mantener ? 'no sube, ${a.text}' : a.text}'
+                          '${a.decision == ProposalStatus.aceptada ? ' · aceptado' : ''}',
+                          style: text.bodySmall,
+                        ),
+                        if (a.review != null) Text('Revisión: ${a.review}', style: text.bodySmall),
+                        if (a.status == StrengthStatus.subir && a.decision == null && a.proposalId != null)
+                          Wrap(spacing: 4, children: [
+                            TextButton(
+                              onPressed: () => _decideStrength(ref, a, ProposalStatus.aceptada),
+                              child: const Text('Lo intento hoy'),
+                            ),
+                            TextButton(
+                              onPressed: () => _decideStrength(ref, a, ProposalStatus.pospuesta),
+                              child: const Text('Hoy no'),
+                            ),
+                            TextButton(
+                              onPressed: () => _decideStrength(ref, a, ProposalStatus.rechazada),
+                              child: const Text('Mantener'),
+                            ),
+                          ]),
+                      ],
                     ),
                   ),
                 ],
@@ -97,6 +130,9 @@ class CoachCard extends ConsumerWidget {
             ),
         ],
         if (r.proposal != null) ...[
+          if (coachPolicyExperimental)
+            Text('Política experimental v$coachPolicy: las cifras de la revisión están por confirmar.',
+                style: text.labelSmall),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,

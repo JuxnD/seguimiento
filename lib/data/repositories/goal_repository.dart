@@ -181,6 +181,40 @@ class GoalRepository {
         decidedOn: r.decidedOn == null ? null : parseDay(r.decidedOn!),
       );
 
+  /// Decide una propuesta de rondas, fuerza o escalera (criterios existentes).
+  /// Idempotente por ID; "pospuesta" dura `postponeDays` (hoy no = 1).
+  Future<void> decideProposal(
+    String id,
+    String kind,
+    ProposalStatus status, {
+    required DateTime today,
+    int postponeDays = proposalTodayOnlyDays,
+    String evidence = '',
+  }) {
+    final d0 = dateOnly(today);
+    return db.into(db.coachProposals).insertOnConflictUpdate(CoachProposalsCompanion.insert(
+          id: id,
+          kind: kind,
+          status: status.name,
+          evidence: evidence,
+          createdOn: dayKey(d0),
+          decidedOn: Value(dayKey(d0)),
+          reviewAfter: Value(status == ProposalStatus.pospuesta ? dayKey(addDays(d0, postponeDays)) : null),
+          policy: const Value(coachPolicy),
+        ));
+  }
+
+  /// Decisión de un ejercicio de fuerza más reciente (para revisar si una
+  /// subida aceptada se sostuvo).
+  Future<(String, ProposalRecord)?> lastDecision(String kind) async {
+    final row = await (db.select(db.coachProposals)
+          ..where((t) => t.kind.equals(kind))
+          ..orderBy([(t) => OrderingTerm(expression: t.decidedOn, mode: OrderingMode.desc)])
+          ..limit(1))
+        .getSingleOrNull();
+    return row == null ? null : (row.id, _record(row));
+  }
+
   /// Decide una propuesta de pasos. Idempotente por ID: decidir dos veces
   /// deja la última decisión y una sola vigencia.
   Future<void> decideSteps(

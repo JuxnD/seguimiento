@@ -31,6 +31,8 @@ import 'mobility_screen.dart';
 import 'round_counter_screen.dart';
 import 'session_form_screen.dart';
 import 'v3_timers.dart';
+import '../../data/repositories/goal_repository.dart';
+import '../../domain/adaptive_coach.dart';
 
 /// Arranca el cronómetro con el plan del día ya cargado: si toca circuito
 /// cuenta rondas, si tocan bloques cuenta series. Sin plan, cae al cronómetro
@@ -98,8 +100,19 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
   final variants = adjusted.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
   // El día de progresión propone la meta según la regla; no la sube solo.
-  final proposal =
+  var proposal =
       planDay.type == DayType.progresion ? await ref.read(trainingRepositoryProvider).progressionProposal(day) : null;
+  // Lo decidido en Hoy sobre esta misma propuesta (plan 009): "hoy no" o
+  // "mantener" dejan las rondas de la última vez.
+  String? roundsId;
+  if (proposal != null && proposal.canProgress && proposal.sessionId != null) {
+    roundsId = roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
+    final decided = await GoalRepository(ref.read(databaseProvider)).proposal(roundsId);
+    if (proposalHidden(decided, day)) {
+      proposal = heldProposal(proposal, decided!.status);
+      roundsId = null;
+    }
+  }
   if (!context.mounted) return;
   final suggestLight = light ?? await ref.read(dashboardRepositoryProvider).hardGameBefore(day);
   if (!context.mounted) return;
@@ -114,6 +127,12 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
     ),
   );
   if (setup == null || !context.mounted) return;
+  // Empezar con las rondas que propuso la regla es aceptarlas (confirmación
+  // existente del diálogo; plan 009 la registra).
+  if (roundsId != null && proposal != null && setup.rounds == proposal.rounds) {
+    await GoalRepository(ref.read(databaseProvider)).decideProposal(roundsId, 'rondas', ProposalStatus.aceptada, today: day);
+  }
+  if (!context.mounted) return;
 
   await _runGuided(
     context,

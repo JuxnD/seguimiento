@@ -55,16 +55,28 @@ declarado agotamiento.
   (14 días en el peldaño).
 - Racha intensa ≥ 3 y RPE ≥ 7 como intenso: `recovery.dart` existente.
 - Carga alta 600 y dos sesiones hoy: `recovery.dart` existente.
-- **Nuevos, política v1 a confirmar por el owner**: cobertura 8/10, 80 %
+- **Nuevos, política v1 EXPERIMENTAL** (`coachPolicyExperimental`, se ve en
+  la tarjeta junto a la propuesta), a confirmar por el owner. Es revisión de
+  una meta elegida por la persona, no prescripción automática: cobertura 8/10, 80 %
   para proponer, 50 % para revisar, RPE ≥ 9 como cansancio, RPE ≤ 8 o
   despertar 1–2 como señal favorable, ventana de 3 días, redondeo de 500.
   No suben nada solos: la cifra sugerida es el promedio propio.
 
+## Seguimiento de propuestas con criterios existentes
+
+Sin incrementos nuevos ni otro motor: se registra la decisión sobre lo que
+las reglas ya proponen, en `coach_proposals` (sin migración nueva).
+
+| Propuesta | Aceptar | Hoy no / posponer | Mantener | Revisión |
+|---|---|---|---|---|
+| Rondas (§2) | empezar con las rondas propuestas en el diálogo existente | "Hoy no" en Hoy: las de la última vez sólo hoy | descarta esa evidencia | la regla existente evalúa la sesión siguiente |
+| Fuerza (008) | "Lo intento hoy" | "Hoy no": el cronómetro no empuja la subida hoy | descarta esa evidencia | sesión siguiente: "se sostuvo" o "no se sostuvo (causa)" |
+| Escaleras (§19.10) | "Subir a…" existente (registra aceptada) | "En 7 días" | descarta ese peldaño/época | la confirmación y el criterio existentes |
+
+ID estable por evidencia (`rondas:A>B:sN`, `fuerza:<ej>:sN`,
+`escalera:<id>:P>P+1:<desde>`): otra sesión u otro peldaño es otra propuesta.
+
 ## Fuera de este tramo
 
-- Propuestas de fuerza, rondas y escaleras dentro de la misma lectura: esperan
-  la evidencia de 008 (`StrengthSessionEvidence` con `mode`) de la
-  integración 122.
-- Cobertura de 1.000 días y conteo de consultas (paso 5 del plan).
 - Metas de kcal/proteína con propuestas: hoy sólo se versionan y el informe
   mide la proteína de cada día con la suya.

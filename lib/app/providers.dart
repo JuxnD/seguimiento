@@ -42,6 +42,9 @@ import '../domain/report/period_summary.dart';
 import '../domain/report/report_builder.dart';
 import '../domain/report/report_input.dart';
 import '../domain/steps.dart';
+import '../data/repositories/goal_repository.dart';
+import '../domain/adaptive_coach.dart' show ladderProposalId;
+import '../domain/core_ladders.dart' show coreLadders;
 
 /// Se sobreescribe en `main` con la base ya abierta.
 final databaseHostProvider = Provider<DatabaseHost>((ref) => throw UnimplementedError());
@@ -112,6 +115,21 @@ final ladderAdviceProvider = StreamProvider.autoDispose((ref) {
   final repo = ref.watch(ladderRepositoryProvider);
   final today = ref.watch(todayProvider);
   return repo.watchAdvice(today);
+});
+
+/// Lo decidido sobre cada propuesta de subir peldaño (plan 009), por escalera.
+final ladderDecisionsProvider = FutureProvider.autoDispose((ref) async {
+  final advice = await ref.watch(ladderAdviceProvider.future);
+  final goals = GoalRepository(ref.watch(databaseProvider));
+  final today = ref.watch(todayProvider);
+  return {
+    for (final l in coreLadders)
+      if (advice[l.id] case final a? when a.canStepUp)
+        l.id: (
+          id: ladderProposalId(l.id, a.step.step, addDays(dateOnly(today), -a.daysOnStep)),
+          decision: await goals.proposal(ladderProposalId(l.id, a.step.step, addDays(dateOnly(today), -a.daysOnStep))),
+        ),
+  };
 });
 
 /// Test de condición (§19.11).
