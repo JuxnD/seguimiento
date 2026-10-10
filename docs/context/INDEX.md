@@ -187,3 +187,13 @@ Android ni cambio SDK/workflow. Depende de integrar008–011 antes del ensayo.
 Piloto externo, baseline, umbrales, participantes y QA nativa nuevos pendientes;
 preparación parcial no es publicación ni validación comercial.
 Evidencia local: [sesión012](sessions/2026-10-09-012-preparacion-piloto.md).
+
+## Logo: preparación013 (9 de octubre)
+
+Worktree `C:/My Projects/seguimiento-013-logo`, base d2d3070: S en movimiento,
+paleta existente y fuenteSVG única con PNGs/recursos Android regenerados.
+No cambian nombre, paquete, firma, SDK, versión ni pantallas. [Diseño y comparación](../design/logo-013.md),
+[fuente/pipeline](../../assets/icon/LEEME.md),
+[recibo](sessions/2026-10-09-013-logo.md).
+Validación de entradas PNG/safezone/alpha y revisión técnica en pequeño;
+APK integrado, permisos/notificación/temático y aceptación humana pendientes.
