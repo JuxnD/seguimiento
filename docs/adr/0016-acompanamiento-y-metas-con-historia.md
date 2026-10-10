@@ -34,20 +34,31 @@ declarado agotamiento.
   | Señal | Lectura |
   |---|---|
   | Racha intensa (existente, ≥ 3 días) o cansancio declarado (RPE ≥ 9 hoy o ayer, o "cansado" al despertar) | **Recuperar**: pasos suaves, sin caminata extra; el aviso de pasos no sale |
+  | Recuperación declarada no normal en 3 días (`recoveryOk=false` o "cansado"; R2) | **Recuperar**, con esa señal dicha en Hoy y en la línea de caminatas; no es diagnóstico de agotamiento |
   | < 8 de los últimos 10 días entre semana con pasos | **Faltan datos** |
   | Meta cambiada por la persona hace < 14 días | **En prueba**, revisión a los 14 días |
   | ≥ 80 % de los días juzgables en la meta y promedio redondeado (500, hacia abajo) mayor que la meta | **Propuesta** de subir a ese promedio, si además: |
   | … carga alta hoy (≥ 600) o dos sesiones hoy | **Observando**: la revisión espera |
-  | … ninguna señal favorable conocida en 3 días (al despertar 1–2 o RPE ≤ 8) | **Faltan datos**: no se presume recuperación |
+  | … ninguna señal favorable conocida en 3 días (al despertar 1–2 o `recoveryOk=true`) | **Faltan datos**: no se presume recuperación |
   | Cambio en prueba ya revisado con < 50 % de cumplimiento | **Revisar** (volver atrás lo decide la persona) |
   | Lo demás | **Observando** |
 
-- **Propuestas** (`coach_proposals`): ID estable `pasos:A>B:p1`. Aceptar
-  (con cifra editable) rige **desde mañana**, idempotente; posponer = 7 días;
-  rechazar vale para su ventana: se reconsidera sólo con una ventana nueva
-  completa (14 días después) u otra cifra; no se repite cada mañana.
-- Hoy y el aviso de pasos leen la **misma** lectura (`CoachRepository`).
-  "Sin responder" no es descanso ni fatiga.
+- **Propuestas** (`coach_proposals`): ID estable `pasos:A>B:<desde>:p1`, con
+  la vigencia de la meta revisada (`legado` si no tiene fecha): volver a mano
+  a una meta anterior es otro ciclo y no lo atrapa una decisión vieja (R2).
+  Aceptar (con cifra editable) rige **desde el día siguiente al real de la
+  decisión** (`decisionClockProvider`): antes de escribir se revalida con la
+  lectura de ese día; si cambió (p. ej. cruzó medianoche y cambió la ventana)
+  no se guarda nada y se dice. Idempotente; posponer = 7 días; rechazar vale
+  para su ventana: se reconsidera sólo con una ventana nueva completa (14 días
+  después) u otra cifra; no se repite cada mañana.
+- Hoy, la línea de caminatas y el aviso de pasos leen la **misma** lectura
+  (`CoachRepository`); el aviso se reprograma al guardar señales, vigencias o
+  decisiones (`coachSignalsProvider`). "Sin responder" no es descanso ni
+  fatiga. Ningún aviso de meta dice "faltan" si la meta vigente ya se cumplió.
+- **Informe y resumen** miden cada período con las vigencias de esos días
+  (`GoalSpan`): la meta, el cambio o "histórica no registrada"; nunca la de
+  hoy sobre el pasado. `kcalFloor` sigue como regla aparte.
 
 ## Fuentes de los números
 
@@ -70,8 +81,8 @@ las reglas ya proponen, en `coach_proposals` (sin migración nueva).
 | Propuesta | Aceptar | Hoy no / posponer | Mantener | Revisión |
 |---|---|---|---|---|
 | Rondas (§2) | empezar con las rondas propuestas en el diálogo existente | "Hoy no" en Hoy: las de la última vez sólo hoy | descarta esa evidencia | la regla existente evalúa la sesión siguiente |
-| Fuerza (008) | "Lo intento hoy" | "Hoy no": el cronómetro no empuja la subida hoy | descarta esa evidencia | sesión siguiente: "se sostuvo" o "no se sostuvo (causa)" |
-| Escaleras (§19.10) | "Subir a…" existente (registra aceptada) | "En 7 días" | descarta ese peldaño/época | la confirmación y el criterio existentes |
+| Fuerza (008) | "Lo intento hoy" guarda la dosis (`StrengthDose`, JSON en `evidence`) | "Hoy no": el cronómetro no empuja la subida hoy | descarta esa evidencia | primera sesión con el ejercicio desde la aceptación contra la dosis: misma carga/variante = no demuestra; acordada en todas las series limpias = se sostuvo; parcial, otro protocolo/día, fallo o bajo el piso = no demostrada/no sostenida con causa; banda/pausa no se registran = no se puede demostrar |
+| Escaleras (§19.10) | "Subir a…" (Hoy y Escaleras): `acceptStepUp` registra la aceptación y sube en una transacción | "En 7 días" | descarta ese peldaño/época | la confirmación y el criterio existentes |
 
 ID estable por evidencia (`rondas:A>B:sN`, `fuerza:<ej>:sN`,
 `escalera:<id>:P>P+1:<desde>`): otra sesión u otro peldaño es otra propuesta.
