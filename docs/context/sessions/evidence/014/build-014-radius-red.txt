@@ -1,0 +1,14 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart
+00:00 +0: torso sube sin mover manos ni doblar codos en los 61 puntos del recorrido
+00:00 +1: mutante sin desplazamiento escapular pierde contacto: el oráculo detecta el fallo
+00:00 +2: radio declarado conserva arco de pierna; el default mantiene la cuerda antigua
+00:00 +2 -1: radio declarado conserva arco de pierna; el default mantiene la cuerda antigua [E]
+  Expected: a numeric value within <0.001> of <28>
+    Actual: <24.24871130596428>
+     Which:  differs by <3.7512886940357184>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_warmup_rig_test.dart 58:5      main.<fn>
+
+00:00 +2 -1: Some tests failed.

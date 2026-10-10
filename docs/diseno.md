@@ -19,6 +19,12 @@ Direcciones, comparación en pequeño y límites de validación:
 [logo013](design/logo-013.md). No se cambió nombre, paquete ni firma; revisión
 del owner e ícono en APK integrado pendientes.
 
+**Arranque016:** reutiliza ese foreground013, cuadrado108dp y centrado en
+legacy; icono nativo31+ y fondo`#0B0806` también en NormalTheme/día/noche.
+No imagen nueva ni espera artificial.30PNG originales se conservan; XML y
+referencias se verifican en fuente. Arranque frío/transición del APK exacto y
+lectura del owner pendientes: [ADR0018](adr/0018-arranque-y-respaldo-android.md).
+
 ### Color por tipo de día
 
 Definido una sola vez en [`lib/ui/session_style.dart`](../lib/ui/session_style.dart)
@@ -116,14 +122,19 @@ incompleta: un récord tiene que ser contado.
 
 | Gráfica | Qué muestra |
 |---|---|
-| Rondas por sesión | Evolución de las sesiones de circuito: la línea que debe subir |
-| Proteína por día | Barras del rango del informe con la línea del mínimo; los días por debajo se ven apagados |
-| Peso | Evolución, solo con pesajes en ayunas si los hay |
-| Medidas | Una línea por sitio, con selector; solo aparecen los sitios con al menos dos tomas |
+| Rondas por sesión | Datos del rango; selector de tipo y condiciones guardadas. Dosis, variante, lastre y ventana explican qué se está comparando |
+| Proteína por día | Barras de días observados; sin registro, incompleto y cerrado se distinguen con texto. Una meta sólo se muestra si tiene fuente y vigencia documentadas |
+| Peso | Pesajes del rango separados por momento declarado; las referencias fuera de ayunas conservan su evidencia |
+| Medidas | Sitios con alguna toma en el rango; unidad visible y condiciones de ayuno separadas |
 
-Los días sin dato se dibujan en cero en vez de unirse con una pendiente
-inventada. El eje de rondas solo muestra enteros y se deja margen para que la
-última fecha no se corte.
+Las fechas ocupan su distancia real de calendario. No se suavizan curvas ni se
+unen protocolos distintos u observaciones dudosas. Un dato aislado muestra
+fecha y valor; tocar un punto o abrir los registros permite revisar la evidencia.
+El cero observado se conserva, y un día sin registro carece de barra numérica.
+Los controles y la tabla usan el tema existente y admiten texto ampliado.
+El perfil actual no se presenta como historia de metas. Contrato y límites:
+[progreso-metricas.md](progreso-metricas.md); verificación local:
+[recibo015](context/sessions/2026-10-10-015-graficas-evidencia.md).
 
 ## Fotos de progreso
 

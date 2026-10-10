@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_mockup_render_test.dart
+00:00 +0: mockups del catálogo y visor reales, sin renderer paralelo
+00:05 +1: hoja legible en teléfono con texto grande
+00:09 +2: All tests passed!

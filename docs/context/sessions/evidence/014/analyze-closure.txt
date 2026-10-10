@@ -1,0 +1,6 @@
+Analyzing seguimiento-014-calentamiento...
+
+warning - The generic type 'Map<dynamic, dynamic>' should have explicit type arguments but doesn't - test\ui\illustration_warmup_rig_test.dart:130:50 - strict_raw_type
+warning - The generic type 'Map<dynamic, dynamic>' should have explicit type arguments but doesn't - test\ui\illustration_warmup_rig_test.dart:131:50 - strict_raw_type
+
+2 issues found. (ran in 13.6s)

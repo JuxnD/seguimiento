@@ -1,0 +1,10 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart
+00:00 +0: vela y dragon mantienen cabeza horizontal junto a los hombros
+00:00 +1: cuadriceps y piernas en pared mantienen el pie transversal a la tibia
+00:00 +2: manos conservan contacto con barra y borde de mesa durante el recorrido
+00:00 +3: flexion unilateral mantiene solamente la mano de trabajo apoyada
+00:00 +4: plancha inversa y pike mantienen palmas apoyadas al cambiar de momento
+00:00 +5: calentamiento conserva apoyos y brazos rectos en 61 muestras
+00:00 +6: balanceos distingue pierna móvil, pie fijo y mano en pared lateral
+00:00 +7: puente conserva hombros, cabeza horizontal, palmas y ambos pies
+00:00 +8: All tests passed!

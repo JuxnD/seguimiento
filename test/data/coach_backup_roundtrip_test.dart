@@ -11,7 +11,6 @@ import 'package:seguimiento/data/repositories/goal_repository.dart';
 import 'package:seguimiento/data/repositories/recovery_repository.dart';
 import 'package:seguimiento/data/repositories/steps_repository.dart';
 import 'package:seguimiento/domain/adaptive_coach.dart';
-import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/domain/goal_history.dart';
 
 import '../support/sqlite_host.dart';

@@ -1,0 +1,20 @@
+test_allow_backup_enabled (__main__.AndroidPolicyTests.test_allow_backup_enabled) ... ok
+test_background_white (__main__.AndroidPolicyTests.test_background_white) ... ok
+test_cloud_empty (__main__.AndroidPolicyTests.test_cloud_empty) ... ok
+test_d2d_missing (__main__.AndroidPolicyTests.test_d2d_missing) ... ok
+test_default_normal_theme (__main__.AndroidPolicyTests.test_default_normal_theme) ... ok
+test_each_mode_and_domain_omission (__main__.AndroidPolicyTests.test_each_mode_and_domain_omission) ... ok
+test_inclusion_rejected (__main__.AndroidPolicyTests.test_inclusion_rejected) ... ok
+test_legacy_brand_reference_wrong (__main__.AndroidPolicyTests.test_legacy_brand_reference_wrong) ... ok
+test_legacy_consumer_missing (__main__.AndroidPolicyTests.test_legacy_consumer_missing) ... ok
+test_legacy_domain_omission (__main__.AndroidPolicyTests.test_legacy_domain_omission) ... ok
+test_modern_brand_reference_wrong (__main__.AndroidPolicyTests.test_modern_brand_reference_wrong) ... ok
+test_modern_consumer_missing (__main__.AndroidPolicyTests.test_modern_consumer_missing) ... ok
+test_parent_path_rejected (__main__.AndroidPolicyTests.test_parent_path_rejected) ... ok
+test_real_source_and_013_inputs (__main__.AndroidPolicyTests.test_real_source_and_013_inputs) ... ok
+test_unknown_domain_rejected (__main__.AndroidPolicyTests.test_unknown_domain_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 2.678s
+
+OK

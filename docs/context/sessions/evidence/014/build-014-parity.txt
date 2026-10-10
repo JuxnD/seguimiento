@@ -1,0 +1,5 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/build/legacy-rig/record_geometry_test.dart
+00:00 +0: C:/My Projects/seguimiento-014-calentamiento/build/legacy-rig/record_geometry_test.dart: congelar geometría original antes de extender hombros
+00:01 +1: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart
+00:04 +1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:06 +2: All tests passed!

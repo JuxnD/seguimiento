@@ -1,0 +1,64 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart
+00:00 +0: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart: torso sube sin mover manos ni doblar codos en los 61 puntos del recorrido
+00:00 +1: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart: mutante sin desplazamiento escapular pierde contacto: el oráculo detecta el fallo
+00:00 +2: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart: radio declarado conserva arco de pierna; el default mantiene la cuerda antigua
+00:00 +3: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart: radio opt-in maneja antipodales por plano explícito y rechaza degeneración
+00:00 +4: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart: omitir radio en artefacto generado reproduce pie fuera de rango entre claves
+00:00 +5: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_geometry_test.dart: alcances 3D conservan largos de brazos y piernas en los momentos clave
+00:00 +6: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_geometry_test.dart: elevaciones laterales usan el plano frontal y 90/90 conserva pelvis sentada
+00:00 +7: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_geometry_test.dart: figura4 apoya el tobillo en la rodilla opuesta; carrera no alcanza sobre la cabeza
+00:00 +8: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_geometry_test.dart: la plancha lateral apila hombros; el pike no apoya los codos
+00:00 +9: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_geometry_test.dart: las seis guías nuevas conservan largos anatómicos en 61 muestras
+00:00 +10: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: vela y dragon mantienen cabeza horizontal junto a los hombros
+00:00 +11: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: cuadriceps y piernas en pared mantienen el pie transversal a la tibia
+00:00 +12: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: manos conservan contacto con barra y borde de mesa durante el recorrido
+00:01 +13: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: flexion unilateral mantiene solamente la mano de trabajo apoyada
+00:01 +14: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: plancha inversa y pike mantienen palmas apoyadas al cambiar de momento
+00:01 +15: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: calentamiento conserva apoyos y brazos rectos en 61 muestras
+00:01 +16: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: balanceos distingue pierna móvil, pie fijo y mano en pared lateral
+00:01 +17: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_supports_test.dart: puente conserva hombros, cabeza horizontal, palmas y ambos pies
+00:01 +18: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_legacy_parity_test.dart: desplazamiento cero conserva exactamente geometría histórica en 61 muestras
+00:02 +19: C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_catalog_coverage_test.dart: cada guía, peldaño y ejercicio de movilidad tiene su propia ilustración
+00:07 +20: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: datos los tres ejercicios de la iteración, con inicio, medio y final
+00:07 +21: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: datos los momentos clave reproducen los apoyos del generador
+00:07 +22: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación lerpAngle va por el camino corto
+00:07 +23: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación en los extremos coincide con los momentos clave
+00:07 +24: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación a mitad de camino los segmentos conservan su largo
+00:07 +25: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación las manos no se sueltan de la barra al animar la dominada
+00:07 +26: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación en el nórdico la cadera gira alrededor de las rodillas, que no se mueven
+00:07 +27: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación nada atraviesa el suelo en ningún punto del recorrido
+00:07 +28: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: interpolación loopProgress va y vuelve con pausas en cada momento
+00:07 +29: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D el lado cercano va a +z y el lejano a -z; las manos al ancho del agarre
+00:07 +30: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D las extremidades conservan su largo en 3D y los codos salen hacia afuera
+00:07 +31: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D ikJoint respeta largos y sale hacia el polo
+00:07 +32: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D la cara flexora del muslo arrodillado mira hacia atrás (isquios)
+00:07 +33: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: paso a 3D en el pino el pecho y la cara miran a la pared
+00:07 +34: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: cámara el centro cae en el centro de la pantalla y lo cercano se ve más grande
+00:07 +35: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: cámara girar 90° pone el eje x de frente a la cámara
+00:07 +36: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: cámara inclinar mira desde arriba: se ve el suelo y la profundidad horizontal no cambia con la altura
+00:07 +37: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: orden de pintado de lejos a cerca, y los empates en el orden de llegada
+00:07 +38: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: orden de pintado de perfil, el brazo cercano se pinta después del torso y el lejano antes
+00:07 +39: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:07 +40: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:08 +41: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:08 +42: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:08 +43: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:08 +44: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:08 +45: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: las tres figuras se pintan sin errores, giradas o no
+00:09 +46: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión guía extensa conserva lectura y rechaza solo la consulta de IA
+00:09 +47: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica con figura 3D: tres momentos grandes que se pasan de lado
+00:09 +48: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión supina sin carga (jueves): 3D sin mochila
+00:10 +49: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica "Ver movimiento" anima en el mismo cuadro y vuelve a los momentos
+00:10 +50: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica "Ver movimiento" anima en el mismo cuadro y vuelve a los momentos
+00:10 +51: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F02: la dominada respeta la variante de la sesión supina con carga: 3D con mochila
+00:10 +52: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica tocar un momento lo abre en grande; arrastrar gira y se vuelve de perfil
+00:10 +53: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica tocar un momento lo abre en grande; arrastrar gira y se vuelve de perfil
+00:10 +54: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_test.dart: hoja de técnica tocar un momento lo abre en grande; arrastrar gira y se vuelve de perfil
+00:10 +55: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+00:10 +56: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+00:10 +57: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.0: se leen todos los pies sin desbordar
+00:20 +58: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.3: se leen todos los pies sin desbordar
+00:27 +59: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px texto ×1.6: se leen todos los pies sin desbordar
+00:39 +60: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px ampliar una animación conserva el momento que se estaba viendo
+00:39 +61: C:/My Projects/seguimiento-014-calentamiento/test/ui/exercise_figure_3d_audit_test.dart: F03 y F04: momentos a 360 px ampliar en una transición conserva la pose intermedia
+00:40 +62: All tests passed!

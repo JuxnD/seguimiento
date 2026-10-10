@@ -1,0 +1,12 @@
+Analyzing seguimiento-015-graficas...
+
+  error - The getter 'source' isn't defined for the type 'MealItemRow' - lib\data\repositories\chart_repository.dart:146:31 - undefined_getter
+  error - A value of type 'Future<List<String>>' can't be returned from the method 'sitesWithHistory' because it has a return type of 'Future<List<MeasureSite>>' - lib\data\repositories\chart_repository.dart:226:12 - return_of_invalid_type
+   info - Statements in an if should be enclosed in a block - lib\domain\progress.dart:131:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\progress.dart:324:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\progress.dart:340:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\report\charts.dart:113:23 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\report\charts.dart:276:21 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\report\charts_section.dart:127:7 - curly_braces_in_flow_control_structures
+
+8 issues found. (ran in 25.9s)

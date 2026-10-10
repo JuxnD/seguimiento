@@ -270,32 +270,32 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
             child: stage,
           ),
         ),
-        Row(
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 4,
           children: [
-            const SizedBox(width: 4),
             if (!_playing)
-              for (var i = 0; i < _n; i++)
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.only(right: 6),
-                  width: i == _page ? 18 : 7,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    color: i == _page ? scheme.primary : scheme.outline,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-            // El botón toma su ancho natural; solo se recorta si no cabe.
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                for (var i = 0; i < _n; i++)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.only(right: 6),
+                    width: i == _page ? 18 : 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      color: i == _page ? scheme.primary : scheme.outline,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  )
+              ]),
+            // Reflow preserves the full action label with large text.
             if (fig.continuous)
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
-                    icon: Icon(_playing ? Icons.pause_circle_outline : Icons.play_circle_outline),
-                    label: Text(_playing ? 'Ver momentos' : 'Ver movimiento', overflow: TextOverflow.ellipsis),
-                  ),
-                ),
+              TextButton.icon(
+                onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
+                icon: Icon(_playing ? Icons.pause_circle_outline : Icons.play_circle_outline),
+                label: Text(_playing ? 'Ver momentos' : 'Ver movimiento', maxLines: 2, textAlign: TextAlign.center),
               ),
             IconButton(
               tooltip: 'Ampliar y girar',

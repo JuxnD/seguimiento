@@ -151,13 +151,16 @@ def export_frame(f):
     s = fg.solve(f)
     j = s['joints']
     out = {'caption': f['caption'], 'hip': list(f['hip']), 'torso': f['torso'], 'gaze': f.get('gaze', 0), 'limbs': {}}
+    if 'shoulderOffset' in f:
+        out['shoulderOffset'] = list(f['shoulderOffset'])
     for side in ('near', 'far'):
         for limb, mid, end, root in (('Leg', 'Knee', 'Ankle', 'hip'), ('Arm', 'Elbow', 'Hand', 'neck')):
             spec = f.get(side + limb)
             if not spec:
                 continue
             m, e = j[side + mid], j[side + end]
-            a1, a2 = _ang(j[root], m), _ang(m, e)
+            origin = j.get('shoulder', j['neck']) if limb == 'Arm' else j[root]
+            a1, a2 = _ang(origin, m), _ang(m, e)
             item = {'angles': [a1, a2]}
             if 'reach' in spec:
                 # Apoyo: la extremidad se sujeta ahí al animar (IK).

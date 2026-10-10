@@ -206,32 +206,47 @@ final photoCheckInsProvider = StreamProvider((ref) => ref.watch(photoRepositoryP
 final chartRepositoryProvider =
     Provider((ref) => ChartRepository(ref.watch(databaseProvider), ref.watch(nutritionRepositoryProvider)));
 
-/// Rondas de cada sesión de circuito: la línea que debe subir.
-final roundsSeriesProvider = FutureProvider((ref) {
+/// Observations of the selected report period; protocol decides comparison.
+final roundsSeriesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(sessionsProvider);
-  return ref.watch(chartRepositoryProvider).rounds();
+  return ref
+      .watch(chartRepositoryProvider)
+      .rounds(from: parseDay(range.$1), to: parseDay(range.$2));
 });
 
 /// Proteína por día del rango del informe.
-final proteinSeriesProvider = FutureProvider.family((ref, (String, String) range) {
+final proteinSeriesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(mealsRangeRefreshProvider(range));
-  return ref.watch(chartRepositoryProvider).nutritionDaily(parseDay(range.$1), parseDay(range.$2));
+  ref.watch(closedDaysRangeProvider(range));
+  return ref
+      .watch(chartRepositoryProvider)
+      .nutritionDays(parseDay(range.$1), parseDay(range.$2));
 });
 
-final weightSeriesProvider = FutureProvider((ref) {
+final weightSeriesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(weightsProvider);
-  return ref.watch(chartRepositoryProvider).weights();
+  return ref
+      .watch(chartRepositoryProvider)
+      .weights(from: parseDay(range.$1), to: parseDay(range.$2));
 });
 
-final measurementSitesProvider = FutureProvider((ref) {
+final measurementSitesProvider =
+    FutureProvider.family((ref, (String, String) range) {
   ref.watch(checkInsProvider);
-  return ref.watch(chartRepositoryProvider).sitesWithHistory();
+  return ref
+      .watch(chartRepositoryProvider)
+      .sitesWithHistory(from: parseDay(range.$1), to: parseDay(range.$2));
 });
 
-final measurementSeriesProvider = FutureProvider.family((ref, MeasureSite site) {
+final measurementSeriesProvider =
+    FutureProvider.family((ref, (MeasureSite, String, String) key) {
   ref.watch(checkInsProvider);
   final unit = ref.watch(profileProvider).value?.lengthUnit ?? LengthUnit.cm;
-  return ref.watch(chartRepositoryProvider).measurements(site, unit: unit);
+  return ref.watch(chartRepositoryProvider).measurements(key.$1,
+      unit: unit, from: parseDay(key.$2), to: parseDay(key.$3));
 });
 
 /// Reloj de las decisiones del acompañamiento (plan 009): una propuesta se

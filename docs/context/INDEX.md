@@ -1,11 +1,43 @@
 # Índice de contexto
 
+**Plan015 implementado localmente (10oct):** [gráficas con rango y evidencia](../progreso-metricas.md)
+y [recibo](sessions/2026-10-10-015-graficas-evidencia.md), worktree aislado
+`C:/My Projects/seguimiento-015-graficas`, base de integración122 `bf1da688`.
+Selección, resumen y registros comparten rango/protocolo; ausencia no es cero.
+No completa011 ni añade radar o historial de metas: la conexión con009 es una
+interfaz opcional, sin persistencia nueva. APK y aceptación humana pendientes.
+
 **Integración local122:** [baseClaude929 + evidencia008](sessions/2026-10-09-integracion-122-base-evidencia.md)
 en `C:/My Projects/seguimiento-122-integracion`. Reconciliación de protocolo
-de fuerza/técnica sin migración; resto de frentes pendiente y sin publicación.
+de fuerza/técnica sin migración en ese tramo; sin publicación.
 El [tramo012/013 revisado](sessions/2026-10-10-integracion-122-012-013.md)
 integra divulgación de respaldos/IA, preparación de piloto y logo desde SVG;
 39controles y4capturas pasan,30PNG preservados. Esquema20; sin APK ni instalación.
+La [integración010](sessions/2026-10-10-integracion-122-010.md) añade catálogo
+revisable y esquema21:83controles pasan con interopPHP local ficticio, migración
+y ZIP. Se conservan008/mode/warmup/snapshot y012/013;009/22 y los demás frentes
+siguen pendientes. Sin APK, backend desplegado ni teléfono probado.
+El [checkpoint014/016](sessions/2026-10-10-integracion-122-014-016.md)
+añade las seis figuras de calentamiento y el arranque/políticaAndroid revisados.
+79entradas/73anteriores intactas,76controles dirigidos y4mutantes rechazados;
+esquema21 y SDK3.22 conservados. El [checkpoint015](sessions/2026-10-10-integracion-122-015.md)
+integra gráficas con rango/evidencia:44criterios y9controles compartidos pasan.
+Full combinado espera009 y los frentes011/012 pendientes;015 no añade radar.
+El [checkpointClaude de calentamiento](sessions/2026-10-10-integracion-122-warmup.md)
+integra avisos de molestias sin agregar ejercicios y checklist de Cindy de
+prueba:18casos y24controles compartidos pasaron localmente. La revisión
+independiente devolvió2 fallos de snapshot histórico; la barrera UI→archivo
+ahora espera completion real (18dirigidos/8Store pasan localmente), sin cambiar
+producción. Causa previa NO_CONFIRMADA y nueva revisión pendiente. Nueva costura SQLite→pantalla
+positiva probada; mutante de conexión NO_EVALUADO por cierre de harness detenido
+tras diagnóstico acotado. Esquema21; sin APK ni validación de teléfono.
+
+**Slice016 aislado:** [arranque y política Android](../adr/0018-arranque-y-respaldo-android.md)
+en `seguimiento-016-android`, basec04b2a9. Misma S013, reglas de exclusión
+cloud/D2D y divulgación en Ajustes; ZIP/local conservados. Verificación fuente
+no equivale a Manifest fusionado, APK ni respaldo observado en un teléfono.
+[Recibo016 y gates](sessions/2026-10-10-016-android.md):15testsPython,
+8testsFlutter, análisis/diff0; sin cambiar los30PNG originales.
 
 **Implementación local plan008 (9oct):** [contrato de evidencia de progreso](progress-evidence.md)
 y [recibo de pruebas](sessions/2026-10-09-008-evidencia.md). Worktree aislado
@@ -209,3 +241,11 @@ No cambian nombre, paquete, firma, SDK, versión ni pantallas. [Diseño y compar
 [recibo](sessions/2026-10-09-013-logo.md).
 Validación de entradas PNG/safezone/alpha y revisión técnica en pequeño;
 APK integrado, permisos/notificación/temático y aceptación humana pendientes.
+
+
+Frente014: seis nuevas guías de calentamiento tienen figura explícita,
+79entradas de catálogo (73 anteriores+6 nuevas). Contrato `shoulderOffset`
+y `keepReachRadius` opt-in, recorridos y comprensión pendiente:
+[Diseño014](../design/calentamiento-014.md) y
+[recibo014](sessions/2026-10-10-014-calentamiento.md).
+No atribuir estas figuras a unAPK anterior ni a la instalación del owner.

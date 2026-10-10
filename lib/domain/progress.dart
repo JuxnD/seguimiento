@@ -46,11 +46,16 @@ bool isRecord(int rounds, int? previousMax) => previousMax == null ? rounds > 0 
 
 /// Punto de una serie para las gráficas.
 class SeriesPoint {
-  const SeriesPoint(this.date, this.value, {this.label});
+  const SeriesPoint(this.date, this.value, {this.label, this.protocol, this.protocolLabel, this.comparable = true, this.evidence = '', this.sourceId});
 
   final DateTime date;
   final double value;
   final String? label;
+  final String? protocol;
+  final String? protocolLabel;
+  final bool comparable;
+  final String evidence;
+  final int? sourceId;
 }
 
 /// Agrupa valores por día, sumando los del mismo día.

@@ -125,3 +125,104 @@ Esta evidencia no se atribuye al APK publicado ni a un servidor desplegado.
 | SQLite20 →21 → parche → renombre/borrado → ZIP/reapertura | Tabla/mappings/36source IDs/version comprobados aparte; sin sobrescribir ediciones; idempotencia y tombstones; registry y notas exactos en ZIP |
 | Propuesta sintética → precisión/coste Luna real | NO_EVALUADO; coherencia aritmética y cobertura textual no equivalen a precisión semántica |
 | Fuente nueva → APK integrado → actualización/teléfono | Pendiente del coordinador; no se tocó teléfono/producción ni se publicaron cambios |
+
+En [integración122/010](sessions/2026-10-10-integracion-122-010.md),83controles
+dirigidos cruzan los consumidores reales del checkout combinado: Dart→PHP
+ficticio→Dart, revisión→SQLite,18/19/20→21, registry→ZIP→reapertura y C01.
+008/mode/warmup/snapshot no cambian en este tramo. El primer timeout de carga
+se conserva junto al gate consolidado posterior; no se infiere su causa.
+Suite completa del candidato, APK/backend remoto y aceptación del owner siguen
+pendientes: estos83casos no son una nueva certificación global del producto.
+
+
+## Frente014 · figuras del calentamiento (10oct2026)
+
+| Cruce | Evidencia / límite |
+|---|---|
+| warmupMobility/warmupForZone/buildWarmup → recetas | Test producción primero rojo6ausentes, ahora exige cobertura real;79entradas, sin fallback para esas seis |
+| Python→JSON→KeyPose→solve2D→lift3D→interpolación | Campos opcionales de hombros y arco de pierna;61muestras, defectos rojos y mutantes reales;73objetos/geometrías previas idénticos |
+| Pose→suelo/barra/pared/banda→extremos | Palmas/pies/codos/contactos y grip con relectura del JSON; no afloja umbral0,35 ni guards |
+| Painter/TechniqueContent→PNG→montaje |65capturas reales, seis guías e intermedios, lado derecho, texto1/1,6 y scroll; Roboto versionado |
+| Fuente→comprensión→APK→persona | Comprensión humana y QA integración/APK pendientes; no hubo build, instalación ni publicación |
+
+[Recibo014](sessions/2026-10-10-014-calentamiento.md). La política por dolor
+no pertenece a este frente y no se valida por la figura disponible.
+
+
+R1: Retracciones valida también la suela completa respecto al suelo en61muestras
+(min4,75u), no sólo mano–barra. Círculos declara dirección por texto numerado
+independiente de cámara. ViewerCTA→glifo real→semantics→acción prueba etiqueta
+completa a360px/text1,6 y2,0; reflow conserva todos los controles. ReciboR1
+sobrebasee35a; aceptación humana yAPK pendientes.
+
+## Slice016: consumidores Android de marca y respaldo
+
+| Cruce | Estado / límite |
+|---|---|
+| S013→PNG→launch legacy/atributo31→theme consumidor | Parser fuente, consumidor y hashes30PNG; mutantes recurso/fondo/default rechazados. Render Android/arranque del APK exacto PENDIENTE |
+| Política→Manifest→reglas legacy/cloud/D2D | XML real con los9dominios admitidos; modo vacío/ausente, include, dominio desconocido, path ajeno y consumidores rotos rechazados. Fusión de Manifest/OEM/transportes PENDIENTE |
+| Copy→Ajustes→ZIP/cancelación/SQLite/fotos | Prueba widget de texto completo configurado y límites, más confirmación/cancelación y relectura originales. Android AutoBackup nativo NO_OBSERVADO |
+
+Decisión y autoridad:[ADR0018](../adr/0018-arranque-y-respaldo-android.md).
+No transforma una política fuente en promesa de eliminación de copias previas
+ni de control de terceros; no toma verdes de APK anteriores para este slice.
+
+Checkpoint122 con014/016:[recibo integrado](sessions/2026-10-10-integracion-122-014-016.md).
+Generación repetida idéntica,73objetos/hashgeometrías legacy conservados,76gates
+dirigidos verdes y4mutantes del JSON rechazados por assertions reales. Después
+de restaurar bytes,10controles de apoyos/paridad verdes. SDK/schema/firma no
+cambian; native/OEM/owner y full candidato siguen pendientes. En el checkpoint
+Claude posterior se adaptó la cobertura014 a las fuentes reales, sin reconstruir
+el mapa warmupForZone retirado por la política de dolor.
+
+## Plan015 local: gráficas con rango y evidencia (10oct)
+
+Autoridad acotada: `seguimiento-015-graficas`, `JuxnD/015-graficas-evidencia`,
+base de integración122 `bf1da688`. Sin cambios de esquema ni servicios externos.
+[Contrato](../progreso-metricas.md),
+[recibo y evidencias](sessions/2026-10-10-015-graficas-evidencia.md).
+
+| Cruce enumerado | Evidencia ejecutada / límite |
+|---|---|
+| Rango del informe → consultas SQL → providers → gráfica/registros | Fixtures SQLite con datos dentro/fuera; sitios y unidades del mismo rango;240sesiones y límite máximo200; selección cambia datos, resumen y tabla |
+| Dosis/modo/plan/ventana/calidad → protocolo → comparación | Firma compartida008;20/30min y técnica/normal separados; importada, estimada, cortada y desconocida siguen observaciones; rótulo humano muestra condiciones antes de escoger |
+| Fecha real → eje/tocar → fecha/valor/evidencia textual |1ene,2ene,1feb ocupan0,1,31días; sin curva inventada, punto aislado visible; tap y registros inspeccionables |
+| Snapshot de comida/cierre → nullable → barra/estado | Ausencia sin barra≠cero guardado; cierre igual aReportStats; actualización del cierre conserva tabla abierta; proteína0 real tiene eje válido |
+| Meta con fuente y vigencia → resolver → referencia y tabla | DTO/fixture local cubierto; rechaza unidad/fecha/fuente/número inválidos; no usa perfil actual para historia. Adaptador009 no implementado aquí |
+| Registro antiguo editado → reconsulta → rango activo | Actualiza peso/sesión fuera de90/60días; prueba refuta invalidación adicional, sin modificar watchers de otros consumidores |
+| Widgets compartidos → renderer360/texto1.6 → capturas | TresPNG sintéticos del Flutterrenderer; tabla y opciones completas revisadas. No equivale a aceptación humana o medición de latencia Android |
+| Fuente local → APK integrado → teléfono/piloto | Declarado pendiente del coordinador; ninguna instalación, publicación o usuario real verificado en015 |
+
+Siete cruces locales cubiertos y uno declarado en este alcance. No cierra011,
+radar, historial de metas o piloto, ni hereda validación de otro APK.
+
+En [checkpoint122/015](sessions/2026-10-10-integracion-122-015.md),los44criterios
+pasan sobre la fuente combinada con008/010/014/016. Nueve controles compartidos
+cruzan unidad de comida, paridad geométrica, controles grandes y divulgación.
+No se cambió comportamiento para integrar; catálogo79/73 y30PNG preservados.
+Rango/protocolo comparten el mismo read-model; metas históricas y radar siguen
+pendientes de sus adaptadores, no se fabrican a partir del perfil actual.
+
+## CheckpointClaude en122: molestiasSQLite y Cindy de prueba
+
+[Recibo separado](sessions/2026-10-10-integracion-122-warmup.md). El nuevo caso
+SQLite→RecoveryRepository→GuidedSessionScreen exige aviso de Hombro5 reciente,
+excluye Rodilla2/Codo antiguo, conserva siete dosis y relee snapshot sin pasos
+completos.18casos pasan, junto con24controles de figuras/guía/snapshots; esquema21,
+paridad79/73 y30PNG intactos. Las notas son avisos, no recetas ni completitud.
+
+La sensibilidad negativa a provider conectado a otraDB vacía queda
+NO_EVALUADO: diagnóstico de harness BLOCKED al cerrar la DB fuente, pese a
+que el montaje llega al oráculo y la DB vacía cierra. Se conserva salida de
+los intentos; no se declara rojo a una interrupción ni se infiere bug nativo
+del cierre de una prueba. Revisión final, full candidato e instalación pendientes.
+
+La repetición independiente deRoot en9c0de20 encontró2 snapshots históricos
+viejos (16casos pasan/2fallan), por lo que no aprobó el cierre completo. Traza
+aislada conserva emitted/completion/archivo de una misma instancia: foto vieja
+mientras quedaban saves nuevos pendientes; último completion deja foto correcta.
+No reproduce el fallo justo tras20ticks y su causa exacta sigueNO_CONFIRMADA.
+Se autorizó una barrera en el harness que espera las futures reales emitidas
+sin pendientes, cota5s dentro del timeout original y relectura física/assertions
+intactas.18dirigidos+8Store pasan con esa barrera; producción no cambia y la
+revisión independiente de esta fuente queda pendiente. Mutante2DB no se reabre.

@@ -1,0 +1,36 @@
+00:00 +0: loading C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart
+00:00 +0: C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:04 +1: C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+00:05 +2: C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+00:07 +3: C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart:179:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _BackupCardState._progress (package:seguimiento/features/settings/settings_screen.dart:198:14)
+<asynchronous suspension>
+#10     _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:220:21)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:09 +4: C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+00:11 +5: C:/My Projects/seguimiento-016-android/test/data/backup_disclosure_test.dart: (tearDownAll)
+00:11 +5: loading C:/My Projects/seguimiento-016-android/test/data/backup_settings_test.dart
+00:13 +5: C:/My Projects/seguimiento-016-android/test/data/backup_settings_test.dart: (setUpAll)
+00:13 +5: C:/My Projects/seguimiento-016-android/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:16 +6: C:/My Projects/seguimiento-016-android/test/data/backup_settings_test.dart: Ajustes recorre ZIP y confirma restauración
+00:18 +7: C:/My Projects/seguimiento-016-android/test/data/backup_settings_test.dart: (tearDownAll)
+00:18 +7: loading C:/My Projects/seguimiento-016-android/test/tool/android_policy_test.dart
+00:19 +7: C:/My Projects/seguimiento-016-android/test/tool/android_policy_test.dart: Android source policy rejects XML consumer mutations; native QA pending
+00:23 +8: All tests passed!

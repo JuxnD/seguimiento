@@ -304,7 +304,7 @@ Future<void> _runTimer(
   void save(TimerSnapshot s) => unawaited(store.save(s));
   final draft = await nav.push<SessionDraft>(MaterialPageRoute(
     builder: (_) => mode == 'cindy'
-        ? AmrapScreen(date: date, resume: resume, onSnapshot: save)
+        ? AmrapScreen(date: date, resume: resume, onSnapshot: save, attempt: cindyTest)
         : TabataScreen(date: date, exercises: exercises, resume: resume, onSnapshot: save),
   ));
   await _clearActive(container);

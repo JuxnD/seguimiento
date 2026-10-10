@@ -156,32 +156,29 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// reloj en marcha y el descanso tras la aproximación.
   late final _warmupMarked = <String>{...?widget.resume?.warmupDone};
   late bool _warmupSkipped = widget.resume?.warmupSkipped ?? false;
-  Set<String> _soreZones = const {};
-  late List<WarmupItem> _warmupItems = _buildWarmup();
+  Map<String, int> _soreZones = const {};
+  late final List<WarmupItem> _warmupItems = _buildWarmup();
   String? _warmupTimerKey;
   DateTime? _warmupTimerEnds;
   DateTime? _approachRestEnds;
 
-  List<WarmupItem> _buildWarmup() =>
-      buildWarmup(scriptDayFrom(widget.day), ownWarmup: _warmupExercises.isNotEmpty, soreZones: _soreZones);
+  List<WarmupItem> _buildWarmup() => buildWarmup(scriptDayFrom(widget.day), ownWarmup: _warmupExercises.isNotEmpty);
 
-  /// Molestias de hoy o ayer (≥ 3) en rodilla, hombro o codo suman un paso.
+  /// Molestias de hoy o ayer (≥ 3): se avisan arriba del calentamiento.
   Future<void> _loadSoreness() async {
     try {
       final byDay = await ref.read(recoveryRepositoryProvider).sorenessRange(widget.date);
       final d0 = dateOnly(widget.date);
-      final zones = {
-        for (final e in byDay.entries)
-          if (!e.key.isBefore(addDays(d0, -1)) && !e.key.isAfter(d0))
-            for (final z in e.value.entries)
-              if (z.value >= 3 && sorenessZones.contains(z.key)) z.key,
-      };
+      final zones = <String, int>{};
+      for (final e in byDay.entries) {
+        if (e.key.isBefore(addDays(d0, -1)) || e.key.isAfter(d0)) continue;
+        for (final z in e.value.entries) {
+          if (z.value > (zones[z.key] ?? 0)) zones[z.key] = z.value;
+        }
+      }
       if (!mounted || zones.isEmpty) return;
-      setState(() {
-        _soreZones = zones;
-        _warmupItems = _buildWarmup();
-      });
-    } on Object {/* Sin molestias legibles, el bloque base sigue igual. */}
+      setState(() => _soreZones = zones);
+    } on Object {/* Sin molestias legibles, no hay aviso. */}
   }
 
   void _toggleWarmup(WarmupItem item) {
@@ -1252,6 +1249,18 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           child: ListView(
             key: const ValueKey('warmup-list'),
             children: [
+              for (final note in soreWarmupNotes(_soreZones, order: sorenessZones))
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.healing_outlined, size: 18, color: scheme.error),
+                      const SizedBox(width: 6),
+                      Expanded(child: Text(note, style: text.bodySmall)),
+                    ],
+                  ),
+                ),
               for (final w in _warmupExercises)
                 ListTile(
                   dense: true,

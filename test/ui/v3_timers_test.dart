@@ -49,6 +49,17 @@ void main() {
     expect(back.exercises, snap.exercises);
   });
 
+  testWidgets('Cindy de prueba: calentamiento y checklist a la vista; la normal no los muestra', (tester) async {
+    await show(tester, AmrapScreen(date: DateTime.now(), attempt: true));
+    expect(find.text('Antes del intento'), findsOneWidget);
+    expect(find.text('Reloj en modo entrenamiento'), findsOneWidget);
+    expect(find.text('Empezar AMRAP'), findsOneWidget, reason: 'la tarjeta no bloquea empezar');
+    await tester.pumpWidget(const SizedBox.shrink());
+    await show(tester, AmrapScreen(date: DateTime.now()));
+    expect(find.text('Antes del intento'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('Cindy retomada sigue con sus rondas y su reloj', (tester) async {
     final now = DateTime.now();
     final snaps = <TimerSnapshot>[];

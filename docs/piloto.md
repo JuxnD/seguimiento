@@ -44,9 +44,12 @@ fuera de SQLite/ZIP. Los flags y el cronómetro no se exportan ni reemplazan.
 Eliminar IA no cambia respaldos automáticos anteriores ni archivos externos,
 y no llama a un borrado remoto. No se añadió purga local ni cifrado de ZIP:
 serían decisiones separadas con restauración compatible y selección explícita.
-Política propia Android backup/transferencia pendiente de decisión y de pruebas
-del manifiesto fusionado y dispositivo QA; no se afirmó que el teléfono suba
-datos a la nube ni se promete recuperar una licencia desde otra instalación.
+La [política Android016](adr/0018-arranque-y-respaldo-android.md) configura
+exclusión de cloud y trasladoD2D automático en Manifest y reglas legacy/31+.
+ZIP manual y copias locales se conservan. Parser fuente/mutantes y UI no prueban
+el respaldo del sistema: quedan Manifest fusionado y transporte del APK exacto
+en dispositivoQA. No se afirmó que el teléfono del owner subiera datos ni se
+eliminan copias previas o controlan herramientas del fabricante/terceros.
 
 ## Ensayo end-to-end antes de voluntarios
 

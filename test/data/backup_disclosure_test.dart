@@ -92,6 +92,11 @@ void main() {
     await settings(tester);
     expect(find.textContaining('historial de IA'), findsWidgets);
     expect(find.textContaining('sin cifrar'), findsWidgets);
+    expect(
+        find.text('Esta app está configurada para excluir sus datos de copias automáticas de Android '
+            'y del traslado entre teléfonos. Usa el ZIP. No borra copias previas '
+            'ni controla herramientas del fabricante o de terceros.'),
+        findsOneWidget);
     expect(find.textContaining('pueden recuperar conversaciones borradas'),
         findsOneWidget);
     await release(tester);

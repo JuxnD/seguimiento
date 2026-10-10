@@ -1,0 +1,27 @@
+{
+  "status": "INVALID_SOURCE_POLICY",
+  "violations": [
+    "ALLOW_BACKUP_ENABLED",
+    "LEGACY_RULE_CONSUMER",
+    "MODERN_RULE_CONSUMER",
+    "INVALID_XML:android/app/src/main/res/xml/backup_rules.xml",
+    "INVALID_XML:android/app/src/main/res/xml/data_extraction_rules.xml",
+    "INVALID_XML:android/app/src/main/res/values/colors.xml",
+    "LAUNCH_BACKGROUND:drawable",
+    "LAUNCH_GLYPH:drawable",
+    "LAUNCH_BACKGROUND:drawable-v21",
+    "LAUNCH_GLYPH:drawable-v21",
+    "WINDOW_BACKGROUND:values:NormalTheme",
+    "WINDOW_BACKGROUND:values-night:NormalTheme",
+    "INVALID_XML:android/app/src/main/res/values-v31/styles.xml",
+    "INVALID_XML:android/app/src/main/res/values-night-v31/styles.xml"
+  ],
+  "sourceSha256": {
+    "android/app/src/main/AndroidManifest.xml": "7a03699965011d701b5843e111997097e421f4f20eee07427b42234e5d04af0b",
+    "android/app/src/main/res/drawable/launch_background.xml": "2df60e2cfbee873ce2858088cf003e6b93498f2f568476da437610467ea1a9d7",
+    "android/app/src/main/res/drawable-v21/launch_background.xml": "dca312ec77de83e43ef70a825c299b51451247286c29167d62f19165750b8793",
+    "android/app/src/main/res/values/styles.xml": "cca15a99b59380a548bf6a890f7ca5380ee509b1f9bbb2f5f9ec3589fa25c2f7",
+    "android/app/src/main/res/values-night/styles.xml": "ea763597dc1a84c8034251caee98d7753e0fbf57340ffc94677427de4b537516"
+  },
+  "nativeValidation": "PENDING_MERGED_XML_APK_STARTUP_AND_TRANSPORT"
+}

@@ -1,0 +1,272 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/data/meal_estimate_test.dart
+00:00 +0 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/meal_estimate_test.dart [E]
+  TimeoutException after 0:12:00.000000: Test timed out after 12 minutes.
+  package:test_api/src/backend/invoker.dart 338:28  Invoker._handleError.<fn>
+  dart:async/zone.dart 1391:47                      _rootRun
+  dart:async/zone.dart 1301:19                      _CustomZone.run
+  package:test_api/src/backend/invoker.dart 336:10  Invoker._handleError
+  package:test_api/src/backend/invoker.dart 291:9   Invoker.heartbeat.<fn>.<fn>
+  dart:async/zone.dart 1399:13                      _rootRun
+  dart:async/zone.dart 1301:19                      _CustomZone.run
+  package:test_api/src/backend/invoker.dart 290:38  Invoker.heartbeat.<fn>
+  dart:async-patch/timer_patch.dart 18:15           Timer._createTimer.<fn>
+  dart:isolate-patch/timer_impl.dart 398:19         _Timer._runTimers
+  dart:isolate-patch/timer_impl.dart 429:5          _Timer._handleMessage
+  dart:isolate-patch/isolate_patch.dart 184:12      _RawReceivePort._handleMessage
+
+00:00 +0 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart
+00:00 +0 -1: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: (setUpAll)
+00:00 +0 -1: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: schema20→21 adds missing references, preserves custom homonym and history
+00:01 +1 -1: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: first install records identities after combos and does not duplicate
+00:01 +2 -1: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: ZIP→restaurar→reabrir conserva registry IDs y provenance de comida
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:128:16)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:26:89)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:127:15)
+<asynchronous suspension>
+#8      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#9      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#10     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:128:16)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:106:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:148:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart:153:20)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:05 +3 -1: C:/My Projects/seguimiento-122-integracion/test/data/catalog_upgrade_test.dart: (tearDownAll)
+00:05 +3 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/food_basis_regression_test.dart
+00:06 +3 -1: C:/My Projects/seguimiento-122-integracion/test/data/food_basis_regression_test.dart: (setUpAll)
+00:06 +3 -1: C:/My Projects/seguimiento-122-integracion/test/data/food_basis_regression_test.dart: optional remembered250g retains per100 and homonym/combo/snapshot unchanged
+00:07 +4 -1: C:/My Projects/seguimiento-122-integracion/test/data/food_basis_regression_test.dart: (tearDownAll)
+00:07 +4 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/gateway_estimate_interop_test.dart
+00:08 +4 -1: C:/My Projects/seguimiento-122-integracion/test/data/gateway_estimate_interop_test.dart: Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)
+00:08 +5 -1: loading C:/My Projects/seguimiento-122-integracion/test/ui/meal_estimate_flow_test.dart
+00:10 +5 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_estimate_flow_test.dart: (setUpAll)
+00:10 +5 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_estimate_flow_test.dart: estimación de 250 g no permite convertir la unidad a porción o ml
+00:12 +6 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_estimate_flow_test.dart: IA→revisión/exclusión→borrador→Guardar→SQLite; no crea catálogo antes de Guardar
+00:14 +7 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_estimate_flow_test.dart: volver con Recordar elegido no guarda comida ni catálogo
+00:14 +8 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_estimate_flow_test.dart: fallo de red conserva frase y registro manual; cero escrituras
+00:15 +9 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_estimate_flow_test.dart: (tearDownAll)
+00:15 +9 -1: loading C:/My Projects/seguimiento-122-integracion/test/ui/meal_text_screen_test.dart
+00:15 +9 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_text_screen_test.dart: consentimiento ligado a frase y macro local llega solo al borrador
+00:17 +10 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_text_screen_test.dart: no pierde propuesta ambigua ni acepta parcialmente; quitar y resolver son explícitos
+00:17 +11 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_text_screen_test.dart: reanálisis descarta confirmaciones de cantidad de la propuesta anterior
+00:18 +12 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_text_screen_test.dart: editar frase descarta resultado viejo y exige consentimiento nuevo
+00:18 +13 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_text_screen_test.dart: respuesta tardía de status de licencia anterior no habilita ni reemplaza cuota
+00:18 +14 -1: loading C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_edit_test.dart
+00:19 +14 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_edit_test.dart: (setUpAll)
+00:19 +14 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_edit_test.dart: editar una estimación coincidente no enlaza ni verifica catálogo antes de Guardar
+00:21 +15 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_edit_test.dart: (tearDownAll)
+00:21 +15 -1: loading C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart
+00:23 +15 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: (setUpAll)
+00:23 +15 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: entrada libre homónima de un alimento por 100 g: sin "Actualizar" y el combo no cambia
+00:26 +16 -1: C:/My Projects/seguimiento-122-integracion/test/ui/meal_form_free_replace_test.dart: (tearDownAll)
+00:26 +16 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/free_entry_replace_test.dart
+00:27 +16 -1: C:/My Projects/seguimiento-122-integracion/test/data/free_entry_replace_test.dart: (setUpAll)
+00:27 +16 -1: C:/My Projects/seguimiento-122-integracion/test/data/free_entry_replace_test.dart: un alimento por 100 g no se puede actualizar como porción: el combo no cambia
+00:27 +17 -1: C:/My Projects/seguimiento-122-integracion/test/data/free_entry_replace_test.dart: un alimento por unidad tampoco: 1 huevo no pasa a ser 1 porción
+00:27 +18 -1: C:/My Projects/seguimiento-122-integracion/test/data/free_entry_replace_test.dart: una entrada libre por porción sí se actualiza y sus combos siguen en porciones
+00:27 +19 -1: C:/My Projects/seguimiento-122-integracion/test/data/free_entry_replace_test.dart: un combo que ya quedó inflado se marca para revisar; uno normal no
+00:27 +20 -1: C:/My Projects/seguimiento-122-integracion/test/data/free_entry_replace_test.dart: (tearDownAll)
+00:27 +20 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart
+00:28 +20 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: (setUpAll)
+00:28 +20 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: fixture sintética congelada 17 migra a 18 sin reconstruir el esquema
+00:28 +21 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 1 llega al 21 sin perder datos
+00:29 +22 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 2 llega al 21 conservando el catálogo
+00:30 +23 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 7 llega al 21 con guías, catálogo nuevo y rondas sin separar
+00:30 +24 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: del esquema 8 al 9 los recordatorios vuelven a los valores acordados
+00:31 +25 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 6 llega al 21: las sesiones viejas quedan con descanso 0
+00:31 +26 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 9 llega al 21: pasos, golpe en el fútbol y alimentos marcados
+00:32 +27 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 10 llega al 21 con la tabla de fotos de referencia
+00:33 +28 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 11 llega al 21 con la tabla de recordatorios propios
+00:33 +29 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 12 llega al 21: pan y salchichón por gramos
+00:34 +30 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 13 llega al 21: las sesiones quedan revisadas
+00:34 +31 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 14 llega al 21: plan y sesiones listos para el v3
+00:34 +32 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 15 llega al 21: RIR, fútbol, sueño y meta de fútbol
+00:35 +33 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 16 llega al 21: momento del pesaje, mañana y huevos por porción
+00:35 +34 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: una base del esquema 18 llega al 21: historial importado, tests y escaleras
+00:35 +35 -1: C:/My Projects/seguimiento-122-integracion/test/data/migration_test.dart: (tearDownAll)
+00:35 +35 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart
+00:36 +35 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: (setUpAll)
+00:36 +35 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: fixture is genuinely frozen schema18, pinned and independently checked
+00:36 +36 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: 18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI
+00:37 +37 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: negative controls reject changed source, removed citation and lost row
+00:37 +38 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema18_121_migration_test.dart: (tearDownAll)
+00:37 +38 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart
+00:38 +38 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: (setUpAll)
+00:38 +38 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: genuine19 fixture freezes test, ladder, imports and wallclock
+00:38 +39 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: 19 to current normalizes only test clock and preserves original columns through ZIP
+00:39 +40 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: normalizing the clock cannot erase regular training time or ladder dates
+00:39 +41 -1: C:/My Projects/seguimiento-122-integracion/test/data/schema19_121_migration_test.dart: (tearDownAll)
+00:39 +41 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart
+00:40 +41 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: (setUpAll)
+00:40 +41 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:41 +42 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: SQLite legacy sigue restaurando solo los registros y conserva las fotos locales
+00:42 +43 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 21
+00:42 +44 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: el manifiesto declara esquema, bytes y SHA-256 del archivo que viaja
+00:43 +45 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/../flags.json
+00:43 +46 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: ../escape.jpg
+00:44 +47 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: /fotos/absolute.jpg
+00:44 +48 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: C:/fotos/absolute.jpg
+00:44 +49 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a/../../escape.jpg
+00:44 +50 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a\..\escape.jpg
+00:45 +51 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: flags.json
+00:45 +52 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: duplicados exactos y por mayúsculas se rechazan antes de extraer
+00:45 +53 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: una entrada symlink se rechaza sin escribir su destino
+00:46 +54 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: paquete sin manifest.json se rechaza y conserva B
+00:46 +55 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: paquete sin seguimiento.sqlite se rechaza y conserva B
+00:46 +56 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: paquete sin fotos/frente.jpg se rechaza y conserva B
+00:46 +57 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: foto con CRC válido pero SHA-256 distinto se rechaza
+00:47 +58 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: quitar foto y descriptor no oculta la referencia pendiente de la base
+00:47 +59 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: DB incompleta con hashes correctos en ZIP se rechaza sin tocar B
+00:47 +60 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: un esquema futuro y un manifiesto incoherente se rechazan
+00:48 +61 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: archivo ZIP truncado se rechaza sin cambiar B
+00:48 +62 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: tamaños declarados excesivos y DEFLATE con tamaño falso se rechazan
+00:49 +63 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: exportar fotos previamente ausentes declara incompleto; restaurarlo requiere confirmación
+00:49 +64 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: sin fotos todavía exporta y restaura un paquete completo
+00:50 +65 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: fallo al reabrir después de reemplazar fotos revierte DB y todas las fotos de B
+00:50 +66 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=false
+00:50 +67 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=true
+00:50 +68 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_archive_test.dart: (tearDownAll)
+00:50 +68 -1: loading C:/My Projects/seguimiento-122-integracion/test/ui/suspicious_combo_test.dart
+00:51 +68 -1: C:/My Projects/seguimiento-122-integracion/test/ui/suspicious_combo_test.dart: (setUpAll)
+00:51 +68 -1: C:/My Projects/seguimiento-122-integracion/test/ui/suspicious_combo_test.dart: combo con 150 porciones: pregunta y "Registrar igual" lo registra
+00:54 +69 -1: C:/My Projects/seguimiento-122-integracion/test/ui/suspicious_combo_test.dart: (tearDownAll)
+00:54 +69 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart
+00:55 +69 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: (setUpAll)
+00:55 +69 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:58 +70 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+00:59 +71 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+01:00 +72 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13382:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart:174:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _BackupCardState._progress (package:seguimiento/features/settings/settings_screen.dart:194:14)
+<asynchronous suspension>
+#10     _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:216:21)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:02 +73 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+01:03 +74 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_disclosure_test.dart: (tearDownAll)
+01:03 +74 -1: loading C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart
+01:04 +74 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: (setUpAll)
+01:04 +74 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+01:06 +75 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: Ajustes recorre ZIP y confirma restauración
+01:07 +76 -1: C:/My Projects/seguimiento-122-integracion/test/data/backup_settings_test.dart: (tearDownAll)
+01:07 +76 -1: Some tests failed.

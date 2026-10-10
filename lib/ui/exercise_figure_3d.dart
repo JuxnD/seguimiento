@@ -118,7 +118,8 @@ class LimbPose {
       this.depth,
       this.pole,
       this.end3,
-      this.reach3});
+      this.reach3,
+      this.keepReachRadius = false});
 
   factory LimbPose.fromJson(Map<String, Object?> j) {
     final a = j['angles'] as List;
@@ -133,6 +134,7 @@ class LimbPose {
       pole: j['pole'] == null ? null : _vector(j['pole'] as List),
       end3: j['end3'] == null ? null : _vector(j['end3'] as List).unit,
       reach3: j['reach3'] == null ? null : _vector(j['reach3'] as List),
+      keepReachRadius: j['keepReachRadius'] as bool? ?? false,
     );
   }
 
@@ -151,6 +153,9 @@ class LimbPose {
   // Frontal/oblicuo: profundidad del extremo y plano anatómico de flexión.
   final double? depth;
   final V3? pole, end3, reach3;
+
+  /// Reach is relative to the limb root, in body units. Opt-in spherical arc.
+  final bool keepReachRadius;
 }
 
 V3 _vector(List<Object?> values) => V3(_num(values[0]), _num(values[1]), _num(values[2]));
@@ -164,6 +169,7 @@ class KeyPose {
       this.gaze = 0,
       this.bodyZ = 0,
       this.bodyRoll = 0,
+      this.shoulderOffset = Offset.zero,
       this.props,
       required this.limbs});
 
@@ -174,6 +180,7 @@ class KeyPose {
         gaze: _num(j['gaze']),
         bodyZ: _num(j['bodyZ']),
         bodyRoll: _num(j['bodyRoll']),
+        shoulderOffset: j['shoulderOffset'] == null ? Offset.zero : _pt(j['shoulderOffset']),
         props: j['props'] == null ? null : (j['props'] as List).cast<Map<String, Object?>>(),
         limbs: {
           for (final e in (j['limbs'] as Map<String, Object?>).entries)
@@ -189,6 +196,10 @@ class KeyPose {
 
   /// Cabeceo respecto del torso: positivo baja la barbilla.
   final double gaze, bodyZ, bodyRoll;
+
+  /// Scapular anchor relative to neck, in body units (~3.2cm):
+  /// dx toward chest/front, dy along hip→neck. Not world X/Y.
+  final Offset shoulderOffset;
   final List<Map<String, Object?>>? props;
   final Map<String, LimbPose> limbs;
 }
@@ -402,7 +413,8 @@ class Figure3D {
         grips: s.grips,
         limbPoses: s.limbPoses,
         bodyZ: s.bodyZ,
-        bodyRoll: s.bodyRoll);
+        bodyRoll: s.bodyRoll,
+        shoulderOffset: s.shoulderOffset);
   }
 
   /// Nada atraviesa la pared, como nada atraviesa el suelo: si algo la
@@ -501,6 +513,7 @@ class Figure3DCatalog {
           gaze: frame.gaze,
           bodyZ: frame.bodyZ,
           bodyRoll: frame.bodyRoll,
+          shoulderOffset: frame.shoulderOffset,
           props: frame.props,
           limbs: {
             for (final entry in frame.limbs.entries)
@@ -517,6 +530,7 @@ class Figure3DCatalog {
                       pole: entry.value.pole,
                       end3: entry.value.end3,
                       reach3: entry.value.reach3,
+                      keepReachRadius: entry.value.keepReachRadius,
                     )
           },
         )
@@ -598,10 +612,12 @@ class Skeleton2D {
       required this.grips,
       this.limbPoses = const {},
       this.bodyZ = 0,
-      this.bodyRoll = 0});
+      this.bodyRoll = 0,
+      this.shoulderOffset = Offset.zero});
 
   final Map<String, Offset> joints;
   final double torso, gaze, bodyZ, bodyRoll;
+  final Offset shoulderOffset;
 
   /// Ángulo del pie ('nearLeg') o de los dedos ('nearArm'), en grados.
   final Map<String, double> ends;
@@ -641,6 +657,7 @@ class Skeleton2D {
         limbPoses: limbPoses,
         bodyZ: bodyZ,
         bodyRoll: bodyRoll,
+        shoulderOffset: shoulderOffset,
       );
 
   /// Nada bajo el suelo: si algo lo atraviesa, todo sube.
@@ -652,6 +669,7 @@ class Skeleton2D {
 
 Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
   final neck = p.hip + _dir(p.torso) * d.torso;
+  final shoulder = neck + _dir(p.torso + 90) * p.shoulderOffset.dx + _dir(p.torso) * p.shoulderOffset.dy;
   final j = <String, Offset>{'hip': p.hip, 'neck': neck, 'head': neck + _dir(p.torso + p.gaze) * d.headOffset};
   final ends = <String, double>{};
   final grips = <String, String?>{};
@@ -660,7 +678,7 @@ Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
     if (l == null) continue;
     final leg = name.endsWith('Leg');
     final side = name.startsWith('near') ? 'near' : 'far';
-    final root = leg ? p.hip : neck;
+    final root = leg ? p.hip : shoulder;
     final a = leg ? d.thigh : d.upperArm, b = leg ? d.shin : d.forearm;
     final Offset mid, end;
     if (l.reach3 case final reach?) {
@@ -703,7 +721,8 @@ Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
       grips: grips,
       limbPoses: p.limbs,
       bodyZ: p.bodyZ,
-      bodyRoll: p.bodyRoll);
+      bodyRoll: p.bodyRoll,
+      shoulderOffset: p.shoulderOffset);
 }
 
 /// Momento intermedio entre dos clave. Se interpolan ángulos (los segmentos
@@ -719,6 +738,18 @@ KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t) {
     hip = pv + _dir(ang) * _lerp(da.distance, db.distance, t);
   } else {
     hip = Offset.lerp(a.hip, b.hip, t)!;
+  }
+  final torso = lerpAngle(a.torso, b.torso, t);
+  var shoulderOffset = Offset.zero;
+  if (a.shoulderOffset != Offset.zero || b.shoulderOffset != Offset.zero) {
+    Offset anchor(KeyPose pose) =>
+        pose.hip +
+        _dir(pose.torso) * fig.dims.torso +
+        _dir(pose.torso + 90) * pose.shoulderOffset.dx +
+        _dir(pose.torso) * pose.shoulderOffset.dy;
+    final delta = Offset.lerp(anchor(a), anchor(b), t)! - (hip + _dir(torso) * fig.dims.torso);
+    final front = _dir(torso + 90), up = _dir(torso);
+    shoulderOffset = Offset(delta.dx * front.dx + delta.dy * front.dy, delta.dx * up.dx + delta.dy * up.dy);
   }
   final limbs = <String, LimbPose>{};
   for (final name in limbNames) {
@@ -748,23 +779,61 @@ KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t) {
           : lb.end3 == null
               ? la.end3
               : V3.lerp(la.end3!, lb.end3!, t).unit,
-      reach3: la.reach3 == null
-          ? lb.reach3
-          : lb.reach3 == null
-              ? la.reach3
-              : V3.lerp(la.reach3!, lb.reach3!, t),
+      reach3: _interpolateReach(la, lb, t),
+      keepReachRadius: la.keepReachRadius || lb.keepReachRadius,
     );
   }
   return KeyPose(
     caption: t < 0.5 ? a.caption : b.caption,
     hip: hip,
-    torso: lerpAngle(a.torso, b.torso, t),
+    torso: torso,
     gaze: _lerp(a.gaze, b.gaze, t),
     bodyZ: _lerp(a.bodyZ, b.bodyZ, t),
     bodyRoll: lerpAngle(a.bodyRoll, b.bodyRoll, t),
+    shoulderOffset: shoulderOffset,
     props: t < .5 ? a.props : b.props,
     limbs: limbs,
   );
+}
+
+/// Preserve the legacy chord unless both poses explicitly request an arc.
+V3? _interpolateReach(LimbPose a, LimbPose b, double t) {
+  if (!a.keepReachRadius && !b.keepReachRadius) {
+    return a.reach3 == null
+        ? b.reach3
+        : b.reach3 == null
+            ? a.reach3
+            : V3.lerp(a.reach3!, b.reach3!, t);
+  }
+  if (!a.keepReachRadius || !b.keepReachRadius || a.reach3 == null || b.reach3 == null) {
+    throw const FormatException('keepReachRadius requires reach3 on both adjacent poses');
+  }
+  final va = a.reach3!, vb = b.reach3!;
+  final ra = va.length, rb = vb.length;
+  if (!ra.isFinite || !rb.isFinite || ra < 1e-9 || rb < 1e-9) {
+    throw const FormatException('keepReachRadius requires finite nonzero radii');
+  }
+  final ua = va.unit, ub = vb.unit;
+  final dot = ua.dot(ub).clamp(-1.0, 1.0);
+  V3 direction;
+  if (dot < -.999999) {
+    // Opposite endpoints do not define a plane: a perpendicular pole is required.
+    final endpointPlane = ub - ua * dot;
+    final pole = a.pole;
+    final normal = endpointPlane.length > 1e-8
+        ? endpointPlane
+        : pole == null
+            ? V3.zero
+            : pole - ua * pole.dot(ua);
+    if (!normal.length.isFinite || normal.length < 1e-9) {
+      throw const FormatException('antipodal reach3 requires a perpendicular pole');
+    }
+    final angle = math.acos(dot);
+    direction = ua * math.cos(angle * t) + normal.unit * math.sin(angle * t);
+  } else {
+    direction = V3.lerp(ua, ub, t).unit;
+  }
+  return direction * _lerp(ra, rb, t);
 }
 
 // ---------------------------------------------------------------------------
@@ -843,7 +912,9 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
   final endDir = <String, V3>{};
   for (final (side, sz) in const [('near', 1.0), ('far', -1.0)]) {
     final hip = V3.lift(j['hip']!, s.bodyZ + sz * BodyDims.hipHalf);
-    final sh = V3.lift(j['neck']!, s.bodyZ + sz * BodyDims.shoulderHalf);
+    final sh = V3.lift(j['neck']!, s.bodyZ + sz * BodyDims.shoulderHalf) +
+        front * s.shoulderOffset.dx +
+        up * s.shoulderOffset.dy;
     p['${side}Hip'] = hip;
     p['${side}Shoulder'] = sh;
     final leg = '${side}Leg', arm = '${side}Arm';

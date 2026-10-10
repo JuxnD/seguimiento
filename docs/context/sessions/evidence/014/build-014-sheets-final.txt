@@ -1,0 +1,3 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_mockup_render_test.dart
+00:00 +0: hoja legible en teléfono con texto grande
+00:17 +1: All tests passed!

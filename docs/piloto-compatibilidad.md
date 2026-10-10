@@ -1,7 +1,8 @@
 # Matriz para el spike Android/tienda
 
-Verificación de fuente y SDK local: 9-oct-2026, base d2d3070. No se cambiaron
-SDK, dependencias, Android, firma ni workflow. Esta matriz no es un recibo nativo.
+Matriz original de fuente/SDK:9-oct-2026, based2d3070. El slice016 (10oct,
+basec04b2a9) actualiza sólo la política y recursos Android descritos debajo;
+no cambia SDK, dependencias, firma ni workflow. No es un recibo nativo.
 
 | Elemento | Fuente actual comprobada | Próximo gate |
 |---|---|---|
@@ -16,7 +17,7 @@ SDK, dependencias, Android, firma ni workflow. Esta matriz no es un recibo nativ
 | Gráficas / metadata | lock fl_chart0.69.2 / package_info_plus8.3.1 | Radar nuevo bajo SDK del spike y metadata APK nativa |
 | Guion / wakelock | Sesión congelada local; lock wakelock_plus1.3.0 | Pausa→upgrade→reanudar→force-stop→reabrir, mismos índice/dosis |
 | Firma / licencia | Misma identidad histórica, sin rotación. Activación Android Keystore en noBackupFilesDir | Apksigner, instalación -r y activación no incluida en ZIP/transferencia |
-| Android backup | No política propia fullBackup/dataExtraction en Manifest fuente | ADR de política, Manifest fusionado y prueba nativa. Cloud concreta NO_VERIFICADA |
+| Android backup | Candidata016: allowBackupfalse y reglas legacy/31+ excluyen cloud/D2D; ZIP/local conservados. [ADR0018](adr/0018-arranque-y-respaldo-android.md) | Verificar Manifest fusionado y transporte del APK exacto en QA. Configuración fuente no prueba teléfono/OEM ni elimina copias previas |
 | Fuente→APK→upgrade | Herramientas 012 comparan artifacts/metadata | Recibo nuevo para candidato integrado; integración al pipeline pendiente |
 
 La fuente oficial de Google Play consultada hoy exige target36(Android16) para

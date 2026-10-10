@@ -1,0 +1,7 @@
+00:00 +0: loading C:/My Projects/seguimiento-014-calentamiento/test/ui/illustration_warmup_rig_test.dart
+00:00 +0: torso sube sin mover manos ni doblar codos en los 61 puntos del recorrido
+00:00 +1: mutante sin desplazamiento escapular pierde contacto: el oráculo detecta el fallo
+00:00 +2: radio declarado conserva arco de pierna; el default mantiene la cuerda antigua
+00:00 +3: radio opt-in maneja antipodales por plano explícito y rechaza degeneración
+00:00 +4: omitir radio en artefacto generado reproduce pie fuera de rango entre claves
+00:00 +5: All tests passed!

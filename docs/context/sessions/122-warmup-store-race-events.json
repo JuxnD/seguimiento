@@ -1,0 +1,232 @@
+[
+  {
+    "event": "instance=146788095 file=C:\\Users\\Acer\\AppData\\Local\\Temp\\seguimiento_guiado490cfe8a/sesion.json"
+  },
+  {
+    "event": "save#1",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#2",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#3",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "before old 20x10ms flush instance=146788095 pending=[1, 2, 3]"
+  },
+  {
+    "event": "save#1 completed instance=146788095 pending=[2, 3]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#2 completed instance=146788095 pending=[3]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#3 completed instance=146788095 pending=[]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "after old 20x10ms flush instance=146788095 pending=[]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "captured-for-original-assertion",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "diagnostic after 0ms target=3 instance=146788095 pending=[]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#4",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "trabajo",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#5",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "enfriamiento",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#6",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "terminado",
+      "warmupDone": [
+        "movilidad:Círculos de hombros",
+        "aproximacion:Flexiones"
+      ],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "instance=345568246 file=C:\\Users\\Acer\\AppData\\Local\\Temp\\seguimiento_guiadoedb4f2fd/sesion.json"
+  },
+  {
+    "event": "save#1",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#2",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "trabajo",
+      "warmupDone": [],
+      "warmupSkipped": true
+    }
+  },
+  {
+    "event": "before old 20x10ms flush instance=345568246 pending=[1, 2]"
+  },
+  {
+    "event": "save#1 completed instance=345568246 pending=[2]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "calentamiento",
+      "warmupDone": [],
+      "warmupSkipped": false
+    }
+  },
+  {
+    "event": "save#2 completed instance=345568246 pending=[]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "trabajo",
+      "warmupDone": [],
+      "warmupSkipped": true
+    }
+  },
+  {
+    "event": "after old 20x10ms flush instance=345568246 pending=[]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "trabajo",
+      "warmupDone": [],
+      "warmupSkipped": true
+    }
+  },
+  {
+    "event": "captured-for-original-assertion",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "trabajo",
+      "warmupDone": [],
+      "warmupSkipped": true
+    }
+  },
+  {
+    "event": "diagnostic after 0ms target=2 instance=345568246 pending=[]",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "trabajo",
+      "warmupDone": [],
+      "warmupSkipped": true
+    }
+  },
+  {
+    "event": "save#3",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "enfriamiento",
+      "warmupDone": [],
+      "warmupSkipped": true
+    }
+  },
+  {
+    "event": "save#4",
+    "snapshot": {
+      "date": "2026-09-24",
+      "phase": "terminado",
+      "warmupDone": [],
+      "warmupSkipped": true
+    }
+  }
+]

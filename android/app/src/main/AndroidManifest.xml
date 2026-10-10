@@ -20,7 +20,12 @@
     <application
         android:label="Seguimiento"
         android:name="${applicationName}"
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher">
+        <!-- Cloud/D2D exclusions explicit: allowBackup alone is insufficient on
+             some Android12+ transports. Manual ZIP/local backups are separate. -->
         <!-- Una sola tarea para la app (§16.13): singleTask y la afinidad por
              defecto (sin taskAffinity="") hacen que el launcher, un aviso o el
              "Abrir" del instalador reutilicen la misma tarea en vez de dejar
