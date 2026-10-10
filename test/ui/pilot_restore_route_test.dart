@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show Value;
@@ -178,7 +179,27 @@ void main() {
         expect(done(), isTrue, reason: 'frontera no completada: $what');
       }
 
-      Future<T> io<T>(Future<T> Function() f) async => (await tester.runAsync(f)) as T;
+      // Las consultas ya iniciadas por los widgets también necesitan avanzar
+      // en FakeAsync. No esperar SQL dentro de runAsync sin bombear la app.
+      Future<T> io<T>(Future<T> Function() f) async {
+        var completed = false;
+        T? value;
+        Object? error;
+        StackTrace? stack;
+        await tester.runAsync(() async {
+          unawaited(Future<T>.sync(f).then<void>((result) {
+            value = result;
+            completed = true;
+          }, onError: (Object e, StackTrace s) {
+            error = e;
+            stack = s;
+            completed = true;
+          }));
+        });
+        await waitFor(() => completed, 'operación SQL real completada');
+        if (error != null) Error.throwWithStackTrace(error!, stack!);
+        return value as T;
+      }
 
       try {
         await tester.pumpWidget(ProviderScope(overrides: [
@@ -283,12 +304,23 @@ void main() {
         await tester.pumpWidget(const SizedBox());
         await tester.pump(const Duration(seconds: 1));
         var closed = false;
-        final closing = host.db.close().then((_) => closed = true);
+        Object? closeError;
+        StackTrace? closeStack;
+        await tester.runAsync(() async {
+          unawaited(Future<void>.sync(host.db.close).then<void>((_) {
+            closed = true;
+          }, onError: (Object e, StackTrace s) {
+            closeError = e;
+            closeStack = s;
+            closed = true;
+          }));
+        });
         while (!closed && deadline.elapsed < const Duration(seconds: 25)) {
           await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
           await tester.pump(const Duration(milliseconds: 10));
         }
-        await closing;
+        expect(closed, isTrue, reason: 'cierre real de SQLite no completado dentro de 25 s');
+        if (closeError != null) Error.throwWithStackTrace(closeError!, closeStack!);
         tester.view.reset();
         await tester.runAsync(() async {
           try {

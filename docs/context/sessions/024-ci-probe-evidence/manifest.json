@@ -56,6 +56,59 @@
       "rawBytes": 15338,
       "gzip": "instrumented-test.dart.gz",
       "gzipSha256": "5a8dfcaffb59e92e428310c6d6d86cd6f6af06f4edb99a7a1b89cf2bce713473"
+    },
+    "five-after-fix.log": {
+      "rawSha256": "0f1126a61fd8f7f8b223a025f12637e60d11049218f36a7fe9f79e6e2dec0eba",
+      "rawBytes": 13660,
+      "gzip": "five-after-fix.log.gz",
+      "gzipSha256": "3f25eeeb52e70ee959ff6ff27c04161da60ae088e504f76fdb5a7deeb3600d47"
+    },
+    "five-after-fix-result.json": {
+      "rawSha256": "c3620ab01c84f3e124fc9bfad10458c438f022f0c0b632ffd410786f2197b27a",
+      "rawBytes": 440,
+      "gzip": "five-after-fix-result.json.gz",
+      "gzipSha256": "462e7c5b56b940c6cd7626433675021d43062153bf499e1ae23c2118cfe8a6cc"
+    },
+    "fix-analyze.log": {
+      "rawSha256": "833e16df7d2e47fa9462dfd2eaf573731e7a17476353b4177750f3a3da68867c",
+      "rawBytes": 1029,
+      "gzip": "fix-analyze.log.gz",
+      "gzipSha256": "55c3ee87d49488519bbbb6e205a316742743c97ef91bc81dbb56041759ef49bc"
+    },
+    "fix-analyze-final.log": {
+      "rawSha256": "1e7c040b6a4c5834b8adae34985a4f391dacbeac918fa050e774cf83de8f9f37",
+      "rawBytes": 98,
+      "gzip": "fix-analyze-final.log.gz",
+      "gzipSha256": "9cc9ea610b8e455358c5bb3912e07620c539edeb81399ef2931beb6a5a2a6534"
     }
+  },
+  "fix": {
+    "scope": "test-only IO helper and bounded observed close",
+    "testSha256": "22017eee22974d9ae4dd3f1315eb63aab148a79eb8040ce23e440d9170d7f61c",
+    "testResult": {
+      "exit": 0,
+      "watchdog": "NOT_TRIGGERED",
+      "seconds": 30.137836999987485,
+      "pid": 40500,
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "C:/seguimiento-sdk-3.22.0/flutter/bin/flutter.bat",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter",
+        "expanded",
+        "test/ui/pilot_restore_route_test.dart"
+      ],
+      "testSha256": "22017eee22974d9ae4dd3f1315eb63aab148a79eb8040ce23e440d9170d7f61c"
+    },
+    "existingCasesPassed": 5,
+    "assertionDeadlineSeconds": 20,
+    "existingCloseDeadlineSeconds": 25,
+    "analyzeInitial": "1: partial diagnostic source artifacts under build; not real harness",
+    "analyzeFinal": 0,
+    "diagnosticCopiesPackaging": "original/instrumented .dart renamed to .dart.txt; bytes and gzip preserved; no analyzer exclusions"
   }
 }
