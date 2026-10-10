@@ -23,7 +23,7 @@ void main() {
     DateTime? since,
     LoadReading load = calm,
     bool fatigue = false,
-    bool recoveryKnown = true,
+    RecoverySignal recovery = RecoverySignal.favorable,
     ProposalRecord? last,
   }) =>
       stepsReading(
@@ -34,7 +34,7 @@ void main() {
         stepsGoalOn: (_) => goal,
         load: load,
         fatigue: fatigue,
-        recoveryKnown: recoveryKnown,
+        recovery: recovery,
         last: last,
       );
 
@@ -117,9 +117,12 @@ void main() {
     });
 
     test('sin ninguna señal de recuperación conocida no se propone subir', () {
-      final r = read(today, weekdays(today, (i) => 6400 + i * 20), recoveryKnown: false);
+      final r = read(today, weekdays(today, (i) => 6400 + i * 20), recovery: RecoverySignal.desconocida);
       expect((r.state, r.proposal), (CoachState.faltanDatos, null));
       expect(r.reason, contains('falta saber cómo te recuperas'));
+      final bad = read(today, weekdays(today, (i) => 6400 + i * 20), recovery: RecoverySignal.desfavorable);
+      expect((bad.state, bad.proposal), (CoachState.observar, null));
+      expect(bad.reason, contains('no te recuperaste bien'));
     });
 
     test('carga alta hoy (90 min a RPE 8) o dos sesiones hoy frenan la propuesta ese día', () {

@@ -71,22 +71,35 @@ class GoalRepository {
     final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingleOrNull();
     if (profile == null) return;
     final current = goalsOfProfile(profile);
-    int? due(GoalMetric m) {
-      final v = h.current(m, today)?.value;
-      return v == null || current[m] == v ? null : v.round();
+    // Value.absent = no cambia. Para kcal de fútbol, una vigencia con null
+    // ("la misma de entre semana") se proyecta como null.
+    Value<int> req(GoalMetric m) {
+      final v = h.current(m, today);
+      if (v?.value == null || current[m] == v!.value) return const Value.absent();
+      return Value(v.value!.round());
     }
 
-    final steps = due(GoalMetric.pasos);
-    final pMin = due(GoalMetric.proteinaMin);
-    final pMax = due(GoalMetric.proteinaMax);
-    final kcal = due(GoalMetric.kcal);
-    if (steps == null && pMin == null && pMax == null && kcal == null) return;
-    await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(ProfilesCompanion(
-      stepsTarget: steps == null ? const Value.absent() : Value(steps),
-      proteinMin: pMin == null ? const Value.absent() : Value(pMin),
-      proteinMax: pMax == null ? const Value.absent() : Value(pMax),
-      kcalTarget: kcal == null ? const Value.absent() : Value(kcal),
-    ));
+    Value<int?> football() {
+      final v = h.current(GoalMetric.kcalFutbol, today);
+      if (v == null || current[GoalMetric.kcalFutbol] == v.value) return const Value.absent();
+      return Value(v.value?.round());
+    }
+
+    final change = ProfilesCompanion(
+      stepsTarget: req(GoalMetric.pasos),
+      proteinMin: req(GoalMetric.proteinaMin),
+      proteinMax: req(GoalMetric.proteinaMax),
+      kcalTarget: req(GoalMetric.kcal),
+      kcalTargetFootball: football(),
+    );
+    if (!change.stepsTarget.present &&
+        !change.proteinMin.present &&
+        !change.proteinMax.present &&
+        !change.kcalTarget.present &&
+        !change.kcalTargetFootball.present) {
+      return;
+    }
+    await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(change);
   }
 
   /// Programa una meta con su vigencia sin tocar el perfil.
@@ -105,6 +118,10 @@ class GoalRepository {
   /// vigencia, sin proyección al perfil. null = sin referencia.
   Future<void> setReference(GoalMetric metric, double? value, {DateTime? effectiveFrom, DateTime? now}) {
     if (!metric.reference) throw ArgumentError.value(metric, 'metric', 'no es una referencia del radar');
+    // 0, negativos o NaN no permiten normalizar el radar (revisión de Codex).
+    if (value != null && (!value.isFinite || value <= 0)) {
+      throw ArgumentError.value(value, 'value', 'una referencia es null o una cifra finita mayor que 0');
+    }
     final today = dateOnly(now ?? DateTime.now());
     return scheduleGoal(metric, value,
         effectiveFrom: effectiveFrom ?? today, origin: GoalOrigin.perfil, reason: 'Referencia aceptada', now: today);
@@ -119,6 +136,11 @@ class GoalRepository {
   }) =>
       db.transaction(() async {
         final today = dateOnly(now ?? DateTime.now());
+        // El perfil es lo que rige hoy: una vigencia futura va por
+        // `scheduleGoal`, nunca escribiendo el perfil antes de tiempo.
+        if (effectiveFrom != null && dateOnly(effectiveFrom).isAfter(today)) {
+          throw ArgumentError.value(effectiveFrom, 'effectiveFrom', 'futura: usar scheduleGoal');
+        }
         final before = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
         await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(data);
         final after = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();

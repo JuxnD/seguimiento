@@ -162,5 +162,46 @@ void main() {
     dips = (await dashboard.today(now: d(10, 20))).strength.firstWhere((a) => a.exercise == 'Fondos en barra');
     expect(dips.status, StrengthStatus.subir, reason: 'misma sesión sin el fallo: la regla existente sube');
   });
+
+  group('recuperación declarada (contrafactuales)', () {
+    Future<void> today20(bool? recoveryOk, {String? mode, bool imported = false}) =>
+        TrainingRepository(db, ExerciseRepository(db)).save(SessionDraft(
+          date: today,
+          type: SessionType.progresion,
+          totalSec: 1200,
+          roundsDone: 6,
+          rpe: 7,
+          recoveryOk: recoveryOk,
+          mode: mode,
+          imported: imported,
+        ));
+
+    test('recoveryOk=false con RPE 7 bloquea la propuesta', () async {
+      await fill((i) => 6400 + i * 20, rested: false);
+      await today20(false);
+      final r = await coach.stepsReading(today);
+      expect((r.state, r.proposal), (CoachState.observar, null));
+      expect(r.reason, contains('no te recuperaste bien'));
+    });
+
+    test('todo null con RPE 7 no demuestra buena recuperación', () async {
+      await fill((i) => 6400 + i * 20, rested: false);
+      await today20(null);
+      expect((await coach.stepsReading(today)).state, CoachState.faltanDatos);
+    });
+
+    test('recoveryOk=true permite proponer si cobertura y carga son favorables', () async {
+      await fill((i) => 6400 + i * 20, rested: false);
+      await today20(true);
+      expect((await coach.stepsReading(today)).state, CoachState.propuesta);
+    });
+
+    test('test e importado no cuentan como señal de recuperación', () async {
+      await fill((i) => 6400 + i * 20, rested: false);
+      await today20(true, mode: 'test');
+      await today20(true, imported: true);
+      expect(await coach.recovery(today), RecoverySignal.desconocida);
+    });
+  });
 }
 

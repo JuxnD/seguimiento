@@ -115,4 +115,35 @@ void main() {
     expect((r.status, r.reviewAfter), (ProposalStatus.rechazada, null));
     expect((await ProfileRepository(db).get()).stepsTarget, 5000, reason: 'rechazar no toca la meta');
   });
+
+  test('kcal de fútbol: una vigencia futura se proyecta al llegar, también de vuelta a null', () async {
+    await goals.scheduleGoal(GoalMetric.kcalFutbol, 2500, effectiveFrom: d(11, 3), origin: GoalOrigin.perfil, now: d(11, 2));
+    await goals.projectDueGoals(d(11, 2));
+    final before = (await ProfileRepository(db).get()).kcalTargetFootball;
+    await goals.projectDueGoals(d(11, 3));
+    expect((await ProfileRepository(db).get()).kcalTargetFootball, 2500);
+    expect(before, isNot(2500), reason: 'no antes de tiempo');
+    await goals.scheduleGoal(GoalMetric.kcalFutbol, null, effectiveFrom: d(11, 10), origin: GoalOrigin.perfil, now: d(11, 9));
+    await goals.projectDueGoals(d(11, 10));
+    expect((await ProfileRepository(db).get()).kcalTargetFootball, isNull, reason: 'null = la misma de entre semana');
+  });
+
+  test('updateProfile no acepta una vigencia futura: para eso está scheduleGoal', () async {
+    final before = await ProfileRepository(db).get();
+    await expectLater(
+      goals.updateProfile(const ProfilesCompanion(stepsTarget: Value(6000)),
+          origin: GoalOrigin.perfil, effectiveFrom: d(11, 3), now: d(11, 2)),
+      throwsArgumentError,
+    );
+    expect(await ProfileRepository(db).get(), before, reason: 'la transacción no deja nada escrito');
+  });
+
+  test('referencia del radar: null o cifra finita mayor que 0', () async {
+    for (final bad in [0.0, -3.0, double.nan, double.infinity]) {
+      expect(() => goals.setReference(GoalMetric.refHollow, bad), throwsArgumentError, reason: '$bad');
+    }
+    await goals.setReference(GoalMetric.refHollow, 45);
+    await goals.setReference(GoalMetric.refHollow, null);
+  });
 }
+

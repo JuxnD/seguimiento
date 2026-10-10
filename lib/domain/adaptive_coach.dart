@@ -108,6 +108,12 @@ class CoachReading {
   bool get recoveryFirst => state == CoachState.recuperacion;
 }
 
+/// Lo que se sabe de la recuperación de los últimos 3 días, sólo por lo que
+/// la persona declaró: al despertar (1–2 bien, 3 cansado) o "recuperación
+/// normal" al cerrar una sesión (`recoveryOk`). La intensidad moderada, el
+/// tiempo o las notas no cuentan como respuesta (revisión de Codex).
+enum RecoverySignal { favorable, desconocida, desfavorable }
+
 /// Señales de fatiga declaradas: RPE ≥ 9 hoy o ayer, o "cansado" al
 /// despertar. Sin respuesta no es recuperación ni fatiga.
 bool declaredFatigue({required List<int?> rpeTodayAndYesterday, int? morningFeeling}) =>
@@ -136,7 +142,7 @@ CoachReading stepsReading({
   required int? Function(DateTime day) stepsGoalOn,
   required LoadReading load,
   required bool fatigue,
-  bool recoveryKnown = false,
+  RecoverySignal recovery = RecoverySignal.desconocida,
   ProposalRecord? last,
 }) {
   final d0 = dateOnly(today);
@@ -209,12 +215,21 @@ CoachReading stepsReading({
         nextReview: addDays(d0, 1),
       );
     }
-    if (!recoveryKnown) {
+    if (recovery == RecoverySignal.desfavorable) {
+      return CoachReading(
+        evaluatedOn: d0,
+        state: CoachState.observar,
+        reason: 'Vas para subir la meta, pero declaraste que no te recuperaste bien: la revisión espera.',
+        evidence: [...evidence, 'recuperación declarada no normal en 3 días'],
+        nextReview: addDays(d0, 1),
+      );
+    }
+    if (recovery == RecoverySignal.desconocida) {
       return CoachReading(
         evaluatedOn: d0,
         state: CoachState.faltanDatos,
         reason: 'Vas para subir la meta, pero falta saber cómo te recuperas: responde "¿Cómo amaneciste?" '
-            'o anota el RPE de tus sesiones.',
+            'o marca si te recuperaste al cerrar una sesión.',
         evidence: [...evidence, 'sin señales de recuperación en 3 días'],
         action: 'Registro de la mañana: cómo amaneciste.',
         nextReview: addDays(d0, 1),
