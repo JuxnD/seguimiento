@@ -5,7 +5,9 @@ import '../../app/providers.dart';
 import '../../domain/dates.dart';
 import '../../domain/format.dart';
 import '../../domain/recovery.dart';
+import '../../domain/sleep_entry.dart';
 import '../../ui/widgets.dart';
+import 'sleep_hours_dialog.dart';
 
 /// Registro de la mañana (§16.15, §19.6) en una sola pantalla: peso en
 /// ayunas, pulso en reposo al despertar, horas en cama y molestias por zona.
@@ -27,7 +29,6 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   final _sore = <String, int>{};
   bool _loading = true;
 
-  static const _sleepOptions = [6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0];
 
   @override
   void initState() {
@@ -124,12 +125,21 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                       spacing: 6,
                       runSpacing: 4,
                       children: [
-                        for (final h in _sleepOptions)
+                        for (final h in sleepOptions)
                           ChoiceChip(
                             label: Text(fmtDec(h)),
                             selected: _sleep == h,
                             onSelected: (_) => setState(() => _sleep = _sleep == h ? null : h),
                           ),
+                        // Lo que no es un botón (10 h 11 min) se escribe y se ve aquí.
+                        ChoiceChip(
+                          label: Text(_sleep != null && !isSleepOption(_sleep) ? 'Otro: ${formatSleepHours(_sleep!)}' : 'Otro'),
+                          selected: _sleep != null && !isSleepOption(_sleep),
+                          onSelected: (_) async {
+                            final hours = await askSleepHours(context, initial: isSleepOption(_sleep) ? null : _sleep);
+                            if (hours != null && mounted) setState(() => _sleep = hours);
+                          },
+                        ),
                       ],
                     ),
                   ],

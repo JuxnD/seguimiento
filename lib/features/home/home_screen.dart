@@ -19,6 +19,7 @@ import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../plan/v3_activation.dart';
 import '../../domain/progress.dart';
+import '../../domain/sleep_entry.dart';
 import '../../domain/mobility.dart' show legRecovery;
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
@@ -28,6 +29,7 @@ import '../body/ladders_screen.dart';
 import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
 import 'morning_check_screen.dart';
+import 'sleep_hours_dialog.dart';
 import 'steps_source_line.dart';
 import 'walk_screen.dart';
 import '../report/summary_screen.dart';
@@ -825,8 +827,6 @@ class _SleepLine extends ConsumerWidget {
 
   final DateTime date;
 
-  static const _options = [6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0];
-
   Future<void> _set(WidgetRef ref, double hours) => ref.read(sleepRepositoryProvider).set(date, hours);
 
   @override
@@ -844,7 +844,7 @@ class _SleepLine extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                    'Anoche: ${fmtDec(hours)} h en cama${hours >= sleepGoalHours ? '' : ' · meta ${fmtInt(sleepGoalHours)} h'}',
+                    'Anoche: ${isSleepOption(hours) ? '${fmtDec(hours)} h' : formatSleepHours(hours)} en cama${hours >= sleepGoalHours ? '' : ' · meta ${fmtInt(sleepGoalHours)} h'}',
                     style: text.bodyMedium),
               ),
             ],
@@ -868,7 +868,14 @@ class _SleepLine extends ConsumerWidget {
             spacing: 6,
             runSpacing: 4,
             children: [
-              for (final h in _options) ActionChip(label: Text(fmtDec(h)), onPressed: () => _set(ref, h)),
+              for (final h in sleepOptions) ActionChip(label: Text(fmtDec(h)), onPressed: () => _set(ref, h)),
+              ActionChip(
+                label: const Text('Otro'),
+                onPressed: () async {
+                  final hours = await askSleepHours(context);
+                  if (hours != null) await _set(ref, hours);
+                },
+              ),
             ],
           ),
         ],
