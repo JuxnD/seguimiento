@@ -1,0 +1,19 @@
+ERROR missing heading '# Project context' in C:\My Projects\seguimiento-012-piloto\docs\context\INDEX.md
+ERROR missing heading '## Read this first' in C:\My Projects\seguimiento-012-piloto\docs\context\INDEX.md
+ERROR missing heading '## Context map' in C:\My Projects\seguimiento-012-piloto\docs\context\INDEX.md
+ERROR missing heading '## Freshness' in C:\My Projects\seguimiento-012-piloto\docs\context\INDEX.md
+ERROR missing context file: C:\My Projects\seguimiento-012-piloto\docs\context\PRODUCT.md
+ERROR missing context file: C:\My Projects\seguimiento-012-piloto\docs\context\REFERENCES.md
+ERROR missing context file: C:\My Projects\seguimiento-012-piloto\docs\context\DOMAIN.md
+ERROR missing context file: C:\My Projects\seguimiento-012-piloto\docs\context\ARCHITECTURE.md
+ERROR missing context file: C:\My Projects\seguimiento-012-piloto\docs\context\OPERATIONS.md
+ERROR missing context file: C:\My Projects\seguimiento-012-piloto\docs\context\DELIVERY.md
+ERROR missing context file: C:\My Projects\seguimiento-012-piloto\docs\context\EVIDENCE.md
+ERROR INDEX.md does not route to PRODUCT.md
+ERROR INDEX.md does not route to REFERENCES.md
+ERROR INDEX.md does not route to DOMAIN.md
+ERROR INDEX.md does not route to ARCHITECTURE.md
+ERROR INDEX.md does not route to OPERATIONS.md
+ERROR INDEX.md does not route to DELIVERY.md
+ERROR INDEX.md does not route to EVIDENCE.md
+CONTEXT_LIBRARY_SUMMARY files=9 errors=18

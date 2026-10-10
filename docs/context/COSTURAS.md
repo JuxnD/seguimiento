@@ -69,3 +69,59 @@ Comprensión humana/publicación pendientes. Recibo: [sesión](sessions/2026-10-
 Las pruebas y recapturas prueban las fronteras enumeradas. No afirman que todo
 el entrenamiento sea seguro, que el owner lo comprenda o que las metas ya se
 adapten longitudinalmente; esto último queda enPlan007.
+
+## Plan008 local: evidencia de progreso (9oct)
+
+Entorno autorizado: SQLite en memoria y flutter_test, fuente aislada en
+`seguimiento-008-evidencia`. [Contrato](progress-evidence.md),
+[recibo](sessions/2026-10-09-008-evidencia.md).
+
+| Cruce enumerado | Estado y evidencia |
+|---|---|
+| Marcas acumuladas → SQLite → DTO → consumidor del cierre | Cubierto local:60/125/195→60/65/70→media65; work/lap separados y protocolo distinto/unknown no compara |
+| Serie manual con split/fallo → SQLite → DTO → guía siguiente | Cubierto local:12+3/fallo no muestra+kg; mutante de pérdida de flags en la proyección produce rojo en esa UI |
+| Tests parciales/dudosos → SQLite → tabla/dosis | Cubierto local:T3 parcial visible conservaT2 limpio; dudoso observado no aumenta dosis; unknown/futuro/inválido no aptos |
+| Fecha prevista vs real → pantalla → SQLite → reentrada | Cubierto local:nuevo usa9oct pese previsto11dic; edición homogénea conserva9oct. [Revisión2](sessions/2026-10-09-008-fecha-parte.md): todas las filas de la parte; fechas mixtas/inválidas/futuras bloqueanGuardar hasta confirmar, sin escrituras al abrir/picker/cancelar |
+| Fuente integrada con Claude → APK → uso del owner | Declarado: repetir gates sobre candidato integrado y APK; no observado por este worktree |
+
+Cuatro cruces locales cubiertos y uno declarado en este alcance. El denominador
+es este inventario, no todo el producto. No hereda QA de APK anteriores.
+
+En [integración122](sessions/2026-10-09-integracion-122-base-evidencia.md),
+la costura serie→SQLite→DTO→guía conserva también mode real. Técnica no permite
+subida ni se mezcla con normal; normal/normal mantiene consejo y observación.
+Rojo del automerge y verde del ajuste cruzan la pantalla y la base reales.
+
+## Preparación012: privacidad y gate futuro
+
+Esta fila no hereda QA nativa de otro APK. Fuente base d2d3070 en worktree012;
+detalle/evidencia: [recibo de sesión](sessions/2026-10-09-012-preparacion-piloto.md).
+
+| Cruce | Cobertura / límite |
+|---|---|
+| Exportar → revisión de inventario → crear/compartir | Widget en ruta Ajustes exige confirmación; cancelar no llama host/plugins. Incluye IA/archivo sin cifrar; formatoZIP y guards existentes conservados. Compartir en Android nuevo PENDIENTE |
+| Copia automática → preparar → confirmación de restore | Archivo SQLite ficticio real llega a confirmación que declara reemplazoIA y conservación de sesión/permisos/licencia. Rechazos/restore del formato probados en suite backup existente; APK nuevo PENDIENTE |
+| Borrar conversación → DB actual → copias previas | UI explica alcance, cancelar conserva y confirmar borra al releerDB. No se implementó purga ni se prometió borrar servicio/externos |
+| Manifest → SQLite/fotos/JSON/UI/logs → receipt → APKmetadata | 17tests Python con artefactos ficticios y mutantes; CLI release rechazafixtures. Lectura aapt/apksigner real y collector/candidato integrado PENDIENTES |
+
+No hay nuevo porcentaje global: el inventario histórico permanece ligado a sus
+artefactos. El recibo de herramientas no atestigua que un dispositivo ejecutó
+comandos; procedencia del collector debe ser revisada antes de aceptar captura
+nativa. SDK/tienda, alta aislada y ensayo humano siguen abiertos.
+
+## Plan010: comidas estimadas y catálogo (9oct)
+
+Fuente aislada `seguimiento-010-luna` sobre a0521c8 (C01 incluido). Gateway local
+`control360i-010-estimate` commit3f4bff14. [Recibo](sessions/2026-10-09-plan010-comidas-local.md).
+Esta evidencia no se atribuye al APK publicado ni a un servidor desplegado.
+
+| Cruce | Evidencia / gate restante |
+|---|---|
+| Catálogo completo → candidatos≤200 → transporte | Nombre fuera de primeros200 en1000; rojo con parser anterior y verde por selección local |
+| DTO Dart → schema PHP → respuesta → parser Dart | Interop de ambos runtimes reales con proveedor ficticio; cliente antiguo status intacto y154checks legacy; remoto pendiente |
+| Unidad porción → escala → borrador | Unidad IA fija, guard rechaza g→ml/porción;125g escala250kcal;250g se conserva al editar/Guardar; rojos archivados |
+| known+unknown → revisión → Guardar → SQLite/informe | Pendiente impide aceptar; exclusión con motivo o resolución humana; notas/dudas se releen; cancelar/red fallida0escrituras |
+| Aprendizaje opcional → catálogo/combos/snapshots | Sólo al Guardar, ficha nueva ante homónimo, conserva base/unidad y cantidades originales |
+| SQLite20 →21 → parche → renombre/borrado → ZIP/reapertura | Tabla/mappings/36source IDs/version comprobados aparte; sin sobrescribir ediciones; idempotencia y tombstones; registry y notas exactos en ZIP |
+| Propuesta sintética → precisión/coste Luna real | NO_EVALUADO; coherencia aritmética y cobertura textual no equivalen a precisión semántica |
+| Fuente nueva → APK integrado → actualización/teléfono | Pendiente del coordinador; no se tocó teléfono/producción ni se publicaron cambios |

@@ -10,10 +10,14 @@ del logo: fondo `#0B0806`, superficies `#150F0B` y `#241A13`, naranja base
 `#F08A34` (profundo `#E4661F`) reservado para lo accionable y el dato en foco,
 texto `#FFF6EC`. Todo lo demás son neutros cálidos.
 
-**Ícono**: anillo de 10 segmentos (la meta de 10 rondas) con la figura colgada
-de la barra. Los originales están en `assets/icon/`; `python tool/icons.py`
-genera el ícono clásico, el adaptable (con capa monocroma para los íconos
-temáticos) y el de la barra de estado.
+**Ícono de la candidata013**: S en movimiento, una única ruta naranja con la
+inicial de Seguimiento. Conserva la paleta y elimina la asociación fija a diez
+rondas del ícono anterior (anillo segmentado y figura en la barra). El SVG
+editable en `assets/icon/` es fuente única; `python tool/icons.py` regenera
+clásico, tienda, capas adaptables/monocroma y barra de estado.
+Direcciones, comparación en pequeño y límites de validación:
+[logo013](design/logo-013.md). No se cambió nombre, paquete ni firma; revisión
+del owner e ícono en APK integrado pendientes.
 
 ### Color por tipo de día
 

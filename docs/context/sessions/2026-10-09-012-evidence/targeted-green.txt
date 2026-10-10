@@ -1,0 +1,124 @@
+00:00 +0: loading C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart
+00:00 +0: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: el historial trae 27 entradas: 19 sesiones y 8 días de fútbol
+00:00 +1: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: importarlo marca todo como importado y no repite al aplicarlo otra vez
+00:00 +2: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: lo importado no es récord; lo registrado en la app sí
+00:00 +3: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: un día ya registrado en la app no se llena con el historial
+00:00 +4: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: metas del v3.1 desde ya, mínimo 130 y techo 160 según el handoff actualizado
+00:00 +5: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: revisar las metas anteriores no las cambia sin confirmar y aplicar es idempotente
+00:00 +6: C:/My Projects/seguimiento-012-piloto/test/data/history_import_test.dart: (tearDownAll)
+00:00 +6: loading C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart
+00:01 +6: C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart: (setUpAll)
+00:01 +6: C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart: siembra las dos versiones y el perfil
+00:02 +7: C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart: v1 rige hasta el 27 sep y v2 desde el 28
+00:02 +8: C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart: v1: la semana queda como el plan real
+00:02 +9: C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart: v2: añade los bloques y protege jueves y viernes
+00:02 +10: C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart: sembrar es idempotente: no duplica el plan
+00:02 +11: C:/My Projects/seguimiento-012-piloto/test/data/seed_plan_test.dart: (tearDownAll)
+00:02 +11: loading C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart
+00:03 +11: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: (setUpAll)
+00:03 +11: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: el respaldo manual es ZIP y transporta DB y ambas clases de fotos de A a B
+00:05 +12: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: SQLite legacy sigue restaurando solo los registros y conserva las fotos locales
+00:05 +13: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: el ZIP lleva el snapshot y la base 17 restaurada migra a 20
+00:06 +14: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: el manifiesto declara esquema, bytes y SHA-256 del archivo que viaja
+00:07 +15: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/../flags.json
+00:07 +16: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: ../escape.jpg
+00:08 +17: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: /fotos/absolute.jpg
+00:09 +18: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: C:/fotos/absolute.jpg
+00:09 +19: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a/../../escape.jpg
+00:10 +20: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: fotos/a\..\escape.jpg
+00:10 +21: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: ruta rechazada sin cambiar B: flags.json
+00:10 +22: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: duplicados exactos y por mayúsculas se rechazan antes de extraer
+00:11 +23: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: una entrada symlink se rechaza sin escribir su destino
+00:12 +24: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: paquete sin manifest.json se rechaza y conserva B
+00:13 +25: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: paquete sin seguimiento.sqlite se rechaza y conserva B
+00:13 +26: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: paquete sin fotos/frente.jpg se rechaza y conserva B
+00:13 +27: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: foto con CRC válido pero SHA-256 distinto se rechaza
+00:14 +28: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: quitar foto y descriptor no oculta la referencia pendiente de la base
+00:14 +29: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: DB incompleta con hashes correctos en ZIP se rechaza sin tocar B
+00:15 +30: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: un esquema futuro y un manifiesto incoherente se rechazan
+00:15 +31: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: archivo ZIP truncado se rechaza sin cambiar B
+00:16 +32: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: tamaños declarados excesivos y DEFLATE con tamaño falso se rechazan
+00:16 +33: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: exportar fotos previamente ausentes declara incompleto; restaurarlo requiere confirmación
+00:17 +34: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: sin fotos todavía exporta y restaura un paquete completo
+00:17 +35: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: fallo al reabrir después de reemplazar fotos revierte DB y todas las fotos de B
+00:17 +36: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=false
+00:18 +37: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: recuperación tras cierre del proceso, committed=true
+00:18 +38: C:/My Projects/seguimiento-012-piloto/test/data/backup_archive_test.dart: (tearDownAll)
+00:18 +38: loading C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart
+00:18 +38: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: (setUpAll)
+00:18 +38: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: el primer arranque respalda; hasta la semana siguiente no repite
+00:19 +39: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: se queda solo con los más recientes
+00:19 +40: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: el respaldo se puede restaurar y trae los datos de ese día
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13142:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart:62:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:19 +41: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: archivos ajenos en la carpeta no se listan ni se borran
+00:20 +42: C:/My Projects/seguimiento-012-piloto/test/data/auto_backup_test.dart: (tearDownAll)
+00:20 +42: loading C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart
+00:21 +42: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: (setUpAll)
+00:21 +42: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+00:24 +43: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial
+00:26 +44: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash
+00:27 +45: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: consumer advice cambia tras guardar editar y borrar sin reiniciar
+00:28 +46: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: legado1.20 conserva secuencia e indice sin agregar escalera; guion malformado se descarta
+00:29 +47: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+00:29 +48: C:/My Projects/seguimiento-012-piloto/test/ui/release121_flows_test.dart: (tearDownAll)
+00:29 +48: loading C:/My Projects/seguimiento-012-piloto/test/ui/steps_base_settings_test.dart
+00:30 +48: C:/My Projects/seguimiento-012-piloto/test/ui/steps_base_settings_test.dart: (setUpAll)
+00:30 +48: C:/My Projects/seguimiento-012-piloto/test/ui/steps_base_settings_test.dart: base5000 requiere guardar; abrir y seleccionar no cambia el perfil
+00:32 +49: C:/My Projects/seguimiento-012-piloto/test/ui/steps_base_settings_test.dart: (tearDownAll)
+00:32 +49: loading C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart
+00:33 +49: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: (setUpAll)
+00:33 +49: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:35 +50: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+00:36 +51: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+00:37 +52: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database.
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:13142:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart:174:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _BackupCardState._progress (package:seguimiento/features/settings/settings_screen.dart:194:14)
+<asynchronous suspension>
+#10     _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:216:21)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:39 +53: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+00:39 +54: C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart: (tearDownAll)
+00:39 +54: loading C:/My Projects/seguimiento-012-piloto/test/tool/pilot_release_gate_test.dart
+00:40 +54: C:/My Projects/seguimiento-012-piloto/test/tool/pilot_release_gate_test.dart: gate compara capturas y rechaza mutantes; fixtures no autorizan publicación
+00:44 +55: All tests passed!

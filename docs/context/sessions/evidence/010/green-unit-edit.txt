@@ -1,0 +1,8 @@
+00:00 +0: loading C:/My Projects/seguimiento-010-luna/test/ui/meal_estimate_flow_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: estimación de 250 g no permite convertir la unidad a porción o ml
+00:04 +1: IA→revisión/exclusión→borrador→Guardar→SQLite; no crea catálogo antes de Guardar
+00:08 +2: volver con Recordar elegido no guarda comida ni catálogo
+00:10 +3: fallo de red conserva frase y registro manual; cero escrituras
+00:10 +4: (tearDownAll)
+00:10 +4: All tests passed!

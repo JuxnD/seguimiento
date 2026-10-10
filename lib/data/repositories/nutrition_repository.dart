@@ -117,8 +117,7 @@ class MealTemplate {
   }
 }
 
-/// Umbral de sospecha, no prueba: 20 porciones de algo en una comida casi
-/// siempre eran gramos. Se pregunta, no se bloquea.
+/// Señal para revisar unidades de combos legacy; no límite universal de consumo.
 const impossiblePortions = 20;
 
 String fmtQuantity(double q) => q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
@@ -216,6 +215,26 @@ class NutritionRepository {
           defaultQuantity: const Value(1),
           origin: const Value(FoodOrigin.entradaLibre),
         ));
+  }
+
+  /// Explicit optional learning after review, never automatic or overwriting a
+  /// homonym. Preserve g/ml basis and estimated source; meal snapshot is separate.
+  Future<int> rememberReviewedEstimate(MealItemDraft draft) async {
+    final quantity = draft.quantity;
+    final unit = draft.quantityUnit;
+    if (!draft.isFree || quantity == null || !quantity.isFinite || quantity <= 0 ||
+        unit == null || unit.trim().isEmpty || !validEstimatedMacros(draft.macros)) {
+      throw ArgumentError('Estimación no revisable');
+    }
+    final exists = await foodNamed(draft.label);
+    final name = exists == null ? draft.label : await freeFoodName(draft.label);
+    final bulk = unit == 'g' || unit == 'ml';
+    final macros = draft.macros.scale((bulk ? 100 : 1) / quantity);
+    return db.into(db.foods).insert(FoodsCompanion.insert(name: name,
+      basis: bulk ? FoodBasis.per100 : FoodBasis.unit, unitLabel: Value(unit),
+      defaultQuantity: Value(quantity), kcal: macros.kcal, protein: macros.protein,
+      carbs: Value(macros.carbs), fat: Value(macros.fat),
+      source: const Value(MacroSource.estimado), origin: const Value(FoodOrigin.usuario)));
   }
 
   /// Nombre libre en el catálogo a partir de uno ocupado: "Pasta (2)", "(3)"…

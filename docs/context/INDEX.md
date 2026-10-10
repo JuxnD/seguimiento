@@ -1,5 +1,29 @@
 # Índice de contexto
 
+**Integración local122:** [baseClaude929 + evidencia008](sessions/2026-10-09-integracion-122-base-evidencia.md)
+en `C:/My Projects/seguimiento-122-integracion`. Reconciliación de protocolo
+de fuerza/técnica sin migración; resto de frentes pendiente y sin publicación.
+El [tramo012/013 revisado](sessions/2026-10-10-integracion-122-012-013.md)
+integra divulgación de respaldos/IA, preparación de piloto y logo desde SVG;
+39controles y4capturas pasan,30PNG preservados. Esquema20; sin APK ni instalación.
+
+**Implementación local plan008 (9oct):** [contrato de evidencia de progreso](progress-evidence.md)
+y [recibo de pruebas](sessions/2026-10-09-008-evidencia.md). Worktree aislado
+`C:/My Projects/seguimiento-008-evidencia`; no equivale a publicación.009/011
+deben consumir los DTO/resolvers compartidos y conservar observaciones dudosas
+sin convertirlas en aptitud para aumentar dosis.
+La [revisión de fecha de toda la parte](sessions/2026-10-09-008-fecha-parte.md)
+añade confirmación ante fechas mezcladas, inválidas o futuras.
+
+**Candidato local plan010 (9-oct):** comidas conocidas/nuevas con estimación
+revisable, cobertura de toda la descripción y aprendizaje opcional al Guardar.
+Esquema21 añade registro de parches de catálogo sin convertir unidades ni
+reescribir comidas. Mantiene `meal_text` antiguo; el gateway requiere desplegar
+`meal_estimate` antes de que la pantalla use esa tarea. Precisión/coste reales
+NO_EVALUADO; no se tocó teléfono ni producción.
+[ADR0017](../adr/0017-comidas-estimadas-y-catalogo-aditivo.md) y
+[recibo local](sessions/2026-10-09-plan010-comidas-local.md).
+
 Punto de entrada antes de tocar el repositorio. Cada documento tiene un dueño
 de tema; si un hecho cambia, se actualiza aquí y en su documento.
 
@@ -161,3 +185,27 @@ son evidencia de que la app funcione ni de que deje de funcionar.
 Recibo de la renovación1.22 y feedback Cuádriceps/Vela:
 [sessions/2026-10-09-ilustraciones-y-recuperacion.md](sessions/2026-10-09-ilustraciones-y-recuperacion.md).
 Fuente funcional7fa8099; revisión humana de comprensión permanece abierta.
+
+## Preparación independiente del piloto (9 de octubre)
+
+Plan012, worktree `C:/My Projects/seguimiento-012-piloto`, base d2d3070.
+Cambios acotados: inventario de exportación/restauración (incluye IA y archivo
+sin cifrar), alcance veraz de borrado, herramientas de gate con artefactos
+sintéticos y documentación. No se implementó alta nueva, migración, política
+Android ni cambio SDK/workflow. Depende de integrar008–011 antes del ensayo.
+[Caso viable](../CASO.md), [piloto](../piloto.md),
+[matriz de compatibilidad](../piloto-compatibilidad.md),
+[contrato del gate](../runbooks/pilot-release-gate.md).
+Piloto externo, baseline, umbrales, participantes y QA nativa nuevos pendientes;
+preparación parcial no es publicación ni validación comercial.
+Evidencia local: [sesión012](sessions/2026-10-09-012-preparacion-piloto.md).
+
+## Logo: preparación013 (9 de octubre)
+
+Worktree `C:/My Projects/seguimiento-013-logo`, base d2d3070: S en movimiento,
+paleta existente y fuenteSVG única con PNGs/recursos Android regenerados.
+No cambian nombre, paquete, firma, SDK, versión ni pantallas. [Diseño y comparación](../design/logo-013.md),
+[fuente/pipeline](../../assets/icon/LEEME.md),
+[recibo](sessions/2026-10-09-013-logo.md).
+Validación de entradas PNG/safezone/alpha y revisión técnica en pequeño;
+APK integrado, permisos/notificación/temático y aceptación humana pendientes.

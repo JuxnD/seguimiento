@@ -21,9 +21,14 @@ class _AiHistoryScreenState extends ConsumerState<AiHistoryScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        scrollable: true,
         title: const Text('Borrar esta conversación'),
         content: Text(
-            'Se eliminarán sus ${row.kind == 'weeklyAnalysis' ? 'comentarios' : 'preguntas y respuestas'} y el contexto guardado.'),
+            'Se eliminarán sus ${row.kind == 'weeklyAnalysis' ? 'comentarios' : 'preguntas y respuestas'} '
+            'y el contexto guardado de la base actual de este teléfono.\n\n'
+            'Los respaldos anteriores, incluidos los automáticos, y los archivos que ya exportaste '
+            'no se modifican. Restaurar una copia anterior puede recuperar esta conversación. '
+            'Esta acción no borra datos del servicio de IA.'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),

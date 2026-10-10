@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -7,11 +8,28 @@ import '../../data/repositories/nutrition_repository.dart';
 import '../../data/weekly_ai.dart';
 import '../../domain/format.dart';
 import '../../domain/nutrition.dart';
+import '../../domain/meal_estimate.dart';
 import '../../ui/widgets.dart';
 import '../ai/ai_activation_screen.dart';
 import '../ai/ai_budget.dart';
 
-/// Turns a phrase into a reviewed list of local catalog foods. It never saves.
+/// Backward compatible with callers expecting a list, with durable source notes.
+class MealTextSelection extends ListBase<MealItemDraft> {
+  MealTextSelection(this.items, this.notes, {this.remember = const []});
+  final List<MealItemDraft> items;
+  final String notes;
+  final List<MealItemDraft> remember;
+  @override
+  int get length => items.length;
+  @override
+  set length(int value) => items.length = value;
+  @override
+  MealItemDraft operator [](int index) => items[index];
+  @override
+  void operator []=(int index, MealItemDraft value) => items[index] = value;
+}
+
+/// Reviewed known/estimated/pending items. This screen never writes data.
 class MealTextScreen extends StatefulWidget {
   const MealTextScreen({
     super.key,
@@ -38,6 +56,9 @@ class _MealTextScreenState extends State<MealTextScreen> {
   int _generation = 0, _activationGeneration = 0, _statusGeneration = 0;
   http.Client? _client, _statusClient;
   MealTextProposal? _proposal;
+  MealEstimate? _estimate;
+  bool _supportsEstimate = false, _coverageConfirmed = false;
+  final _estimateRows = <_EstimateReview>[];
   final _choices = <FoodRow?>[];
   final _quantities = <TextEditingController>[];
   final _useProposed = <bool>[];
@@ -67,13 +88,20 @@ class _MealTextScreenState extends State<MealTextScreen> {
         _busy = false;
         _error = 'La descripción cambió; la consulta anterior se descartó.';
         _clearProposal();
-      } else if (_proposal != null && _text.text != _proposalText) {
+      } else if ((_proposal != null || _estimate != null) &&
+          _text.text != _proposalText) {
         _clearProposal();
       }
     });
   }
 
   void _clearProposal() {
+    _estimate = null;
+    _coverageConfirmed = false;
+    for (final row in _estimateRows) {
+      row.dispose();
+    }
+    _estimateRows.clear();
     _proposal = null;
     _proposalText = null;
     _choices.clear();
@@ -130,6 +158,8 @@ class _MealTextScreenState extends State<MealTextScreen> {
         setState(() {
           _quota = assistant.lastQuota;
           _enabled = result['enabled'] == true;
+          _supportsEstimate = result['tasks'] is List &&
+              (result['tasks'] as List).contains('meal_estimate');
         });
       }
     } on AiError catch (e) {
@@ -180,6 +210,21 @@ class _MealTextScreenState extends State<MealTextScreen> {
     });
     try {
       final assistant = MealAssistant(client);
+      if (_supportsEstimate) {
+        final estimate = await assistant.estimateMeal(
+            text: text, catalog: widget.foods, hwid: hwid, license: license);
+        if (!mounted || generation != _generation) return;
+        setState(() {
+          _estimate = estimate;
+          _proposalText = text;
+          _quota = assistant.lastQuota;
+          for (final item in estimate.items) {
+            _estimateRows.add(_EstimateReview(item,
+                widget.foods.where((f) => f.id == item.foodId).firstOrNull));
+          }
+        });
+        return;
+      }
       final proposal = await assistant.describeMeal(
           text: text, catalog: widget.foods, hwid: hwid, license: license);
       if (!mounted || generation != _generation) return;
@@ -277,7 +322,13 @@ class _MealTextScreenState extends State<MealTextScreen> {
           'Resuelve o quita explícitamente cada propuesta antes de añadir.');
       return;
     }
-    Navigator.pop(context, drafts);
+    final notes = 'Descripción original · IA: $_proposalText\n'
+        '${_proposal!.uncertainties.map((d) => 'Por verificar: $d').join('\n')}\n'
+        '${[
+      for (var i = 0; i < _removed.length; i++)
+        if (_removed[i]) 'Excluido explícitamente: ${_proposal!.items[i].label}'
+    ].join('\n')}';
+    Navigator.pop(context, MealTextSelection(drafts, notes));
   }
 
   @override
@@ -290,6 +341,9 @@ class _MealTextScreenState extends State<MealTextScreen> {
     _text.dispose();
     for (final controller in _quantities) {
       controller.dispose();
+    }
+    for (final row in _estimateRows) {
+      row.dispose();
     }
     super.dispose();
   }
@@ -307,7 +361,8 @@ class _MealTextScreenState extends State<MealTextScreen> {
       body: ListView(padding: const EdgeInsets.all(20), children: [
         const Text(
             'Escribe lo que comiste. Puedes usar el dictado de tu teclado. '
-            'Solo se envía la frase y una lista reducida del catálogo; no se envían macros ni registros.'),
+            'Se envía la frase y una lista reducida del catálogo; no se envían tus registros. '
+            'La IA puede proponer estimaciones de alimentos nuevos: revisa porción y cifras.'),
         const SizedBox(height: 12),
         TextField(
           controller: _text,
@@ -323,6 +378,9 @@ class _MealTextScreenState extends State<MealTextScreen> {
               icon: const Icon(Icons.lock_open),
               label: const Text('Activar IA en este teléfono')),
         if (active) ...[
+          if (!_supportsEstimate)
+            const Text(
+                'Este servidor aún usa catálogo para el texto. Si falta un alimento, regístralo manualmente; la descripción se conserva.'),
           AiBudget(quota: _quota),
           CheckboxListTile(
             contentPadding: EdgeInsets.zero,
@@ -353,6 +411,7 @@ class _MealTextScreenState extends State<MealTextScreen> {
           Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Text(_error!)),
+        if (_estimate != null) ..._estimateWidgets(),
         if (_proposal != null) ...[
           const SizedBox(height: 16),
           Text('Revisa alimento y cantidad',
@@ -377,6 +436,224 @@ class _MealTextScreenState extends State<MealTextScreen> {
         ],
       ]),
     );
+  }
+
+  List<Widget> _estimateWidgets() {
+    final total = Macros.sum(_estimateRows
+        .map((r) => r.draft())
+        .whereType<MealItemDraft>()
+        .map((d) => d.macros));
+    final ready = _coverageConfirmed &&
+        _estimateRows.every(
+            (r) => r.excluded != null || r.confirmed && r.draft() != null) &&
+        _estimateRows.any((r) => r.excluded == null && r.draft() != null) &&
+        total.kcal <= 5000;
+    return [
+      const SizedBox(height: 16),
+      Text('Revisa toda la comida',
+          style: Theme.of(context).textTheme.titleLarge),
+      SelectableText('Descripción enviada: $_proposalText'),
+      for (var i = 0; i < _estimateRows.length; i++) _estimateCard(i),
+      for (final doubt in _estimate!.uncertainties)
+        Text('Por verificar: $doubt'),
+      CheckboxListTile(
+          key: const Key('estimate-coverage'),
+          contentPadding: EdgeInsets.zero,
+          title: const Text(
+              'Confirmo que está todo lo que comí, incluidas bebidas y añadidos'),
+          value: _coverageConfirmed,
+          onChanged: (v) => setState(() => _coverageConfirmed = v == true)),
+      Text(
+          '${fmtInt(total.kcal)} kcal · P ${fmtDec(total.protein)} g · C ${fmtDec(total.carbs)} g · G ${fmtDec(total.fat)} g'),
+      FilledButton(
+          onPressed: ready ? _acceptEstimate : null,
+          child: const Text('Añadir al borrador')),
+      const Text(
+          'Nada se guarda hasta Guardar. La estimación no equivale a una etiqueta verificada.'),
+    ];
+  }
+
+  Widget _estimateCard(int index) {
+    final row = _estimateRows[index], item = row.item;
+    void changed() => setState(() {
+          row.confirmed = false;
+          _coverageConfirmed = false;
+        });
+    Widget number(TextEditingController controller, String label) => TextField(
+        key: Key('estimate-$index-$label'),
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        decoration: InputDecoration(labelText: label),
+        onChanged: (_) => changed());
+    return Card(
+        child: Padding(
+            padding: const EdgeInsets.all(12),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(item.label, style: Theme.of(context).textTheme.titleMedium),
+              Text(_estimate!.coverage
+                  .where((s) => s.itemIndex == index)
+                  .map((s) => s.text)
+                  .join()),
+              if (row.excluded != null) ...[
+                Text('Excluido por ti: ${row.excluded}'),
+                TextButton(
+                    onPressed: () => setState(() {
+                          row.excluded = null;
+                          _coverageConfirmed = false;
+                        }),
+                    child: const Text('Restaurar')),
+              ] else ...[
+                Text(item.kind == MealEstimateKind.known
+                    ? 'Catálogo local · cifras calculadas aquí'
+                    : item.kind == MealEstimateKind.estimated
+                        ? 'Estimación IA · cifras de la porción propuesta'
+                        : 'Pendiente · necesita aclaración'),
+                if (item.question != null) Text(item.question!),
+                if (item.portion != null)
+                  Text('Porción propuesta: ${item.portion}'),
+                for (final assumption in item.assumptions)
+                  Text('Supuesto: $assumption'),
+                if (item.kind == MealEstimateKind.unresolved) ...[
+                  const Text(
+                      'Puedes completar la descripción arriba y consultar de nuevo, elegir catálogo o escribir una estimación manual.'),
+                  DropdownButtonFormField<FoodRow>(
+                      value: row.food,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                          labelText: 'Resolver con catálogo'),
+                      items: [
+                        for (final food in widget.foods)
+                          DropdownMenuItem(
+                              value: food,
+                              child: Text(food.name,
+                                  overflow: TextOverflow.ellipsis))
+                      ],
+                      onChanged: (f) {
+                        row.food = f;
+                        row.unit.text = f?.unitLabel ?? '';
+                        row.quantity.clear();
+                        changed();
+                      }),
+                ],
+                if (row.food != null || row.manual)
+                  number(row.quantity, 'Cantidad'),
+                if (row.food != null) Text('Unidad: ${row.food!.unitLabel}'),
+                if (row.food == null && !row.manual)
+                  TextButton(
+                      onPressed: () => setState(() => row.manual = true),
+                      child: const Text('Registrar una estimación manual')),
+                if (row.food == null && row.manual) ...[
+                  TextField(
+                      controller: row.unit,
+                      readOnly: item.kind == MealEstimateKind.estimated,
+                      decoration: const InputDecoration(
+                          labelText:
+                              'Unidad de esta porción (g, ml, porción…)'),
+                      onChanged: (_) => changed()),
+                  if (item.quantity != null)
+                    Text(
+                        'Las cifras de abajo corresponden a ${fmtDec(item.quantity!)} ${item.unit}. Cambiar cantidad las escala en esa misma unidad. Para otra unidad, aclara la descripción y consulta otra vez o vuelve al registro manual.'),
+                  number(row.kcal, 'kcal'),
+                  number(row.protein, 'Proteína'),
+                  number(row.carbs, 'Carbohidratos'),
+                  number(row.fat, 'Grasa'),
+                  CheckboxListTile(
+                      key: Key('estimate-remember-$index'),
+                      title: const Text(
+                          'Recordar este alimento estimado en mi catálogo al guardar'),
+                      value: row.remember,
+                      onChanged: (v) =>
+                          setState(() => row.remember = v == true)),
+                ],
+                if (row.draft() == null)
+                  const Text(
+                      'Falta cantidad/unidad o las cifras no son coherentes. Corrige antes de confirmar.'),
+                CheckboxListTile(
+                    key: Key('estimate-confirm-$index'),
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                        'Revisé la cantidad y las cifras de este alimento'),
+                    value: row.confirmed,
+                    onChanged: row.draft() == null
+                        ? null
+                        : (v) => setState(() => row.confirmed = v == true)),
+                TextButton(
+                    key: Key('estimate-exclude-$index'),
+                    onPressed: () => _excludeEstimate(row),
+                    child: const Text('Excluir con motivo')),
+              ],
+            ])));
+  }
+
+  Future<void> _excludeEstimate(_EstimateReview row) async {
+    final reason = TextEditingController();
+    final choice = await showDialog<String>(
+        context: context,
+        builder: (c) => AlertDialog(
+                title: const Text('Excluir de esta comida'),
+                content: TextField(
+                    controller: reason,
+                    maxLength: 180,
+                    decoration: const InputDecoration(
+                        labelText: 'Motivo: no lo comí, duplicado…')),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(c),
+                      child: const Text('Cancelar')),
+                  FilledButton(
+                      onPressed: () {
+                        if (reason.text.trim().isNotEmpty) {
+                          Navigator.pop(c, reason.text.trim());
+                        }
+                      },
+                      child: const Text('Excluir'))
+                ]));
+    // Dialog teardown still owns its input for this frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) => reason.dispose());
+    if (mounted && choice != null) {
+      setState(() {
+        row.excluded = choice;
+        _coverageConfirmed = false;
+      });
+    }
+  }
+
+  void _acceptEstimate() {
+    final items = <MealItemDraft>[], remember = <MealItemDraft>[];
+    final notes = StringBuffer(
+        'Descripción original · IA: $_proposalText\nEstimación revisada; estos son los supuestos originales, no una etiqueta verificada.');
+    for (final row in _estimateRows) {
+      final item = row.item;
+      if (row.excluded != null) {
+        notes.write(
+            '\nExcluido explícitamente: ${item.label}; motivo: ${row.excluded}');
+        continue;
+      }
+      final draft = row.draft();
+      if (draft == null || !row.confirmed || !_coverageConfirmed) return;
+      items.add(draft);
+      if (row.remember && row.food == null) remember.add(draft);
+      notes.write(
+          '\n${item.label}: ${draft.quantityLabel}; origen: ${row.food != null ? 'catálogo local' : item.kind == MealEstimateKind.estimated ? 'estimación IA gpt-6-luna revisada' : 'estimación manual revisada'}; kcal ${fmtDec(draft.macros.kcal)}, P ${fmtDec(draft.macros.protein)}, C ${fmtDec(draft.macros.carbs)}, G ${fmtDec(draft.macros.fat)}.');
+      if (item.portion != null) {
+        notes.write('\nPorción original: ${item.portion}');
+      }
+      for (final assumption in item.assumptions) {
+        notes.write('\nSupuesto: $assumption');
+      }
+      if (item.question != null) {
+        notes.write('\nPregunta original: ${item.question}');
+      }
+    }
+    for (final doubt in _estimate!.uncertainties) {
+      notes.write('\nPor verificar: $doubt');
+    }
+    if (items.isNotEmpty &&
+        Macros.sum(items.map((d) => d.macros)).kcal <= 5000) {
+      Navigator.pop(context,
+          MealTextSelection(items, notes.toString(), remember: remember));
+    }
   }
 
   Widget _proposalCard(int index, MealTextItem item) {
@@ -498,6 +775,67 @@ class _MealTextScreenState extends State<MealTextScreen> {
     final macros =
         macrosFor(basis: food.basis, perBasis: food.macros, quantity: quantity);
     return '${fmtInt(macros.kcal)} kcal · P ${fmtDec(macros.protein)} g';
+  }
+}
+
+class _EstimateReview {
+  _EstimateReview(this.item, this.food) {
+    manual = item.kind == MealEstimateKind.estimated;
+    quantity.text = item.quantity == null ? '' : fmtDec(item.quantity!);
+    unit.text = item.unit ?? '';
+    final m = item.macros;
+    if (m != null) {
+      kcal.text = fmtDec(m.kcal);
+      protein.text = fmtDec(m.protein);
+      carbs.text = fmtDec(m.carbs);
+      fat.text = fmtDec(m.fat);
+    }
+  }
+  final MealEstimateItem item;
+  FoodRow? food;
+  final quantity = TextEditingController(),
+      unit = TextEditingController(),
+      kcal = TextEditingController(),
+      protein = TextEditingController(),
+      carbs = TextEditingController(),
+      fat = TextEditingController();
+  bool confirmed = false, remember = false, manual = false;
+  String? excluded;
+  MealItemDraft? draft() {
+    if (excluded != null) return null;
+    final q = parseNum(quantity.text);
+    if (q == null || !q.isFinite || q <= 0 || q > 5000) return null;
+    if (food != null) return MealItemDraft.fromFood(food!, q);
+    // A numerical ratio only scales quantities with the same original unit.
+    // Manual unresolved entries have no AI reference quantity and remain free.
+    if (item.kind == MealEstimateKind.estimated &&
+        unit.text.trim() != item.unit) return null;
+    final values =
+        [kcal, protein, carbs, fat].map((c) => parseNum(c.text)).toList();
+    if (values.any((v) => v == null) ||
+        unit.text.trim().isEmpty ||
+        unit.text.runes.length > 30) return null;
+    var macros = Macros(
+        kcal: values[0]!,
+        protein: values[1]!,
+        carbs: values[2]!,
+        fat: values[3]!);
+    if (!validEstimatedMacros(macros)) return null;
+    // The fields express the proposed portion. Editing quantity scales it
+    // transparently; corrected macro fields remain per original portion.
+    if (item.quantity != null) macros = macros.scale(q / item.quantity!);
+    if (!validEstimatedMacros(macros)) return null;
+    return MealItemDraft(
+        label: item.label,
+        quantity: q,
+        quantityUnit: unit.text.trim(),
+        macros: macros);
+  }
+
+  void dispose() {
+    for (final c in [quantity, unit, kcal, protein, carbs, fat]) {
+      c.dispose();
+    }
   }
 }
 

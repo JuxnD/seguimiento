@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:clock/clock.dart';
 
 import '../../app/providers.dart';
 import '../../domain/fitness_test.dart';
+import '../../domain/dates.dart' show dayKey;
 import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
 import '../training/test_mode_screen.dart';
@@ -35,14 +37,14 @@ class TestResultsScreen extends ConsumerWidget {
                   for (final part in TestPart.values)
                     OutlinedButton(
                         onPressed: () async {
-                          final date = await ref.read(fitnessTestRepositoryProvider).dateFor(round, part);
+                          final date =
+                              await ref.read(fitnessTestRepositoryProvider).recordedDateFor(round, part) ??
+                                  clock.now();
                           if (!context.mounted) return;
-                          if (date == null) {
-                            showSnack(context, 'Activa el plan v3.1 para programar los tests.');
-                            return;
-                          }
-                          await Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => TestModeScreen(date: date, round: round, part: part)));
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => TestModeScreen(date: date, round: round, part: part)));
                         },
                         child: Text('T$round ${part == TestPart.torso ? 'torso' : 'piernas'}')),
               ]),
@@ -61,11 +63,14 @@ class TestResultsScreen extends ConsumerWidget {
   }
 }
 
-/// Último test con resultado de una prueba.
+/// Último test completo y limpio; conservar parciales en las columnas.
 int? lastRound(List<TestResult> results, String item) {
   int? last;
   for (final r in results) {
-    if (r.item == item && (last == null || r.round > last)) last = r.round;
+    if (r.item == item &&
+        testValue(results, r.round, item) != null &&
+        !results.any((x) => x.round == r.round && x.item == item && !x.clean) &&
+        (last == null || r.round > last)) last = r.round;
   }
   return last;
 }
@@ -88,7 +93,8 @@ class TestTable extends StatelessWidget {
             : '${partial.map((r) => '${r.side}: ${formatTestValue(t, r.value)}${r.clean ? '' : '*'}').join('\n')}\nParcial';
       }
       final doubtful = results.any((r) => r.round == round && r.item == t.id && !r.clean);
-      return '${formatTestValue(t, v)}${doubtful ? '*' : ''}';
+      final date = results.firstWhere((r) => r.round == round && r.item == t.id).date;
+      return '${formatTestValue(t, v)}${doubtful ? '*' : ''}\n${date == null ? 'Fecha sin registrar' : dayKey(date)}';
     }
 
     final rows = [
@@ -112,10 +118,11 @@ class TestTable extends StatelessWidget {
             ),
             for (final round in [1, 2, 3]) Text(cell(t, round), style: text.bodySmall),
             Builder(builder: (_) {
-              final last = lastRound(results, t.id);
+              final last = latestEligibleTestRound(results, t.id, asOf: clock.now());
               final pct = last == null || last == 1
                   ? null
-                  : improvement(testValue(results, 1, t.id), testValue(results, last, t.id));
+                  : improvement(eligibleTestValue(results, 1, t.id, asOf: clock.now()),
+                      eligibleTestValue(results, last, t.id, asOf: clock.now()));
               return Text(
                 pct == null ? '—' : '${pct >= 0 ? '+' : ''}${pct.round()} %',
                 style: text.bodySmall?.copyWith(
@@ -139,9 +146,10 @@ class TestDoses extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final lines = [
       for (final t in allTests)
-        if (lastRound(results, t.id) case final round?)
-          if (testValue(results, round, t.id) case final v?)
-            if (initialDose(t, v) case final dose?) '${t.name}: $dose${t.perSide ? ' por lado' : ''}',
+        if (latestEligibleTestRound(results, t.id, asOf: clock.now()) case final round?)
+          if (eligibleTestValue(results, round, t.id, asOf: clock.now()) case final v?)
+            if (initialDose(t, v) case final dose?)
+              '${t.name}: $dose${t.perSide ? ' por lado' : ''} (T$round)',
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,6 +157,8 @@ class TestDoses extends StatelessWidget {
         Text('Reps: el tope del rango al 70–75 % del máximo. Aguantes: series del 50–60 % del tiempo máximo.',
             style: text.bodySmall),
         const SizedBox(height: 6),
+        const Text(
+            'Sólo resultados completos y limpios con fecha registrada. Los parciales o con dudas siguen visibles; no aumentan la dosis.'),
         for (final l in lines) Text('• $l', style: text.bodyMedium),
       ],
     );

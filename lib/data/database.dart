@@ -10,6 +10,7 @@ import '../domain/enums.dart';
 import '../domain/goal_history.dart' show GoalOrigin;
 import '../domain/reminders.dart';
 import 'catalog_updates.dart';
+import 'catalog_patches.dart';
 import 'repositories/goal_repository.dart' show seedGoalVersions;
 import 'seed_foods.dart';
 import 'tables.dart';
@@ -29,6 +30,7 @@ const databaseFileName = 'seguimiento.sqlite';
   SessionSets,
   FootballGames,
   Foods,
+  CatalogPatches,
   Meals,
   MealItems,
   MealTemplates,
@@ -188,6 +190,7 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(sessions, sessions.mode);
             await m.addColumn(sessions, sessions.extraReps);
           }
+          if (from < 21) await m.createTable(catalogPatches);
           if (from < 16) {
             // v16: Plan v3.1 (§19): RIR por serie, meta de kcal de los días de
             // fútbol, hidratación del partido y horas de sueño.
@@ -236,9 +239,9 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 22) {
             // v22 (plan 009): metas con historia y propuestas del
-            // acompañamiento. El 21 es de 010 (catálogo); en esta rama no
-            // existe y el paso es aditivo. Lo que había en el perfil se copia
-            // como legado: no se sabe desde cuándo regía.
+            // acompañamiento, después del 21 de 010 (catálogo). Aditivo. Lo
+            // que había en el perfil se copia como legado: no se sabe desde
+            // cuándo regía, sí desde la migración.
             await m.createTable(goalVersions);
             await m.createTable(coachProposals);
             // morning_checks nace en el 17 con la definición actual: antes
@@ -255,6 +258,7 @@ class AppDatabase extends _$AppDatabase {
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');
+          await applyCatalogPatchV1(this);
         },
       );
 

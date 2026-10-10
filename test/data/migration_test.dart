@@ -94,6 +94,13 @@ void main() {
     await db.customStatement('drop table goal_versions');
     await db.customStatement('drop table coach_proposals');
     await db.customStatement('alter table morning_checks drop column feeling');
+    if (version >= 21) {
+      await rows?.call(db);
+      await db.customStatement('pragma user_version = $version');
+      await db.close();
+      return;
+    }
+    await db.customStatement('drop table catalog_patches');
     if (version >= 20) {
       await rows?.call(db);
       await db.customStatement('pragma user_version = $version');

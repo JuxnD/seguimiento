@@ -1,0 +1,75 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: historial técnico RIR4 no sustituye la última fuerza normal apta
+00:00 +0 -1: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: historial técnico RIR4 no sustituye la última fuerza normal apta [E]
+  Expected: DateTime:<2026-10-05 00:00:00.000>
+    Actual: DateTime:<2026-10-12 00:00:00.000>
+  Modo se toma de SQLite, no de RIR o nombre
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\progress_evidence_test.dart 99:5          main.<fn>
+
+00:00 +0 -1: C:/My Projects/seguimiento-122-integracion/test/data/progress_evidence_test.dart: (tearDownAll)
+00:01 +0 -1: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: (setUpAll)
+00:01 +0 -1: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado null → guía tecnica: subida false
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TextContainingWidgetFinder:<Found 1 widget with text containing +2–5 kg: [
+            Text("Toca subir: +2–5 kg de mochila y vuelve a 10", dependencies:
+[DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart:274:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart line 274
+The test description was:
+  modo registrado null → guía tecnica: subida false
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +0 -2: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado null → guía tecnica: subida false [E]
+  Test failed. See exception logs above.
+  The test description was: modo registrado null → guía tecnica: subida false
+
+00:05 +0 -2: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado tecnica → guía null: subida false
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TextContainingWidgetFinder:<Found 1 widget with text containing +2–5 kg: [
+            Text("Toca subir: +2–5 kg de mochila y vuelve a 10", dependencies:
+[DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart:274:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart line 274
+The test description was:
+  modo registrado tecnica → guía null: subida false
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +0 -3: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado tecnica → guía null: subida false [E]
+  Test failed. See exception logs above.
+  The test description was: modo registrado tecnica → guía null: subida false
+
+00:06 +0 -3: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: modo registrado null → guía null: subida true
+00:07 +1 -3: C:/My Projects/seguimiento-122-integracion/test/ui/progress_evidence_test.dart: (tearDownAll)
+00:07 +1 -3: Some tests failed.

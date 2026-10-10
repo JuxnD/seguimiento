@@ -1,0 +1,8 @@
+00:00 +0: loading C:/My Projects/seguimiento-010-luna/test/data/meal_estimate_test.dart
+00:00 +0: catálogo 1000 conserva alimento nombrado fuera de primeros200
+00:00 +0 -1: catálogo 1000 conserva alimento nombrado fuera de primeros200 [E]
+  La descripción supera los límites permitidos.
+  package:seguimiento/data/meal_assistant.dart 93:7  MealAssistant.describeMeal
+  test\data\meal_estimate_test.dart 29:36            main.<fn>
+
+00:00 +0 -1: Some tests failed.

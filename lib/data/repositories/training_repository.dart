@@ -5,6 +5,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
+import '../../domain/progress_evidence.dart';
 import '../../domain/session_math.dart';
 import '../database.dart';
 import '../seed_plan.dart' show plancheBlock;
@@ -130,6 +131,14 @@ class SessionDraft {
 
   /// Trabajo de cada ronda, sin descansos. null si no hay descansos medidos.
   List<int>? get roundWorkSec => roundWork(roundMarksSec, roundRestSec);
+
+  /// Only recorded dose and equipment form the comparison protocol. No side
+  /// is inferred from set ordering and missing exercises stay unknown.
+  String? get exerciseProtocol {
+    if (sets.isEmpty) return null;
+    final keys = sets.map((s) => '${s.exercise}|${s.reps}|${s.variant}|${s.loadKg}').toSet().toList()..sort();
+    return keys.join(';');
+  }
 
   /// Trabajo neto: sin calentamiento, enfriamiento ni descansos.
   int get netSec => circuitNetSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec, restSec: restSec);
@@ -314,8 +323,21 @@ class TrainingRepository {
   /// cada ronda (o sus vueltas, si es anterior al esquema 8), para comparar al
   /// cerrar. null si es la primera.
   Future<(DateTime, int?, List<int>)?> previousOfType(SessionType type, DateTime date) async {
+    final evidence = await previousTiming(type, date);
+    return evidence == null ? null : (evidence.date, evidence.rounds, evidence.durationsSec);
+  }
+
+  Future<RoundTimingEvidence?> previousTiming(SessionType type, DateTime date,
+      {int? planDayId, String? mode}) async {
     final row = await (db.select(db.sessions)
-          ..where((t) => t.type.equalsValue(type) & t.date.isSmallerThanValue(dayKey(date)))
+          ..where((t) =>
+              t.type.equalsValue(type) &
+              t.date.isSmallerThanValue(dayKey(date)) &
+              t.imported.equals(false) &
+              t.roundsEstimated.equals(false) &
+              t.incomplete.equals(false) &
+              (planDayId == null ? const Constant(true) : t.planDayId.equals(planDayId)) &
+              (mode == null ? t.mode.isNull() : t.mode.equals(mode)))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
@@ -327,10 +349,24 @@ class TrainingRepository {
           ..where((t) => t.sessionId.equals(row.id))
           ..orderBy([(t) => OrderingTerm(expression: t.roundIndex)]))
         .get();
-    final work = rounds.every((r) => r.workSec != null)
+    final measuredWork = rounds.isNotEmpty && rounds.every((r) => r.workSec != null);
+    final work = measuredWork
         ? rounds.map((r) => r.workSec!).toList()
         : lapDurations(rounds.map((r) => r.elapsedSec).toList());
-    return (parseDay(row.date), row.roundsDone, work);
+    final detail = await load(row.id);
+    return RoundTimingEvidence(
+        sessionId: row.id,
+        date: parseDay(row.date),
+        type: row.type,
+        planDayId: row.planDayId,
+        mode: row.mode,
+        exerciseProtocol: detail.exerciseProtocol,
+        rounds: row.roundsDone,
+        basis: measuredWork ? TimingBasis.work : TimingBasis.lap,
+        durationsSec: work,
+        imported: row.imported,
+        estimated: row.roundsEstimated,
+        incomplete: row.incomplete);
   }
 
   /// Últimas rondas hechas antes de una fecha, por tipo de circuito.
@@ -444,10 +480,63 @@ class TrainingRepository {
       if (sets.isEmpty) continue;
       return [
         for (final s in sets)
-          SetDraft(exercise: exercise, reps: s.reps, loadKg: s.loadKg, variant: s.variant, rir: s.rir),
+          SetDraft(
+              exercise: exercise,
+              reps: s.reps,
+              loadKg: s.loadKg,
+              variant: s.variant,
+              rir: s.rir,
+              split: s.split,
+              splitDetail: s.splitDetail,
+              toFailure: s.toFailure),
       ];
     }
     return const [];
+  }
+
+  /// Same weekday limits weekly protocol changes; explicit session/plan and
+  /// set provenance remain available to the policy instead of being discarded.
+  Future<StrengthSessionEvidence?> lastStrengthEvidence(String exercise, DateTime date, {String? mode}) async {
+    final exId = await exercises.idOf(exercise);
+    if (exId == null) return null;
+    final circuit =
+        SessionType.values.where((t) => t.isCircuit || t == SessionType.resistencia).map((t) => t.name);
+    final rows = await (db.select(db.sessions)
+          ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.isNotIn(circuit) &
+            (mode == null ? t.mode.isNull() : t.mode.equals(mode)))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+            (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)
+          ]))
+        .get();
+    for (final row in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
+      final sets = await (db.select(db.sessionSets)
+            ..where((t) => t.sessionId.equals(row.id) & t.exerciseId.equals(exId))
+            ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+          .get();
+      if (sets.isEmpty) continue;
+      return StrengthSessionEvidence(
+          sessionId: row.id,
+          date: parseDay(row.date),
+          type: row.type,
+          exercise: exercise,
+          planDayId: row.planDayId,
+          mode: row.mode,
+          incomplete: row.incomplete,
+          imported: row.imported,
+          sets: [
+            for (final s in sets)
+              StrengthSetEvidence(
+                  reps: s.reps,
+                  rir: s.rir,
+                  split: s.split,
+                  splitDetail: s.splitDetail,
+                  toFailure: s.toFailure,
+                  loadKg: s.loadKg,
+                  variant: s.variant)
+          ]);
+    }
+    return null;
   }
 
   /// ¿La última inclinación de planche llegó a 3 × 30 s? Entonces entra el

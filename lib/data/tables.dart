@@ -296,6 +296,17 @@ class Foods extends Table {
   RealColumn get eggsPerUnit => real().nullable()();
 }
 
+/// Additive catalog patch identities travel inside SQLite backups. A null
+/// foodId is a tombstone: deletion/collision is not recreated on next launch.
+@DataClassName('CatalogPatchRow')
+class CatalogPatches extends Table {
+  TextColumn get sourceId => text()();
+  IntColumn get patchVersion => integer()();
+  IntColumn get foodId => integer().nullable().references(Foods, #id, onDelete: KeyAction.setNull)();
+  @override
+  Set<Column> get primaryKey => {sourceId};
+}
+
 /// Combos de un toque: lo que se repite (batido, cena base…). Guardan
 /// referencias al catálogo; los macros se calculan al registrarlos.
 @DataClassName('MealTemplateRow')

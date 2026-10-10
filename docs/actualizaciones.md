@@ -12,6 +12,10 @@ comparte a donde el usuario elija (Drive, correo, archivos…). Abrir el menú d
 compartir **no demuestra que quedó guardado fuera del teléfono**: hay que
 comprobar el archivo en su destino. El ZIP contiene datos y fotos personales,
 sin cifrado; se conserva únicamente donde el usuario decide guardarlo.
+Incluye toda la base: perfil, plan, catálogos, sesiones, comidas, medidas e
+historial de IA con preguntas, respuestas y contexto. Ajustes muestra ese
+inventario y pide confirmación **antes de crear y compartir** el paquete.
+La licencia cifrada en Android Keystore/noBackupFilesDir no se exporta.
 
 El paquete lo gestiona [`backup_archive.dart`](../lib/data/backup_archive.dart).
 Su formato v1 contiene `manifest.json`, `seguimiento.sqlite` y `fotos/`
@@ -46,7 +50,11 @@ el exportar a mano. Android puede incluir esa carpeta en su copia de seguridad
 en la nube (la app no la desactiva), pero no está verificado y no se debe
 contar con ello. **Estas copias automáticas solo contienen registros, sin
 fotos**. Para cambiar de teléfono o recuperar las fotos hay que exportar el
-ZIP manual y guardarlo fuera del dispositivo.
+ZIP manual y guardarlo fuera del dispositivo. La copia SQLite, sin cifrado de
+archivo, también conserva historial y contexto de IA. Borrar una conversación
+sólo afecta la base actual: restaurar una copia anterior puede recuperarla.
+La pantalla de borrado lo explica; no purga respaldos ni archivos ya compartidos,
+y no solicita al servicio IA un borrado remoto.
 
 Si la app no logra arrancar (base dañada, migración fallida), muestra una
 pantalla con el error y, si la base alcanzó a abrir, un botón para exportarla
@@ -58,6 +66,13 @@ confirmación indicando qué se reemplazará. Un ZIP reemplaza base y fotos; un
 SQLite antiguo **solo reemplaza la base y conserva las fotos locales**: no
 recupera fotos del dispositivo anterior. Implementación:
 [`lib/data/database_host.dart`](../lib/data/database_host.dart).
+La confirmación declara el reemplazo del historial de IA y la posible
+reaparición de conversaciones borradas después de esa copia. Flags/permisos,
+cronómetro en curso y licencia quedan fuera del respaldo/restauración.
+
+Preparación de gate por APK exacto, todavía sin conexión al workflow ni nueva
+captura nativa: [procedimiento 012](runbooks/pilot-release-gate.md). No atribuir
+los recibos anteriores a otro APK o commit.
 
 El orden importa y por eso está así:
 

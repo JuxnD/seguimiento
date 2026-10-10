@@ -160,9 +160,7 @@ class MealPhotoAi {
           carbs: number(r['carbs'], 400),
           fat: number(r['fat'], 200));
       // No aceptar macros imposibles. Es un control de coherencia, no exactitud.
-      if (m.kcal <= 0 ||
-          (m.kcal - (4 * m.protein + 4 * m.carbs + 9 * m.fat)).abs() >
-              math.max(100, m.kcal * .35)) {
+      if (!validEstimatedMacros(m)) {
         throw const FormatException();
       }
       return PhotoFoodEstimate(
