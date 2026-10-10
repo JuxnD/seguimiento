@@ -253,3 +253,24 @@ se puede recuperar una selección de escalera que nunca se guardó; los
 DoneSteps y tiempos se conservan. Un mapa efectivo malformado se descarta
 con mensaje para permitir empezar una sesión nueva. El incidente lumbar también
 se relee de SQLite si Android cerró entre el commit del evento y el snapshot.
+
+### Ventana medida de Cindy (plan 019)
+
+Al guardar una Cindy nueva, el total se compone de los segundos enteros de
+calentamiento, la ventana medida entre inicio y final del trabajo y los
+segundos de enfriamiento. Así, al restar calentamiento y enfriamiento, una
+ventana de 20:00 sigue siendo 1.200 segundos: truncar cada fase y el total de
+reloj por separado podía añadir un segundo ficticio al circuito.
+
+Las fases se guardan con precisión de segundos enteros; la suma puede ser
+ligeramente menor que el total de reloj truncado por separado. No se reparte
+esa diferencia como trabajo. Una Cindy cortada conserva su duración medida,
+su marca de incompleta, rondas, repeticiones extra y dosis; retomar por JSON
+conserva sus marcas de reloj. El cap prescrito no sustituye tiempo medido.
+El contexto usa «1 ronda» y conserva «0 rondas»/«2 rondas» tanto en una
+Cindy completa como cortada; no cambian las cantidades ni las repeticiones.
+No se reescriben sesiones antiguas, no se añade tolerancia de comparación y
+no cambia el cálculo de Tabata. Una observación antigua de 1.201 segundos no
+demuestra por sí sola que proceda de este fallo.
+
+Ver [recibo local y límites](context/sessions/2026-10-10-019-cindy-window.md).

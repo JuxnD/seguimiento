@@ -1,5 +1,11 @@
 # Índice de contexto
 
+**Plan019 local (10oct):** [ventana medida de Cindy](../cronometro.md#ventana-medida-de-cindy-plan-019)
+y [recibo](sessions/2026-10-10-019-cindy-window.md), worktree aislado
+`C:/My Projects/seguimiento-019-cindy`, base `238ef85`. Nuevos drafts suman
+fases para conservar el circuito medido, sin normalizar historias ni cambiar
+comparabilidad/Tabata. Integración, APK y teléfono quedan pendientes.
+
 **Plan015 implementado localmente (10oct):** [gráficas con rango y evidencia](../progreso-metricas.md)
 y [recibo](sessions/2026-10-10-015-graficas-evidencia.md), worktree aislado
 `C:/My Projects/seguimiento-015-graficas`, base de integración122 `bf1da688`.

@@ -1,5 +1,20 @@
 # Costuras verificadas de la candidata 1.21
 
+## Plan019 local: marcas de Cindy → pantalla → draft
+
+Base `238ef85`, worktree `seguimiento-019-cindy`, Flutter3.22/Dart3.4.
+No es evidencia de APK integrado ni del teléfono del owner.
+
+| Cruce enumerado | Evidencia local / límite |
+|---|---|
+| Marcas fraccionarias → AmrapScreen → Terminar y guardar → SessionDraft | Rojo1201 vs1200 en BASE; composición de fases conserva la ventana20:00 y dosis/rondas |
+| Cortar a2:00 → repeticiones extra → snapshotJSON → reabrir → draft | Ventana120, incompleta, marcas y dosis idénticas; no rellenar20min prescritos |
+| Cap/tiempo desconocido → registro | Sin inicio no inventa1200; ventana registrada1300 se conserva como1300, sin normalizarla al cap |
+| Composición Cindy → otros cronómetros/protocolo/historia | Tabata preservado, matemáticas globales y comparación008 intactas; historias antiguas no se migran |
+| Draft local → persistencia/APK/uso diario | Pendiente de integración y QA del coordinador; esta tarea sólo verifica la salida real de la pantalla en flutter_test |
+
+[Comandos, hashes, montaje corregido y resultado de suite](sessions/2026-10-10-019-cindy-window.md).
+
 ## Parámetros de verificación
 
 Autoridad: «procede y dejala lista para publicar». Entorno sintético aislado,

@@ -239,6 +239,7 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
 
   SessionDraft _draft() {
     final rounds = _roundMarks.length;
+    final roundsLabel = '$rounds ${rounds == 1 ? 'ronda' : 'rondas'}';
     final partial = _partial ?? 0;
     // Cortado antes de los 20 min: no es una marca comparable.
     final cut = _workElapsed < _capSec;
@@ -247,7 +248,9 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
       startTime: timeKey(startedAt.hour, startedAt.minute),
       type: SessionType.resistencia,
       mode: 'cindy',
-      totalSec: totalSec,
+      // Sumar fases ya truncadas conserva la ventana de trabajo medida:
+      // truncar también el total por separado puede añadir un segundo.
+      totalSec: warmupSec + _workElapsed + cooldownSec,
       warmupSec: warmupSec,
       cooldownSec: cooldownSec,
       roundsDone: rounds,
@@ -255,8 +258,8 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
       incomplete: cut,
       roundMarksSec: List.of(_roundMarks),
       context: cut
-          ? 'Cindy cortada: $rounds rondas + $partial reps en ${formatDuration(_workElapsed)} de ${widget.minutes} min'
-          : 'Cindy: $rounds rondas + $partial reps en ${widget.minutes} min',
+          ? 'Cindy cortada: $roundsLabel + $partial reps en ${formatDuration(_workElapsed)} de ${widget.minutes} min'
+          : 'Cindy: $roundsLabel + $partial reps en ${widget.minutes} min',
       sets: [
         for (var r = 0; r < rounds; r++)
           for (final (name, reps) in cindyRound) SetDraft(exercise: name, reps: reps),
