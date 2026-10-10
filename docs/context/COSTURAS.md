@@ -125,3 +125,11 @@ Esta evidencia no se atribuye al APK publicado ni a un servidor desplegado.
 | SQLite20 →21 → parche → renombre/borrado → ZIP/reapertura | Tabla/mappings/36source IDs/version comprobados aparte; sin sobrescribir ediciones; idempotencia y tombstones; registry y notas exactos en ZIP |
 | Propuesta sintética → precisión/coste Luna real | NO_EVALUADO; coherencia aritmética y cobertura textual no equivalen a precisión semántica |
 | Fuente nueva → APK integrado → actualización/teléfono | Pendiente del coordinador; no se tocó teléfono/producción ni se publicaron cambios |
+
+En [integración122/010](sessions/2026-10-10-integracion-122-010.md),83controles
+dirigidos cruzan los consumidores reales del checkout combinado: Dart→PHP
+ficticio→Dart, revisión→SQLite,18/19/20→21, registry→ZIP→reapertura y C01.
+008/mode/warmup/snapshot no cambian en este tramo. El primer timeout de carga
+se conserva junto al gate consolidado posterior; no se infiere su causa.
+Suite completa del candidato, APK/backend remoto y aceptación del owner siguen
+pendientes: estos83casos no son una nueva certificación global del producto.

@@ -2,10 +2,14 @@
 
 **Integración local122:** [baseClaude929 + evidencia008](sessions/2026-10-09-integracion-122-base-evidencia.md)
 en `C:/My Projects/seguimiento-122-integracion`. Reconciliación de protocolo
-de fuerza/técnica sin migración; resto de frentes pendiente y sin publicación.
+de fuerza/técnica sin migración en ese tramo; sin publicación.
 El [tramo012/013 revisado](sessions/2026-10-10-integracion-122-012-013.md)
 integra divulgación de respaldos/IA, preparación de piloto y logo desde SVG;
 39controles y4capturas pasan,30PNG preservados. Esquema20; sin APK ni instalación.
+La [integración010](sessions/2026-10-10-integracion-122-010.md) añade catálogo
+revisable y esquema21:83controles pasan con interopPHP local ficticio, migración
+y ZIP. Se conservan008/mode/warmup/snapshot y012/013;009/22 y los demás frentes
+siguen pendientes. Sin APK, backend desplegado ni teléfono probado.
 
 **Implementación local plan008 (9oct):** [contrato de evidencia de progreso](progress-evidence.md)
 y [recibo de pruebas](sessions/2026-10-09-008-evidencia.md). Worktree aislado

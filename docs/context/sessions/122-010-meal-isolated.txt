@@ -1,0 +1,9 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/test/data/meal_estimate_test.dart
+00:00 +0: cliente status real sin cambio desdea0521c8 acepta tarea nueva
+00:00 +1: desconocido requiere porción o deja pendiente explícito
+00:00 +2: 4 huevos pan leche350ml Milo preservan componentes sin doble contar
+00:00 +3: rechaza parcial, ID ajeno, unidad incorrecta, cantidad perdida y macros imposibles
+00:00 +4: catálogo 1000 conserva alimento nombrado fuera de primeros200
+00:00 +5: texto largo no llama; JSON truncado no crea propuesta
+00:00 +6: cobertura de caracteres no permite arroz chino bajo huevo conocido
+00:00 +7: All tests passed!
