@@ -18,6 +18,8 @@ import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../plan/v3_activation.dart';
+import '../plan/plan_edit_screen.dart' show PlanEditScreen;
+import '../../data/repositories/plan_repository.dart' show PlanDraft;
 import '../../domain/progress.dart';
 import '../../domain/sleep_entry.dart';
 import '../../domain/mobility.dart' show legRecovery;
@@ -56,6 +58,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final today = ref.watch(todayProvider);
     final dashboard = ref.watch(dashboardProvider);
+    // Plan 022: sin ninguna versión del plan no hay "descanso": hay una
+    // rutina por configurar. Una instalación nueva no recibe el v3.1 del dueño.
+    final noVersions = ref.watch(planVersionsProvider).valueOrNull?.isEmpty ?? false;
+    final newInstall = ref.watch(setupStatusProvider).valueOrNull?.isNewInstall ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -71,41 +77,74 @@ class HomeScreen extends ConsumerWidget {
       body: dashboard.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
-        data: (d) => RefreshIndicator(
-          // Deslizar hacia abajo trae los pasos del reloj al instante.
-          onRefresh: () async {
-            await ref.read(syncStepsProvider)();
-            ref.invalidate(dashboardProvider);
-          },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: 24),
-            children: [
-              const ActiveSessionBanner(),
-              UpdateBanner(
-                onOpenSettings: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
-              ),
-              _PlanHero(dashboard: d),
-              _RingsCard(dashboard: d),
-              if (d.coach case final coach?) CoachCard(reading: coach, strength: d.strength),
-              const _PendingReviewCard(),
-              const _LadderStepUpCard(),
-              _YesterdayCheckCard(today: today),
-              const _CorrectionsBanner(),
-              const TodayCustomRemindersCard(),
-              _WeekGlanceCard(today: today),
-              if (d.v3Suggestion != null) _V3SuggestionCard(monday: d.v3Suggestion!),
-              _ActionsCard(
-                date: today,
-                dayType: d.dayType,
-                burpees: d.dayType == DayType.densidad ? d.v3?.burpees : null,
-              ),
-              if (d.measurement != null) _MeasurementCard(due: d.measurement!),
-            ],
-          ),
-        ),
+        data: (d) {
+          final noRoutine = noVersions && d.planVersion == null;
+          return RefreshIndicator(
+            // Deslizar hacia abajo trae los pasos del reloj al instante.
+            onRefresh: () async {
+              await ref.read(syncStepsProvider)();
+              ref.invalidate(dashboardProvider);
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 24),
+              children: [
+                const ActiveSessionBanner(),
+                UpdateBanner(
+                  onOpenSettings: () =>
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+                ),
+                if (noRoutine) _NoRoutineCard(today: today) else _PlanHero(dashboard: d),
+                _RingsCard(dashboard: d),
+                if (d.coach case final coach?) CoachCard(reading: coach, strength: d.strength),
+                const _PendingReviewCard(),
+                const _LadderStepUpCard(),
+                _YesterdayCheckCard(today: today),
+                const _CorrectionsBanner(),
+                const TodayCustomRemindersCard(),
+                _WeekGlanceCard(today: today),
+                if (d.v3Suggestion != null && !noRoutine && !newInstall) _V3SuggestionCard(monday: d.v3Suggestion!),
+                _ActionsCard(
+                  date: today,
+                  dayType: d.dayType,
+                  burpees: d.dayType == DayType.densidad ? d.v3?.burpees : null,
+                ),
+                if (d.measurement != null) _MeasurementCard(due: d.measurement!),
+              ],
+            ),
+          );
+        },
       ),
+    );
+  }
+}
+
+/// Sin rutina (plan 022): ausencia y acción, no un día de descanso ni racha.
+/// Se configura con el editor común del plan.
+class _NoRoutineCard extends StatelessWidget {
+  const _NoRoutineCard({required this.today});
+
+  final DateTime today;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return AppCard(
+      children: [
+        Text('${weekdayLong(today.weekday)} ${formatShort(today)}'.toUpperCase(),
+            style: text.labelSmall?.copyWith(letterSpacing: 1)),
+        const SizedBox(height: 8),
+        Text('Sin rutina configurada', style: text.titleLarge),
+        const SizedBox(height: 4),
+        const Text('Todavía no hay un plan semanal: hoy no cuenta como descanso ni como día de entreno.'),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          onPressed: () => Navigator.push(
+              context, MaterialPageRoute(builder: (_) => PlanEditScreen(draft: PlanDraft.empty(dateOnly(today))))),
+          icon: const Icon(Icons.edit_calendar),
+          label: const Text('Configurar mi rutina'),
+        ),
+      ],
     );
   }
 }

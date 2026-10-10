@@ -11,6 +11,7 @@ import 'package:seguimiento/data/backup_archive.dart';
 import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/domain/nutrition.dart';
 import 'package:seguimiento/domain/enums.dart';
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 void main() {
@@ -36,6 +37,10 @@ void main() {
     await db.customStatement('DROP TABLE goal_versions');
     await db.customStatement('DROP TABLE coach_proposals');
     await db.customStatement('ALTER TABLE morning_checks DROP COLUMN feeling');
+    // Ni lo del 23 (plan 022): el perfil sin origen/estado del alta.
+    for (final column in ['profile_origin', 'setup_state', 'setup_confirmed_at', 'handoff_consent_at']) {
+      await db.customStatement('ALTER TABLE profiles DROP COLUMN $column');
+    }
     await db.customStatement('PRAGMA user_version=20');
     await db.close();
     db = AppDatabase(NativeDatabase(file));
@@ -131,6 +136,8 @@ void main() {
     final b = DatabaseHost(File('${bDir.path}/seguimiento.sqlite'),
         (f) => AppDatabase(NativeDatabase(f)));
     await seedFoodsIfEmpty(a.db);
+    // Quien registra comidas ya pasó el alta (plan 022).
+    await asExistingUser(a.db, goals: false);
     final repo = NutritionRepository(a.db);
     const notes =
         'Descripción original · IA: 250 g de arroz chino\nSupuesto: aceite desconocido\nEstimación IA gpt-6-luna revisada';

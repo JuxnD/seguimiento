@@ -39,6 +39,21 @@ class Profiles extends Table {
   /// la misma de entre semana (`kcalTarget`).
   IntColumn get kcalTargetFootball => integer().nullable()();
 
+  /// Alta (plan 022, esquema 23). Origen: 'new' (instalación nueva) o
+  /// 'legacyUnknown' (base migrada: no se infiere quién es). El valor por
+  /// defecto es el de la migración; `onCreate` escribe new/pending.
+  TextColumn get profileOrigin => text().withDefault(const Constant('legacyUnknown'))();
+
+  /// 'pending' hasta confirmar el alta; 'ready' después.
+  TextColumn get setupState => text().withDefault(const Constant('ready'))();
+
+  /// Momento real (ISO) en que se confirmó el alta. null si no la hubo.
+  TextColumn get setupConfirmedAt => text().nullable()();
+
+  /// Consentimiento explícito y fechado (ISO) para aplicar las correcciones
+  /// del traspaso original. Separado del alta: ni el origen ni un flag lo dan.
+  TextColumn get handoffConsentAt => text().nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }

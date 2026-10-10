@@ -6,6 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/repositories/body_repository.dart';
+import 'package:seguimiento/data/repositories/goal_repository.dart';
+import 'package:seguimiento/data/repositories/profile_repository.dart';
+import 'package:seguimiento/domain/goal_history.dart';
 import 'package:seguimiento/data/repositories/reminder_repository.dart';
 import 'package:seguimiento/domain/reminders.dart';
 import 'package:seguimiento/domain/enums.dart';
@@ -57,6 +60,8 @@ const _v10Columns = {
 };
 const _v10Tables = ['daily_steps'];
 
+const _v23ProfileColumns = ['profile_origin', 'setup_state', 'setup_confirmed_at', 'handoff_consent_at'];
+
 const _v4Columns = {
   'sessions': ['out_of_plan', 'incomplete', 'planned_rounds'],
 };
@@ -86,8 +91,19 @@ void main() {
   Future<void> buildOldSchema(int version, {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    if (version >= 23) {
+      await rows?.call(db);
+      await db.close();
+      return;
+    }
+    // Una base anterior al 23 no tiene alta: la fila del perfil es la de
+    // siempre (sin origen/estado) y sin vigencias de instalación nueva.
+    for (final column in _v23ProfileColumns) {
+      await db.customStatement('alter table profiles drop column $column');
+    }
     if (version >= 22) {
       await rows?.call(db);
+      await db.customStatement('pragma user_version = $version');
       await db.close();
       return;
     }
@@ -291,7 +307,7 @@ void main() {
     raw.dispose();
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     expect((await BodyRepository(migrated).watchWeights().first).map((row) => row.kg), [70]);
     final meal = await migrated
         .customSelect('select m.date, i.label, i.kcal from meals m join meal_items i on i.meal_id = m.id')
@@ -301,7 +317,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 1 llega al 22 sin perder datos', () async {
+  test('una base del esquema 1 llega al 23 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -331,7 +347,7 @@ void main() {
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -351,7 +367,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 22 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 23 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -363,11 +379,11 @@ void main() {
     final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 7 llega al 22 con guías, catálogo nuevo y rondas sin separar', () async {
+  test('una base del esquema 7 llega al 23 con guías, catálogo nuevo y rondas sin separar', () async {
     await buildOldSchema(7, rows: (old) async {
       // 'Separaciones con banda' lleva anclaje: antes la guía se escribía en
       // el paso 8, cuando `exercises.anchor` (paso 15) aún no existía.
@@ -381,7 +397,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
 
     final pike = await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Pike push-up'))).getSingle();
     expect(pike.formCues, startsWith('Posición de V invertida'));
@@ -415,7 +431,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     final repo = ReminderRepository(migrated);
     await repo.ensureDefaults(); // lo que hace el arranque
     final settings = await repo.settings();
@@ -431,7 +447,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 6 llega al 22: las sesiones viejas quedan con descanso 0', () async {
+  test('una base del esquema 6 llega al 23: las sesiones viejas quedan con descanso 0', () async {
     await buildOldSchema(6);
     final old = AppDatabase(NativeDatabase(file));
     await old.customStatement(
@@ -442,11 +458,11 @@ void main() {
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.totalSec, 1200);
     expect(session.restSec, 0);
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 9 llega al 22: pasos, golpe en el fútbol y alimentos marcados', () async {
+  test('una base del esquema 9 llega al 23: pasos, golpe en el fútbol y alimentos marcados', () async {
     await buildOldSchema(9, rows: (db) async {
       await db.customStatement(
           "insert into foods (name, basis, unit_label, kcal, protein) values ('Pan (unidad)', 'unit', 'unidad', 140, 4.5)");
@@ -471,27 +487,27 @@ void main() {
     final profile = await migrated.select(migrated.profiles).getSingle();
     expect(profile.stepsTarget, 5000);
     expect(await migrated.select(migrated.dailySteps).get(), isEmpty);
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 10 llega al 22 con la tabla de fotos de referencia', () async {
+  test('una base del esquema 10 llega al 23 con la tabla de fotos de referencia', () async {
     await buildOldSchema(10);
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await migrated.select(migrated.exercisePhotos).get(), isEmpty);
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 11 llega al 22 con la tabla de recordatorios propios', () async {
+  test('una base del esquema 11 llega al 23 con la tabla de recordatorios propios', () async {
     await buildOldSchema(11);
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await migrated.select(migrated.customReminders).get(), isEmpty);
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 12 llega al 22: pan y salchichón por gramos', () async {
+  test('una base del esquema 12 llega al 23: pan y salchichón por gramos', () async {
     late int panId;
     await buildOldSchema(12, rows: (db) async {
       panId = await db.into(db.foods).insert(FoodsCompanion.insert(
@@ -538,22 +554,22 @@ void main() {
     final logged = await migrated.select(migrated.mealItems).getSingle();
     expect((logged.label, logged.kcal), ('Pan (unidad)', 140), reason: 'lo ya comido no cambia');
     expect(logged.foodId, isNull, reason: 'solo pierde el vínculo con el alimento borrado');
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 13 llega al 22: las sesiones quedan revisadas', () async {
+  test('una base del esquema 13 llega al 23: las sesiones quedan revisadas', () async {
     await buildOldSchema(13, rows: (db) async {
       await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-01', 'circuito', 1200)");
     });
     final migrated = AppDatabase(NativeDatabase(file));
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.pendingReview, isFalse, reason: 'lo ya guardado no queda como pendiente');
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 14 llega al 22: plan y sesiones listos para el v3', () async {
+  test('una base del esquema 14 llega al 23: plan y sesiones listos para el v3', () async {
     await buildOldSchema(14, rows: (db) async {
       await db.customStatement("insert into plan_versions (valid_from) values ('2026-09-28')");
       await db
@@ -564,11 +580,11 @@ void main() {
     expect(version.scheme, isNull, reason: 'el v2 sigue siendo un plan plano');
     final session = await migrated.select(migrated.sessions).getSingle();
     expect((session.mode, session.extraReps), (null, null));
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 15 llega al 22: RIR, fútbol, sueño y meta de fútbol', () async {
+  test('una base del esquema 15 llega al 23: RIR, fútbol, sueño y meta de fútbol', () async {
     await buildOldSchema(15, rows: (db) async {
       await db.customStatement("insert into exercises (name) values ('Dominadas')");
       await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-05', 'bloques', 1800)");
@@ -585,11 +601,11 @@ void main() {
     expect(profile.kcalTargetFootball, isNull, reason: 'sin meta propia, el fútbol usa la de entre semana');
     await migrated.into(migrated.sleepLogs).insert(SleepLogsCompanion.insert(date: '2026-10-06', hours: 7.5));
     expect((await migrated.select(migrated.sleepLogs).getSingle()).hours, 7.5);
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 16 llega al 22: momento del pesaje, mañana y huevos por porción', () async {
+  test('una base del esquema 16 llega al 23: momento del pesaje, mañana y huevos por porción', () async {
     await buildOldSchema(16, rows: (db) async {
       await db.customStatement("insert into body_weights (date, kg, fasted) values ('2026-10-05', 80.5, 0)");
       await db.customStatement(
@@ -609,11 +625,11 @@ void main() {
     await migrated
         .into(migrated.skillAchievements)
         .insert(SkillAchievementsCompanion.insert(skill: 'l_sit', date: '2026-12-11'));
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 18 llega al 22: historial importado, tests y escaleras', () async {
+  test('una base del esquema 18 llega al 23: historial importado, tests y escaleras', () async {
     await buildOldSchema(18, rows: (db) async {
       await db.customStatement(
           "insert into sessions (date, type, total_sec) values ('2026-10-05', 'circuitoLigero', 1500)");
@@ -629,28 +645,124 @@ void main() {
     await migrated
         .into(migrated.ladderStates)
         .insert(LadderStatesCompanion.insert(ladder: 'dragon_flag', step: 1, since: '2026-10-12'));
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     await migrated.close();
   });
 
-  test('una base del esquema 20 llega al 22: metas legadas sin fecha, sin propuestas', () async {
+  test('una base del esquema 20 llega al 23: metas legadas sin fecha, sin propuestas', () async {
     await buildOldSchema(20, rows: (db) async {
       await (db.update(db.profiles)..where((t) => t.id.equals(1)))
           .write(const ProfilesCompanion(stepsTarget: Value(7500), proteinMin: Value(130)));
       await db.customStatement("insert into morning_checks (date, resting_hr) values ('2026-10-09', 58)");
     });
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 22);
+    expect(await userVersion(migrated), 23);
     final goals = await migrated.select(migrated.goalVersions).get();
     final steps = goals.where((g) => g.metric == 'pasos').toList();
     expect(steps.map((g) => (g.value, g.effectiveFrom == null, g.origin)), [
       (7500.0, true, 'legado'),
       (7500.0, false, 'legado'),
     ], reason: 'no se inventa cuándo empezó a regir el 7.500; sí se sabe desde la migración');
-    expect(goals.map((g) => g.metric).toSet(), {'pasos', 'proteinaMin', 'proteinaMax', 'kcal', 'kcalFutbol'});
+    expect(goals.map((g) => g.metric).toSet(), {'pasos', 'proteinaMin', 'proteinaMax', 'kcal', 'kcalFutbol', 'kcalFloor'});
     expect(await migrated.select(migrated.coachProposals).get(), isEmpty);
     final check = await migrated.select(migrated.morningChecks).getSingle();
     expect((check.restingHr, check.feeling), (58, null), reason: 'sin respuesta no es cansancio ni descanso');
     await migrated.close();
   });
+
+  // Plan 022: tabla → columnas → todas las filas; metas/pisos sin duplicar y
+  // sin propuestas nuevas. Lo existente queda legacyUnknown/ready.
+  for (final version in [20, 21, 22]) {
+    test('una base del esquema $version llega al 23 conservando cada tabla, columna y fila', () async {
+      await buildOldSchema(version, rows: (db) async {
+        await db.customStatement(
+            "update profiles set start_date = '2026-08-26', steps_target = 7500, kcal_floor = 1900, kcal_target = 2100");
+        await db.customStatement("insert into body_weights (date, kg, fasted) values ('2026-10-01', 80.4, 1)");
+        await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-02', 'progresion', 1332)");
+        await db.customStatement("insert into meals (date, slot) values ('2026-10-03', 'almuerzo')");
+        await db.customStatement("insert into morning_checks (date, resting_hr) values ('2026-10-04', 57)");
+        if (version >= 22) {
+          // Historia 009 ya migrada (legado + desde la migración), un cambio
+          // del perfil, una referencia del radar y una propuesta decidida.
+          await db.customStatement('''insert into goal_versions (metric, value, effective_from, accepted_at, origin) values
+              ('pasos', 7500, null, '2026-10-08', 'legado'), ('pasos', 7500, '2026-10-08', '2026-10-08', 'legado'),
+              ('proteinaMin', 130, null, '2026-10-08', 'legado'), ('proteinaMin', 130, '2026-10-08', '2026-10-08', 'legado'),
+              ('proteinaMax', 160, null, '2026-10-08', 'legado'), ('proteinaMax', 160, '2026-10-08', '2026-10-08', 'legado'),
+              ('kcal', 2400, null, '2026-10-08', 'legado'), ('kcal', 2400, '2026-10-08', '2026-10-08', 'legado'),
+              ('kcalFutbol', null, null, '2026-10-08', 'legado'), ('kcalFutbol', null, '2026-10-08', '2026-10-08', 'legado'),
+              ('kcal', 2100, '2026-10-09', '2026-10-09', 'perfil'),
+              ('refDominadas', 12, '2026-10-09', '2026-10-09', 'perfil')''');
+          await db.customStatement(
+              "insert into coach_proposals (id, kind, status, evidence, created_on, policy) values ('p1', 'pasos', 'rechazada', '', '2026-10-09', 1)");
+        }
+      });
+
+      Map<String, ({List<String> columns, Map<int, Map<String, Object?>> rows})> snapshot() {
+        final raw = sqlite.sqlite3.open(file.path, mode: sqlite.OpenMode.readOnly);
+        try {
+          final names = raw
+              .select("select name from sqlite_master where type = 'table' and name not like 'sqlite_%'")
+              .map((r) => r['name'] as String);
+          return {
+            for (final t in names)
+              t: (
+                columns: [for (final c in raw.select('pragma table_info("$t")')) c['name'] as String],
+                rows: {
+                  for (final r in raw.select('select rowid as _rid, * from "$t"'))
+                    r['_rid'] as int: {for (final k in r.keys) if (k != '_rid') k: r[k]},
+                },
+              ),
+          };
+        } finally {
+          raw.dispose();
+        }
+      }
+
+      final before = snapshot();
+      final migrated = AppDatabase(NativeDatabase(file));
+      expect(await userVersion(migrated), 23);
+      final status = await ProfileRepository(migrated).setupStatus();
+      expect((status.origin, status.state, status.confirmedAt, status.handoffConsentAt),
+          (ProfileOrigin.legacyUnknown, SetupState.ready, null, null),
+          reason: 'no se infiere el dueño ni se pide configurar');
+      final history = await GoalRepository(migrated).history();
+      await migrated.close();
+      final after = snapshot();
+
+      // Tablas que la propia app puede completar al abrir: catálogo y avisos.
+      const additive = {'foods', 'catalog_patches', 'meal_templates', 'meal_template_items', 'reminders', 'goal_versions'};
+      for (final e in before.entries) {
+        final now = after[e.key];
+        expect(now, isNotNull, reason: 'tabla ${e.key}');
+        expect(now!.columns, containsAll(e.value.columns), reason: 'columnas de ${e.key}');
+        for (final row in e.value.rows.entries) {
+          expect({for (final c in e.value.columns) c: now.rows[row.key]?[c]}, row.value,
+              reason: '${e.key} fila ${row.key}');
+        }
+        if (!additive.contains(e.key)) expect(now.rows.length, e.value.rows.length, reason: 'filas de ${e.key}');
+      }
+      expect(after['profiles']!.columns, containsAll(_v23ProfileColumns));
+      expect(after['coach_proposals']!.rows.length, before['coach_proposals']?.rows.length ?? 0,
+          reason: 'la migración no crea propuestas');
+
+      final added = [
+        for (final r in after['goal_versions']!.rows.entries)
+          if (!(before['goal_versions']?.rows.containsKey(r.key) ?? false)) r.value,
+      ];
+      if (version >= 22) {
+        expect(added.map((r) => (r['metric'], r['value'], r['effective_from'] == null, r['origin'])), [
+          ('kcalFloor', 1900.0, true, 'legado'),
+          ('kcalFloor', 1900.0, false, 'legado'),
+        ], reason: 'sólo el piso que faltaba; la historia 009 y la referencia no se duplican');
+      } else {
+        expect(added.map((r) => r['metric']).toSet(),
+            {'pasos', 'proteinaMin', 'proteinaMax', 'kcal', 'kcalFutbol', 'kcalFloor'});
+        expect(added, hasLength(12));
+      }
+      final floor = history.on(GoalMetric.kcalFloor, DateTime.now())!;
+      expect((floor.known, floor.value), (true, 1900));
+      expect(history.on(GoalMetric.kcalFloor, DateTime(2026, 9, 1))!.known, isFalse,
+          reason: 'antes de la migración: meta histórica no registrada');
+    });
+  }
 }

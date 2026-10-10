@@ -8,6 +8,7 @@ import 'package:seguimiento/data/repositories/body_repository.dart';
 import 'package:seguimiento/data/repositories/profile_repository.dart';
 import 'package:seguimiento/domain/reminders.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 void main() {
@@ -16,9 +17,11 @@ void main() {
   late Directory dir;
   late DatabaseHost host;
 
-  setUp(() {
+  setUp(() async {
     dir = Directory.systemTemp.createTempSync('seguimiento_restore');
     host = DatabaseHost(File('${dir.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
+    // Alta ya pasada (plan 022): un respaldo con registros no es un alta pendiente.
+    await asExistingUser(host.db, goals: false);
   });
 
   tearDown(() async {

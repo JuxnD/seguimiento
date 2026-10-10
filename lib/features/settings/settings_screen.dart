@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show Value;
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
@@ -12,12 +11,14 @@ import 'package:share_plus/share_plus.dart';
 import '../../app/providers.dart';
 import '../../data/backup_archive.dart';
 import '../../data/database.dart';
-import '../../data/database_host.dart';
+import '../../data/repositories/goal_repository.dart';
 import '../../data/repositories/profile_repository.dart';
+import '../../domain/goal_history.dart' show GoalMetric;
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import 'corrections_screen.dart';
+import 'restore_access.dart';
 import '../../ui/widgets.dart';
 import '../meals/foods_screen.dart';
 import '../plan/plan_screen.dart';
@@ -134,10 +135,9 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8),
-            child:
-                Text('Un ZIP reemplaza registros, historial de IA y fotos. '
-                    'Los respaldos antiguos .sqlite reemplazan la base, incluido el historial de IA '
-                    'que contengan; conservan las fotos actuales. No reemplazan el cronómetro en curso ni los permisos.'),
+            child: Text('Un ZIP reemplaza registros, historial de IA y fotos. '
+                'Los respaldos antiguos .sqlite reemplazan la base, incluido el historial de IA '
+                'que contengan; conservan las fotos actuales. No reemplazan el cronómetro en curso ni los permisos.'),
           ),
           const SizedBox(height: 12),
           Text('Copias automáticas', style: Theme.of(context).textTheme.titleSmall),
@@ -160,7 +160,8 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
                             contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.history),
                             title: Text('${weekdayLong(b.date.weekday)} ${formatLong(b.date)}'),
-                            subtitle: Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB · base e historial IA, sin fotos'),
+                            subtitle:
+                                Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB · base e historial IA, sin fotos'),
                             trailing: TextButton(
                               onPressed: _busy
                                   ? null
@@ -201,67 +202,19 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
     }
   }
 
-  /// Reemplaza registros y, para ZIP, fotos. Pide
-  /// confirmación explícita porque borra lo registrado desde ese respaldo.
-  Future<void> _restore(BuildContext context, WidgetRef ref) async {
-    final picked = await FilePicker.platform.pickFiles(withData: false);
-    final path = picked?.files.single.path;
-    if (path == null || !context.mounted) return;
-    await _restoreFile(context, ref, File(path), p.basename(path));
-  }
+  /// Reemplaza registros y, para ZIP, fotos, con el acceso común de
+  /// restauración (también lo usa el alta).
+  Future<void> _restore(BuildContext context, WidgetRef ref) => _whileBusy(() => pickAndRestoreBackup(context, ref));
 
-  Future<void> _restoreFile(BuildContext context, WidgetRef ref, File file, String label) async {
+  Future<void> _restoreFile(BuildContext context, WidgetRef ref, File file, String label) =>
+      _whileBusy(() => restoreBackupFile(context, ref, file, label));
+
+  Future<void> _whileBusy(Future<Object?> Function() action) async {
     if (_busy) return;
     setState(() => _busy = true);
-    PreparedBackup? prepared;
-    var replaced = false;
     try {
-      final archive = await _archive(ref);
-      final ready = await _progress('Verificando respaldo', () => archive.prepare(file));
-      prepared = ready;
-      if (!context.mounted) return;
-      final legacy = ready.legacy;
-      final missing = ready.missingPhotos.length;
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (c) => AlertDialog(
-          scrollable: true,
-          title: const Text('¿Restaurar este respaldo?'),
-          content: Text('Respaldo: $label\n\n'
-              'Se reemplaza la base actual: perfil, plan, sesiones, comidas, medidas, catálogos e historial de IA '
-              '(preguntas, respuestas y contexto) por lo guardado en el respaldo. '
-              'Pueden reaparecer conversaciones que borraste después de esa copia. '
-              '${legacy ? 'Es un respaldo antiguo: NO contiene fotos. Las fotos actuales se conservan.' : 'Se reemplazan también las fotos actuales por las ${ready.photoCount} fotos del ZIP.'}\n\n'
-              '${missing == 0 ? '' : 'RESPALDO INCOMPLETO: $missing fotos ya faltaban al exportarlo y no se pueden recuperar.\n\n'}'
-              'El cronómetro en curso, los permisos y la licencia no cambian. '
-              'El respaldo es un archivo sin cifrar.\n\n'
-              'Esto no se puede deshacer.\n\n'
-              'Si lo de ahora te sirve, exporta primero.'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
-            FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Restaurar')),
-          ],
-        ),
-      );
-      if (confirmed != true || !context.mounted) return;
-      replaced = true;
-      await _progress('Restaurando respaldo', () => archive.restore(ready, allowMissingPhotos: true));
-      if (context.mounted) {
-        showSnack(
-            context,
-            legacy
-                ? 'Registros restaurados; fotos actuales conservadas'
-                : 'Registros y ${ready.photoCount} fotos restaurados${missing == 0 ? '' : '; $missing fotos faltantes'}');
-      }
-    } on RestoreException catch (e) {
-      if (context.mounted) showSnack(context, e.message);
-    } on Object catch (e) {
-      if (context.mounted) showSnack(context, 'No se pudo restaurar: $e');
+      await action();
     } finally {
-      // Siempre: aunque falle, la conexión pudo cerrarse y reabrirse en el
-      // rollback. Sin esto, repositorios y streams quedan sobre la vieja.
-      if (replaced) ref.read(databaseGenerationProvider.notifier).state++;
-      await prepared?.dispose();
       if (mounted) setState(() => _busy = false);
     }
   }
@@ -275,18 +228,13 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
         builder: (dialogContext) => AlertDialog(
           scrollable: true,
           title: const Text('Antes de exportar'),
-          content: const Text(
-              'El ZIP incluye perfil, plan, sesiones, comidas, medidas, catálogos, '
+          content: const Text('El ZIP incluye perfil, plan, sesiones, comidas, medidas, catálogos, '
               'fotos de progreso y ejercicios, e historial de IA con preguntas, respuestas y contexto.\n\n'
               'Se guarda sin cifrar. Compártelo sólo donde quieras conservar esos datos privados. '
               'No incluye la licencia, los permisos ni el cronómetro en curso.'),
           actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(dialogContext, false),
-                child: const Text('Cancelar')),
-            FilledButton(
-                onPressed: () => Navigator.pop(dialogContext, true),
-                child: const Text('Crear respaldo')),
+            TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancelar')),
+            FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Crear respaldo')),
           ],
         ),
       );
@@ -356,6 +304,48 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
   late LengthUnit _unit = p.lengthUnit;
   late bool _neverToFailure = p.neverToFailure;
 
+  /// Metas cuya vigencia es "sin meta" (plan 022): el campo se muestra vacío
+  /// y la proyección interna del perfil no se ofrece como elección. Escribir
+  /// una cifra la acepta; dejarlo vacío no toca esa meta.
+  Set<GoalMetric> _none = const {};
+  late final _noneFields = {
+    GoalMetric.proteinaMin: _proteinMin,
+    GoalMetric.proteinaMax: _proteinMax,
+    GoalMetric.kcal: _kcal,
+    GoalMetric.kcalFloor: _kcalFloor,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_loadDecisions());
+  }
+
+  Future<void> _loadDecisions() async {
+    final h = await GoalRepository(ref.read(databaseProvider)).history();
+    final today = DateTime.now();
+    final none = {
+      for (final m in _noneFields.keys)
+        if (h.current(m, today) case final v? when v.value == null) m,
+    };
+    if (!mounted || none.isEmpty) return;
+    setState(() {
+      _none = none;
+      for (final m in none) {
+        _noneFields[m]!.clear();
+      }
+    });
+  }
+
+  /// Valor que escribe el guardado: vacío en una meta "sin meta" no cambia.
+  Value<int> _goalValue(GoalMetric m, int fallback) {
+    final v = int.tryParse(_noneFields[m]!.text.trim());
+    if (_none.contains(m) && v == null) return const Value.absent();
+    return Value(v ?? fallback);
+  }
+
+  String _label(GoalMetric m, String label) => _none.contains(m) ? '$label (sin meta)' : label;
+
   @override
   void dispose() {
     for (final c in [
@@ -377,15 +367,16 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
   }
 
   Future<void> _save() async {
-    final proteinMin = int.tryParse(_proteinMin.text) ?? p.proteinMin;
-    final proteinMax = int.tryParse(_proteinMax.text) ?? p.proteinMax;
-    final kcal = int.tryParse(_kcal.text) ?? p.kcalTarget;
-    final kcalFloor = int.tryParse(_kcalFloor.text) ?? p.kcalFloor;
+    final proteinMin = _goalValue(GoalMetric.proteinaMin, p.proteinMin);
+    final proteinMax = _goalValue(GoalMetric.proteinaMax, p.proteinMax);
+    final kcal = _goalValue(GoalMetric.kcal, p.kcalTarget);
+    final kcalFloor = _goalValue(GoalMetric.kcalFloor, p.kcalFloor);
+    bool both(Value<int> a, Value<int> b) => a.present && b.present;
     final interval = int.tryParse(_interval.text) ?? p.measureIntervalDays;
     final intervalMax = int.tryParse(_intervalMax.text) ?? p.measureIntervalMaxDays;
-    final problem = proteinMin > proteinMax
+    final problem = both(proteinMin, proteinMax) && proteinMin.value > proteinMax.value
         ? 'La proteína mínima no puede ser mayor que la máxima'
-        : kcalFloor > kcal
+        : both(kcalFloor, kcal) && kcalFloor.value > kcal.value
             ? 'El piso de alerta no puede ser mayor que las kcal objetivo'
             : interval <= 0 || intervalMax < interval
                 ? 'La ventana de medición va de un mínimo (> 0) a un máximo mayor o igual'
@@ -400,10 +391,10 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
               birthDate: Value(_birth == null ? null : dayKey(_birth!)),
               heightCm: Value(parseNum(_height.text)),
               startDate: Value(dayKey(_start)),
-              proteinMin: Value(proteinMin),
-              proteinMax: Value(proteinMax),
-              kcalTarget: Value(kcal),
-              kcalFloor: Value(kcalFloor),
+              proteinMin: proteinMin,
+              proteinMax: proteinMax,
+              kcalTarget: kcal,
+              kcalFloor: kcalFloor,
               kcalTargetFootball: Value(_positiveInt(_kcalFootball.text)),
               minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
               measureIntervalDays: Value(interval),
@@ -449,17 +440,22 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: NumberField(controller: _proteinMin, label: 'Proteína mín', suffix: 'g')),
+            Expanded(
+                child: NumberField(
+                    controller: _proteinMin, label: _label(GoalMetric.proteinaMin, 'Proteína mín'), suffix: 'g')),
             const SizedBox(width: 8),
-            Expanded(child: NumberField(controller: _proteinMax, label: 'Proteína máx', suffix: 'g')),
+            Expanded(
+                child: NumberField(
+                    controller: _proteinMax, label: _label(GoalMetric.proteinaMax, 'Proteína máx'), suffix: 'g')),
           ],
         ),
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(child: NumberField(controller: _kcal, label: 'kcal objetivo')),
+            Expanded(child: NumberField(controller: _kcal, label: _label(GoalMetric.kcal, 'kcal objetivo'))),
             const SizedBox(width: 8),
-            Expanded(child: NumberField(controller: _kcalFloor, label: 'Piso de alerta kcal')),
+            Expanded(
+                child: NumberField(controller: _kcalFloor, label: _label(GoalMetric.kcalFloor, 'Piso de alerta kcal'))),
           ],
         ),
         const SizedBox(height: 8),

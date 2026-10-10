@@ -56,7 +56,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **18**. Al cambiar una tabla:
+`schemaVersion` vale **23** en el candidato local del plan 022 (ver al final). Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -204,3 +204,27 @@ rechaza: es de una versión más nueva y restaurarlo rompería los datos.
 - Toda escritura de metas pasa por `GoalRepository.updateProfile` o
   `scheduleGoal`. Oráculos: `goal_history_test`, `adaptive_coach_data_test`,
   `migration_test` (20 → 22). [ADR 0016](adr/0016-acompanamiento-y-metas-con-historia.md).
+
+## Esquema 23 (plan 022, candidato local sin publicar)
+
+- `profiles.profile_origin` (`new` | `legacyUnknown`), `setup_state`
+  (`pending` | `ready`), `setup_confirmed_at` (ISO, null sin alta) y
+  `handoff_consent_at` (ISO, consentimiento separado y fechado para las
+  correcciones del traspaso original). Valores fuera de contrato son error
+  visible (`SetupStatus.parse`), nunca se corrigen ni se infieren.
+- `onCreate`: perfil `new/pending`, **cero** vigencias (antes sembraba cinco).
+  Al confirmar el alta se aceptan seis métricas (pasos, proteinaMin,
+  proteinaMax, kcal, kcalFutbol, **kcalFloor**) con vigencia = fecha real de
+  confirmación, también las null y las iguales al ejemplo.
+- Migración 20/21/22 → 23: columnas con defaults `legacyUnknown/ready`, sin
+  inferir dueño por ID 1, licencia, tabla vacía ni flags. Se añaden antes de la
+  siembra del 22. `seedGoalVersions` trabaja **por métrica faltante**: desde 22
+  sólo añade `kcalFloor` (legado sin fecha + conocido desde la migración); no
+  duplica historia 009, referencias ni propuestas.
+- Contrato pendiente: si `pending`, ninguna tabla personal tiene filas
+  (`personalTablesWithRows`; compartidas = profiles, exercises, foods,
+  catalog_patches, meal_templates, meal_template_items, reminders). Lo valida
+  `DatabaseHost.checkComplete` en la apertura de prueba de un respaldo, antes de
+  tocar base y fotos. Oráculos: `pilot_profile_test`, `migration_test`
+  (20/21/22 → 23 por tabla/columna/fila), `schema21_122_integration_test`.
+  [ADR 0020](adr/0020-alta-neutral-y-arranque-protegido.md).

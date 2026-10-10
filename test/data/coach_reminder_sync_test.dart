@@ -21,6 +21,7 @@ import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/goal_history.dart';
 import 'package:seguimiento/domain/reminders.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 /// Plan 009, R2: lo guardado en SQLite llega por los providers a la
@@ -69,6 +70,8 @@ void main() {
 
   setUp(() async {
     db = openInMemoryDatabase();
+    // Avisos sólo con alta confirmada (plan 022): es la base del dueño.
+    await asExistingUser(db, goals: false);
     final plan = PlanRepository(db, ExerciseRepository(db));
     await seedIfEmpty(db, plan);
     await ReminderRepository(db).ensureDefaults();

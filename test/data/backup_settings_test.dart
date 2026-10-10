@@ -16,6 +16,7 @@ import 'package:seguimiento/data/update_service.dart';
 import 'package:seguimiento/features/settings/health_connect_card.dart';
 import 'package:seguimiento/features/settings/settings_screen.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 // Solo el diálogo del sistema se sustituye: ZIP, SQLite, archivos, pantalla,
@@ -60,6 +61,9 @@ void main() {
         final dirB = Directory('${root.path}/B')..createSync();
         a = DatabaseHost(File('${dirA.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
         b = DatabaseHost(File('${dirB.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
+        // A y B ya pasaron el alta (plan 022).
+        await asExistingUser(a.db, goals: false);
+        await asExistingUser(b.db, goals: false);
         await BodyRepository(a.db).addWeight(DateTime(2026, 10, 1), 72);
         await BodyRepository(b.db).addWeight(DateTime(2026, 10, 2), 73);
         File('${dirA.path}/fotos/primera.jpg')

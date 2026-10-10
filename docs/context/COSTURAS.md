@@ -1,5 +1,23 @@
 # Costuras verificadas de la candidata 1.21
 
+## Plan022 local: alta neutral → SQLite → AppEntry → shell/restaurar
+
+Base `f34ab7c`, worktree `seguimiento-claude-022`, Flutter3.22/Dart3.4, esquema23.
+Sin APK, AVD ni teléfono; nativo (permisos reales, Health Connect) NO_EVALUADO.
+
+| Cruce | Evidencia local / límite |
+|---|---|
+| onCreate → SQLite → AppEntry | Rojo f34: 5 metas aceptadas al instalar; verde: new/pending, 0 vigencias, 0 planes; AppEntry no monta HomeShell (spies: 0 permisos/avisos/pasos/respaldo, también tras 3 min) |
+| Alta (pantalla) → transacción → listo → shell | Confirmar escribe 6 vigencias desde la confirmación real y corre efectos una vez; cancelar/reiniciar/fallo (trigger SQLite) dejan pending sin cambios; doble confirmación no duplica |
+| Listo → restaurar alta pendiente → app abierta | Vuelve al alta, `applySchedule([])`; mutante sin guarda programó 17 avisos y fue rechazado |
+| ZIP23 → trialOpen/checkComplete → base/fotos | Origen/estado inválido o pending con registros rechazado antes de reemplazar: bytes de base, fotos y flags idénticos; mutante sin `validateSetup` rechazado; fallo tardío revierte alta previa y fotos |
+| ZIP/SQLite 20–22 → 23 | legacyUnknown/ready sin pedir alta; 20/21/22 conservan cada tabla→columna→fila; desde 22 sólo se añade `kcalFloor`; fixture real 21 conserva sus 33 tablas |
+| Correcciones → transacción | Sin consentimiento, sin respaldo, con flags «descartado», origen nuevo o legado: 0 escrituras; consentimiento retirado entre pantalla y transacción: 0 escrituras |
+| Historia «sin meta» → lectores Hoy/comidas/avisos/informe/IA | **Pendiente 012**: leen la proyección del perfil (130/2400). No activar usuarios nuevos ni publicar hasta ese cierre |
+
+[ADR 0020](../adr/0020-alta-neutral-y-arranque-protegido.md) ·
+[recibo022](sessions/2026-10-10-022-alta-neutral-claude.md).
+
 ## Plan019 local: marcas de Cindy → pantalla → draft
 
 Base `238ef85`, worktree `seguimiento-019-cindy`, Flutter3.22/Dart3.4.

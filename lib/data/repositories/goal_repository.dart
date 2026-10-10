@@ -12,20 +12,23 @@ Map<GoalMetric, double?> goalsOfProfile(ProfileRow p) => {
       GoalMetric.proteinaMax: p.proteinMax.toDouble(),
       GoalMetric.kcal: p.kcalTarget.toDouble(),
       GoalMetric.kcalFutbol: p.kcalTargetFootball?.toDouble(),
+      GoalMetric.kcalFloor: p.kcalFloor.toDouble(),
     };
 
-/// Primera vigencia de cada meta. Instalación nueva: conocida desde hoy.
-/// Base migrada (`effectiveFrom` null): el pasado queda incierto (fila sin
-/// fecha) y el mismo valor se sabe vigente **desde la migración** (revisión
-/// de Codex: si no, el legado nunca se podría revisar). No duplica.
+/// Primera vigencia de cada meta. Base migrada (`effectiveFrom` null): el
+/// pasado queda incierto (fila sin fecha) y el mismo valor se sabe vigente
+/// **desde la migración** (revisión de Codex: si no, el legado nunca se
+/// podría revisar). Por métrica (plan 022): sólo siembra las que no tienen
+/// ninguna vigencia; no duplica historia, referencias ni propuestas. Una
+/// instalación nueva no pasa por aquí: acepta sus metas al confirmar el alta.
 Future<void> seedGoalVersions(AppDatabase db,
     {required DateTime? effectiveFrom, required String origin, DateTime? now}) async {
-  final existing = await db.select(db.goalVersions).get();
-  if (existing.isNotEmpty) return;
+  final existing = {for (final r in await db.select(db.goalVersions).get()) r.metric};
   final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingleOrNull();
   if (profile == null) return;
   final today = dateOnly(now ?? DateTime.now());
   for (final e in goalsOfProfile(profile).entries) {
+    if (existing.contains(e.key.name)) continue;
     Future<void> add(DateTime? from) => db.into(db.goalVersions).insert(GoalVersionsCompanion.insert(
           metric: e.key.name,
           value: Value(e.value),
@@ -37,6 +40,16 @@ Future<void> seedGoalVersions(AppDatabase db,
     if (effectiveFrom == null) await add(today);
   }
 }
+
+/// Metas que un cambio de perfil escribe explícitamente.
+Set<GoalMetric> _presentGoals(ProfilesCompanion c) => {
+      if (c.stepsTarget.present) GoalMetric.pasos,
+      if (c.proteinMin.present) GoalMetric.proteinaMin,
+      if (c.proteinMax.present) GoalMetric.proteinaMax,
+      if (c.kcalTarget.present) GoalMetric.kcal,
+      if (c.kcalTargetFootball.present) GoalMetric.kcalFutbol,
+      if (c.kcalFloor.present) GoalMetric.kcalFloor,
+    };
 
 GoalVersion _version(GoalVersionRow r) => GoalVersion(
       id: r.id,
@@ -91,12 +104,14 @@ class GoalRepository {
       proteinMax: req(GoalMetric.proteinaMax),
       kcalTarget: req(GoalMetric.kcal),
       kcalTargetFootball: football(),
+      kcalFloor: req(GoalMetric.kcalFloor),
     );
     if (!change.stepsTarget.present &&
         !change.proteinMin.present &&
         !change.proteinMax.present &&
         !change.kcalTarget.present &&
-        !change.kcalTargetFootball.present) {
+        !change.kcalTargetFootball.present &&
+        !change.kcalFloor.present) {
       return;
     }
     await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(change);
@@ -145,8 +160,17 @@ class GoalRepository {
         await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(data);
         final after = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
         final old = goalsOfProfile(before);
+        final present = _presentGoals(data);
+        final h = await history();
         for (final e in goalsOfProfile(after).entries) {
-          if (old[e.key] == e.value) continue;
+          // Plan 022: si lo vigente es "sin meta" (null conocido), escribir una
+          // cifra es aceptarla aunque coincida con la proyección del perfil.
+          // Sólo cuenta lo que el llamador escribió: editar la estatura no
+          // acepta metas.
+          final current = h.current(e.key, today);
+          final acceptsOverNone =
+              present.contains(e.key) && e.value != null && current != null && current.value == null;
+          if (old[e.key] == e.value && !acceptsOverNone) continue;
           await db.into(db.goalVersions).insert(GoalVersionsCompanion.insert(
                 metric: e.key.name,
                 value: Value(e.value),

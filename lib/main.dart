@@ -10,19 +10,17 @@ import 'data/active_session_store.dart';
 import 'data/database_host.dart';
 import 'data/local_flags.dart';
 import 'data/notification_service.dart';
-import 'data/repositories/exercise_repository.dart';
-import 'data/repositories/plan_repository.dart';
 import 'data/repositories/reminder_repository.dart';
 import 'data/seed_foods.dart';
-import 'data/seed_plan.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DatabaseHost? host;
   try {
     host = await DatabaseHost.open();
-    // Primera apertura: deja el plan y las metas listos para registrar.
-    await seedIfEmpty(host.db, PlanRepository(host.db, ExerciseRepository(host.db)));
+    // Plan 022: sólo referencias compartidas (catálogo y combos). Plan, fecha
+    // y metas son de cada usuario: el alta (AppEntry) o su respaldo. La
+    // rutina se configura después con el editor del plan.
     await seedFoodsIfEmpty(host.db);
     await ReminderRepository(host.db).ensureDefaults();
     final flags = await LocalFlags.open();

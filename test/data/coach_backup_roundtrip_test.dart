@@ -13,6 +13,7 @@ import 'package:seguimiento/data/repositories/steps_repository.dart';
 import 'package:seguimiento/domain/adaptive_coach.dart';
 import 'package:seguimiento/domain/goal_history.dart';
 
+import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
 
 /// Plan 009, R2: ZIP → restaurar en otra instalación → cerrar y reabrir. Las
@@ -31,12 +32,15 @@ void main() {
   late DatabaseHost a;
   late DatabaseHost b;
 
-  setUp(() {
+  setUp(() async {
     root = Directory.systemTemp.createTempSync('seguimiento_coach_backup_');
     final dirA = Directory('${root.path}/A')..createSync();
     final dirB = Directory('${root.path}/B')..createSync();
     a = DatabaseHost(File('${dirA.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
     b = DatabaseHost(File('${dirB.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
+    // Alta ya pasada (plan 022).
+    await asExistingUser(a.db, goals: false);
+    await asExistingUser(b.db, goals: false);
   });
 
   tearDown(() async {
