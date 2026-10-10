@@ -74,7 +74,9 @@ class LaddersScreen extends ConsumerWidget {
                         if (a.canStepUp)
                           FilledButton.tonal(
                             onPressed: () async {
-                              await ref.read(ladderRepositoryProvider).stepUp(l, ref.read(todayProvider));
+                              // La misma decisión que en Hoy: acepta y sube a la vez (plan 009).
+                              await ref.read(ladderRepositoryProvider).acceptStepUp(l, ref.read(todayProvider));
+                              ref.invalidate(ladderDecisionsProvider);
                               ref.invalidate(ladderAdviceProvider);
                               ref.invalidate(dashboardProvider);
                             },

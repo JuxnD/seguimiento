@@ -531,8 +531,9 @@ class _LadderStepUpCard extends ConsumerWidget {
               children: [
                 FilledButton.tonal(
                   onPressed: () async {
-                    await decide(l, ProposalStatus.aceptada);
-                    final step = await ref.read(ladderRepositoryProvider).stepUp(l, ref.read(todayProvider));
+                    // Aceptar y subir son una sola escritura (R2).
+                    final step = await ref.read(ladderRepositoryProvider).acceptStepUp(l, ref.read(todayProvider));
+                    ref.invalidate(ladderDecisionsProvider);
                     ref.invalidate(ladderAdviceProvider);
                     ref.invalidate(dashboardProvider);
                     if (context.mounted) {

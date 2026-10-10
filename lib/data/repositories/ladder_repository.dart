@@ -5,6 +5,8 @@ import '../../domain/core_ladders.dart';
 import '../../domain/dates.dart';
 import '../../domain/plan_v3.dart' show v31Scheme;
 import '../database.dart';
+import '../../domain/adaptive_coach.dart' show ProposalStatus, ladderProposalId;
+import 'goal_repository.dart';
 
 /// Peldaño actual de cada escalera de core (§19.10).
 class LadderState {
@@ -83,6 +85,26 @@ class LadderRepository {
   Future<int> stepUp(CoreLadder ladder, DateTime date) => db.transaction(() async {
         final s = await state(ladder, today: date);
         if (!(await advice(ladder, date)).canStepUp) return s.step;
+        final next = (s.step + 1).clamp(1, ladder.top);
+        await _write(ladder, next, date, s.lumbarOn);
+        return next;
+      });
+
+  /// "Subir a…" como una sola decisión (plan 009, R2): registra la
+  /// aceptación de la propuesta de ese peldaño y sube, en la misma
+  /// transacción. Si algo falla en medio no queda aceptación sin peldaño; un
+  /// segundo toque ya no ve la propuesta (otro peldaño) y no sube dos.
+  /// `beforeStep` sólo existe para inyectar un fallo en pruebas.
+  Future<int> acceptStepUp(CoreLadder ladder, DateTime date, {Future<void> Function()? beforeStep}) =>
+      db.transaction(() async {
+        final s = await state(ladder, today: date);
+        final a = await advice(ladder, date);
+        if (!a.canStepUp) return s.step;
+        final since = addDays(dateOnly(date), -a.daysOnStep);
+        await GoalRepository(db).decideProposal(
+            ladderProposalId(ladder.id, a.step.step, since), 'escalera:${ladder.id}', ProposalStatus.aceptada,
+            today: date);
+        if (beforeStep != null) await beforeStep();
         final next = (s.step + 1).clamp(1, ladder.top);
         await _write(ladder, next, date, s.lumbarOn);
         return next;

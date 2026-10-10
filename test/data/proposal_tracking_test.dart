@@ -5,6 +5,7 @@ import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/repositories/dashboard_repository.dart';
 import 'package:seguimiento/data/repositories/exercise_repository.dart';
 import 'package:seguimiento/data/repositories/goal_repository.dart';
+import 'package:seguimiento/data/repositories/ladder_repository.dart';
 import 'package:seguimiento/data/repositories/nutrition_repository.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
 import 'package:seguimiento/data/repositories/profile_repository.dart';
@@ -188,6 +189,47 @@ void main() {
       final after = (await container.read(ladderDecisionsProvider.future))['dragon_flag']!;
       expect(proposalHidden(after.decision, d(10, 27)), isTrue);
       expect(proposalHidden(after.decision, d(11, 3)), isFalse);
+    });
+
+    group('aceptar y subir: una sola decisión (R2)', () {
+      late LadderRepository ladders;
+      late String id;
+
+      setUp(() async {
+        for (final day in [d(10, 19), d(10, 26)]) {
+          await training.save(SessionDraft(date: day, type: SessionType.trenSuperior, sets: [
+            for (var i = 0; i < 3; i++) SetDraft(exercise: 'Encogimiento inverso', reps: 12),
+            for (var i = 0; i < 3; i++) SetDraft(exercise: hollowHold, reps: 40),
+          ]));
+        }
+        ladders = LadderRepository(db);
+        final a = await ladders.advice(dragonFlagLadder, d(10, 27));
+        expect((a.canStepUp, a.step.step), (true, 1));
+        id = ladderProposalId('dragon_flag', 1, addDays(d(10, 27), -a.daysOnStep));
+      });
+
+      test('un fallo entre registrar y subir no deja aceptación sin peldaño', () async {
+        await expectLater(
+            ladders.acceptStepUp(dragonFlagLadder, d(10, 27), beforeStep: () async => throw StateError('falla inyectada')),
+            throwsStateError);
+        expect(await goals.proposal(id), isNull, reason: 'la aceptación se deshizo con el fallo');
+        expect((await ladders.state(dragonFlagLadder, today: d(10, 27))).step, 1);
+        // Reintento sano: ambas cosas.
+        expect(await ladders.acceptStepUp(dragonFlagLadder, d(10, 27)), 2);
+        expect((await goals.proposal(id))!.status, ProposalStatus.aceptada);
+      });
+
+      test('doble toque: sube uno, una sola aceptación', () async {
+        final steps = await Future.wait([
+          ladders.acceptStepUp(dragonFlagLadder, d(10, 27)),
+          ladders.acceptStepUp(dragonFlagLadder, d(10, 27)),
+        ]);
+        expect(steps, [2, 2]);
+        expect((await ladders.state(dragonFlagLadder, today: d(10, 27))).step, 2);
+        expect(await ladders.acceptStepUp(dragonFlagLadder, d(10, 27)), 2, reason: 'un tercer toque tampoco sube');
+        final rows = await (db.select(db.coachProposals)..where((t) => t.kind.equals('escalera:dragon_flag'))).get();
+        expect([for (final r in rows) (r.id, r.status)], [(id, 'aceptada')]);
+      });
     });
   });
 }
