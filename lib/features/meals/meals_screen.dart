@@ -304,13 +304,13 @@ class _Shortcuts extends ConsumerWidget {
                         title: t.name,
                         subtitle: t.impossibleQuantity == null
                             ? 'P ${fmtInt(t.macros.protein)} g · toca para registrar'
-                            : 'Revisa: ${t.impossibleQuantity} (¿eran gramos?) · toca para corregir',
+                            : 'Revisa: ${t.impossibleQuantity} (¿eran gramos?)',
                         value: fmtInt(t.macros.kcal),
                         valueLabel: 'kcal',
-                        // Un combo con cantidades imposibles no se registra de un toque.
+                        // Cantidad sospechosa: se pregunta, no se bloquea (puede ser real).
                         onTap: () => t.impossibleQuantity == null
                             ? _logTemplate(context, ref, t)
-                            : _editTemplate(context, t),
+                            : _reviewSuspicious(context, ref, t),
                         trailing: IconButton(
                           tooltip: 'Ajustar o borrar',
                           icon: const Icon(Icons.tune),
@@ -384,6 +384,29 @@ class _Shortcuts extends ConsumerWidget {
     final draft = await ref.read(nutritionRepositoryProvider).loadMeal(meal.meal.id);
     if (context.mounted) {
       await Navigator.push(context, MaterialPageRoute(builder: (_) => MealFormScreen(draft: draft)));
+    }
+  }
+
+  /// Un combo con una cantidad sospechosa (C01) pregunta antes de
+  /// registrarse: corregirlo o registrarlo tal cual.
+  Future<void> _reviewSuspicious(BuildContext context, WidgetRef ref, MealTemplate template) async {
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('¿Revisar «${template.name}»?'),
+        content: Text('Tiene ${template.impossibleQuantity}: '
+            '${fmtInt(template.macros.kcal)} kcal. Si eran gramos, corrígelo; si es así, regístralo igual.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, 'log'), child: const Text('Registrar igual')),
+          FilledButton(onPressed: () => Navigator.pop(c, 'edit'), child: const Text('Corregir combo')),
+        ],
+      ),
+    );
+    if (!context.mounted || choice == null) return;
+    if (choice == 'edit') {
+      await _editTemplate(context, template);
+    } else {
+      await _logTemplate(context, ref, template);
     }
   }
 
