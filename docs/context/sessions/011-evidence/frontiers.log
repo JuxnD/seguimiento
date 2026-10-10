@@ -1,0 +1,106 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart
+00:00 +0: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: SQLite completo, corte y referencia común desde vigencia real
+00:00 +1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: bilateral parcial, futuro e inválido no ocultan apta anterior
+00:00 +2: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: Cindy flags/ventana/receta y orden DDFFSS son observaciones
+00:00 +3: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: 300 sesiones por lotes equivalen a core completo sin perder inicio
+00:01 +4: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: ZIP restore SQLite y databaseGeneration releen referencias del radar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:122:79)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:131:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:122:79)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:131:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:01 +5: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: providers observan editar/borrar evidencia antigua y referencias sin invalidación manual
+00:01 +6: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (tearDownAll)
+00:01 +6: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+lib/features/report/charts.dart:326:347: Error: Expected ':' before this.
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^
+lib/features/report/charts.dart:326:347: Error: Expected an identifier, but got '}'.
+Try inserting an identifier before '}'.
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^
+lib/features/report/charts.dart:326:283: Error: A value of type 'List<ChartDay>?' can't be assigned to a variable of type 'bool'.
+ - 'List' is from 'dart:core'.
+ - 'ChartDay' is from 'package:seguimiento/domain/chart_evidence.dart' ('lib/domain/chart_evidence.dart').
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^
+lib/features/report/charts.dart:326:298: Error: The getter 'evidence' isn't defined for the class 'List<int>'.
+ - 'List' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'evidence'.
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^^^^^^^^
+00:02 +6 -1: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+00:02 +6 -1: loading C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart
+lib/features/report/charts.dart:326:347: Error: Expected ':' before this.
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^
+lib/features/report/charts.dart:326:347: Error: Expected an identifier, but got '}'.
+Try inserting an identifier before '}'.
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^
+lib/features/report/charts.dart:326:283: Error: A value of type 'List<ChartDay>?' can't be assigned to a variable of type 'bool'.
+ - 'List' is from 'dart:core'.
+ - 'ChartDay' is from 'package:seguimiento/domain/chart_evidence.dart' ('lib/domain/chart_evidence.dart').
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^
+lib/features/report/charts.dart:326:298: Error: The getter 'evidence' isn't defined for the class 'List<int>'.
+ - 'List' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'evidence'.
+                '${formatLong(timeline[group.x])}\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? "Meta documentada: " : ""}${fmtInt(rod.toY)} $unit\n${rodIndex == group.barRods.length - 1 && goals[group.x] != null ? goals[group.x]?.source : metric == 'steps' ? days?[group.x].evidence ?? "" : days?[group.x].statusLabel ?? ""}'
+                                                                                          ^^^^^^^^
+00:04 +6 -2: loading C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart
+00:04 +6 -2: Some tests failed.

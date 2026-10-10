@@ -1,0 +1,98 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+lib/features/report/personal_radar_section.dart:66:76: Error: The method 'formatLong' isn't defined for the class 'PersonalRadarSection'.
+ - 'PersonalRadarSection' is from 'package:seguimiento/features/report/personal_radar_section.dart' ('lib/features/report/personal_radar_section.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'formatLong'.
+      if (context.mounted) showSnack(context, 'Referencia guardada desde ${formatLong(confirmed)}.');
+                                                                           ^^^^^^^^^^
+00:00 +0 -1: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+00:00 +0 -1: loading C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart
+00:00 +0 -1: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart [E]
+  Error: the Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 10:3  throwToolExit
+  package:flutter_tools/src/compile.dart 898:9     DefaultResidentCompiler._compile.<fn>
+  dart:async/zone.dart 1407:47                     _rootRunUnary
+  dart:async/zone.dart 1308:19                     _CustomZone.runUnary
+  dart:async/future_impl.dart 847:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 876:13               Future._propagateToListeners
+  dart:async/future_impl.dart 772:9                Future._propagateToListeners
+  dart:async/future_impl.dart 652:5                Future._completeWithValue
+  dart:async/future_impl.dart 722:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone.dart 1399:13                     _rootRun
+  dart:async/zone.dart 1301:19                     _CustomZone.run
+  dart:async/zone.dart 1209:7                      _CustomZone.runGuarded
+  dart:async/zone.dart 1249:23                     _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:21         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 118:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 185:5      _RawReceivePort._handleMessage
+  
+00:00 +0 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (setUpAll)
+00:00 +0 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: SQLite completo, corte y referencia común desde vigencia real
+00:00 +1 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: bilateral parcial, futuro e inválido no ocultan apta anterior
+00:00 +2 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: Cindy flags/ventana/receta y orden DDFFSS son observaciones
+00:00 +3 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: 300 sesiones por lotes equivalen a core completo sin perder inicio
+00:01 +4 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: ZIP restore SQLite y databaseGeneration releen referencias del radar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:153:70)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:164:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:153:70)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:164:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:01 +5 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: providers observan editar/borrar evidencia antigua y referencias sin invalidación manual
+00:01 +6 -1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (tearDownAll)
+00:01 +6 -1: loading C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart
+00:02 +6 -1: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: proteína130→160 distingue promedio140 de días1/2
+00:02 +7 -1: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: null explícito de proteína/pasos no es un día fallido ni legado
+00:02 +8 -1: C:/My Projects/seguimiento-011-radar/test/domain/progress_nutrition_reference_test.dart: kcal calendario real propia/heredada/ausente sin fallback cargado
+00:02 +9 -1: Some tests failed.

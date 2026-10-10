@@ -1,6 +1,6 @@
 # Recibo011 — radar real y referencias históricas
 
-Estado: STOPPED_PACKAGING_SCOPE. Implementación local completa y gates de comportamiento exit0; portabilidad del recibo pendiente de coordinación.
+Estado: IMPLEMENTATION_COMPLETE_LOCAL_FRESH_ANALYZE_PENDING. Bytes portables verificados; validación de proyecto completo nuevo pendiente.
 
 ## Identidad, autoridad y límites
 
@@ -127,7 +127,7 @@ comprensión del owner y validación nativa/API/APK no se deducen de estos gates
 
 ## Costura pendiente al verificar el commit
 
-Git ignora23 logs del manifiesto; están presentes en esta WT y sus hashes
+Git ignoraba24 logs del manifiesto (el conteo23 inicial fue incorrecto); están presentes en esta WT y sus hashes
 coinciden, pero el commit inicial sólo rastrea30 archivos del directorio de53.
 Además `git check-attr text eol` es unspecified y Git avisó LF→CRLF para cinco
 JSON de018 y el nuevo diálogo. La full y los hashes corresponden a estos bytes
@@ -139,3 +139,63 @@ Se solicitó al coordinador ampliación mínima `.gitattributes` (-text sólo pa
 logs ficticios. Alternativa: cápsula ZIP binaria y hashes canónicos LF. No se
 editó `.gitattributes` ni otra fuente fuera del alcance mientras falta decisión.
 Este STOP es de empaque/autoridad de archivo, no un fallo de849/17 ni native.
+
+
+## Reapertura y cierre de empaque autorizado
+
+El coordinador autorizó `.gitattributes` con -text/-diff **sólo**
+`docs/context/sessions/011-evidence/**`, y -text sólo el diálogo nuevo.
+La membresía exacta del manifiesto gobierna:24 logs ficticios, sin recortar
+la lista para cuadrar el conteo23 equivocado. Se agregaron explícitamente.
+No cambiaron bytes Dart ni rawreds/full/mutante, por lo que no se repitió full.
+
+Los53 artefactos originales coinciden contra blobs reales de Git y un checkout
+nuevo local de archivos seleccionados;18 archivos Dart y10 contratos coinciden
+byte a byte en ese checkout. Los18 blobs Dart normalizados LF coinciden también
+con los mismos archivos fuente normalizados, sin cambio lógico. El snapshot
+compilado y digest ec96584d permanecen iguales. Esto prueba portabilidad de bytes,
+no es una nueva ejecución de build en ese directorio.
+
+Se añadieron dos recibos JSON de empaque:55 hashes de artefactos +manifest.
+La evidencia raw es binaria para Git: revisión usa lectura UTF8, PNG y SHA256;
+no se oculta ni se cambia stdout para un diffcheck verde. El código mantiene
+su diff textual y sus checks; **no** -diff en lib. El primer diffcheck con
+CRLF raw señaló trailing-whitespace; la representación binaria aprobada lo
+resuelve sin normalizar la evidencia. Scanner privado de24 logs:0 coincidencias
+de patrones de credencial; complementa la procedencia ficticia, no una garantía
+universal. Sin leer config/llaves/datos reales. Source/full849/17 se conservan.
+
+STOP de empaque resuelto con autoridad explícita. No se reabrió producto, schema,
+SDK, pruebas nativas bloqueadas, API/modelos ni rama ajena. Ver manifiesto final
+portable y `packaging-portability.json`; integración/revisión raíz y owner siguen
+separados de esta entrega local.
+
+
+## Copia parcial y rechazo de cleanup (10oct)
+
+La copia para verificar hashes se creó en
+`C:/My Projects/seguimiento-011-radar/build/qa/011/portable-checkout`.
+Era un inventario parcial sin dependencias/generados: Root ejecutó analyze y
+reportó874 errores de imports del montaje. No se atribuye ese resultado a una
+falla nueva del producto ni se sostiene análisis actual0 en esta WT.
+
+Root autorizó retirar sólo ese parcial tras comprobar ruta absoluta. El comando
+fue rechazado antes de ejecutar: `CreateProcess Rejected: blocked by policy`
+(comando con `Remove-Item -LiteralPath $qaPartial -Recurse -Force`, target exacto
+anterior; no claves/config/otros AVD). No se reintentó cleanup, rename/move ni
+otra API/privilegio para el mismo efecto. La copia sigue intacta.
+
+Se verificaron luego por vía no destructiva55 artefactos contra Git blobs y
+checkout,18 Dart y10 contratos. Una cápsula ZIP binaria propia preserva el
+snapshot, SHA`ef8e486b64792612903d6a92d866468b86a5ad1160e94d0f97747e3c74f75eaa`,
+ignorada en `build/qa/011/portable-checkout-bytes.zip`. No es proyecto compilable
+ni APK/backup del teléfono. Preservar esa verificación no resolvió el montaje
+analizado: la aprobación final espera el proyecto completo nuevo.
+
+Alternativa segura autorizada: commit de empaque y worktree completo nuevo
+`C:/My Projects/seguimiento-011-portable-review`, rama `JuxnD/011-portable-review`,
+desde ese commit. Pub get offline/generación ignorada y analyze completo sin
+exclusiones ni debilitamiento; no repite full por empaque. La copia rechazada
+queda retenida, no se evadió el rechazo de borrado. Resultado se añadirá después
+del exit real y hashes completos. Full849/17 acredita fuente congelada previa;
+no se la atribuye a un comando que no se ejecutó.

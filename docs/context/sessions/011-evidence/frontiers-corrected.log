@@ -1,0 +1,110 @@
+00:00 +0: loading C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart
+00:00 +0: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: SQLite completo, corte y referencia común desde vigencia real
+00:00 +1: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: bilateral parcial, futuro e inválido no ocultan apta anterior
+00:00 +2: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: Cindy flags/ventana/receta y orden DDFFSS son observaciones
+00:00 +3: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: 300 sesiones por lotes equivalen a core completo sin perder inicio
+00:01 +4: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: ZIP restore SQLite y databaseGeneration releen referencias del radar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:122:79)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:131:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14326:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:122:79)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:211:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:62:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:66:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:54:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart:131:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:01 +5: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: providers observan editar/borrar evidencia antigua y referencias sin invalidación manual
+00:01 +6: C:/My Projects/seguimiento-011-radar/test/data/personal_radar_repository_test.dart: (tearDownAll)
+00:01 +6: loading C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart
+00:03 +6: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: (setUpAll)
+00:03 +6: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados
+00:05 +7: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: SQL→Tu progreso viewport inicial360 texto1.0 y detalle
+00:06 +8: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: SQL→Tu progreso viewport inicial360 texto1.6 y detalle
+00:06 +9: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: SQL→Tu progreso viewport inicial360 texto2.0 y detalle
+00:06 +10: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: dos ejes/sin referencia y pasado no cambia por decisión de hoy
+00:07 +11: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: Cindy cancelada conserva pendiente y no crea sesión nueva
+00:07 +12: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: pasos ausentes≠0 y adaptador proteína histórica por día
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: (int, Null):<(160, null)>
+  Actual: (double, DateTime):<(160.0, 2026-10-09 00:00:00.000)>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart:202:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart line 202
+The test description was:
+  pasos ausentes≠0 y adaptador proteína histórica por día
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +12 -1: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: pasos ausentes≠0 y adaptador proteína histórica por día [E]
+  Test failed. See exception logs above.
+  The test description was: pasos ausentes≠0 y adaptador proteína histórica por día
+  
+00:08 +12 -1: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: Tu progreso conecta radar real incluso sin pruebas
+00:08 +13 -1: C:/My Projects/seguimiento-011-radar/test/ui/personal_radar_integration_test.dart: (tearDownAll)
+00:08 +13 -1: loading C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart
+00:09 +13 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: (setUpAll)
+00:09 +13 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+00:11 +14 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial
+00:14 +15 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash
+00:16 +16 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: consumer advice cambia tras guardar editar y borrar sin reiniciar
+00:18 +17 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: legado1.20 conserva secuencia e indice sin agregar escalera; guion malformado se descarta
+00:19 +18 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+00:20 +19 -1: C:/My Projects/seguimiento-011-radar/test/ui/release121_flows_test.dart: (tearDownAll)
+00:20 +19 -1: Some tests failed.

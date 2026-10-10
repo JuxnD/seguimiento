@@ -2,7 +2,7 @@
   "base": "f34ab7c9fd4107ffc728e2b9bfdd2153e00315a4",
   "sourceDigest": "ec96584df2c18b737847de1177c69c158eb832ca2e3c62d4ce6625db6074138c",
   "sourceFrozen": "source-frozen.json",
-  "status": "IMPLEMENTATION_COMPLETE_LOCAL",
+  "status": "IMPLEMENTATION_COMPLETE_LOCAL_FRESH_PROJECT_ANALYZE_PENDING",
   "synthetic": true,
   "schema": 22,
   "sdk": "3.22.0/Dart3.4",
@@ -89,6 +89,8 @@
     "full-confirmation-final.log": "f16ecd1f1c6d7c909911c35a10d3e8439e34badb183395dabf06388bf8e5a5cb",
     "mutant-no-segments.log": "6c3cbb7e4ec7c1c5ed165fa8e7bf0388767690ed34fef981165e05e432581cc9",
     "mutant.json": "5ddb2f6c67625b2944397e896ff42d5df9b3f7623e09e0865ab5ab1d839e0552",
+    "packaging-portability.json": "1e59beeb974ac3db2259458f608992bba796cb5b70d15c77e0d253c195e4ec9d",
+    "packaging-secret-scan.json": "730d0515818709494783694cac9f6458b73f45727b1d084f244a0e4522526dd1",
     "pub-get.log": "084059e0ee9236f05bf88ed928fccce137bfb3d44a72a31cd13fbbdf7128063f",
     "raster-restored.log": "2583f360bc20b799abe230e9e1a202cfb9fc619707a1524435404be13cca4ffe",
     "raster018/completo-360-texto1.0.json": "da15c11b78b6adda4996ce42f45ef5af27c2ac9e899dd7c16ea165de88660222",
@@ -108,5 +110,22 @@
     "ui-corrected.log": "8de8cab960ef51bba26b070591ca5889ddbf79c50b5624dfa00c74f4c665c42d",
     "ui-first.log": "dcc80dc2c1c65e75b7a9b2c4b36ac1888239aac81f250a5828e262ef88da38b2",
     "ui-preserved-selection.log": "50e6d2f7e064313752b4ef0467fd9224d49c6312b82a935363301a8e9c1e9e97"
-  }
+  },
+  "portable": true,
+  "packaging": {
+    "exactDeclaredLogs": 24,
+    "artifactHashCount": 55,
+    "sourcePhysicalHashes": 18,
+    "sourceGitCanonicalLFHashes": 18,
+    "unchangedContracts": 10,
+    "verification": "Git index blobs + fresh selected-file checkout, not a fresh build",
+    "rawGitDiff": "binary (-text -diff evidence directory only); UTF8/hash review",
+    "dartGitDiff": "normal, no -diff source",
+    "protection": "synthetic fixture provenance + private credential-pattern scan0; not universal secret detector",
+    "finalOriginalArtifactFreshHashes": 55,
+    "currentProjectCheck": "Pending complete new worktree analyze; no exclusions",
+    "cleanupRejected": "CreateProcess Rejected: blocked by policy; exact owned portable-checkout retained, no retries or alternative removal/move",
+    "capsuleZipSHA256": "ef8e486b64792612903d6a92d866468b86a5ad1160e94d0f97747e3c74f75eaa"
+  },
+  "currentOriginalWorktreeAnalyze": "OPEN: partial verification checkout retained after policy rejection; source unchanged"
 }

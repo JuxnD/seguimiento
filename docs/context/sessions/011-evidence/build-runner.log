@@ -1,0 +1,56 @@
+[INFO] Generating build script...
+[INFO] Generating build script completed, took 352ms
+
+[INFO] Precompiling build script......
+[INFO] Precompiling build script... completed, took 3.6s
+
+[INFO] Initializing inputs
+[INFO] Building new asset graph...
+[INFO] Building new asset graph completed, took 1.5s
+
+[INFO] Checking for unexpected pre-existing outputs....
+[INFO] Checking for unexpected pre-existing outputs. completed, took 1ms
+
+[INFO] Running build...
+[INFO] Generating SDK summary...
+[INFO] 1.9s elapsed, 0/16 actions completed.
+[INFO] 3.4s elapsed, 0/16 actions completed.
+[INFO] Generating SDK summary completed, took 4.3s
+
+[INFO] 5.5s elapsed, 9/59 actions completed.
+[INFO] 6.5s elapsed, 28/74 actions completed.
+[INFO] 7.6s elapsed, 44/78 actions completed.
+[INFO] 8.6s elapsed, 48/82 actions completed.
+[INFO] 9.7s elapsed, 81/109 actions completed.
+[INFO] 17.2s elapsed, 102/120 actions completed.
+[INFO] 20.4s elapsed, 104/121 actions completed.
+[INFO] 22.0s elapsed, 115/131 actions completed.
+[INFO] 23.0s elapsed, 147/163 actions completed.
+[INFO] 24.0s elapsed, 194/212 actions completed.
+[INFO] 25.1s elapsed, 244/260 actions completed.
+[INFO] 26.1s elapsed, 277/292 actions completed.
+[INFO] 27.2s elapsed, 327/343 actions completed.
+[INFO] 28.2s elapsed, 361/376 actions completed.
+[INFO] 29.3s elapsed, 394/406 actions completed.
+[INFO] 30.3s elapsed, 523/539 actions completed.
+[INFO] 31.4s elapsed, 539/555 actions completed.
+[INFO] 32.4s elapsed, 553/569 actions completed.
+[INFO] 33.5s elapsed, 567/583 actions completed.
+[INFO] 34.5s elapsed, 581/597 actions completed.
+[INFO] 35.5s elapsed, 603/619 actions completed.
+[INFO] 36.5s elapsed, 620/633 actions completed.
+[INFO] 37.6s elapsed, 634/650 actions completed.
+[INFO] 38.6s elapsed, 648/664 actions completed.
+[INFO] 39.6s elapsed, 665/681 actions completed.
+[INFO] 40.7s elapsed, 687/703 actions completed.
+[INFO] 41.8s elapsed, 702/704 actions completed.
+[INFO] 42.9s elapsed, 703/704 actions completed.
+[INFO] 44.1s elapsed, 1033/1033 actions completed.
+[INFO] 45.2s elapsed, 1289/1289 actions completed.
+[INFO] Running build completed, took 45.2s
+
+[INFO] Caching finalized dependency graph...
+[INFO] Caching finalized dependency graph completed, took 131ms
+
+[INFO] Succeeded after 45.4s with 411 outputs (1414 actions)
+
