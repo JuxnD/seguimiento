@@ -75,4 +75,3 @@ Los informes históricos usan el perfil actual (`report_repository.dart:185`, `p
 La doble progresión acepta RIR desconocido (`progress.dart:103`) por diseño explícito y recomienda+2–5 kg. Para el futuro motor de acompañamiento, usar sólo series comparables, recientes y con esfuerzo conocido; no heredar esa suposición como prueba de estar listo. Las escaleras de core sí tienen criterio de dos sesiones y 14 días, con confirmación, y son referencia reutilizable (`core_ladders.dart:252`, `ladder_repository.dart:82`).
 
 Esta auditoría no revisó todo el código de IA, seguridad remota, macroprecisión de comidas, protocolo clínico ni pantalla instalada del owner. No solicita publicación ni transforma recomendaciones en prescripción.
-

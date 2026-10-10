@@ -270,7 +270,7 @@ def generate(name):
                 if name == 'Pike push-up': spec['pole'] = [1,-.2,.15 if sd=='near' else -.15]
                 if name == 'Pike push-up':
                     f[sd+'Leg']['reach']=[f[sd+'Leg']['reach'][0],-1.75]
-        
+
         e['focus'] = None if len(e['frames']) < 2 else 'hip'
         return e
     if name in {'Flexiones diamante','Flexión a una mano','Flexión arquero','Flexión pseudo-planche','Flexiones con pies elevados'}:

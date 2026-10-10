@@ -156,3 +156,8 @@ Esta adaptación no duplica autoridad en páginas con nombres genéricos. El
 validador estructural global exige esos nombres y encabezados literales en
 inglés; sus incompatibilidades con esta biblioteca se declaran aparte y no
 son evidencia de que la app funcione ni de que deje de funcionar.
+
+
+Recibo de la renovación1.22 y feedback Cuádriceps/Vela:
+[sessions/2026-10-09-ilustraciones-y-recuperacion.md](sessions/2026-10-09-ilustraciones-y-recuperacion.md).
+Fuente funcional7fa8099; revisión humana de comprensión permanece abierta.

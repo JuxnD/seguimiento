@@ -44,3 +44,28 @@ medida porcentual de corrección general.
 10 de 13 costuras enumeradas con ejecución vigente; 3 declaradas y 0 sin cobertura en
 este alcance. Variaciones de artefacto/configuración/recorrido invalidan atribuir
 estos resultados a otro paquete: ejecutar los mismos gates de nuevo.
+
+
+## Candidata local 1.22: ilustraciones y recuperación (9oct)
+
+Este alcance no hereda automáticamente el veredicto del APK1.21 de arriba.
+Autoridad: renovar todas las ilustraciones y auditar acompañamiento/metas con
+casos ficticios; el feedback del owner rechazó Cuádriceps y Vela. Fuente local
+`seguimiento-ilustraciones`, rama `JuxnD/ilustraciones-completas`, commit7fa8099.
+Comprensión humana/publicación pendientes. Recibo: [sesión](sessions/2026-10-09-ilustraciones-y-recuperacion.md).
+
+| Cruce | Evidencia ejecutada / gate restante |
+|---|---|
+| Guías/detalles/escaleras/movilidad → recetas → JSON | Generación73entradas explícitas; testcoverage exige cada nombre incorporado y falla si no hay receta |
+| Poses → rig3D → apoyos/equipo | Longitudes, suelo/pared, variantes, continuidad; controles reales de muñeca/pie/cabeza y mano–equipo en61muestras. Fixturesanteriores fallan3y2casos, sin convertir criterios en una regla clínica universal |
+| JSON/renderer → miniatura/guía/ampliación/movilidad | Visor compartido; biblioteca con búsqueda, lados, agarre y carga; texto1/1.3/1.6, teléfono y tableta; nombre personalizado informa ausencia |
+| Fuente → mockups → comprensión | PNG del mismo Flutterpainter, galería73entradas y4montajes; feedback humano abrió correcciones nuevas. Comprensión sigue pendiente del owner |
+| Fuente → APK → asset/firma → Android | Requiere recibo de build posterior a la última corrección; no atribuir capturas/APKprevios al rigactual |
+| SQLite/historial → carga/racha → aviso | Racha20/21 real, moderado conocido corta; sesión desconocida no prueba recuperación, excluye futuro/importados; avisos confecha y sin promesa fija |
+| Perfilguardado → mínimo5000 → relectura | Nuevo perfil5000; existente conserva7500 hasta llenar campo/Guardarperfil. Widgetdemuestra apertura/CTA0escrituras y guardado cambia sólo pasos |
+| Medidas → consejo | Una toma/semana y cintura vieja no autorizan ajuste; negativos antes, positivos con datos frescos después |
+| APKprevio → actualizaciónsinuninstall → datos | Baseline propio QA5580: esquema20,32tablas,528filas y3archivos; comparación exacta tras actualización se registra en el recibo |
+
+Las pruebas y recapturas prueban las fronteras enumeradas. No afirman que todo
+el entrenamiento sea seguro, que el owner lo comprenda o que las metas ya se
+adapten longitudinalmente; esto último queda enPlan007.
