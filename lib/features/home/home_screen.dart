@@ -367,6 +367,15 @@ class _StartButtons extends ConsumerWidget {
             label: const Text('Aplicar versión ligera'),
           ),
         ],
+        // §16.21: moverse sin gastar fuerza (descarga, víspera de test, plan B).
+        if (d.techniqueSuggested) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => startTechniqueSession(context, ref),
+            icon: const Icon(Icons.self_improvement),
+            label: const Text('Sesión técnica (RIR 4)'),
+          ),
+        ],
       ],
     );
   }

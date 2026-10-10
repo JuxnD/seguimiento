@@ -9,6 +9,7 @@ import '../../domain/progress.dart';
 import '../../domain/recovery.dart';
 import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
 import '../../domain/steps.dart';
+import '../../domain/technique_session.dart';
 import '../database.dart';
 import 'exercise_repository.dart';
 import 'fitness_test_repository.dart';
@@ -53,7 +54,12 @@ class TodayDashboard {
     this.soreZones = const [],
     this.planB = false,
     this.fitnessTest,
+    this.techniqueSuggested = false,
   });
+
+  /// Ofrecer la sesión técnica (§16.21): descarga, víspera de test o de las
+  /// pruebas, o con plan B. Alternativa, no reemplazo.
+  final bool techniqueSuggested;
 
   /// Test de condición de hoy (§19.11): el lunes sustituye el tirón; el
   /// miércoles va antes de la sesión de piernas. null si hoy no toca.
@@ -218,6 +224,8 @@ class DashboardRepository {
           ..limit(1))
         .getSingleOrNull();
 
+    final eve = planSessions.isEmpty && await _eveOfTest(date, training);
+    final planB = planSessions.isEmpty && suggestPlanB(dayHasLegs: dayHasLegs, load: load, soreness: soreness, today: date);
     return TodayDashboard(
       date: date,
       weekIndex: weekIndexFor(p.programStart, date),
@@ -232,7 +240,7 @@ class DashboardRepository {
       load: load,
       restingHrWarning: restingHrWarning(await recovery.restingHrRange(date), date),
       soreZones: persistentSoreness(soreness, date),
-      planB: planSessions.isEmpty && suggestPlanB(dayHasLegs: dayHasLegs, load: load, soreness: soreness, today: date),
+      planB: planB,
       targetRounds: proposal?.rounds ?? view?.day.targetRounds,
       proposal: proposal,
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
@@ -253,6 +261,12 @@ class DashboardRepository {
       v3: v3,
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
       fitnessTest: test,
+      techniqueSuggested: planSessions.isEmpty &&
+          suggestTechniqueSession(
+            deload: v3?.reducedVolume ?? false,
+            eveOfTest: eve,
+            planB: planB,
+          ),
       measurement: measurementDue(
         today: date,
         lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
@@ -261,6 +275,16 @@ class DashboardRepository {
         maxDays: p.measureIntervalMaxDays,
       ),
     );
+  }
+
+  /// Mañana hay test de condición o es el viernes de pruebas del v3.1. Se
+  /// mira el v3.1 de mañana: el domingo antes del Test 1 todavía no hay v3.1.
+  Future<bool> _eveOfTest(DateTime date, TrainingRepository training) async {
+    final tomorrow = addDays(date, 1);
+    final v3 = await training.blockDay(await plan.dayFor(tomorrow), tomorrow);
+    if (v3 == null || !v3.isV31) return false;
+    final start = addDays(tomorrow, -(tomorrow.weekday - 1) - (v3.week - 1) * 7);
+    return scheduledTest(start, tomorrow) != null || dateOnly(v3.testDate) == tomorrow;
   }
 
   Future<({int round, TestPart part, bool done})?> _fitnessTest(DateTime date, V3Day? v3) async {

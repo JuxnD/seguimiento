@@ -16,6 +16,7 @@ import '../../domain/progress.dart';
 import '../../domain/recovery.dart' show planBTorso;
 import '../../domain/session_math.dart';
 import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
+import '../../domain/technique_session.dart';
 import '../../ui/hero.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
@@ -158,6 +159,48 @@ Future<void> startPlanB(BuildContext context, WidgetRef ref) async {
       date: day,
       sessionType: SessionType.trenSuperior,
       note: 'Plan B (solo torso): carga alta o molestia en la pierna; piernas hasta 48 h después',
+    ),
+  );
+}
+
+/// Guion de la sesión técnica (§16.21) para `day`.
+PlanDayDraft techniqueDayDraft(DateTime day) => PlanDayDraft(
+      weekday: day.weekday,
+      type: DayType.trenSuperior,
+      notes: techniqueNote,
+      exercises: [
+        for (final (name, sets, reps, hold, rest, perSide, grip, block) in techniqueTemplate)
+          PlanExerciseDraft(
+            name: name,
+            sets: sets,
+            repsMin: reps,
+            repsMax: reps,
+            holdSecMin: hold,
+            holdSecMax: hold,
+            restSec: rest,
+            perSide: perSide,
+            grip: grip,
+            block: block,
+            rirMin: reps == null ? null : techniqueRir,
+            rirMax: reps == null ? null : techniqueRir,
+          ),
+      ],
+    );
+
+/// Sesión técnica (§16.21): alternativa corta a RIR 4. Se registra aparte
+/// (`mode = 'tecnica'`) y el guion se guarda entero para poder retomarla.
+Future<void> startTechniqueSession(BuildContext context, WidgetRef ref) async {
+  final canStart = await _noPendingSession(context, ref);
+  if (!canStart || !context.mounted) return;
+  final day = dateOnly(DateTime.now());
+  await _runGuided(
+    context,
+    GuidedSessionScreen(
+      day: techniqueDayDraft(day),
+      date: day,
+      mode: techniqueMode,
+      sessionType: SessionType.trenSuperior,
+      note: 'Sesión técnica (RIR 4)',
     ),
   );
 }
@@ -373,6 +416,35 @@ String describeActiveSession(ActiveSession s) {
 Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSession session) async {
   switch (session) {
     case final GuidedSnapshot s:
+      // Plan B y sesión técnica no salen del plan (planDayId -1): se retoman
+      // con el guion que quedó guardado entero.
+      if (s.planDayId < 0 && s.effectiveDay != null) {
+        PlanDayDraft day;
+        try {
+          day = thawGuidedDay(s.effectiveDay!);
+        } on Object {
+          if (!context.mounted) return;
+          showSnack(context, 'La sesión guardada tiene un guion inválido; se descarta para poder empezar otra.');
+          await _clearActive(ProviderScope.containerOf(context, listen: false));
+          return;
+        }
+        if (!context.mounted) return;
+        await _runGuided(
+          context,
+          GuidedSessionScreen(
+            day: day,
+            note: s.note,
+            mode: s.mode,
+            date: parseDay(s.date),
+            sessionType: s.sessionType,
+            coreVariant: s.coreVariant,
+            roundsOverride: s.roundsOverride,
+            light: s.light,
+            resume: s,
+          ),
+        );
+        return;
+      }
       final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
       if (!context.mounted) return;
       if (view == null) {
