@@ -1,6 +1,6 @@
 # Recibo011 — radar real y referencias históricas
 
-Estado: IMPLEMENTATION_COMPLETE_LOCAL. Gates finales exit0; revisión raíz, aceptación humana y publicación separadas.
+Estado: STOPPED_PACKAGING_SCOPE. Implementación local completa y gates de comportamiento exit0; portabilidad del recibo pendiente de coordinación.
 
 ## Identidad, autoridad y límites
 
@@ -123,3 +123,19 @@ caso de medianoche, no se añadió una tolerancia ni un nuevo cálculo.
 Fuente final recuperable por el commit de este recibo y hashes declarados.
 El revisor repetirá criterios sobre ese SHA antes de integrar. La aceptación de
 comprensión del owner y validación nativa/API/APK no se deducen de estos gates.
+
+
+## Costura pendiente al verificar el commit
+
+Git ignora23 logs del manifiesto; están presentes en esta WT y sus hashes
+coinciden, pero el commit inicial sólo rastrea30 archivos del directorio de53.
+Además `git check-attr text eol` es unspecified y Git avisó LF→CRLF para cinco
+JSON de018 y el nuevo diálogo. La full y los hashes corresponden a estos bytes
+físicos; un checkout/cherry-pick fresco puede convertirlos. No se declara el
+manifiesto portable ni ese paso cerrado aún. El cambio lógico/Dart está congelado.
+
+Se solicitó al coordinador ampliación mínima `.gitattributes` (-text sólo para
+`docs/context/sessions/011-evidence/**` y el diálogo nuevo) y agregar explícitos
+logs ficticios. Alternativa: cápsula ZIP binaria y hashes canónicos LF. No se
+editó `.gitattributes` ni otra fuente fuera del alcance mientras falta decisión.
+Este STOP es de empaque/autoridad de archivo, no un fallo de849/17 ni native.
