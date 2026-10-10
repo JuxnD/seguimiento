@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import sys; from pathlib import Path; sys.path.insert(0,'tool'); import pilot_release_gate; print(pilot_release_gate.inspect_apk(Path('C:/My Projects/seguimiento-ilustraciones/build/app/outputs/flutter-apk/app-release.apk')))
+                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\My Projects\seguimiento-012-piloto\tool\pilot_release_gate.py", line 45, in inspect_apk
+    require(package and target and len(certificates) == 1, "Incomplete/ambiguous APK identity")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\My Projects\seguimiento-012-piloto\tool\pilot_upgrade_verify.py", line 20, in require
+    raise ValueError(message)
+ValueError: Incomplete/ambiguous APK identity

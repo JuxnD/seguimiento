@@ -111,8 +111,11 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
   Widget build(BuildContext context) => AppCard(
         title: 'Respaldo',
         children: [
-          const Text('Exporta un ZIP con tus registros y fotos de progreso y ejercicios. '
-              'Guárdalo fuera del teléfono para poder recuperarlo si lo pierdes.'),
+          const Text('Exporta un ZIP con tus registros, historial de IA '
+              '(preguntas, respuestas y contexto) y fotos de progreso y ejercicios. '
+              'El archivo se guarda sin cifrar: quien lo reciba puede leer esos datos. '
+              'Guárdalo en un lugar privado fuera del teléfono para recuperarlo si lo pierdes. '
+              'La licencia de IA no se incluye.'),
           const SizedBox(height: 8),
           FilledButton.tonalIcon(
             onPressed: _busy ? null : () => _export(context, ref),
@@ -128,12 +131,16 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
           const Padding(
             padding: EdgeInsets.only(top: 8),
             child:
-                Text('Un ZIP reemplaza registros y fotos. Los respaldos antiguos .sqlite solo reemplazan registros.'),
+                Text('Un ZIP reemplaza registros, historial de IA y fotos. '
+                    'Los respaldos antiguos .sqlite reemplazan la base, incluido el historial de IA '
+                    'que contengan; conservan las fotos actuales. No reemplazan el cronómetro en curso ni los permisos.'),
           ),
           const SizedBox(height: 12),
           Text('Copias automáticas', style: Theme.of(context).textTheme.titleSmall),
-          const Text('Una por semana, dentro de la app; se guardan las 4 últimas. '
-              'Solo contienen registros, sin fotos. Sirven para deshacer un error; '
+          const Text('Una por semana, sin cifrar dentro de la app; se guardan las 4 últimas. '
+              'Contienen la base y el historial de IA, sin fotos ni licencia. '
+              'Al restaurarlas pueden recuperar conversaciones borradas después de la copia. '
+              'Sirven para deshacer un error; '
               'si pierdes el teléfono se pierden también. Para cambiar de teléfono, exporta el ZIP.'),
           ref.watch(autoBackupsProvider).when(
                 loading: () => const LinearProgressIndicator(),
@@ -149,7 +156,7 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
                             contentPadding: EdgeInsets.zero,
                             leading: const Icon(Icons.history),
                             title: Text('${weekdayLong(b.date.weekday)} ${formatLong(b.date)}'),
-                            subtitle: Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB · registros sin fotos'),
+                            subtitle: Text('${fmtDec(b.bytes / 1024, decimals: 0)} KB · base e historial IA, sin fotos'),
                             trailing: TextButton(
                               onPressed: _busy
                                   ? null
@@ -214,11 +221,16 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (c) => AlertDialog(
+          scrollable: true,
           title: const Text('¿Restaurar este respaldo?'),
           content: Text('Respaldo: $label\n\n'
-              'Se reemplazan todas las sesiones, comidas y medidas actuales por las del respaldo. '
+              'Se reemplaza la base actual: perfil, plan, sesiones, comidas, medidas, catálogos e historial de IA '
+              '(preguntas, respuestas y contexto) por lo guardado en el respaldo. '
+              'Pueden reaparecer conversaciones que borraste después de esa copia. '
               '${legacy ? 'Es un respaldo antiguo: NO contiene fotos. Las fotos actuales se conservan.' : 'Se reemplazan también las fotos actuales por las ${ready.photoCount} fotos del ZIP.'}\n\n'
               '${missing == 0 ? '' : 'RESPALDO INCOMPLETO: $missing fotos ya faltaban al exportarlo y no se pueden recuperar.\n\n'}'
+              'El cronómetro en curso, los permisos y la licencia no cambian. '
+              'El respaldo es un archivo sin cifrar.\n\n'
               'Esto no se puede deshacer.\n\n'
               'Si lo de ahora te sirve, exporta primero.'),
           actions: [
@@ -254,6 +266,27 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
     if (_busy) return;
     setState(() => _busy = true);
     try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          scrollable: true,
+          title: const Text('Antes de exportar'),
+          content: const Text(
+              'El ZIP incluye perfil, plan, sesiones, comidas, medidas, catálogos, '
+              'fotos de progreso y ejercicios, e historial de IA con preguntas, respuestas y contexto.\n\n'
+              'Se guarda sin cifrar. Compártelo sólo donde quieras conservar esos datos privados. '
+              'No incluye la licencia, los permisos ni el cronómetro en curso.'),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Cancelar')),
+            FilledButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('Crear respaldo')),
+          ],
+        ),
+      );
+      if (confirmed != true || !context.mounted) return;
       final dir = await getTemporaryDirectory();
       final path =
           p.join(dir.path, 'seguimiento-${dayKey(DateTime.now())}-${DateTime.now().microsecondsSinceEpoch}.zip');

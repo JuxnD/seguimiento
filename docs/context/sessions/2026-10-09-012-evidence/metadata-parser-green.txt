@@ -1,0 +1,1 @@
+{'package': 'com.juandiego.seguimiento', 'versionCode': 30, 'versionName': '1.22.0', 'targetSdk': 34, 'signatureSha256': '6f839c41abf9e17634544a8ae5dff18ca64333b070ef40cd582dbdc9ac133ed7'}

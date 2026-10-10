@@ -173,3 +173,17 @@ son evidencia de que la app funcione ni de que deje de funcionar.
 Recibo de la renovación1.22 y feedback Cuádriceps/Vela:
 [sessions/2026-10-09-ilustraciones-y-recuperacion.md](sessions/2026-10-09-ilustraciones-y-recuperacion.md).
 Fuente funcional7fa8099; revisión humana de comprensión permanece abierta.
+
+## Preparación independiente del piloto (9 de octubre)
+
+Plan012, worktree `C:/My Projects/seguimiento-012-piloto`, base d2d3070.
+Cambios acotados: inventario de exportación/restauración (incluye IA y archivo
+sin cifrar), alcance veraz de borrado, herramientas de gate con artefactos
+sintéticos y documentación. No se implementó alta nueva, migración, política
+Android ni cambio SDK/workflow. Depende de integrar008–011 antes del ensayo.
+[Caso viable](../CASO.md), [piloto](../piloto.md),
+[matriz de compatibilidad](../piloto-compatibilidad.md),
+[contrato del gate](../runbooks/pilot-release-gate.md).
+Piloto externo, baseline, umbrales, participantes y QA nativa nuevos pendientes;
+preparación parcial no es publicación ni validación comercial.
+Evidencia local: [sesión012](sessions/2026-10-09-012-preparacion-piloto.md).

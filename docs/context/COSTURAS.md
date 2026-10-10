@@ -91,3 +91,20 @@ En [integración122](sessions/2026-10-09-integracion-122-base-evidencia.md),
 la costura serie→SQLite→DTO→guía conserva también mode real. Técnica no permite
 subida ni se mezcla con normal; normal/normal mantiene consejo y observación.
 Rojo del automerge y verde del ajuste cruzan la pantalla y la base reales.
+
+## Preparación012: privacidad y gate futuro
+
+Esta fila no hereda QA nativa de otro APK. Fuente base d2d3070 en worktree012;
+detalle/evidencia: [recibo de sesión](sessions/2026-10-09-012-preparacion-piloto.md).
+
+| Cruce | Cobertura / límite |
+|---|---|
+| Exportar → revisión de inventario → crear/compartir | Widget en ruta Ajustes exige confirmación; cancelar no llama host/plugins. Incluye IA/archivo sin cifrar; formatoZIP y guards existentes conservados. Compartir en Android nuevo PENDIENTE |
+| Copia automática → preparar → confirmación de restore | Archivo SQLite ficticio real llega a confirmación que declara reemplazoIA y conservación de sesión/permisos/licencia. Rechazos/restore del formato probados en suite backup existente; APK nuevo PENDIENTE |
+| Borrar conversación → DB actual → copias previas | UI explica alcance, cancelar conserva y confirmar borra al releerDB. No se implementó purga ni se prometió borrar servicio/externos |
+| Manifest → SQLite/fotos/JSON/UI/logs → receipt → APKmetadata | 17tests Python con artefactos ficticios y mutantes; CLI release rechazafixtures. Lectura aapt/apksigner real y collector/candidato integrado PENDIENTES |
+
+No hay nuevo porcentaje global: el inventario histórico permanece ligado a sus
+artefactos. El recibo de herramientas no atestigua que un dispositivo ejecutó
+comandos; procedencia del collector debe ser revisada antes de aceptar captura
+nativa. SDK/tienda, alta aislada y ensayo humano siguen abiertos.

@@ -1,0 +1,83 @@
+00:00 +0: loading C:/My Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventario incluye IA y explica cifrado y copias automáticas
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing historial de IA: []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart:63:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart line 63
+The test description was:
+  inventario incluye IA y explica cifrado y copias automáticas
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: inventario incluye IA y explica cifrado y copias automáticas [E]
+  Test failed. See exception logs above.
+  The test description was: inventario incluye IA y explica cifrado y copias automáticas
+  
+00:01 +0 -1: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Antes de exportar": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart:74:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart line 74
+The test description was:
+  exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -2: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo [E]
+  Test failed. See exception logs above.
+  The test description was: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+  
+00:03 +0 -2: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing base actual de este
+teléfono: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart:102:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-012-piloto/test/data/backup_disclosure_test.dart line 102
+The test description was:
+  borrar IA explica copia actual y anteriores; cancelación conserva conversación
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -3: borrar IA explica copia actual y anteriores; cancelación conserva conversación [E]
+  Test failed. See exception logs above.
+  The test description was: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+  
+00:04 +0 -3: (tearDownAll)
+00:04 +0 -3: Some tests failed.

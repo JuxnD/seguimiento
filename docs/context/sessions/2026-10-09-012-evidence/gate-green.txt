@@ -1,0 +1,22 @@
+test_changed_apk_byte_rejected (__main__.PilotGateTest.test_changed_apk_byte_rejected) ... ok
+test_changed_manifest_after_receipt_rejected (__main__.PilotGateTest.test_changed_manifest_after_receipt_rejected) ... ok
+test_metadata_parsing_uses_both_tools_and_timeout (__main__.PilotGateTest.test_metadata_parsing_uses_both_tools_and_timeout) ... ok
+test_missing_metadata_tool_is_not_hash_only_pass (__main__.PilotGateTest.test_missing_metadata_tool_is_not_hash_only_pass) ... ok
+test_missing_or_empty_required_manifest_fields (__main__.PilotGateTest.test_missing_or_empty_required_manifest_fields) ... ok
+test_missing_phase_and_changed_upgrade_signature (__main__.PilotGateTest.test_missing_phase_and_changed_upgrade_signature) ... ok
+test_missing_receipt_rejected (__main__.PilotGateTest.test_missing_receipt_rejected) ... ok
+test_mocked_metadata_positive_not_native_qa (__main__.PilotGateTest.test_mocked_metadata_positive_not_native_qa) ... ok
+test_mutant_flags_session_ui_log_and_unexecuted_phase (__main__.PilotGateTest.test_mutant_flags_session_ui_log_and_unexecuted_phase) ... ok
+test_mutant_photo_missing_changed_extra (__main__.PilotGateTest.test_mutant_photo_missing_changed_extra) ... ok
+test_mutant_value_schema_tables_columns_and_duplicates (__main__.PilotGateTest.test_mutant_value_schema_tables_columns_and_duplicates) ... ok
+test_positive_artifact_comparison_cli (__main__.PilotGateTest.test_positive_artifact_comparison_cli) ... ok
+test_release_refuses_synthetic_fixture_cli (__main__.PilotGateTest.test_release_refuses_synthetic_fixture_cli) ... ok
+test_stale_receipt_removed_on_failed_cli_rerun (__main__.PilotGateTest.test_stale_receipt_removed_on_failed_cli_rerun) ... ok
+test_tampered_receipt_rejected (__main__.PilotGateTest.test_tampered_receipt_rejected) ... ok
+test_wrong_independent_signature_rejected (__main__.PilotGateTest.test_wrong_independent_signature_rejected) ... ok
+test_wrong_source_rejected (__main__.PilotGateTest.test_wrong_source_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 7.300s
+
+OK
