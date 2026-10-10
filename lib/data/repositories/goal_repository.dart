@@ -14,22 +14,27 @@ Map<GoalMetric, double?> goalsOfProfile(ProfileRow p) => {
       GoalMetric.kcalFutbol: p.kcalTargetFootball?.toDouble(),
     };
 
-/// Primera vigencia de cada meta: la instalación nueva desde hoy, la base
-/// migrada como legado (sin fecha). No duplica si ya hay vigencias.
-Future<void> seedGoalVersions(AppDatabase db, {required DateTime? effectiveFrom, required String origin}) async {
+/// Primera vigencia de cada meta. Instalación nueva: conocida desde hoy.
+/// Base migrada (`effectiveFrom` null): el pasado queda incierto (fila sin
+/// fecha) y el mismo valor se sabe vigente **desde la migración** (revisión
+/// de Codex: si no, el legado nunca se podría revisar). No duplica.
+Future<void> seedGoalVersions(AppDatabase db,
+    {required DateTime? effectiveFrom, required String origin, DateTime? now}) async {
   final existing = await db.select(db.goalVersions).get();
   if (existing.isNotEmpty) return;
   final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingleOrNull();
   if (profile == null) return;
-  final now = dateOnly(DateTime.now());
+  final today = dateOnly(now ?? DateTime.now());
   for (final e in goalsOfProfile(profile).entries) {
-    await db.into(db.goalVersions).insert(GoalVersionsCompanion.insert(
+    Future<void> add(DateTime? from) => db.into(db.goalVersions).insert(GoalVersionsCompanion.insert(
           metric: e.key.name,
           value: Value(e.value),
-          effectiveFrom: Value(effectiveFrom == null ? null : dayKey(effectiveFrom)),
-          acceptedAt: dayKey(now),
+          effectiveFrom: Value(from == null ? null : dayKey(from)),
+          acceptedAt: dayKey(today),
           origin: origin,
         ));
+    await add(effectiveFrom);
+    if (effectiveFrom == null) await add(today);
   }
 }
 
@@ -57,6 +62,53 @@ class GoalRepository {
 
   Stream<GoalHistory> watchHistory() =>
       db.select(db.goalVersions).watch().map((rows) => GoalHistory([for (final r in rows) _version(r)]));
+
+  /// Proyecta al perfil lo que ya rige hoy (p. ej. una propuesta aceptada
+  /// ayer para hoy). Idempotente y sin crear vigencias. El perfil es la
+  /// proyección; la verdad está en `goal_versions`.
+  Future<void> projectDueGoals(DateTime today) async {
+    final h = await history();
+    final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingleOrNull();
+    if (profile == null) return;
+    final current = goalsOfProfile(profile);
+    int? due(GoalMetric m) {
+      final v = h.current(m, today)?.value;
+      return v == null || current[m] == v ? null : v.round();
+    }
+
+    final steps = due(GoalMetric.pasos);
+    final pMin = due(GoalMetric.proteinaMin);
+    final pMax = due(GoalMetric.proteinaMax);
+    final kcal = due(GoalMetric.kcal);
+    if (steps == null && pMin == null && pMax == null && kcal == null) return;
+    await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(ProfilesCompanion(
+      stepsTarget: steps == null ? const Value.absent() : Value(steps),
+      proteinMin: pMin == null ? const Value.absent() : Value(pMin),
+      proteinMax: pMax == null ? const Value.absent() : Value(pMax),
+      kcalTarget: kcal == null ? const Value.absent() : Value(kcal),
+    ));
+  }
+
+  /// Programa una meta con su vigencia sin tocar el perfil.
+  Future<void> scheduleGoal(GoalMetric metric, double? value,
+          {required DateTime effectiveFrom, required String origin, String? reason, DateTime? now}) =>
+      db.into(db.goalVersions).insert(GoalVersionsCompanion.insert(
+            metric: metric.name,
+            value: Value(value),
+            effectiveFrom: Value(dayKey(effectiveFrom)),
+            acceptedAt: dayKey(dateOnly(now ?? DateTime.now())),
+            origin: origin,
+            reason: Value(reason),
+          ));
+
+  /// Referencia del radar (plan 011): sólo con aceptación explícita, con
+  /// vigencia, sin proyección al perfil. null = sin referencia.
+  Future<void> setReference(GoalMetric metric, double? value, {DateTime? effectiveFrom, DateTime? now}) {
+    if (!metric.reference) throw ArgumentError.value(metric, 'metric', 'no es una referencia del radar');
+    final today = dateOnly(now ?? DateTime.now());
+    return scheduleGoal(metric, value,
+        effectiveFrom: effectiveFrom ?? today, origin: GoalOrigin.perfil, reason: 'Referencia aceptada', now: today);
+  }
 
   Future<void> updateProfile(
     ProfilesCompanion data, {
@@ -132,12 +184,15 @@ class GoalRepository {
               policy: const Value(coachPolicy),
             ));
         if (status == ProposalStatus.aceptada) {
-          // Aceptar cambia sólo el futuro: rige desde mañana.
-          await updateProfile(
-            ProfilesCompanion(stepsTarget: Value(acceptedValue ?? p.to)),
+          // Aceptar cambia sólo el futuro: rige desde mañana. El perfil (lo
+          // que leen Hoy y los avisos) no cambia hoy; lo proyecta
+          // `projectDueGoals` cuando la vigencia llega.
+          await scheduleGoal(
+            GoalMetric.pasos,
+            (acceptedValue ?? p.to).toDouble(),
+            effectiveFrom: addDays(d0, 1),
             origin: GoalOrigin.propuesta,
             reason: 'Propuesta ${p.id}: ${p.daysAtGoal} días en la meta, promedio ${p.average}',
-            effectiveFrom: addDays(d0, 1),
             now: d0,
           );
         }

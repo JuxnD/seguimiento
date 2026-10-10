@@ -13,6 +13,7 @@ import '../../domain/technique_session.dart';
 import '../database.dart';
 import '../../domain/adaptive_coach.dart';
 import 'coach_repository.dart';
+import 'goal_repository.dart';
 import 'exercise_repository.dart';
 import 'fitness_test_repository.dart';
 import 'nutrition_repository.dart';
@@ -182,6 +183,8 @@ class DashboardRepository {
   /// `planche`: llegaron las mini paralelas (§19.7).
   Future<TodayDashboard> today({DateTime? now, bool planche = false}) async {
     final date = dateOnly(now ?? DateTime.now());
+    // Lo que ya rige hoy pasa al perfil antes de leerlo (plan 009).
+    await GoalRepository(db).projectDueGoals(date);
     final p = await profile.get();
     final view = await plan.dayFor(date);
     final training = TrainingRepository(db, ExerciseRepository(db));

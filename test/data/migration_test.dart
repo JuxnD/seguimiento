@@ -635,9 +635,11 @@ void main() {
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await userVersion(migrated), 22);
     final goals = await migrated.select(migrated.goalVersions).get();
-    final steps = goals.singleWhere((g) => g.metric == 'pasos');
-    expect((steps.value, steps.effectiveFrom, steps.origin), (7500.0, null, 'legado'),
-        reason: 'no se inventa cuándo empezó a regir el 7.500');
+    final steps = goals.where((g) => g.metric == 'pasos').toList();
+    expect(steps.map((g) => (g.value, g.effectiveFrom == null, g.origin)), [
+      (7500.0, true, 'legado'),
+      (7500.0, false, 'legado'),
+    ], reason: 'no se inventa cuándo empezó a regir el 7.500; sí se sabe desde la migración');
     expect(goals.map((g) => g.metric).toSet(), {'pasos', 'proteinaMin', 'proteinaMax', 'kcal', 'kcalFutbol'});
     expect(await migrated.select(migrated.coachProposals).get(), isEmpty);
     final check = await migrated.select(migrated.morningChecks).getSingle();

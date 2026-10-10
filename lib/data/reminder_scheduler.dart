@@ -14,6 +14,7 @@ import 'repositories/plan_repository.dart';
 import 'repositories/profile_repository.dart';
 import 'repositories/reminder_repository.dart';
 import 'repositories/coach_repository.dart';
+import 'repositories/goal_repository.dart';
 
 /// Junta lo que hay en la base con las reglas de `domain/reminders.dart` y
 /// deja programados los avisos de los próximos días.
@@ -41,6 +42,8 @@ class ReminderScheduler {
   Future<List<PlannedNotification>> reschedule({int horizonDays = 7, DateTime? now}) async {
     final moment = now ?? DateTime.now();
     final today = dateOnly(moment);
+    // Lo que ya rige hoy pasa al perfil antes de leerlo (plan 009).
+    await GoalRepository(db).projectDueGoals(today);
     final settings = await reminders.settings();
     final p = await profile.get();
 

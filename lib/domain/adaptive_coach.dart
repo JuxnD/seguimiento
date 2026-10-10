@@ -134,6 +134,7 @@ CoachReading stepsReading({
   required int? Function(DateTime day) stepsGoalOn,
   required LoadReading load,
   required bool fatigue,
+  bool recoveryKnown = false,
   ProposalRecord? last,
 }) {
   final d0 = dateOnly(today);
@@ -195,8 +196,37 @@ CoachReading stepsReading({
   final share = judged.isEmpty ? 0.0 : atGoal / judged.length;
   final candidate = average ~/ coachStepsRounding * coachStepsRounding;
   if (judged.length >= coachMinCoverage && share >= coachProposeShare && candidate > goal) {
+    // Subir pide saber que la recuperación va bien: carga alta hoy o dos
+    // sesiones hoy frenan; sin ninguna señal conocida no se presume.
+    if (load.highToday || load.twoToday) {
+      return CoachReading(
+        evaluatedOn: d0,
+        state: CoachState.observar,
+        reason: 'Vas para subir la meta, pero la carga de hoy ya es alta (${load.todayLoad}): la revisión espera.',
+        evidence: [...evidence, 'carga de hoy ${load.todayLoad}'],
+        nextReview: addDays(d0, 1),
+      );
+    }
+    if (!recoveryKnown) {
+      return CoachReading(
+        evaluatedOn: d0,
+        state: CoachState.faltanDatos,
+        reason: 'Vas para subir la meta, pero falta saber cómo te recuperas: responde "¿Cómo amaneciste?" '
+            'o anota el RPE de tus sesiones.',
+        evidence: [...evidence, 'sin señales de recuperación en 3 días'],
+        action: 'Registro de la mañana: cómo amaneciste.',
+        nextReview: addDays(d0, 1),
+      );
+    }
     final p = StepsProposal(from: goal, to: candidate, average: average, daysAtGoal: atGoal);
-    final decided = last != null && last.id == p.id ? last : null;
+    var decided = last != null && last.id == p.id ? last : null;
+    // Un rechazo vale para la ventana con la que se decidió; con una ventana
+    // nueva completa (14 días después) se puede reconsiderar.
+    if (decided?.status == ProposalStatus.rechazada &&
+        decided!.decidedOn != null &&
+        !d0.isBefore(addDays(dateOnly(decided.decidedOn!), coachReviewDays))) {
+      decided = null;
+    }
     final snoozed = decided?.status == ProposalStatus.pospuesta &&
         decided!.reviewAfter != null &&
         d0.isBefore(dateOnly(decided.reviewAfter!));

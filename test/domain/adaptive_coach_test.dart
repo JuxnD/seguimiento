@@ -23,6 +23,7 @@ void main() {
     DateTime? since,
     LoadReading load = calm,
     bool fatigue = false,
+    bool recoveryKnown = true,
     ProposalRecord? last,
   }) =>
       stepsReading(
@@ -33,6 +34,7 @@ void main() {
         stepsGoalOn: (_) => goal,
         load: load,
         fatigue: fatigue,
+        recoveryKnown: recoveryKnown,
         last: last,
       );
 
@@ -112,6 +114,34 @@ void main() {
       expect(read(today, steps).proposal!.id, r.proposal!.id, reason: 'misma entrada, misma decisión');
       expect(read(addDays(today, 1), weekdays(addDays(today, 1), (i) => 6400 + i * 20)).proposal!.id, r.proposal!.id,
           reason: 'al día siguiente, misma evidencia: no es otra propuesta');
+    });
+
+    test('sin ninguna señal de recuperación conocida no se propone subir', () {
+      final r = read(today, weekdays(today, (i) => 6400 + i * 20), recoveryKnown: false);
+      expect((r.state, r.proposal), (CoachState.faltanDatos, null));
+      expect(r.reason, contains('falta saber cómo te recuperas'));
+    });
+
+    test('carga alta hoy (90 min a RPE 8) o dos sesiones hoy frenan la propuesta ese día', () {
+      final steps = weekdays(today, (i) => 6400 + i * 20);
+      const heavy = LoadReading(todayLoad: 720, todayCount: 1, intenseStreak: 1);
+      const twice = LoadReading(todayLoad: 300, todayCount: 2, intenseStreak: 1);
+      for (final load in [heavy, twice]) {
+        final r = read(today, steps, load: load);
+        expect((r.state, r.proposal), (CoachState.observar, null));
+        expect(r.reason, contains('la revisión espera'));
+      }
+    });
+
+    test('un rechazo vale para su ventana: con una ventana nueva completa se reconsidera', () {
+      final rejected = ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.rechazada, decidedOn: today);
+      final steps = weekdays(today, (i) => 6400 + i * 20);
+      expect(read(today, steps, last: rejected).state, CoachState.observar);
+      final d13 = addDays(today, 13);
+      expect(read(d13, weekdays(d13, (i) => 6400 + i * 20), last: rejected).state, CoachState.observar,
+          reason: 'sin repetirse cada mañana dentro de la ventana');
+      final d14 = addDays(today, 14);
+      expect(read(d14, weekdays(d14, (i) => 6400 + i * 20), last: rejected).state, CoachState.propuesta);
     });
 
     test('cumple justo: se mantiene, no propone', () {

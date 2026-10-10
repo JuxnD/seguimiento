@@ -47,6 +47,26 @@ class CoachRepository {
     );
   }
 
+  /// ¿Hay una señal favorable conocida en los últimos 3 días? Al despertar
+  /// descansado o normal, o una sesión con RPE ≤ 8 anotado. Nada anotado no
+  /// demuestra recuperación.
+  Future<bool> recoveryKnown(DateTime date) async {
+    final d0 = dateOnly(date);
+    final from = dayKey(addDays(d0, -2));
+    final feelings = await (db.select(db.morningChecks)
+          ..where((t) => t.date.isBetweenValues(from, dayKey(d0)) & t.feeling.isNotNull()))
+        .get();
+    if (feelings.any((f) => f.feeling! <= 2)) return true;
+    final sessions = await (db.select(db.sessions)
+          ..where((t) =>
+              t.date.isBetweenValues(from, dayKey(d0)) &
+              db.trainingSessions &
+              t.imported.equals(false) &
+              t.rpe.isNotNull()))
+        .get();
+    return sessions.any((s) => s.rpe! <= 8);
+  }
+
   Future<CoachReading> stepsReading(DateTime date, {LoadReading? load}) async {
     final d0 = dateOnly(date);
     final goals = GoalRepository(db);
@@ -71,6 +91,7 @@ class CoachRepository {
       history: history,
       load: load ?? await this.load(d0),
       fatigue: await fatigue(d0),
+      recoveryKnown: await recoveryKnown(d0),
       last: await goals.lastProposal('pasos'),
     );
   }
@@ -85,6 +106,7 @@ CoachReading stepsReadingFrom({
   required GoalHistory history,
   required LoadReading load,
   required bool fatigue,
+  bool recoveryKnown = false,
   ProposalRecord? last,
 }) =>
     stepsReading(
@@ -98,5 +120,6 @@ CoachReading stepsReadingFrom({
       },
       load: load,
       fatigue: fatigue,
+      recoveryKnown: recoveryKnown,
       last: last,
     );

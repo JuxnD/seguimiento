@@ -73,8 +73,37 @@ void main() {
     expect(h.of(GoalMetric.pasos).where((v) => v.origin == GoalOrigin.propuesta), hasLength(1));
     final record = (await goals.proposal(p.id))!;
     expect(record.status, ProposalStatus.aceptada);
-    final profile = await ProfileRepository(db).get();
-    expect(profile.stepsTarget, 5800);
+    expect((await ProfileRepository(db).get()).stepsTarget, 5000,
+        reason: 'hoy no cambia lo que leen Hoy, avisos e informe');
+    await goals.projectDueGoals(d(11, 2));
+    expect((await ProfileRepository(db).get()).stepsTarget, 5000, reason: 'antes de medianoche, igual');
+    await goals.projectDueGoals(d(11, 3));
+    expect((await ProfileRepository(db).get()).stepsTarget, 5800, reason: 'al día siguiente rige');
+    final versions = (await goals.history()).versions.length;
+    await goals.projectDueGoals(d(11, 4));
+    expect((await goals.history()).versions.length, versions, reason: 'proyectar no crea vigencias');
+  });
+
+  test('base migrada: pasado incierto, el mismo valor conocido desde la migración', () async {
+    await db.delete(db.goalVersions).go();
+    await seedGoalVersions(db, effectiveFrom: null, origin: GoalOrigin.legado, now: d(10, 10));
+    final h = await goals.history();
+    expect(h.on(GoalMetric.pasos, d(10, 9))!.known, isFalse);
+    final since = h.on(GoalMetric.pasos, d(10, 10))!;
+    expect((since.known, since.value, since.since), (true, 5000, d(10, 10)));
+  });
+
+  test('referencias del radar: sin defaults, con vigencia, sin tocar el perfil', () async {
+    final h0 = await goals.history();
+    expect(h0.on(GoalMetric.refDominadas, d(10, 12)), isNull, reason: 'sin referencia hasta aceptarla');
+    final before = await ProfileRepository(db).get();
+    await goals.setReference(GoalMetric.refDominadas, 12, effectiveFrom: d(10, 12), now: d(10, 12));
+    await goals.setReference(GoalMetric.refSaltoLargo, null, effectiveFrom: d(10, 12), now: d(10, 12));
+    final h = await goals.history();
+    expect(h.on(GoalMetric.refDominadas, d(10, 12))!.value, 12);
+    expect(h.on(GoalMetric.refSaltoLargo, d(10, 12))!.value, isNull);
+    expect(await ProfileRepository(db).get(), before);
+    expect(() => goals.setReference(GoalMetric.pasos, 6000), throwsArgumentError);
   });
 
   test('posponer guarda la fecha de revisión; rechazar persiste', () async {

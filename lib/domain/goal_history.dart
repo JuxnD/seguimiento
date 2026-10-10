@@ -6,14 +6,27 @@ import 'dates.dart';
 // cuándo cambió.
 
 enum GoalMetric {
-  pasos('Pasos diarios entre semana'),
-  proteinaMin('Proteína mínima'),
-  proteinaMax('Proteína máxima'),
-  kcal('kcal entre semana'),
-  kcalFutbol('kcal en días de fútbol');
+  pasos('Pasos diarios entre semana', 'pasos'),
+  proteinaMin('Proteína mínima', 'g'),
+  proteinaMax('Proteína máxima', 'g'),
+  kcal('kcal entre semana', 'kcal'),
+  kcalFutbol('kcal en días de fútbol', 'kcal'),
 
-  const GoalMetric(this.label);
+  // Referencias del radar (plan 011): opcionales, sin valor por defecto ni
+  // proyección al perfil. null = sin referencia. Sólo con aceptación explícita.
+  refDominadas('Dominadas estrictas', 'reps', reference: true),
+  refFlexiones('Flexiones', 'reps', reference: true),
+  refHollow('Hollow hold', 's', reference: true),
+  refBulgara('Búlgara por lado', 'reps', reference: true),
+  refSaltoLargo('Salto largo', 'cm', reference: true),
+  refCindy('Cindy 20 min', 'rondas', reference: true);
+
+  const GoalMetric(this.label, this.unit, {this.reference = false});
   final String label;
+  final String unit;
+
+  /// Referencia del radar: no es meta diaria ni vive en el perfil.
+  final bool reference;
 }
 
 /// Origen de una vigencia.

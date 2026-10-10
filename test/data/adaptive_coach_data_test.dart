@@ -50,11 +50,13 @@ void main() {
 
   tearDown(() => db.close());
 
-  Future<void> fill(int Function(int i) value) async {
+  Future<void> fill(int Function(int i) value, {bool rested = true}) async {
     final w = coachWindow(today);
     for (var i = 0; i < w.length; i++) {
       await steps.setSteps(w[i], value(i));
     }
+    // Una señal conocida de recuperación favorable (ayer, al despertar).
+    if (rested) await RecoveryRepository(db).setFeeling(addDays(today, -1), 2);
   }
 
   test('pasos holgados: propone; aceptar desde Hoy rige mañana y Hoy cambia a "en prueba"', () async {
@@ -62,6 +64,7 @@ void main() {
     final r = await coach.stepsReading(today);
     expect(r.state, CoachState.propuesta);
     await GoalRepository(db).decideSteps(r.proposal!, ProposalStatus.aceptada, today: today);
+    expect((await ProfileRepository(db).get()).stepsTarget, 5000);
     final same = await coach.stepsReading(today);
     expect((same.state, same.proposal), (CoachState.aceptada, null),
         reason: 'hoy todavía rige 5.000, pero la propuesta ya se decidió: no se repite');
@@ -110,10 +113,10 @@ void main() {
 
   test('informe: cada día con su meta; lo anterior a toda vigencia no se clasifica', () async {
     await db.delete(db.goalVersions).go();
-    await seedGoalVersions(db, effectiveFrom: null, origin: GoalOrigin.legado);
+    await seedGoalVersions(db, effectiveFrom: null, origin: GoalOrigin.legado, now: d(10, 13));
     await GoalRepository(db).updateProfile(const ProfilesCompanion(stepsTarget: Value(6000)),
         origin: GoalOrigin.perfil, now: d(10, 14));
-    await steps.setSteps(d(10, 12), 5500); // lunes, antes del cambio: sin meta registrada
+    await steps.setSteps(d(10, 12), 5500); // lunes, antes de la migración: sin meta registrada
     await steps.setSteps(d(10, 14), 6100); // miércoles, con 6.000: cumple
     await steps.setSteps(d(10, 15), 5500); // jueves, con 6.000: no cumple
     final input = await ReportRepository(db, NutritionRepository(db)).load(d(10, 12), d(10, 18), today: d(10, 20));
