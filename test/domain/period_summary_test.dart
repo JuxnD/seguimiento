@@ -88,7 +88,7 @@ void main() {
     expect(s.stepsDays, 3);
     expect(s.bestStepsDay, (d(10, 4), 12000));
     expect(s.weekdaysWithSteps, 2, reason: 'el domingo no tiene meta');
-    expect(s.weekdaysAtGoal, 1);
+    expect(s.weekdaysAtGoal, 2, reason: 'base inicial5.000;8.000 y6.000 cumplen');
     expect(s.distanceKm, closeTo(26000 * 0.747 / 1000, 0.01));
   });
 
@@ -124,7 +124,8 @@ void main() {
   });
 
   test('un periodo vacío lo dice', () {
-    final s = summarizePeriod(ReportInput(programStart: d(8, 26), rangeStart: d(9, 30), rangeEnd: d(10, 6), today: d(10, 2)));
+    final s =
+        summarizePeriod(ReportInput(programStart: d(8, 26), rangeStart: d(9, 30), rangeEnd: d(10, 6), today: d(10, 2)));
     expect(s.isEmpty, isTrue);
     expect(s.stepsAvg, isNull);
   });

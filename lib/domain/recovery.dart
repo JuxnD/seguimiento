@@ -135,6 +135,7 @@ class LoadReading {
     required this.todayLoad,
     required this.todayCount,
     required this.intenseStreak,
+    this.streakThrough,
   });
 
   final int todayLoad;
@@ -145,6 +146,7 @@ class LoadReading {
   /// Días seguidos (hasta hoy, o hasta ayer si hoy no hay nada) con algo
   /// intenso.
   final int intenseStreak;
+  final DateTime? streakThrough;
 
   bool get twoToday => todayCount >= 2;
   bool get highToday => todayLoad >= highDayLoad;
@@ -155,10 +157,10 @@ class LoadReading {
 
   /// Por qué conviene no entrenar otra vez.
   String get reason => twoToday
-      ? 'Ya entrenaste dos veces hoy. Recuperar ahora te deja mejor para el viernes.'
+      ? 'Ya entrenaste dos veces hoy. Revisa tu recuperación antes de añadir otra sesión.'
       : threeIntense
-          ? '$intenseStreak días seguidos intensos. Recuperar ahora te deja mejor para el viernes.'
-          : 'La carga de hoy ya es alta ($todayLoad). Recuperar ahora te deja mejor para el viernes.';
+          ? '$intenseStreak días seguidos intensos. Revisa tu recuperación antes de añadir otra sesión.'
+          : 'La carga de hoy ya es alta ($todayLoad). Revisa tu recuperación antes de añadir otra sesión.';
 }
 
 LoadReading loadReading(List<LoadItem> items, DateTime today) {
@@ -167,6 +169,11 @@ LoadReading loadReading(List<LoadItem> items, DateTime today) {
   bool intenseOn(DateTime d) => items.any((i) => dateOnly(i.date) == d && i.intense);
   var streak = 0;
   var day = intenseOn(d0) ? d0 : addDays(d0, -1);
+  // Una sesión moderada conocida hoy termina la racha. Sin RPE no prueba
+  // recuperación: se conserva la lectura previa hasta registrar esfuerzo.
+  final moderateToday = todayItems.any((i) => i.minutes > 0 && i.effort != null && i.effort! < 7);
+  if (!intenseOn(d0) && moderateToday && todayItems.every((i) => i.effort != null)) day = d0;
+  final end = day;
   while (intenseOn(day)) {
     streak++;
     day = addDays(day, -1);
@@ -175,6 +182,7 @@ LoadReading loadReading(List<LoadItem> items, DateTime today) {
     todayLoad: todayItems.fold(0, (a, i) => a + i.load),
     todayCount: todayItems.length,
     intenseStreak: streak,
+    streakThrough: streak == 0 ? null : end,
   );
 }
 
@@ -221,8 +229,8 @@ bool suggestPlanB({
 }) {
   if (!dayHasLegs) return false;
   final d0 = dateOnly(today);
-  final legSore = [d0, addDays(d0, -1)].any(
-      (d) => (soreness[d] ?? const {}).entries.any((e) => legZones.contains(e.key) && e.value >= 3));
+  final legSore = [d0, addDays(d0, -1)]
+      .any((d) => (soreness[d] ?? const {}).entries.any((e) => legZones.contains(e.key) && e.value >= 3));
   return load.threeIntense || legSore;
 }
 
@@ -244,9 +252,8 @@ class Skill {
   /// Lo que conviene tener antes de entrenarla.
   final String? prereq;
 
-  String get window => toMonth >= 24 && fromMonth >= 24
-      ? '${fromMonth ~/ 12}–${toMonth ~/ 12} años'
-      : '$fromMonth–$toMonth meses';
+  String get window =>
+      toMonth >= 24 && fromMonth >= 24 ? '${fromMonth ~/ 12}–${toMonth ~/ 12} años' : '$fromMonth–$toMonth meses';
 }
 
 /// Inicio de la hoja de ruta: octubre de 2026.
@@ -257,13 +264,11 @@ const skillRoadmap = [
   Skill('l_sit', 'L-sit', '20 s', 0, 3),
   Skill('handstand', 'Pino libre', '30 s', 3, 6),
   Skill('v_sit', 'V-sit', '5 s', 3, 6),
-  Skill('muscle_up', 'Muscle-up en barra', '3 limpios', 3, 9,
-      prereq: '12 dominadas estrictas y 15 fondos'),
+  Skill('muscle_up', 'Muscle-up en barra', '3 limpios', 3, 9, prereq: '12 dominadas estrictas y 15 fondos'),
   Skill('wall_hspu', 'HSPU contra la pared', '5 completos', 6, 12),
   Skill('tuck_planche', 'Tuck planche', '10 s', 6, 12, prereq: 'inclinación de planche 3 × 30 s (§19.7)'),
   Skill('tuck_front_lever', 'Tuck front lever', '10 s', 6, 12),
-  Skill('straddle_front_lever', 'Front lever straddle', '5 s', 12, 18,
-      prereq: '10 dominadas con 10 kg'),
+  Skill('straddle_front_lever', 'Front lever straddle', '5 s', 12, 18, prereq: '10 dominadas con 10 kg'),
   Skill('impossible_dip', 'Fondo imposible', '3 reps', 12, 18),
   Skill('free_hspu', 'HSPU libre', '3 reps', 12, 24),
   Skill('straddle_planche', 'Planche straddle', '5 s', 12, 24),

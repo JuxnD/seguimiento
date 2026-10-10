@@ -23,6 +23,7 @@ import '../../data/repositories/plan_repository.dart';
 import '../../data/seed_plan.dart';
 import '../plan/plan_screen.dart';
 import 'active_session_banner.dart';
+import 'exercise_library_screen.dart';
 import 'football_form_screen.dart';
 import 'guided_session_screen.dart';
 import 'mobility_screen.dart';
@@ -759,6 +760,12 @@ class TrainingScreen extends ConsumerWidget {
         title: const Text('Entreno'),
         actions: [
           IconButton(
+            tooltip: 'Guías de ejercicios',
+            icon: const Icon(Icons.menu_book_outlined),
+            onPressed: () =>
+                Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ExerciseLibraryScreen())),
+          ),
+          IconButton(
             tooltip: 'Plan semanal',
             icon: const Icon(Icons.calendar_view_week),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlanScreen())),
@@ -769,6 +776,15 @@ class TrainingScreen extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 96),
         children: [
           const ActiveSessionBanner(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.menu_book_outlined),
+              label: const Text('Consultar guías de ejercicios'),
+              onPressed: () =>
+                  Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ExerciseLibraryScreen())),
+            ),
+          ),
           HeroCard(
             color: style.color,
             overline: dashboard == null ? 'Hoy' : 'Hoy · semana ${dashboard.weekIndex}',

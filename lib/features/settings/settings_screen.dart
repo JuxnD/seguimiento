@@ -321,7 +321,19 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
 
   @override
   void dispose() {
-    for (final c in [_height, _proteinMin, _proteinMax, _kcal, _kcalFloor, _kcalFootball, _warmup, _interval, _intervalMax, _cooldown, _steps]) {
+    for (final c in [
+      _height,
+      _proteinMin,
+      _proteinMax,
+      _kcal,
+      _kcalFloor,
+      _kcalFootball,
+      _warmup,
+      _interval,
+      _intervalMax,
+      _cooldown,
+      _steps
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -345,24 +357,27 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
       showSnack(context, problem);
       return;
     }
-    await guarded(context, () => ref.read(profileRepositoryProvider).save(ProfilesCompanion(
-          birthDate: Value(_birth == null ? null : dayKey(_birth!)),
-          heightCm: Value(parseNum(_height.text)),
-          startDate: Value(dayKey(_start)),
-          proteinMin: Value(proteinMin),
-          proteinMax: Value(proteinMax),
-          kcalTarget: Value(kcal),
-          kcalFloor: Value(kcalFloor),
-          kcalTargetFootball: Value(_positiveInt(_kcalFootball.text)),
-          minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
-          measureIntervalDays: Value(interval),
-          measureIntervalMaxDays: Value(intervalMax),
-          nextMeasurementDate: Value(_nextMeasurement == null ? null : dayKey(_nextMeasurement!)),
-          cooldownTargetSec: Value(parseDuration(_cooldown.text) ?? p.cooldownTargetSec),
-          neverToFailure: Value(_neverToFailure),
-          stepsTarget: Value(_positiveInt(_steps.text) ?? p.stepsTarget),
-          lengthUnit: Value(_unit),
-        )), ok: 'Perfil guardado');
+    await guarded(
+        context,
+        () => ref.read(profileRepositoryProvider).save(ProfilesCompanion(
+              birthDate: Value(_birth == null ? null : dayKey(_birth!)),
+              heightCm: Value(parseNum(_height.text)),
+              startDate: Value(dayKey(_start)),
+              proteinMin: Value(proteinMin),
+              proteinMax: Value(proteinMax),
+              kcalTarget: Value(kcal),
+              kcalFloor: Value(kcalFloor),
+              kcalTargetFootball: Value(_positiveInt(_kcalFootball.text)),
+              minWarmupSec: Value(parseDuration(_warmup.text) ?? p.minWarmupSec),
+              measureIntervalDays: Value(interval),
+              measureIntervalMaxDays: Value(intervalMax),
+              nextMeasurementDate: Value(_nextMeasurement == null ? null : dayKey(_nextMeasurement!)),
+              cooldownTargetSec: Value(parseDuration(_cooldown.text) ?? p.cooldownTargetSec),
+              neverToFailure: Value(_neverToFailure),
+              stepsTarget: Value(_positiveInt(_steps.text) ?? p.stepsTarget),
+              lengthUnit: Value(_unit),
+            )),
+        ok: 'Perfil guardado');
   }
 
   @override
@@ -414,6 +429,11 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
         NumberField(controller: _kcalFootball, label: 'kcal en días de fútbol (sáb y dom; vacío = la misma)'),
         const SizedBox(height: 8),
         NumberField(controller: _steps, label: 'Pasos diarios entre semana', suffix: 'pasos'),
+        if (p.stepsTarget == 7500) ...[
+          const Text('Puedes adoptar el mínimo inicial de 5.000 pasos. El cambio se aplica al guardar el perfil.'),
+          TextButton(
+              onPressed: () => setState(() => _steps.text = '5000'), child: const Text('Usar 5.000 pasos como base')),
+        ],
         const SizedBox(height: 8),
         Row(
           children: [

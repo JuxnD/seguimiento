@@ -237,22 +237,10 @@ def build(ex):
 
 
 def main():
-    figures, problems = [], []
-    for ex in EXERCISES:
-        fig, probs = build(ex)
-        figures.append(fig)
-        problems += probs
-    if problems:
-        print('\n'.join(problems))
-        sys.exit(1)
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    target = os.path.join(root, 'assets', 'tecnica', 'figuras3d.json')
-    consts = {'T': fg.T, 'UA': fg.UA, 'FA': fg.FA, 'TH': fg.TH, 'SH': fg.SH, 'FT': fg.FT,
-              'HEAD_OFF': fg.HEAD_OFF, 'HEAD_R': fg.HEAD_R}
-    with open(target, 'w', encoding='utf-8') as fh:
-        json.dump({'version': 1, 'consts': consts, 'figures': fg._round(figures)}, fh,
-                  ensure_ascii=False, separators=(',', ':'))
-    print(f'{len(figures)} figuras 3D → {os.path.relpath(target, root)}')
+    # Única entrada pública: el catálogo completo. EXERCISES conserva las
+    # especificaciones originales reutilizadas por illustration_catalog.
+    from illustration_catalog import main as build_catalog
+    build_catalog()
 
 
 if __name__ == '__main__':

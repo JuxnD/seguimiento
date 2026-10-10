@@ -133,7 +133,8 @@ DecisionReading twoWeekRule({
   required List<(DateTime, double)> abdomen,
   required DateTime today,
 }) {
-  final complete = weeks.where((w) => addDays(w.monday, 6).isBefore(dateOnly(today))).toList();
+  final complete = weeks.where((w) => addDays(w.monday, 6).isBefore(dateOnly(today)) && w.count >= 3).toList()
+    ..sort((a, b) => a.monday.compareTo(b.monday));
   if (complete.isEmpty) {
     return const DecisionReading(KcalAction.faltanDatos,
         'Hace falta una semana completa de pesajes en ayunas (mínimo martes, jueves y sábado).');
@@ -141,7 +142,8 @@ DecisionReading twoWeekRule({
   final last = complete.last;
   // Pesajes de hace un mes no dicen nada de hoy.
   if (daysBetween(last.monday, dateOnly(today)) > 14) {
-    return DecisionReading(KcalAction.faltanDatos,
+    return DecisionReading(
+        KcalAction.faltanDatos,
         'No hay pesajes recientes (el último promedio es de la semana del ${formatShort(last.monday)}). '
         'Pésate en ayunas martes, jueves y sábado.',
         lastWeek: last.monday);
@@ -175,7 +177,7 @@ DecisionReading twoWeekRule({
   return DecisionReading(
     KcalAction.mantener,
     still == null
-        ? '${_cap(rate())}. Falta el abdomen de hace 3 semanas para decidir; si no se mueve, −150 kcal o +2.000 pasos.'
+        ? '${_cap(rate())}. Falta una medida reciente de abdomen y otra comparable de hace 3 semanas; registra antes de ajustar metas.'
         : '${_cap(rate())}, pero la cintura baja: no cambiar.',
     kgPerWeek: loss,
     lastWeek: last.monday,
@@ -186,9 +188,12 @@ DecisionReading twoWeekRule({
 /// si no hay una toma de hace 3 semanas o más para comparar.
 bool? _waistStill(List<(DateTime, double)> abdomen, DateTime today) {
   if (abdomen.isEmpty) return null;
-  final sorted = [...abdomen]..sort((a, b) => a.$1.compareTo(b.$1));
+  final sorted = abdomen.where((m) => !dateOnly(m.$1).isAfter(dateOnly(today))).toList()
+    ..sort((a, b) => a.$1.compareTo(b.$1));
+  if (sorted.isEmpty) return null;
   final latest = sorted.last;
-  final old = sorted.where((m) => daysBetween(m.$1, latest.$1) >= 21).lastOrNull;
+  if (daysBetween(latest.$1, today) > 14) return null;
+  final old = sorted.where((m) => daysBetween(m.$1, latest.$1) >= 21 && daysBetween(m.$1, latest.$1) <= 35).lastOrNull;
   if (old == null) return null;
   return old.$2 - latest.$2 < 0.5;
 }

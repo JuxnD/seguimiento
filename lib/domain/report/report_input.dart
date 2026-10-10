@@ -16,7 +16,7 @@ class Targets {
     this.minCooldownSec = minCooldownSecDefault,
     this.measureIntervalDays = 21,
     this.lengthUnit = LengthUnit.cm,
-    this.stepsTarget = 7500,
+    this.stepsTarget = 5000,
   });
 
   /// Por debajo de 1 min el enfriamiento no cuenta como tal. Es una

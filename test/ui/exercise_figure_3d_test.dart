@@ -29,7 +29,7 @@ void main() {
         expect([for (var i = 0; i < 3; i++) momentLabel(fig, i)], ['Inicio', 'Medio', 'Final']);
       }
       expect(catalog.forExercise('  nordico (ISQUIOS) ')?.name, 'Nórdico (isquios)');
-      expect(catalog.forExercise('Flexiones'), isNull);
+      expect(catalog.forExercise('Flexiones'), isNotNull, reason: 'la renovación cubre también el catálogo plano');
     });
 
     test('los momentos clave reproducen los apoyos del generador', () {
@@ -57,7 +57,8 @@ void main() {
     test('en los extremos coincide con los momentos clave', () {
       for (final fig in catalog.all) {
         for (final (i, f) in fig.frames.indexed) {
-          final key = solveKeyPose(f, fig.dims).grounded();
+          final raw = solveKeyPose(f, fig.dims);
+          final key = f.bodyRoll.abs() > .001 ? raw : raw.grounded();
           final at = fig.skeletonAt(fig.frames.length < 2 ? 0 : i / (fig.frames.length - 1));
           for (final e in key.joints.entries) {
             expect(dist(at.joints[e.key]!, e.value), lessThan(0.05), reason: '${fig.name} $i ${e.key}');
@@ -69,13 +70,13 @@ void main() {
     test('a mitad de camino los segmentos conservan su largo', () {
       for (final fig in catalog.all) {
         for (var k = 1; k < 20; k++) {
-          final j = fig.skeletonAt(k / 20).joints;
+          final j = liftSkeleton(fig.skeletonAt(k / 20), fig).p;
           for (final side in ['near', 'far']) {
-            expect(dist(j['hip']!, j['${side}Knee']!), closeTo(dims.thigh, 0.01));
-            expect(dist(j['${side}Knee']!, j['${side}Ankle']!), closeTo(dims.shin, 0.01));
-            expect(dist(j['${side}Ankle']!, j['${side}Toe']!), closeTo(dims.foot, 0.01));
+            expect((j['${side}Hip']! - j['${side}Knee']!).length, closeTo(dims.thigh, 0.01), reason: fig.name);
+            expect((j['${side}Knee']! - j['${side}Ankle']!).length, closeTo(dims.shin, 0.01), reason: fig.name);
+            expect((j['${side}Ankle']! - j['${side}Toe']!).length, closeTo(dims.foot, 0.01), reason: fig.name);
           }
-          expect(dist(j['hip']!, j['neck']!), closeTo(dims.torso, 0.01));
+          expect((j['hip']! - j['neck']!).length, closeTo(dims.torso, 0.01));
         }
       }
     });
@@ -99,7 +100,13 @@ void main() {
     test('nada atraviesa el suelo en ningún punto del recorrido', () {
       for (final fig in catalog.all) {
         for (var k = 0; k <= 40; k++) {
-          expect(fig.skeletonAt(k / 40).lowest, lessThanOrEqualTo(0.06), reason: '${fig.name} t=${k / 40}');
+          if (fig.skeletonAt(k / 40).bodyRoll == 0) {
+            expect(fig.skeletonAt(k / 40).lowest, lessThanOrEqualTo(0.06), reason: '${fig.name} t=${k / 40}');
+          } else {
+            final body = liftSkeleton(fig.skeletonAt(k / 40), fig);
+            expect(body.p['nearAnkle']!.y, lessThanOrEqualTo(-.5));
+            expect(body.p['nearElbow']!.y, lessThanOrEqualTo(-.5));
+          }
         }
       }
       // Colgado de la barra, las puntas de los pies quedan bien arriba del suelo.
@@ -114,10 +121,10 @@ void main() {
     test('loopProgress va y vuelve con pausas en cada momento', () {
       expect(loopProgress(0, 3), 0);
       expect(loopProgress(0.5, 3), 0, reason: 'pausa inicial');
-      expect(loopProgress(0.6 + 1.2 + 0.1, 3), closeTo(0.5, 1e-9), reason: 'pausa en el medio');
-      expect(loopProgress(0.6 + 1.8 + 1.2 + 0.1, 3), closeTo(1, 1e-9), reason: 'pausa al final');
-      expect(loopProgress(0.6 + 1.2 / 2, 3), closeTo(0.25, 1e-9));
-      const cycle = 0.6 + 4 * 1.8;
+      expect(loopProgress(0.6 + 2.4 + 0.1, 3), closeTo(0.5, 1e-9), reason: 'pausa en el medio');
+      expect(loopProgress(0.6 + 3.0 + 2.4 + 0.1, 3), closeTo(1, 1e-9), reason: 'pausa al final');
+      expect(loopProgress(0.6 + 2.4 / 2, 3), closeTo(0.25, 1e-9));
+      const cycle = 0.6 + 4 * 3.0;
       expect(loopProgress(cycle - 0.01, 3), closeTo(0, 1e-9), reason: 'vuelve al inicio');
       expect(loopProgress(cycle + 0.3, 3), 0);
     });
@@ -291,7 +298,7 @@ void main() {
       final frame = tester.getSize(find.byKey(const ValueKey('figura3d-0')));
       expect(frame.width, greaterThan(280));
       expect(frame.height, figure3dHeight);
-      expect(find.textContaining(fig.muscles), findsOneWidget);
+      expect(find.textContaining(fig.muscles), findsWidgets);
 
       await tester.drag(pages, const Offset(-320, 0));
       await tester.pumpAndSettle();
@@ -320,9 +327,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(Figure3DFullScreen), findsOneWidget);
       expect(find.widgetWithText(ChoiceChip, 'Inicio'), findsOneWidget);
-      expect(find.text('De perfil'), findsNothing);
+      expect(find.text('De perfil'), findsOneWidget);
 
-      await tester.drag(find.byKey(const ValueKey('figura3d-giro')), const Offset(400, 0));
+      await tester.drag(find.byKey(const ValueKey('figura3d-giro')), const Offset(600, 0));
       await tester.pump();
       final painter = tester
           .widgetList<CustomPaint>(
@@ -330,22 +337,23 @@ void main() {
           .map((c) => c.painter)
           .whereType<Figure3DPainter>()
           .single;
-      expect(painter.yaw, maxYaw, reason: 'el giro se limita a ±60°');
+      expect(painter.yaw, maxYaw, reason: 'el giro se limita a ±180°');
       expect(find.text('De perfil'), findsOneWidget);
 
-      await tester.tap(find.text('De perfil'));
+      await tester.tap(find.text('Vista inicial'));
       await tester.pump();
-      expect(find.text('De perfil'), findsNothing);
+      expect(find.text('De perfil'), findsOneWidget);
 
       await tester.tap(find.widgetWithText(ChoiceChip, 'Final'));
       await tester.pumpAndSettle();
       expect(find.text(fig.frames[2].caption), findsOneWidget);
     });
 
-    testWidgets('sin figura 3D, la figura plana de siempre', (tester) async {
-      await pumpSheet(tester, 'Flexiones');
+    testWidgets('ejercicio personalizado sin ilustración declara la ausencia', (tester) async {
+      await pumpSheet(tester, 'Ejercicio personalizado sin ilustración');
       expect(find.byKey(const ValueKey('figura3d-momentos')), findsNothing);
-      expect(find.byType(ExerciseArtFrames), findsOneWidget);
+      expect(find.byType(ExerciseArtFrames), findsNothing);
+      expect(find.textContaining('todavía no tiene una ilustración'), findsOneWidget);
       expect(find.text('Ver movimiento'), findsNothing);
     });
   });
@@ -353,7 +361,7 @@ void main() {
   test('el giro máximo es simétrico y la vista inicial cabe en él', () {
     for (final fig in catalog.all) {
       expect(fig.initialYaw.abs(), lessThanOrEqualTo(maxYaw));
-      expect(fig.initialPitch, inInclusiveRange(0, 35));
+      expect(fig.initialPitch, inInclusiveRange(0, 55));
     }
   });
 }

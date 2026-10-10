@@ -58,13 +58,27 @@ void main() {
     await training.save(SessionDraft(
         date: d(10, 5), type: SessionType.circuitoLigero, roundsDone: 5, rpe: 7, totalSec: 1800, warmupSec: 360));
     for (final day in [3, 4, 5]) {
-      await training.saveFootball(FootballGamesCompanion.insert(
-          date: '2026-10-0$day', minutes: 90, intensity: const Value(8)));
+      await training
+          .saveFootball(FootballGamesCompanion.insert(date: '2026-10-0$day', minutes: 90, intensity: const Value(8)));
     }
     final today = await dashboard.today(now: d(10, 5));
     expect(today.trained, isTrue);
     expect(today.load.todayCount, 2);
     expect(today.load.warnAnotherSession, isTrue);
+  });
+
+  test('racha real crece más allá de7días y un moderado la corta', () async {
+    final day = DateTime(2026, 10, 9);
+    for (var i = 1; i <= 20; i++) {
+      await training.save(SessionDraft(
+          date: day.subtract(Duration(days: i)), type: SessionType.circuitoLigero, rpe: 8, totalSec: 1800));
+    }
+    expect((await dashboard.today(now: day)).load.intenseStreak, 20);
+    await training.save(SessionDraft(date: day, type: SessionType.circuitoLigero, rpe: 8, totalSec: 1800));
+    expect((await dashboard.today(now: day)).load.intenseStreak, 21);
+    final tomorrow = day.add(const Duration(days: 1));
+    await training.save(SessionDraft(date: tomorrow, type: SessionType.circuitoLigero, rpe: 4, totalSec: 1200));
+    expect((await dashboard.today(now: tomorrow)).load.intenseStreak, 0);
   });
 
   test('molestia en la pierna ayer y día de piernas: plan B', () async {
@@ -94,13 +108,15 @@ void main() {
         ['Muñecas (planche)', 'Inclinación de planche', 'Flexión pseudo-planche']);
     expect(day.exercises.any((e) => e.name == 'Tuck planche'), isFalse);
     expect((await training.withPlanche(view.day, d(10, 13), v3, enabled: false)).exercises.first.name,
-        'Pino pecho a la pared', reason: 'sin paralelas no cambia nada');
+        'Pino pecho a la pared',
+        reason: 'sin paralelas no cambia nada');
 
     await training.save(SessionDraft(date: d(10, 13), type: SessionType.trenSuperior, sets: [
       for (var i = 0; i < 3; i++) SetDraft(exercise: 'Inclinación de planche', reps: 30),
     ]));
     final thu = (await plan.dayFor(d(10, 15)))!;
-    final withTuck = await training.withPlanche(thu.day, d(10, 15), await training.blockDay(thu, d(10, 15)), enabled: true);
+    final withTuck =
+        await training.withPlanche(thu.day, d(10, 15), await training.blockDay(thu, d(10, 15)), enabled: true);
     expect(withTuck.exercises.any((e) => e.name == 'Tuck planche'), isTrue);
   });
 }

@@ -285,7 +285,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       if (!mounted || events.isEmpty) return;
       setState(() => _lumbar.addAll(events));
       _persist();
-    } on Object {/* Snapshot conserva las marcas si no se puede releer la BD. */}
+    } on Object {
+      /* Snapshot conserva las marcas si no se puede releer la BD. */
+    }
   }
 
   /// Foto del estado en disco: si Android mata la app, se retoma desde aquí.
@@ -1010,6 +1012,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         progressionNote: guide.progressionNote,
         mediaUrl: guide.mediaUrl,
         grip: step?.grip,
+        side: step?.side,
         loaded: step == null ? null : !step.isRound && guide.tracksLoad && _loadFor(step.exercise) != null,
       );
 

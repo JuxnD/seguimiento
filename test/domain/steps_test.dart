@@ -32,7 +32,8 @@ void main() {
           now: now,
           days: [ReminderDay(date: DateTime(now.year, now.month, now.day), type: DayType.bloques)],
           settings: const {
-            ReminderKind.pasos: ReminderSetting(kind: ReminderKind.pasos, enabled: true, hour: 18, minute: 0, threshold: 4000),
+            ReminderKind.pasos:
+                ReminderSetting(kind: ReminderKind.pasos, enabled: true, hour: 18, minute: 0, threshold: 4000),
           },
           stepsToday: steps,
         );
@@ -43,7 +44,7 @@ void main() {
     test('entre semana suena si va por debajo o si no se anotaron', () {
       final low = steps(ctx(DateTime(2026, 9, 29, 12), steps: 1935));
       expect(low.single.when, DateTime(2026, 9, 29, 18));
-      expect(low.single.body, contains('Faltan 5.565'));
+      expect(low.single.body, contains('Faltan 3.065 para 5.000'));
       expect(steps(ctx(DateTime(2026, 9, 29, 12))).single.title, 'Pasos: sin anotar hoy');
     });
 

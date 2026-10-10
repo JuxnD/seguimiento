@@ -27,6 +27,11 @@ Las ampliaciones §16.19–22 (pasos/sueño, comidaIA, técnica y guía con hist
 están en [roadmap](../roadmap.md). §16.17 espera permisos/fuentes de Innova;
 §16.18 requiere ampliar el contrato del gateway para la propuesta semanal.
 
+**Trabajo activo (9oct):** [renovación integral de ilustraciones](../design/ilustraciones-renovacion.md),
+worktree `C:/My Projects/seguimiento-ilustraciones`, rama
+`JuxnD/ilustraciones-completas`. Incluye guías faltantes y biblioteca consultable;
+no modifica la release1.21 ni equivale a una nueva publicación.
+
 | Tema | Documento | Cuándo se actualiza |
 |---|---|---|
 | Qué es y cómo se corre | [../../README.md](../../README.md) | Cambian comandos, stack o estructura |
@@ -92,8 +97,8 @@ están en [roadmap](../roadmap.md). §16.17 espera permisos/fuentes de Innova;
 - Pasos: la app del reloj (Innova S-Watch, *Yo → Health Connect*) los escribe
   en Health Connect y esta app los trae al abrirse si se conectó en Ajustes
   ([ADR 0007](../adr/0007-pasos-por-health-connect-nativo.md)). También se
-  anotan a mano; se queda la cifra mayor. La meta (7.500) es solo entre
-  semana. Innova escribe por lotes al sincronizar, con esa hora: Hoy muestra
+  anotan a mano; se queda la cifra mayor. La meta personal es entre semana. En candidata1.22 la base inicial es5.000;
+  actualizar conserva el perfil existente y ofrece cambiarlo al guardar. Innova escribe por lotes al sincronizar, con esa hora: Hoy muestra
   quién escribió el último registro y cuándo, y pide abrir la app del reloj
   si pasaron más de 6 h (§16.14).
 - El emulador se prueba con APK debug, que no recorta recursos: lo que toque

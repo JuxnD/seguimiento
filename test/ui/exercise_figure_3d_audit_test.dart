@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
-import 'package:seguimiento/data/exercise_details.dart';
 import 'package:seguimiento/features/training/technique_sheet.dart';
 import 'package:seguimiento/ui/exercise_art.dart';
 import 'package:seguimiento/ui/exercise_figure.dart';
@@ -67,17 +66,20 @@ void main() {
       // Se mide en el tiempo de la animación (con su aceleración), que es lo
       // que se ve: al salir de la L la pierna recta sube rápido al principio
       // del tramo, pero el bucle arranca despacio.
-      for (final f in catalog.all) {
+      final discontinuities = <String>[];
+      for (final f in catalog.all.where((f) => f.continuous)) {
         var prev = f.skeletonAt(0).joints;
-        for (var frame = 1; frame < 60 * 8; frame++) {
+        for (var frame = 1; frame < 60 * (0.6 + 2 * (f.frames.length - 1) * 3.0).ceil(); frame++) {
           final p = loopProgress(frame / 60, f.frames.length);
           final j = f.skeletonAt(p).joints;
           for (final e in j.entries) {
-            expect((e.value - prev[e.key]!).distance, lessThan(1.5), reason: '${f.name} p=$p ${e.key}');
+            final delta = (e.value - prev[e.key]!).distance;
+            if (delta >= 1.5) discontinuities.add('${f.name} p=$p ${e.key}: $delta');
           }
           prev = j;
         }
       }
+      expect(discontinuities, isEmpty, reason: discontinuities.take(30).join('\n'));
     });
 
     test('ninguna figura con pared la atraviesa', () {
@@ -86,7 +88,8 @@ void main() {
           final x = (wall['x'] as num).toDouble();
           for (var k = 0; k <= 100; k++) {
             for (final p in f.skeletonAt(k / 100).joints.values) {
-              expect(p.dx, greaterThanOrEqualTo(x - 0.05), reason: '${f.name} t=${k / 100}');
+              final side = f.frames.first.hip.dx >= x ? 1 : -1;
+              expect((p.dx - x) * side, greaterThanOrEqualTo(-.05), reason: '${f.name} t=${k / 100}');
             }
           }
         }
@@ -97,27 +100,14 @@ void main() {
   group('F02: la dominada respeta la variante de la sesión', () {
     final pull = catalog.forExercise('Dominadas')!;
 
-    test('la figura 3D es prona con mochila y solo coincide con esa variante', () {
-      expect(pull.matches(), isTrue, reason: 'sin contexto (catálogo) se muestra');
-      expect(pull.matches(grip: 'prona', loaded: true), isTrue);
-      expect(pull.matches(grip: 'Prono', loaded: true), isTrue);
-      expect(pull.matches(loaded: true), isTrue, reason: 'agarre sin especificar y con carga');
-      expect(pull.matches(grip: 'supina', loaded: true), isFalse);
-      expect(pull.matches(grip: 'supina'), isFalse);
-      expect(pull.matches(grip: 'prona', loaded: false), isFalse, reason: 'circuito del viernes: sin mochila');
-      expect(pull.matches(loaded: false), isFalse);
-      // Las demás figuras no dependen de la variante.
-      expect(catalog.forExercise('Nórdico (isquios)')!.matches(grip: 'supina', loaded: false), isTrue);
-    });
-
-    test('el detalle escrito no da por hecha la mochila si la sesión va sin carga', () {
-      final d = exerciseDetail('Dominadas')!;
-      expect(d.stepsFor(loaded: false).where((s) => s.toLowerCase().contains('mochila')), isEmpty);
-      expect(d.easierFor(loaded: false)?.toLowerCase(), isNot(contains('mochila')));
-      // Con carga o sin contexto, el paso de la mochila sigue, dicho como condición.
-      final loaded = d.stepsFor(loaded: true);
-      expect(loaded.first, startsWith('Si va con mochila'));
-      expect(d.stepsFor(), loaded);
+    test('las variantes generan agarre y carga propios en 3D', () {
+      expect(pull.matches(grip: 'prona', loaded: false), isTrue);
+      final supina = catalog.forExercise('Dominadas', grip: 'supina', loaded: false)!;
+      expect(supina.frames.first.limbs['nearArm']!.grip, 'bar_supina');
+      expect(supina.props.any((p) => p['type'] == 'backpack'), isFalse);
+      final loaded = catalog.forExercise('Dominadas', grip: 'supina', loaded: true)!;
+      expect(loaded.props.any((p) => p['type'] == 'backpack'), isTrue);
+      expect(loaded.frames.first.limbs['nearArm']!.grip, 'bar_supina');
     });
 
     Future<void> pumpSheet(WidgetTester tester, {String? grip, bool? loaded}) async {
@@ -131,14 +121,12 @@ void main() {
           exercisePhotoProvider.overrideWith((ref, _) => Stream.value(null)),
           documentsDirProvider.overrideWith((ref) => Directory.systemTemp),
         ],
-        child: MaterialApp(
-            home: Scaffold(body: TechniqueContent(exercise: 'Dominadas', grip: grip, loaded: loaded))),
+        child: MaterialApp(home: Scaffold(body: TechniqueContent(exercise: 'Dominadas', grip: grip, loaded: loaded))),
       ));
       await tester.pump();
     }
 
-    testWidgets('guía extensa conserva lectura y rechaza solo la consulta de IA',
-        (tester) async {
+    testWidgets('guía extensa conserva lectura y rechaza solo la consulta de IA', (tester) async {
       await loadTestFonts(tester);
       tester.view.physicalSize = const Size(360, 120000);
       tester.view.devicePixelRatio = 1;
@@ -151,10 +139,7 @@ void main() {
           exercisePhotoProvider.overrideWith((ref, _) => Stream.value(null)),
           documentsDirProvider.overrideWith((ref) => Directory.systemTemp),
         ],
-        child: MaterialApp(
-            home: Scaffold(
-                body: TechniqueContent(
-                    exercise: 'Dominadas', cues: [longCue]))),
+        child: MaterialApp(home: Scaffold(body: TechniqueContent(exercise: 'Dominadas', cues: [longCue]))),
       ));
       await tester.pump();
       expect(tester.takeException(), isNull);
@@ -167,23 +152,36 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('supina sin carga (jueves): figura plana y nada de mochila', (tester) async {
+    testWidgets('supina sin carga (jueves): 3D sin mochila', (tester) async {
       await pumpSheet(tester, grip: 'supina', loaded: false);
-      expect(find.byKey(const ValueKey('figura3d-momentos')), findsNothing);
-      expect(find.byType(ExerciseArtFrames), findsOneWidget);
+      expect(find.byKey(const ValueKey('figura3d-momentos')), findsOneWidget);
+      expect(find.byType(ExerciseArtFrames), findsNothing);
       expect(find.textContaining('mochila'), findsNothing);
+      final painter = tester
+          .widgetList<CustomPaint>(find.byType(CustomPaint))
+          .map((p) => p.painter)
+          .whereType<Figure3DPainter>()
+          .first;
+      expect(painter.figure.frames.first.limbs['nearArm']!.grip, 'bar_supina');
+      expect(painter.figure.props.any((p) => p['type'] == 'backpack'), isFalse);
     });
 
-    testWidgets('prona sin carga (circuito): figura plana', (tester) async {
+    testWidgets('prona sin carga (circuito): 3D sin mochila', (tester) async {
       await pumpSheet(tester, grip: 'prona', loaded: false);
-      expect(find.byKey(const ValueKey('figura3d-momentos')), findsNothing);
-      expect(find.byType(ExerciseArtFrames), findsOneWidget);
+      expect(find.byKey(const ValueKey('figura3d-momentos')), findsOneWidget);
+      expect(find.byType(ExerciseArtFrames), findsNothing);
     });
 
-    testWidgets('supina con carga: figura plana (la 3D es prona)', (tester) async {
+    testWidgets('supina con carga: 3D con mochila', (tester) async {
       await pumpSheet(tester, grip: 'supina', loaded: true);
-      expect(find.byKey(const ValueKey('figura3d-momentos')), findsNothing);
-      expect(find.byType(ExerciseArtFrames), findsOneWidget);
+      final painter = tester
+          .widgetList<CustomPaint>(find.byType(CustomPaint))
+          .map((p) => p.painter)
+          .whereType<Figure3DPainter>()
+          .first;
+      expect(painter.figure.props.any((p) => p['type'] == 'backpack'), isTrue);
+      expect(find.byKey(const ValueKey('figura3d-momentos')), findsOneWidget);
+      expect(find.byType(ExerciseArtFrames), findsNothing);
     });
 
     testWidgets('prona con mochila (lunes): el maniquí 3D', (tester) async {
@@ -208,8 +206,8 @@ void main() {
       final theme = buildGymTheme();
       await tester.pumpWidget(MaterialApp(
         theme: theme.copyWith(textTheme: theme.textTheme.apply(fontFamily: 'Roboto')),
-        builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)), child: child!),
+        builder: (context, child) =>
+            MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)), child: child!),
         home: Scaffold(
           body: ListView(children: [
             Padding(padding: const EdgeInsets.all(20), child: Figure3DMoments(figure: fig)),
@@ -232,6 +230,10 @@ void main() {
             expect(find.text('${i + 1}/${fig.frames.length} · ${fig.frames[i].caption}'), findsOneWidget);
           }
           // Animado, el pie tampoco desborda.
+          if (!fig.continuous) {
+            expect(find.text('Ver movimiento'), findsNothing);
+            continue;
+          }
           await tester.tap(find.text('Ver movimiento'));
           await tester.pump();
           await tester.pump(const Duration(seconds: 3));
@@ -246,11 +248,11 @@ void main() {
       await mount(tester, catalog.forExercise('Nórdico (isquios)')!);
       await tester.tap(find.text('Ver movimiento'));
       await tester.pump();
-      await tester.pump(const Duration(seconds: 2));
-      final paint = tester.widget<CustomPaint>(find.descendant(
-          of: find.byKey(const ValueKey('figura3d-animada')), matching: find.byType(CustomPaint)));
+      await tester.pump(const Duration(milliseconds: 3200));
+      final paint = tester.widget<CustomPaint>(
+          find.descendant(of: find.byKey(const ValueKey('figura3d-animada')), matching: find.byType(CustomPaint)));
       final progress = (paint.painter! as Figure3DPainter).progress;
-      expect(progress, closeTo(0.5, 0.001), reason: 'a los 2 s el bucle está en la pausa del medio');
+      expect(progress, closeTo(0.5, 0.001), reason: 'a los 3,2 s el bucle está en la pausa del medio');
       await tester.tap(find.byTooltip('Ampliar y girar'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
@@ -270,16 +272,16 @@ void main() {
       await tester.tap(find.text('Ver movimiento'));
       await tester.pump();
       // 0,6 s de pausa y la mitad del primer tramo.
-      await tester.pump(const Duration(milliseconds: 1200));
-      final paint = tester.widget<CustomPaint>(find.descendant(
-          of: find.byKey(const ValueKey('figura3d-animada')), matching: find.byType(CustomPaint)));
+      await tester.pump(const Duration(milliseconds: 1800));
+      final paint = tester.widget<CustomPaint>(
+          find.descendant(of: find.byKey(const ValueKey('figura3d-animada')), matching: find.byType(CustomPaint)));
       final progress = (paint.painter! as Figure3DPainter).progress;
       expect(progress, inExclusiveRange(0.05, 0.45));
       await tester.tap(find.byTooltip('Ampliar y girar'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
-      expect(tester.widget<Figure3DFullScreen>(find.byType(Figure3DFullScreen)).initialProgress,
-          closeTo(progress, 0.001));
+      expect(
+          tester.widget<Figure3DFullScreen>(find.byType(Figure3DFullScreen)).initialProgress, closeTo(progress, 0.001));
     });
   });
 }

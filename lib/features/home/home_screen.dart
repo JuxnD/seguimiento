@@ -446,6 +446,7 @@ class _PlanBCard extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
     final why = dashboard.load.threeIntense
         ? '${dashboard.load.intenseStreak} días intensos seguidos'
+            '${dashboard.load.streakThrough == null ? '' : ' hasta el ${formatShort(dashboard.load.streakThrough!)}'}'
         : 'molestia en la pierna';
     return Container(
       padding: const EdgeInsets.all(12),
@@ -458,7 +459,7 @@ class _PlanBCard extends ConsumerWidget {
         children: [
           Text('Plan B: solo torso', style: text.titleSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
           Text(
-              'Por $why, hoy sin pierna (vuelve en 48 h). Supinas, flexiones, pike, remo, plancha lateral y '
+              'Por $why, considera hoy el plan de torso. Revisa mañana el esfuerzo y las molestias antes de volver a piernas. Supinas, flexiones, pike, remo, plancha lateral y '
               'hollow, todo a RIR 2.',
               style: text.bodySmall),
           const SizedBox(height: 6),

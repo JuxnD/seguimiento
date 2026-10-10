@@ -131,7 +131,7 @@ class ReminderContext {
     this.kcalTarget = 2400,
     this.missingMealsToday = const [],
     this.stepsToday,
-    this.stepsTarget = 7500,
+    this.stepsTarget = 5000,
     this.custom = const [],
     this.lastMeasurement,
     this.measureIntervalDays = 21,
@@ -180,12 +180,10 @@ List<PlannedNotification> planReminders(ReminderContext ctx) {
   out.addAll(_steps(ctx));
   out.addAll(_measurement(ctx));
 
-  return out.where((n) => n.when.isAfter(ctx.now)).toList()
-    ..sort((a, b) => a.when.compareTo(b.when));
+  return out.where((n) => n.when.isAfter(ctx.now)).toList()..sort((a, b) => a.when.compareTo(b.when));
 }
 
-DateTime _at(DateTime day, ReminderSetting s) =>
-    DateTime(day.year, day.month, day.day, s.hour ?? 0, s.minute ?? 0);
+DateTime _at(DateTime day, ReminderSetting s) => DateTime(day.year, day.month, day.day, s.hour ?? 0, s.minute ?? 0);
 
 Iterable<PlannedNotification> _sessionReminder(ReminderContext ctx, ReminderDay day) sync* {
   final s = ctx.setting(ReminderKind.sesion);

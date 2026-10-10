@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-09T23:25:31.912258+00:00",
+  "title": "Design System: Seguimiento — ilustraciones",
+  "extensions": {
+    "colorMeta": {
+      "accion": {
+        "role": "primary",
+        "displayName": "Naranja de acción"
+      },
+      "fondo": {
+        "role": "neutral",
+        "displayName": "Negro cálido"
+      },
+      "superficie": {
+        "role": "neutral",
+        "displayName": "Superficie oscura"
+      },
+      "superficie-alta": {
+        "role": "neutral",
+        "displayName": "Superficie de controles"
+      },
+      "texto": {
+        "role": "neutral",
+        "displayName": "Marfil de lectura"
+      },
+      "texto-secundario": {
+        "role": "neutral",
+        "displayName": "Beige de apoyo"
+      },
+      "piel-frontal": {
+        "role": "neutral",
+        "displayName": "Piel frontal mate",
+        "tonalRamp": [
+          "#81543A",
+          "#CF9670",
+          "#F5CBAE"
+        ]
+      },
+      "piel-posterior": {
+        "role": "neutral",
+        "displayName": "Piel posterior mate",
+        "tonalRamp": [
+          "#4A3228",
+          "#A2826A",
+          "#D8BCA4"
+        ]
+      },
+      "ropa": {
+        "role": "secondary",
+        "displayName": "Azul de ropa",
+        "tonalRamp": [
+          "#16252E",
+          "#3F6476",
+          "#7FA8BC"
+        ]
+      },
+      "equipo": {
+        "role": "secondary",
+        "displayName": "Verde de equipo",
+        "tonalRamp": [
+          "#123430",
+          "#34766E",
+          "#6CC0B4"
+        ]
+      },
+      "contacto": {
+        "role": "secondary",
+        "displayName": "Turquesa de contacto"
+      }
+    },
+    "typographyMeta": {
+      "titulo-pantalla": {
+        "displayName": "Título de pantalla",
+        "purpose": "Encabezado nativo de la biblioteca y la figura ampliada."
+      },
+      "boton-principal": {
+        "displayName": "Acción principal",
+        "purpose": "Acciones explícitas de la guía."
+      },
+      "navegacion": {
+        "displayName": "Navegación de la app",
+        "purpose": "Rol heredado del tema, sin introducir una nueva familia."
+      }
+    },
+    "shadows": [
+      {
+        "name": "contacto-figura",
+        "value": "Canvas: sombra radial bajo el cuerpo y sombras de apoyo",
+        "purpose": "Referencia espacial del renderer; no convertir oclusiones ambiguas en una decisión aceptada."
+      },
+      {
+        "name": "superficie-plana",
+        "value": "elevation: 0",
+        "purpose": "Tarjetas y navegación separadas por tono y borde."
+      }
+    ],
+    "motion": [
+      {
+        "name": "pausa-momento",
+        "value": "600ms",
+        "purpose": "Pausa en cada momento al reproducir."
+      },
+      {
+        "name": "transicion-momento",
+        "value": "2400ms; cubic ease-in-out",
+        "purpose": "Ida y vuelta sólo para figuras con continuidad."
+      },
+      {
+        "name": "movimiento-reducido",
+        "value": "MediaQuery.disableAnimations: stop and disable playback",
+        "purpose": "Conservar consulta manual sin reproducción automática."
+      },
+      {
+        "name": "indicador-momento",
+        "value": "200ms",
+        "purpose": "Cambio visual de la selección del carrusel."
+      }
+    ],
+    "breakpoints": [],
+    "supportAnnotations": {
+      "font": "Roboto",
+      "sizeDp": 12,
+      "minViewportDp": 200,
+      "anchor": "actual body joint, projected with camera",
+      "figures": [
+        "Vela",
+        "Dragon flag family",
+        "Cuádriceps",
+        "Fondos en barra",
+        "Remo invertido (mesa)"
+      ],
+      "acceptance": "owner comprehension pending"
+    }
+  },
+  "components": [
+    {
+      "name": "Acción principal",
+      "kind": "button",
+      "description": "Traducción HTML del botón nativo; el artefacto canónico es Flutter.",
+      "html": "<button class=\"ds-primary\">Reintentar</button>",
+      "css": ".ds-primary{font-family:Roboto,Arial,sans-serif;font-size:15px;background:#F08A34;color:#1A0C00;border:0;border-radius:14px;min-height:48px;padding:0 20px;font-weight:700}.ds-primary:hover{opacity:.92}.ds-primary:focus-visible{outline:2px solid #FFF6EC;outline-offset:3px}.ds-primary:active{opacity:.82}",
+      "refersTo": "boton-principal"
+    },
+    {
+      "name": "Acción secundaria",
+      "kind": "button",
+      "description": "Botón delineado para acciones secundarias.",
+      "html": "<button class=\"ds-outline\">Ampliar</button>",
+      "css": ".ds-outline{font-family:Roboto,Arial,sans-serif;font-size:15px;background:transparent;color:#FFF6EC;border:1px solid #4A3526;border-radius:14px;min-height:44px;padding:0 10px;font-weight:600}.ds-outline:hover{background:#241A13}.ds-outline:focus-visible{outline:2px solid #F08A34;outline-offset:3px}.ds-outline:active{opacity:.82}",
+      "refersTo": "boton-secundario"
+    },
+    {
+      "name": "Vista de cámara",
+      "kind": "button",
+      "description": "Acción de texto, sin inventar la representación del cuerpo.",
+      "html": "<button class=\"ds-camera\">Ver apoyos</button>",
+      "css": ".ds-camera{font-family:Roboto,Arial,sans-serif;font-size:15px;border:0;background:transparent;color:#F08A34;min-height:44px;padding:0 10px;font-weight:600}.ds-camera:hover{background:#241A13}.ds-camera:focus-visible{outline:2px solid #F08A34;outline-offset:2px}.ds-camera:active{opacity:.82}"
+    },
+    {
+      "name": "Búsqueda de ejercicio",
+      "kind": "input",
+      "description": "Etiqueta explícita y foco visible.",
+      "html": "<label class=\"ds-search\">Busca un ejercicio<input aria-label=\"Busca un ejercicio\" placeholder=\"Nórdico\"></label>",
+      "css": ".ds-search{font-family:Roboto,Arial,sans-serif;color:#C9B8A8;font-size:13px;display:block}.ds-search input{font-family:Roboto,Arial,sans-serif;font-size:15px;display:block;margin-top:4px;border:1px solid #4A3526;border-radius:12px;background:#241A13;color:#FFF6EC;padding:12px;max-width:100%}.ds-search input:hover{border-color:#C9B8A8}.ds-search input:focus-visible{outline:none;border:1.6px solid #F08A34}",
+      "refersTo": "campo-busqueda"
+    },
+    {
+      "name": "Variante sin seleccionar",
+      "kind": "chip",
+      "description": "El mismo patrón sirve a lado, agarre y momento.",
+      "html": "<button class=\"ds-chip\" aria-pressed=\"false\">Lado derecho</button>",
+      "css": ".ds-chip{font-family:Roboto,Arial,sans-serif;font-size:14px;font-weight:600;border:1px solid #4A3526;border-radius:10px;background:#241A13;color:#F3E6D8;padding:8px 12px}.ds-chip:hover{opacity:.9}.ds-chip:focus-visible{outline:2px solid #F08A34;outline-offset:2px}.ds-chip:active{opacity:.8}",
+      "refersTo": "chip"
+    },
+    {
+      "name": "Variante seleccionada",
+      "kind": "chip",
+      "description": "Color de acción y texto oscuro reflejan selección.",
+      "html": "<button class=\"ds-selected\" aria-pressed=\"true\">Lado izquierdo</button>",
+      "css": ".ds-selected{font-family:Roboto,Arial,sans-serif;font-size:14px;font-weight:700;border:1px solid #4A3526;border-radius:10px;background:#F08A34;color:#1A0C00;padding:8px 12px}.ds-selected:hover{opacity:.9}.ds-selected:focus-visible{outline:2px solid #FFF6EC;outline-offset:2px}.ds-selected:active{opacity:.8}",
+      "refersTo": "chip-seleccionado"
+    },
+    {
+      "name": "Guía en biblioteca",
+      "kind": "nav",
+      "description": "Representación de navegación textual; la miniatura real se dibuja con Figure3DPainter.",
+      "html": "<button class=\"ds-guide\"><span><strong>Nórdico (isquios)</strong><small>Fuerza</small></span><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m9 6 6 6-6 6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/></svg></button>",
+      "css": ".ds-guide{font-family:Roboto,Arial,sans-serif;font-size:15px;display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 16px;border:0;border-bottom:1px solid #2A1F17;background:#0B0806;color:#FFF6EC;text-align:left}.ds-guide strong{font-weight:700}.ds-guide small{display:block;color:#C9B8A8;margin-top:4px}.ds-guide:hover{background:#241A13}.ds-guide:focus-visible{outline:2px solid #F08A34;outline-offset:-2px}.ds-guide:active{opacity:.82}"
+    },
+    {
+      "name": "Tarjeta de instrucciones",
+      "kind": "card",
+      "description": "Contenedor del tema, con separación tonal y elevación cero.",
+      "html": "<article class=\"ds-card\"><strong>Antes de empezar</strong><p>Consulta los momentos y lee la guía del ejercicio.</p></article>",
+      "css": ".ds-card{font-family:Roboto,Arial,sans-serif;color:#FFF6EC;background:#150F0B;border:1px solid #2A1F17;border-radius:16px;padding:16px}.ds-card strong{font-weight:700}.ds-card p{color:#C9B8A8;margin:8px 0 0}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Apoyo visual para aprender el ejercicio",
+    "overview": "Sistema derivado del candidato en `lib/ui/exercise_figure_3d.dart`,\n`lib/ui/exercise_figure_3d_view.dart`, la biblioteca de ejercicios y el tema\nnativo. Conserva la identidad oscura y naranja de Seguimiento. El cuerpo\nhumano mate, la ropa azul y los objetos de apoyo dan referencias para leer\nla posición; las figuras tienen momentos con explicaciones y una vista ampliable.\n\nLa consulta sigue buscar → abrir guía → recorrer momentos → ampliar y girar\n→ leer técnica. La biblioteca no crea una sesión. Este documento describe\nimplementación, no aprobación clínica ni aceptación del usuario. El catálogo\ndel candidato contiene 73 entradas, incluyendo alias, progresiones y movilidad;\nno son 73 movimientos distintos. La release pública 1.21 tiene cobertura parcial.\n`build/mockups/renovacion` contiene capturas del mismo renderer para revisión,\nno composiciones aceptadas ni evidencia de publicación.",
+    "keyCharacteristics": [
+      "Figura humana y equipo representados con un rig determinista compartido.",
+      "Momentos rotulados y controles explícitos de orientación.",
+      "Variantes de lado, agarre y mochila cuando el catálogo las soporta.",
+      "Identidad visual heredada del tema de la app y movimiento opcional."
+    ],
+    "rules": [
+      {
+        "name": "The Material Reference Rule",
+        "body": "Frente, espalda, ropa y equipo conservan su material al girar; la orientación no depende únicamente del color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Caption Space Rule",
+        "body": "Los pies de momentos crecen con la escala de texto; su lectura no se resuelve recortando la explicación.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "**Do** reutilizar el rig y el generador para que mockup y app compartan poses.",
+      "**Do** mantener pies legibles y orientación, equipo y variantes explícitos.",
+      "**Do** conservar consulta por momentos cuando el movimiento está reducido.",
+      "**Do** revisar apoyos y oclusiones en capturas reales antes de aceptar una pose."
+    ],
+    "donts": [
+      "**Don't** editar el asset generado para ocultar una discrepancia con su fuente.",
+      "**Don't** interpretar 73 entradas o pruebas verdes como aceptación clínica o humana.",
+      "**Don't** convertir un cruce de extremidades o contacto ambiguo en una regla visual.",
+      "**Don't** presentar los mockups del candidato como ilustraciones ya publicadas."
+    ]
+  }
+}

@@ -194,11 +194,14 @@ class DashboardRepository {
         .map((r) => r.read(maxRounds))
         .getSingle();
 
-    // Carga de la última semana: sesiones (RPE × min) y partidos.
-    final weekAgo = dayKey(addDays(date, -7));
-    final recentSessions =
-        await (db.select(db.sessions)..where((t) => t.date.isBiggerOrEqualValue(weekAgo) & db.trainingSessions)).get();
-    final recentGames = await (db.select(db.footballGames)..where((t) => t.date.isBiggerOrEqualValue(weekAgo))).get();
+    // Carga y racha real hasta hoy: no truncar una racha al límite de7días.
+    final throughToday = dayKey(date);
+    final recentSessions = await (db.select(db.sessions)
+          ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & db.trainingSessions & t.imported.equals(false)))
+        .get();
+    final recentGames = await (db.select(db.footballGames)
+          ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & t.imported.equals(false)))
+        .get();
     final load = loadReading([
       for (final s in recentSessions.where((s) => s.mode != 'test'))
         LoadItem(date: parseDay(s.date), minutes: (s.totalSec - s.warmupSec - s.cooldownSec) ~/ 60, effort: s.rpe),

@@ -33,7 +33,7 @@ class Profiles extends Table {
   TextColumn get lengthUnit => textEnum<LengthUnit>().withDefault(const Constant('cm'))();
 
   /// Meta de pasos diarios entre semana.
-  IntColumn get stepsTarget => integer().withDefault(const Constant(7500))();
+  IntColumn get stepsTarget => integer().withDefault(const Constant(5000))();
 
   /// Meta de kcal de los días de fútbol (sábado y domingo, §19.3). null =
   /// la misma de entre semana (`kcalTarget`).

@@ -453,7 +453,7 @@ void main() {
     expect(game.knock, isNull);
 
     final profile = await migrated.select(migrated.profiles).getSingle();
-    expect(profile.stepsTarget, 7500);
+    expect(profile.stepsTarget, 5000);
     expect(await migrated.select(migrated.dailySteps).get(), isEmpty);
     expect(await userVersion(migrated), 20);
     await migrated.close();

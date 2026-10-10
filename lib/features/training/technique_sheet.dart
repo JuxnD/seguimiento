@@ -27,6 +27,7 @@ Future<void> showTechniqueSheet(
   String? anchor,
   String? grip,
   bool? loaded,
+  String? side,
 }) =>
     showModalBottomSheet<void>(
       context: context,
@@ -45,6 +46,7 @@ Future<void> showTechniqueSheet(
           anchor: anchor,
           grip: grip,
           loaded: loaded,
+          side: side,
           controller: controller,
         ),
       ),
@@ -61,6 +63,7 @@ class TechniqueContent extends StatelessWidget {
     this.anchor,
     this.grip,
     this.loaded,
+    this.side,
   });
 
   final String exercise;
@@ -76,6 +79,7 @@ class TechniqueContent extends StatelessWidget {
   /// externa. null = sin contexto (desde el catálogo): la guía completa.
   final String? grip;
   final bool? loaded;
+  final String? side;
 
   @override
   Widget build(BuildContext context) {
@@ -85,31 +89,29 @@ class TechniqueContent extends StatelessWidget {
     // lo que conserva el catálogo, ni se repite una clave idéntica.
     final detail = exerciseDetail(exercise);
     final steps = _uniqueCues(detail?.stepsFor(loaded: loaded) ?? cues);
-    final personal =
-        detail == null ? const <String>[] : _uniqueCues(cues, excluding: steps);
+    final personal = detail == null ? const <String>[] : _uniqueCues(cues, excluding: steps);
     final easier = detail?.easierFor(loaded: loaded);
     return SafeArea(
       child: ListView(
         controller: controller,
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
         children: [
-          Text(exercise,
-              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+          Text(exercise, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
           if (detail != null) Text(detail.muscles, style: text.bodyMedium),
+          if (side != null) Text('Lado: $side'),
+          if (grip != null) Text('Agarre: $grip${loaded == true ? ' · con mochila' : ''}'),
           const SizedBox(height: 14),
-          ExerciseFigureView(exercise: exercise, grip: grip, loaded: loaded),
+          ExerciseFigureView(exercise: exercise, grip: grip, loaded: loaded, side: side),
           const SizedBox(height: 16),
-          if (detail != null) Text('Cómo hacerlo', style: text.titleSmall),
-          if (detail != null) const SizedBox(height: 6),
+          if (steps.isNotEmpty) Text('Cómo hacerlo', style: text.titleSmall),
+          if (steps.isNotEmpty) const SizedBox(height: 6),
           for (final (i, cue) in steps.indexed)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                      width: 24,
-                      child: Text('${i + 1}.', style: text.titleMedium)),
+                  SizedBox(width: 24, child: Text('${i + 1}.', style: text.titleMedium)),
                   Expanded(child: Text(cue, style: text.bodyLarge)),
                 ],
               ),
@@ -119,29 +121,22 @@ class TechniqueContent extends StatelessWidget {
             Text('Claves personales', style: text.titleSmall),
             const SizedBox(height: 6),
             for (final cue in personal)
-              Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(cue, style: text.bodyLarge)),
+              Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(cue, style: text.bodyLarge)),
           ],
           if (detail?.note case final note?) ...[
             const SizedBox(height: 4),
-            Text(note,
-                style: text.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
+            Text(note, style: text.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
           ],
           if (detail != null && detail.mistakes.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text('Errores comunes', style: text.titleSmall),
-            for (final m in detail.mistakes)
-              Text('• $m', style: text.bodyMedium),
+            for (final m in detail.mistakes) Text('• $m', style: text.bodyMedium),
           ],
           if (easier != null || detail?.harder != null) ...[
             const SizedBox(height: 12),
-            if (easier case final easy?)
-              _Scale(title: 'Más fácil', body: easy, icon: Icons.south),
-            if (easier != null && detail?.harder != null)
-              const SizedBox(height: 8),
-            if (detail?.harder case final hard?)
-              _Scale(title: 'Más difícil', body: hard, icon: Icons.north),
+            if (easier case final easy?) _Scale(title: 'Más fácil', body: easy, icon: Icons.south),
+            if (easier != null && detail?.harder != null) const SizedBox(height: 8),
+            if (detail?.harder case final hard?) _Scale(title: 'Más difícil', body: hard, icon: Icons.north),
           ],
           if (progressionNote != null) ...[
             const SizedBox(height: 12),
@@ -203,8 +198,7 @@ class TechniqueContent extends StatelessWidget {
                   );
                 } on FormatException {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text(
-                          'Esta guía supera el límite de consulta. Puedes seguir usando la guía sin IA.')));
+                      content: Text('Esta guía supera el límite de consulta. Puedes seguir usando la guía sin IA.')));
                   return;
                 }
                 Navigator.push(
@@ -226,11 +220,9 @@ class TechniqueContent extends StatelessWidget {
           if (url != null) ...[
             const SizedBox(height: 16),
             OutlinedButton.icon(
-              onPressed: () =>
-                  launchUrl(url, mode: LaunchMode.externalApplication),
+              onPressed: () => launchUrl(url, mode: LaunchMode.externalApplication),
               icon: const Icon(Icons.play_circle_outline),
-              label: Text(url.queryParameters.containsKey('search_query') ||
-                      url.path == '/search'
+              label: Text(url.queryParameters.containsKey('search_query') || url.path == '/search'
                   ? 'Buscar demostración'
                   : 'Ver video de referencia'),
             ),
@@ -259,21 +251,17 @@ String _guideSnapshotText({
       'Ejercicio: $exercise.',
       if (muscles != null) 'Músculos: $muscles.',
       'Figura: $exercise${grip == null ? '' : ', agarre $grip'}${loaded == null ? '' : loaded ? ', con carga' : ', sin carga'}.',
-      if (steps.isNotEmpty)
-        'Cómo hacerlo:\n${steps.indexed.map((entry) => '${entry.$1 + 1}. ${entry.$2}').join('\n')}',
+      if (steps.isNotEmpty) 'Cómo hacerlo:\n${steps.indexed.map((entry) => '${entry.$1 + 1}. ${entry.$2}').join('\n')}',
       if (personal.isNotEmpty) 'Claves personales:\n${personal.join('\n')}',
       if (note != null) 'Nota: $note',
-      if (mistakes.isNotEmpty)
-        'Errores comunes:\n${mistakes.map((text) => '• $text').join('\n')}',
+      if (mistakes.isNotEmpty) 'Errores comunes:\n${mistakes.map((text) => '• $text').join('\n')}',
       if (easier != null) 'Más fácil: $easier',
       if (harder != null) 'Más difícil: $harder',
       if (progression != null) 'Progresión: $progression',
-      if (bandAnchors[anchor] case (final title, final how))
-        'Banda: $title. $how',
+      if (bandAnchors[anchor] case (final title, final how)) 'Banda: $title. $how',
     ].join('\n\n');
 
-List<String> _uniqueCues(List<String> cues,
-    {List<String> excluding = const []}) {
+List<String> _uniqueCues(List<String> cues, {List<String> excluding = const []}) {
   String key(String cue) => nameKey(cue.trim().replaceAll(RegExp(r'\s+'), ' '));
   final seen = excluding.map(key).toSet();
   return [
@@ -328,9 +316,7 @@ Future<void> showBandGuide(BuildContext context) => showModalBottomSheet<void>(
             shrinkWrap: true,
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
             children: [
-              Text('La banda elástica',
-                  style:
-                      text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+              Text('La banda elástica', style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               for (final (title, how) in bandAnchors.values) ...[
                 Text(title, style: text.titleSmall),
@@ -350,8 +336,7 @@ Future<void> showBandGuide(BuildContext context) => showModalBottomSheet<void>(
 
 /// Foto de referencia de un ejercicio (null si no hay).
 final exercisePhotoProvider = StreamProvider.family(
-  (ref, String exercise) =>
-      ref.watch(exercisePhotoRepositoryProvider).watch(exercise),
+  (ref, String exercise) => ref.watch(exercisePhotoRepositoryProvider).watch(exercise),
 );
 
 /// La foto que el usuario guardó para este ejercicio, o el botón para
@@ -367,30 +352,20 @@ class ExerciseReferencePhoto extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     final row = ref.watch(exercisePhotoProvider(exercise)).valueOrNull;
     final base = ref.watch(documentsDirProvider).valueOrNull;
-    final file = row == null || base == null
-        ? null
-        : ExercisePhotoRepository.fileIn(base, row);
+    final file = row == null || base == null ? null : ExercisePhotoRepository.fileIn(base, row);
 
     final header = Row(
       children: [
-        Expanded(
-            child: Text('TU FOTO DE REFERENCIA',
-                style: text.labelMedium?.copyWith(letterSpacing: 0.6))),
+        Expanded(child: Text('TU FOTO DE REFERENCIA', style: text.labelMedium?.copyWith(letterSpacing: 0.6))),
         if (file != null) ...[
-          TextButton(
-              onPressed: () => _pick(context, ref),
-              child: const Text('Cambiar')),
+          TextButton(onPressed: () => _pick(context, ref), child: const Text('Cambiar')),
           IconButton(
             tooltip: 'Quitar foto',
             icon: const Icon(Icons.delete_outline),
             onPressed: () async {
               if (await confirmDelete(context, 'la foto de referencia')) {
                 if (!context.mounted) return;
-                await guarded(
-                    context,
-                    () => ref
-                        .read(exercisePhotoRepositoryProvider)
-                        .remove(exercise));
+                await guarded(context, () => ref.read(exercisePhotoRepositoryProvider).remove(exercise));
               }
             },
           ),
@@ -407,8 +382,7 @@ class ExerciseReferencePhoto extends ConsumerWidget {
           OutlinedButton(
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               alignment: Alignment.centerLeft,
             ),
             onPressed: () => _pick(context, ref),
@@ -421,8 +395,7 @@ class ExerciseReferencePhoto extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Añadir foto', style: text.titleSmall),
-                      Text('Una captura de un video o una foto tuya bien hecha',
-                          style: text.bodySmall),
+                      Text('Una captura de un video o una foto tuya bien hecha', style: text.bodySmall),
                     ],
                   ),
                 ),
@@ -472,8 +445,7 @@ class ExerciseReferencePhoto extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text(
-                  'Elegir de la galería (una captura de video sirve)'),
+              title: const Text('Elegir de la galería (una captura de video sirve)'),
               onTap: () => Navigator.pop(c, ImageSource.gallery),
             ),
           ],
@@ -483,8 +455,7 @@ class ExerciseReferencePhoto extends ConsumerWidget {
     if (source == null) return;
     final XFile? picked;
     try {
-      picked = await ImagePicker()
-          .pickImage(source: source, maxWidth: 1600, imageQuality: 85);
+      picked = await ImagePicker().pickImage(source: source, maxWidth: 1600, imageQuality: 85);
     } on Object catch (e) {
       // Permiso negado o sin cámara: se dice, no se revienta.
       if (context.mounted) {
@@ -495,9 +466,7 @@ class ExerciseReferencePhoto extends ConsumerWidget {
     if (picked == null || !context.mounted) return;
     await guarded(
       context,
-      () => ref
-          .read(exercisePhotoRepositoryProvider)
-          .save(exercise, File(picked!.path)),
+      () => ref.read(exercisePhotoRepositoryProvider).save(exercise, File(picked!.path)),
       ok: 'Foto guardada',
     );
   }
@@ -508,9 +477,7 @@ class ExerciseReferencePhoto extends ConsumerWidget {
           backgroundColor: Colors.black,
           child: Stack(
             children: [
-              Positioned.fill(
-                  child: InteractiveViewer(
-                      maxScale: 5, child: Center(child: Image.file(file)))),
+              Positioned.fill(child: InteractiveViewer(maxScale: 5, child: Center(child: Image.file(file)))),
               Positioned(
                 top: 8,
                 right: 8,

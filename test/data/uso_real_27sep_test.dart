@@ -102,7 +102,8 @@ void main() {
     });
 
     test('tras un domingo intenso o con golpe, el lunes avisa que baje', () async {
-      await training.saveFootball(FootballGamesCompanion.insert(date: '2026-09-27', minutes: 90, intensity: const Value(6)));
+      await training
+          .saveFootball(FootballGamesCompanion.insert(date: '2026-09-27', minutes: 90, intensity: const Value(6)));
       expect((await dashboard.today(now: d(9, 28))).hardFootballYesterday, isNull);
 
       await (db.update(db.footballGames)).write(const FootballGamesCompanion(knock: Value(true)));
@@ -164,7 +165,8 @@ void main() {
     });
 
     test('una entrada libre queda como alimento estimado de una porción', () async {
-      final id = await nutrition.saveFreeEntryFood('Arepa de huevo', const Macros(kcal: 400, protein: 12, carbs: 40, fat: 20));
+      final id =
+          await nutrition.saveFreeEntryFood('Arepa de huevo', const Macros(kcal: 400, protein: 12, carbs: 40, fat: 20));
       final food = (await nutrition.foodById(id))!;
       expect(food.origin, FoodOrigin.entradaLibre);
       expect(food.source, MacroSource.estimado);
@@ -223,8 +225,8 @@ void main() {
 
       final today = await dashboard.today(now: d(9, 29));
       expect(today.stepsToday, 4200);
-      expect(today.stepsGoal, 7500);
-      expect(today.stepsProgress, closeTo(0.56, 0.01));
+      expect(today.stepsGoal, 5000);
+      expect(today.stepsProgress, closeTo(0.84, 0.01));
       expect((await dashboard.today(now: d(9, 27))).stepsGoal, isNull, reason: 'domingo sin meta');
     });
 
@@ -237,8 +239,10 @@ void main() {
 
       final report = ReportRepository(db, NutritionRepository(db));
       final md = buildReport(await report.load(d(9, 23), d(9, 29), today: d(9, 29)));
-      expect(md, contains('- Pasos: 7.312/día (3 días registrados) (+4.312 vs semana anterior) · '
-          'entre semana 4.968 (meta 7.500, 1/2 días en meta)'));
+      expect(
+          md,
+          contains('- Pasos: 7.312/día (3 días registrados) (+4.312 vs semana anterior) · '
+              'entre semana 4.968 (meta 5.000, 1/2 días en meta)'));
     });
   });
 
@@ -266,7 +270,8 @@ void main() {
       final v = PlanDraft.empty(d(9, 28));
       v.days[0]
         ..type = DayType.circuito
-        ..exercises.add(PlanExerciseDraft(name: 'Plancha lateral', sets: 2, holdSecMin: 30, holdSecMax: 40, perSide: true, block: 'core'));
+        ..exercises.add(PlanExerciseDraft(
+            name: 'Plancha lateral', sets: 2, holdSecMin: 30, holdSecMax: 40, perSide: true, block: 'core'));
       await plan.saveAsNewVersion(v);
       await training.save(SessionDraft(date: d(9, 28), type: SessionType.circuito, roundsDone: 5, rpe: 6, sets: [
         SetDraft(exercise: 'Plancha lateral', reps: 35),
