@@ -302,10 +302,15 @@ class _Shortcuts extends ConsumerWidget {
                         icon: Icons.bolt,
                         color: _mealColor,
                         title: t.name,
-                        subtitle: 'P ${fmtInt(t.macros.protein)} g · toca para registrar',
+                        subtitle: t.impossibleQuantity == null
+                            ? 'P ${fmtInt(t.macros.protein)} g · toca para registrar'
+                            : 'Revisa: ${t.impossibleQuantity} (¿eran gramos?) · toca para corregir',
                         value: fmtInt(t.macros.kcal),
                         valueLabel: 'kcal',
-                        onTap: () => _logTemplate(context, ref, t),
+                        // Un combo con cantidades imposibles no se registra de un toque.
+                        onTap: () => t.impossibleQuantity == null
+                            ? _logTemplate(context, ref, t)
+                            : _editTemplate(context, t),
                         trailing: IconButton(
                           tooltip: 'Ajustar o borrar',
                           icon: const Icon(Icons.tune),
@@ -382,6 +387,16 @@ class _Shortcuts extends ConsumerWidget {
     }
   }
 
+  Future<void> _editTemplate(BuildContext context, MealTemplate template) => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MealFormScreen(
+            template: template,
+            draft: MealDraft(date: day, slot: template.row.slot ?? MealSlot.otro, items: template.toDrafts()),
+          ),
+        ),
+      );
+
   Future<void> _templateMenu(BuildContext context, WidgetRef ref, MealTemplate template) async {
     final action = await showModalBottomSheet<String>(
       context: context,
@@ -428,15 +443,7 @@ class _Shortcuts extends ConsumerWidget {
         ),
       );
     } else if (action == 'editar') {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MealFormScreen(
-            template: template,
-            draft: MealDraft(date: day, slot: template.row.slot ?? MealSlot.otro, items: template.toDrafts()),
-          ),
-        ),
-      );
+      await _editTemplate(context, template);
     } else if (action == 'borrar') {
       if (await confirmDelete(context, 'el combo "${template.name}"') && context.mounted) {
         await guarded(context, () => repo.deleteTemplate(template.row.id), failure: 'No se pudo borrar');

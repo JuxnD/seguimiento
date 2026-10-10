@@ -84,6 +84,13 @@ alimento **personalizado** de una porción (`origin = entradaLibre`, fuente
   de sobra. Si ya existe con las mismas cifras (±0,5), se usa ese alimento. Si
   existe con otras, pregunta: *Actualizar* (reescribe las cifras), *Guardar
   como nuevo* ("Pasta (2)") o *Solo esta vez* (no toca el catálogo).
+  *Actualizar* sólo aparece si el guardado ya va **por porción**. Uno por
+  100 g/ml o por unidad no cambia de base: sus combos lo usan en gramos o
+  unidades, y pasarlo a porción convertía 150 g en 150 porciones (C01, 9 oct).
+  Sus cifras se cambian en el catálogo.
+- **Combos con cantidades imposibles** (≥ 20 porciones de un alimento por
+  porción, lo que dejó C01): Atajos dice "Revisa: 150 porciones de …" y al
+  tocarlo abre el combo para corregirlo en vez de registrarlo.
 - **En el informe sigue siendo estimado**: un alimento a ojo guardado no se
   vuelve "referencia"; cuenta en la procedencia como entrada libre.
 - **Gestión** en Comidas → Catálogo: filtro *Personalizados* y *Favoritos*,

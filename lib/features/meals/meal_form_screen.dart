@@ -203,8 +203,9 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
               ListTile(
                 leading: const Icon(Icons.bolt),
                 title: Text(t.name),
-                subtitle: Text(
-                    '${fmtInt(t.macros.kcal)} kcal · P ${fmtInt(t.macros.protein)} g'),
+                subtitle: Text(t.impossibleQuantity == null
+                    ? '${fmtInt(t.macros.kcal)} kcal · P ${fmtInt(t.macros.protein)} g'
+                    : 'Revisa en Comidas → Atajos: ${t.impossibleQuantity}'),
                 onTap: () => Navigator.pop(context, t),
               ),
           ],
@@ -240,6 +241,9 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     FoodRow? replacing;
     var name = e.label;
     if (existing != null) {
+      // Solo un alimento que ya va por porción admite cifras de una porción:
+      // cambiarle la base a uno por 100 g o por unidad descuadraba sus combos.
+      final updatable = canUpdateAsPortion(existing);
       final choice = await showDialog<String>(
         context: context,
         builder: (c) => AlertDialog(
@@ -247,17 +251,22 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
           content: Text('Guardado: ${_macroLine(existing.portionMacros)} '
               '(${fmtDec(existing.defaultQuantity)} ${existing.unitLabel}).\n'
               'Ahora: ${_macroLine(e.perPortion)} (1 porción).\n\n'
-              '¿Actualizo las cifras guardadas o lo guardo como otro alimento?'),
+              '${updatable ? '¿Actualizo las cifras guardadas o lo guardo como otro alimento?' : 'El guardado va por ${existing.unitLabel}, no por porción; sus cifras se cambian en el catálogo. ¿Lo registro solo esta vez o lo guardo como otro alimento?'}'),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(c, 'once'),
                 child: const Text('Solo esta vez')),
-            TextButton(
-                onPressed: () => Navigator.pop(c, 'new'),
-                child: const Text('Guardar como nuevo')),
-            FilledButton(
-                onPressed: () => Navigator.pop(c, 'update'),
-                child: const Text('Actualizar')),
+            if (updatable) ...[
+              TextButton(
+                  onPressed: () => Navigator.pop(c, 'new'),
+                  child: const Text('Guardar como nuevo')),
+              FilledButton(
+                  onPressed: () => Navigator.pop(c, 'update'),
+                  child: const Text('Actualizar')),
+            ] else
+              FilledButton(
+                  onPressed: () => Navigator.pop(c, 'new'),
+                  child: const Text('Guardar como nuevo')),
           ],
         ),
       );

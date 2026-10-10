@@ -103,7 +103,31 @@ class MealTemplate {
       [for (final (food, quantity) in items) MealItemDraft.fromFood(food, quantity)];
 
   Macros get macros => Macros.sum(toDrafts().map((i) => i.macros));
+
+  /// Cantidad imposible de un alimento por porción (≥ 20): lo que dejó C01
+  /// cuando un alimento por gramos pasó a porción y el combo conservó los
+  /// gramos (150 g → 150 porciones). null si el combo se ve bien.
+  String? get impossibleQuantity {
+    for (final (food, quantity) in items) {
+      if (canUpdateAsPortion(food) && quantity >= impossiblePortions) {
+        return '${fmtQuantity(quantity)} porciones de ${food.name}';
+      }
+    }
+    return null;
+  }
 }
+
+/// Nadie come 20 porciones de algo en una comida.
+const impossiblePortions = 20;
+
+String fmtQuantity(double q) => q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
+
+/// ¿Se pueden reemplazar sus cifras por las de una porción a ojo? Solo si ya
+/// se mide en porciones. Un alimento por 100 g o por unidad (huevo, lata) que
+/// pasara a "porción" haría que los combos que lo usan cuenten 150 porciones
+/// donde había 150 g (C01, auditoría del 9 oct).
+bool canUpdateAsPortion(FoodRow food) =>
+    food.basis == FoodBasis.unit && food.unitLabel == 'porción' && food.defaultQuantity == 1;
 
 class NutritionRepository {
   NutritionRepository(this.db);
@@ -177,12 +201,10 @@ class NutritionRepository {
       source: const Value(MacroSource.estimado),
     );
     if (replacing != null) {
-      await (db.update(db.foods)..where((t) => t.id.equals(replacing.id))).write(values.copyWith(
-        basis: const Value(FoodBasis.unit),
-        unitLabel: const Value('porción'),
-        defaultQuantity: const Value(1),
-        servingGrams: const Value(null),
-      ));
+      if (!canUpdateAsPortion(replacing)) {
+        throw ArgumentError.value(replacing.name, 'replacing', 'no se mide en porciones');
+      }
+      await (db.update(db.foods)..where((t) => t.id.equals(replacing.id))).write(values);
       return replacing.id;
     }
     final clean = name.trim();
