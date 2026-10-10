@@ -47,12 +47,12 @@ void main() {
     expect(w.map((i) => i.stage).toSet(), {WarmupStage.aproximacion});
   });
 
-  test('molestia en rodilla, hombro o codo añade un ejercicio por zona, sin repetir', () {
-    final w = buildWarmup(push, soreZones: {'Rodilla', 'Codo', 'Isquios'});
-    final extra = w.where((i) => i.stage == WarmupStage.zona).map((i) => i.exercise).toList();
-    expect(extra, ['Cuádriceps'], reason: 'codo pide muñecas, que el día de empuje ya trae; isquios no aplica');
-    expect(buildWarmup(circuit, soreZones: {'Hombro'}).where((i) => i.stage == WarmupStage.zona).single.exercise,
-        'Dislocaciones con banda');
+  test('una molestia se avisa, no agrega un ejercicio', () {
+    expect(buildWarmup(push).length, buildWarmup(push).length);
+    final notes = soreWarmupNotes({'Hombro': 5, 'Rodilla': 2, 'Codo': 3}, order: ['Rodilla', 'Hombro', 'Codo']);
+    expect(notes, hasLength(2), reason: 'rodilla 2/10 no llega al umbral');
+    expect(notes.first, startsWith('Molestia en hombro (5/10)'));
+    expect(soreWarmupNotes(const {}), isEmpty);
   });
 
   test('las claves son estables y el registro dice lo hecho', () {

@@ -20,7 +20,6 @@ enum WarmupFocus {
 enum WarmupStage {
   movilidad('Movilidad general'),
   activacion('Activación'),
-  zona('Para la molestia'),
   aproximacion('Ronda de aproximación');
 
   const WarmupStage(this.label);
@@ -50,13 +49,6 @@ class WarmupItem {
 }
 
 const _pull = {'Dominadas', 'Remo invertido (mesa)', 'Colgarse de la barra', 'Elevación de piernas colgado', 'Toes-to-bar'};
-
-/// Ejercicio de movilidad para una zona con molestia (rodilla, hombro, codo).
-const warmupForZone = {
-  'Rodilla': 'Cuádriceps',
-  'Hombro': 'Dislocaciones con banda',
-  'Codo': 'Muñecas (planche)',
-};
 
 const warmupMobility = [
   ('Círculos de hombros', 30),
@@ -119,23 +111,30 @@ List<WarmupItem> _approach(ScriptDay day) {
 
 /// El bloque del día. `ownWarmup`: el día trae su calentamiento (FIFA 11+ el
 /// miércoles): ése reemplaza movilidad y activación; queda la aproximación.
-/// `soreZones`: zonas con molestia hoy o ayer (≥ 3 de 10).
-List<WarmupItem> buildWarmup(ScriptDay day, {bool ownWarmup = false, Set<String> soreZones = const {}}) {
+/// Una molestia no agrega ejercicios: se avisa con [soreWarmupNotes].
+List<WarmupItem> buildWarmup(ScriptDay day, {bool ownWarmup = false}) {
   final focus = warmupFocusFor(day);
-  final items = <WarmupItem>[
+  return [
     if (!ownWarmup) ...[
       for (final (name, sec) in warmupMobility) WarmupItem(WarmupStage.movilidad, name, seconds: sec),
       ..._activation(focus),
     ],
+    ..._approach(day),
   ];
-  final present = {for (final i in items) i.exercise};
-  for (final zone in const ['Rodilla', 'Hombro', 'Codo']) {
-    final extra = warmupForZone[zone]!;
-    if (soreZones.contains(zone) && present.add(extra)) {
-      items.add(WarmupItem(WarmupStage.zona, extra, seconds: 30, note: 'Por molestia en ${zone.toLowerCase()}'));
-    }
-  }
-  return [...items, ..._approach(day)];
+}
+
+/// Molestia de hoy o ayer (≥ 3 de 10): se explica, no se receta un
+/// movimiento nuevo sin evidencia (revisión de Codex al ADR 0015). Una por
+/// zona, con la nota más alta, en el orden del registro de molestias.
+List<String> soreWarmupNotes(Map<String, int> zones, {List<String> order = const []}) {
+  final keys = [
+    for (final z in order) if ((zones[z] ?? 0) >= 3) z,
+    for (final z in zones.keys) if (!order.contains(z) && zones[z]! >= 3) z,
+  ];
+  return [
+    for (final z in keys)
+      'Molestia en ${z.toLowerCase()} (${zones[z]}/10): calienta suave esa zona, baja el rango o salta lo que duela.',
+  ];
 }
 
 /// Calentamiento antes de un test (§19.11): sin aproximación, porque cada

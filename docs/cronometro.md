@@ -32,7 +32,7 @@ accidente.
 - **Calentamiento guiado** (§16.23, [ADR 0015](adr/0015-calentamiento-guiado.md)):
   lista de pasos con su dosis y una clave de técnica (tocar abre la guía):
   movilidad general 4 × 30 s, activación según el día (tirón, empuje o
-  piernas), un paso por molestia en rodilla, hombro o codo, y la ronda de
+  piernas), un aviso si hay molestia (no agrega ejercicios), y la ronda de
   aproximación al 40 % del primer ejercicio (en circuito, una ronda). Se
   marcan a mano; los de tiempo tienen reloj propio y se marcan al terminarlo.
   Toda la aproximación marcada arma 2 min de descanso antes de la primera

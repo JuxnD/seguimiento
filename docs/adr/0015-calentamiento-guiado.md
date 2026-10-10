@@ -18,8 +18,10 @@ oráculos de fases, aproximación, guardado y reanudación.
 - `lib/domain/warmup.dart` arma el bloque, puro y probado:
   - movilidad 4 × 30 s;
   - activación según el primer ejercicio del día (tirón, empuje o piernas);
-  - un paso por molestia ≥ 3 hoy o ayer en rodilla (cuádriceps), hombro
-    (dislocaciones con banda) o codo (muñecas), sin repetir;
+  - una molestia ≥ 3 hoy o ayer **no agrega un ejercicio**: se avisa arriba
+    ("Molestia en hombro (5/10): calienta suave esa zona, baja el rango o
+    salta lo que duela"). Revisión de Codex: recetar un movimiento por zona
+    sin evidencia no corresponde. El handoff pedía añadirlo;
   - aproximación al 40 % hacia abajo, mínimo 1: en circuito, una ronda; si
     no, el primer ejercicio. Los aguantes, al 40 % del tiempo;
   - con FIFA 11+ (miércoles), sólo la aproximación.
@@ -45,8 +47,8 @@ posterior necesitan consultarlo como dato, la migración puede leer la nota
 
 ## Límites
 
-- La dosis (40 %, 30 s, 2 min) y los ejercicios por zona son la propuesta
-  del handoff, no una validación clínica.
+- La dosis (40 %, 30 s, 2 min) es la propuesta del handoff, no una
+  validación clínica.
 - Faltan figuras de Círculos de hombros, Balanceos de pierna, Retracciones
   escapulares, Flexiones escapulares, Puente de glúteo y Dislocaciones con
   banda: tienen ficha (pasos y errores) y el visor declara la ausencia.
