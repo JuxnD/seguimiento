@@ -469,7 +469,9 @@ class _StepsCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 6),
               child: Text(
-                'Meta de ${fmtInt(stepsGoal)} entre semana: ${s.weekdaysAtGoal} de ${s.weekdaysWithSteps} días.',
+                'Meta de ${fmtInt(stepsGoal)} entre semana: ${s.weekdaysAtGoal} de '
+                '${s.weekdaysWithSteps - s.weekdaysGoalUnknown} días.'
+                '${s.weekdaysGoalUnknown == 0 ? '' : ' ${s.weekdaysGoalUnknown} con meta histórica no registrada.'}',
                 style: text.bodyMedium,
               ),
             ),

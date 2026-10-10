@@ -111,7 +111,9 @@ void _summary(StringBuffer b, ReportStats s) {
     final weekday = steps.weekdayAverage == null
         ? ''
         : ' · entre semana ${fmtInt(steps.weekdayAverage!)} (meta ${fmtInt(t.stepsTarget)}, '
-            '${steps.weekdaysAtGoal}/${steps.weekdayDays} ${steps.weekdayDays == 1 ? 'día' : 'días'} en meta)';
+            '${steps.weekdaysAtGoal}/${steps.weekdayDays - steps.weekdaysGoalUnknown} '
+            '${steps.weekdayDays - steps.weekdaysGoalUnknown == 1 ? 'día' : 'días'} en meta'
+            '${steps.weekdaysGoalUnknown == 0 ? '' : '; ${steps.weekdaysGoalUnknown} con meta histórica no registrada'})';
     final before = s.previous?.steps?.average;
     final vs = before == null ? '' : ' (${fmtDelta(steps.average - before, decimals: 0)} vs semana anterior)';
     b.writeln('- Pasos: ${fmtInt(steps.average)}/día ($n ${n == 1 ? 'día registrado' : 'días registrados'})'

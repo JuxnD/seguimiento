@@ -200,6 +200,16 @@ CoachReading stepsReading({
     final snoozed = decided?.status == ProposalStatus.pospuesta &&
         decided!.reviewAfter != null &&
         d0.isBefore(dateOnly(decided.reviewAfter!));
+    if (decided?.status == ProposalStatus.aceptada) {
+      final starts = addDays(dateOnly(decided!.decidedOn ?? d0), 1);
+      return CoachReading(
+        evaluatedOn: d0,
+        state: CoachState.aceptada,
+        reason: 'Aceptaste subir la meta: rige desde el ${formatShort(starts)}. Hoy se mide con ${fmtInt(goal)}.',
+        evidence: evidence,
+        nextReview: addDays(starts, coachReviewDays),
+      );
+    }
     if (decided?.status == ProposalStatus.rechazada || snoozed) {
       return CoachReading(
         evaluatedOn: d0,

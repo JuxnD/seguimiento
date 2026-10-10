@@ -11,6 +11,8 @@ import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlo
 import '../../domain/steps.dart';
 import '../../domain/technique_session.dart';
 import '../database.dart';
+import '../../domain/adaptive_coach.dart';
+import 'coach_repository.dart';
 import 'exercise_repository.dart';
 import 'fitness_test_repository.dart';
 import 'nutrition_repository.dart';
@@ -55,7 +57,12 @@ class TodayDashboard {
     this.planB = false,
     this.fitnessTest,
     this.techniqueSuggested = false,
+    this.coach,
   });
+
+  /// Lectura del acompañamiento (plan 009): pasos según cobertura,
+  /// cumplimiento y recuperación. null fuera de Hoy.
+  final CoachReading? coach;
 
   /// Ofrecer la sesión técnica (§16.21): descarga, víspera de test o de las
   /// pruebas, o con plan B. Alternativa, no reemplazo.
@@ -200,20 +207,11 @@ class DashboardRepository {
         .map((r) => r.read(maxRounds))
         .getSingle();
 
-    // Carga y racha real hasta hoy: no truncar una racha al límite de7días.
-    final throughToday = dayKey(date);
-    final recentSessions = await (db.select(db.sessions)
-          ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & db.trainingSessions & t.imported.equals(false)))
-        .get();
-    final recentGames = await (db.select(db.footballGames)
-          ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & t.imported.equals(false)))
-        .get();
-    final load = loadReading([
-      for (final s in recentSessions.where((s) => s.mode != 'test'))
-        LoadItem(date: parseDay(s.date), minutes: (s.totalSec - s.warmupSec - s.cooldownSec) ~/ 60, effort: s.rpe),
-      for (final g in recentGames)
-        LoadItem(date: parseDay(g.date), minutes: g.minutes, effort: g.intensity, isFootball: true),
-    ], date);
+    // Carga y racha real hasta hoy (sin truncar a 7 días), la misma que lee
+    // el acompañamiento y los avisos (plan 009).
+    final coachRepo = CoachRepository(db);
+    final load = await coachRepo.load(date);
+    final coach = await coachRepo.stepsReading(date, load: load);
     final recovery = RecoveryRepository(db);
     final soreness = await recovery.sorenessRange(date);
     final dayHasLegs = view != null &&
@@ -261,6 +259,7 @@ class DashboardRepository {
       v3: v3,
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
       fitnessTest: test,
+      coach: coach,
       techniqueSuggested: planSessions.isEmpty &&
           suggestTechniqueSession(
             deload: v3?.reducedVolume ?? false,

@@ -132,6 +132,7 @@ class ReminderContext {
     this.missingMealsToday = const [],
     this.stepsToday,
     this.stepsTarget = 5000,
+    this.stepsRecoveryFirst = false,
     this.custom = const [],
     this.lastMeasurement,
     this.measureIntervalDays = 21,
@@ -154,6 +155,9 @@ class ReminderContext {
   /// Pasos registrados hoy; null = aún no se anotan.
   final int? stepsToday;
   final int stepsTarget;
+
+  /// El acompañamiento pone hoy la recuperación primero (plan 009).
+  final bool stepsRecoveryFirst;
 
   /// Recordatorios propios del usuario.
   final List<CustomReminder> custom;
@@ -272,6 +276,9 @@ Iterable<PlannedNotification> _missingMeals(ReminderContext ctx) sync* {
 Iterable<PlannedNotification> _steps(ReminderContext ctx) sync* {
   final s = ctx.setting(ReminderKind.pasos);
   if (s == null || !s.enabled) return;
+  // Misma lectura que Hoy (plan 009): con la recuperación primero no se
+  // empuja a caminar por la meta.
+  if (ctx.stepsRecoveryFirst) return;
   // Solo entre semana: sábado y domingo son de fútbol y no tienen meta.
   if (stepsGoalFor(ctx.now, ctx.stepsTarget) == null) return;
   final threshold = s.threshold ?? 4000;

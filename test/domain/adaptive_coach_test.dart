@@ -131,6 +131,10 @@ void main() {
       expect(read(today, steps, last: postponed).state, CoachState.observar);
       expect(read(d(11, 5), weekdays(d(11, 5), (i) => 6400 + i * 20), last: postponed).state, CoachState.propuesta);
 
+      final accepted = read(today, steps,
+          last: ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.aceptada, decidedOn: today));
+      expect((accepted.state, accepted.proposal, accepted.nextReview), (CoachState.aceptada, null, d(11, 17)));
+
       final otherEvidence = read(today, weekdays(today, (i) => 7600 + i * 20),
           last: const ProposalRecord(id: 'pasos:5000>6000:p1', status: ProposalStatus.rechazada));
       expect(otherEvidence.proposal?.id, 'pasos:5000>7500:p1', reason: 'otra cifra es otra evidencia');

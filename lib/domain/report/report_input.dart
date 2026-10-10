@@ -4,6 +4,7 @@ library;
 
 import '../enums.dart';
 import '../nutrition.dart';
+import '../goal_history.dart';
 
 class Targets {
   const Targets({
@@ -291,6 +292,7 @@ class ReportInput {
     this.holdExercises = const {},
     this.perSideExercises = const {},
     this.dataStart,
+    this.goals,
     this.previous,
     this.notes,
   });
@@ -353,6 +355,18 @@ class ReportInput {
   /// importado). Los días del plan anteriores no son faltas: no hay datos
   /// (§16.16). null = no se sabe; cuenta todo el rango.
   final DateTime? dataStart;
+
+  /// Metas con historia (plan 009): cada día se mide con la suya. null =
+  /// sin historia cargada: se usa `targets` como hasta ahora.
+  final GoalHistory? goals;
+
+  /// Meta de un día: la vigente ese día; null si es "meta histórica no
+  /// registrada" (no se clasifica). Sin historia, la de `targets`.
+  double? goalOn(GoalMetric metric, DateTime day, num fallback) {
+    final at = goals?.on(metric, day);
+    if (at == null) return fallback.toDouble();
+    return at.known ? at.value : null;
+  }
 
   /// El rango anterior del mismo largo (la semana pasada), para comparar.
   /// null en el propio rango anterior: la comparación no se encadena.

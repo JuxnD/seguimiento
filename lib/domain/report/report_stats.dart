@@ -3,6 +3,7 @@ import '../enums.dart';
 import '../nutrition.dart';
 import '../steps.dart';
 import 'report_input.dart';
+import '../goal_history.dart' show GoalMetric;
 
 /// Métricas derivadas del rango. Alertas e informe leen de aquí para que un
 /// número nunca se calcule de dos formas distintas.
@@ -178,7 +179,8 @@ class ReportStats {
     return (label, reference, free);
   }
 
-  late final StepsSummary? steps = summarizeSteps(input.steps, input.targets.stepsTarget);
+  late final StepsSummary? steps = summarizeSteps(input.steps, input.targets.stepsTarget,
+      goalOn: input.goals == null ? null : (d) => input.goalOn(GoalMetric.pasos, d, input.targets.stepsTarget));
 
   double? get avgKcal => closedDays.isEmpty ? null : _avg((m) => m.kcal);
   double? get avgProtein => closedDays.isEmpty ? null : _avg((m) => m.protein);

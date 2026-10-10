@@ -13,6 +13,7 @@ import 'repositories/nutrition_repository.dart';
 import 'repositories/plan_repository.dart';
 import 'repositories/profile_repository.dart';
 import 'repositories/reminder_repository.dart';
+import 'repositories/coach_repository.dart';
 
 /// Junta lo que hay en la base con las reglas de `domain/reminders.dart` y
 /// deja programados los avisos de los próximos días.
@@ -82,6 +83,7 @@ class ReminderScheduler {
       missingMealsToday: missing,
       stepsToday: steps?.steps,
       stepsTarget: p.stepsTarget,
+      stepsRecoveryFirst: (await CoachRepository(db).stepsReading(today)).recoveryFirst,
       custom: await CustomReminderRepository(db).all(),
       lastMeasurement: lastMeasurement,
       measureIntervalDays: p.measureIntervalDays,

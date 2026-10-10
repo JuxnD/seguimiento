@@ -28,6 +28,7 @@ import '../body/body_screen.dart' show addWeightDialog;
 import '../body/ladders_screen.dart';
 import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
+import 'coach_card.dart';
 import 'morning_check_screen.dart';
 import 'sleep_hours_dialog.dart';
 import 'steps_source_line.dart';
@@ -85,6 +86,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               _PlanHero(dashboard: d),
               _RingsCard(dashboard: d),
+              if (d.coach case final coach?) CoachCard(reading: coach),
               const _PendingReviewCard(),
               const _LadderStepUpCard(),
               _YesterdayCheckCard(today: today),
@@ -1461,6 +1463,22 @@ class _WalksLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final goal = dashboard.stepsGoal;
     if (goal == null) return const SizedBox.shrink();
+    // Recuperación primero (plan 009): sin cuenta de caminatas pendientes.
+    if (dashboard.coach?.recoveryFirst ?? false) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: Row(
+          children: [
+            const Icon(Icons.self_improvement, size: 18, color: AppColors.steps),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(dashboard.coach!.action ?? 'Pasos suaves, en llano.',
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ),
+          ],
+        ),
+      );
+    }
     final left = walksLeft(dashboard.stepsToday ?? 0, goal);
     if (left == 0) return const SizedBox.shrink();
     return Padding(
