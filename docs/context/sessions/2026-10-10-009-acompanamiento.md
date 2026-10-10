@@ -25,6 +25,7 @@ publicación, teléfono ni datos reales.
 | `6191055` | R2 escaleras: `acceptStepUp` atómico e idempotente |
 | `9d65f35` | R2 caso 7: ZIP → restaurar → reabrir |
 | `3ad7a88` | Merge del checkpoint 122 `7843732`; `guided_warmup_test` = versión de Codex (barrera) |
+| `0621322` | R2 sobre `8761ab4` (Codex): carga con misma variante, calidad sin certificar RIR no anotado, `decode` estricto, join en `_firstSessionWith`; oráculos de Codex adoptados |
 
 ## Escenarios del plan y su prueba
 
@@ -71,8 +72,11 @@ publicación, teléfono ni datos reales.
 | 7. ZIP → restore → reapertura | `coach_backup_roundtrip_test`: filas idénticas de `goal_versions`/`coach_proposals`/`morning_checks` y misma lectura |
 | Fuerza: "subiste" sólo demostrado | `proposal_tracking_test` (8 variantes en SQLite con carga real), `strength_advice_test` (variante, banda/pausa, decode) |
 | Escaleras atómicas | `proposal_tracking_test`: fallo inyectado entre escrituras, doble/triple toque |
+| Revisión de Codex a `8761ab4` | `strength_advice_test` (variante con +2 kg, RIR null, 9 JSON incompletos), `proposal_tracking_test` R2 (variante cambiada, JSON restaurado incompleto); rojo con `8761ab4`: «subiste a 7 kg y se sostuvo (4 series limpias)» con otra variante y decode aceptando JSON sin destino |
+| Oráculos de Codex `285eaf4` | `report_goal_history_review_test` (4, aserciones sin cambiar) y los tres R2 de fuerza en `proposal_tracking_test` (aceptando con la dosis; el control con el texto nuevo) |
 
-Suite completa sobre `3ad7a88`: **790 pasan, 17 omitidas, exit 0**;
+Suite completa sobre `3ad7a88`: 790 pasan, 17 omitidas, exit 0; sobre
+`0621322`: **799 pasan, 17 omitidas, exit 0**;
 `flutter analyze` sin hallazgos (Windows, flutter_tester, equipo compartido
 con procesos de Codex).
 
