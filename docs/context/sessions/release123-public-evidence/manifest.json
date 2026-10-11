@@ -1,0 +1,77 @@
+{
+  "sourceSha": "5a648a6ef1002ae17f3148f831706044398160d5",
+  "tag": "v1.23.0",
+  "releaseUrl": "https://github.com/JuxnD/seguimiento/releases/tag/v1.23.0",
+  "apkUrl": "https://github.com/JuxnD/seguimiento/releases/download/v1.23.0/seguimiento-v1.23.0.apk",
+  "publishedAt": "2026-10-10T23:00:23Z",
+  "assetId": 629203339,
+  "apkBytes": 73756442,
+  "apkSha256": "1cf0f2aadf6749933dfffe11fb93797960e2b227ce43d28f4a5afa839747649e",
+  "certificateSha256": "6f839c41abf9e17634544a8ae5dff18ca64333b070ef40cd582dbdc9ac133ed7",
+  "apksignerExit": 0,
+  "package": "com.juandiego.seguimiento",
+  "versionName": "1.23.0",
+  "versionCode": 31,
+  "minSdk": 26,
+  "targetSdk": 34,
+  "ciPr": {
+    "run": 38092060754,
+    "conclusion": "success",
+    "passed": 913,
+    "failed": 0,
+    "skipped": 17
+  },
+  "ciMain": {
+    "run": 38092782500,
+    "conclusion": "success",
+    "counts": null
+  },
+  "releaseWorkflow": {
+    "run": 38092804641,
+    "conclusion": "success",
+    "counts": null
+  },
+  "deferred": [
+    "phone acceptance",
+    "expanded native QA",
+    "genuine schema22 additional fixture",
+    "real AI quality/cost"
+  ],
+  "records": [
+    {
+      "file": "123-ci-green.txt.gz",
+      "rawBytes": 549352,
+      "rawSha256": "72d7aad104ed84b161127b9154a020cba77d80f020cf7e018535db6cba86e7e9",
+      "gzipSha256": "29953a505702685b46c0a7a0a10e29409ea80217dd33cd6ca6a091b52e4fd4c6",
+      "scope": "terminal output"
+    },
+    {
+      "file": "123-public-certificate.txt.gz",
+      "rawBytes": 311,
+      "rawSha256": "bd6eff783428c88285f0dacbc0170a0ce920c8d39e106c1e83b69cfd4b5c80c0",
+      "gzipSha256": "1420cc8ebc9a73f1014cda197e271f9a3a36fb52a0de6a0250ab4a8f569ea98d",
+      "scope": "terminal output"
+    },
+    {
+      "file": "123-public-badging.txt.gz",
+      "rawBytes": 5219,
+      "rawSha256": "ac4623d52efc2bb949fc51d0d23534387c0621a95620a054710a80687a948b57",
+      "gzipSha256": "e9cbebb233e06b2acac157e8c211784f15139ff2ec6ff92ad8c0b0b7592616d1",
+      "scope": "terminal output"
+    },
+    {
+      "file": "123-release-green.txt.gz",
+      "rawBytes": 165,
+      "rawSha256": "5625211d4e22aa0d12b76e1d728fac155e5bb49ea4b9c9e447755d552e4bdb5f",
+      "gzipSha256": "9ec0ecd50bdd8863efe0f6575aa20a0d3139b88538364af333491b6529c87e0d",
+      "scope": "GitHub API i/o timeout attempt"
+    },
+    {
+      "file": "123-main-ci-green.txt.gz",
+      "rawBytes": 165,
+      "rawSha256": "94fbe177b4a4704b50661c1689e966baaa519c52caf03a3ffd22fdc91c31aaf2",
+      "gzipSha256": "d60fc162cef6ae1816043de0f1cb9147dc0eba82cccee1971a6fd7cfc9a93845",
+      "scope": "GitHub API i/o timeout attempt"
+    }
+  ]
+}

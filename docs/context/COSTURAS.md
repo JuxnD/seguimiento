@@ -1,4 +1,13 @@
-# Costuras verificadas de la candidata 1.21
+# Costuras verificadas y límites de Seguimiento
+
+**Publicación personal1.23, 10oct:** fuente5a648a6/tagv1.23.0 → Release38092804641
+SUCCESS → APK GitHub descargado73756442B/SHA1cf0f2aa… → apksigner0/certificado
+histórico6f839c41… → aapt1.23/code31/paquete conservado. CI de PR913/17 y CI/main
+completos pasan; continuidad genuina18/20/21 y ZIP/reapertura documentados en
+[recibo final](sessions/2026-10-10-release-1-23.md). La firma y la identidad del
+APK no acreditan teléfono, OEM ni precisión de IA: QA ampliada/nativa y consultas
+reales siguen aplazadas por el owner. Los apartados siguientes conservan su alcance
+histórico de fuente/host y no se atribuyen automáticamente a Android.
 
 ## Corrección025 local: consulta → comparación → tarjeta
 

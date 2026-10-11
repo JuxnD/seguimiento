@@ -1,11 +1,13 @@
 # Índice de contexto
 
-**Entrega personal1.23.0+31 (10oct):** 023/024/025 integrados, esquema23.
+**Publicada1.23.0+31 (10oct):** 023/024/025 integrados, esquema23.
 [Recibo de release](sessions/2026-10-10-release-1-23.md) y
 [manifiesto/evidencia](sessions/release123-evidence/manifest.json): conservación
-genuina18/19/20/21, análisis y compilación/firma local pasan. EnsayoUI integrado
-local interrumpido por hang, causa NO_CONFIRMADA; todos los tests de CI/release
-siguen obligatorios con concurrency1/90s. Publicación y APK público aún pendientes.
+genuina18/19/20/21; CI de PR913/17 sin fallos, CI/main y Release completos pasan.
+PR3 integrado en5a648a6, tagv1.23.0. El APK público descargado identifica
+1.23/code31 y conserva el certificado histórico; SHA1cf0f2aa… coincide con GitHub.
+Los rojos anteriores de harness se conservan con sus correcciones, sin omisiones
+nuevas ni relajación de oráculos/timeouts. [Descarga oficial](https://github.com/JuxnD/seguimiento/releases/download/v1.23.0/seguimiento-v1.23.0.apk).
 QA ampliada/Android/teléfono NOT_EXECUTED_OWNER_DEFERRED por autorización owner;
 la prueba del teléfono corresponde al owner. Los apartados siguientes son históricos.
 
