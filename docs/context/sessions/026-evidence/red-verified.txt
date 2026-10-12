@@ -1,0 +1,45 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: sin archivo, todo es null
+00:00 +1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: guarda y lee valores y fechas
+00:00 +2: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un tipo distinto al pedido devuelve null, no revienta
+00:00 +3: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un archivo dañado se trata como vacío
+00:00 +4: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: escrituras simultáneas conservan todas las claves al reabrir
+00:00 +4 -1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: escrituras simultáneas conservan todas las claves al reabrir [E]
+  PathNotFoundException: Cannot rename file to 'C:\Users\Acer\AppData\Local\Temp\seguimiento_flags91e21808/sub/flags.json', path = 'C:\Users\Acer\AppData\Local\Temp\seguimiento_flags91e21808/sub/flags.json.tmp' (OS Error: El sistema no puede encontrar el archivo especificado.
+  , errno = 2)
+  dart:io                                          _File.rename
+  package:seguimiento/data/local_flags.dart 47:15  LocalFlags.set
+  ===== asynchronous gap ===========================
+  dart:async                                       _CustomZone.registerUnaryCallback
+  package:seguimiento/data/local_flags.dart 43:5   LocalFlags.set
+  test\data\local_flags_test.dart 49:13            main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                       _CustomZone.registerUnaryCallback
+  test\data\local_flags_test.dart 44:5             main.<fn>
+  
+00:00 +4 -1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un fallo se propaga y no impide la siguiente escritura
+00:00 +5 -1: loading C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart
+00:01 +5 -1: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: (setUpAll)
+00:01 +5 -1: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: añadir primera medida en ayunas futura no cambia el informe histórico
+00:01 +5 -2: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: añadir primera medida en ayunas futura no cambia el informe histórico [E]
+  Expected: <90>
+    Actual: <85.0>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\report_baseline_cutoff_test.dart 33:5     main.<fn>
+  
+00:01 +5 -2: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: sin registros o sólo registros futuros no hay líneas base
+00:01 +5 -3: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: sin registros o sólo registros futuros no hay líneas base [E]
+  Expected: null
+    Actual: <Instance of 'WeightEntry'>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\report_baseline_cutoff_test.dart 42:5     main.<fn>
+  
+00:01 +5 -3: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: conserva ayunas anterior y admite tomas en el último día
+00:01 +6 -3: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: (tearDownAll)
+00:01 +6 -3: loading C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart
+00:02 +6 -3: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: (setUpAll)
+00:02 +6 -3: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: doble toque pendiente crea sólo una versión SQLite

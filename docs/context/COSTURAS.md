@@ -402,3 +402,14 @@ previa872/17/2 queda como fallo histórico, nunca como suite verde del candidato
 [Recibo/identidad](sessions/2026-10-10-release-1-23.md). Owner aplaza matriz
 ampliada y operación Android/teléfono: NOT_EXECUTED_OWNER_DEFERRED. No inferir
 operación nativa de pruebas host ni compatibilidad binaria de sólo hashes fuente.
+
+## Integridad diaria026 — host local
+
+Flags callers concurrentes → cola por ruta → archivo reabierto: conserva claves,
+fecha y valor anterior; fallo filesystem llega al caller y siguiente escribe.
+SQLite → ReportRepository → Markdown histórico: futuros no cambian baseline;
+sin datos/sólo futuros/ayunas anteriores/corte inclusivo verificados.
+Doble toque UI → Future pendiente → SQLite: una versión; error deja reintentar,
+con foco retirado e interacción bloqueada y cierre sólo de ruta actual.
+[Recibo y rojos/verdes](sessions/2026-10-12-026-integridad.md).
+Sin operación nativa ni publicación nueva; no resuelve concurrencia multiproceso.

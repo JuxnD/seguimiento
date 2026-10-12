@@ -1,0 +1,83 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: sin archivo, todo es null
+00:00 +1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: guarda y lee valores y fechas
+00:00 +2: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un tipo distinto al pedido devuelve null, no revienta
+00:00 +3: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un archivo dañado se trata como vacío
+00:00 +4: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: escrituras simultáneas conservan todas las claves al reabrir
+00:00 +4 -1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: escrituras simultáneas conservan todas las claves al reabrir [E]
+  Expected: <7>
+    Actual: <null>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\local_flags_test.dart 52:5                main.<fn>
+  
+00:00 +4 -1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un fallo se propaga y no impide la siguiente escritura
+00:00 +5 -1: loading C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart
+test/data/report_baseline_cutoff_test.dart:37:45: Error: 'isNull' is imported from both 'package:drift/src/runtime/query_builder/query_builder.dart' and 'package:matcher/src/core_matchers.dart'.
+    expect((await report()).baselineWeight, isNull);
+                                            ^^^^^^
+test/data/report_baseline_cutoff_test.dart:42:34: Error: 'isNull' is imported from both 'package:drift/src/runtime/query_builder/query_builder.dart' and 'package:matcher/src/core_matchers.dart'.
+    expect(input.baselineWeight, isNull);
+                                 ^^^^^^
+00:01 +5 -2: loading C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart
+00:01 +5 -2: loading C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart
+00:07 +5 -2: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: (setUpAll)
+00:07 +5 -2: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: doble toque pendiente crea sólo una versión SQLite
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: an object with length of <1>
+  Actual: [
+            PlanVersionRow:PlanVersionRow(id: 1, validFrom: 2026-10-12, notes: null, scheme: null),
+            PlanVersionRow:PlanVersionRow(id: 2, validFrom: 2026-10-12, notes: null, scheme: null)
+          ]
+   Which: has length of <2>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart:62:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart line 62
+The test description was:
+  doble toque pendiente crea sólo una versión SQLite
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +5 -3: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: doble toque pendiente crea sólo una versión SQLite [E]
+  Test failed. See exception logs above.
+  The test description was: doble toque pendiente crea sólo una versión SQLite
+  
+00:10 +5 -3: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: error conserva editor y permite reintentar
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing No se pudo guardar: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart:74:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart line 74
+The test description was:
+  error conserva editor y permite reintentar
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +5 -4: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: error conserva editor y permite reintentar [E]
+  Test failed. See exception logs above.
+  The test description was: error conserva editor y permite reintentar
+  
+00:10 +5 -4: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: (tearDownAll)
+00:11 +5 -4: Some tests failed.

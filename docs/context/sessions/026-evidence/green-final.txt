@@ -1,0 +1,58 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: sin archivo, todo es null
+00:00 +1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: guarda y lee valores y fechas
+00:00 +2: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un tipo distinto al pedido devuelve null, no revienta
+00:00 +3: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un archivo dañado se trata como vacío
+00:00 +4: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: escrituras simultáneas conservan todas las claves al reabrir
+00:00 +5: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un fallo se propaga y no impide la siguiente escritura
+00:00 +6: loading C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart
+00:02 +6: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: (setUpAll)
+00:02 +6: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: añadir primera medida en ayunas futura no cambia el informe histórico
+00:02 +7: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: sin registros o sólo registros futuros no hay líneas base
+00:02 +8: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: conserva ayunas anterior y admite tomas en el último día
+00:02 +9: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: (tearDownAll)
+00:02 +9: loading C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart
+00:04 +9: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: (setUpAll)
+00:04 +9: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: doble toque pendiente crea sólo una versión SQLite
+00:06 +10: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: error conserva editor y permite reintentar
+00:06 +11: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: (tearDownAll)
+00:06 +11: loading C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart
+00:08 +11: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: estadísticas sesiones esperadas usan la versión vigente de cada día
+00:08 +12: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: estadísticas promedios solo sobre días registrados
+00:08 +13: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: alertas detecta las reglas del plan
+00:08 +14: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: alertas medición antes de tiempo
+00:08 +15: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: alertas sin alerta de intervalo cuando se respeta el mínimo
+00:08 +16: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del tipo fuera de plan y de la sesión incompleta
+00:08 +17: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del enfriamiento corto
+00:08 +18: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: sesiones fuera de plan e incompletas la tabla muestra rondas hechas sobre planificadas
+00:08 +19: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: sesiones fuera de plan e incompletas una sesión fuera de plan se marca en la tabla
+00:08 +20: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: regla de progresión subir de ronda con series partidas genera alerta
+00:08 +21: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: regla de progresión subir de ronda limpio no genera alerta
+00:08 +22: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: regla de progresión técnica o recuperación marcadas en no también bloquean
+00:08 +23: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: semana en curso a mitad de semana, los días que no han llegado no son faltas
+00:08 +24: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: semana en curso un día de entrenamiento ya cerrado sin sesión sí es falta
+00:08 +25: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: semana en curso una ronda estimada no es récord
+00:08 +26: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown una semana del programa va de lunes a domingo y se titula como semana (§16.8)
+00:08 +27: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown con 1 de 5 hecha hoy quedan 4, no 5 (§16.8)
+00:08 +28: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown encabezado, resumen y secciones
+00:08 +29: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown medidas en la unidad elegida con Δ vs línea base
+00:08 +30: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown el descanso va en su columna y no cuenta como trabajo neto
+00:08 +31: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown dice de dónde salen las kcal
+00:08 +32: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown trabajo por ronda sin descanso, R1→Rn y descansos aparte
+00:08 +33: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown sin descansos medidos las vueltas dicen que los llevan dentro
+00:08 +34: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown un día sin desayuno, almuerzo y cena no entra al promedio ni a las alertas
+00:08 +35: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown cerrar el día a mano lo cuenta aunque falte una comida
+00:08 +36: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown volumen por ejercicio contra la semana anterior
+00:08 +37: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown flexiones peores el viernes tras una semana con pike push-ups sugiere bajar a 2 series
+00:08 +38: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown RPE 9 o 10 en circuito ligero se señala
+00:08 +39: C:/My Projects/seguimiento-026-integridad/test/domain/report_test.dart: informe markdown rango vacío no revienta
+00:08 +40: loading C:/My Projects/seguimiento-026-integridad/test/data/report_goal_history_review_test.dart
+00:09 +40: C:/My Projects/seguimiento-026-integridad/test/data/report_goal_history_review_test.dart: (setUpAll)
+00:09 +40: C:/My Projects/seguimiento-026-integridad/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 130 no queda bajo mínimo
+00:09 +41: C:/My Projects/seguimiento-026-integridad/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 160 sí queda bajo mínimo
+00:10 +42: C:/My Projects/seguimiento-026-integridad/test/data/report_goal_history_review_test.dart: R2 historia: 145 g cumplieron 130 aunque el mínimo actual sea 160
+R2 histórico: [] | - Proteína promedio: 145 g (meta 130–160) · kcal promedio: 2.500 (meta 2.400) · días cerrados: 7/7
+00:10 +43: C:/My Projects/seguimiento-026-integridad/test/data/report_goal_history_review_test.dart: R2 desconocido: 145 g no prueban incumplir una meta histórica sin fecha
+R2 desconocido: [] | - Proteína promedio: 145 g (meta histórica no registrada) · kcal promedio: 2.500 (meta histórica no registrada) · días cerrados: 7/7
+00:10 +44: C:/My Projects/seguimiento-026-integridad/test/data/report_goal_history_review_test.dart: (tearDownAll)
+00:10 +44: All tests passed!

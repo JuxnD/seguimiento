@@ -1,0 +1,19 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: sin archivo, todo es null
+00:00 +1: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: guarda y lee valores y fechas
+00:00 +2: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un tipo distinto al pedido devuelve null, no revienta
+00:00 +3: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un archivo dañado se trata como vacío
+00:00 +4: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: escrituras simultáneas conservan todas las claves al reabrir
+00:00 +5: C:/My Projects/seguimiento-026-integridad/test/data/local_flags_test.dart: un fallo se propaga y no impide la siguiente escritura
+00:00 +6: loading C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart
+00:00 +6: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: (setUpAll)
+00:01 +6: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: añadir primera medida en ayunas futura no cambia el informe histórico
+00:01 +7: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: sin registros o sólo registros futuros no hay líneas base
+00:01 +8: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: conserva ayunas anterior y admite tomas en el último día
+00:01 +9: C:/My Projects/seguimiento-026-integridad/test/data/report_baseline_cutoff_test.dart: (tearDownAll)
+00:01 +9: loading C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart
+00:02 +9: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: (setUpAll)
+00:02 +9: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: doble toque pendiente crea sólo una versión SQLite
+00:04 +10: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: error conserva editor y permite reintentar
+00:05 +11: C:/My Projects/seguimiento-026-integridad/test/ui/plan_save_once_test.dart: (tearDownAll)
+00:05 +11: All tests passed!

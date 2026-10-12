@@ -1,5 +1,11 @@
 # Índice de contexto
 
+**Mantenimiento026 local (12oct):** preferencias serializadas por ruta,
+líneas base limitadas al fin del informe y guardado único mientras el editor
+escribe. [Recibo, rojos y gates](sessions/2026-10-12-026-integridad.md).
+Roadmap/piloto distinguen lo publicado1.23 de validación humana/nativa pendiente.
+Sin publicación nueva, dispositivo, IA real ni cambio de esquema/SDK.
+
 **Publicada1.23.0+31 (10oct):** 023/024/025 integrados, esquema23.
 [Recibo de release](sessions/2026-10-10-release-1-23.md) y
 [manifiesto/evidencia](sessions/release123-evidence/manifest.json): conservación

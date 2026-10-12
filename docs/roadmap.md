@@ -113,7 +113,23 @@ originales; reanudación verificada tras reinicio.
 [Recibo final](context/sessions/2026-10-07-handoff-publicacion-121.md).
 Los nuevos apartados del handoff listados arriba siguen pendientes.
 
-## Candidata1.22 — ilustraciones y acompañamiento (9oct)
+## Estado vigente — publicada1.23 y mantenimiento local026 (12oct)
+
+1.23.0+31 publicada el10oct: ilustraciones/biblioteca, metas con vigencia e
+historia, propuestas revisables, radar, comidas asistidas y alta neutral
+integrados. [Recibo de publicación](context/sessions/2026-10-10-release-1-23.md).
+007/008–011/022–025 ya no representan trabajo pendiente de implementación.
+La política adaptativa continúa experimental: publicación no prueba utilidad
+ni aceptación. QA ampliada/Android/teléfono fue aplazada por el owner
+(NOT_EXECUTED_OWNER_DEFERRED); precisión/coste IA real y comprensión de figuras
+siguen sin validar. Respaldo automático externo, reloj/etiquetas reales y piloto
+con participantes/baseline/umbrales/agenda permanecen pendientes.
+
+026 protege preferencias concurrentes, línea base histórica y guardado único
+del editor; [evidencia local](context/sessions/2026-10-12-026-integridad.md).
+Pruebas host no equivalen a nueva publicación ni validación del teléfono.
+
+## Antecedente histórico — candidata1.22 (9oct, superado por1.23)
 
 En construcción local:73entradas ilustradas y biblioteca consultable, variantes,
 orientación/apoyos y movilidad en visor compartido. [Contrato y revisión](design/ilustraciones-renovacion.md).

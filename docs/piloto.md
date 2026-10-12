@@ -1,6 +1,10 @@
 # Preparación de un piloto
 
-Estado al 9-oct-2026: **PREPARACIÓN PARCIAL**. No PREPARADO_PARA_PILOTO todavía.
+Estado al12-oct-2026: **PREPARACIÓN PARCIAL**. No PREPARADO_PARA_PILOTO todavía.
+1.23 publicó alta neutral y lectores008–011 integrados; quedan validación
+nativa/humana, precisión/coste IA real, participantes, baseline, umbrales y
+agenda. [Recibo de release](context/sessions/2026-10-10-release-1-23.md).
+La delimitación siguiente es histórica (9oct); no autoriza un piloto real.
 Caso y supuesto letal: [CASO.md](CASO.md). La delimitación del coordinador permite
 privacidad, herramientas y documentación antes de 008–011; prohíbe activar alta
 nueva, SDK, distribución o usuarios reales en este slice.
@@ -13,8 +17,8 @@ nueva, SDK, distribución o usuarios reales en este slice.
 | Borrado IA | Elimina la conversación de la base actual. UI explica que copias anteriores pueden recuperarla y que el servicio no se modifica. |
 | Copias automáticas | UI declara historial IA, sin fotos, sin cifrar. No se purgan copias silenciosamente. |
 | Gate de artefactos | Herramientas nuevas y pruebas sintéticas; faltan captura nativa del candidato integrado y conexión al workflow. |
-| Perfil nuevo | **PENDIENTE**: no heredar datos del owner. Especificación debajo; no implementado ahora. |
-| Progreso/comidas/gráficas | **PENDIENTE** integración y aceptación 008–011. |
+| Perfil nuevo | **IMPLEMENTADO/PUBLICADO1.23**: alta neutral022 y protección de restauración024. Aceptación nativa/humana ampliada pendiente. |
+| Progreso/comidas/gráficas | **INTEGRADO/PUBLICADO1.23** 008–011/023; utilidad, precisión/coste IA real y aceptación pendientes. |
 | Figuras | Aceptación humana de comprensión pendiente; existencia del JSON no la sustituye. |
 | Tienda | [Matriz](piloto-compatibilidad.md); spike target36/runtime no realizado. |
 | Uso real | Sin participantes, baseline, umbrales ni agenda confirmados. |
@@ -30,8 +34,9 @@ La actualización del owner conserva su perfil, metas explícitas, plan,
 historial y sesión congelada. Correcciones personales requieren procedencia
 legacy demostrada o importación personal explícita; una tabla vacía no prueba
 identidad. Restaurar una base legacy conserva recuperación y pregunta antes de
-reemplazar. Faltan pruebas de alta/reinicio/restauración/cancelación/error y dos
-perfiles ficticios independientes; no habrá migración incidental desde este slice.
+reemplazar. La implementación022/024 y sus pruebas host están integradas en1.23;
+pruebas nativas ampliadas y aceptación humana siguen aplazadas. El contrato
+se conserva; este documento no demuestra operación en el teléfono.
 
 ## Datos y retención
 
