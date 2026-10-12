@@ -70,6 +70,12 @@ La confirmación declara el reemplazo del historial de IA y la posible
 reaparición de conversaciones borradas después de esa copia. Flags/permisos,
 cronómetro en curso y licencia quedan fuera del respaldo/restauración.
 
+Fotos de progreso (plan 027): el archivo nuevo se prepara antes, la fila se
+reemplaza en una transacción y el archivo anterior se borra solo después del
+commit; un fallo SQL deja fila y bytes previos. Un crash entre el commit y la
+purga puede dejar un archivo huérfano en `fotos/` (no se barre solo), nunca una
+foto referenciada sin archivo.
+
 Preparación de gate por APK exacto, todavía sin conexión al workflow ni nueva
 captura nativa: [procedimiento 012](runbooks/pilot-release-gate.md). No atribuir
 los recibos anteriores a otro APK o commit.

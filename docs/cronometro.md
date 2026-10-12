@@ -100,6 +100,12 @@ descanso en curso vuelve a programar su aviso. El cronómetro libre funciona
 igual. La foto se borra al guardar o descartar la sesión. Las marcas del
 calentamiento también se retoman. Plan B y sesión técnica (fuera del plan)
 se retoman con el guion guardado; antes se descartaban.
+Tras restaurar una copia, el cronómetro (fuera del respaldo) sigue vigente: si
+el snapshot lleva su guion, se retoma con él aunque el id del día no exista en
+esa base o pertenezca a otro día; entonces se guarda sin plan y con la nota
+"Recuperada tras restaurar…". Un snapshot sin guion (legado) solo se
+reconstruye si su día existe y contiene lo ya hecho; si no, o si el guion no se
+lee, el archivo se conserva y se pregunta (Dejarla pendiente / Descartarla).
 
 Al terminar el enfriamiento la sesión **se guarda sola** como "sin revisar"
 (`sessions.pending_review`, esquema 14): cuenta en Hoy y en el informe desde

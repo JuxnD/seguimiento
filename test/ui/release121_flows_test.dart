@@ -287,7 +287,7 @@ void main() {
     }
   });
 
-  testWidgets('legado1.20 conserva secuencia e indice sin agregar escalera; guion malformado se descarta', (t) async {
+  testWidgets('legado1.20 conserva secuencia e indice sin agregar escalera; si no hay con qué comprobar el día, pide confirmación', (t) async {
     try {
       final date = DateTime(2026, 10, 19);
       final view = (await io(t, () => plan.dayFor(date)))!;
@@ -305,6 +305,10 @@ void main() {
           (c, ref) => Scaffold(
               body: TextButton(onPressed: () => resumeActiveSession(c, ref, loaded), child: const Text('legado'))));
       await t.tap(find.text('legado'));
+      await settle(t);
+      await settle(t);
+      // Plan 027: sin guion ni lo hecho no se presume que el id sea el mismo día.
+      await t.tap(find.text('Retomar con ese día'));
       await settle(t);
       await settle(t);
       expect(find.text(expected.exercise), findsWidgets);
@@ -333,9 +337,9 @@ void main() {
       await t.tap(find.text('corrupto'));
       await settle(t);
       await settle(t);
-      expect(find.text('La sesión guardada tiene un guion inválido; se descarta para poder empezar otra.'),
-          findsOneWidget);
-      expect(await io(t, () => store.load()), isNull);
+      // Plan 027: un guion ilegible ya no se descarta en silencio.
+      expect(find.text('Sesión sin su guion'), findsOneWidget);
+      expect(await io(t, () => store.load()), isNotNull);
       expect(t.takeException(), isNull);
     } finally {
       await cleanup(t);

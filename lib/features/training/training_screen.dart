@@ -106,7 +106,8 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   // "mantener" dejan las rondas de la última vez.
   String? roundsId;
   if (proposal != null && proposal.canProgress && proposal.sessionId != null) {
-    roundsId = roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
+    roundsId =
+        roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
     final decided = await GoalRepository(ref.read(databaseProvider)).proposal(roundsId);
     if (proposalHidden(decided, day)) {
       proposal = heldProposal(proposal, decided!.status);
@@ -130,7 +131,8 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   // Empezar con las rondas que propuso la regla es aceptarlas (confirmación
   // existente del diálogo; plan 009 la registra).
   if (roundsId != null && proposal != null && setup.rounds == proposal.rounds) {
-    await GoalRepository(ref.read(databaseProvider)).decideProposal(roundsId, 'rondas', ProposalStatus.aceptada, today: day);
+    await GoalRepository(ref.read(databaseProvider))
+        .decideProposal(roundsId, 'rondas', ProposalStatus.aceptada, today: day);
   }
   if (!context.mounted) return;
 
@@ -289,8 +291,7 @@ Future<void> _startResistance(
 Future<void> startCindyTest(BuildContext context, WidgetRef ref) async {
   final allowed = await _noPendingSession(context, ref);
   if (!context.mounted || !allowed) return;
-  await _runTimer(context, ref, date: dateOnly(ref.read(decisionClockProvider)()),
-      mode: 'cindy', cindyTest: true);
+  await _runTimer(context, ref, date: dateOnly(ref.read(decisionClockProvider)()), mode: 'cindy', cindyTest: true);
 }
 
 Future<void> _runTimer(
@@ -443,26 +444,41 @@ String describeActiveSession(ActiveSession s) {
 Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSession session) async {
   switch (session) {
     case final GuidedSnapshot s:
-      // Plan B y sesión técnica no salen del plan (planDayId -1): se retoman
-      // con el guion que quedó guardado entero.
-      if (s.planDayId < 0 && s.effectiveDay != null) {
+      // El guion congelado manda. Plan B, sesión técnica y sesiones de un plan
+      // que ya no está (copia restaurada) se retoman con él, sin depender del
+      // id local del día.
+      if (s.effectiveDay != null) {
         PlanDayDraft day;
         try {
           day = thawGuidedDay(s.effectiveDay!);
         } on Object {
           if (!context.mounted) return;
-          showSnack(context, 'La sesión guardada tiene un guion inválido; se descarta para poder empezar otra.');
-          await _clearActive(ProviderScope.containerOf(context, listen: false));
+          await _askAboutLostScript(context, 'El guion guardado de esa sesión no se puede leer.');
           return;
+        }
+        // El id solo vale si en esta base sigue siendo el mismo día: tras
+        // restaurar puede faltar o pertenecer a otro. Entonces la sesión se
+        // guarda sin plan, marcada como recuperada.
+        int? linkId;
+        if (s.planDayId >= 0) {
+          final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
+          if (!context.mounted) return;
+          if (view != null && _sameDay(view.day, day)) linkId = s.planDayId;
+        }
+        final recovered = s.planDayId >= 0 && linkId == null;
+        var note = s.note;
+        if (recovered && !(note ?? '').contains(_recoveredNote)) {
+          note = note == null || note.isEmpty ? _recoveredNote : '$note. $_recoveredNote';
         }
         if (!context.mounted) return;
         await _runGuided(
           context,
           GuidedSessionScreen(
             day: day,
-            note: s.note,
+            note: note,
             mode: s.mode,
             date: parseDay(s.date),
+            planDayId: linkId,
             sessionType: s.sessionType,
             coreVariant: s.coreVariant,
             roundsOverride: s.roundsOverride,
@@ -472,12 +488,27 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         );
         return;
       }
-      final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
+      // Snapshot legado, sin guion: el id del día es lo único que lo une al
+      // plan, y tras restaurar puede ser de otro día. Solo se reconstruye solo
+      // si lo ya hecho cabe en ese día; si no hay con qué comprobarlo, se
+      // pregunta con lo que se sabe. Nunca se descarta en silencio.
+      final view = s.planDayId < 0 ? null : await ref.read(planRepositoryProvider).dayById(s.planDayId);
       if (!context.mounted) return;
       if (view == null) {
-        showSnack(context, 'El día del plan de esa sesión ya no existe; se descarta.');
-        await _clearActive(ProviderScope.containerOf(context, listen: false));
+        await _askAboutLostScript(context,
+            'Es de una versión anterior y el día del plan de esa sesión ya no está en esta copia de los datos.');
         return;
+      }
+      final names = {for (final e in view.day.exercises) e.name};
+      final proven = s.done.isNotEmpty && s.done.every((d) => names.contains(d.exercise));
+      if (!proven) {
+        final choice = await _askAboutLostScript(
+          context,
+          'Es de una versión anterior y no guardó su guion. En esta copia, ese número de día es ${view.day.type.label} '
+          '(${weekdayShort(view.day.weekday)}); no se puede comprobar que sea el mismo.',
+          canUse: true,
+        );
+        if (choice != _LostChoice.use || !context.mounted) return;
       }
       final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, parseDay(s.date));
       final (deloaded, note) = _v3Adjust(view.day, v3);
@@ -486,25 +517,17 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       final adjusted = await ref.read(trainingRepositoryProvider).withPlanche(deloaded, parseDay(s.date), v3,
           enabled: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
       if (!context.mounted) return;
-      PlanDayDraft effective;
-      try {
-        effective =
-            s.effectiveDay == null ? (s.light ? lightVersion(adjusted) : adjusted) : thawGuidedDay(s.effectiveDay!);
-      } on Object {
-        if (!context.mounted) return;
-        showSnack(context, 'La sesión guardada tiene un guion inválido; se descarta para poder empezar otra.');
-        await _clearActive(ProviderScope.containerOf(context, listen: false));
-        return;
-      }
-      if (!context.mounted) return;
+      final effective = s.light ? lightVersion(adjusted) : adjusted;
+      // Sin prueba de que sea el día de la sesión, se retoma pero no se vincula.
+      final legacyNote = proven ? note : (note == null ? _recoveredNote : '$note. $_recoveredNote');
       await _runGuided(
         context,
         GuidedSessionScreen(
           day: effective,
-          note: s.effectiveDay == null ? note : s.note,
+          note: legacyNote,
           mode: s.mode,
           date: parseDay(s.date),
-          planDayId: s.planDayId,
+          planDayId: proven ? s.planDayId : null,
           sessionType: s.sessionType,
           coreVariant: s.coreVariant,
           roundsOverride: s.roundsOverride,
@@ -527,6 +550,44 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
           cindyTest: s.mode == 'cindy' && (v3?.cindyTest ?? false),
           resume: s);
   }
+}
+
+const _recoveredNote = 'Recuperada tras restaurar: no se pudo identificar el plan de origen';
+
+enum _LostChoice { use, pending, discard }
+
+/// Mismo día del plan, por estructura: igual día de la semana y tipo, y los
+/// ejercicios del plan (nombre y bloque, en orden) están todos en el guion
+/// congelado. El guion puede traer de más (escalera, planche) pero no de menos.
+/// No prueba procedencia: un día de otra base con la misma estructura pasa.
+bool _sameDay(PlanDayDraft base, PlanDayDraft frozen) {
+  if (base.weekday != frozen.weekday || base.type != frozen.type) return false;
+  var i = 0;
+  for (final e in frozen.exercises) {
+    if (i < base.exercises.length && e.name == base.exercises[i].name && e.block == base.exercises[i].block) i++;
+  }
+  return i == base.exercises.length;
+}
+
+/// La sesión guardada no se puede rearmar con certeza. No se borra ni se
+/// reconstruye con otro día: queda pendiente salvo que se elija descartarla.
+Future<_LostChoice> _askAboutLostScript(BuildContext context, String reason, {bool canUse = false}) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final choice = await showDialog<_LostChoice>(
+    context: context,
+    builder: (c) => AlertDialog(
+      title: const Text('Sesión sin su guion'),
+      content: Text('$reason Sigue guardada: déjala pendiente o descártala para poder empezar otra.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c, _LostChoice.discard), child: const Text('Descartarla')),
+        TextButton(onPressed: () => Navigator.pop(c, _LostChoice.pending), child: const Text('Dejarla pendiente')),
+        if (canUse)
+          FilledButton(onPressed: () => Navigator.pop(c, _LostChoice.use), child: const Text('Retomar con ese día')),
+      ],
+    ),
+  );
+  if (choice == _LostChoice.discard) await _clearActive(container);
+  return choice ?? _LostChoice.pending;
 }
 
 class _SessionSetup {

@@ -39,6 +39,10 @@ class PhotoRepository {
 
   /// Copia la imagen al directorio de la app y la registra. Si ya había una
   /// foto de ese ángulo ese día, la reemplaza.
+  ///
+  /// Orden: archivo nuevo, fila en una transacción y, solo con la fila ya
+  /// confirmada, el archivo anterior. Si algo falla antes del commit, el
+  /// archivo nuevo se limpia y la foto previa queda intacta.
   Future<void> add({
     required File source,
     required DateTime date,
@@ -46,25 +50,46 @@ class PhotoRepository {
     bool fasted = true,
   }) async {
     final dir = await _dir();
-    // Nombre único: una foto que se reclasifica conserva su archivo, y otra
-    // del mismo día y ángulo no debe pisarlo.
-    final name = '${dayKey(date)}-${angle.name}-${DateTime.now().millisecondsSinceEpoch}${p.extension(source.path)}';
-    final target = File(p.join(dir.path, name));
-    await source.copy(target.path);
+    final target = await _claim(dir, '${dayKey(date)}-${angle.name}-${DateTime.now().millisecondsSinceEpoch}',
+        p.extension(source.path));
+    final relative = p.join(folder, p.basename(target.path));
+    ProgressPhotoRow? replaced;
+    try {
+      await source.copy(target.path);
+      replaced = await db.transaction(() async {
+        final existing = await occupant(date, angle);
+        if (existing != null) await _deleteRow(existing);
+        await db.into(db.progressPhotos).insert(ProgressPhotosCompanion.insert(
+              date: dayKey(date),
+              angle: angle,
+              relativePath: relative,
+              fasted: Value(fasted),
+            ));
+        return existing;
+      });
+    } on Object {
+      try {
+        if (target.existsSync()) target.deleteSync();
+      } on FileSystemException {
+        // Queda un huérfano en fotos/; nunca una foto referenciada sin archivo.
+      }
+      rethrow;
+    }
+    if (replaced != null && replaced.relativePath != relative) _deleteFile(dir.parent, replaced);
+  }
 
-    final existing = await (db.select(db.progressPhotos)
-          ..where((t) => t.date.equals(dayKey(date)) & t.angle.equalsValue(angle)))
-        .getSingleOrNull();
-    // Si la anterior tenía otra extensión (.png → .jpg), su archivo no fue
-    // sobrescrito: se borra para no dejar huérfanos.
-    if (existing != null) await delete(existing, keepFile: existing.relativePath == p.join(folder, name));
-
-    await db.into(db.progressPhotos).insert(ProgressPhotosCompanion.insert(
-          date: dayKey(date),
-          angle: angle,
-          relativePath: p.join(folder, name),
-          fasted: Value(fasted),
-        ));
+  /// Reserva un nombre libre creando el archivo de forma exclusiva: otra alta
+  /// del mismo día y ángulo en el mismo milisegundo no puede pisarlo.
+  Future<File> _claim(Directory dir, String stem, String ext) async {
+    for (var n = 0;; n++) {
+      final file = File(p.join(dir.path, n == 0 ? '$stem$ext' : '$stem-$n$ext'));
+      try {
+        await file.create(exclusive: true);
+        return file;
+      } on PathExistsException {
+        continue;
+      }
+    }
   }
 
   Stream<List<PhotoCheckIn>> watchCheckIns() => (db.select(db.progressPhotos)
@@ -90,17 +115,24 @@ class PhotoRepository {
   }
 
   /// Reclasifica una foto: otro tipo u otra fecha (§16.11). Si ya había una
-  /// foto en ese lugar, se reemplaza (y su archivo se borra).
-  Future<void> reclassify(ProgressPhotoRow row, {PhotoAngle? angle, DateTime? date}) => db.transaction(() async {
-        final newAngle = angle ?? row.angle;
-        final newDate = date == null ? row.date : dayKey(date);
-        final taken = await occupant(parseDay(newDate), newAngle, except: row.id);
-        if (taken != null) await delete(taken);
-        await (db.update(db.progressPhotos)..where((t) => t.id.equals(row.id))).write(ProgressPhotosCompanion(
-          angle: Value(newAngle),
-          date: Value(newDate),
-        ));
-      });
+  /// foto en ese lugar, se reemplaza: su fila sale en la misma transacción y su
+  /// archivo se borra solo después del commit.
+  Future<void> reclassify(ProgressPhotoRow row, {PhotoAngle? angle, DateTime? date}) async {
+    final taken = await db.transaction(() async {
+      final newAngle = angle ?? row.angle;
+      final newDate = date == null ? row.date : dayKey(date);
+      final taken = await occupant(parseDay(newDate), newAngle, except: row.id);
+      if (taken != null) await _deleteRow(taken);
+      await (db.update(db.progressPhotos)..where((t) => t.id.equals(row.id))).write(ProgressPhotosCompanion(
+        angle: Value(newAngle),
+        date: Value(newDate),
+      ));
+      return taken;
+    });
+    if (taken != null && taken.relativePath != row.relativePath) {
+      _deleteFile(await getApplicationDocumentsDirectory(), taken);
+    }
+  }
 
   /// Quita la foto de la lista sin borrar el archivo: así se puede deshacer.
   /// El archivo se borra después con [purgeFile].
@@ -112,10 +144,15 @@ class PhotoRepository {
   /// Borra el archivo de una foto ya quitada de la lista.
   Future<void> purgeFile(ProgressPhotoRow row) async => _deleteFile(await getApplicationDocumentsDirectory(), row);
 
+  /// Borra la fila y después el archivo: si el DELETE falla, la foto sigue
+  /// completa. Un crash entre ambos pasos deja un huérfano, no una foto rota.
   Future<void> delete(ProgressPhotoRow row, {bool keepFile = false}) async {
+    await _deleteRow(row);
     if (!keepFile) _deleteFile(await getApplicationDocumentsDirectory(), row);
-    await (db.delete(db.progressPhotos)..where((t) => t.id.equals(row.id))).go();
   }
+
+  Future<void> _deleteRow(ProgressPhotoRow row) =>
+      (db.delete(db.progressPhotos)..where((t) => t.id.equals(row.id))).go();
 
   /// La ruta sale de la base, que puede venir de un respaldo restaurado: solo
   /// se borra lo que está dentro de la carpeta de fotos. Una ruta con `..`
