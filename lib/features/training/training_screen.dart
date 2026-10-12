@@ -456,7 +456,7 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
           await _askAboutLostScript(context, 'El guion guardado de esa sesión no se puede leer.');
           return;
         }
-        // La restauración ya soltó el id (unlinkPlanAfterRestore). Aquí solo se
+        // La restauración ya soltó el id (ActiveSessionStore.protectedRestore). Aquí solo se
         // cubre que el día desaparezca por otra vía: entonces se guarda sin
         // plan, marcada como recuperada.
         int? linkId;

@@ -1,0 +1,45 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/active_session_critical_write_test.dart
+test/data/active_session_critical_write_test.dart:42:83: Error: 'SessionProtectionException' isn't a type.
+    await expectLater(store.protectedRestore(() async => ran = true), throwsA(isA<SessionProtectionException>()));
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:72:21: Error: 'SessionRecoveryException' isn't a type.
+        throwsA(isA<SessionRecoveryException>()));
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:42:29: Error: The method 'protectedRestore' isn't defined for the class 'ActiveSessionStore'.
+ - 'ActiveSessionStore' is from 'package:seguimiento/data/active_session_store.dart' ('lib/data/active_session_store.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'protectedRestore'.
+    await expectLater(store.protectedRestore(() async => ran = true), throwsA(isA<SessionProtectionException>()));
+                            ^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:51:17: Error: The method 'protectedRestore' isn't defined for the class 'ActiveSessionStore'.
+ - 'ActiveSessionStore' is from 'package:seguimiento/data/active_session_store.dart' ('lib/data/active_session_store.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'protectedRestore'.
+    await store.protectedRestore(() async => duringRestore = disk()['planDayId'] as int);
+                ^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:61:29: Error: The method 'protectedRestore' isn't defined for the class 'ActiveSessionStore'.
+ - 'ActiveSessionStore' is from 'package:seguimiento/data/active_session_store.dart' ('lib/data/active_session_store.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'protectedRestore'.
+    await expectLater(store.protectedRestore<void>(() async => throw StateError('rollback')), throwsStateError);
+                            ^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:68:15: Error: The method 'protectedRestore' isn't defined for the class 'ActiveSessionStore'.
+ - 'ActiveSessionStore' is from 'package:seguimiento/data/active_session_store.dart' ('lib/data/active_session_store.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'protectedRestore'.
+        store.protectedRestore<void>(() async {
+              ^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:79:17: Error: The method 'protectedRestore' isn't defined for the class 'ActiveSessionStore'.
+ - 'ActiveSessionStore' is from 'package:seguimiento/data/active_session_store.dart' ('lib/data/active_session_store.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'protectedRestore'.
+    await store.protectedRestore(() async {});
+                ^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:87:17: Error: The method 'protectedRestore' isn't defined for the class 'ActiveSessionStore'.
+ - 'ActiveSessionStore' is from 'package:seguimiento/data/active_session_store.dart' ('lib/data/active_session_store.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'protectedRestore'.
+    await store.protectedRestore(() async {});
+                ^^^^^^^^^^^^^^^^
+test/data/active_session_critical_write_test.dart:102:17: Error: The method 'protectedRestore' isn't defined for the class 'ActiveSessionStore'.
+ - 'ActiveSessionStore' is from 'package:seguimiento/data/active_session_store.dart' ('lib/data/active_session_store.dart').
+Try correcting the name to the name of an existing method, or defining a method named 'protectedRestore'.
+    await store.protectedRestore(() async => ran = true);
+                ^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading C:/My Projects/seguimiento-027-claude/test/data/active_session_critical_write_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-027-claude/test/data/active_session_critical_write_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-027-claude/test/data/active_session_critical_write_test.dart
+00:00 +0 -1: Some tests failed.

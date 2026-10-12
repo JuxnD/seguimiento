@@ -1,0 +1,193 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/ui/restored_session_unlink_test.dart
+test/ui/restored_session_unlink_test.dart:84:7: Error: 'stale' isn't a type.
+      stale Directory root;
+      ^^^^^
+test/ui/restored_session_unlink_test.dart:84:13: Error: Expected ';' after this.
+      stale Directory root;
+            ^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:84:23: Error: Undefined name 'root'.
+      stale Directory root;
+                      ^^^^
+test/ui/restored_session_unlink_test.dart:85:7: Error: 'stale' isn't a type.
+      stale DatabaseHost host;
+      ^^^^^
+test/ui/restored_session_unlink_test.dart:85:13: Error: Expected ';' after this.
+      stale DatabaseHost host;
+            ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:85:26: Error: Undefined name 'host'.
+      stale DatabaseHost host;
+                         ^^^^
+test/ui/restored_session_unlink_test.dart:86:7: Error: 'stale' isn't a type.
+      stale File zip;
+      ^^^^^
+test/ui/restored_session_unlink_test.dart:86:13: Error: Expected ';' after this.
+      stale File zip;
+            ^^^^
+test/ui/restored_session_unlink_test.dart:86:18: Error: Undefined name 'zip'.
+      stale File zip;
+                 ^^^
+test/ui/restored_session_unlink_test.dart:87:7: Error: 'stale' isn't a type.
+      stale File snapshotFile;
+      ^^^^^
+test/ui/restored_session_unlink_test.dart:87:13: Error: 'File' is already declared in this scope.
+      stale File snapshotFile;
+            ^^^^
+test/ui/restored_session_unlink_test.dart:86:13: Context: Previous declaration of 'File'.
+      stale File zip;
+            ^^^^
+test/ui/restored_session_unlink_test.dart:87:13: Error: Expected ';' after this.
+      stale File snapshotFile;
+            ^^^^
+test/ui/restored_session_unlink_test.dart:87:18: Error: Undefined name 'snapshotFile'.
+      stale File snapshotFile;
+                 ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:88:7: Error: 'stale' isn't a type.
+      stale List<int> originalBytes;
+      ^^^^^
+test/ui/restored_session_unlink_test.dart:88:13: Error: Expected ';' after this.
+      stale List<int> originalBytes;
+            ^^^^
+test/ui/restored_session_unlink_test.dart:88:23: Error: Expected '[' before this.
+      stale List<int> originalBytes;
+                      ^^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:88:21: Error: Expected ';' after this.
+      stale List<int> originalBytes;
+                    ^
+test/ui/restored_session_unlink_test.dart:88:23: Error: Undefined name 'originalBytes'.
+      stale List<int> originalBytes;
+                      ^^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:89:7: Error: 'stale' isn't a type.
+      stale int deviceDayId;
+      ^^^^^
+test/ui/restored_session_unlink_test.dart:88:18: Error: Local variable 'int' can't be referenced before it is declared.
+      stale List<int> originalBytes;
+                 ^^^
+test/ui/restored_session_unlink_test.dart:89:13: Context: This is the declaration of the variable 'int'.
+      stale int deviceDayId;
+            ^^^
+test/ui/restored_session_unlink_test.dart:89:13: Error: Expected ';' after this.
+      stale int deviceDayId;
+            ^^^
+test/ui/restored_session_unlink_test.dart:89:17: Error: Undefined name 'deviceDayId'.
+      stale int deviceDayId;
+                ^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:97:9: Error: Setter not found: 'root'.
+        root = await Directory.systemTemp.createTemp('seguimiento_027_restore_');
+        ^^^^
+test/ui/restored_session_unlink_test.dart:98:40: Error: Undefined name 'root'.
+        final sourceDir = Directory('${root.path}/source')..createSync();
+                                       ^^^^
+test/ui/restored_session_unlink_test.dart:102:84: Error: Undefined name 'root'.
+        zip = (await BackupArchive(host: source, documents: sourceDir).exportTo('${root.path}/respaldo.zip')).file;
+                                                                                   ^^^^
+test/ui/restored_session_unlink_test.dart:102:9: Error: Setter not found: 'zip'.
+        zip = (await BackupArchive(host: source, documents: sourceDir).exportTo('${root.path}/respaldo.zip')).file;
+        ^^^
+test/ui/restored_session_unlink_test.dart:105:40: Error: Undefined name 'root'.
+        final targetDir = Directory('${root.path}/target')..createSync();
+                                       ^^^^
+test/ui/restored_session_unlink_test.dart:107:9: Error: Setter not found: 'host'.
+        host = DatabaseHost(target, (f) {
+        ^^^^
+test/ui/restored_session_unlink_test.dart:114:33: Error: Undefined name 'host'.
+        await ProfileRepository(host.db).confirmSetup(SetupDraft(startDate: DateTime(2026, 10, 10), stepsTarget: 6000));
+                                ^^^^
+test/ui/restored_session_unlink_test.dart:115:35: Error: Undefined name 'host'.
+        deviceDayId = await _seed(host.db, mine);
+                                  ^^^^
+test/ui/restored_session_unlink_test.dart:115:9: Error: Setter not found: 'deviceDayId'.
+        deviceDayId = await _seed(host.db, mine);
+        ^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:117:9: Error: Setter not found: 'snapshotFile'.
+        snapshotFile = File('${targetDir.path}/sesion.json');
+        ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:118:34: Error: Undefined name 'snapshotFile'.
+        await ActiveSessionStore(snapshotFile).save(GuidedSnapshot(
+                                 ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:121:22: Error: Undefined name 'deviceDayId'.
+          planDayId: deviceDayId,
+                     ^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:135:25: Error: Undefined name 'snapshotFile'.
+        originalBytes = snapshotFile.readAsBytesSync();
+                        ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:135:9: Error: Setter not found: 'originalBytes'.
+        originalBytes = snapshotFile.readAsBytesSync();
+        ^^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:138:40: Error: Undefined name 'snapshotFile'.
+      final store = ActiveSessionStore(snapshotFile);
+                                       ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:139:40: Error: Undefined name 'root'.
+      final flags = LocalFlags(File('${root.path}/target/flags.json'));
+                                       ^^^^
+test/ui/restored_session_unlink_test.dart:143:7: Error: 'stale' isn't a type.
+      stale ProviderContainer container;
+      ^^^^^
+test/ui/restored_session_unlink_test.dart:143:13: Error: Expected ';' after this.
+      stale ProviderContainer container;
+            ^^^^^^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:143:31: Error: Undefined name 'container'.
+      stale ProviderContainer container;
+                              ^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:183:50: Error: Undefined name 'host'.
+          databaseHostProvider.overrideWithValue(host),
+                                                 ^^^^
+test/ui/restored_session_unlink_test.dart:186:52: Error: Undefined name 'host'.
+          documentsDirProvider.overrideWith((_) => host.file.parent),
+                                                   ^^^^
+test/ui/restored_session_unlink_test.dart:194:71: Error: Undefined name 'zip'.
+                TextButton(onPressed: () => restoreBackupFile(c, ref, zip, 'respaldo.zip'), child: const Text('restaurar')),
+                                                                      ^^^
+test/ui/restored_session_unlink_test.dart:200:9: Error: Setter not found: 'container'.
+        container = ProviderScope.containerOf(t.element(find.text('restaurar')), listen: false);
+        ^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:205:51: Error: Undefined name 'snapshotFile'.
+          if (mode == _Mode.blocked) Directory('${snapshotFile.path}.tmp').createSync();
+                                                  ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:215:19: Error: Undefined name 'container'.
+                  container.read(databaseGenerationProvider) == generation,
+                  ^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:223:58: Error: Undefined name 'snapshotFile'.
+        final onDisk = await io(() => ActiveSessionStore(snapshotFile).load()) as GuidedSnapshot;
+                                                         ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:226:22: Error: Undefined name 'host'.
+          final db = host.db;
+                     ^^^^
+test/ui/restored_session_unlink_test.dart:227:96: Error: Undefined name 'deviceDayId'.
+          final restoredDay = await io(() => (db.select(db.planDays)..where((d) => d.id.equals(deviceDayId))).getSingle());
+                                                                                          ^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:229:51: Error: Undefined name 'originalBytes'.
+          final original = jsonDecode(utf8.decode(originalBytes)) as Map<String, Object?>;
+                                                  ^^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:239:63: Error: Undefined name 'snapshotFile'.
+          final afterLate = await io(() => ActiveSessionStore(snapshotFile).load()) as GuidedSnapshot;
+                                                              ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:243:18: Error: Undefined name 'snapshotFile'.
+          expect(snapshotFile.readAsBytesSync(), originalBytes);
+                 ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:243:50: Error: Undefined name 'originalBytes'.
+          expect(snapshotFile.readAsBytesSync(), originalBytes);
+                                                 ^^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:244:36: Error: Undefined name 'deviceDayId'.
+          expect(onDisk.planDayId, deviceDayId);
+                                   ^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:248:22: Error: Undefined name 'host'.
+          final db = host.db;
+                     ^^^^
+test/ui/restored_session_unlink_test.dart:255:18: Error: Undefined name 'container'.
+          expect(container.read(databaseGenerationProvider), 0);
+                 ^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:264:59: Error: Undefined name 'snapshotFile'.
+        final current = await io(() => ActiveSessionStore(snapshotFile).load()) as GuidedSnapshot;
+                                                          ^^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:265:65: Error: Undefined name 'deviceDayId'.
+        expect(current.planDayId, mode == _Mode.restored ? -1 : deviceDayId);
+                                                                ^^^^^^^^^^^
+test/ui/restored_session_unlink_test.dart:277:39: Error: Undefined name 'host'.
+          unawaited(Future<void>.sync(host.db.close).then<void>((_) => closed = true, onError: (Object _) => closed = true));
+                                      ^^^^
+test/ui/restored_session_unlink_test.dart:286:19: Error: Undefined name 'root'.
+            await root.delete(recursive: true);
+                  ^^^^
+00:00 +0 -1: loading C:/My Projects/seguimiento-027-claude/test/ui/restored_session_unlink_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-027-claude/test/ui/restored_session_unlink_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-027-claude/test/ui/restored_session_unlink_test.dart
+00:00 +0 -1: Some tests failed.

@@ -53,7 +53,7 @@ class _Notifications extends NotificationService {
 /// El respaldo trae un martes con los MISMOS id, día, tipo y nombres pero otra
 /// dosis: la estructura no prueba que sea el plan de la sesión; lo que lo
 /// desvincula es la restauración exitosa.
-enum _Mode { restored, cancelled, rolledBack, ordinary }
+enum _Mode { restored, cancelled, rolledBack, ordinary, blocked }
 
 PlanDayDraft _tuesday(int sets, int repsMin, int repsMax) => PlanDayDraft(weekday: 2, type: DayType.trenSuperior, exercises: [
       PlanExerciseDraft(name: 'Dominadas australianas', sets: sets, repsMin: repsMin, repsMax: repsMax, restSec: 90),
@@ -76,6 +76,8 @@ void main() {
       _Mode.cancelled => 'restauración cancelada: el snapshot en disco queda byte a byte igual y sigue vinculado',
       _Mode.rolledBack => 'restauración fallida con rollback: el snapshot queda byte a byte igual y sigue vinculado',
       _Mode.ordinary => 'sin restauración: el guion normal se retoma vinculado a su plan',
+      _Mode.blocked =>
+        'no se puede escribir el cronómetro: error informado, la base y el snapshot quedan intactos y no hay generación nueva',
     };
     testWidgets(title, (t) async {
       final deadline = Stopwatch()..start();
@@ -200,10 +202,11 @@ void main() {
 
         if (mode != _Mode.ordinary) {
           if (mode == _Mode.rolledBack) failNextOpen = true;
+          if (mode == _Mode.blocked) Directory('${snapshotFile.path}.tmp').createSync();
           await t.tap(find.text('restaurar'));
           await waitFor(() => find.text('¿Restaurar este respaldo?').evaluate().isNotEmpty, 'confirmación');
           await t.tap(find.text(mode == _Mode.cancelled ? 'Cancelar' : 'Restaurar'));
-          final generation = mode == _Mode.cancelled ? 0 : 1;
+          final generation = mode == _Mode.cancelled || mode == _Mode.blocked ? 0 : 1;
           await waitFor(
               () =>
                   find.text('¿Restaurar este respaldo?').evaluate().isEmpty &&
@@ -230,9 +233,26 @@ void main() {
           for (final k in original.keys.where((k) => k != 'planDayId' && k != 'note')) {
             expect(jsonEncode(now[k]), jsonEncode(original[k]), reason: 'campo conservado: $k');
           }
+          // Un guardado tardío de la misma sesión (pantalla vieja) no repone el id.
+          final stale = ActiveSession.fromJson({...original, 'reps': 4})!;
+          await io(() => store.save(stale));
+          final afterLate = await io(() => ActiveSessionStore(snapshotFile).load()) as GuidedSnapshot;
+          expect((afterLate.planDayId, afterLate.reps), (-1, 4));
+          loaded = afterLate;
         } else {
           expect(snapshotFile.readAsBytesSync(), originalBytes);
           expect(onDisk.planDayId, deviceDayId);
+        }
+        if (mode == _Mode.blocked) {
+          expect(find.textContaining('No se pudo proteger el cronómetro'), findsOneWidget);
+          final db = host.db;
+          final profile = await io(() => (db.select(db.profiles)).getSingle());
+          expect(profile.stepsTarget, 6000, reason: 'la base no se reemplazó');
+          final days = await io(() => db.select(db.planDays).get());
+          expect(days.length, 7);
+          final ex = await io(() => db.select(db.planExercises).get());
+          expect(ex.map((e) => e.repsMin).toSet(), {6}, reason: 'dosis original, no la del respaldo');
+          expect(container.read(databaseGenerationProvider), 0);
         }
 
         await t.tap(find.text('retomar'));

@@ -23,3 +23,18 @@ Corridas anteriores a fe0b565, borradas del disco por un `rm -f` y recuperadas d
 - `r1-backup-disclosure-rerun.log.txt`: fallo real causado por mi cambio (restore lee el store; esa prueba no lo
   proveía); corregido con un override en la prueba. `r1-backup-disclosure-fixed.log.txt`: verde.
 - `r1-green-unlink.log.txt`, `r1-green-new.log.txt` (24), `r1-green-existing.log.txt` (61), `r1-analyze.log.txt`.
+
+## Ronda 2 (prefijo r2-)
+Evidencia en bytes exactos: `.gitattributes` fija `-text -diff` para esta carpeta; `SHA256SUMS.txt` coincide con
+`git show HEAD:<ruta>` y con la copia de trabajo.
+- `r2-red-8b1cac5.log.txt`: rojo REAL contra 8b1cac5 (producto de la ronda 1): (a) restaurado: un guardado tardío
+  de la misma sesión repone el id (`Expected (-1, 4)`, `Actual (2, 4)`); (b) tmp bloqueado: la restauración se
+  ejecuta igual (la generación pasa a 1, la base se reemplazó), por eso la espera de "restauración terminada" con
+  generación 0 no se cumple.
+- `r2-red-8b1cac5-store-api-ausente.log.txt`: la prueba de bajo nivel no compila en 8b1cac5 (la API
+  `protectedRestore` no existe); no es un rojo de comportamiento.
+- `r2-red-8b1cac5-test-intermedio.log.txt`: mismo rojo con una versión previa de la prueba (índice+1).
+- `r2-harness-failure-sed-late.log.txt`: fallo de HARNESS, un `sed` mío rompió las declaraciones `late`.
+- `r2-harness-failure-green-intermedio.log.txt`: intermedio con expectativas de tipos mal escritas y un cambio de
+  índice que dejaba el cronómetro en descanso (finder offstage); harness, no producto.
+- `r2-green-new.log.txt` (33 pruebas), `r2-green-existing.log.txt`, `r2-analyze.log.txt`.

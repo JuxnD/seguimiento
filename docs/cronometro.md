@@ -106,7 +106,12 @@ estructura del día prueban que sea el mismo plan. El archivo del cronómetro
 (fuera del respaldo) se reescribe con `planDayId = -1` y la nota "Recuperada
 tras restaurar…"; guion, fecha, índice, dosis, marcas, tiempos, calentamiento y
 demás campos quedan intactos y el snapshot se retoma con su guion, sin vincular
-a ningún plan. Cancelar o revertir la restauración no toca el archivo. Sin
+a ningún plan. La desvinculación se escribe de forma estricta (sin absorber
+errores) ANTES de reemplazar la base: si no se puede escribir, la restauración
+no corre y se avisa. Si la restauración falla y revierte, el archivo vuelve byte
+a byte a su estado anterior (o se avisa si ni eso se pudo). Un guardado tardío de
+la misma sesión (misma fecha e inicio) no repone el id viejo; una sesión nueva
+conserva su vínculo normal. Cancelar la restauración no toca el archivo. Sin
 restauración, el guion normal conserva su vínculo. Un snapshot sin guion
 (legado 1.20) solo se reconstruye solo si lo ya hecho cabe en el día del id; si
 no, o si el guion no se lee, el archivo se conserva y se pregunta (Dejarla

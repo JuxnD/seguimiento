@@ -2,3 +2,6 @@
 docs/context/sessions/011-evidence/** -text -diff
 lib/features/report/radar_reference_dialog.dart -text
 test/fixtures/gateway_contract/** -text
+
+# Bytes exactos de la evidencia 027 (hashes verificables entre hosts).
+docs/context/sessions/027-evidence/** -text -diff

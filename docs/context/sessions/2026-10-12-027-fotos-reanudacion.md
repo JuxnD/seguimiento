@@ -41,3 +41,19 @@ datos del owner.
 - Fallos intermedios conservados y rotulados (harness vs. producto) en README.md.
 - Cambios a pruebas existentes: `release121_flows_test` (guion ilegible conserva
   y pregunta), `backup_disclosure_test` (override del store que restore ahora lee).
+
+## Ronda 2
+- Defecto de 8b1cac5: `unlinkPlanAfterRestore` usaba `save`, que absorbe errores: con el
+  archivo temporal bloqueado devolvía éxito y la base se reemplazaba con el id viejo en disco.
+- `ActiveSessionStore.protectedRestore(restore)`: espera la fila de guardados, toma lo más
+  reciente, escribe la desvinculación con `_writeStrict` (tmp + rename + relectura, lanza) ANTES
+  de llamar al callback; si falla lanza `SessionProtectionException` y la base no cambia (no hay
+  generación nueva). Si el callback falla, devuelve los bytes originales
+  (`SessionRecoveryException` si no puede). La identidad (fecha + inicio) de la sesión
+  desvinculada sanea guardados posteriores de esa misma sesión; otras sesiones no se tocan.
+  `save` ordinario sigue tolerante. `restore_access` marca `replaced` solo dentro del callback.
+- Pruebas: `test/data/active_session_critical_write_test.dart` (8) y casos `blocked` + guardado
+  tardío en `restored_session_unlink_test`. Evidencia r2-* (ver README de la carpeta).
+- Evidencia en bytes exactos: `.gitattributes` (`-text -diff` en `027-evidence/**`).
+- Límite: un fallo de energía durante `_writeStrict` queda cubierto por tmp+rename, no por fsync
+  del directorio. Probado en host, no Android.

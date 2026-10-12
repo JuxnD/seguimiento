@@ -16,4 +16,12 @@ dfc661a6b9975b8d0820c0e44c4f409ff3ae064d90882fd82d4586015f5cb11c *./r1-green-unl
 5da3300c5aa84e0d5da6ee5223ca819d714c92d7a54e912f5dee8c7bb4dc3e45 *./r1-harness-failure-alta-invalida.log.txt
 4d7b502d5833cb122966b7075fc8f74163b3641f016b8a4ce7769a615972af0f *./r1-harness-failure-snack-esperado.log.txt
 4165fa6770f62ff7f1b62b35f25297ae814d189dc267d9ba5b3239fc843a41e7 *./r1-red-fe0b565.log.txt
+8e3c670526ab8e1aee84d80d26598625cc9dc6febafd8d0472d18d1b3a8533ac *./r2-analyze.log.txt
+ac248ceb0489cff92b56d2d7ae0f17edc7327efc9f5d498fc2f2c25186f65794 *./r2-green-existing.log.txt
+0ad546960f589fe8ae6ed6f4d713a9c50bf88326f6f72c3dacdee7c1d64d9ec3 *./r2-green-new.log.txt
+0d7e11e7affedaaa56c00a28f114b9070c9626d0aee1f242ab188b042d18ff4d *./r2-harness-failure-green-intermedio.log.txt
+70bb29a42cf0413b2bee92ebc76454f4a278fbf8f800f99255a35a32a63c61c8 *./r2-harness-failure-sed-late.log.txt
+961647b4ad7349796b75ee6fad289be9cef7265a9e80383219c589db7ad7fdae *./r2-red-8b1cac5-store-api-ausente.log.txt
+e096f64310b926e1aa29218fef2e1caffd388aee9c34a77564e06c7b9c8082e5 *./r2-red-8b1cac5-test-intermedio.log.txt
+2fd28cdf7d4ec56e7fe161abd6edc711167892c549ea6e323ada827bb0732efd *./r2-red-8b1cac5.log.txt
 472e9cfce6635c76a4a23f9246302f3c7c8a805652d44077d5cbd1efb4a1a9a0 *./red-433f64f.log.txt

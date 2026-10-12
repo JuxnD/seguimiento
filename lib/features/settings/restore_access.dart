@@ -68,11 +68,13 @@ Future<bool> restoreBackupFile(BuildContext context, WidgetRef ref, File file, S
       ),
     );
     if (confirmed != true || !context.mounted) return false;
-    replaced = true;
-    await _progress(context, 'Restaurando respaldo', () => archive.restore(ready, allowMissingPhotos: true));
+    // El cronómetro se protege (desvinculación persistida) ANTES de tocar la
+    // base; si no se puede, la restauración no corre y `replaced` sigue false.
+    await _progress(context, 'Restaurando respaldo', () => sessionStore.protectedRestore(() {
+          replaced = true;
+          return archive.restore(ready, allowMissingPhotos: true);
+        }));
     restored = true;
-    // Solo con la base ya reemplazada: cancelar o revertir no toca el cronómetro.
-    await sessionStore.unlinkPlanAfterRestore();
     container.invalidate(activeSessionProvider);
     if (context.mounted) {
       showSnack(
