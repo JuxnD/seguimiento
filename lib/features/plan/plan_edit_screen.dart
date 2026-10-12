@@ -21,6 +21,7 @@ class PlanEditScreen extends ConsumerStatefulWidget {
 class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
   late final PlanDraft d = widget.draft;
   late final _notes = TextEditingController(text: d.notes ?? '');
+  bool _saving = false;
 
   @override
   void dispose() {
@@ -29,15 +30,25 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     d.notes = _notes.text;
     final problem = planDraftProblem(d) ?? _extendedRangesProblem();
     if (problem != null) {
       showSnack(context, problem);
       return;
     }
-    final ok = await guarded(
-        context, () => ref.read(planRepositoryProvider).saveAsNewVersion(d));
-    if (ok && mounted) Navigator.pop(context, true);
+    FocusScope.of(context).unfocus();
+    setState(() => _saving = true);
+    final route = ModalRoute.of(context);
+    try {
+      final ok = await guarded(
+          context, () => ref.read(planRepositoryProvider).saveAsNewVersion(d));
+      if (ok && mounted && route?.isCurrent == true) {
+        Navigator.pop(context, true);
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   /// Los campos que ahora se pueden editar usan el mismo modelo persistido.
@@ -71,42 +82,45 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Nueva versión del plan')),
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 96),
-        children: [
-          AppCard(
-            children: [
-              DateTile(
-                  label: 'Vigente desde',
-                  date: d.validFrom,
-                  onChanged: (v) => setState(() => d.validFrom = v)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _notes,
-                decoration: const InputDecoration(
-                    labelText: 'Qué cambia',
-                    hintText: 'Subo a 8 rondas objetivo',
-                    border: OutlineInputBorder()),
-                maxLines: 2,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Text(
-                    'Las versiones anteriores no se tocan: el informe sabrá qué plan regía cada día.'),
-              ),
-            ],
-          ),
-          for (final day in d.days)
-            _DayCard(
-                key: ObjectKey(day),
-                day: day,
-                onChanged: () => setState(() {})),
-        ],
+      body: AbsorbPointer(
+        absorbing: _saving,
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: 96),
+          children: [
+            AppCard(
+              children: [
+                DateTile(
+                    label: 'Vigente desde',
+                    date: d.validFrom,
+                    onChanged: (v) => setState(() => d.validFrom = v)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _notes,
+                  decoration: const InputDecoration(
+                      labelText: 'Qué cambia',
+                      hintText: 'Subo a 8 rondas objetivo',
+                      border: OutlineInputBorder()),
+                  maxLines: 2,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Text(
+                      'Las versiones anteriores no se tocan: el informe sabrá qué plan regía cada día.'),
+                ),
+              ],
+            ),
+            for (final day in d.days)
+              _DayCard(
+                  key: ObjectKey(day),
+                  day: day,
+                  onChanged: () => setState(() {})),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _save,
+        onPressed: _saving ? null : _save,
         icon: const Icon(Icons.save),
-        label: const Text('Guardar versión'),
+        label: Text(_saving ? 'Guardando…' : 'Guardar versión'),
       ),
     );
   }

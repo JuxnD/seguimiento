@@ -39,4 +39,33 @@ void main() {
     await flags.set('asked', true);
     expect(flags.get<bool>('asked'), isTrue);
   });
+
+  test('escrituras simultáneas conservan todas las claves al reabrir',
+      () async {
+    await flags.set('previa', 7);
+    final other = LocalFlags(File(flags.file.absolute.path));
+    await Future.wait([
+      flags.set('asked', true),
+      other.set('when', DateTime(2026, 10, 12)),
+      flags.set('origin', 'reloj ficticio'),
+    ]);
+    final again = LocalFlags(flags.file);
+    expect(again.get<int>('previa'), 7);
+    expect(again.get<bool>('asked'), isTrue);
+    expect(again.getDate('when'), DateTime(2026, 10, 12));
+    expect(again.get<String>('origin'), 'reloj ficticio');
+  });
+
+  test('un fallo se propaga y no impide la siguiente escritura', () async {
+    await flags.set('previa', 7);
+    final blocked = Directory('${flags.file.path}.tmp')..createSync();
+    await expectLater(
+        flags.set('failed', true), throwsA(isA<FileSystemException>()));
+    blocked.deleteSync();
+    await flags.set('recovered', true);
+    final again = LocalFlags(flags.file);
+    expect(again.get<int>('previa'), 7);
+    expect(again.get<bool>('failed'), isNull);
+    expect(again.get<bool>('recovered'), isTrue);
+  });
 }

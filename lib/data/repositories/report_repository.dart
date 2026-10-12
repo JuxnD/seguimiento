@@ -141,6 +141,7 @@ class ReportRepository {
 
     final weights = await (db.select(db.bodyWeights)..where((x) => x.date.isBetweenValues(f, t))).get();
     final baselineWeight = await (db.select(db.bodyWeights)
+          ..where((x) => x.date.isSmallerOrEqualValue(t))
           ..orderBy([(x) => OrderingTerm(expression: x.date), (x) => OrderingTerm(expression: x.id)])
           ..limit(1))
         .getSingleOrNull();
@@ -151,7 +152,10 @@ class ReportRepository {
     // La línea base es la primera toma **en ayunas** de cada sitio (§16.10):
     // una tomada después de cenar no es comparable. Sin ninguna en ayunas,
     // la primera que haya.
-    final allMeasures = await (db.select(db.measurements)..orderBy([(x) => OrderingTerm(expression: x.date)])).get();
+    final allMeasures = await (db.select(db.measurements)
+          ..where((x) => x.date.isSmallerOrEqualValue(t))
+          ..orderBy([(x) => OrderingTerm(expression: x.date), (x) => OrderingTerm(expression: x.id)]))
+        .get();
     for (final m in allMeasures.where((m) => m.fasted)) {
       baseline.putIfAbsent(m.site, () => _measure(m));
     }

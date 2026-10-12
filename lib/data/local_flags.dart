@@ -18,6 +18,10 @@ class LocalFlags {
 
   final File file;
 
+  // Una cola por ruta en este isolate, incluso con varias instancias. Cada
+  // caller conserva su Future/error; la cola continúa después de un fallo.
+  static final _writes = <String, Future<void>>{};
+
   Map<String, Object?> _read() {
     try {
       final decoded = jsonDecode(file.readAsStringSync());
@@ -38,8 +42,23 @@ class LocalFlags {
     return raw == null ? null : DateTime.tryParse(raw);
   }
 
-  Future<void> set(String key, Object? value) async {
-    final data = _read()..[key] = value is DateTime ? value.toIso8601String() : value;
+  Future<void> set(String key, Object? value) {
+    final path = p.normalize(file.absolute.path);
+    final identity = Platform.isWindows ? path.toLowerCase() : path;
+    final previous = _writes[identity] ?? Future<void>.value();
+    final write = previous.then((_) => _set(key, value));
+    final tail =
+        write.then<void>((_) {}, onError: (Object _, StackTrace __) {});
+    _writes[identity] = tail;
+    tail.then((_) {
+      if (identical(_writes[identity], tail)) _writes.remove(identity);
+    });
+    return write;
+  }
+
+  Future<void> _set(String key, Object? value) async {
+    final data = _read()
+      ..[key] = value is DateTime ? value.toIso8601String() : value;
     await file.parent.create(recursive: true);
     // Escribe aparte y renombra: un cierre a mitad no deja el archivo cortado.
     final tmp = File('${file.path}.tmp');
