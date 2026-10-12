@@ -34,7 +34,12 @@ jobs:
       - run: python -m pip install Pillow==12.2.0
 
       - name: SQLite para las pruebas
-        run: sudo apt-get update && sudo apt-get install -y libsqlite3-0
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-0 php-cli
+
+      - name: Contrato PHP versionado (sin proveedor ni red)
+        run: |
+          python -B tool/gateway_contract_verify.py
+          python -B tool/gateway_contract_test.py
 
       - name: Dependencias
         run: flutter pub get

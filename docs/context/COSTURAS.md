@@ -413,3 +413,12 @@ Doble toque UI → Future pendiente → SQLite: una versión; error deja reinten
 con foco retirado e interacción bloqueada y cierre sólo de ruta actual.
 [Recibo y rojos/verdes](sessions/2026-10-12-026-integridad.md).
 Sin operación nativa ni publicación nueva; no resuelve concurrencia multiproceso.
+
+## Contrato PHP028 — paquete mínimo local
+
+Dart request → cuatrofuentesPHP pinned → parserDart:250g/500kcal/coverage exacta,
+transporte proveedor ficticio. Verificador comprueba bytes/paths antes de overrides;
+PHP ausente/bundle cambiado/ausente/extra rechazan, no omiten. Git attributes
+conserva bytes entre hosts. CI/Release preparar PHP y comprobar bundle antes
+empaquetar; remoto/Linux/despliegue/IA real siguen sin comprobar.
+[Recibo y negativos](sessions/2026-10-12-028-interop.md).

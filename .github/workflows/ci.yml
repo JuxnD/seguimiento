@@ -29,7 +29,11 @@ jobs:
       - run: python -m pip install Pillow==12.2.0
 
       # Las pruebas abren SQLite del sistema (ver test/support/sqlite_host.dart).
-      - run: sudo apt-get update && sudo apt-get install -y libsqlite3-0
+      - run: sudo apt-get update && sudo apt-get install -y libsqlite3-0 php-cli
+      - name: Contrato PHP versionado (sin proveedor ni red)
+        run: |
+          python -B tool/gateway_contract_verify.py
+          python -B tool/gateway_contract_test.py
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       # El release se queda sin red si este permiso falta (Flutter solo lo

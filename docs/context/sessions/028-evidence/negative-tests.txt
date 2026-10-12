@@ -1,0 +1,10 @@
+test_changed_file (__main__.ContractTest.test_changed_file) ... ok
+test_extra_file (__main__.ContractTest.test_extra_file) ... ok
+test_intact (__main__.ContractTest.test_intact) ... ok
+test_missing_file (__main__.ContractTest.test_missing_file) ... ok
+test_untrusted_manifest_path (__main__.ContractTest.test_untrusted_manifest_path) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.881s
+
+OK

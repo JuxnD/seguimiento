@@ -1,3 +1,4 @@
 # Exact local QA evidence bytes; narrowly scoped to plan011.
 docs/context/sessions/011-evidence/** -text -diff
 lib/features/report/radar_reference_dialog.dart -text
+test/fixtures/gateway_contract/** -text

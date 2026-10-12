@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/gateway_estimate_interop_test.dart
+00:00 +0: Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)
+  Skip: Requiere SEGUIMIENTO_ESTIMATE_GATEWAY y SEGUIMIENTO_ESTIMATE_PHP; no es prueba remota.
+00:00 +0 ~1: All tests skipped.

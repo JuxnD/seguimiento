@@ -6,6 +6,12 @@ escribe. [Recibo, rojos y gates](sessions/2026-10-12-026-integridad.md).
 Roadmap/piloto distinguen lo publicado1.23 de validación humana/nativa pendiente.
 Sin publicación nueva, dispositivo, IA real ni cambio de esquema/SDK.
 
+**Gate028 local (12oct):** cruce Dart→PHP obligatorio sobre cuatro fuentes
+pinned y hashes; PHP ausente y bundle corrupto fallan. CI/Release preparan PHP.
+[Recibo y negativos](sessions/2026-10-12-028-interop.md),
+[renovación](../runbooks/gateway-contract.md). Copia derivada de backend privado
+queda local para revisión; remoto/Linux/publicación no ejecutados ni autorizados.
+
 **Publicada1.23.0+31 (10oct):** 023/024/025 integrados, esquema23.
 [Recibo de release](sessions/2026-10-10-release-1-23.md) y
 [manifiesto/evidencia](sessions/release123-evidence/manifest.json): conservación

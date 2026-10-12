@@ -7,14 +7,28 @@ import 'package:seguimiento/data/meal_assistant.dart';
 import '../support/meal_estimate_fixture.dart';
 
 void main() {
-  final gateway = Platform.environment['SEGUIMIENTO_ESTIMATE_GATEWAY'];
-  final php = Platform.environment['SEGUIMIENTO_ESTIMATE_PHP'];
+  final gateway = Platform.environment['SEGUIMIENTO_ESTIMATE_GATEWAY'] ??
+      'test/fixtures/gateway_contract';
+  final php = Platform.environment['SEGUIMIENTO_ESTIMATE_PHP'] ?? 'php';
   test('Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)',
       () async {
+    // Always verify the pinned bundle, even when comparing a local backend.
+    final verified =
+        await Process.run('python', ['-B', 'tool/gateway_contract_verify.py']);
+    expect(verified.exitCode, 0,
+        reason: '${verified.stdout}\n${verified.stderr}');
+    try {
+      final runtime = await Process.run(php, ['--version']);
+      expect(runtime.exitCode, 0,
+          reason: 'PHP CLI obligatorio para el contrato');
+    } on ProcessException {
+      fail(
+          'PHP CLI obligatorio: configura SEGUIMIENTO_ESTIMATE_PHP o instala php');
+    }
     const text = '250 g de arroz chino';
     final result = estimateResult([estimateItem('Arroz chino')], [(text, 0)]);
     final assistant = MealAssistant(MockClient((request) async {
-      final process = await Process.start(php!, [
+      final process = await Process.start(php, [
         '-d',
         'display_errors=0',
         '$gateway/scripts/seguimiento_estimate_test.php',
@@ -38,8 +52,5 @@ void main() {
     expect(estimate.items.single.quantity, 250);
     expect(estimate.items.single.macros!.kcal, 500);
     expect(estimate.coverage.single.text, text);
-  },
-      skip: gateway == null || php == null
-          ? 'Requiere SEGUIMIENTO_ESTIMATE_GATEWAY y SEGUIMIENTO_ESTIMATE_PHP; no es prueba remota.'
-          : false);
+  });
 }

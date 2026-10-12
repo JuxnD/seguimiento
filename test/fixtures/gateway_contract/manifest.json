@@ -1,0 +1,11 @@
+{
+  "contract": 2,
+  "source_commit": "3f4bff14e5d811415860f4a59180ab3af2e1c1e8",
+  "reviewed_head": "2dbf55627c5657acd552d4048b3b7a9da365b520",
+  "files": {
+    "app/services/SeguimientoAssistantService.php": "4efba18653569cd7336416ff3636b03d9bbe60af216760c725617adf4fbae7d3",
+    "app/services/SeguimientoAiService.php": "773c50208bd0474e62b393c5bb09847e4f6f9512d9fd149738d2da81803597f4",
+    "app/services/SeguimientoAiTransport.php": "8e17d225bd991062149e3e9d67edffee4c171f96403c57e1017ebbdf1c4bf463",
+    "scripts/seguimiento_estimate_test.php": "7d32f3ca8542620ddb30da07ed862b731cdf7e2bd54ddbde14f06bcfbbf44e95"
+  }
+}

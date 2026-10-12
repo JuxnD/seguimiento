@@ -1,0 +1,3 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/gateway_estimate_interop_test.dart
+00:00 +0: Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)
+00:00 +1: All tests passed!
