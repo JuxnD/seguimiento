@@ -1,0 +1,149 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: inventario incluye IA y explica cifrado y copias automáticas
+00:02 +1: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+00:03 +2: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+00:05 +3: restaurar copia automática revela alcance e IA antes de reemplazar
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following UnimplementedError was thrown running a test:
+UnimplementedError
+
+When the exception was thrown, this was the stack:
+#1      ProviderContainer.read (package:riverpod/src/framework/container.dart:241:21)
+#2      ConsumerStatefulElement.read (package:flutter_riverpod/src/consumer.dart:620:59)
+#3      restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:36:28)
+#4      _BackupCardState._restoreFile.<anonymous closure> (package:seguimiento/features/settings/settings_screen.dart:225:24)
+#5      _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:19)
+#6      _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:225:7)
+#7      _BackupCardState.build.<anonymous closure>.<anonymous closure> (package:seguimiento/features/settings/settings_screen.dart:183:43)
+#8      _InkResponseState.handleTap (package:flutter/src/material/ink_well.dart:1171:21)
+#9      GestureRecognizer.invokeCallback (package:flutter/src/gestures/recognizer.dart:344:24)
+#10     TapGestureRecognizer.handleTapUp (package:flutter/src/gestures/tap.dart:652:11)
+#11     BaseTapGestureRecognizer._checkUp (package:flutter/src/gestures/tap.dart:309:5)
+#12     BaseTapGestureRecognizer.acceptGesture (package:flutter/src/gestures/tap.dart:279:7)
+#13     GestureArenaManager.sweep (package:flutter/src/gestures/arena.dart:167:27)
+#14     GestureBinding.handleEvent (package:flutter/src/gestures/binding.dart:499:20)
+#15     GestureBinding.dispatchEvent (package:flutter/src/gestures/binding.dart:475:22)
+#16     RendererBinding.dispatchEvent (package:flutter/src/rendering/binding.dart:425:11)
+#17     GestureBinding._handlePointerEventImmediately (package:flutter/src/gestures/binding.dart:420:7)
+#18     GestureBinding.handlePointerEvent (package:flutter/src/gestures/binding.dart:383:5)
+#19     TestWidgetsFlutterBinding.handlePointerEventForSource.<anonymous closure> (package:flutter_test/src/binding.dart:662:42)
+#20     TestWidgetsFlutterBinding.withPointerEventSource (package:flutter_test/src/binding.dart:672:11)
+#21     TestWidgetsFlutterBinding.handlePointerEventForSource (package:flutter_test/src/binding.dart:662:5)
+#22     WidgetTester.sendEventToBinding.<anonymous closure> (package:flutter_test/src/widget_tester.dart:868:15)
+#25     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:71:41)
+#26     WidgetTester.sendEventToBinding (package:flutter_test/src/widget_tester.dart:867:27)
+#27     TestGesture.up.<anonymous closure> (package:flutter_test/src/test_pointer.dart:550:26)
+#30     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:71:41)
+#31     TestGesture.up (package:flutter_test/src/test_pointer.dart:543:27)
+#32     WidgetController.tapAt.<anonymous closure> (package:flutter_test/src/controller.dart:1085:21)
+#33     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:117:7)
+#34     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart:186:5)
+#35     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+#36     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+#38     activeSessionStoreProvider.<anonymous closure> (package:seguimiento/app/providers.dart:69:74)
+#39     ProviderContainer.read (package:riverpod/src/framework/container.dart:241:21)
+#40     ConsumerStatefulElement.read (package:flutter_riverpod/src/consumer.dart:620:59)
+#41     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:36:28)
+#42     _BackupCardState._restoreFile.<anonymous closure> (package:seguimiento/features/settings/settings_screen.dart:225:24)
+#43     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:19)
+#44     _BackupCardState._restoreFile (package:seguimiento/features/settings/settings_screen.dart:225:7)
+#45     _BackupCardState.build.<anonymous closure>.<anonymous closure> (package:seguimiento/features/settings/settings_screen.dart:183:43)
+#46     _InkResponseState.handleTap (package:flutter/src/material/ink_well.dart:1171:21)
+#47     GestureRecognizer.invokeCallback (package:flutter/src/gestures/recognizer.dart:344:24)
+#48     TapGestureRecognizer.handleTapUp (package:flutter/src/gestures/tap.dart:652:11)
+#49     BaseTapGestureRecognizer._checkUp (package:flutter/src/gestures/tap.dart:309:5)
+#50     BaseTapGestureRecognizer.acceptGesture (package:flutter/src/gestures/tap.dart:279:7)
+#51     GestureArenaManager.sweep (package:flutter/src/gestures/arena.dart:167:27)
+#52     GestureBinding.handleEvent (package:flutter/src/gestures/binding.dart:499:20)
+#53     GestureBinding.dispatchEvent (package:flutter/src/gestures/binding.dart:475:22)
+#54     RendererBinding.dispatchEvent (package:flutter/src/rendering/binding.dart:425:11)
+#55     GestureBinding._handlePointerEventImmediately (package:flutter/src/gestures/binding.dart:420:7)
+#56     GestureBinding.handlePointerEvent (package:flutter/src/gestures/binding.dart:383:5)
+#57     TestWidgetsFlutterBinding.handlePointerEventForSource.<anonymous closure> (package:flutter_test/src/binding.dart:662:42)
+#58     TestWidgetsFlutterBinding.withPointerEventSource (package:flutter_test/src/binding.dart:672:11)
+#59     TestWidgetsFlutterBinding.handlePointerEventForSource (package:flutter_test/src/binding.dart:662:5)
+#60     WidgetTester.sendEventToBinding.<anonymous closure> (package:flutter_test/src/widget_tester.dart:868:15)
+#63     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:71:41)
+#64     WidgetTester.sendEventToBinding (package:flutter_test/src/widget_tester.dart:867:27)
+#65     TestGesture.up.<anonymous closure> (package:flutter_test/src/test_pointer.dart:550:26)
+#68     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:71:41)
+#69     TestGesture.up (package:flutter_test/src/test_pointer.dart:543:27)
+#70     WidgetController.tapAt.<anonymous closure> (package:flutter_test/src/controller.dart:1085:21)
+#72     WidgetController.tapAt.<anonymous closure> (package:flutter_test/src/controller.dart:1084:35)
+#75     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:71:41)
+#76     WidgetController.tapAt (package:flutter_test/src/controller.dart:1083:27)
+#77     WidgetController.tap (package:flutter_test/src/controller.dart:1032:12)
+#78     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart:186:18)
+#80     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart:181:20)
+#81     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+#83     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:181:25)
+#84     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:19)
+#86     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1006:5)
+#89     TestWidgetsFlutterBinding._runTest (package:flutter_test/src/binding.dart:995:14)
+#90     AutomatedTestWidgetsFlutterBinding.runTest.<anonymous closure> (package:flutter_test/src/binding.dart:1475:24)
+#91     FakeAsync.run.<anonymous closure>.<anonymous closure> (package:fake_async/fake_async.dart:182:54)
+#96     withClock (package:clock/src/default.dart:52:10)
+#97     FakeAsync.run.<anonymous closure> (package:fake_async/fake_async.dart:182:22)
+#102    FakeAsync.run (package:fake_async/fake_async.dart:182:7)
+#103    AutomatedTestWidgetsFlutterBinding.runTest (package:flutter_test/src/binding.dart:1472:15)
+#104    testWidgets.<anonymous closure> (package:flutter_test/src/widget_tester.dart:175:24)
+#105    Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+#107    Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+#112    Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:13)
+#113    Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:17)
+#118    Invoker._waitForOutstandingCallbacks (package:test_api/src/backend/invoker.dart:254:5)
+#119    Invoker._onRun.<anonymous closure>.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/invoker.dart:394:17)
+#121    Invoker._onRun.<anonymous closure>.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/invoker.dart:392:11)
+#126    Invoker._onRun.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/invoker.dart:383:9)
+#127    Invoker._guardIfGuarded (package:test_api/src/backend/invoker.dart:426:15)
+#128    Invoker._onRun.<anonymous closure> (package:test_api/src/backend/invoker.dart:382:7)
+#135    Invoker._onRun (package:test_api/src/backend/invoker.dart:381:11)
+#136    LiveTestController.run (package:test_api/src/backend/live_test_controller.dart:153:11)
+#137    RemoteListener._runLiveTest.<anonymous closure> (package:test_api/src/backend/remote_listener.dart:273:16)
+#142    RemoteListener._runLiveTest (package:test_api/src/backend/remote_listener.dart:272:5)
+#143    RemoteListener._serializeTest.<anonymous closure> (package:test_api/src/backend/remote_listener.dart:220:7)
+#161    _GuaranteeSink.add (package:stream_channel/src/guarantee_channel.dart:125:12)
+#162    new _MultiChannel.<anonymous closure> (package:stream_channel/src/multi_channel.dart:159:31)
+#164    CastStreamSubscription._onData (dart:_internal/async_cast.dart:85:11)
+#190    new _WebSocketImpl._fromSocket.<anonymous closure> (dart:_http/websocket_impl.dart:1144:21)
+#196    _WebSocketProtocolTransformer._messageFrameEnd (dart:_http/websocket_impl.dart:332:23)
+#197    _WebSocketProtocolTransformer.add (dart:_http/websocket_impl.dart:226:46)
+#205    _Socket._onData (dart:io-patch/socket_patch.dart:2449:41)
+#212    new _RawSocket.<anonymous closure> (dart:io-patch/socket_patch.dart:1936:33)
+#213    _NativeSocket.issueReadEvent.issue (dart:io-patch/socket_patch.dart:1379:14)
+(elided 112 frames from dart:async and package:stack_trace)
+
+The test description was:
+  restaurar copia automática revela alcance e IA antes de reemplazar
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +3 -1: restaurar copia automática revela alcance e IA antes de reemplazar [E]
+  Test failed. See exception logs above.
+  The test description was: restaurar copia automática revela alcance e IA antes de reemplazar
+  
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test (but after the test had completed):
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "¿Restaurar este respaldo?": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:149:31)
+#1      _expect (package:matcher/src/expect/expect.dart:144:3)
+#2      expect (package:matcher/src/expect/expect.dart:56:3)
+#3      expect (package:flutter_test/src/widget_tester.dart:474:18)
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart:196:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  Test failed. See exception logs above.
+  The test description was: restaurar copia automática revela alcance e IA antes de reemplazar
+  
+00:14 +3 -1: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+00:15 +4 -1: (tearDownAll)
+00:16 +4 -1: Some tests failed.

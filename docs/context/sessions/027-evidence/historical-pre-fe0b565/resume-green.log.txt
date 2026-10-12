@@ -1,0 +1,14 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el id del día no existe en la copia restaurada: se retoma con el guion congelado
+00:01 +1: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el mismo id pertenece a otro día de otra base: no se asigna a ese plan
+00:01 +2: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el id coincide con el mismo día: se conserva el vínculo normal
+00:02 +3: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: snapshot legado sin guion y sin día: se conserva y se pide decisión
+00:04 +4: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+00:05 +5: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: guion congelado inválido: el archivo se conserva y se pide decisión
+00:06 +6: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: (tearDownAll)
+00:06 +6: loading C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart
+00:07 +6: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: (setUpAll)
+00:07 +6: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: sesión técnica cerrada por Android: se retoma en el mismo paso
+00:08 +7: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: (tearDownAll)
+00:08 +7: All tests passed!

@@ -41,6 +41,15 @@ class ActiveSessionStore {
     return _enqueue();
   }
 
+  /// Tras una restauración exitosa: el cronómetro en curso no viaja en el
+  /// respaldo y su id de día puede ser de otra base. Suelta esa referencia
+  /// conservando todo lo demás. Devuelve cuando el archivo ya quedó escrito.
+  Future<void> unlinkPlanAfterRestore() async {
+    final current = await load();
+    if (current is! GuidedSnapshot || current.planDayId < 0) return;
+    await save(current.unlinkedAfterRestore());
+  }
+
   /// Borra la sesión en curso (se guardó o se descartó).
   Future<void> clear() {
     _pending = null;

@@ -456,19 +456,19 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
           await _askAboutLostScript(context, 'El guion guardado de esa sesión no se puede leer.');
           return;
         }
-        // El id solo vale si en esta base sigue siendo el mismo día: tras
-        // restaurar puede faltar o pertenecer a otro. Entonces la sesión se
-        // guarda sin plan, marcada como recuperada.
+        // La restauración ya soltó el id (unlinkPlanAfterRestore). Aquí solo se
+        // cubre que el día desaparezca por otra vía: entonces se guarda sin
+        // plan, marcada como recuperada.
         int? linkId;
         if (s.planDayId >= 0) {
           final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
           if (!context.mounted) return;
-          if (view != null && _sameDay(view.day, day)) linkId = s.planDayId;
+          if (view != null) linkId = s.planDayId;
         }
         final recovered = s.planDayId >= 0 && linkId == null;
         var note = s.note;
-        if (recovered && !(note ?? '').contains(_recoveredNote)) {
-          note = note == null || note.isEmpty ? _recoveredNote : '$note. $_recoveredNote';
+        if (recovered && !(note ?? '').contains(recoveredPlanNote)) {
+          note = note == null || note.isEmpty ? recoveredPlanNote : '$note. $recoveredPlanNote';
         }
         if (!context.mounted) return;
         await _runGuided(
@@ -519,7 +519,7 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       if (!context.mounted) return;
       final effective = s.light ? lightVersion(adjusted) : adjusted;
       // Sin prueba de que sea el día de la sesión, se retoma pero no se vincula.
-      final legacyNote = proven ? note : (note == null ? _recoveredNote : '$note. $_recoveredNote');
+      final legacyNote = proven ? note : (note == null ? recoveredPlanNote : '$note. $recoveredPlanNote');
       await _runGuided(
         context,
         GuidedSessionScreen(
@@ -552,22 +552,7 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
   }
 }
 
-const _recoveredNote = 'Recuperada tras restaurar: no se pudo identificar el plan de origen';
-
 enum _LostChoice { use, pending, discard }
-
-/// Mismo día del plan, por estructura: igual día de la semana y tipo, y los
-/// ejercicios del plan (nombre y bloque, en orden) están todos en el guion
-/// congelado. El guion puede traer de más (escalera, planche) pero no de menos.
-/// No prueba procedencia: un día de otra base con la misma estructura pasa.
-bool _sameDay(PlanDayDraft base, PlanDayDraft frozen) {
-  if (base.weekday != frozen.weekday || base.type != frozen.type) return false;
-  var i = 0;
-  for (final e in frozen.exercises) {
-    if (i < base.exercises.length && e.name == base.exercises[i].name && e.block == base.exercises[i].block) i++;
-  }
-  return i == base.exercises.length;
-}
 
 /// La sesión guardada no se puede rearmar con certeza. No se borra ni se
 /// reconstruye con otro día: queda pendiente salvo que se elija descartarla.

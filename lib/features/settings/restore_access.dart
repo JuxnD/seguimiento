@@ -33,6 +33,8 @@ Future<bool> restoreBackupFile(BuildContext context, WidgetRef ref, File file, S
   final host = ref.read(databaseHostProvider);
   final documents = ref.read(documentsDirProvider.future);
   final generation = ref.read(databaseGenerationProvider.notifier);
+  final sessionStore = ref.read(activeSessionStoreProvider);
+  final container = ProviderScope.containerOf(context, listen: false);
   PreparedBackup? prepared;
   var replaced = false;
   var restored = false;
@@ -55,7 +57,7 @@ Future<bool> restoreBackupFile(BuildContext context, WidgetRef ref, File file, S
             'Pueden reaparecer conversaciones que borraste después de esa copia. '
             '${legacy ? 'Es un respaldo antiguo: NO contiene fotos. Las fotos actuales se conservan.' : 'Se reemplazan también las fotos actuales por las ${ready.photoCount} fotos del ZIP.'}\n\n'
             '${missing == 0 ? '' : 'RESPALDO INCOMPLETO: $missing fotos ya faltaban al exportarlo y no se pueden recuperar.\n\n'}'
-            'El cronómetro en curso, los permisos y la licencia no cambian. '
+            'El cronómetro en curso, los permisos y la licencia no cambian; el cronómetro solo suelta su vínculo con el plan anterior. '
             'El respaldo es un archivo sin cifrar.\n\n'
             'Esto no se puede deshacer.\n\n'
             'Si lo de ahora te sirve, exporta primero.'),
@@ -69,6 +71,9 @@ Future<bool> restoreBackupFile(BuildContext context, WidgetRef ref, File file, S
     replaced = true;
     await _progress(context, 'Restaurando respaldo', () => archive.restore(ready, allowMissingPhotos: true));
     restored = true;
+    // Solo con la base ya reemplazada: cancelar o revertir no toca el cronómetro.
+    await sessionStore.unlinkPlanAfterRestore();
+    container.invalidate(activeSessionProvider);
     if (context.mounted) {
       showSnack(
           context,

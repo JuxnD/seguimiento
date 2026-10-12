@@ -1,0 +1,27 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add éxito sin ocupante: copia el archivo y registra la fila
+00:00 +1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add éxito con ocupante: reemplaza fila y archivo, sin huérfano
+00:00 +2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add INSERT fallido: conserva fila y bytes previos y no deja el archivo nuevo
+00:00 +3: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add origen inexistente: falla la copia y no cambia nada
+00:00 +4: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add dos altas del mismo día y ángulo no pisan el archivo de la otra
+00:00 +5: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify éxito: la ocupante se reemplaza y su archivo se purga tras el commit
+00:00 +6: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify UPDATE fallido: la ocupante conserva fila y bytes
+00:00 +7: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify sin ocupante: solo mueve
+00:00 +8: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga quitar conserva el archivo; restore devuelve la foto; purga lo borra
+00:00 +9: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete confinado: una ruta con .. no borra fuera de fotos
+00:00 +10: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete con fallo SQL conserva el archivo
+00:00 +11: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: (tearDownAll)
+00:00 +11: loading C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart
+00:03 +11: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: (setUpAll)
+00:03 +11: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el id del día no existe en la copia restaurada: se retoma con el guion congelado
+00:04 +12: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el mismo id pertenece a otro día de otra base: no se asigna a ese plan
+00:05 +13: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el id coincide con el mismo día: se conserva el vínculo normal
+00:06 +14: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: mismo martes y tipo con otros ejercicios: el guion se retoma pero no se vincula
+00:07 +15: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el guion trae un bloque añadido (escalera): sigue siendo el mismo día y se vincula
+00:08 +16: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo
+00:11 +17: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: snapshot legado sin guion y sin día: se conserva y se pide decisión
+00:13 +18: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+00:14 +19: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: guion congelado inválido: el archivo se conserva y se pide decisión
+00:15 +20: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: (tearDownAll)
+00:15 +20: All tests passed!

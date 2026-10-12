@@ -183,10 +183,10 @@ void main() {
     });
   });
 
-  testWidgets('el mismo id pertenece a otro día de otra base: no se asigna a ese plan', (t) async {
+  testWidgets('tras restaurar, el mismo id es de otro día: no se asigna a ese plan', (t) async {
     await run(t, (settle, db, store, resume) async {
       final foreign = await seedPlan(db, friday: DayType.piernas);
-      await resume(snapshot(planDayId: foreign));
+      await resume(snapshot(planDayId: foreign).unlinkedAfterRestore());
 
       expect(find.text('Fondos en banco'), findsWidgets);
       expect(find.text('Sentadilla'), findsNothing);
@@ -209,13 +209,13 @@ void main() {
     });
   });
 
-  testWidgets('mismo martes y tipo con otros ejercicios: el guion se retoma pero no se vincula', (t) async {
+  testWidgets('tras restaurar, mismo martes y tipo con otros ejercicios: el guion se retoma sin vincular', (t) async {
     await run(t, (settle, db, store, resume) async {
       final foreign = await seedPlan(db,
           friday: DayType.descanso,
           tuesday: DayType.trenSuperior,
           tuesdayExercises: [PlanExerciseDraft(name: 'Remo invertido', sets: 5, repsMin: 3, repsMax: 5)]);
-      await resume(snapshot(planDayId: foreign));
+      await resume(snapshot(planDayId: foreign).unlinkedAfterRestore());
 
       expect(find.text('Fondos en banco'), findsWidgets);
       final current = await t.runAsync(store.load) as GuidedSnapshot?;

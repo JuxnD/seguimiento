@@ -1,0 +1,23 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add éxito sin ocupante: copia el archivo y registra la fila
+00:00 +1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add éxito con ocupante: reemplaza fila y archivo, sin huérfano
+00:00 +2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add INSERT fallido: conserva fila y bytes previos y no deja el archivo nuevo
+00:00 +3: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add origen inexistente: falla la copia y no cambia nada
+00:00 +4: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add dos altas del mismo día y ángulo no pisan el archivo de la otra
+00:00 +5: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify éxito: la ocupante se reemplaza y su archivo se purga tras el commit
+00:00 +6: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify UPDATE fallido: la ocupante conserva fila y bytes
+00:00 +7: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify sin ocupante: solo mueve
+00:00 +8: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga quitar conserva el archivo; restore devuelve la foto; purga lo borra
+00:00 +9: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete confinado: una ruta con .. no borra fuera de fotos
+00:00 +10: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete con fallo SQL conserva el archivo
+00:00 +11: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: (tearDownAll)
+00:00 +11: loading C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart
+00:01 +11: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: (setUpAll)
+00:01 +11: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: una espalda subida como perfil se pasa a espalda
+00:01 +12: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: cambiar la fecha la mueve de toma
+00:01 +13: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: detecta la foto que ya ocupa el destino y mueve la nueva allí
+00:01 +14: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: quitar y deshacer devuelve la misma foto
+00:01 +15: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: una ruta que sale de la carpeta de fotos no se borra
+00:01 +16: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: (tearDownAll)
+00:01 +16: All tests passed!

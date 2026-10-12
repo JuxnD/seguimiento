@@ -7,6 +7,9 @@ library;
 
 import 'enums.dart';
 
+/// Nota de contexto de una sesión cuyo plan de origen no se puede identificar.
+const recoveredPlanNote = 'Recuperada tras restaurar: no se pudo identificar el plan de origen';
+
 sealed class ActiveSession {
   const ActiveSession({required this.date, required this.startedAt});
 
@@ -148,6 +151,19 @@ class GuidedSnapshot extends ActiveSession {
   /// saltó (§16.23). Faltan en fotos anteriores: nada marcado.
   final List<String> warmupDone;
   final bool warmupSkipped;
+
+  /// Tras restaurar una base, el id del día pertenece a otra base: se suelta
+  /// la referencia y se anota. El resto (guion, dosis, marcas, tiempos) queda
+  /// tal cual. Idempotente.
+  GuidedSnapshot unlinkedAfterRestore() {
+    if (planDayId < 0) return this;
+    final n = note;
+    return _fromJson({
+      ...toJson(),
+      'planDayId': -1,
+      'note': n == null || n.isEmpty ? recoveredPlanNote : (n.contains(recoveredPlanNote) ? n : '$n. $recoveredPlanNote'),
+    });
+  }
 
   @override
   Map<String, Object?> toJson() => {

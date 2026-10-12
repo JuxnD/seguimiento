@@ -1,0 +1,38 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: add éxito sin ocupante: copia el archivo y registra la fila
+00:00 +1: add éxito con ocupante: reemplaza fila y archivo, sin huérfano
+00:00 +2: add INSERT fallido: conserva fila y bytes previos y no deja el archivo nuevo
+00:00 +2 -1: add INSERT fallido: conserva fila y bytes previos y no deja el archivo nuevo [E]
+  Expected: [1]
+    Actual: MappedListIterable<ProgressPhotoRow, int>:[]
+     Which: at location [0] is MappedListIterable<ProgressPhotoRow, int>:[] which shorter than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\photo_atomicity_test.dart 79:7            main.<fn>.<fn>
+  
+00:00 +2 -1: add origen inexistente: falla la copia y no cambia nada
+00:00 +3 -1: add dos altas del mismo día y ángulo no pisan el archivo de la otra
+00:00 +4 -1: reclassify éxito: la ocupante se reemplaza y su archivo se purga tras el commit
+00:00 +5 -1: reclassify UPDATE fallido: la ocupante conserva fila y bytes
+00:00 +5 -2: reclassify UPDATE fallido: la ocupante conserva fila y bytes [E]
+  PathNotFoundException: Cannot open file, path = 'C:\Users\Acer\AppData\Local\Temp\seguimiento_027_docs71a28de1\fotos\2026-10-03-espalda-seed.jpg' (OS Error: El sistema no puede encontrar el archivo especificado.
+  , errno = 2)
+  dart:io                                     _File.readAsBytesSync
+  test\data\photo_atomicity_test.dart 52:84   main.bytesOf
+  test\data\photo_atomicity_test.dart 128:14  main.<fn>.<fn>
+  
+00:00 +5 -2: reclassify sin ocupante: solo mueve
+00:00 +6 -2: quitar, deshacer y purga quitar conserva el archivo; restore devuelve la foto; purga lo borra
+00:00 +7 -2: quitar, deshacer y purga delete confinado: una ruta con .. no borra fuera de fotos
+00:00 +8 -2: quitar, deshacer y purga delete con fallo SQL conserva el archivo
+00:00 +8 -3: quitar, deshacer y purga delete con fallo SQL conserva el archivo [E]
+  PathNotFoundException: Cannot open file, path = 'C:\Users\Acer\AppData\Local\Temp\seguimiento_027_docs50eba3cc\fotos\2026-10-03-frente-seed.jpg' (OS Error: El sistema no puede encontrar el archivo especificado.
+  , errno = 2)
+  dart:io                                     _File.readAsBytesSync
+  test\data\photo_atomicity_test.dart 52:84   main.bytesOf
+  test\data\photo_atomicity_test.dart 166:14  main.<fn>.<fn>
+  
+00:00 +8 -3: (tearDownAll)
+00:00 +8 -3: Some tests failed.

@@ -1,0 +1,108 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: una espalda subida como perfil se pasa a espalda
+00:00 +1: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: cambiar la fecha la mueve de toma
+00:00 +2: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: detecta la foto que ya ocupa el destino y mueve la nueva allí
+00:00 +3: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: quitar y deshacer devuelve la misma foto
+00:00 +4: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: una ruta que sale de la carpeta de fotos no se borra
+00:00 +5: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: (tearDownAll)
+00:00 +5: loading C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart
+00:01 +5: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: (setUpAll)
+00:01 +5: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: sesión técnica cerrada por Android: se retoma en el mismo paso
+00:03 +6: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: (tearDownAll)
+00:03 +6: loading C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart
+00:04 +6: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+00:04 +7: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+00:04 +8: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+00:04 +9: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+00:04 +10: loading C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart
+00:05 +10: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: (setUpAll)
+00:05 +10: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: calentamiento guiado: pasos con su dosis, reloj por paso y lo marcado queda anotado
+00:08 +11: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: saltar el calentamiento queda registrado y no pregunta
+00:08 +12: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: molestia en el registro: aviso visible y los mismos pasos
+00:09 +13: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart:262:16)
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#9      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:09 +14: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: foto vieja sin calentamiento guiado: nada marcado, no se rompe
+00:09 +15: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: (tearDownAll)
+00:09 +15: loading C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart
+00:10 +15: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: (setUpAll)
+00:10 +15: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+00:15 +16: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial
+00:17 +17: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash
+00:20 +18: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: consumer advice cambia tras guardar editar y borrar sin reiniciar
+00:22 +19: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: legado1.20 conserva secuencia e indice sin agregar escalera; si no hay con qué comprobar el día, pide confirmación
+00:24 +20: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+00:25 +21: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: (tearDownAll)
+00:25 +21: loading C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart
+00:27 +21: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: (setUpAll)
+00:27 +21: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:29 +22: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+00:30 +23: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+00:32 +24: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart:179:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:110:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:42:19)
+<asynchronous suspension>
+#11     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:34 +25: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+00:35 +26: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: (tearDownAll)
+00:35 +26: loading C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart
+00:36 +26: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: Hoy muestra el core además del circuito, una línea por variante
+00:36 +27: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: la versión ligera: 5 rondas, elevaciones 2×8–10 y hollow 2×20–30 s
+00:36 +28: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: el guion de la versión ligera tiene 5 rondas y el core recortado
+00:36 +29: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: un día de bloques pierde una serie en lo que tiene 3 o más
+00:36 +30: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: retomar una sesión ligera la reconstruye ligera
+00:36 +31: loading C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart
+00:37 +31: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: (setUpAll)
+00:37 +31: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A1: una prueba guardada no equivale a test completo
+00:37 +32: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A2: pruebas de piernas no sustituyen la sesión normal
+00:37 +33: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A3: valores no finitos no llegan a resultados persistidos
+00:38 +34: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A4: un solo lado no determina el lado más débil
+00:38 +35: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja
+00:38 +36: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida
+00:38 +37: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes
+00:38 +38: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=true
+00:38 +39: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=false
+00:38 +40: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps NaN conserva resultado anterior
+00:38 +41: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps Infinity conserva resultado anterior
+00:38 +42: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps -Infinity conserva resultado anterior
+00:38 +43: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps -1.0 conserva resultado anterior
+00:38 +44: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps 1.5 conserva resultado anterior
+00:39 +45: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos
+00:39 +46: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+00:39 +47: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: lumbar durable idempotente con mismo evento y separado por sesion
+00:39 +48: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: (tearDownAll)
+00:39 +48: All tests passed!

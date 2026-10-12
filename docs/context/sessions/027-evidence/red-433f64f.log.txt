@@ -1,0 +1,399 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add éxito sin ocupante: copia el archivo y registra la fila
+00:05 +1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add éxito con ocupante: reemplaza fila y archivo, sin huérfano
+00:05 +2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add INSERT fallido: conserva fila y bytes previos y no deja el archivo nuevo
+00:08 +2 -1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add INSERT fallido: conserva fila y bytes previos y no deja el archivo nuevo [E]
+  Expected: [1]
+    Actual: MappedListIterable<ProgressPhotoRow, int>:[]
+     Which: at location [0] is MappedListIterable<ProgressPhotoRow, int>:[] which shorter than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\photo_atomicity_test.dart 79:7            main.<fn>.<fn>
+  
+00:08 +2 -1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add origen inexistente: falla la copia y no cambia nada
+00:09 +3 -1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: add dos altas del mismo día y ángulo no pisan el archivo de la otra
+00:09 +4 -1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify éxito: la ocupante se reemplaza y su archivo se purga tras el commit
+00:10 +5 -1: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify UPDATE fallido: la ocupante conserva fila y bytes
+00:11 +5 -2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify UPDATE fallido: la ocupante conserva fila y bytes [E]
+  PathNotFoundException: Cannot open file, path = 'C:\Users\Acer\AppData\Local\Temp\seguimiento_027_docs7129a13d\fotos\2026-10-03-espalda-seed.jpg' (OS Error: El sistema no puede encontrar el archivo especificado.
+  , errno = 2)
+  dart:io                                     _File.readAsBytesSync
+  test\data\photo_atomicity_test.dart 52:84   main.bytesOf
+  test\data\photo_atomicity_test.dart 130:14  main.<fn>.<fn>
+  
+00:11 +5 -2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: reclassify sin ocupante: solo mueve
+00:12 +6 -2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga quitar conserva el archivo; restore devuelve la foto; purga lo borra
+00:12 +7 -2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete confinado: una ruta con .. no borra fuera de fotos
+00:13 +8 -2: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete con fallo SQL conserva el archivo
+00:13 +8 -3: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete con fallo SQL conserva el archivo [E]
+  PathNotFoundException: Cannot open file, path = 'C:\Users\Acer\AppData\Local\Temp\seguimiento_027_docs4a97adeb\fotos\2026-10-03-frente-seed.jpg' (OS Error: El sistema no puede encontrar el archivo especificado.
+  , errno = 2)
+  dart:io                                     _File.readAsBytesSync
+  test\data\photo_atomicity_test.dart 52:84   main.bytesOf
+  test\data\photo_atomicity_test.dart 168:14  main.<fn>.<fn>
+  
+00:13 +8 -3: C:/My Projects/seguimiento-027-claude/test/data/photo_atomicity_test.dart: (tearDownAll)
+00:13 +8 -3: loading C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart
+00:17 +8 -3: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: (setUpAll)
+00:17 +8 -3: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el id del día no existe en la copia restaurada: se retoma con el guion congelado
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TextContainingWidgetFinder:<Found 1 widget with text containing ya no existe: [
+            Text("El día del plan de esa sesión ya no existe; se descarta.", dependencies:
+[DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:172:7)
+<asynchronous suspension>
+#5      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:119:5)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:168:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart line 172
+The test description was:
+  el id del día no existe en la copia restaurada: se retoma con el guion congelado
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:18 +8 -4: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el id del día no existe en la copia restaurada: se retoma con el guion congelado [E]
+  Test failed. See exception logs above.
+  The test description was: el id del día no existe en la copia restaurada: se retoma con el guion congelado
+  
+01:19 +8 -4: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el mismo id pertenece a otro día de otra base: no se asigna a ese plan
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:187:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <-1>
+  Actual: <5>
+un día ajeno con el mismo id no es el plan de la sesión
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:195:7)
+<asynchronous suspension>
+#5      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:119:5)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:187:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart line 195
+The test description was:
+  el mismo id pertenece a otro día de otra base: no se asigna a ese plan
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:25 +8 -5: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el mismo id pertenece a otro día de otra base: no se asigna a ese plan [E]
+  Test failed. See exception logs above.
+  The test description was: el mismo id pertenece a otro día de otra base: no se asigna a ese plan
+  
+01:25 +8 -5: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el id coincide con el mismo día: se conserva el vínculo normal
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:201:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:26 +9 -5: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: mismo martes y tipo con otros ejercicios: el guion se retoma pero no se vincula
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:213:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: <-1>
+  Actual: <2>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:222:7)
+<asynchronous suspension>
+#5      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:119:5)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:213:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart line 222
+The test description was:
+  mismo martes y tipo con otros ejercicios: el guion se retoma pero no se vincula
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:27 +9 -6: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: mismo martes y tipo con otros ejercicios: el guion se retoma pero no se vincula [E]
+  Test failed. See exception logs above.
+  The test description was: mismo martes y tipo con otros ejercicios: el guion se retoma pero no se vincula
+  
+01:27 +9 -6: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: el guion trae un bloque añadido (escalera): sigue siendo el mismo día y se vincula
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:229:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:28 +10 -6: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:243:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Sesión sin su guion": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:255:7)
+<asynchronous suspension>
+#5      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:119:5)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:243:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart line 255
+The test description was:
+  legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:29 +10 -7: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo [E]
+  Test failed. See exception logs above.
+  The test description was: legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo
+  
+01:29 +10 -7: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: snapshot legado sin guion y sin día: se conserva y se pide decisión
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:275:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Sesión sin su guion": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:287:7)
+<asynchronous suspension>
+#5      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:119:5)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:275:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart line 287
+The test description was:
+  snapshot legado sin guion y sin día: se conserva y se pide decisión
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:30 +10 -8: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: snapshot legado sin guion y sin día: se conserva y se pide decisión [E]
+  Test failed. See exception logs above.
+  The test description was: snapshot legado sin guion y sin día: se conserva y se pide decisión
+  
+01:30 +10 -8: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:301:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Sesión sin su guion": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:315:7)
+<asynchronous suspension>
+#5      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:119:5)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:301:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart line 315
+The test description was:
+  legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:31 +10 -9: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día [E]
+  Test failed. See exception logs above.
+  The test description was: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+  
+01:31 +10 -9: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: guion congelado inválido: el archivo se conserva y se pide decisión
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:66:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:322:11)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Sesión sin su guion": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:327:7)
+<asynchronous suspension>
+#5      main.run (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:119:5)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart:322:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart line 327
+The test description was:
+  guion congelado inválido: el archivo se conserva y se pide decisión
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:32 +10 -10: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: guion congelado inválido: el archivo se conserva y se pide decisión [E]
+  Test failed. See exception logs above.
+  The test description was: guion congelado inválido: el archivo se conserva y se pide decisión
+  
+01:32 +10 -10: C:/My Projects/seguimiento-027-claude/test/ui/restored_session_resume_test.dart: (tearDownAll)
+01:32 +10 -10: Some tests failed.

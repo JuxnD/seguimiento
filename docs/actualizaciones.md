@@ -68,7 +68,9 @@ recupera fotos del dispositivo anterior. Implementación:
 [`lib/data/database_host.dart`](../lib/data/database_host.dart).
 La confirmación declara el reemplazo del historial de IA y la posible
 reaparición de conversaciones borradas después de esa copia. Flags/permisos,
-cronómetro en curso y licencia quedan fuera del respaldo/restauración.
+flags/permisos y licencia quedan fuera del respaldo/restauración. El cronómetro en curso también
+queda fuera, salvo que tras una restauración exitosa suelta su vínculo con el plan (ver
+[cronómetro](cronometro.md)).
 
 Fotos de progreso (plan 027): el archivo nuevo se prepara antes, la fila se
 reemplaza en una transacción y el archivo anterior se borra solo después del

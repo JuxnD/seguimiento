@@ -1,0 +1,438 @@
+00:00 +0: loading C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: una espalda subida como perfil se pasa a espalda
+00:00 +1: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: cambiar la fecha la mueve de toma
+00:00 +2: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: detecta la foto que ya ocupa el destino y mueve la nueva allí
+00:00 +3: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: quitar y deshacer devuelve la misma foto
+00:00 +4: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: una ruta que sale de la carpeta de fotos no se borra
+00:00 +5: C:/My Projects/seguimiento-027-claude/test/data/photo_repository_test.dart: (tearDownAll)
+00:00 +5: loading C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart
+00:02 +5: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: (setUpAll)
+00:02 +5: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: sesión técnica cerrada por Android: se retoma en el mismo paso
+00:06 +6: C:/My Projects/seguimiento-027-claude/test/ui/technique_resume_test.dart: (tearDownAll)
+00:06 +6: loading C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart
+00:07 +6: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+00:07 +7: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+00:07 +8: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+00:07 +9: C:/My Projects/seguimiento-027-claude/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+00:07 +10: loading C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart
+00:09 +10: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: (setUpAll)
+00:09 +10: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: calentamiento guiado: pasos con su dosis, reloj por paso y lo marcado queda anotado
+00:13 +11: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: saltar el calentamiento queda registrado y no pregunta
+00:14 +12: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: molestia en el registro: aviso visible y los mismos pasos
+00:14 +13: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: SQLite a pantalla: hombro reciente avisa sin cambiar ni completar el bloque
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:318:39)
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart:262:16)
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#9      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:15 +14: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: foto vieja sin calentamiento guiado: nada marcado, no se rompe
+00:15 +15: C:/My Projects/seguimiento-027-claude/test/ui/guided_warmup_test.dart: (tearDownAll)
+00:15 +15: loading C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart
+00:16 +15: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: (setUpAll)
+00:16 +15: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha
+00:20 +16: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial
+00:23 +17: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash
+00:26 +18: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: consumer advice cambia tras guardar editar y borrar sin reiniciar
+00:28 +19: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: legado1.20 conserva secuencia e indice sin agregar escalera; si no hay con qué comprobar el día, pide confirmación
+00:31 +20: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: snapshot con mapa efectivo malformado no tumba la pantalla
+00:32 +21: C:/My Projects/seguimiento-027-claude/test/ui/release121_flows_test.dart: (tearDownAll)
+00:32 +21: loading C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart
+00:34 +21: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: (setUpAll)
+00:34 +21: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: inventario incluye IA y explica cifrado y copias automáticas
+00:38 +22: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: exportar requiere revisar datos antes de crear o compartir y cancelar es inocuo
+00:40 +23: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: borrar IA explica copia actual y anteriores; cancelación conserva conversación
+00:41 +24: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: restaurar copia automática revela alcance e IA antes de reemplazar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart:182:19)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+#11     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:43 +25: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: aviso de exportación legible a 1.6 en teléfono y cancelar accesible
+00:44 +26: C:/My Projects/seguimiento-027-claude/test/data/backup_disclosure_test.dart: (tearDownAll)
+00:44 +26: loading C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart
+00:45 +26: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: Hoy muestra el core además del circuito, una línea por variante
+00:45 +27: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: la versión ligera: 5 rondas, elevaciones 2×8–10 y hollow 2×20–30 s
+00:45 +28: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: el guion de la versión ligera tiene 5 rondas y el core recortado
+00:45 +29: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: un día de bloques pierde una serie en lo que tiene 3 o más
+00:45 +30: C:/My Projects/seguimiento-027-claude/test/domain/light_version_test.dart: retomar una sesión ligera la reconstruye ligera
+00:46 +31: loading C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart
+00:47 +31: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: (setUpAll)
+00:47 +31: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A1: una prueba guardada no equivale a test completo
+00:48 +32: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A2: pruebas de piernas no sustituyen la sesión normal
+00:49 +33: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A3: valores no finitos no llegan a resultados persistidos
+00:49 +34: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A4: un solo lado no determina el lado más débil
+00:49 +35: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja
+00:49 +36: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida
+00:50 +37: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes
+00:50 +38: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=true
+00:50 +39: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=false
+00:50 +40: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps NaN conserva resultado anterior
+00:51 +41: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps Infinity conserva resultado anterior
+00:51 +42: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps -Infinity conserva resultado anterior
+00:51 +43: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps -1.0 conserva resultado anterior
+00:51 +44: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo atomico reps 1.5 conserva resultado anterior
+00:51 +45: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos
+00:51 +46: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+00:51 +47: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: lumbar durable idempotente con mismo evento y separado por sesion
+00:51 +48: C:/My Projects/seguimiento-027-claude/test/data/release121_contracts_test.dart: (tearDownAll)
+00:51 +48: loading C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart
+00:54 +48: C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart: (setUpAll)
+00:54 +48: C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart: SQL pendiente con Ajustes encima muestra el alta visible
+01:01 +49: C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart: ZIP pendiente real desde Ajustes: alta visible, Ajustes/shell fuera, guion intacto
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart:148:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+#11     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart:148:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#12     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:72:5)
+<asynchronous suspension>
+#13     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:06 +50: C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart: ZIP listo real desde Ajustes: sigue en Ajustes con los datos del respaldo
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart:148:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+#11     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart:148:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#12     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:72:5)
+<asynchronous suspension>
+#13     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:11 +51: C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart: cancelar la confirmación no cambia base, fotos, flags ni guion
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart:148:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+#11     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:14 +52: C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart: fallo tardío revierte: alta lista, Ajustes y fotos intactos
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart:148:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+#11     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart:148:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     _progress (package:seguimiento/features/settings/restore_access.dart:115:12)
+<asynchronous suspension>
+#12     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:72:5)
+<asynchronous suspension>
+#13     _BackupCardState._whileBusy (package:seguimiento/features/settings/settings_screen.dart:231:7)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:19 +53: C:/My Projects/seguimiento-027-claude/test/ui/pilot_restore_route_test.dart: (tearDownAll)
+01:19 +53: loading C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart
+01:20 +53: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: (setUpAll)
+01:20 +53: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: restaurar devuelve los datos del respaldo y descarta los posteriores
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:46:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:21 +54: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: un respaldo sin recordatorios queda con los de por defecto
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:57:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:21 +55: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: el perfil restaurado es el del respaldo, no el actual
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:22:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:69:5)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:21 +56: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: un archivo que no es un respaldo se rechaza y no toca la base
+01:21 +57: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: una base sqlite ajena se rechaza por no tener las tablas
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:86:19)
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:91:17)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:22 +58: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: si la base restaurada no abre, vuelve la anterior con todo lo registrado
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:111:14)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#11     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#13     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#14     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-027-claude/test/data/restore_test.dart:114:5)
+<asynchronous suspension>
+#15     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#16     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#17     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+01:22 +59: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: un archivo inexistente se rechaza con mensaje claro
+01:22 +60: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: un respaldo al que le falta una tabla se rechaza y conserva la base actual
+01:22 +61: C:/My Projects/seguimiento-027-claude/test/data/restore_test.dart: (tearDownAll)
+01:22 +61: All tests passed!

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
+import 'package:seguimiento/data/active_session_store.dart';
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/auto_backup.dart';
@@ -64,6 +65,8 @@ void main() {
     await tester.pumpWidget(ProviderScope(
         overrides: [
           databaseProvider.overrideWithValue(db),
+          // Plan 027: restaurar suelta el vínculo del cronómetro; aquí no hay sesión.
+          activeSessionStoreProvider.overrideWithValue(ActiveSessionStore(File('${Directory.systemTemp.path}/sin-sesion-027.json'))),
           if (host != null) databaseHostProvider.overrideWithValue(host),
           documentsDirProvider
               .overrideWith((_) => directory ?? Directory.systemTemp),

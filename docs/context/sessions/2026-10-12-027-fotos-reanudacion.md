@@ -15,29 +15,29 @@ datos del owner.
 - Límite: un crash entre commit y purga deja un archivo huérfano en `fotos/`
   (no hay barrido); nunca una foto referenciada sin archivo.
 
-## Reanudación tras restaurar (`training_screen.dart`)
-- Con `effectiveDay`: se retoma siempre con el guion congelado (dosis, marcas,
-  índice, calentamiento). El `planDayId` se conserva solo si en la base actual
-  el día es el mismo por estructura (`_sameDay`: weekday, tipo y ejercicios del
-  plan, en orden, contenidos en el guion; el guion puede traer de más). Si no,
-  se retoma sin plan (`-1`) y la nota de contexto dice "Recuperada tras
-  restaurar…".
-- Sin `effectiveDay` (legado 1.20): automático solo si lo ya hecho cabe en el día
-  del id; si no hay con qué comprobarlo (p. ej. nada hecho) o el día no existe,
-  diálogo "Sesión sin su guion": Dejarla pendiente / Descartarla / (si hay día)
-  Retomar con ese día (sin vincular al plan). Guion ilegible: mismo diálogo.
-  Nunca se borra el archivo sin elegir "Descartarla".
-- Límite: `_sameDay` no prueba procedencia; un día de otra base con la misma
-  estructura se vincula (efecto: evidencia de progresión idéntica en forma).
-- Contrato cambiado en `release121_flows_test`: el guion malformado ya no se
-  descarta en silencio y el legado sin lo hecho pide confirmación.
+## Reanudación tras restaurar (revisión 1 sobre fe0b565)
+- fe0b565 decidía el vínculo con `_sameDay` (estructura): no prueba procedencia y
+  omite dosis/descanso/variante. Se eliminó.
+- Mecanismo ahora: `restoreBackupFile` (restore común), solo tras `archive.restore`
+  exitoso, llama `ActiveSessionStore.unlinkPlanAfterRestore()`: reescribe el
+  snapshot guiado con `planDayId = -1` y nota `recoveredPlanNote`, conservando
+  los demás campos (`GuidedSnapshot.unlinkedAfterRestore`, idempotente, sin campos
+  nuevos ni SQL), y luego invalida `activeSessionProvider`. Cancelación/rollback no lo tocan.
+- `resumeActiveSession`: con guion, usa el congelado y conserva `planDayId` si el
+  día existe (reanudación ordinaria); si el día no existe, lo suelta con la nota.
+  Legado sin guion y guion ilegible: diálogo "Sesión sin su guion" (sin cambios).
+- Límites: restaurar mientras un cronómetro está abierto en pantalla podría
+  reescribirlo con el id viejo en su siguiente guardado (no probado; flujo de
+  Ajustes no coexiste con el cronómetro). Un snapshot de otro dispositivo/copia
+  puesto a mano en disco no se desvincula. Probado en host, no en Android.
 
-## Evidencia (`027-evidence/`, SHA256SUMS.txt)
-- `red-433f64f.log`: pruebas nuevas contra el producto de la base: 10 fallos
-  (3 fotos: INSERT/UPDATE/DELETE fallidos pierden foto; 7 reanudación).
-- `green-new.log`: 20 pruebas nuevas pasan. `green-existing.log`: 48 existentes
-  (fotos, técnica, active_session, warmup, release121, backup, light) pasan.
-- `analyze.log`: sin incidencias. `git diff --check`: 0.
-- Pruebas de reanudación usan SQLite real + archivo de snapshot real + callerUI
-  `resumeActiveSession`; no hay restauración ZIP completa (límite: la base
-  "restaurada" es una base con otro plan).
+## Evidencia (`027-evidence/`, `.log.txt` + `SHA256SUMS.txt`; ver README.md)
+- Entrega fe0b565: rojo 10/20 contra 433f64f; verde 20 nuevas + 48 existentes.
+- Ronda 1: `test/ui/restored_session_unlink_test.dart` (ZIP real con BackupArchive,
+  restoreBackupFile, snapshot releído de disco, resume por UI; mismo id/día/tipo/
+  nombres con otra dosis). Rojo REAL en fe0b565 (`planDayId` 2 ≠ -1) solo en el caso
+  restaurado; cancelado, rollback y ordinario son controles que pasan antes y después.
+  Verde: 24 nuevas, 61 existentes, analyze 0, diff-check 0.
+- Fallos intermedios conservados y rotulados (harness vs. producto) en README.md.
+- Cambios a pruebas existentes: `release121_flows_test` (guion ilegible conserva
+  y pregunta), `backup_disclosure_test` (override del store que restore ahora lee).
