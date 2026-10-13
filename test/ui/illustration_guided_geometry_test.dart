@@ -466,4 +466,46 @@ void main() {
       expect(changed, greaterThan(300), reason: 'The real default camera must show the chest turn.');
     });
   });
+  testWidgets('seated soleus load is visible above the working thighs in both cameras', (tester) async {
+    for (final key in ['seated_soleus_bilateral', 'seated_soleus_unilateral']) {
+      final original = catalog.forExercise('Sóleo sentado con mochila', physicalVariantKey: key)!;
+      final stripped = jsonDecode(jsonEncode(data)) as Map<String, Object?>;
+      final raw = key.endsWith('bilateral')
+          ? (stripped['figures'] as List).cast<Map<String, Object?>>().firstWhere((v) => v['name'] == 'Sóleo sentado con mochila')
+          : ((stripped['physicalVariants'] as List).cast<Map<String, Object?>>().firstWhere((v) => v['key'] == key)['figure'] as Map<String, Object?>);
+      // Keep the equipment coordinates in the camera bounds: only hide its ink.
+      ((raw['props'] as List).last as Map<String, Object?>)['alpha'] = 0;
+      final bare = Figure3DCatalog.fromJsonString(jsonEncode(stripped)).forExercise('Sóleo sentado con mochila', physicalVariantKey: key)!;
+      for (final yaw in [25.0, 70.0]) {
+        for (final progress in [0.0, 8 / original.motion.length]) {
+          await tester.runAsync(() async {
+            final images = <List<int>>[];
+            for (final fig in [original, bare]) {
+              final recorder = ui.PictureRecorder();
+              paintFigure3D(ui.Canvas(recorder), const ui.Size(360, 315), fig, progress, yaw: yaw, pitch: original.initialPitch);
+              final picture = recorder.endRecording();
+              final image = await picture.toImage(360, 315);
+              images.add((await image.toByteData(format: ui.ImageByteFormat.rawRgba))!.buffer.asUint8List());
+              image.dispose(); picture.dispose();
+            }
+            final body = liftSkeleton(original.skeletonAt(progress), original);
+            final thigh = V3.lerp(body.p['nearHip']!, body.p['nearKnee']!, .65);
+            final camera = cameraFor(original, const ui.Size(360,315), yaw: yaw, pitch: original.initialPitch);
+            final center = camera.project(thigh + const V3(0,-4,0)).offset;
+            final radius = camera.scale * 9;
+            var changed = 0;
+            for (var y = 0; y < 315; y++) {
+              for (var x = 0; x < 360; x++) {
+                if ((x-center.dx).abs() > radius || (y-center.dy).abs() > radius) continue;
+                final i = (y*360+x)*4;
+                if (images[0][i] != images[1][i] || images[0][i+1] != images[1][i+1] || images[0][i+2] != images[1][i+2]) changed++;
+              }
+            }
+            expect(changed, greaterThan(100), reason: '$key yaw$yaw progress$progress: backpack must be visible over the loaded thigh, not merely present behind the body.');
+          });
+        }
+      }
+    }
+  });
+
 }
