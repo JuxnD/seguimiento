@@ -6,6 +6,7 @@
 library;
 
 import 'enums.dart';
+import 'timer_profile.dart';
 import 'accessory_quality_proof.dart';
 import 'core_ladders.dart' show v32AccessoryLadders;
 
@@ -313,7 +314,7 @@ class CounterSnapshot extends ActiveSession {
       );
 }
 
-/// Cindy o Tabata a mitad (cronómetros del v3). Como el resto, solo marcas
+/// Cindy, Tabata o carrera 15/15 a mitad. Como el resto, solo marcas
 /// de reloj: al volver, el tiempo transcurrido con la app muerta cuenta.
 class TimerSnapshot extends ActiveSession {
   const TimerSnapshot({
@@ -327,10 +328,19 @@ class TimerSnapshot extends ActiveSession {
     this.partial,
     this.worst = const {},
     this.exercises = const [],
+    this.prescription,
   });
 
-  /// 'cindy' o 'tabata'.
+  /// 'cindy', 'tabata' or the explicit 'running1515' profile.
   final String mode;
+  final TimerPrescription? prescription;
+  TimerProfile? get profile => prescription?.profile;
+  int? get workSec => prescription?.workSec;
+  int? get restSec => prescription?.restSec;
+  int? get intervals => prescription?.intervals;
+  int? get betweenBlocksSec => prescription?.betweenBlocksSec;
+  bool? get includeFinalRest => prescription?.includeFinalRest;
+  bool? get footballFreeConfirmed => prescription?.footballFreeConfirmed;
 
   /// 'calentamiento', 'trabajo' o 'enfriamiento'.
   final String phase;
@@ -359,6 +369,7 @@ class TimerSnapshot extends ActiveSession {
         'partial': partial,
         'worst': {for (final e in worst.entries) '${e.key}': e.value},
         'exercises': exercises,
+        if (prescription != null) ...prescription!.toJson(),
       };
 
   static TimerSnapshot _fromJson(Map<String, Object?> j) => TimerSnapshot(
@@ -380,6 +391,9 @@ class TimerSnapshot extends ActiveSession {
         exercises: [
           for (final e in (j['exercises'] as List?) ?? const []) e as String
         ],
+        prescription: TimerPrescription.fromJson(j,
+            blocks: ((j['exercises'] as List?) ?? const []).length,
+            mode: j['mode']! as String),
       );
 }
 
