@@ -326,4 +326,63 @@ void main() {
           reason: 'A 3px band spanning the hands must remain mostly visible, not just an endpoint dot.');
     });
   });
+
+  test('accessory physical levels preserve straight tibial knees bed support and support hands', () {
+    for(final key in ['tibialis_wall_close','tibialis_wall_far','tibialis_wall_loaded']) {
+      final fig=catalog.forExercise('Tibial en la pared',physicalVariantKey:key)!;
+      final start=liftSkeleton(fig.skeletonAt(0),fig);
+      for(var i=0;i<=40;i++) {
+        final body=liftSkeleton(fig.skeletonAt(i/40),fig);
+        for(final side in ['near','far']) {
+          final hip=body.p['${side}Hip']!, knee=body.p['${side}Knee']!, ankle=body.p['${side}Ankle']!;
+          expect((knee-hip).unit.dot((ankle-knee).unit),greaterThan(.9999),reason:key);
+          expect((ankle-start.p['${side}Ankle']!).length,lessThan(.001),reason:key);
+        }
+      }
+    }
+    for(final key in ['prone_y_t_bed_edge','prone_y_t_loaded']) {
+      final fig=catalog.forExercise('Y-T prono',physicalVariantKey:key)!;
+      final rest=liftSkeleton(fig.skeletonAt(0),fig);
+      final raised=liftSkeleton(fig.skeletonAt(1/fig.motion.length),fig);
+      expect(rest.p['hip']!.y,closeTo(-19.5,.01));
+      expect(rest.p['nearHand']!.y-rest.p['nearShoulder']!.y,greaterThan(15));
+      expect(raised.p['nearHand']!.y,lessThan(raised.p['nearShoulder']!.y-1));
+      expect((raised.p['hip']!-rest.p['hip']!).length,lessThan(.001));
+    }
+    final support=catalog.forExercise('Support hold en paralelas',physicalVariantKey:'support_protraction')!;
+    final start=liftSkeleton(support.skeletonAt(0),support);
+    final end=liftSkeleton(support.skeletonAt(1/support.motion.length),support);
+    expect((end.p['hip']!-start.p['hip']!).length,greaterThan(.8));
+    for(final side in ['near','far']) {
+      expect((end.p['${side}Hand']!-start.p['${side}Hand']!).length,lessThan(.001));
+      expect((end.p['${side}Hand']!-end.p['${side}Shoulder']!).length,closeTo(19,.03));
+    }
+  });
+
+  testWidgets('accessory loads are really painted at the selected limb rather than metadata only', (tester) async {
+    for(final spec in [('Tibial en la pared','tibialis_wall_loaded'),('Y-T prono','prone_y_t_loaded')]) {
+      final original=catalog.forExercise(spec.$1,physicalVariantKey:spec.$2)!;
+      final stripped=jsonDecode(jsonEncode(data)) as Map<String,Object?>;
+      final variant=(stripped['physicalVariants'] as List).cast<Map<String,Object?>>().firstWhere((v)=>v['key']==spec.$2);
+      final raw=variant['figure'] as Map<String,Object?>;
+      (raw['props'] as List).removeWhere((p)=>(p['type'] as String).startsWith('guided'));
+      final bare=Figure3DCatalog.fromJsonString(jsonEncode(stripped)).forExercise(spec.$1,physicalVariantKey:spec.$2)!;
+      await tester.runAsync(() async {
+        final images=<List<int>>[];
+        for(final fig in [original,bare]) {
+          final recorder=ui.PictureRecorder();
+          paintFigure3D(ui.Canvas(recorder),const ui.Size(420,360),fig,1/fig.motion.length,yaw:original.initialYaw,pitch:original.initialPitch);
+          final picture=recorder.endRecording();final image=await picture.toImage(420,360);
+          images.add((await image.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List());
+          image.dispose();picture.dispose();
+        }
+        var changed=0;
+        for(var i=0;i<images[0].length;i+=4) {
+          if(images[0][i]!=images[1][i] || images[0][i+1]!=images[1][i+1] || images[0][i+2]!=images[1][i+2]) changed++;
+        }
+        expect(changed,greaterThan(100),reason:'${spec.$2}: actual load must be visible in the production painter.');
+      });
+    }
+  });
+
 }

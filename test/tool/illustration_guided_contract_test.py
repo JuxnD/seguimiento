@@ -7,9 +7,11 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 NAMES = '''Respiración 90/90|Gato-camello|Libro abierto|Muñecas a cuatro patas|Deslizamientos en la pared|Zancada del mundo|Rodilla a la pared|Sentadilla profunda|Pie corto|Pike sentado|Pancake|Dorsal en la cama|Pectoral en el marco de la puerta|Sóleo en la pared|Scap pull-up|Y-T prono|Abducción de cadera de lado|Copenhague|Sóleo sentado con mochila|Tibial en la pared|Rotación externa con banda|Support hold en paralelas|Sprint lanzado|Flexiones escapulares|Sentadilla isométrica en la pared|Nórdico inverso|Bajada lateral del escalón|Aterrizaje clavado|Mesa invertida|Plancha inversa sobre antebrazos|Plancha inversa sobre las manos|Plancha inversa a una pierna|Plancha inversa con patada|Plancha inversa con pies elevados'''.split('|')
 VARIANTS = {
+    'Tibial en la pared': ['tibialis_wall_close', 'tibialis_wall_far', 'tibialis_wall_loaded'],
+    'Y-T prono': ['prone_y_t_floor', 'prone_y_t_bed_edge', 'prone_y_t_loaded'],
     'Copenhague': ['copenhagen_short', 'copenhagen_long'],
     'Sóleo sentado con mochila': ['seated_soleus_bilateral', 'seated_soleus_unilateral'],
-    'Support hold en paralelas': ['support_parallels', 'support_rings'],
+    'Support hold en paralelas': ['support_parallels', 'support_rings', 'support_protraction'],
     'Rotación externa con banda': ['band_rotation_side', 'band_rotation_90_90'],
     'Aterrizaje clavado': ['landing_bilateral', 'landing_unilateral', 'landing_lateral'],
 }
@@ -40,7 +42,7 @@ class GuidedContract(unittest.TestCase):
         variants = self.data.get('physicalVariants', [])
         self.assertEqual({(v['exercise'], v['key']) for v in variants},
                          {(name, key) for name, keys in VARIANTS.items() for key in keys})
-        self.assertEqual(len(variants), 11)
+        self.assertEqual(len(variants), 18)
         for variant in variants:
             name, key = variant['exercise'], variant['key']
             if key == VARIANTS[name][0]:

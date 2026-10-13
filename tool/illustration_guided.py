@@ -8,9 +8,11 @@ import math
 
 NAMES = '''Respiración 90/90|Gato-camello|Libro abierto|Muñecas a cuatro patas|Deslizamientos en la pared|Zancada del mundo|Rodilla a la pared|Sentadilla profunda|Pie corto|Pike sentado|Pancake|Dorsal en la cama|Pectoral en el marco de la puerta|Sóleo en la pared|Scap pull-up|Y-T prono|Abducción de cadera de lado|Copenhague|Sóleo sentado con mochila|Tibial en la pared|Rotación externa con banda|Support hold en paralelas|Sprint lanzado|Sentadilla isométrica en la pared|Nórdico inverso|Bajada lateral del escalón|Aterrizaje clavado|Mesa invertida|Plancha inversa sobre antebrazos|Plancha inversa sobre las manos|Plancha inversa a una pierna|Plancha inversa con pies elevados'''.split('|')
 VARIANTS = {
+    'Tibial en la pared': ('tibialis_wall_close', 'tibialis_wall_far', 'tibialis_wall_loaded'),
+    'Y-T prono': ('prone_y_t_floor', 'prone_y_t_bed_edge', 'prone_y_t_loaded'),
     'Copenhague': ('copenhagen_short', 'copenhagen_long'),
     'Sóleo sentado con mochila': ('seated_soleus_bilateral', 'seated_soleus_unilateral'),
-    'Support hold en paralelas': ('support_parallels', 'support_rings'),
+    'Support hold en paralelas': ('support_parallels', 'support_rings', 'support_protraction'),
     'Rotación externa con banda': ('band_rotation_side', 'band_rotation_90_90'),
     'Aterrizaje clavado': ('landing_bilateral', 'landing_unilateral', 'landing_lateral'),
 }
@@ -195,9 +197,23 @@ def generate(name, variant=None):
             for sd,sign in [('near',1),('far',-1)]:
                 b[sd+'Arm'].update(reach3=[x,-2,sign*z],pole=[0,1,0],end3=[0,-1,0])
             frames.extend([b,cp(b),cp(a)])
+        props=[box([25,-.7,0],[9,1.4,12])]
+        if variant in ('prone_y_t_bed_edge','prone_y_t_loaded'):
+            # The same prone rig rests on the bed; free arms can descend
+            # alongside its narrow edge instead of stopping at the floor.
+            for i,f in enumerate(frames):
+                f['hip']=(0,-19.5)
+                if i in (0,3,6):
+                    for sd,sign in [('near',1),('far',-1)]:
+                        f[sd+'Arm'].update(reach3=[4,17,sign*7],pole=[1,0,sign],end3=[0,-1,0])
+                    f['caption']='Boca abajo en el borde; brazos libres junto a la cama'
+            props=bench(-3,-15,width=65,depth=6)+[box([25,-15.7,0],[9,1.4,12])]
+            if variant=='prone_y_t_loaded':
+                props += [dict(type='guidedHandWeight',joint=sd+'Hand') for sd in ['near','far']]
+                for f in frames: f['caption']+=' · carga ligera en ambas manos'
         return result(frames,[phase('Eleva en Y'),phase('Pausa Y',kind='hold'),phase('Baja'),
                               phase('Eleva en T'),phase('Pausa T',kind='hold'),phase('Baja')],
-                      props=[box([25,-.7,0],[9,1.4,12])],yaw=45,pitch=45)
+                      props=props,yaw=45,pitch=45)
     # 034 specifications continue below; unsupported names must fail closed.
     return _plan034(name, variant, result, cycle)
 
@@ -262,10 +278,22 @@ def _plan034(name, variant, result, cycle):
         motions=[phase('Eleva el talón',seconds=.3) for _ in sweep[1:]]+[phase('Pausa arriba',kind='hold',seconds=1)]+[phase('Baja',seconds=.3) for _ in sweep[1:]]
         return result(frames,motions,props=bench(-4,-13.5,width=17,depth=10)+[box([10,-18,0],[9,5,12])],per_side=variant=='seated_soleus_unilateral',yaw=25)
     if name == 'Tibial en la pared':
-        a=pose('Espalda apoyada; talones firmes',(0,-28),-90,reach(7,-1),reach(7,-1))
+        distance=7 if variant in (None,'tibialis_wall_close') else 14
+        hip_y=-1-math.sqrt(28**2-distance**2)
+        angle=math.degrees(math.atan2(-1-hip_y,distance))
+        a=pose('Espalda y glúteos a pared; piernas rectas, talones firmes',(0,hip_y),-90,
+               limb(angle,angle,foot=0),limb(angle,angle,foot=0))
         b=cp(a); b['caption']='Levanta las puntas; conserva los talones en el suelo'
         b['nearLeg']['foot']=-35; b['farLeg']['foot']=-35
-        return cycle(a,b,contacts=['nearAnkle','farAnkle'],props=[dict(type='wall',x=-3,top=-62,depth=14,thick=1)],yaw=15)
+        props=[dict(type='wall',x=-3,top=-62,depth=14,thick=1)]
+        if variant=='tibialis_wall_far':
+            for f in (a,b): f['caption']+=' · pies más lejos de la pared'
+        if variant=='tibialis_wall_loaded':
+            props.append(dict(type='guidedFootPack',joint='nearToe'))
+            b['farLeg']['foot']=0
+            a['caption']='Asa de mochila en el pie cercano; talón firme'
+            b['caption']='Eleva la punta con la mochila; baja con control'
+        return cycle(a,b,contacts=['nearAnkle','farAnkle'],props=props,per_side=variant=='tibialis_wall_loaded',yaw=25)
     if name == 'Rotación externa con banda':
         a=pose('Codos al costado a 90°; banda entre manos')
         b=cp(a); b['caption']='Abre las manos; los codos conservan su sitio'
@@ -296,6 +324,9 @@ def _plan034(name, variant, result, cycle):
                limb(90,90),limb(90,90),arm(90,90,hand=0,grip='bar_parallel'),arm(90,90,hand=0,grip='bar_parallel'))
         b=cp(a); b['caption']='Pies libres; empuja los apoyos y sostén con hombros abajo'
         b['nearLeg']=limb(105,155,foot=0); b['farLeg']=limb(105,155,foot=0)
+        if variant=='support_protraction':
+            b['hip']=(-1,-30); b['shoulderOffset']=(1,0); b['spineBend']=-.6
+            b['caption']='Empuja las barras; separa escápulas con codos rectos'
         # Hands remain y=-29: bars/rings are at that same height.
         if variant=='support_rings':
             props=[]

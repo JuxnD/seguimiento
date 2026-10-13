@@ -1,0 +1,23 @@
+..F
+======================================================================
+FAIL: test_physical_variants_are_complete_and_not_silent_base_substitutions (illustration_guided_contract_test.GuidedContract.test_physical_variants_are_complete_and_not_silent_base_substitutions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_guided_contract_test.py", line 43, in test_physical_variants_are_complete_and_not_silent_base_substitutions
+    self.assertEqual({(v['exercise'], v['key']) for v in variants},
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     {(name, key) for name, keys in VARIANTS.items() for key in keys})
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the second set but not the first:
+('Y-T prono', 'prone_y_t_floor')
+('Y-T prono', 'prone_y_t_loaded')
+('Tibial en la pared', 'tibialis_wall_close')
+('Tibial en la pared', 'tibialis_wall_loaded')
+('Tibial en la pared', 'tibialis_wall_far')
+('Support hold en paralelas', 'support_protraction')
+('Y-T prono', 'prone_y_t_bed_edge')
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.031s
+
+FAILED (failures=1)
