@@ -1,0 +1,11 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/ui/registros_040_flows_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: sueño: editar horas guarda como manual; eliminar pide confirmación
+00:05 +1: fútbol: usar los pesajes del día, confirmar comparables y guardar
+00:07 +2: fútbol: no son de este partido, faltan datos y "Completar" no guarda; "Guardar así" sí
+00:09 +3: fútbol: editar un partido muestra sus valores y no ofrece los del día
+00:09 +4: pendiente: Cancelar no toca nada; Desactivar sólo ese
+00:11 +5: (tearDownAll)
+00:11 +5: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T175947453-58300-a866c8ccd25a4fa2b7695278f76a17f7.json
+exit=0

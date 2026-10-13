@@ -56,9 +56,15 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
     if (widget.existing == null) _loadDayWeights();
   }
 
+  /// Cada consulta de pesajes lleva su número: si mientras tanto cambió la
+  /// fecha, la respuesta vieja se descarta y no se ofrece como del día nuevo.
+  int _weightsQuery = 0;
+
   Future<void> _loadDayWeights() async {
-    final weights = await ref.read(bodyRepositoryProvider).weightsOn(_date);
-    if (!mounted) return;
+    final query = ++_weightsQuery;
+    final day = _date;
+    final weights = await ref.read(bodyRepositoryProvider).weightsOn(day);
+    if (!mounted || query != _weightsQuery || day != _date) return;
     String? kgOf(WeighMoment m) {
       final w = weights.where((w) => weighMomentOf(w.moment, fasted: w.fasted) == m).firstOrNull;
       return w == null ? null : fmtDec(w.kg);
@@ -77,6 +83,7 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
       if (_before.text.isEmpty && w.before != null) _before.text = w.before!;
       if (_after.text.isEmpty && w.after != null) _after.text = w.after!;
       _dayWeights = null;
+      _comparable = null;
     });
   }
 
@@ -163,6 +170,8 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
                   setState(() {
                     _date = v;
                     _dayWeights = null;
+                    // Otro día: lo confirmado sobre los pesajes ya no vale.
+                    _comparable = null;
                   });
                   if (widget.existing == null) _loadDayWeights();
                 },
@@ -207,11 +216,19 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
                 children: [
                   Expanded(
                       child: NumberField(
-                          controller: _before, label: 'Peso antes', suffix: 'kg', decimal: true, onChanged: (_) => setState(() {}))),
+                          controller: _before,
+                          label: 'Peso antes',
+                          suffix: 'kg',
+                          decimal: true,
+                          onChanged: (_) => setState(() => _comparable = null))),
                   const SizedBox(width: 8),
                   Expanded(
                       child: NumberField(
-                          controller: _after, label: 'Peso después', suffix: 'kg', decimal: true, onChanged: (_) => setState(() {}))),
+                          controller: _after,
+                          label: 'Peso después',
+                          suffix: 'kg',
+                          decimal: true,
+                          onChanged: (_) => setState(() => _comparable = null))),
                 ],
               ),
               const SizedBox(height: 8),
@@ -219,7 +236,8 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
                   controller: _fluid, label: 'Bebido durante (0 si nada)', suffix: 'ml', onChanged: (_) => setState(() {})),
               if (_bothWeights) ...[
                 const SizedBox(height: 8),
-                const Text('¿Los dos pesajes son comparables (sin comer ni beber entre medias, misma ropa)?'),
+                const Text('¿Los dos pesajes son de este partido y en las mismas condiciones (misma ropa, sin comer '
+                    'ni otro cambio sin anotar)? Lo bebido durante se descuenta aparte.'),
                 Wrap(spacing: 6, children: [
                   ChoiceChip(
                     label: const Text('Sí, comparables'),

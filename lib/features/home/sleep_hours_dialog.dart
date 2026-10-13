@@ -97,8 +97,9 @@ class _SleepEditDialog extends StatefulWidget {
 }
 
 class _SleepEditDialogState extends State<_SleepEditDialog> {
-  late final _hours = TextEditingController(
-      text: widget.initial == null ? '' : widget.initial!.hours.toString().replaceAll('.', ','));
+  late final String _initialHoursText =
+      widget.initial == null ? '' : widget.initial!.hours.toString().replaceAll('.', ',');
+  late final _hours = TextEditingController(text: _initialHoursText);
   late final _note = TextEditingController(text: widget.initial?.note ?? '');
   late (int, int)? _start = _hm(widget.initial?.start);
   late (int, int)? _wake = _hm(widget.initial?.wake);
@@ -152,7 +153,11 @@ class _SleepEditDialogState extends State<_SleepEditDialog> {
           context, SleepEdit.save(hours: hours, start: w.start, wake: w.wake, fromClock: _fromClock, note: note));
       return;
     }
-    final hours = parseSleepHours(_hours.text);
+    // Sin tocar las horas se conservan tal cual (también una noche de 0 h de
+    // antes, que el formato de escritura no admite): editar la nota o la
+    // procedencia no obliga a reescribirlas.
+    final unchanged = widget.initial != null && _hours.text == _initialHoursText;
+    final hours = unchanged ? widget.initial!.hours : parseSleepHours(_hours.text);
     if (hours == null) {
       setState(() => _error = 'Escribe horas entre 0 y 16, p. ej. 10,2 o 10:11');
       return;

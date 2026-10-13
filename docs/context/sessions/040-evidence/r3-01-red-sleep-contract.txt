@@ -1,0 +1,22 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-diagc53/test/data/sleep_save_contract_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: horas que no cuadran con acostarse y despertar se rechazan sin escribir
+00:00 +0 -1: horas que no cuadran con acostarse y despertar se rechazan sin escribir [E]
+  Expected: throws <Instance of 'ArgumentError'>
+    Actual: <Instance of 'Future<void>'>
+     Which: emitted <null>
+  
+  package:matcher                                     expectLater
+  package:flutter_test/src/widget_tester.dart 511:25  expectLater
+  test\data\sleep_save_contract_test.dart 25:11       main.<fn>
+  
+00:00 +0 -1: una noche de 0 h se puede guardar (editar sólo nota o procedencia)
+00:00 +0 -2: una noche de 0 h se puede guardar (editar sólo nota o procedencia) [E]
+  Invalid argument (hours): entre 0 y 16.0: 0.0
+  package:seguimiento/data/repositories/sleep_repository.dart 58:7  SleepRepository.save
+  test\data\sleep_save_contract_test.dart 35:16                     main.<fn>
+  
+00:00 +0 -2: (tearDownAll)
+00:00 +0 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T175853370-58808-53d71e2407bd44d3b37ad1841c4f0076.json
+exit=1

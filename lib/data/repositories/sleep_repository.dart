@@ -44,8 +44,14 @@ class SleepRepository {
             ));
       });
 
+  /// Diferencia admitida entre las horas y las que salen de inicio y
+  /// despertar: el redondeo a dos decimales (minutos → horas).
+  static const hoursTolerance = 0.01;
+
   /// Guarda la noche completa desde el diálogo de edición. Con inicio y
-  /// despertar, las horas tienen que salir de ellos.
+  /// despertar, las horas tienen que salir de ellos (si no cuadran, no se
+  /// escribe nada). Admite 0–16 h como la tabla: una noche de 0 h de antes se
+  /// puede conservar al editar sólo la nota o la procedencia.
   Future<void> save(
     DateTime day, {
     required double hours,
@@ -54,12 +60,18 @@ class SleepRepository {
     required String source,
     String? note,
   }) async {
-    if (!hours.isFinite || hours <= 0 || hours > maxSleepHours) {
+    if (!hours.isFinite || hours < 0 || hours > maxSleepHours) {
       throw ArgumentError.value(hours, 'hours', 'entre 0 y $maxSleepHours');
     }
     if ((start == null) != (wake == null)) throw ArgumentError('inicio y despertar van juntos');
-    if (start != null && hoursBetween(start, wake!) == null) {
-      throw ArgumentError('el despertar tiene que ser después de acostarse y no pasar de $maxSleepHours h');
+    if (start != null) {
+      final derived = hoursBetween(start, wake!);
+      if (derived == null) {
+        throw ArgumentError('el despertar tiene que ser después de acostarse y no pasar de $maxSleepHours h');
+      }
+      if ((derived - hours).abs() > hoursTolerance) {
+        throw ArgumentError.value(hours, 'hours', 'no cuadra con acostarse y despertar ($derived h)');
+      }
     }
     final trimmed = note?.trim();
     await db.into(db.sleepLogs).insertOnConflictUpdate(SleepLogsCompanion(
