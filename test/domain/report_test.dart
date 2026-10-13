@@ -242,7 +242,7 @@ void main() {
   });
 
   group('regla de progresión', () {
-    test('subir de ronda con series partidas genera alerta', () {
+    test('subir después de anterior con series partidas genera alerta', () {
       final base = weekFour();
       final input = ReportInput(
         programStart: base.programStart,
@@ -251,6 +251,12 @@ void main() {
         today: base.today,
         planVersions: base.planVersions,
         roundsBeforeRange: const {SessionType.circuito: 6},
+        sessionsBeforeRange: {
+          SessionType.circuito: SessionEntry(date: DateTime(2026, 9, 15),
+            type: SessionType.circuito, roundsDone: 6, techniqueOk: true,
+            fullRange: true, recoveryOk: true,
+            sets: [const SetEntry(exercise: 'Flexiones', setIndex: 1, reps: 10, split: true)]),
+        },
         sessions: [
           SessionEntry(
             date: DateTime(2026, 9, 16),
@@ -266,7 +272,7 @@ void main() {
       );
     });
 
-    test('subir de ronda limpio no genera alerta', () {
+    test('anterior limpia autoriza subir de ronda', () {
       final base = weekFour();
       final input = ReportInput(
         programStart: base.programStart,
@@ -274,6 +280,11 @@ void main() {
         rangeEnd: base.rangeEnd,
         today: base.today,
         roundsBeforeRange: const {SessionType.circuito: 6},
+        sessionsBeforeRange: {
+          SessionType.circuito: SessionEntry(date: DateTime(2026, 9, 15),
+            type: SessionType.circuito, roundsDone: 6, techniqueOk: true,
+            fullRange: true, recoveryOk: true),
+        },
         sessions: [
           SessionEntry(
             date: DateTime(2026, 9, 16),
@@ -289,7 +300,7 @@ void main() {
       expect(buildAlerts(ReportStats(input)).where((a) => a.startsWith('Subiste')), isEmpty);
     });
 
-    test('técnica o recuperación marcadas en no también bloquean', () {
+    test('técnica o recuperación anteriores marcadas en no también bloquean', () {
       final base = weekFour();
       final input = ReportInput(
         programStart: base.programStart,
@@ -297,6 +308,11 @@ void main() {
         rangeEnd: base.rangeEnd,
         today: base.today,
         roundsBeforeRange: const {SessionType.progresion: 7},
+        sessionsBeforeRange: {
+          SessionType.progresion: SessionEntry(date: DateTime(2026, 9, 17),
+            type: SessionType.progresion, roundsDone: 7, techniqueOk: false,
+            fullRange: true, recoveryOk: false),
+        },
         sessions: [
           SessionEntry(
             date: DateTime(2026, 9, 18),

@@ -1,0 +1,125 @@
+00:00 +0: loading C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: Hoy autoriza desde anterior limpia; fallo actual no inventa infracción
+00:01 +1: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: anterior fallida bloquea Hoy y reporte aunque actual salga limpia
+00:01 +2: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: calidad anterior null no desaparece fuera del rango
+00:01 +3: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: calidad anterior false no desaparece fuera del rango
+00:02 +4: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: incompleta anterior y meta pendiente no autorizan aumento
+00:02 +5: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: sin rondas en última anterior se explicita evidencia no evaluable
+00:02 +6: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: salto mayor al incremento permitido no se justifica por calidad
+00:02 +7: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: sin precedente y registro futuro no inventan permiso
+00:03 +8: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: precedente dentro de rango y dos filas del mismo día usan último ID como Hoy
+00:03 +9: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: no usar sesión del mismo día ni otro tipo para autorizar el intento
+00:03 +10: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: ausencia individual de técnica anterior sigue siendo bloqueo explícito
+00:04 +11: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: ausencia individual de rango completo anterior sigue siendo bloqueo explícito
+00:04 +12: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: ausencia individual de recuperación anterior sigue siendo bloqueo explícito
+00:05 +13: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: precedente importado no acredita permiso
+00:05 +14: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: precedente estimado no acredita permiso
+00:05 +15: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: (tearDownAll)
+00:05 +15: loading C:/My Projects/seguimiento-033-coherencia/test/data/football_today_summary_test.dart
+00:09 +15: C:/My Projects/seguimiento-033-coherencia/test/data/football_today_summary_test.dart: (setUpAll)
+00:09 +15: C:/My Projects/seguimiento-033-coherencia/test/data/football_today_summary_test.dart: todos los partidos: acumulado coincide con carga core y reporte
+00:10 +16: C:/My Projects/seguimiento-033-coherencia/test/data/football_today_summary_test.dart: RPE desconocido: carga estimada core y ponderado sólo conocido
+00:10 +17: C:/My Projects/seguimiento-033-coherencia/test/data/football_today_summary_test.dart: cero minutos no divide por cero; sin partidos no hay actividad
+00:11 +18: C:/My Projects/seguimiento-033-coherencia/test/data/football_today_summary_test.dart: ayer intenso conserva lector y no contamina acumulado de hoy
+00:11 +19: C:/My Projects/seguimiento-033-coherencia/test/data/football_today_summary_test.dart: (tearDownAll)
+00:11 +19: loading C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart
+00:14 +19: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: (setUpAll)
+00:14 +19: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: lista completa idéntica encuentra previo; editar propio id no se compara consigo
+00:15 +20: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en última serie evita falso duplicado
+00:15 +21: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en carga evita falso duplicado
+00:15 +22: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en variante evita falso duplicado
+00:15 +23: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en RIR evita falso duplicado
+00:15 +24: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en split evita falso duplicado
+00:15 +25: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en detalle evita falso duplicado
+00:15 +26: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en fallo evita falso duplicado
+00:15 +27: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diferencia en orden evita falso duplicado
+00:15 +28: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: plantillas distintas no coinciden por tipo o weekday
+00:15 +29: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: vacío y carga null frente a cero no son duplicados
+00:15 +30: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diez estimado no acredita hito limpio
+00:15 +31: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diez importado no acredita hito limpio
+00:15 +32: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diez incompleto no acredita hito limpio
+00:15 +33: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: diez sin calidad no acredita hito limpio
+00:15 +34: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: hito excluye propioID y exige contexto legado, no plan desconocido/guiado sin vínculo
+00:15 +35: C:/My Projects/seguimiento-033-coherencia/test/data/session_confirmation_repository_test.dart: (tearDownAll)
+00:15 +35: loading C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart
+00:19 +35: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: (setUpAll)
+00:19 +35: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: guard inicia antes de consultar plan: dos taps sólo una consulta y una fila
+00:25 +36: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: duplicado completo pide confirmación; corregir no escribe y aceptar una fila
+
+Warning: A call to tap() with finder "Found 1 widget with widget matching predicate: [
+  Tooltip("Back", dependencies: [_InheritedTheme, _LocalizationsScope-[GlobalKey#01277]], state: TooltipState#28984(ticker inactive)),
+]" derived an Offset (Offset(28.0, 28.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: _RenderLayoutSurrogateProxyBox#ad13e relayoutBoundary=up2
+The hit test result at that offset is: HitTestResult(_RenderColoredBox#d9aad@Offset(28.0, 28.0), RenderConstrainedBox#ca91c@Offset(28.0, 28.0), RenderMouseRegion#f627a@Offset(28.0, 28.0), RenderSemanticsAnnotations#2d824@Offset(28.0, 28.0), RenderPointerListener#dd9ad@Offset(28.0, 28.0), RenderSemanticsGestureHandler#280a8@Offset(28.0, 28.0), RenderExcludeSemantics#78559@Offset(28.0, 28.0), RenderBlockSemantics#0b2f8@Offset(28.0, 28.0), RenderIgnorePointer#a7743@Offset(28.0, 28.0), RenderSemanticsAnnotations#3ea5b@Offset(28.0, 28.0), _RenderTheater#cc31d@Offset(28.0, 28.0), RenderAbsorbPointer#7e30b@Offset(28.0, 28.0), RenderPointerListener#62585@Offset(28.0, 28.0), RenderSemanticsAnnotations#a4975@Offset(28.0, 28.0), RenderCustomPaint#951a1@Offset(28.0, 28.0), RenderSemanticsAnnotations#49971@Offset(28.0, 28.0), RenderSemanticsAnnotations#19d69@Offset(28.0, 28.0), RenderTapRegionSurface#3911d@Offset(28.0, 28.0), RenderSemanticsAnnotations#13239@Offset(28.0, 28.0), RenderSemanticsAnnotations#31329@Offset(28.0, 28.0), RenderSemanticsAnnotations#35119@Offset(28.0, 28.0), HitTestEntry<HitTestTarget>#cac6f(_ReusableRenderView#b042e), HitTestEntry<HitTestTarget>#8a306(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:1933:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1784:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1032:18)
+#3      WidgetTester.pageBack.<anonymous closure> (package:flutter_test/src/widget_tester.dart:1175:13)
+#4      _rootRun (dart:async/zone.dart:1399:13)
+#5      _CustomZone.run (dart:async/zone.dart:1301:19)
+#6      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:71:41)
+#7      WidgetTester.pageBack (package:flutter_test/src/widget_tester.dart:1167:27)
+#8      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart:155:13)
+<asynchronous suspension>
+#9      main.inWidgetZone (file:///C:/My%20Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart:78:7)
+<asynchronous suspension>
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:33 +37: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: primera progresión limpia de diez acredita hito tras guardar sin activar plan
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with text "Abrir": []" (used in a call to "tap()") could not find any
+matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:1884:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1784:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1032:18)
+#3      main.mount (file:///C:/My%20Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart:103:13)
+<asynchronous suspension>
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart:190:5)
+<asynchronous suspension>
+#5      main.inWidgetZone (file:///C:/My%20Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart:78:7)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  primera progresión limpia de diez acredita hito tras guardar sin activar plan
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:36 +37 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: primera progresión limpia de diez acredita hito tras guardar sin activar plan [E]
+  Test failed. See exception logs above.
+  The test description was: primera progresión limpia de diez acredita hito tras guardar sin activar plan
+  
+00:36 +37 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: una sola serie distinta no confirma y editar propio id no duplica
+00:40 +38 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: busy quita foco; fallo conserva formulario y retry guarda exactamente una fila
+00:45 +39 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: borrado existente elimina registro y carga/informe se recalculan
+00:47 +40 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: (tearDownAll)
+00:47 +40 -1: loading C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart
+lib/features/home/home_screen.dart:866:56: Error: The getter 'ref' isn't defined for the class '_RingsCard'.
+ - '_RingsCard' is from 'package:seguimiento/features/home/home_screen.dart' ('lib/features/home/home_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
+                onTap: () => _showFootballDay(context, ref, d),
+                                                       ^^^
+lib/features/home/home_screen.dart:887:56: Error: The getter 'ref' isn't defined for the class '_RingsCard'.
+ - '_RingsCard' is from 'package:seguimiento/features/home/home_screen.dart' ('lib/features/home/home_screen.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'ref'.
+            onPressed: () => _showFootballDay(context, ref, d),
+                                                       ^^^
+00:51 +40 -2: loading C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart
+00:51 +40 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T052555617-53584-fbd315e6fb6c47d4848d5a5a33b0255a.json

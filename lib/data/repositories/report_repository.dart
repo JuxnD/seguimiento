@@ -53,11 +53,26 @@ class ReportRepository {
     // Sesiones, con sus series y vueltas en dos consultas (no dos por sesión).
     final allSessions = await (db.select(db.sessions)..where((x) => x.date.isBetweenValues(f, t))).get();
     final sessionRows = [for (final s in allSessions) if (s.type.isTraining) s];
+    final beforeRows = <SessionRow>[];
+    for (final type in SessionType.values.where((x) => x.isCircuit)) {
+      // Igual que lastOfType/Hoy: última fecha anterior, luego último ID;
+      // no saltar una sesión sin rondas para rescatar evidencia más antigua.
+      final row = await (db.select(db.sessions)
+            ..where((x) => x.date.isSmallerThanValue(f) & x.type.equalsValue(type))
+            ..orderBy([
+              (x) => OrderingTerm(expression: x.date, mode: OrderingMode.desc),
+              (x) => OrderingTerm(expression: x.id, mode: OrderingMode.desc),
+            ])
+            ..limit(1))
+          .getSingleOrNull();
+      if (row != null) beforeRows.add(row);
+    }
+    final evidenceRows = [...sessionRows, ...beforeRows];
     final mobility = [
       for (final s in allSessions)
         if (!s.type.isTraining) MobilityEntry(date: parseDay(s.date), totalSec: s.totalSec),
     ];
-    final ids = [for (final s in sessionRows) s.id];
+    final ids = [for (final s in evidenceRows) s.id];
     final setsBySession = <int, List<SessionSetRow>>{};
     final roundsBySession = <int, List<SessionRoundRow>>{};
     if (ids.isNotEmpty) {
@@ -77,11 +92,13 @@ class ReportRepository {
       }
     }
     final sessions = <SessionEntry>[];
-    for (final s in sessionRows) {
+    final sessionsBefore = <SessionType, SessionEntry>{};
+    for (final s in evidenceRows) {
       final sets = setsBySession[s.id] ?? const <SessionSetRow>[];
       final rounds = roundsBySession[s.id] ?? const <SessionRoundRow>[];
       final measured = rounds.isNotEmpty && rounds.every((r) => r.workSec != null && r.restSec != null);
-      sessions.add(SessionEntry(
+      final entry = SessionEntry(
+        id: s.id,
         date: parseDay(s.date),
         startTime: s.startTime,
         type: s.type,
@@ -122,7 +139,12 @@ class ReportRepository {
               rir: x.rir,
             ),
         ],
-      ));
+      );
+      if (s.date.compareTo(f) < 0) {
+        sessionsBefore[s.type] = entry;
+      } else {
+        sessions.add(entry);
+      }
     }
 
     final maxBefore = db.sessions.roundsDone.max();
@@ -198,6 +220,7 @@ class ReportRepository {
       sessions: sessions,
       previousRoundsRecord: prevRecord,
       roundsBeforeRange: roundsBefore,
+      sessionsBeforeRange: sessionsBefore,
       football: [
         for (final g in football)
           FootballEntry(

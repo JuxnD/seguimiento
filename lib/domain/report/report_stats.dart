@@ -248,15 +248,43 @@ class ReportStats {
 /// Sesiones de circuito que subieron de ronda sin cumplir la regla de
 /// progresión, con el motivo. Orden cronológico.
 List<(SessionEntry, int, List<String>)> progressionViolations(ReportStats s) {
-  final out = <(SessionEntry, int, List<String>)>[];
-  final previous = <SessionType, int>{...s.input.roundsBeforeRange};
-  for (final session in s.sessionsSorted.where((x) => x.type.isCircuit && x.roundsDone != null)) {
-    final before = previous[session.type];
-    final blockers = session.progressionBlockers;
-    if (before != null && session.roundsDone! > before && blockers.isNotEmpty) {
-      out.add((session, before, blockers));
+  return progressionReview(s).violations;
+}
+
+/// Permiso del intento, no calidad de su resultado. Las sesiones del mismo
+/// día comparten precedente; al siguiente día gana el último ID, como Hoy.
+({List<(SessionEntry, int, List<String>)> violations, List<SessionEntry> unknown})
+    progressionReview(ReportStats s) {
+  final violations = <(SessionEntry, int, List<String>)>[];
+  final unknown = <SessionEntry>[];
+  final previous = <SessionType, SessionEntry>{...s.input.sessionsBeforeRange};
+  final rows = s.input.sessions.where((x) => x.type.isCircuit).toList()
+    ..sort((a, b) {
+      final day = dayKey(a.date).compareTo(dayKey(b.date));
+      return day != 0 ? day : (a.id ?? 0).compareTo(b.id ?? 0);
+    });
+  var index = 0;
+  while (index < rows.length) {
+    final day = dayKey(rows[index].date);
+    final pending = <SessionType, SessionEntry>{};
+    while (index < rows.length && dayKey(rows[index].date) == day) {
+      final current = rows[index++];
+      final before = previous[current.type];
+      final proposal = before?.progressionEvidence;
+      if (current.roundsDone != null && !current.imported && !current.roundsEstimated) {
+        if (proposal == null) {
+          unknown.add(current);
+        } else if (current.roundsDone! > proposal.lastRounds) {
+          final reasons = [...proposal.unmet];
+          if (proposal.canProgress && current.roundsDone! > proposal.rounds) {
+            reasons.add('la propuesta anterior era ${proposal.rounds} rondas');
+          }
+          if (reasons.isNotEmpty) violations.add((current, proposal.lastRounds, reasons));
+        }
+      }
+      pending[current.type] = current;
     }
-    previous[session.type] = session.roundsDone!;
+    previous.addAll(pending);
   }
-  return out;
+  return (violations: violations, unknown: unknown);
 }

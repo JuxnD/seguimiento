@@ -1,0 +1,8 @@
+{
+  "Inference": "Bounded pumps did not resolve pending await; initial pump hypothesis not confirmed",
+  "Next": "Create DB within runAsync and trace preparation await boundaries",
+  "Method": "Ctrl-C own session90821",
+  "LastObserved": "00:00 first Hoy case; no assertion terminal",
+  "Phase": "baseline bounded UI",
+  "Status": "INTERRUPTED_HARNESS"
+}

@@ -1,0 +1,8 @@
+{
+  "Unresolved": "db.close awaited in widget harness did not complete; UI bug not counted",
+  "Phase": "baseline one UI trace",
+  "LastObserved": "anchor visible; disposing widget; widget disposed; closing database",
+  "Status": "INTERRUPTED_HARNESS",
+  "Next": "Independent A implementation; B/C baseline next lease after harness closes cleanly",
+  "Method": "Ctrl-C own session94818"
+}

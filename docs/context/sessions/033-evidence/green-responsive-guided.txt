@@ -1,0 +1,39 @@
+00:00 +0: loading C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart: Hoy suma dos partidos y abre detalle real, texto 1.0
+033 HARNESS: database created
+033 HARNESS: seed complete
+033 HARNESS: real dashboard loaded
+033 HARNESS: fonts loaded
+033 HARNESS: home mounted
+033 HARNESS: home pumped
+033 HARNESS: football anchor visible
+033 HARNESS: disposing widget
+033 HARNESS: widget disposed; closing database
+033 HARNESS: database closed
+00:02 +1: C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart: Hoy suma dos partidos y abre detalle real, texto 2.0
+033 HARNESS: database created
+033 HARNESS: seed complete
+033 HARNESS: real dashboard loaded
+033 HARNESS: fonts loaded
+033 HARNESS: home mounted
+033 HARNESS: home pumped
+033 HARNESS: football anchor visible
+033 HARNESS: disposing widget
+033 HARNESS: widget disposed; closing database
+033 HARNESS: database closed
+00:03 +2: C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart: (tearDownAll)
+00:03 +2: loading C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart
+00:04 +2: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: (setUpAll)
+00:04 +2: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: hito guiado espera commit real; DB falla=false
+00:05 +3: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: hito guiado espera commit real; DB falla=true
+00:05 +4: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: terminar antes guarda solo lo hecho y la marca como incompleta
+00:06 +5: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: cada ronda separa su trabajo del descanso que la precede
+00:08 +6: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: un doble toque en "Hecho" no salta el descanso ni la parada siguiente
+00:09 +7: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: el cierre de un circuito pide técnica, rango y recuperación
+00:09 +8: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: al terminar el enfriamiento la sesión queda guardada sin revisar (§16.9)
+00:10 +9: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: el acumulado de reps es por ejercicio
+00:10 +10: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: un aguante por lado: derecho, luego izquierdo, con cronómetro y descanso entre series
+00:11 +11: C:/My Projects/seguimiento-033-coherencia/test/ui/guided_session_test.dart: (tearDownAll)
+00:11 +11: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T152630668-27116-e490dced256a4b048221d4134d39424e.json

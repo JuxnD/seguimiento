@@ -1,0 +1,3 @@
+Analyzing seguimiento-033-coherencia...                         
+No issues found! (ran in 5.6s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T153523659-61284-acd0f0bc8de049c6a29d01d7e524566d.json

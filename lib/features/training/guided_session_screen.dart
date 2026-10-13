@@ -30,6 +30,7 @@ import '../../domain/mobility.dart' show legRecovery, mobilityNight;
 import '../../domain/recovery.dart' show sorenessZones;
 import '../../domain/warmup.dart';
 import '../../ui/progress_ring.dart';
+import '../../ui/record_celebration.dart';
 import '../../ui/session_style.dart';
 import '../../ui/widgets.dart';
 import '../../ui/theme.dart';
@@ -324,13 +325,24 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// Desde ese momento cuenta en Hoy y en el informe aunque nunca se toque
   /// "Revisar y guardar" (§16.9).
   int? _savedId;
+  bool _savingPending = false;
 
   Future<void> _saveAsPending() async {
+    if (_savingPending || _savedId != null) return;
+    _savingPending = true;
+    var milestone = false;
+    int? milestoneRounds;
     try {
       final draft = _buildDraft()..pendingReview = true;
-      final id = await ref.read(trainingRepositoryProvider).save(draft);
+      final repo = ref.read(trainingRepositoryProvider);
+      final store = ref.read(activeSessionStoreProvider);
+      final hadTen = await repo.firstCleanTen(excludeSessionId: draft.id) != null;
+      final v2 = await repo.v2ProgressionContext(draft, requireLink: true);
+      final id = await repo.save(draft);
       _savedId = id;
-      await ref.read(activeSessionStoreProvider).clear();
+      await store.clear();
+      milestone = !hadTen && v2;
+      milestoneRounds = draft.roundsDone;
       final rounds = draft.roundsDone == null ? '' : '${draft.roundsDone} rondas · ';
       unawaited(_notifications.scheduleReviewReminder(
         after: const Duration(hours: 1),
@@ -340,7 +352,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     } on Object {
       // Sin base (o si falla), la foto en disco la conserva: Hoy la ofrece
       // como "terminada sin guardar".
-      _persist();
+      if (mounted) _persist();
+    } finally {
+      _savingPending = false;
+    }
+    if (mounted && milestone) {
+      await showRecordCelebration(context, rounds: milestoneRounds!, milestone: true);
     }
   }
 

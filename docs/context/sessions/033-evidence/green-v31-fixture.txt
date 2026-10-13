@@ -1,0 +1,12 @@
+00:00 +0: loading C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: activarlo: semana 1, metas vigentes de §19.3 y abdomen el sábado
+00:00 +1: un v3 activado para el mismo lunes queda reemplazado por el v3.1
+00:00 +2: el viernes es circuito hasta las 10 limpias; después Cindy de prueba
+00:01 +3: 10 rondas sin los criterios no cuentan como limpias
+00:01 +4: partido entre semana: el viernes metabólico lo avisa
+00:01 +5: RIR por serie y últimas series de fuerza del mismo día de la semana
+00:01 +6: medir en una fecha del v3.1 corre la próxima a la siguiente
+00:01 +7: (tearDownAll)
+00:01 +7: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T153058431-46484-8e5acbfb0890463fae42f418a46826d8.json

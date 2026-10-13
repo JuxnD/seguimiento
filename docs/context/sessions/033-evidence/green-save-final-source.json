@@ -1,0 +1,6 @@
+{
+  "utc": "2026-10-13T15:35:41.7029585Z",
+  "sha256": "85453840CF9882BF0B42D00CD4D684835D38148420EBE1EEBE928946B0A01D71",
+  "reason": "split await/mounted/saved, explicit State lifetime after commit",
+  "file": "lib/features/training/session_form_screen.dart"
+}

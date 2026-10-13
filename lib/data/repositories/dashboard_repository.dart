@@ -7,6 +7,7 @@ import '../../domain/fitness_test.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
+import '../../domain/football_summary.dart';
 import '../../domain/recovery.dart';
 import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
 import '../../domain/goal_history.dart';
@@ -38,6 +39,7 @@ class TodayDashboard {
     required this.roundsDone,
     required this.sessionsToday,
     this.footballToday,
+    this.footballGamesToday = const [],
     this.hardFootballYesterday,
     required this.streak,
     required this.macros,
@@ -108,6 +110,14 @@ class TodayDashboard {
   /// Partido registrado hoy. Va aparte de las sesiones (`FootballGames`), pero
   /// para Hoy y la racha cuenta igual que entrenar.
   final FootballGameRow? footballToday;
+  final List<FootballGameRow> footballGamesToday;
+
+  /// Conserva el row representativo para hidratación/lectores legados; el
+  /// acumulado usa todos y no mezcla pesajes entre partidos.
+  List<FootballGameRow> get gamesToday => footballGamesToday.isNotEmpty
+      ? footballGamesToday : [if (footballToday != null) footballToday!];
+  FootballDaySummary get footballSummary => FootballDaySummary(date,
+      gamesToday.map((g) => (minutes: g.minutes, intensity: g.intensity, format: g.format)));
 
   /// Partido de ayer si fue intenso (≥ 8) o hubo golpe: hoy se baja la carga.
   final FootballGameRow? hardFootballYesterday;
@@ -237,7 +247,11 @@ class DashboardRepository {
     final planSessions = sessions.where((s) => s.mode != 'test').toList();
     final torsoComplete = date.weekday == DateTime.monday && test?.part == TestPart.torso && test!.done;
     final meals = await nutrition.range(date, date);
-    final football = await _lastGame(date);
+    final footballGames = await (db.select(db.footballGames)
+          ..where((t) => t.date.equals(dayKey(date)))
+          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+        .get();
+    final football = footballGames.isEmpty ? null : footballGames.last;
     final yesterday = await _lastGame(addDays(date, -1));
 
     final maxRounds = db.sessions.roundsDone.max();
@@ -285,6 +299,7 @@ class DashboardRepository {
       roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
       sessionsToday: planSessions.length + (torsoComplete ? 1 : 0),
       footballToday: football,
+      footballGamesToday: footballGames,
       hardFootballYesterday: yesterday != null && isHardGame(yesterday) ? yesterday : null,
       streak: await _streak(date),
       macros: Macros.sum(meals.map((m) => m.macros)),

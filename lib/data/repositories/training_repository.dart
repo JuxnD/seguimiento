@@ -132,6 +132,14 @@ class SessionDraft {
   /// Trabajo de cada ronda, sin descansos. null si no hay descansos medidos.
   List<int>? get roundWorkSec => roundWork(roundMarksSec, roundRestSec);
 
+  ProgressionProposal? get progressionEvidence => imported || roundsEstimated ? null : proposeProgression(
+      lastRounds: roundsDone, lastPlanned: plannedRounds, lastDate: date, sessionId: id,
+      anySplit: sets.any((s) => s.split), anyFailure: sets.any((s) => s.toFailure),
+      techniqueOk: techniqueOk, fullRange: fullRange, recoveryOk: recoveryOk, incomplete: incomplete);
+
+  bool get cleanTen => type == SessionType.progresion && (roundsDone ?? 0) >= 10 &&
+      progressionEvidence?.canProgress == true;
+
   /// Only recorded dose and equipment form the comparison protocol. No side
   /// is inferred from set ordering and missing exercises stay unknown.
   String? get exerciseProtocol {
@@ -405,45 +413,66 @@ class TrainingRepository {
   /// aquí para que la meta sea la misma en las dos pantallas.
   Future<ProgressionProposal?> progressionProposal(DateTime date) async {
     final last = await lastOfType(SessionType.progresion, date);
-    if (last == null) return null;
-    return proposeProgression(
-      lastRounds: last.roundsDone,
-      lastPlanned: last.plannedRounds,
-      lastDate: last.date,
-      sessionId: last.id,
-      anySplit: last.sets.any((s) => s.split),
-      anyFailure: last.sets.any((s) => s.toFailure),
-      techniqueOk: last.techniqueOk,
-      fullRange: last.fullRange,
-      recoveryOk: last.recoveryOk,
-      incomplete: last.incomplete,
-    );
+    return last?.progressionEvidence;
+  }
+
+  /// Última sesión de la plantilla/protocolo comparable, excluyendo el ID
+  /// editado. Una coincidencia parcial de series no se considera duplicado.
+  Future<SessionDraft?> repeatedSetsBefore(SessionDraft draft) async {
+    if (draft.sets.isEmpty || draft.sets.any((s) => s.exercise.trim().isEmpty)) return null;
+    final rows = await (db.select(db.sessions)
+          ..where((t) => t.type.equalsValue(draft.type) & t.date.isSmallerOrEqualValue(dayKey(draft.date)) &
+              (draft.id == null ? const Constant(true) : t.id.equals(draft.id!).not()) &
+              (draft.mode == null ? t.mode.isNull() : t.mode.equals(draft.mode!)) &
+              (draft.planDayId == null ? t.planDayId.isNull() : t.planDayId.equals(draft.planDayId!)))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+            (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
+          ]))
+        .get();
+    for (final row in rows) {
+      final previous = await load(row.id);
+      final protocol = previous.sets.length == draft.sets.length &&
+          List.generate(draft.sets.length, (i) => previous.sets[i].exercise.trim() == draft.sets[i].exercise.trim())
+              .every((same) => same);
+      if (draft.planDayId == null && !protocol) continue;
+      if (!protocol) return null;
+      for (var i = 0; i < draft.sets.length; i++) {
+        final a = draft.sets[i], b = previous.sets[i];
+        if (a.reps != b.reps || a.loadKg != b.loadKg || a.rir != b.rir || a.split != b.split ||
+            a.toFailure != b.toFailure || _blankToNull(a.variant) != _blankToNull(b.variant) ||
+            (a.split && _blankToNull(a.splitDetail) != _blankToNull(b.splitDetail))) return null;
+      }
+      return previous;
+    }
+    return null;
+  }
+
+  /// La marca física no autoriza afirmar un hito de otro programa. Una
+  /// sesión guiada desvinculada conserva su guion, pero no se retargetea al
+  /// plan del día para acreditar el hito específico del circuito legado.
+  Future<bool> v2ProgressionContext(SessionDraft draft, {bool requireLink = false}) async {
+    if (!draft.cleanTen || (requireLink && draft.planDayId == null)) return false;
+    final plan = PlanRepository(db, exercises);
+    final view = draft.planDayId == null ? await plan.dayFor(draft.date) : await plan.dayById(draft.planDayId!);
+    return view != null && view.scheme == null && view.day.type == DayType.progresion;
   }
 
   /// Fecha de la primera progresión de 10 rondas o más que cumplió la regla
   /// de calidad, antes de `before`. Desde el viernes siguiente, el viernes del
   /// v3.1 deja el circuito y alterna Cindy y Tabata (§19.1).
-  Future<DateTime?> firstCleanTen({DateTime? before}) async {
+  Future<DateTime?> firstCleanTen({DateTime? before, int? excludeSessionId}) async {
     final rows = await (db.select(db.sessions)
           ..where((t) =>
               t.type.equalsValue(SessionType.progresion) &
               t.roundsDone.isBiggerOrEqualValue(10) &
+              (excludeSessionId == null ? const Constant(true) : t.id.equals(excludeSessionId).not()) &
               (before == null ? const Constant(true) : t.date.isSmallerThanValue(dayKey(before))))
           ..orderBy([(t) => OrderingTerm(expression: t.date)]))
         .get();
     for (final r in rows) {
       final s = await load(r.id);
-      final p = proposeProgression(
-        lastRounds: s.roundsDone,
-        lastPlanned: s.plannedRounds,
-        anySplit: s.sets.any((x) => x.split),
-        anyFailure: s.sets.any((x) => x.toFailure),
-        techniqueOk: s.techniqueOk,
-        fullRange: s.fullRange,
-        recoveryOk: s.recoveryOk,
-        incomplete: s.incomplete,
-      );
-      if (p != null && p.canProgress) return s.date;
+      if (s.cleanTen) return s.date;
     }
     return null;
   }

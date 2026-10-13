@@ -249,23 +249,51 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
   }
 
   Future<void> _save() async {
-    _syncTimes();
-    if (!await _softChecks()) return;
-    if (!await _confirmAgainstPlan()) return;
-    d
-      ..roundsDone = int.tryParse(_rounds.text)
-      ..context = _context.text
-      ..notes = _notes.text
-      ..limitingExercise = _limiting.text
-      ..pendingReview = false;
-    if (!mounted) return;
+    if (_saving) return;
+    final route = ModalRoute.of(context);
+    FocusScope.of(context).unfocus();
     setState(() => _saving = true);
     try {
+      _syncTimes();
+      if (!await _softChecks() || !mounted) return;
+      if (!await _confirmAgainstPlan() || !mounted) return;
+      d
+        ..roundsDone = int.tryParse(_rounds.text)
+        ..context = _context.text
+        ..notes = _notes.text
+        ..limitingExercise = _limiting.text;
       final repo = ref.read(trainingRepositoryProvider);
-      if (!await guarded(context, () => repo.save(d))) return;
+      final repeated = await repo.repeatedSetsBefore(d);
+      if (!mounted) return;
+      if (repeated != null && !await _confirm('Mismos números que la última sesión',
+          'Todas las series coinciden con el registro del ${formatShort(repeated.date)}. '
+          '¿Entrenaste y fueron los mismos números? Confirma o corrige.', keep: 'Guardar igual')) return;
+      if (!mounted) return;
+      final original = d.id == null ? null : await repo.load(d.id!);
+      final hadTen = await repo.firstCleanTen(excludeSessionId: d.id) != null;
+      final v2 = await repo.v2ProgressionContext(d, requireLink: d.pendingReview);
+      if (!mounted) return;
+      final pendingReview = d.pendingReview;
+      d.pendingReview = false;
+      var saved = false;
+      try {
+        saved = await guarded(context, () => repo.save(d));
+      } finally {
+        // Un retry de revisión conserva su procedencia aunque SQLite falle.
+        // No tratar un guion desvinculado como un alta manual del plan actual.
+        if (!saved) d.pendingReview = pendingReview;
+      }
+      if (!mounted) return;
+      if (!saved) return;
       unawaited(ref.read(notificationServiceProvider).cancelReviewReminder());
-      if (widget.celebrate) await _celebrateIfRecord(repo);
-      if (mounted) Navigator.pop(context, true);
+      if (!hadTen && original?.cleanTen != true && v2) {
+        await showRecordCelebration(context, rounds: d.roundsDone!, milestone: true);
+      } else if (widget.celebrate) {
+        await _celebrateIfRecord(repo);
+      }
+      if (mounted && route?.isCurrent == true) Navigator.pop(context, true);
+    } on Object catch (error) {
+      if (mounted) showSnack(context, 'No se pudo guardar: $error');
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -303,7 +331,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
           if (d.id != null)
             IconButton(tooltip: 'Borrar', 
               icon: const Icon(Icons.delete_outline),
-              onPressed: () async {
+              onPressed: _saving ? null : () async {
                 if (await confirmDelete(context, 'la sesión')) {
                   if (!context.mounted) return;
                   final ok = await guarded(context, () => ref.read(trainingRepositoryProvider).delete(d.id!), failure: 'No se pudo borrar');
@@ -313,7 +341,7 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             ),
         ],
       ),
-      body: ListView(
+      body: AbsorbPointer(absorbing: _saving, child: ExcludeFocus(excluding: _saving, child: ListView(
         padding: const EdgeInsets.only(bottom: 96),
         children: [
           AppCard(
@@ -527,11 +555,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
             ],
           ),
         ],
-      ),
+      ))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _saving ? null : _save,
         icon: const Icon(Icons.save),
-        label: const Text('Guardar'),
+        label: Text(_saving ? 'Guardando…' : 'Guardar'),
       ),
     );
   }

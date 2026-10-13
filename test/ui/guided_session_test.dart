@@ -14,6 +14,8 @@ import 'package:seguimiento/data/notification_service.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/domain/enums.dart';
+import 'package:seguimiento/domain/active_session.dart';
+import 'package:seguimiento/domain/session_script.dart';
 import 'package:seguimiento/domain/reminders.dart';
 import 'package:seguimiento/features/training/guided_session_screen.dart';
 import 'package:wakelock_plus/wakelock_plus.dart' as wakelock;
@@ -58,6 +60,25 @@ PlanDayDraft _circuit() => PlanDayDraft(
       ],
     );
 
+class _MilestoneWrite extends TrainingRepository {
+  _MilestoneWrite(super.db, super.exercises, {required this.fail});
+  final bool fail;
+  final gate = Completer<void>();
+  final finished = Completer<void>();
+  int calls = 0;
+  @override
+  Future<int> save(SessionDraft draft) async {
+    calls++;
+    try {
+      await gate.future;
+      if (fail) throw StateError('DB rechaza escritura sintética');
+      return await super.save(draft);
+    } finally {
+      finished.complete();
+    }
+  }
+}
+
 void main() {
   late Directory dir;
 
@@ -80,7 +101,8 @@ void main() {
   });
 
   /// Monta el cronómetro detrás de una ruta que recoge lo que devuelve.
-  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester, {PlanDayDraft? day, TrainingRepository? training}) async {
+  Future<List<SessionDraft?>> pumpGuided(WidgetTester tester, {PlanDayDraft? day, TrainingRepository? training,
+      AppDatabase? database, GuidedSnapshot? resume, int? planDayId}) async {
     // Alta para que quepa todo y ancha porque la fuente de prueba dibuja cada
     // letra como un cuadrado (ver app_smoke_test.dart).
     tester.view.physicalSize = const Size(1400, 3000);
@@ -89,6 +111,7 @@ void main() {
     final results = <SessionDraft?>[];
     await tester.pumpWidget(ProviderScope(
       overrides: [
+        if (database != null) databaseProvider.overrideWithValue(database),
         notificationServiceProvider.overrideWithValue(_NoNotifications()),
         activeSessionStoreProvider.overrideWithValue(ActiveSessionStore(File('${dir.path}/sesion.json'))),
         latestWeightProvider.overrideWithValue(70),
@@ -102,7 +125,8 @@ void main() {
               child: FilledButton(
                 onPressed: () async => results.add(await Navigator.push<SessionDraft>(
                   context,
-                  MaterialPageRoute(builder: (_) => GuidedSessionScreen(day: day ?? _circuit(), date: DateTime(2026, 9, 24))),
+                  MaterialPageRoute(builder: (_) => GuidedSessionScreen(day: day ?? _circuit(), date: DateTime(2026, 9, 24),
+                    resume: resume, planDayId: planDayId)),
                 )),
                 child: const Text('abrir'),
               ),
@@ -130,6 +154,77 @@ void main() {
     expect(find.text('Calentamiento a medias'), findsOneWidget);
     await tester.tap(find.text('Empezar igual'));
     await step(tester);
+  }
+
+  for (final fail in [false, true]) {
+    testWidgets('hito guiado espera commit real; DB falla=$fail', (tester) async {
+      late AppDatabase db;
+      late PlanDayView view;
+      await tester.runAsync(() async {
+        db = openInMemoryDatabase();
+        final plan = PlanDraft.empty(DateTime(2026, 9, 1));
+        plan.days[3].type = DayType.progresion;
+        plan.days[3].targetRounds = 10;
+        plan.days[3].exercises
+          ..clear()
+          ..add(PlanExerciseDraft(name: 'Flexiones', repsMin: 8));
+        final plans = PlanRepository(db, ExerciseRepository(db));
+        await plans.saveAsNewVersion(plan);
+        view = (await plans.dayFor(DateTime(2026, 9, 24)))!;
+        await TrainingRepository(db, ExerciseRepository(db)).save(SessionDraft(
+          date: DateTime(2026, 9, 17), type: SessionType.progresion, roundsDone: 9, plannedRounds: 9,
+          techniqueOk: true, fullRange: true, recoveryOk: true));
+      });
+      final repo = _MilestoneWrite(db, ExerciseRepository(db), fail: fail);
+      Future<void> until(bool Function() ready) async {
+        for (var i = 0; i < 100 && !ready(); i++) {
+          await tester.pump(const Duration(milliseconds: 10));
+          await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 5)));
+        }
+        expect(ready(), isTrue, reason: 'esperar frontera real de escritura');
+      }
+      try {
+        final now = DateTime.now();
+        await pumpGuided(tester, database: db, training: repo, day: view.day, planDayId: view.dayId,
+          resume: GuidedSnapshot(date: '2026-09-24', startedAt: now.subtract(const Duration(minutes: 6)),
+            workStartedAt: now.subtract(const Duration(minutes: 5)),
+            workEndedAt: now.subtract(const Duration(seconds: 75)),
+            planDayId: view.dayId, sessionType: SessionType.progresion, phase: GuidedPhase.enfriamiento,
+            index: buildScript(scriptDayFrom(view.day)).length,
+            done: List.generate(10, (_) => const DoneStep('Flexiones', 8, true)),
+            roundMarks: List.filled(10, 20), roundRests: List.filled(10, 30),
+            techniqueOk: true, fullRange: true, recoveryOk: true));
+        await tester.tap(find.text('Terminar enfriamiento'));
+        await until(() => repo.calls == 1);
+        expect(find.text('Meta del Plan v2 cumplida'), findsNothing, reason: 'no acreditar antes de commit');
+        expect(await tester.runAsync(() => db.select(db.sessions).get()), hasLength(1));
+        repo.gate.complete();
+        await until(() => repo.finished.isCompleted);
+        if (!fail) await until(() => find.text('Meta del Plan v2 cumplida').evaluate().isNotEmpty);
+        await tester.pump(const Duration(milliseconds: 500));
+        final rows = await tester.runAsync(() => db.select(db.sessions).get());
+        expect(rows, hasLength(fail ? 1 : 2));
+        if (fail) {
+          expect(find.text('Meta del Plan v2 cumplida'), findsNothing);
+          await until(() => File('${dir.path}/sesion.json').existsSync());
+        } else {
+          expect(rows!.last.roundsDone, 10);
+          expect(rows.last.pendingReview, isTrue);
+          expect(find.text('Meta del Plan v2 cumplida'), findsOneWidget);
+          expect(find.textContaining('Ya quedó guardada'), findsOneWidget);
+          expect(await tester.runAsync(() => db.select(db.planVersions).get()), hasLength(1));
+          expect(File('${dir.path}/sesion.json').existsSync(), isFalse);
+        }
+      } finally {
+        if (!repo.gate.isCompleted) repo.gate.complete();
+        if (repo.calls > 0) await until(() => repo.finished.isCompleted);
+        await tester.pumpWidget(const SizedBox());
+        var closed = false;
+        final closing = db.close().then((_) => closed = true);
+        await until(() => closed);
+        await closing;
+      }
+    });
   }
 
   testWidgets('terminar antes guarda solo lo hecho y la marca como incompleta', (tester) async {

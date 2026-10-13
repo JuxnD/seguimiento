@@ -1,0 +1,14 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/plan_v31_data_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: activarlo: semana 1, metas de §19.3 y abdomen el sábado 17
+00:01 +0 -1: activarlo: semana 1, metas de §19.3 y abdomen el sábado 17 [E]
+  Expected: <2100>
+    Actual: <null>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan_v31_data_test.dart 52:5              main.<fn>
+  
+00:01 +0 -1: (tearDownAll)
+00:01 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T152919528-7040-105a8a6b86684465a6707bf304ff82fd.json

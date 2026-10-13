@@ -1,0 +1,7 @@
+{
+  "Schema": 23,
+  "InputsVerified": "database.dart/tables.dart equal base8ef2df4 and between worktrees",
+  "GeneratedSHA256": "CC692474273458C6AC0AE0571962A301F80CC0644B17F7DF682BB7040CB36659",
+  "Method": "copy existing ignored generated prerequisite; no build_runner",
+  "SourceWorktree": "C:\\My Projects\\seguimiento-026-integridad"
+}

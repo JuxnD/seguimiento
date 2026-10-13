@@ -1,0 +1,79 @@
+{
+  "files": [
+    {
+      "path": "lib/data/repositories/dashboard_repository.dart",
+      "sha256": "6B48DA783852FB483188C00A14E5B135818BB79C7688F1F9DB60BF8C34F778C2"
+    },
+    {
+      "path": "lib/data/repositories/report_repository.dart",
+      "sha256": "440A11A0FE73C0AEBEE8072377589CD7D642E4440B98F943B881E0A6982E1DEB"
+    },
+    {
+      "path": "lib/data/repositories/training_repository.dart",
+      "sha256": "429745C1A1308925E461E88535F9AE9E2C2AEC13B4847CBAC38737C7125BEB9F"
+    },
+    {
+      "path": "lib/domain/football_summary.dart",
+      "sha256": "E368264FCCFB775226F8D3B927BD965191E80A6D670E76C6697AB475EEDCF38F"
+    },
+    {
+      "path": "lib/domain/report/alerts.dart",
+      "sha256": "E1BCC7B23D747189235B36F96B85623FAD05176001AD71932C4709A5BCE665A0"
+    },
+    {
+      "path": "lib/domain/report/report_input.dart",
+      "sha256": "CC18EEEBE88FB7C0D3D2D58CEA50154E44EC6DD14D0600E5563F5BDE7003175D"
+    },
+    {
+      "path": "lib/domain/report/report_stats.dart",
+      "sha256": "3048D9A952335D705C3320B96D2D39AB2C4A37997504A24621B7254962887AD3"
+    },
+    {
+      "path": "lib/features/home/home_screen.dart",
+      "sha256": "80C566C46F090F9E106C80C08A5F02572530C976D4F71155CAC5CA64E0215AC7"
+    },
+    {
+      "path": "lib/features/training/guided_session_screen.dart",
+      "sha256": "01693FF2405607827939CE4CA948928DEAC21D9308E91395B6AE4F45B7AD9425"
+    },
+    {
+      "path": "lib/features/training/session_form_screen.dart",
+      "sha256": "C7BBEA7907B7721C8E8AF9DE59AABF35FC37E1DBB02E60B1F6DF6217DDD7C772"
+    },
+    {
+      "path": "lib/ui/record_celebration.dart",
+      "sha256": "D9B94FAA4A0035DA5F75DDCF3F3DD4352C50E03B33342860D4ED2CB59A6C0CC1"
+    },
+    {
+      "path": "test/data/coherence_progression_report_test.dart",
+      "sha256": "0149F9DB68D14E715C21E0594625CB427697FC62550B442A136CE6641E6F1046"
+    },
+    {
+      "path": "test/data/football_today_summary_test.dart",
+      "sha256": "41E17FD1AA016E93D1A84ED2DDDF57B1ED8AE429CF2F4CC31FA07FDB8F9C1625"
+    },
+    {
+      "path": "test/data/session_confirmation_repository_test.dart",
+      "sha256": "2C8A89F5E3D1C63CD8117269CFA66756742291FF8ACED4A77B9B451B2C2C77DF"
+    },
+    {
+      "path": "test/domain/report_test.dart",
+      "sha256": "AAB6AE66A85D8FD4569D156F9E9D73D10B7D554452F95504C8651ED3E78B5722"
+    },
+    {
+      "path": "test/ui/coherence_today_test.dart",
+      "sha256": "FE6AAD0E2063B999E0DCBED6420129A3F6D815FECA6775B1A29CA64DB6FBDB9D"
+    },
+    {
+      "path": "test/ui/guided_session_test.dart",
+      "sha256": "019E14A2E5BF8E0FCB2DE042186A75EB0A83FE0EEF33CD482B5BF0A01AC1710F"
+    },
+    {
+      "path": "test/ui/session_confirmation_test.dart",
+      "sha256": "99DC641E09DE2B9315838C2E24D6AE952C7E19D676C891F1CE2E79057275422A"
+    }
+  ],
+  "state": "STATIC_UNTESTED_AFTER_UI_OVERFLOW",
+  "base": "8ef2df493ddbc12450618983894a24ec4bcb35f9",
+  "utc": "2026-10-13T13:42:41.8884549Z"
+}

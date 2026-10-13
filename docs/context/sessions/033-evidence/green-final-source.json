@@ -1,0 +1,25 @@
+{
+  "RAMBefore": 7812648960,
+  "CBefore": 37685362688,
+  "Base": "8ef2df493ddbc12450618983894a24ec4bcb35f9",
+  "SDK": "C:/seguimiento-sdk-3.22.0/flutter",
+  "SourceSHA256": {
+    "lib/data/repositories/dashboard_repository.dart": "6b48da783852fb483188c00a14e5b135818bb79c7688f1f9db60bf8c34f778c2",
+    "lib/data/repositories/report_repository.dart": "440a11a0fe73c0aebee8072377589cd7d642e4440b98f943b881e0a6982e1deb",
+    "lib/data/repositories/training_repository.dart": "429745c1a1308925e461e88535f9ae9e2c2aec13b4847cbac38737c7125beb9f",
+    "lib/domain/report/alerts.dart": "e1bcc7b23d747189235b36f96b85623fad05176001ad71932c4709a5bce665a0",
+    "lib/domain/report/report_input.dart": "cc18eeebe88fb7c0d3d2d58cea50154e44ec6dd14d0600e5563f5bde7003175d",
+    "lib/domain/report/report_stats.dart": "3048d9a952335d705c3320b96d2d39ab2c4a37997504a24621b7254962887ad3",
+    "lib/features/home/home_screen.dart": "e6951ab03680020a3b88d00dd018c6fa9696f301c59f3cb6771d39eeff6e309b",
+    "lib/features/training/guided_session_screen.dart": "01693ff2405607827939ce4ca948928deac21d9308e91395b6ae4f45b7ad9425",
+    "lib/features/training/session_form_screen.dart": "c7bbea7907b7721c8e8af9de59aabf35fc37e1dbb02e60b1f6df6217ddd7c772",
+    "lib/ui/record_celebration.dart": "d9b94faa4a0035da5f75ddcf3f3dd4352c50e03b33342860d4ed2cb59a6c0cc1",
+    "test/domain/report_test.dart": "aab6ae66a85d8fd4569d156f9e9d73d10b7d554452f95504c8651ed3e78b5722",
+    "lib/domain/football_summary.dart": "e368264fccfb775226f8d3b927bd965191e80a6d670e76c6697ab475eedcf38f",
+    "test/data/coherence_progression_report_test.dart": "0149f9db68d14e715c21e0594625cb427697fc62550b442a136ce6641e6f1046",
+    "test/data/football_today_summary_test.dart": "41e17fd1aa016e93d1a84ed2dddf57b1ed8ae429cf2f4cc31fa07fdb8f9c1625",
+    "test/data/session_confirmation_repository_test.dart": "2c8a89f5e3d1c63cd8117269cfa66756742291ff8aced4a77b9b451b2c2c77df",
+    "test/ui/coherence_today_test.dart": "679000d94d8edd617710cdcedb94e90224253269c4ec1e2fcb85501c32eecd08",
+    "test/ui/session_confirmation_test.dart": "f0b0d312e9b347c2de13c28d43c58de1e5113489bebf91cfe7ffc45130859c77"
+  }
+}

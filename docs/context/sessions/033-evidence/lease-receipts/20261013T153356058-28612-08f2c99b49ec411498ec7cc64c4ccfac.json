@@ -1,0 +1,22 @@
+{
+  "owner": "033",
+  "token": "f843f41751dc43938edca95a6dda0ba5",
+  "pid": 28612,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--timeout",
+    "90s",
+    "--concurrency",
+    "1",
+    "test/ui/session_confirmation_test.dart"
+  ],
+  "worktree": "C:/My Projects/seguimiento-033-coherencia",
+  "startUtc": "2026-10-13T15:33:43.2343358Z",
+  "finishUtc": "2026-10-13T15:33:56.0542494Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

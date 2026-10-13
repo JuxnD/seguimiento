@@ -3,7 +3,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
-import '../../data/database.dart' show FoodRow;
+import '../../data/database.dart' show FoodRow, FootballGameRow;
 import '../../data/repositories/dashboard_repository.dart';
 import '../../data/repositories/nutrition_repository.dart';
 import '../../data/repositories/profile_repository.dart';
@@ -21,6 +21,7 @@ import '../plan/v3_activation.dart';
 import '../plan/plan_edit_screen.dart' show PlanEditScreen;
 import '../../data/repositories/plan_repository.dart' show PlanDraft;
 import '../../domain/progress.dart';
+import '../../domain/recovery.dart' show LoadItem;
 import '../../domain/sleep_entry.dart';
 import '../../domain/mobility.dart' show legRecovery;
 import '../../ui/progress_ring.dart';
@@ -838,13 +839,13 @@ class _ProposalLine extends ConsumerWidget {
 }
 
 /// Anillos: proteína, kcal y rondas. El progreso se ve, no se lee.
-class _RingsCard extends StatelessWidget {
+class _RingsCard extends ConsumerWidget {
   const _RingsCard({required this.dashboard});
 
   final TodayDashboard dashboard;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final d = dashboard;
     final style = styleForDay(d.dayType);
     final showRounds = d.targetRounds != null;
@@ -852,8 +853,9 @@ class _RingsCard extends StatelessWidget {
     const size = 74.0;
     return AppCard(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        Wrap(
+          alignment: WrapAlignment.spaceAround,
+          runSpacing: 12,
           children: [
             ProgressRing(
               size: size,
@@ -882,15 +884,17 @@ class _RingsCard extends StatelessWidget {
                 label: 'Rondas',
                 color: style.color,
               )
-            else if (d.footballToday case final game? when d.sessionsToday == 0)
-              ProgressRing(
+            else if (d.gamesToday.isNotEmpty && d.sessionsToday == 0)
+              InkWell(
+                onTap: () => _showFootballDay(context, ref, d),
+                child: ProgressRing(
                 size: size,
                 progress: 1,
-                value: "${game.minutes}'",
-                sublabel: game.intensity == null ? 'fútbol ${game.format}' : 'intensidad ${game.intensity}',
+                value: "${d.footballSummary.minutes}'",
+                sublabel: '${d.footballSummary.count} ${d.footballSummary.count == 1 ? 'sesión' : 'sesiones'}',
                 label: 'Fútbol',
                 color: style.color,
-              )
+              ))
             else
               ProgressRing(
                 size: size,
@@ -901,6 +905,12 @@ class _RingsCard extends StatelessWidget {
               ),
           ],
         ),
+        if (d.gamesToday.isNotEmpty && d.sessionsToday > 0)
+          TextButton.icon(
+            onPressed: () => _showFootballDay(context, ref, d),
+            icon: const Icon(Icons.sports_soccer),
+            label: Text("Fútbol · ${d.footballSummary.minutes}' · ${d.footballSummary.count} sesiones"),
+          ),
         if (d.proteinMin == null || d.kcalTarget == null || d.stepsGoal == null) ...[
           const SizedBox(height: 8),
           Text(
@@ -949,6 +959,40 @@ class _RingsCard extends StatelessWidget {
 
 /// Sueño (§19.3): por la mañana, si no se anotó, las horas en cama de un
 /// toque; después, la cifra (tocarla la cambia).
+Future<void> _showFootballDay(BuildContext context, WidgetRef ref, TodayDashboard d) async {
+  final summary = d.footballSummary;
+  final picked = await showModalBottomSheet<FootballGameRow>(
+    context: context,
+    isScrollControlled: true,
+    builder: (sheet) => SafeArea(child: SingleChildScrollView(child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('Fútbol de hoy', style: Theme.of(sheet).textTheme.titleLarge),
+        Text('${summary.minutes} min · ${summary.count} sesiones'),
+        Text('${summary.estimated ? 'Carga estimada' : 'Carga total'}: ${summary.load}'),
+        Text('RPE ponderado: ${summary.weightedRpe == null ? 'sin registrar' : fmtDec(summary.weightedRpe!)}'
+            '${summary.estimated && summary.weightedRpe != null ? ' (parcial)' : ''}'),
+        Text(summary.formatsLabel),
+        if (summary.estimated) const Text('Falta RPE: la carga usa 6 como estimación en esos registros.'),
+        for (final game in d.gamesToday)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text('${game.minutes} min · RPE ${game.intensity ?? 'sin registrar'}'),
+            subtitle: Text('Formato ${game.format} · ${game.intensity == null ? 'Carga estimada' : 'Carga'} '
+                '${LoadItem(date: d.date, minutes: game.minutes, effort: game.intensity, isFootball: true).load}'
+                ' · Hora no registrada'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.pop(sheet, game),
+          ),
+      ]),
+    ))),
+  );
+  if (picked == null || !context.mounted) return;
+  final saved = await Navigator.push<bool>(context,
+      MaterialPageRoute(builder: (_) => FootballFormScreen(existing: picked)));
+  if (saved == true && context.mounted) ref.invalidate(dashboardProvider);
+}
+
 class _SleepLine extends ConsumerWidget {
   const _SleepLine({required this.date});
 
