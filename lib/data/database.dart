@@ -52,6 +52,8 @@ const databaseFileName = 'seguimiento.sqlite';
   AiConversations,
   AiMessages,
   FitnessTests,
+  FitnessTestAttempts,
+  MobilityBenchmarks,
   LadderStates,
   LadderEvents,
   GoalVersions,
@@ -63,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 24;
+  int get schemaVersion => 25;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -78,6 +80,27 @@ class AppDatabase extends _$AppDatabase {
           ));
         },
         onUpgrade: (m, from, to) async {
+          if (from < 25) {
+            await m.addColumn(planExercises, planExercises.purpose);
+            await m.addColumn(planExercises, planExercises.physicalVariantKey);
+            await m.addColumn(footballGames, footballGames.weightsComparable);
+            await m.createTable(fitnessTestAttempts);
+            await m.createTable(mobilityBenchmarks);
+            // Earlier migrations create current tables already.
+            if (from >= 19) {
+              await m.addColumn(fitnessTests, fitnessTests.attemptId);
+              await m.addColumn(fitnessTests, fitnessTests.conditions);
+              await m.addColumn(fitnessTests, fitnessTests.baselineKey);
+            }
+            if (from >= 17) await m.addColumn(morningChecks, morningChecks.kneeStairs);
+            if (from >= 16) {
+              await m.addColumn(sleepLogs, sleepLogs.sleepStart);
+              await m.addColumn(sleepLogs, sleepLogs.wakeAt);
+              await m.addColumn(sleepLogs, sleepLogs.source);
+              await m.addColumn(sleepLogs, sleepLogs.note);
+            }
+            if (from >= 12) await m.addColumn(customReminders, customReminders.origin);
+          }
           if (from < 2) {
             // v2: el plan admite bloques extra, sostenes, RIR y rangos de
             // descanso; la sesión guarda las condiciones de progresión.

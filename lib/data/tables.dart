@@ -115,6 +115,8 @@ class PlanDays extends Table {
 
 @DataClassName('PlanExerciseRow')
 class PlanExercises extends Table {
+  TextColumn get purpose => text().nullable()();
+  TextColumn get physicalVariantKey => text().nullable()();
   IntColumn get id => integer().autoIncrement()();
   IntColumn get planDayId => integer().references(PlanDays, #id, onDelete: KeyAction.cascade)();
   IntColumn get position => integer()();
@@ -253,6 +255,8 @@ class SessionSets extends Table {
 
 @DataClassName('FootballGameRow')
 class FootballGames extends Table {
+  /// null = unknown historical quality; true only after explicit confirmation.
+  BoolColumn get weightsComparable => boolean().nullable()();
   IntColumn get id => integer().autoIncrement()();
   TextColumn get date => text()();
   IntColumn get format => integer().withDefault(const Constant(5))();
@@ -472,6 +476,8 @@ class ExercisePhotos extends Table {
 /// Los días se cuentan desde `lastDone` (o `startDate` si nunca se hizo).
 @DataClassName('CustomReminderRow')
 class CustomReminders extends Table {
+  /// Historical origin remains unknown; never attribute old reminders to AI.
+  TextColumn get origin => text().nullable()();
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text().withLength(min: 1, max: 80)();
   TextColumn get note => text().nullable()();
@@ -487,6 +493,10 @@ class CustomReminders extends Table {
 /// día; registrar otra vez reemplaza.
 @DataClassName('SleepLogRow')
 class SleepLogs extends Table {
+  TextColumn get sleepStart => text().nullable()();
+  TextColumn get wakeAt => text().nullable()();
+  TextColumn get source => text().nullable()();
+  TextColumn get note => text().nullable()();
   TextColumn get date => text()();
   RealColumn get hours => real().check(hours.isBetweenValues(0, 16))();
 
@@ -498,6 +508,7 @@ class SleepLogs extends Table {
 /// peso en ayunas va en `body_weights` y las horas en cama en `sleep_logs`.
 @DataClassName('MorningCheckRow')
 class MorningChecks extends Table {
+  IntColumn get kneeStairs => integer().nullable().check(kneeStairs.isBetweenValues(0, 10))();
   TextColumn get date => text()();
   IntColumn get restingHr => integer().nullable().check(restingHr.isBetweenValues(25, 220))();
 
@@ -542,6 +553,9 @@ class SkillAchievements extends Table {
 /// estricta. `round`: 1 = test inicial, 2 = descarga, 3 = pruebas finales.
 @DataClassName('FitnessTestRow')
 class FitnessTests extends Table {
+  IntColumn get attemptId => integer().nullable().references(FitnessTestAttempts, #id)();
+  TextColumn get conditions => text().nullable()();
+  TextColumn get baselineKey => text().nullable()();
   IntColumn get id => integer().autoIncrement()();
   TextColumn get date => text()();
   IntColumn get round => integer()();
@@ -555,6 +569,30 @@ class FitnessTests extends Table {
 
   /// true = limpia; false = con dudas.
   BoolColumn get clean => boolean().withDefault(const Constant(true))();
+}
+
+/// Append-only attempts; editing addresses an ID, never a date/text prefix.
+class FitnessTestAttempts extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get date => text()();
+  IntColumn get round => integer()();
+  TextColumn get part => text()();
+  TextColumn get protocolId => text()();
+  TextColumn get scheme => text()();
+  TextColumn get blockStart => text().nullable()();
+  IntColumn get sessionId => integer().nullable().unique().references(Sessions, #id)();
+}
+
+/// Mobility measurements have distinct units and allow a signed pike value.
+class MobilityBenchmarks extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get date => text()();
+  TextColumn get item => text()();
+  TextColumn get side => text().nullable()();
+  RealColumn get value => real().nullable()();
+  BoolColumn get touches => boolean().nullable()();
+  TextColumn get conditions => text().nullable()();
+  TextColumn get blockStart => text().nullable()();
 }
 
 /// Peldaño actual de cada escalera de habilidad (§19.10) y desde cuándo.
