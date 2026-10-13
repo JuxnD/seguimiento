@@ -406,6 +406,26 @@ void main() {
     }
   });
 
+  test('rolled support guard rejects world sliding even when planar joints stay fixed', () {
+    final mutant = jsonDecode(jsonEncode(data)) as Map<String, Object?>;
+    final raw = (mutant['figures'] as List).cast<Map<String, Object?>>()
+        .firstWhere((f) => f['name'] == 'Pectoral en el marco de la puerta');
+    final a = jsonDecode(jsonEncode((raw['frames'] as List).first)) as Map<String, Object?>;
+    a['bodyRoll'] = 10.0;
+    final b = jsonDecode(jsonEncode(a)) as Map<String, Object?>;
+    b['bodyZ'] = 1.0;
+    raw['frames'] = [a, b];
+    raw['motion'] = [
+      {'kind': 'interpolate', 'seconds': 1.0, 'label': 'Invalid sliding support',
+       'ground': 'preserve', 'contacts': ['nearHand']}
+    ];
+    final fig = Figure3DCatalog.fromJsonString(jsonEncode(mutant)).forExercise(raw['name'] as String)!;
+    final planarA = solveKeyPose(fig.frames[0], fig.dims);
+    final planarB = solveKeyPose(fig.frames[1], fig.dims);
+    expect((planarA.joints['nearHand']! - planarB.joints['nearHand']!).distance, 0);
+    expect(() => fig.skeletonAt(.5), throwsFormatException);
+  });
+
   testWidgets('doorway stretch turns the chest axially while keeping the supported forearm and feet fixed',
       (tester) async {
     final fig = catalog.forExercise('Pectoral en el marco de la puerta')!;

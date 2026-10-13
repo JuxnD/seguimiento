@@ -430,7 +430,21 @@ class Figure3D {
     // legacy global grounding shortcut would erase take-off or slide hands.
     if (stage != null) {
       final solved = solveKeyPose(pose, dims, exactExtension: true);
+      // A rolled pose closes reach3 chains after the planar solve. Compare
+      // those actual world supports rather than their pre-roll XY proxies.
+      final worldContacts = frames[i].bodyRoll.abs() > .001 ||
+          frames[i + 1].bodyRoll.abs() > .001 || solved.bodyRoll.abs() > .001;
+      final startBody = worldContacts && stage.contacts.isNotEmpty ? liftSkeleton(_keys[i], this) : null;
+      final currentBody = worldContacts && stage.contacts.isNotEmpty ? liftSkeleton(solved, this) : null;
       for (final contact in stage.contacts) {
+        if (worldContacts) {
+          final start = startBody?.p[contact], current = currentBody?.p[contact];
+          final distance = start == null || current == null ? double.nan : (start - current).length;
+          if (!distance.isFinite || distance > .05) {
+            throw FormatException('Apoyo mundial de etapa no conservado: $name/$i/$contact');
+          }
+          continue;
+        }
         final start = _keys[i].joints[contact], current = solved.joints[contact];
         if (start == null || current == null || (start - current).distance > .05) {
           throw FormatException('Apoyo de etapa no conservado: $name/$i/$contact');
