@@ -174,11 +174,29 @@ def generate(name, variant=None):
         motions=[phase('Cadera atrás',seconds=.15) for _ in sweep[1:]]+[phase('Respira',kind='hold')]+[phase('Regresa',seconds=.15) for _ in sweep[1:]]
         return result(frames,motions,props=bench(elbow[0]+3,elbow[1]+1.4,width=15,depth=12),yaw=10,gripZ=4.5)
     if name == 'Pectoral en el marco de la puerta':
-        a=pose('Antebrazo al marco; codo a la altura del hombro')
-        a['nearArm']=arm(0,-90,hand=-90)
-        b=cp(a); b.update(hip=(1,-29),torso=-92,caption='Da un paso y gira suavemente en sentido contrario')
-        for f in (a,b): f['nearArm']=reach(10,-56,hand=-90)
-        return cycle(a,b,contacts=['nearHand'],props=[box([10,-32,8],[2,64,2]),box([10,-64,0],[2,2,18])],per_side=True,yaw=55)
+        # Rotate around the supported shoulder, closing each world-space
+        # chain. The hand, elbow and staggered feet stay at their supports.
+        sweep=[]
+        for i in range(9):
+            angle=20*i/8; theta=math.radians(angle)
+            x=4.5*math.sin(theta); z=4.5*(1-math.cos(theta))
+            f=pose('Antebrazo al marco; adelanta la pierna de ese lado' if i==0 else
+                   'Gira suavemente el pecho hacia el lado contrario',
+                   (x,-28),-90,reach(3,-1),reach(-3,-1),reach(10,-55,hand=-90),arm(90,90))
+            f.update(bodyRoll=angle,bodyZ=z)
+            f['nearArm'].update(reach3=[10,-9,0],pole=[1,0,0],end3=[0,-1,0])
+            for side,sign,target_x in [('near',1,3),('far',-1,-3)]:
+                root_x=x-sign*3.3*math.sin(theta)
+                root_z=z+sign*3.3*math.cos(theta)
+                f[side+'Leg'].update(reach3=[target_x-root_x,27,sign*3.3-root_z],
+                                    pole=[1,0,0],end3=[1,0,0])
+            sweep.append(f)
+        frames=sweep+[cp(sweep[-1])]+[cp(f) for f in reversed(sweep[:-1])]
+        contacts=['nearHand','nearAnkle','farAnkle']
+        motions=[phase('Gira el pecho',seconds=.3,contacts=contacts) for _ in sweep[1:]]
+        motions+=[phase('Respira sin mover los apoyos',kind='hold',seconds=2)]
+        motions+=[phase('Regresa con control',seconds=.3,contacts=contacts) for _ in sweep[1:]]
+        return result(frames,motions,props=[box([12,-32,4.5],[2,64,2]),box([12,-64,0],[2,2,18])],per_side=True,yaw=55)
     if name == 'Sóleo en la pared':
         a=pose('Manos a la pared; ambos talones apoyados',(-10,-25),-80,
                reach(-17,-1),reach(2,-1),reach(9,-37,hand=-90),reach(9,-37,hand=-90))

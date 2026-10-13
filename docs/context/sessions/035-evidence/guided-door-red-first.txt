@@ -1,0 +1,29 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: doorway stretch turns the chest axially while keeping the supported forearm and feet fixed
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: a value greater than <0.2>
+  Actual: <0.0>
+   Which: is not a value greater than <0.2>
+The guide requires turning away from the supported arm, not sagittal tilting.
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:414:5)
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart line 414
+The test description was:
+  doorway stretch turns the chest axially while keeping the supported forearm and feet fixed
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: doorway stretch turns the chest axially while keeping the supported forearm and feet fixed [E]
+  Test failed. See exception logs above.
+  The test description was: doorway stretch turns the chest axially while keeping the supported forearm and feet fixed
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T192322887-65656-e935dd73a9d342adac76f08c83b5fca3.json
