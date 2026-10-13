@@ -7,3 +7,5 @@ test/fixtures/gateway_contract/** -text
 docs/context/sessions/027-evidence/** -text -diff
 docs/context/sessions/029-evidence/** -text -diff
 docs/context/sessions/033-evidence/** -text -diff
+test/fixtures/schema24_034*/manifest24.json -text -diff
+docs/context/sessions/034-probe-evidence/*.txt -text -diff
