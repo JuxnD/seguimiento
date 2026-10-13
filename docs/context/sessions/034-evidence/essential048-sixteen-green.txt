@@ -1,0 +1,50 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; complete cannot hide failure
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; partial cannot hide failure
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; unknown cannot hide failure
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; wrongEpoch cannot hide failure
+00:00 +4: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; forgedDose cannot hide failure
+00:00 +5: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; bad cannot hide failure
+00:00 +6: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; corruptFullTarget cannot hide failure
+00:00 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; overdose cannot hide failure
+00:00 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: (tearDownAll)
+00:00 +8: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_companion_test.dart
+00:01 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_companion_test.dart: (setUpAll)
+00:01 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_companion_test.dart: dragon deload uses prescribed hollow30; companion complete=true
+00:02 +8 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_companion_test.dart: dragon deload uses prescribed hollow30; companion complete=true [E]
+  Expected: <2>
+    Actual: <1>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan034_deload_companion_test.dart 75:7   main.<fn>
+  
+00:02 +8 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_companion_test.dart: dragon deload uses prescribed hollow30; companion complete=false
+00:02 +9 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_companion_test.dart: (tearDownAll)
+00:02 +9 -1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_activation_today_test.dart
+00:03 +9 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_activation_today_test.dart: (setUpAll)
+00:03 +9 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_activation_today_test.dart: activation today preserves yesterday and shares Monday anchor after edits
+00:03 +10 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_activation_today_test.dart: (tearDownAll)
+00:03 +10 -1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart
+00:04 +10 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: (setUpAll)
+00:04 +10 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: Tuesday week6 retains only planche inclinations and halves once
+00:04 +11 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: Tuesday hang has explicit comparable max minus10 or pending (expected: 40, known: true, value: 50.0)
+00:04 +11 -2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: Tuesday hang has explicit comparable max minus10 or pending (expected: 40, known: true, value: 50.0) [E]
+  FormatException: Agarre inválido
+  package:seguimiento/domain/test_protocol.dart 65:9                         canonicalTestConditions
+  package:seguimiento/data/repositories/fitness_test_repository.dart 197:17  FitnessTestRepository.save
+  test\data\plan034_essential_delivery_test.dart 60:39                       main.<fn>
+  
+00:04 +11 -2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: Tuesday hang has explicit comparable max minus10 or pending (expected: null, known: false, value: 50.0)
+00:04 +12 -2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: Tuesday hang has explicit comparable max minus10 or pending (expected: null, known: true, value: 10.0)
+00:04 +12 -3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: Tuesday hang has explicit comparable max minus10 or pending (expected: null, known: true, value: 10.0) [E]
+  FormatException: Agarre inválido
+  package:seguimiento/domain/test_protocol.dart 65:9                         canonicalTestConditions
+  package:seguimiento/data/repositories/fitness_test_repository.dart 197:17  FitnessTestRepository.save
+  test\data\plan034_essential_delivery_test.dart 60:39                       main.<fn>
+  
+00:04 +12 -3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: explicit running1515 identifies legs while exclusions remain intact
+00:05 +13 -3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_essential_delivery_test.dart: (tearDownAll)
+00:05 +13 -3: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T222145095-456-6996b478b4af4814a37964d15b93275d.json

@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/seed_plan.dart';
 import '../../data/plan_v32_template.dart';
+import '../../data/repositories/plan_repository.dart';
 
 import '../../domain/dates.dart';
+import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/plan_v3.dart';
 import '../../ui/widgets.dart';
@@ -79,15 +81,36 @@ Future<void> activateV3(
 }
 
 Future<void> activateV32(
-    BuildContext context, WidgetRef ref, DateTime monday) async {
+    BuildContext context, WidgetRef ref, DateTime effectiveDate) async {
+  final preview = planV32(effectiveDate);
+  final anchor = weekAnchor(effectiveDate);
   final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
               title: const Text('Activar Plan v3.2'),
-              content: Text(
-                  'Desde ${formatShort(monday)}: semana completa, mantenimiento de 6 rondas '
-                  '(10 en semana 4 de cada bloque), escalera inversa, 13 pruebas y movilidad. '
-                  'Tus registros y versiones anteriores se conservan. Las metas aceptadas no cambian.'),
+              content: SizedBox(
+                  width: 480,
+                  child: SingleChildScrollView(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                          'Vigente desde ${formatShort(effectiveDate)}. Calendario desde el lunes ${formatShort(anchor)} de esta semana. '
+                          'Los días anteriores conservan su plan; ninguna prueba se registra o mueve automáticamente. '
+                          '13 pruebas de torso y 4 de piernas. Tus registros y metas aceptadas se conservan.'),
+                      const SizedBox(height: 12),
+                      for (final day in preview.days) ...[
+                        Text(weekdayShort(day.weekday),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(day.exercises.isEmpty
+                            ? day.type.label
+                            : day.exercises.map(_previewDose).join('\n')),
+                        const SizedBox(height: 8),
+                      ],
+                    ],
+                  ))),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(c, false),
@@ -99,8 +122,17 @@ Future<void> activateV32(
   if (ok != true || !context.mounted) return;
   await guarded(
       context,
-      () => activatePlanV32(
-          ref.read(databaseProvider), ref.read(planRepositoryProvider), monday),
+      () => activatePlanV32(ref.read(databaseProvider),
+          ref.read(planRepositoryProvider), effectiveDate),
       ok: 'Plan v3.2 activado');
   ref.invalidate(dashboardProvider);
+}
+
+String _previewDose(PlanExerciseDraft exercise) {
+  final value = exercise.holdSecMin ?? exercise.repsMin;
+  final max = exercise.holdSecMax ?? exercise.repsMax;
+  final dose = value == null
+      ? 'dosis pendiente'
+      : '$value${max != null && max != value ? '–$max' : ''}${exercise.holdSecMin != null ? ' s' : ' rep'}';
+  return '${exercise.name}: ${exercise.sets ?? 1} × $dose${exercise.perSide ? ' por lado' : ''}';
 }

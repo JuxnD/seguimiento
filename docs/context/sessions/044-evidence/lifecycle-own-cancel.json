@@ -1,0 +1,16 @@
+[
+  {
+    "ProcessId": 9064,
+    "ParentProcessId": 13608,
+    "CreationDate": "2026-10-13T16:01:49.957138-05:00",
+    "ExecutablePath": "C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+    "CommandLine": "\"C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe\"  --disable-dart-dev --packages=\"C:\\seguimiento-sdk-3.22.0\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json\"  \"C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\flutter_tools.snapshot\" test --no-pub --concurrency=1 --timeout=90s --reporter=expanded test/ui/plan034_equipment_and_criteria_test.dart --plain-name \"direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history\" "
+  },
+  {
+    "ProcessId": 62800,
+    "ParentProcessId": 9064,
+    "CreationDate": "2026-10-13T16:02:02.059133-05:00",
+    "ExecutablePath": "C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\flutter_tester.exe",
+    "CommandLine": "C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\flutter_tester.exe --disable-vm-service --enable-checked-mode --verify-entry-points --enable-software-rendering --skia-deterministic-rendering --enable-dart-profiling --non-interactive --use-test-fonts --disable-asset-fonts \"--packages=C:\\My Projects\\seguimiento-044-ui-equipo-harness\\.dart_tool\\package_config.json\" \"--flutter-assets-dir=C:\\My Projects\\seguimiento-044-ui-equipo-harness\\build\\unit_test_assets\" C:\\Users\\Acer\\AppData\\Local\\Temp\\flutter_tools.7ea38a3d\\flutter_test_listener.4fd5641f\\listener.dart.dill"
+  }
+]

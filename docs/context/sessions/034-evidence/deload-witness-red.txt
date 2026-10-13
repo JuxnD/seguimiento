@@ -1,0 +1,42 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; complete cannot hide failure
+00:01 +1: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; partial cannot hide failure
+00:01 +2: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; unknown cannot hide failure
+00:01 +3: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; wrongEpoch cannot hide failure
+00:01 +4: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; forgedDose cannot hide failure
+00:01 +5: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; bad cannot hide failure
+00:01 +6: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; corruptFullTarget cannot hide failure
+00:02 +6 -1: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; corruptFullTarget cannot hide failure [E]
+  Expected: <1>
+    Actual: <3>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan034_deload_neutral_test.dart 102:7    main.<fn>
+  
+00:02 +6 -1: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; overdose cannot hide failure
+00:02 +6 -2: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; overdose cannot hide failure [E]
+  Expected: <1>
+    Actual: <3>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan034_deload_neutral_test.dart 102:7    main.<fn>
+  
+00:02 +6 -2: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_neutral_test.dart: (tearDownAll)
+00:02 +6 -2: loading C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_companion_test.dart
+00:03 +6 -2: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_companion_test.dart: (setUpAll)
+00:03 +6 -2: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_companion_test.dart: dragon deload uses prescribed hollow30; companion complete=true
+00:03 +6 -3: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_companion_test.dart: dragon deload uses prescribed hollow30; companion complete=true [E]
+  Expected: <2>
+    Actual: <1>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan034_deload_companion_test.dart 75:7   main.<fn>
+  
+00:03 +6 -3: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_companion_test.dart: dragon deload uses prescribed hollow30; companion complete=false
+00:04 +7 -3: C:/My Projects/seguimiento-034-deload-witness/test/data/plan034_deload_companion_test.dart: (tearDownAll)
+00:04 +7 -3: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T220247802-70124-6bf58d04e3474acb9dda2d8fd4f4fd6e.json

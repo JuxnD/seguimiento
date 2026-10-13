@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_stairs_alert_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Home stairs alert reads three SQLite days and clears for null or zero
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T223258564-60736-ffcf3d7c794d48e49c7537d27e3e51c1.json

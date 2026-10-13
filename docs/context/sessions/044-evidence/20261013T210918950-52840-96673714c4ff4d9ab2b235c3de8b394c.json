@@ -1,0 +1,23 @@
+{
+  "owner": "044",
+  "token": "cd5ee825d1254a6186fa3e762be5c593",
+  "pid": 52840,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--concurrency=1",
+    "--timeout=90s",
+    "--reporter=expanded",
+    "test/ui/plan034_equipment_and_criteria_test.dart",
+    "--plain-name",
+    "direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history"
+  ],
+  "worktree": "C:/My Projects/seguimiento-044-ui-equipo-harness",
+  "startUtc": "2026-10-13T21:09:12.2142240Z",
+  "finishUtc": "2026-10-13T21:09:18.9464160Z",
+  "exit": 1,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

@@ -1,0 +1,18 @@
+{
+  "owner": "044",
+  "token": "b1147f2b3e384272b7f0a604e1d39d2d",
+  "pid": 55700,
+  "tool": "flutter",
+  "arguments": [
+    "analyze",
+    "--no-pub",
+    "test/ui/plan034_equipment_and_criteria_test.dart"
+  ],
+  "worktree": "C:/My Projects/seguimiento-044-ui-equipo-harness",
+  "startUtc": "2026-10-13T21:24:55.0830023Z",
+  "finishUtc": "2026-10-13T21:25:00.4559784Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "ProcessId": 9232,
+    "ParentProcessId": 21308,
+    "Name": "dart.exe",
+    "ExecutablePath": "C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+    "CreationDate": "2026-10-13T15:50:22.685975-05:00"
+  },
+  {
+    "ProcessId": 6620,
+    "ParentProcessId": 9232,
+    "Name": "dartaotruntime.exe",
+    "ExecutablePath": "C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\dart-sdk\\bin\\dartaotruntime.exe",
+    "CreationDate": "2026-10-13T15:50:24.311931-05:00"
+  },
+  {
+    "ProcessId": 39564,
+    "ParentProcessId": 6620,
+    "Name": "conhost.exe",
+    "ExecutablePath": "C:\\WINDOWS\\system32\\conhost.exe",
+    "CreationDate": "2026-10-13T15:50:24.35103-05:00"
+  },
+  {
+    "ProcessId": 64660,
+    "ParentProcessId": 9232,
+    "Name": "flutter_tester.exe",
+    "ExecutablePath": "C:\\seguimiento-sdk-3.22.0\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\flutter_tester.exe",
+    "CreationDate": "2026-10-13T15:50:26.215488-05:00"
+  },
+  {
+    "ProcessId": 14200,
+    "ParentProcessId": 64660,
+    "Name": "conhost.exe",
+    "ExecutablePath": "C:\\WINDOWS\\system32\\conhost.exe",
+    "CreationDate": "2026-10-13T15:50:26.230394-05:00"
+  }
+]

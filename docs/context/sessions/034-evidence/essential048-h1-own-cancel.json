@@ -1,0 +1,14 @@
+{
+  "cancelUtc": "2026-10-13T22:32:58.4454979Z",
+  "cause": "UI harness nonterminal beyond90s; no product verdict",
+  "token": "e1db0954191f442bbf53d252af65ca4e",
+  "verifiedRoot": 34144,
+  "owner": "034",
+  "ownDescendants": [
+    34144,
+    28188,
+    51116,
+    65704,
+    40148
+  ]
+}

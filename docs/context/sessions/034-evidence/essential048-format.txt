@@ -1,0 +1,15 @@
+Formatted lib/data/repositories/ladder_repository.dart
+Formatted lib/data/repositories/training_repository.dart
+Formatted lib/domain/leg_chain.dart
+Formatted lib/features/home/home_screen.dart
+Formatted lib/features/plan/plan_screen.dart
+Formatted lib/features/plan/v3_activation.dart
+Formatted lib/features/training/training_screen.dart
+Formatted test/data/plan034_activation_today_test.dart
+Formatted test/data/plan034_essential_delivery_test.dart
+Formatted test/data/plan034_deload_neutral_test.dart
+Formatted test/data/plan034_deload_companion_test.dart
+Formatted test/data/migration_test.dart
+Formatted test/ui/plan034_equipment_and_criteria_test.dart
+Formatted 17 files (13 changed) in 1.32 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T221900538-66544-38c2eea493e349d687fe935ce701e045.json

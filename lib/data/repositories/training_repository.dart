@@ -870,7 +870,7 @@ class TrainingRepository {
           ]
         : plancheBlock(
             weekday: date.weekday,
-            deload: v3.reducedVolume && !v3.isV32,
+            deload: v3.reducedVolume,
             tuckReady: await plancheTuckReady(date),
           );
     if (block.isEmpty) return day;
@@ -935,6 +935,7 @@ class TrainingRepository {
           holdSecMax: sec,
           restSec: 60,
           block: ladderBlock,
+          purpose: exercisePurpose(hollowHold),
           notes: 'Lumbar pegada al suelo. Para subir de peldaño: 3 × $sec s.',
         ),
     ];
@@ -997,6 +998,32 @@ class TrainingRepository {
           : v3.week <= 4
               ? 10
               : 15;
+    }
+    if (date.weekday == DateTime.tuesday) {
+      final maximum = v3.blockStart == null
+          ? null
+          : await FitnessTestRepository(db).latestMeasurement(
+              item: 'dead_hang',
+              scheme: v32Scheme,
+              blockStart: v3.blockStart!,
+              protocol: TestProtocolId.v32_13,
+              asOf: date);
+      final dose = maximum != null && maximum.value >= 11
+          ? (maximum.value - 10).floor()
+          : null;
+      final hang = result.exercises
+          .where((e) => e.name == 'Colgarse de la barra')
+          .firstOrNull;
+      if (hang != null && dose != null) {
+        hang.holdSecMin = dose;
+        hang.holdSecMax = dose;
+        hang.notes =
+            'Máximo conocido menos 10 s: intento${maximum!.attemptId}, ${dayKey(maximum.date)}.';
+      } else if (hang != null) {
+        result.exercises.remove(hang);
+        result.notes =
+            '${result.notes ?? ''} Colgado pendiente: falta un máximo comparable mayor de 10 s; no se inventa duración.';
+      }
     }
     if (date.weekday == DateTime.friday) {
       result.targetRounds = maintenanceRounds(v3.week);

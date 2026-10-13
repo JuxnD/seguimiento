@@ -94,10 +94,9 @@ class LadderRepository {
       );
     }
     final first = await (db.select(db.planVersions)
-          ..where((t) => t.scheme.equals(
-              ladder.id == 'reverse_plank' || ladder.accessory
-                  ? v32Scheme
-                  : v31Scheme))
+          ..where((t) => ladder.id == 'reverse_plank' || ladder.accessory
+              ? t.scheme.equals(v32Scheme)
+              : t.scheme.isIn([v31Scheme, v32Scheme]))
           ..orderBy([(t) => OrderingTerm(expression: t.validFrom)])
           ..limit(1))
         .getSingleOrNull();
@@ -106,7 +105,7 @@ class LadderRepository {
       final observed = await FitnessTestRepository(db).latestMeasurement(
           item: 'reverse_plank_forearm',
           scheme: v32Scheme,
-          blockStart: parseDay(first.validFrom),
+          blockStart: weekAnchor(parseDay(first.validFrom)),
           protocol: TestProtocolId.v32_13,
           asOf: dateOnly(today ?? DateTime.now()));
       if (observed != null && observed.value > 90) initial = 2;
@@ -317,7 +316,9 @@ class LadderRepository {
             prescription = LadderPrescriptionProof.decodeDeload(
                 rawPrescription, s.identity,
                 sessionDate: date,
-                blockStart: plan!.validFrom,
+                blockStart: dayKey(
+                    await PlanRepository(db, ExerciseRepository(db))
+                        .schemeStart(plan!)),
                 physicalVariant:
                     step.physicalVariantKey ?? 'base:${step.exercise}',
                 perSide: step.perSide,
@@ -329,6 +330,10 @@ class LadderRepository {
             }
           }
         }
+      }
+      if (rawPrescription != null && prescription == null) {
+        invalidMetadata =
+            true; // un tag desconocido/corrupto no acredita un intento.
       }
       if (prescription != null) prescriptions[session.id] = prescription;
       if (epochs?[s.ladder.id] == s.identity ||
@@ -366,6 +371,20 @@ class LadderRepository {
           .add(proof == null || set.setIndex < 1 || set.setIndex > proof.length
               ? null
               : proof[set.setIndex - 1]);
+    }
+    for (final id in deloadCompanions.keys) {
+      final entry = bySession[id];
+      final matches = entry != null &&
+          _completedMaintenance(prescriptions[id], entry.$2[step.exercise],
+              sideBySession[id]?[step.exercise]) &&
+          _completedDeloadCompanions(
+              deloadCompanions[id], entry.$2, sideBySession[id]);
+      if (!matches) {
+        invalidSessions.add(id);
+        if (entry != null) {
+          entry.$2[step.exercise] = <int>[];
+        }
+      }
     }
     return [
       for (final entry in bySession.entries)
@@ -447,7 +466,9 @@ class LadderRepository {
         for (final goal in step.goals.where((g) => g.exercise != step.exercise))
           goal.exercise: {
             'sets': (goal.sets + 1) ~/ 2,
-            'minimum': goal.value,
+            'minimum': goal.exercise == hollowHold && step.hollowSec != null
+                ? 30
+                : goal.value,
             'perSide': goal.perSide
           }
       }

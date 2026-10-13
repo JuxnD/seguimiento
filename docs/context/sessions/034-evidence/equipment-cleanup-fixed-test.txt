@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T205241791-62476-4689d6ad5eb54161b87c2c465b574fda.json

@@ -6,6 +6,7 @@
 library;
 
 import 'enums.dart';
+import 'timer_profile.dart';
 import 'accessory_quality_proof.dart';
 import 'core_ladders.dart' show v32AccessoryLadders;
 
@@ -21,8 +22,7 @@ Map<String, String> _accessoryProofs(Object? raw) {
 }
 
 /// Nota de contexto de una sesión cuyo plan de origen no se puede identificar.
-const recoveredPlanNote =
-    'Recuperada tras restaurar: no se pudo identificar el plan de origen';
+const recoveredPlanNote = 'Recuperada tras restaurar: no se pudo identificar el plan de origen';
 
 sealed class ActiveSession {
   const ActiveSession({required this.date, required this.startedAt});
@@ -51,8 +51,7 @@ sealed class ActiveSession {
 
 /// Una serie o parada ya hecha en el cronómetro guiado.
 class DoneStep {
-  const DoneStep(this.exercise, this.reps, this.isRound,
-      {this.loadKg, this.variant, this.rir, this.side});
+  const DoneStep(this.exercise, this.reps, this.isRound, {this.loadKg, this.variant, this.rir, this.side});
 
   final String exercise;
   final int reps;
@@ -68,8 +67,8 @@ class DoneStep {
   final int? rir;
   final String? side;
 
-  DoneStep withRir(int? value) => DoneStep(exercise, reps, isRound,
-      loadKg: loadKg, variant: variant, rir: value, side: side);
+  DoneStep withRir(int? value) =>
+      DoneStep(exercise, reps, isRound, loadKg: loadKg, variant: variant, rir: value, side: side);
 
   Map<String, Object?> toJson() => {
         'e': exercise,
@@ -187,9 +186,8 @@ class GuidedSnapshot extends ActiveSession {
     return _fromJson({
       ...toJson(),
       'planDayId': -1,
-      'note': n == null || n.isEmpty
-          ? recoveredPlanNote
-          : (n.contains(recoveredPlanNote) ? n : '$n. $recoveredPlanNote'),
+      'note':
+          n == null || n.isEmpty ? recoveredPlanNote : (n.contains(recoveredPlanNote) ? n : '$n. $recoveredPlanNote'),
     });
   }
 
@@ -242,17 +240,9 @@ class GuidedSnapshot extends ActiveSession {
         restStartedAt: _date(j['restStartedAt']),
         restAccumSec: (j['restAccumSec'] as num?)?.toInt() ?? 0,
         reps: (j['reps'] as num?)?.toInt(),
-        done: [
-          for (final d in j['done']! as List)
-            DoneStep.fromJson((d as Map).cast<String, Object?>())
-        ],
-        roundMarks: [
-          for (final m in j['roundMarks']! as List) (m as num).toInt()
-        ],
-        roundRests: [
-          for (final m in (j['roundRests'] as List?) ?? const [])
-            (m as num).toInt()
-        ],
+        done: [for (final d in j['done']! as List) DoneStep.fromJson((d as Map).cast<String, Object?>())],
+        roundMarks: [for (final m in j['roundMarks']! as List) (m as num).toInt()],
+        roundRests: [for (final m in (j['roundRests'] as List?) ?? const []) (m as num).toInt()],
         techniqueOk: j['techniqueOk'] as bool?,
         fullRange: j['fullRange'] as bool?,
         recoveryOk: j['recoveryOk'] as bool?,
@@ -260,12 +250,8 @@ class GuidedSnapshot extends ActiveSession {
         effectiveDay: (j['effectiveDay'] as Map?)?.cast<String, Object?>(),
         note: j['note'] as String?,
         mode: j['mode'] as String?,
-        lumbar: [
-          for (final x in (j['lumbar'] as List?) ?? const []) x as String
-        ],
-        warmupDone: [
-          for (final x in (j['warmupDone'] as List?) ?? const []) x as String
-        ],
+        lumbar: [for (final x in (j['lumbar'] as List?) ?? const []) x as String],
+        warmupDone: [for (final x in (j['warmupDone'] as List?) ?? const []) x as String],
         warmupSkipped: j['warmupSkipped'] == true,
       );
 }
@@ -313,7 +299,7 @@ class CounterSnapshot extends ActiveSession {
       );
 }
 
-/// Cindy o Tabata a mitad (cronómetros del v3). Como el resto, solo marcas
+/// Cindy, Tabata o carrera 15/15 a mitad. Como el resto, solo marcas
 /// de reloj: al volver, el tiempo transcurrido con la app muerta cuenta.
 class TimerSnapshot extends ActiveSession {
   const TimerSnapshot({
@@ -327,10 +313,19 @@ class TimerSnapshot extends ActiveSession {
     this.partial,
     this.worst = const {},
     this.exercises = const [],
+    this.prescription,
   });
 
-  /// 'cindy' o 'tabata'.
+  /// 'cindy', 'tabata' or the explicit 'running1515' profile.
   final String mode;
+  final TimerPrescription? prescription;
+  TimerProfile? get profile => prescription?.profile;
+  int? get workSec => prescription?.workSec;
+  int? get restSec => prescription?.restSec;
+  int? get intervals => prescription?.intervals;
+  int? get betweenBlocksSec => prescription?.betweenBlocksSec;
+  bool? get includeFinalRest => prescription?.includeFinalRest;
+  bool? get footballFreeConfirmed => prescription?.footballFreeConfirmed;
 
   /// 'calentamiento', 'trabajo' o 'enfriamiento'.
   final String phase;
@@ -359,6 +354,7 @@ class TimerSnapshot extends ActiveSession {
         'partial': partial,
         'worst': {for (final e in worst.entries) '${e.key}': e.value},
         'exercises': exercises,
+        if (prescription != null) ...prescription!.toJson(),
       };
 
   static TimerSnapshot _fromJson(Map<String, Object?> j) => TimerSnapshot(
@@ -368,18 +364,15 @@ class TimerSnapshot extends ActiveSession {
         phase: j['phase']! as String,
         workStartedAt: _date(j['workStartedAt']),
         workEndedAt: _date(j['workEndedAt']),
-        roundMarks: [
-          for (final m in (j['roundMarks'] as List?) ?? const [])
-            (m as num).toInt()
-        ],
+        roundMarks: [for (final m in (j['roundMarks'] as List?) ?? const []) (m as num).toInt()],
         partial: (j['partial'] as num?)?.toInt(),
         worst: {
           for (final e in ((j['worst'] as Map?) ?? const {}).entries)
             int.parse(e.key as String): (e.value as num).toInt(),
         },
-        exercises: [
-          for (final e in (j['exercises'] as List?) ?? const []) e as String
-        ],
+        exercises: [for (final e in (j['exercises'] as List?) ?? const []) e as String],
+        prescription: TimerPrescription.fromJson(j,
+            blocks: ((j['exercises'] as List?) ?? const []).length, mode: j['mode']! as String),
       );
 }
 

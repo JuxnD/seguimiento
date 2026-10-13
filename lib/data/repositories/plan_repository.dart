@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import '../../domain/plan_v32.dart';
 import '../database.dart';
 import '../exercise_details.dart';
 import 'exercise_repository.dart';
@@ -346,7 +347,8 @@ class PlanRepository {
       if (x.scheme != v.scheme) break;
       start = parseDay(x.validFrom);
     }
-    return start;
+    // Effective validity stays today; the v3.2 calendar is Monday based.
+    return v.scheme == v32Scheme ? weekAnchor(start) : start;
   }
 
   /// ¿Ya hay una versión con este esquema (el v3)?

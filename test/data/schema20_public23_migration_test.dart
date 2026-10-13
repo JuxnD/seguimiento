@@ -30,7 +30,7 @@ Map<String, int> _multiplicity(Iterable<List<Object?>> rows) {
 }
 
 // Declared destination for this candidate; never read back from the migrated DB.
-const _targetSchema = 24;
+const _targetSchema = 25;
 const _restoredReminderRows = [
   ['recuperacionManana', 1, 22, 0, null],
   ['rutinaManana', 1, 7, 15, null],
@@ -40,7 +40,7 @@ const _restoredReminderRows = [
 void main() {
   setUpAll(useHostSqlite);
   test(
-      'genuine public20 capsule →24 preserves all legacy rows/columns, files, ZIP and reopen',
+      'genuine public20 capsule →25 preserves all legacy rows/columns, files, ZIP and reopen',
       () async {
     final capsule = File('test/fixtures/public20/baseline-offline-public20.zip')
         .readAsBytesSync();

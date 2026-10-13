@@ -1,0 +1,89 @@
+{
+  "fixture": "test/ui/plan034_equipment_and_criteria_test.dart",
+  "generatedSha256": "59980C598E2D37C6E4B43EFF3FFC5DF70F545D0FA52170A9B4E014DD60CE2ECB",
+  "status": "READY_FOR_ROOT_REVIEW",
+  "productionChanged": false,
+  "notes": "No global suite, APK, deployment, device validation or integration claimed",
+  "utc": "2026-10-13T21:26:53.2260600Z",
+  "evidence": [
+    {
+      "sha256": "506CF289CCB668336A9534C09EFCB44ED48A75F26BA7B2D74CA3CB0BED2BE45E",
+      "name": "034-native-original-failure.txt"
+    },
+    {
+      "sha256": "BE63D19AAA69EE22734C9279993CD37B45F36F6FDFAA428A7E627B63F5CC2117",
+      "name": "034-native-original-source.json"
+    },
+    {
+      "sha256": "74921E364E23498DF2063065DB6D7995444EB66B84352D891B99015AA89D9ED5",
+      "name": "20261013T210918950-52840-96673714c4ff4d9ab2b235c3de8b394c.json"
+    },
+    {
+      "sha256": "AAC865402A5C2DB72C53824ACC0E04B5B1349CCB0B1B6F4F3ADC0967894F5858",
+      "name": "20261013T211517531-66612-3d5332370e4841fa93dafa755dcaef70.json"
+    },
+    {
+      "sha256": "466DC73FF086920622A0C7C44E673508FDA626A72D6D9458AC15CCE1A57D3207",
+      "name": "20261013T212500460-55700-937b9bffb4e1420d8de70f337b4967de.json"
+    },
+    {
+      "sha256": "289E993A24A97E7672E198F69414F958CD09ACB4EEB13D316545DCF5DA602624",
+      "name": "20261013T212613469-4140-28eeb7745fef4364917196231aeb8f90.json"
+    },
+    {
+      "sha256": "85C913533F725C2E674F0B56FFA6A7BE9ECA0AF7BF99FC3D06BFB2F72714CF21",
+      "name": "dual-zone-original-tap.txt"
+    },
+    {
+      "sha256": "DB2603B81970C69E4DECF6508FEF7F993BE54F4A2CB9861D462F5AD47831DA2C",
+      "name": "final-three-ui.txt"
+    },
+    {
+      "sha256": "79B839F14DF0875375F9ED818E99105325B1BFD6FD493F5554FFA58E09EDE9CF",
+      "name": "lifecycle-fixed-tap-original.txt"
+    },
+    {
+      "sha256": "85C4F8A7EC1764C5585D7A882C0CE2711E465B32E193E50BD5498799E459F6A4",
+      "name": "lifecycle-only-red.txt"
+    },
+    {
+      "sha256": "957505AB975B3AC99685F84728491B5D91792CEC5F6F9378AC7332182147B62C",
+      "name": "lifecycle-own-cancel.json"
+    },
+    {
+      "sha256": "1AF4FB2571336FB468C85DBED3D63FDBC7B79C70E1DDD1B6CB5943D73B6F25BB",
+      "name": "manual-editor-analyze.txt"
+    },
+    {
+      "sha256": "D157A9CD9A69295C321D103638DB69293AC87A0C46B2198C551AE6EE1157F55B",
+      "name": "manual-editor-centered.txt"
+    },
+    {
+      "sha256": "9443C65E26B7D80C98E6676BB8E0AC6DE439A4DA55537D12C469498DFDEB3CD0",
+      "name": "native-trigger-green.txt"
+    },
+    {
+      "sha256": "831D054B1954632C8DB8F10AC7804EF28A06411670F1E056DDFACDB270262A68",
+      "name": "portable-analyze.txt"
+    },
+    {
+      "sha256": "5F7102201A4FD092D0AF9E2DE165C82370C56A0A08E3474BE13EBAF2E99C8CFD",
+      "name": "portable-three-ui.txt"
+    }
+  ],
+  "tests": {
+    "failed": 0,
+    "receipt": "20261013T212613469-4140-28eeb7745fef4364917196231aeb8f90.json",
+    "passed": 3,
+    "skipped": 0
+  },
+  "fixtureSha256": "8F9CFE97B27D35006D459166A1CF611ABCB5E48311D73AD8B646C4BF9C1DB252",
+  "libTree": "398d3f506e5e1ea654c06860626656de89711ec4",
+  "analyze": {
+    "scope": "single changed test file",
+    "issues": 0,
+    "receipt": "20261013T212500460-55700-937b9bffb4e1420d8de70f337b4967de.json"
+  },
+  "base": "8eb5eed91c1248fe5afac02d0bab5cbf67a02ea8",
+  "testedCommit": "d3b0501a6ae28b990195d1e659531a6d5d8806bc"
+}

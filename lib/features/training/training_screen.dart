@@ -7,7 +7,11 @@ import '../../app/providers.dart';
 import '../../data/database.dart';
 import '../../data/local_flags.dart';
 import '../../data/repositories/training_repository.dart';
+import '../../data/repositories/readiness_repository.dart';
 import '../../domain/active_session.dart';
+import '../../domain/timer_profile.dart';
+import '../../domain/readiness.dart';
+import '../../domain/daily_routines.dart';
 import '../../data/guided_plan_snapshot.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
@@ -45,6 +49,8 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref,
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
   final day = date ?? dateOnly(DateTime.now());
+  final allowed = await _allowTrainingToday(context, ref, day);
+  if (!context.mounted || !allowed) return;
   final view = await ref.read(planRepositoryProvider).dayFor(day);
 
   if (view == null || view.day.exercises.isEmpty) {
@@ -131,6 +137,44 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref,
         context, ref, day, view, v3?.resistance ?? ResistanceMode.cindy,
         cindyTest: v3?.cindyTest ?? false);
     return;
+  }
+
+  if (v3?.isV32 == true && v3!.week >= 5 && day.weekday == DateTime.tuesday) {
+    final choice = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+              title: const Text('Intervalos opcionales 15/15'),
+              content: const Text(
+                  '2 bloques de 8 minutos: 15 s de carrera y 15 s de pausa, 16 ciclos por bloque. Total: 16 minutos. Elige esta opción sólo si confirmas que no jugarás fútbol entre semana. No sustituye automáticamente tu sesión de fuerza.'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(c, false),
+                    child: const Text('Continuar con fuerza')),
+                FilledButton(
+                    onPressed: () => Navigator.pop(c, true),
+                    child: const Text('Confirmo sin fútbol; hacer intervalos')),
+              ],
+            ));
+    if (!context.mounted) return;
+    if (choice == true) {
+      final advice = await ReadinessRepository(ref.read(databaseProvider))
+          .readinessOn(day);
+      final morning = await (ref
+              .read(databaseProvider)
+              .select(ref.read(databaseProvider).morningChecks)
+            ..where((t) => t.date.equals(dayKey(day))))
+          .getSingleOrNull();
+      if (!context.mounted) return;
+      if (advice.action == SuggestedAction.restOnly ||
+          (morning?.kneeStairs != null && morning!.kneeStairs! >= 3)) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content:
+                Text('Los intervalos quedan aplazados por el estado de hoy.')));
+        return;
+      }
+      await _runTimer(context, ref, date: day, mode: 'running1515');
+      return;
+    }
   }
 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
@@ -228,6 +272,8 @@ Future<void> startPlanB(BuildContext context, WidgetRef ref) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
   final day = dateOnly(DateTime.now());
+  final allowed = await _allowTrainingToday(context, ref, day);
+  if (!context.mounted || !allowed) return;
   await _runGuided(
     context,
     GuidedSessionScreen(
@@ -288,6 +334,8 @@ Future<void> startTechniqueSession(BuildContext context, WidgetRef ref) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
   final day = dateOnly(DateTime.now());
+  final allowed = await _allowTrainingToday(context, ref, day);
+  if (!context.mounted || !allowed) return;
   await _runGuided(
     context,
     GuidedSessionScreen(
@@ -390,6 +438,8 @@ Future<void> _runTimer(
   bool cindyTest = false,
   TimerSnapshot? resume,
 }) async {
+  final allowed = await _allowTrainingToday(context, ref, date);
+  if (!context.mounted || !allowed) return;
   // Al guardar, Hoy se recarga y el widget que lanzó esto puede desmontarse:
   // el navegador, el aviso y los repositorios se toman antes.
   final nav = Navigator.of(context);
@@ -402,8 +452,17 @@ Future<void> _runTimer(
     builder: (_) => mode == 'cindy'
         ? AmrapScreen(
             date: date, resume: resume, onSnapshot: save, attempt: cindyTest)
-        : TabataScreen(
-            date: date, exercises: exercises, resume: resume, onSnapshot: save),
+        : mode == 'running1515'
+            ? TabataScreen.running1515(
+                date: date,
+                footballFreeConfirmed: resume?.footballFreeConfirmed ?? true,
+                resume: resume,
+                onSnapshot: save)
+            : TabataScreen(
+                date: date,
+                exercises: exercises,
+                resume: resume,
+                onSnapshot: save),
   ));
   await _clearActive(container);
   if (draft == null) return;
@@ -448,6 +507,8 @@ Future<void> _saveThenReview(
 /// día (o crea una si no hay).
 Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day,
     int minutes, int reps) async {
+  final allowed = await _allowTrainingToday(context, ref, day);
+  if (!context.mounted || !allowed) return;
   final messenger = ScaffoldMessenger.of(context);
   final repo = ref.read(trainingRepositoryProvider);
   final result = await Navigator.push<EmomResult>(
@@ -558,6 +619,14 @@ String describeActiveSession(ActiveSession s) {
 /// Retoma el cronómetro que Android cerró, en el punto exacto donde iba.
 Future<void> resumeActiveSession(
     BuildContext context, WidgetRef ref, ActiveSession session) async {
+  final recovery = session is GuidedSnapshot &&
+      (session.sessionType == SessionType.movilidad ||
+          dailyRoutineIds.contains(session.mode));
+  if (!recovery) {
+    final allowed = await _allowTrainingToday(
+        context, ref, dateOnly(ref.read(decisionClockProvider)()));
+    if (!context.mounted || !allowed) return;
+  }
   switch (session) {
     case final GuidedSnapshot s:
       // El guion congelado manda. Plan B, sesión técnica y sesiones de un plan
@@ -676,7 +745,7 @@ Future<void> resumeActiveSession(
       if (!context.mounted) return;
       await _runTimer(context, ref,
           date: date,
-          mode: s.mode,
+          mode: s.profile == TimerProfile.running1515 ? 'running1515' : s.mode,
           exercises: s.exercises.isEmpty ? tabataExercises : s.exercises,
           cindyTest: s.mode == 'cindy' && (v3?.cindyTest ?? false),
           resume: s);
@@ -1042,8 +1111,10 @@ Future<void> startFreeCounter(BuildContext context, WidgetRef ref,
     {DateTime? date, bool outOfPlan = false}) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
-  await _runCounter(context,
-      date: date ?? dateOnly(DateTime.now()), outOfPlan: outOfPlan);
+  final when = date ?? dateOnly(DateTime.now());
+  if (!await _allowTrainingToday(context, ref, when)) return;
+  if (!context.mounted) return;
+  await _runCounter(context, date: when, outOfPlan: outOfPlan);
 }
 
 Future<void> _runCounter(BuildContext context,
@@ -1323,3 +1394,23 @@ class _FootballTile extends StatelessWidget {
 }
 
 int? _positiveOrNull(int? v) => v == null || v <= 0 ? null : v;
+
+Future<bool> _allowTrainingToday(
+    BuildContext context, WidgetRef ref, DateTime day) async {
+  final advice =
+      await ReadinessRepository(ref.read(databaseProvider)).readinessOn(day);
+  if (!context.mounted) return false;
+  if (advice.action != SuggestedAction.restOnly) return true;
+  await showDialog<void>(
+      context: context,
+      builder: (c) => AlertDialog(
+            title: const Text('Hoy: solo descanso'),
+            content: Text(advice.advice),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(c),
+                  child: const Text('Entendido'))
+            ],
+          ));
+  return false;
+}

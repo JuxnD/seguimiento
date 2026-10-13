@@ -151,7 +151,8 @@ class ChainSession {
 /// Clase de una sesión: intensidad, grupos probados (null = ninguno se
 /// sabe) y `doubt`: hay ejercicios sin grupo conocido, así que los grupos no
 /// probados quedan en duda (no "nada"). null si está excluida.
-({DayIntensity intensity, Set<ChainGroup>? groups, bool doubt, String label})? classifySession(ChainSession s) {
+({DayIntensity intensity, Set<ChainGroup>? groups, bool doubt, String label})?
+    classifySession(ChainSession s) {
   final rpe = s.rpe;
   if (s.imported ||
       s.type == SessionType.movilidad ||
@@ -169,7 +170,12 @@ class ChainSession {
         : min >= 45
             ? DayIntensity.intense
             : DayIntensity.moderate;
-    return (intensity: intensity, groups: {ChainGroup.legs}, doubt: false, label: 'fútbol${min == null ? '' : ' $min min'}');
+    return (
+      intensity: intensity,
+      groups: {ChainGroup.legs},
+      doubt: false,
+      label: 'fútbol${min == null ? '' : ' $min min'}'
+    );
   }
 
   final type = s.type;
@@ -177,12 +183,20 @@ class ChainSession {
   var doubt = false;
   if (s.exercises.isNotEmpty) {
     final known = {
-      if (s.exercises.any((e) => chainLegExercises.contains(e) || chainBothExercises.contains(e))) ChainGroup.legs,
-      if (s.exercises.any((e) => chainTorsoExercises.contains(e) || chainBothExercises.contains(e))) ChainGroup.torso,
+      if (s.exercises.any((e) =>
+          chainLegExercises.contains(e) || chainBothExercises.contains(e)))
+        ChainGroup.legs,
+      if (s.exercises.any((e) =>
+          chainTorsoExercises.contains(e) || chainBothExercises.contains(e)))
+        ChainGroup.torso,
     };
     doubt = s.exercises.any((e) =>
-        !chainLegExercises.contains(e) && !chainTorsoExercises.contains(e) && !chainBothExercises.contains(e));
+        !chainLegExercises.contains(e) &&
+        !chainTorsoExercises.contains(e) &&
+        !chainBothExercises.contains(e));
     groups = known.isEmpty ? null : known;
+  } else if (type == SessionType.resistencia && s.mode == 'running1515') {
+    groups = {ChainGroup.legs};
   } else if (type == SessionType.piernas) {
     groups = {ChainGroup.legs};
   } else if (type == SessionType.trenSuperior) {
@@ -196,24 +210,53 @@ class ChainSession {
   final min = s.workMinutes;
   // Circuito o bloques (también los bloques del v3: tren superior y piernas).
   final strength = type != null &&
-      (type.isCircuit || type == SessionType.bloques || type == SessionType.trenSuperior || type == SessionType.piernas);
+      (type.isCircuit ||
+          type == SessionType.bloques ||
+          type == SessionType.trenSuperior ||
+          type == SessionType.piernas);
   if (strength && rir != null && rir <= 2) {
-    return (intensity: DayIntensity.intense, groups: groups, doubt: doubt, label: '$name RIR $rir');
+    return (
+      intensity: DayIntensity.intense,
+      groups: groups,
+      doubt: doubt,
+      label: '$name RIR $rir'
+    );
   }
   if (rpe != null && rpe >= 7 && min != null && min >= 20) {
-    return (intensity: DayIntensity.intense, groups: groups, doubt: doubt, label: '$name RPE $rpe');
+    return (
+      intensity: DayIntensity.intense,
+      groups: groups,
+      doubt: doubt,
+      label: '$name RPE $rpe'
+    );
   }
   // Moderada: RPE 6, RPE ≥ 7 de menos de 20 min medidos, o RIR 3–4 (§16.24).
   // RIR 5 sin RPE no dice cuánto costó: queda desconocida.
-  if (rpe == 6 || (rpe != null && rpe >= 7 && min != null && min > 0) || (rir != null && rir >= 3 && rir <= 4)) {
-    return (intensity: DayIntensity.moderate, groups: groups, doubt: doubt, label: name);
+  if (rpe == 6 ||
+      (rpe != null && rpe >= 7 && min != null && min > 0) ||
+      (rir != null && rir >= 3 && rir <= 4)) {
+    return (
+      intensity: DayIntensity.moderate,
+      groups: groups,
+      doubt: doubt,
+      label: name
+    );
   }
   // Sin RPE ni RIR, o RPE ≥ 7 sin minutos medidos: no se puede decir.
-  return (intensity: DayIntensity.unknown, groups: groups, doubt: doubt, label: name);
+  return (
+    intensity: DayIntensity.unknown,
+    groups: groups,
+    doubt: doubt,
+    label: name
+  );
 }
 
 class GroupChain {
-  const GroupChain({required this.days, required this.evidence, required this.unknownDays, required this.moderateDays});
+  const GroupChain(
+      {required this.days,
+      required this.evidence,
+      required this.unknownDays,
+      required this.moderateDays});
 
   /// Días intensos de la cadena.
   final int days;
@@ -227,20 +270,31 @@ class GroupChain {
   /// Días moderados dentro de la cadena (no suman ni rompen).
   final List<DateTime> moderateDays;
 
-  static const empty = GroupChain(days: 0, evidence: [], unknownDays: [], moderateDays: []);
+  static const empty =
+      GroupChain(days: 0, evidence: [], unknownDays: [], moderateDays: []);
 
   /// "dom 3 mar fútbol 90 min · lun 4 mar circuito RPE 7", del más viejo al
   /// más reciente.
-  String get evidenceText =>
-      [for (final (d, l) in evidence.reversed) '${weekdayShort(d.weekday)} ${formatShort(d)} $l'].join(' · ');
+  String get evidenceText => [
+        for (final (d, l) in evidence.reversed)
+          '${weekdayShort(d.weekday)} ${formatShort(d)} $l'
+      ].join(' · ');
 }
 
 /// Cadenas de piernas y de torso hasta `today`. Si hoy todavía no hay nada,
 /// se cuenta desde ayer (hoy aún puede entrenarse).
-({GroupChain legs, GroupChain torso}) intenseChains(List<ChainSession> sessions, DateTime today,
+({GroupChain legs, GroupChain torso}) intenseChains(
+    List<ChainSession> sessions, DateTime today,
     {int lookback = 60}) {
   final d0 = dateOnly(today);
-  final byDay = <DateTime, List<({DayIntensity intensity, Set<ChainGroup>? groups, bool doubt, String label})>>{};
+  final byDay = <DateTime,
+      List<
+          ({
+            DayIntensity intensity,
+            Set<ChainGroup>? groups,
+            bool doubt,
+            String label
+          })>>{};
   for (final s in sessions) {
     final c = classifySession(s);
     if (c == null) continue;
@@ -253,14 +307,18 @@ class GroupChain {
     // Sin grupo conocido, o con un ejercicio desconocido que podría ser de
     // este grupo: duda, salvo que sea moderada (no suma ni rompe igual).
     final unknownGroup = items.where((c) =>
-        (c.groups == null || (c.doubt && !c.groups!.contains(g))) && c.intensity != DayIntensity.moderate);
-    final intense = mine.where((c) => c.intensity == DayIntensity.intense).firstOrNull;
+        (c.groups == null || (c.doubt && !c.groups!.contains(g))) &&
+        c.intensity != DayIntensity.moderate);
+    final intense =
+        mine.where((c) => c.intensity == DayIntensity.intense).firstOrNull;
     if (intense != null) return (DayIntensity.intense, intense.label);
-    if (mine.any((c) => c.intensity == DayIntensity.unknown) || unknownGroup.isNotEmpty) {
+    if (mine.any((c) => c.intensity == DayIntensity.unknown) ||
+        unknownGroup.isNotEmpty) {
       return (DayIntensity.unknown, null);
     }
     if (mine.any((c) => c.intensity == DayIntensity.moderate) ||
-        items.any((c) => c.groups == null || (c.doubt && !c.groups!.contains(g)))) {
+        items.any(
+            (c) => c.groups == null || (c.doubt && !c.groups!.contains(g)))) {
       return (DayIntensity.moderate, null);
     }
     return (DayIntensity.none, null);
@@ -294,7 +352,11 @@ class GroupChain {
       unknown.removeWhere((d) => d.isBefore(oldest));
       moderate.removeWhere((d) => d.isBefore(oldest));
     }
-    return GroupChain(days: evidence.length, evidence: evidence, unknownDays: unknown, moderateDays: moderate);
+    return GroupChain(
+        days: evidence.length,
+        evidence: evidence,
+        unknownDays: unknown,
+        moderateDays: moderate);
   }
 
   return (legs: chain(ChainGroup.legs), torso: chain(ChainGroup.torso));
@@ -319,7 +381,8 @@ class PlanBAdvice {
     this.unknownDays = const [],
   });
 
-  static const none = PlanBAdvice(show: false, reasons: [], chainSuppressedByGreenMorning: false);
+  static const none = PlanBAdvice(
+      show: false, reasons: [], chainSuppressedByGreenMorning: false);
 
   final bool show;
 
@@ -351,11 +414,14 @@ PlanBAdvice planBAdvice({
 }) {
   if (!dayHasLegs || restOnly) return PlanBAdvice.none;
   final reasons = <(PlanBReason, String)>[];
-  final chainReached = legs.days >= planBLegChainDays && legs.evidence.length == legs.days;
+  final chainReached =
+      legs.days >= planBLegChainDays && legs.evidence.length == legs.days;
   if (chainReached && !greenMorning) {
     final gaps = [
-      if (legs.moderateDays.isNotEmpty) '${legs.moderateDays.length} moderado${legs.moderateDays.length == 1 ? '' : 's'} en medio',
-      if (legs.unknownDays.isNotEmpty) '${legs.unknownDays.length} sin clasificar',
+      if (legs.moderateDays.isNotEmpty)
+        '${legs.moderateDays.length} moderado${legs.moderateDays.length == 1 ? '' : 's'} en medio',
+      if (legs.unknownDays.isNotEmpty)
+        '${legs.unknownDays.length} sin clasificar',
     ];
     reasons.add((
       PlanBReason.legChain,
@@ -363,8 +429,11 @@ PlanBAdvice planBAdvice({
     ));
   }
   if (kneeStairs != null && kneeStairs >= planBKneeStairs) {
-    final when = kneeStairsDate == null ? '' : ' (${weekdayShort(kneeStairsDate.weekday)} ${formatShort(kneeStairsDate)})';
-    reasons.add((PlanBReason.kneeStairs, 'Rodilla en escaleras $kneeStairs/10$when'));
+    final when = kneeStairsDate == null
+        ? ''
+        : ' (${weekdayShort(kneeStairsDate.weekday)} ${formatShort(kneeStairsDate)})';
+    reasons.add(
+        (PlanBReason.kneeStairs, 'Rodilla en escaleras $kneeStairs/10$when'));
   }
   for (final e in legSoreness.entries) {
     final (level, date) = e.value;
@@ -385,12 +454,17 @@ PlanBAdvice planBAdvice({
 /// Sección del informe: la misma cadena que ve Hoy, al cierre del periodo.
 /// Vacía si no hay días intensos ni días sin clasificar.
 List<String> legChainReportLines(GroupChain legs, GroupChain torso) {
-  if (legs.days == 0 && torso.days == 0 && legs.unknownDays.isEmpty && torso.unknownDays.isEmpty) return const [];
+  if (legs.days == 0 &&
+      torso.days == 0 &&
+      legs.unknownDays.isEmpty &&
+      torso.unknownDays.isEmpty) return const [];
   String line(String name, GroupChain c) => [
         '$name: ${c.days} día${c.days == 1 ? '' : 's'} intenso${c.days == 1 ? '' : 's'} al cierre'
             '${c.evidence.isEmpty ? '' : ' (${c.evidenceText})'}',
-        if (c.moderateDays.isNotEmpty) '${c.moderateDays.length} moderado${c.moderateDays.length == 1 ? '' : 's'} en medio',
-        if (c.unknownDays.isNotEmpty) '${c.unknownDays.length} sin datos para clasificar',
+        if (c.moderateDays.isNotEmpty)
+          '${c.moderateDays.length} moderado${c.moderateDays.length == 1 ? '' : 's'} en medio',
+        if (c.unknownDays.isNotEmpty)
+          '${c.unknownDays.length} sin datos para clasificar',
       ].join('; ');
   return [
     line('Piernas', legs),

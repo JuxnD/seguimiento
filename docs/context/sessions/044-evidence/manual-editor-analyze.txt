@@ -1,0 +1,3 @@
+Analyzing plan034_equipment_and_criteria_test.dart...           
+No issues found! (ran in 3.4s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T212500460-55700-937b9bffb4e1420d8de70f337b4967de.json

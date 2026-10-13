@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:drift/drift.dart' hide Column;
 import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,6 +19,7 @@ import '../../domain/habits.dart';
 import '../../domain/meal_slots.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
+import '../../domain/plan_v32.dart';
 import '../plan/v3_activation.dart';
 import '../plan/plan_edit_screen.dart' show PlanEditScreen;
 import '../../data/repositories/plan_repository.dart' show PlanDraft;
@@ -52,6 +54,33 @@ import '../training/training_screen.dart';
 import '../../ui/theme.dart';
 import '../../data/repositories/goal_repository.dart';
 import '../../domain/adaptive_coach.dart';
+
+final _stairsAlertProvider =
+    StreamProvider.family<bool, DateTime>((ref, today) {
+  final db = ref.watch(databaseProvider);
+  return (db.select(db.morningChecks)
+        ..where((t) =>
+            t.date.isBetweenValues(dayKey(addDays(today, -2)), dayKey(today))))
+      .watch()
+      .map((rows) => kneeThreeDayAlert(
+          today, {for (final row in rows) row.date: row.kneeStairs}));
+});
+
+/// The actual Home alert consumes the same SQLite stream; missing is not zero.
+class KneeStairsAlert extends ConsumerWidget {
+  const KneeStairsAlert({super.key, required this.date});
+  final DateTime date;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(_stairsAlertProvider(date)).valueOrNull != true) {
+      return const SizedBox.shrink();
+    }
+    return const AppCard(title: 'Rodilla: tres días seguidos', children: [
+      Text(
+          'Aplaza sesión de piernas o test. Registraste dolor de 3 o más al subir escaleras durante tres días consecutivos. Revisa el estado de hoy y la adaptación del plan; los días sin registro no se convierten en cero.')
+    ]);
+  }
+}
 
 /// Pantalla de entrada: qué toca hoy, cómo voy y cómo registrarlo rápido.
 class HomeScreen extends ConsumerWidget {
@@ -96,6 +125,7 @@ class HomeScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 24),
               children: [
                 const ActiveSessionBanner(),
+                KneeStairsAlert(date: today),
                 UpdateBanner(
                   onOpenSettings: () => Navigator.push(
                       context,

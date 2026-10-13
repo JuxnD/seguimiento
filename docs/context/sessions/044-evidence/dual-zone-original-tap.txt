@@ -1,0 +1,64 @@
+00:00 +0: loading C:/My Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history
+[044 original failure] Expected: true
+  Actual: <null>
+
+[044 phase] dispose container
+[044 phase] start database close
+[044 phase] database closed
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following PathAccessException was thrown while running async test code:
+Deletion failed, path = 'C:\Users\Acer\AppData\Local\Temp\plan034-equipment15ec2701' (OS Error: El
+proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso.
+, errno = 32)
+
+When the exception was thrown, this was the stack:
+#0      _checkForErrorResponse (dart:io/common.dart:55:9)
+#1      _Directory._delete.<anonymous closure> (dart:io/directory_impl.dart:180:7)
+<asynchronous suspension>
+<asynchronous suspension>
+#8      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart:96:7)
+<asynchronous suspension>
+#9      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#10     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 7 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <null>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart:60:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart line 60
+The test description was:
+  direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves
+  level/history
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history [E]
+  Test failed. See exception logs above.
+  The test description was: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history
+  
+00:01 +0 -1: (tearDownAll)
+00:01 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T210918950-52840-96673714c4ff4d9ab2b235c3de8b394c.json

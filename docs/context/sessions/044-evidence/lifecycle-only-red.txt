@@ -1,0 +1,14 @@
+00:00 +0: loading C:/My Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart
+test/ui/plan034_equipment_and_criteria_test.dart:72:9: Error: Method not found: 'debugPrintSynchronously'.
+        debugPrintSynchronously('[044 phase] dispose container');
+        ^^^^^^^^^^^^^^^^^^^^^^^
+test/ui/plan034_equipment_and_criteria_test.dart:74:9: Error: Method not found: 'debugPrintSynchronously'.
+        debugPrintSynchronously('[044 phase] await database close');
+        ^^^^^^^^^^^^^^^^^^^^^^^
+test/ui/plan034_equipment_and_criteria_test.dart:76:9: Error: Method not found: 'debugPrintSynchronously'.
+        debugPrintSynchronously('[044 phase] database closed');
+        ^^^^^^^^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading C:/My Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T205925702-69792-4677e3335def4ee49394897ecc0775d1.json

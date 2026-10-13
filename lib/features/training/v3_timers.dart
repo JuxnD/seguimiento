@@ -7,6 +7,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
+import '../../domain/timer_profile.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/cindy_protocol.dart';
@@ -266,80 +267,81 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
         child: SizedBox(
           width: double.infinity,
           child: switch (_phase) {
-          // Cindy de prueba: tarjeta fija y desplazable; el botón no se tapa.
-          _Phase.calentamiento when widget.attempt => Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    children: [
-                      const PreAttemptCard(torso: true),
-                      const SizedBox(height: 8),
-                      Text('Calentando ${formatDuration(warmupSec)} · meta ${formatDuration(widget.warmupGoalSec)}',
-                          textAlign: TextAlign.center, style: text.titleMedium),
-                      const SizedBox(height: 4),
-                      Text(
-                          'Luego ${widget.minutes} min de 5 dominadas + 10 flexiones + 15 sentadillas, tantas rondas '
-                          'como puedas. Toca "+1 ronda" al cerrar cada una.',
-                          textAlign: TextAlign.center),
-                    ],
+            // Cindy de prueba: tarjeta fija y desplazable; el botón no se tapa.
+            _Phase.calentamiento when widget.attempt => Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        const PreAttemptCard(torso: true),
+                        const SizedBox(height: 8),
+                        Text('Calentando ${formatDuration(warmupSec)} · meta ${formatDuration(widget.warmupGoalSec)}',
+                            textAlign: TextAlign.center, style: text.titleMedium),
+                        const SizedBox(height: 4),
+                        Text(
+                            'Luego ${widget.minutes} min de 5 dominadas + 10 flexiones + 15 sentadillas, tantas rondas '
+                            'como puedas. Toca "+1 ronda" al cerrar cada una.',
+                            textAlign: TextAlign.center),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: 64,
-                  child: FilledButton(onPressed: () => setState(_start), child: const Text('Empezar AMRAP')),
-                ),
-              ],
-            ),
-          _Phase.calentamiento => _PhasePanel(
-              title: 'Calentamiento',
-              elapsed: warmupSec,
-              goal: widget.warmupGoalSec,
-              hint: 'Luego ${widget.minutes} min de 5 dominadas + 10 flexiones + 15 sentadillas, tantas rondas como '
-                  'puedas. Toca "+1 ronda" al cerrar cada una.',
-              button: 'Empezar AMRAP',
-              onPressed: () => setState(_start),
-            ),
-          _Phase.trabajo => Column(
-              children: [
-                Text('AMRAP ${widget.minutes} MIN', style: text.labelLarge?.copyWith(letterSpacing: 1.2)),
-                const Spacer(),
-                ProgressRing(
-                  progress: _workElapsed / _capSec,
-                  value: formatDuration(_left),
-                  label: '${_roundMarks.length} ${_roundMarks.length == 1 ? 'ronda' : 'rondas'}',
-                  size: 240,
-                  stroke: 16,
-                ),
-                const SizedBox(height: 12),
-                Text('5 dominadas · 10 flexiones · 15 sentadillas', style: text.titleMedium),
-                if (_roundMarks.isNotEmpty)
-                  Text('Última ronda: ${formatDuration(_roundMarks.last - (_roundMarks.length > 1 ? _roundMarks[_roundMarks.length - 2] : 0))}',
-                      style: text.bodySmall),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  height: 110,
-                  child: FilledButton(
-                    onPressed: () => setState(_round),
-                    child: Text('+1 ronda', style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 64,
+                    child: FilledButton(onPressed: () => setState(_start), child: const Text('Empezar AMRAP')),
                   ),
-                ),
-                TextButton(onPressed: _finishEarly, child: const Text('Terminar antes')),
-              ],
-            ),
-          _Phase.enfriamiento => _PhasePanel(
-              title: 'Enfriamiento',
-              elapsed: cooldownSec,
-              goal: 180,
-              hint: 'Cindy: ${_roundMarks.length} rondas + ${_partial ?? 0} reps. Camina y respira; después, la '
-                  'movilidad nocturna.',
-              button: 'Terminar y guardar',
-              onPressed: () {
-                endedAt = clock.now();
-                Navigator.pop(context, _draft());
-              },
-            ),
+                ],
+              ),
+            _Phase.calentamiento => _PhasePanel(
+                title: 'Calentamiento',
+                elapsed: warmupSec,
+                goal: widget.warmupGoalSec,
+                hint: 'Luego ${widget.minutes} min de 5 dominadas + 10 flexiones + 15 sentadillas, tantas rondas como '
+                    'puedas. Toca "+1 ronda" al cerrar cada una.',
+                button: 'Empezar AMRAP',
+                onPressed: () => setState(_start),
+              ),
+            _Phase.trabajo => Column(
+                children: [
+                  Text('AMRAP ${widget.minutes} MIN', style: text.labelLarge?.copyWith(letterSpacing: 1.2)),
+                  const Spacer(),
+                  ProgressRing(
+                    progress: _workElapsed / _capSec,
+                    value: formatDuration(_left),
+                    label: '${_roundMarks.length} ${_roundMarks.length == 1 ? 'ronda' : 'rondas'}',
+                    size: 240,
+                    stroke: 16,
+                  ),
+                  const SizedBox(height: 12),
+                  Text('5 dominadas · 10 flexiones · 15 sentadillas', style: text.titleMedium),
+                  if (_roundMarks.isNotEmpty)
+                    Text(
+                        'Última ronda: ${formatDuration(_roundMarks.last - (_roundMarks.length > 1 ? _roundMarks[_roundMarks.length - 2] : 0))}',
+                        style: text.bodySmall),
+                  const Spacer(),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 110,
+                    child: FilledButton(
+                      onPressed: () => setState(_round),
+                      child: Text('+1 ronda', style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                    ),
+                  ),
+                  TextButton(onPressed: _finishEarly, child: const Text('Terminar antes')),
+                ],
+              ),
+            _Phase.enfriamiento => _PhasePanel(
+                title: 'Enfriamiento',
+                elapsed: cooldownSec,
+                goal: 180,
+                hint: 'Cindy: ${_roundMarks.length} rondas + ${_partial ?? 0} reps. Camina y respira; después, la '
+                    'movilidad nocturna.',
+                button: 'Terminar y guardar',
+                onPressed: () {
+                  endedAt = clock.now();
+                  Navigator.pop(context, _draft());
+                },
+              ),
           },
         ),
       ),
@@ -361,9 +363,40 @@ class TabataScreen extends StatefulWidget {
     this.restSec = 10,
     this.intervals = 8,
     this.betweenBlocksSec = 60,
+    this.includeFinalRest = false,
+    this.profile = TimerProfile.tabata,
+    this.footballFreeConfirmed,
     this.resume,
     this.onSnapshot,
   });
+
+  factory TabataScreen.running1515({
+    Key? key,
+    required DateTime date,
+    required bool footballFreeConfirmed,
+    TimerSnapshot? resume,
+    ValueChanged<TimerSnapshot>? onSnapshot,
+  }) {
+    if (resume != null && resume.profile != TimerProfile.running1515) {
+      throw ArgumentError('La sesión guardada no es carrera 15/15');
+    }
+    final confirmed = resume?.footballFreeConfirmed ?? footballFreeConfirmed;
+    if (!confirmed) throw ArgumentError('Confirma primero que no hay fútbol entre semana');
+    return TabataScreen(
+      key: key,
+      date: date,
+      exercises: const ['Carrera 15/15', 'Carrera 15/15'],
+      workSec: 15,
+      restSec: 15,
+      intervals: 16,
+      betweenBlocksSec: 0,
+      includeFinalRest: true,
+      profile: TimerProfile.running1515,
+      footballFreeConfirmed: confirmed,
+      resume: resume,
+      onSnapshot: onSnapshot,
+    );
+  }
 
   final DateTime date;
   final List<String> exercises;
@@ -378,6 +411,9 @@ class TabataScreen extends StatefulWidget {
   final int restSec;
   final int intervals;
   final int betweenBlocksSec;
+  final bool includeFinalRest;
+  final TimerProfile profile;
+  final bool? footballFreeConfirmed;
 
   @override
   State<TabataScreen> createState() => _TabataScreenState();
@@ -396,16 +432,22 @@ class TabataSegment {
 }
 
 /// La línea de tiempo del Tabata, tramo a tramo.
-List<TabataSegment> tabataTimeline({int blocks = 4, int intervals = 8, int work = 20, int rest = 10, int between = 60}) {
+List<TabataSegment> tabataTimeline(
+    {int blocks = 4,
+    int intervals = 8,
+    int work = 20,
+    int rest = 10,
+    int between = 60,
+    bool includeFinalRest = false}) {
   final out = <TabataSegment>[];
   for (var b = 0; b < blocks; b++) {
     for (var i = 0; i < intervals; i++) {
       out.add(TabataSegment(b, i, 'trabajo', work));
-      // Tras el último intervalo del bloque no hay pausa de 10 s: va el
-      // minuto entre bloques (o el final).
-      if (i < intervals - 1) out.add(TabataSegment(b, i, 'pausa', rest));
+      // Historical Tabata omits the last rest. Running explicitly keeps it
+      // so each 16 x (15/15) block lasts the full eight minutes.
+      if (i < intervals - 1 || includeFinalRest) out.add(TabataSegment(b, i, 'pausa', rest));
     }
-    if (b < blocks - 1) out.add(TabataSegment(b, intervals - 1, 'bloque', between));
+    if (b < blocks - 1 && between > 0) out.add(TabataSegment(b, intervals - 1, 'bloque', between));
   }
   return out;
 }
@@ -430,12 +472,27 @@ List<TabataSegment> tabataTimeline({int blocks = 4, int intervals = 8, int work 
 
 class _TabataScreenState extends State<TabataScreen> with _Ticking {
   _Phase _phase = _Phase.calentamiento;
+  late final _prescription = widget.resume?.prescription ??
+      TimerPrescription(
+          profile: widget.profile,
+          workSec: widget.workSec,
+          restSec: widget.restSec,
+          intervals: widget.intervals,
+          betweenBlocksSec: widget.betweenBlocksSec,
+          includeFinalRest: widget.includeFinalRest,
+          footballFreeConfirmed: widget.footballFreeConfirmed);
+  late final _exercises = List<String>.unmodifiable(
+      widget.resume?.exercises.isNotEmpty == true ? widget.resume!.exercises : widget.exercises);
+  bool get _running => _prescription.profile == TimerProfile.running1515;
+  String get _title => _running ? 'Carrera · intervalos 15/15' : 'Tabata';
+  DateTime get _date => widget.resume == null ? widget.date : parseDay(widget.resume!.date);
   late final _timeline = tabataTimeline(
-    blocks: widget.exercises.length,
-    intervals: widget.intervals,
-    work: widget.workSec,
-    rest: widget.restSec,
-    between: widget.betweenBlocksSec,
+    blocks: _exercises.length,
+    intervals: _prescription.intervals,
+    work: _prescription.workSec,
+    rest: _prescription.restSec,
+    between: _prescription.betweenBlocksSec,
+    includeFinalRest: _prescription.includeFinalRest,
   );
   late final int _totalWorkSec = _timeline.fold(0, (a, s) => a + s.seconds);
   int _lastSegment = -1;
@@ -457,6 +514,7 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
   @override
   void initState() {
     super.initState();
+    _prescription.validate(blocks: _exercises.length);
     if (widget.resume case final r?) {
       startedAt = r.startedAt;
       workStartedAt = r.workStartedAt;
@@ -466,19 +524,27 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
       // Sigue desde el tramo en que va: sin pitar ni preguntar por los que
       // pasaron con la app cerrada.
       if (workStartedAt != null) _lastSegment = _position.$1;
+      if (_running && _phase == _Phase.trabajo && _elapsed >= _totalWorkSec) {
+        workEndedAt = workStartedAt!.add(Duration(seconds: _totalWorkSec));
+        _phase = _Phase.enfriamiento;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _snapshot();
+        });
+      }
     }
     startTicking();
   }
 
   void _snapshot() => widget.onSnapshot?.call(TimerSnapshot(
-        date: dayKey(widget.date),
+        date: dayKey(_date),
         startedAt: startedAt,
-        mode: 'tabata',
+        mode: _prescription.profile.name,
         phase: _phase.name,
         workStartedAt: workStartedAt,
         workEndedAt: workEndedAt,
         worst: Map.of(_worst),
-        exercises: widget.exercises,
+        exercises: _exercises,
+        prescription: _prescription,
       ));
 
   @override
@@ -496,12 +562,12 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
       // descansar. Al cerrar un bloque se pide el peor intervalo.
       // El bloque se cierra al entrar al minuto entre bloques (o al final):
       // ahí, descansando, se anota el peor intervalo.
-      final finishedBlock =
-          _lastSegment >= 0 && (index >= _timeline.length || _timeline[index].kind == 'bloque');
-      if (finishedBlock) unawaited(_askWorst(_timeline[_lastSegment].block));
+      final finishedBlock = _lastSegment >= 0 && (index >= _timeline.length || _timeline[index].kind == 'bloque');
+      if (finishedBlock && !_running) unawaited(_askWorst(_timeline[_lastSegment].block));
       _lastSegment = index;
       if (index >= _timeline.length) {
         workEndedAt = workStartedAt!.add(Duration(seconds: _totalWorkSec));
+        if (_running) _phase = _Phase.enfriamiento;
         _beep(strong: true);
         _snapshot();
       } else {
@@ -516,8 +582,8 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
     final reps = await showDialog<int>(
       context: context,
       builder: (_) => _NumberDialog(
-        title: '${widget.exercises[block]}: reps del peor intervalo',
-        hint: 'El intervalo de 20 s en que menos hiciste. Es la métrica del Tabata.',
+        title: '${_exercises[block]}: reps del peor intervalo',
+        hint: 'El intervalo de ${_prescription.workSec} s en que menos hiciste. Es la métrica del Tabata.',
         max: 60,
       ),
     );
@@ -532,21 +598,25 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
     final split = tabataTimeSplit(_timeline, done);
     final cut = done < _totalWorkSec;
     return SessionDraft(
-      date: widget.date,
+      date: _date,
       startTime: timeKey(startedAt.hour, startedAt.minute),
       type: SessionType.resistencia,
-      mode: 'tabata',
+      mode: _prescription.profile.name,
       totalSec: totalSec,
       warmupSec: warmupSec,
       cooldownSec: cooldownSec,
       restSec: split.rest,
       incomplete: cut,
-      context: '${cut ? 'Tabata cortado a los ${formatDuration(done)} de ${formatDuration(_totalWorkSec)}' : 'Tabata'}'
-          ' · peor intervalo: '
-          '${[for (var b = 0; b < widget.exercises.length; b++) '${widget.exercises[b]} ${_worst[b] ?? '—'}'].join(' · ')}',
+      context: _running
+          ? 'Carrera 15/15 · 2 bloques de 8 min · ${cut ? 'interrumpida' : 'completa'}'
+              ' · ${split.work} s trabajo / ${split.rest} s pausa'
+          : '${cut ? 'Tabata cortado a los ${formatDuration(done)} de ${formatDuration(_totalWorkSec)}' : 'Tabata'}'
+              ' · peor intervalo: '
+              '${[for (var b = 0; b < _exercises.length; b++) '${_exercises[b]} ${_worst[b] ?? '—'}'].join(' · ')}',
       sets: [
-        for (var b = 0; b < widget.exercises.length; b++)
-          if (_worst[b] != null) SetDraft(exercise: widget.exercises[b], reps: _worst[b]!),
+        if (!_running)
+          for (var b = 0; b < _exercises.length; b++)
+            if (_worst[b] != null) SetDraft(exercise: _exercises[b], reps: _worst[b]!),
       ],
     );
   }
@@ -557,7 +627,7 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
     final (index, left) = _position;
     final seg = index < _timeline.length ? _timeline[index] : null;
     return Scaffold(
-      appBar: AppBar(title: const Text('Tabata')),
+      appBar: AppBar(title: Text(_title)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         // Ancho completo: sin esto la columna se encoge a su hijo más ancho
@@ -565,68 +635,78 @@ class _TabataScreenState extends State<TabataScreen> with _Ticking {
         child: SizedBox(
           width: double.infinity,
           child: switch (_phase) {
-          _Phase.calentamiento => _PhasePanel(
-              title: 'Calentamiento',
-              elapsed: warmupSec,
-              goal: widget.warmupGoalSec,
-              hint: '4 bloques de 8 × (20 s a tope / 10 s pausa), 1 min entre bloques: '
-                  '${widget.exercises.join(' · ')}. Suena al cambiar de tramo.',
-              button: 'Empezar Tabata',
-              onPressed: () {
-                setState(() {
-                  workStartedAt = clock.now();
-                  _phase = _Phase.trabajo;
-                });
-                _snapshot();
-              },
-            ),
-          _Phase.trabajo => seg == null
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
-                  children: [
-                    Text('BLOQUE ${seg.block + 1}/${widget.exercises.length} · '
-                        'INTERVALO ${seg.interval + 1}/${widget.intervals}',
-                        style: text.labelLarge?.copyWith(letterSpacing: 1.2)),
-                    const Spacer(),
-                    Text(
-                      switch (seg.kind) {
-                        'trabajo' => '¡A TOPE!',
-                        'pausa' => 'Pausa',
-                        _ => 'Descanso entre bloques',
-                      },
-                      style: text.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(height: 8),
-                    ProgressRing(
-                      progress: 1 - left / seg.seconds,
-                      value: '$left',
-                      label: seg.kind == 'bloque' ? 'Siguiente: ${widget.exercises[seg.block + 1]}' : widget.exercises[seg.block],
-                      size: 240,
-                      stroke: 16,
-                    ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        workEndedAt = clock.now();
-                        setState(() => _phase = _Phase.enfriamiento);
-                        _snapshot();
-                      },
-                      child: const Text('Terminar antes'),
-                    ),
-                  ],
-                ),
-          _Phase.enfriamiento => _PhasePanel(
-              title: 'Enfriamiento',
-              elapsed: cooldownSec,
-              goal: 180,
-              hint: 'Peor intervalo: ${[for (var b = 0; b < widget.exercises.length; b++) '${_worst[b] ?? '—'}'].join(' · ')}. '
-                  'Después, la movilidad nocturna.',
-              button: 'Terminar y guardar',
-              onPressed: () {
-                endedAt = clock.now();
-                Navigator.pop(context, _draft());
-              },
-            ),
+            _Phase.calentamiento => _PhasePanel(
+                title: 'Calentamiento',
+                elapsed: warmupSec,
+                goal: widget.warmupGoalSec,
+                hint: _running
+                    ? '2 bloques de 8 min: 16 × (15 s de carrera / 15 s de pausa), incluida la última pausa. '
+                        'Sin descanso extra entre bloques. Suena al cambiar de tramo.'
+                    : '${_exercises.length} bloques de ${_prescription.intervals} × '
+                        '(${_prescription.workSec} s a tope / ${_prescription.restSec} s pausa), '
+                        '${_prescription.betweenBlocksSec ~/ 60} min entre bloques: '
+                        '${_exercises.join(' · ')}. Suena al cambiar de tramo.',
+                button: _running ? 'Empezar intervalos' : 'Empezar Tabata',
+                onPressed: () {
+                  setState(() {
+                    workStartedAt = clock.now();
+                    _phase = _Phase.trabajo;
+                  });
+                  _snapshot();
+                },
+              ),
+            _Phase.trabajo => seg == null
+                ? const Center(child: CircularProgressIndicator())
+                : Column(
+                    children: [
+                      Text(
+                          'BLOQUE ${seg.block + 1}/${_exercises.length} · '
+                          'INTERVALO ${seg.interval + 1}/${_prescription.intervals}',
+                          style: text.labelLarge?.copyWith(letterSpacing: 1.2)),
+                      const Spacer(),
+                      Text(
+                        switch (seg.kind) {
+                          'trabajo' => _running ? 'Carrera' : '¡A TOPE!',
+                          'pausa' => 'Pausa',
+                          _ => 'Descanso entre bloques',
+                        },
+                        style: text.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 8),
+                      ProgressRing(
+                        progress: 1 - left / seg.seconds,
+                        value: '$left',
+                        label: seg.kind == 'bloque' ? 'Siguiente: ${_exercises[seg.block + 1]}' : _exercises[seg.block],
+                        size: 240,
+                        stroke: 16,
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          workEndedAt = clock.now();
+                          setState(() => _phase = _Phase.enfriamiento);
+                          _snapshot();
+                        },
+                        child: const Text('Terminar antes'),
+                      ),
+                    ],
+                  ),
+            _Phase.enfriamiento => _PhasePanel(
+                title: 'Enfriamiento',
+                elapsed: cooldownSec,
+                goal: 180,
+                hint: _running
+                    ? 'Intervalos terminados. Después, la movilidad nocturna.'
+                    : 'Peor intervalo: ${[
+                        for (var b = 0; b < _exercises.length; b++) '${_worst[b] ?? '—'}'
+                      ].join(' · ')}. '
+                        'Después, la movilidad nocturna.',
+                button: 'Terminar y guardar',
+                onPressed: () {
+                  endedAt = clock.now();
+                  Navigator.pop(context, _draft());
+                },
+              ),
           },
         ),
       ),
@@ -845,7 +925,8 @@ class _NumberDialogState extends State<_NumberDialog> {
           ],
         ),
         actions: [
-          FilledButton(onPressed: _value == null ? null : () => Navigator.pop(context, _value), child: const Text('Listo')),
+          FilledButton(
+              onPressed: _value == null ? null : () => Navigator.pop(context, _value), child: const Text('Listo')),
         ],
       );
 }

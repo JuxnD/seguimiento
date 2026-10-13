@@ -1,0 +1,6 @@
+00:00 +0: loading C:/My Projects/seguimiento-044-ui-equipo-harness/test/ui/plan034_equipment_and_criteria_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history
+[044 phase] dispose container
+[044 phase] await database close
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T210338126-33020-d84019ba8eaa496e9888a0ba07b51615.json

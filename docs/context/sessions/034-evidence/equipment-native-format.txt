@@ -1,0 +1,3 @@
+Formatted test/ui/plan034_equipment_and_criteria_test.dart
+Formatted 1 file (1 changed) in 0.26 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T204002989-65232-fb793b3c379747d486ae2f5035cd3497.json

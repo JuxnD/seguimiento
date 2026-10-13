@@ -1,0 +1,8 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history
+00:02 +1: soleus same-day offers no tomorrow confirmation; following morning captures dated explicit response
+00:02 +2: actual manual editor confirms alarm in draft then cancel preserves SQLite and no events
+00:03 +3: (tearDownAll)
+00:03 +3: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T222620816-46768-f5523d06062a4d449230feb4e2c6e417.json

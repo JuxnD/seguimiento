@@ -1,5 +1,9 @@
 # Índice de contexto
 
+**044 test-only, pendiente revisión root:** harness UI de equipo con IO real y
+cierre Drift acotado entre zonas; 3 UI PASS/0skip y análisis del fixture0.
+Aplicación idéntica al checkpoint parcial0348eb5. [Causa, evidencia y gates](sessions/2026-10-13-044-ui-equipo-harness.md).
+
 **033 local, dirigido y pendiente R1:** coherencia core Hoy/informe, fútbol diario acumulado/detalle/edición porID, guard de guardado y confirmación duplicadas, hito10 traspersistencia sinactivar plan. Fallo/retry no pierde procedencia guiada. [Recibo, negativos y gates](sessions/2026-10-13-033-coherencia.md). Full sólo integración032/034/035; sin esquema/assets/APK/publicación ni aceptación humana nueva.
 
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
@@ -371,3 +375,5 @@ No atribuir estas figuras a unAPK anterior ni a la instalación del owner.
 
 
 034 checkpoint parcial: contratos25/attempts/escaleras y source de3.2 para repartir lectores. Analyze lib+24 testpaths0, últimos7SQLite PASS, UIequipo/paquete43 pendiente de diagnóstico; NO R1final. Ver [checkpoint034](sessions/2026-10-13-034-functional-checkpoint.md) y [propuesta de relevo lector](sessions/2026-10-13-034-reader-handoff.md). Source35/36/39/40 no integrado aquí; cierre completo037 pendiente.
+
+- [034 checkpoint funcional048](sessions/2026-10-13-034-essential048-checkpoint.md): esenciales, evidencia y gates de integración/APK local.

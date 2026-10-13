@@ -1,0 +1,3 @@
+Analyzing 10 items...                                           
+No issues found! (ran in 9.0s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T222511777-56588-4d53467ea6e448288a76315d4595ef0b.json

@@ -1,0 +1,3 @@
+Formatted lib/features/training/training_screen.dart
+Formatted 17 files (1 changed) in 0.75 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T222116921-63600-fae66b8c5be942e3a921ba29ab30afdf.json

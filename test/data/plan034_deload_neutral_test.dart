@@ -19,7 +19,9 @@ void main() {
     'unknown',
     'wrongEpoch',
     'forgedDose',
-    'bad'
+    'bad',
+    'corruptFullTarget',
+    'overdose'
   ]) {
     test('declared complete deload neutral; $variant cannot hide failure',
         () async {
@@ -56,11 +58,15 @@ void main() {
                     'companionGoals': <String, Object?>{}
                   }));
         }
-        if (day == 14 && ['wrongEpoch', 'forgedDose'].contains(variant)) {
+        if (day == 14 &&
+            ['wrongEpoch', 'forgedDose', 'corruptFullTarget']
+                .contains(variant)) {
           final key = LadderPrescriptionProof.key('reverse_plank');
           final raw =
               (jsonDecode(metadata[key]!) as Map).cast<String, Object?>();
-          if (variant == 'wrongEpoch') raw['identity'] = '1:999';
+          if (['wrongEpoch', 'corruptFullTarget'].contains(variant)) {
+            raw['identity'] = '1:999';
+          }
           if (variant == 'forgedDose') {
             raw['sets'] = 1;
             raw['minimum'] = 1;
@@ -68,7 +74,11 @@ void main() {
           metadata[key] = jsonEncode(raw);
         }
         final count = day == 14
-            ? (['partial', 'forgedDose'].contains(variant) ? 1 : 2)
+            ? (['corruptFullTarget', 'overdose'].contains(variant)
+                ? 3
+                : ['partial', 'forgedDose'].contains(variant)
+                    ? 1
+                    : 2)
             : 3;
         await training.save(SessionDraft(
             date: date,
@@ -82,7 +92,10 @@ void main() {
               for (var i = 0; i < count; i++)
                 SetDraft(
                     exercise: 'Plancha inversa sobre antebrazos',
-                    reps: day == 14 ? 20 : 45)
+                    reps: day == 14 &&
+                            !['corruptFullTarget', 'overdose'].contains(variant)
+                        ? 20
+                        : 45)
             ]));
       }
       final advice =

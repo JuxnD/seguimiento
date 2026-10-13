@@ -126,10 +126,6 @@ class PlanScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (list) {
-          if (list.isEmpty) {
-            return const AppCard(
-                children: [EmptyHint('Sin plan. Crea la versión 1.')]);
-          }
           final hasV3 =
               list.any((v) => v.scheme == v31Scheme || v.scheme == v32Scheme);
           return ListView(
@@ -140,9 +136,14 @@ class PlanScreen extends ConsumerWidget {
                   const Text(
                       'Revisa la semana nueva antes de activarla. Conserva historial y metas.'),
                   OutlinedButton(
-                      onPressed: () => activateV32(
-                          context, ref, nextMonday(addDays(DateTime.now(), 1))),
-                      child: const Text('Revisar y activar v3.2')),
+                      onPressed: () =>
+                          activateV32(context, ref, dateOnly(DateTime.now())),
+                      child: const Text('Empezar hoy')),
+                  TextButton(
+                    onPressed: () => activateV32(
+                        context, ref, nextMonday(addDays(DateTime.now(), 1))),
+                    child: const Text('Empezar el próximo lunes'),
+                  ),
                 ]),
               if (!hasV3 && setup != null && !setup.isNewInstall)
                 const _V3ActivationCard(),

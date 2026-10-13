@@ -1,0 +1,4 @@
+Formatted lib/features/home/home_screen.dart
+Formatted test/ui/plan034_stairs_alert_test.dart
+Formatted 3 files (2 changed) in 0.41 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T222931435-4560-64924ca5d754471e8fdc32db1747ddcb.json

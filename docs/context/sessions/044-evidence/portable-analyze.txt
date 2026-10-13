@@ -1,0 +1,6 @@
+Analyzing plan034_equipment_and_criteria_test.dart...           
+
+   info - Missing an 'await' for the 'Future' computed by this expression - test\ui\plan034_equipment_and_criteria_test.dart:41:7 - unawaited_futures
+
+1 issue found. (ran in 8.5s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T212249357-47276-4ce85bb6c91b4f4898881db88a772144.json

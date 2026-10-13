@@ -25,7 +25,7 @@ class _LegacyTable {
 }
 
 // Declared destination for this candidate; never read back from the migrated DB.
-const _targetSchema = 24;
+const _targetSchema = 25;
 const _restoredReminderDefaults = [
   {
     'kind': 'recuperacionManana',
@@ -181,7 +181,7 @@ void main() {
   });
 
   test(
-      '18 to schema24: reopen, ZIP, restore, reopen preserves all old rows and AI',
+      '18 to schema25: reopen, ZIP, restore, reopen preserves all old rows and AI',
       () async {
     final root =
         Directory.systemTemp.createTempSync('seguimiento_121_migration_');

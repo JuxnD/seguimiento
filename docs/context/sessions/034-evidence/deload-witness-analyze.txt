@@ -1,0 +1,6 @@
+Analyzing 2 items...                                            
+
+   info - Statements in an if should be enclosed in a block - test\data\plan034_deload_neutral_test.dart:68:13 - curly_braces_in_flow_control_structures
+
+1 issue found. (ran in 6.3s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T220157692-33280-2695e0e34dbf496bae2c52d3a3686a04.json

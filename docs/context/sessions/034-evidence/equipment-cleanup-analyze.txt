@@ -1,0 +1,6 @@
+Analyzing 3 items...                                            
+
+  error - Undefined name 'db' - test\ui\plan034_equipment_and_criteria_test.dart:141:28 - undefined_identifier
+
+1 issue found. (ran in 7.0s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T204655519-70360-0daa61d86025430ca9ab25e402880185.json

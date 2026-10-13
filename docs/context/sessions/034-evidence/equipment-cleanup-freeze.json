@@ -1,0 +1,19 @@
+{
+  "head": "8eb5eed91c1248fe5afac02d0bab5cbf67a02ea8",
+  "files": [
+    {
+      "path": "test/ui/plan034_equipment_and_criteria_test.dart",
+      "sha256": "97BDF3BB791185A5B519DC5FEE6E3F1A8A2BD009BC2472CFA680FBE8AB2BD2CB"
+    },
+    {
+      "path": "lib/features/plan/plan_screen.dart",
+      "sha256": "402FDA620E6EB0042EAA227A155BB45F21C9CF7B147C43633118BF8BAA2B819F"
+    },
+    {
+      "path": "lib/data/local_flags.dart",
+      "sha256": "C5670789196F94F0275F90C8C44688985B4113E1E750FB8A64EE20F0EE803E20"
+    }
+  ],
+  "generated": "59980C598E2D37C6E4B43EFF3FFC5DF70F545D0FA52170A9B4E014DD60CE2ECB",
+  "lock": "6D625ACCE6C72B2485197988D02D0EF85AD1FDC4AC6169B6381F422811D69C05"
+}
