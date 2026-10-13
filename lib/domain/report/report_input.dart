@@ -3,6 +3,7 @@
 library;
 
 import '../enums.dart';
+import '../leg_chain.dart' show GroupChain;
 import '../readiness.dart' show ReadinessWeek;
 import '../progress.dart';
 import '../nutrition.dart';
@@ -324,6 +325,7 @@ class ReportInput {
     this.recovery,
     this.kneeStairs = const {},
     this.mobilityBenchmarks = const [],
+    this.legChains,
   });
 
   final DateTime programStart;
@@ -334,6 +336,10 @@ class ReportInput {
 
   /// Explicit optional measurements; never converted into training workload.
   final List<String> mobilityBenchmarks;
+
+  /// Cadenas de días intensos al cierre del periodo (§16.24, plan 039), con
+  /// la misma clasificación que el Plan B de Hoy. null = no se calculó.
+  final ({GroupChain legs, GroupChain torso})? legChains;
   final DateTime rangeStart;
 
   /// Inclusivo.

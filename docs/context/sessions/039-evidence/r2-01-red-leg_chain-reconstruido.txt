@@ -1,0 +1,42 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-diag/test/domain/leg_chain_test.dart
+00:00 +0: clasificación bordes de minutos, RIR y RPE
+00:00 +1: clasificación exclusiones antes de cualquier regla
+00:00 +2: clasificación sin datos para clasificar: desconocida, no se inventa
+00:00 +3: clasificación grupos: por ejercicios, y si no, por tipo
+00:00 +4: catálogo y modos (observación root 13:52) los nueve de pierna del Plan v3.2 cuentan como pierna
+00:00 +5: catálogo y modos (observación root 13:52) los nombres de torso del Plan v3.2 cuentan como torso (catálogo 034)
+00:00 +5 -1: catálogo y modos (observación root 13:52) los nombres de torso del Plan v3.2 cuentan como torso (catálogo 034) [E]
+  Expected: Set:[ChainGroup:ChainGroup.torso]
+    Actual: <null>
+     Which: is not Iterable
+  Rotación externa con banda
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\leg_chain_test.dart 83:9                main.<fn>.<fn>
+  
+00:00 +5 -1: catálogo y modos (observación root 13:52) RIR 3–4 sin RPE es moderado; RIR 5 sin RPE ni minutos suficientes queda desconocido
+00:00 +5 -2: catálogo y modos (observación root 13:52) RIR 3–4 sin RPE es moderado; RIR 5 sin RPE ni minutos suficientes queda desconocido [E]
+  Expected: DayIntensity:<DayIntensity.unknown>
+    Actual: DayIntensity:<DayIntensity.moderate>
+  el contrato dice RIR 3–4; más allá no se infiere esfuerzo
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\leg_chain_test.dart 91:7                main.<fn>.<fn>
+  
+00:00 +5 -2: catálogo y modos (observación root 13:52) un nombre desconocido no se supone torso
+00:00 +6 -2: catálogo y modos (observación root 13:52) sesión mixta: lo conocido cuenta y el otro grupo queda en duda
+00:00 +7 -2: catálogo y modos (observación root 13:52) rutinas de 032 fuera aunque el tipo histórico no sea movilidad; la normal elegida conserva su clase
+00:00 +8 -2: cadena caso del traspaso: el jueves sin nada reinicia; el viernes queda en 0
+00:00 +9 -2: cadena moderado no suma ni rompe; desconocido se lista; torso no suma a piernas
+00:00 +10 -2: cadena hoy sin sesión no corta: se cuenta hasta ayer
+00:00 +11 -2: Plan B cadena 3 en día de piernas: motivo con los días
+00:00 +12 -2: Plan B día sin pierna o rojo de 032: nada
+00:00 +13 -2: Plan B la mañana verde suprime sólo la cadena
+00:00 +14 -2: Plan B escaleras: 3 no, 4 sí; null no es verde ni 0
+00:00 +15 -2: Plan B otra zona de pierna conserva su texto
+00:00 +16 -2: Plan B informe: la misma cadena
+00:00 +17 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T192539212-63788-ec530559e0e04628a1de869fc2ec125e.json
+exit=1

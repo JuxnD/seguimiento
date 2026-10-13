@@ -6,6 +6,7 @@ import '../../domain/enums.dart';
 import '../../domain/fitness_test.dart';
 import '../../domain/test_protocol.dart';
 import '../../domain/plan_v32.dart';
+import '../../domain/leg_chain.dart' show PlanBAdvice;
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
@@ -21,6 +22,7 @@ import 'coach_repository.dart';
 import 'goal_repository.dart';
 import 'exercise_repository.dart';
 import 'fitness_test_repository.dart';
+import 'leg_chain_repository.dart';
 import 'readiness_repository.dart';
 import 'nutrition_repository.dart';
 import 'plan_repository.dart';
@@ -68,6 +70,7 @@ class TodayDashboard {
     this.restingHrWarning,
     this.soreZones = const [],
     this.planB = false,
+    this.planBAdvice = PlanBAdvice.none,
     this.fitnessTest,
     this.fitnessTestStart,
     this.techniqueSuggested = false,
@@ -180,6 +183,10 @@ class TodayDashboard {
   /// Hoy conviene el plan B de solo torso: 3 días intensos seguidos o
   /// molestia en la pierna, y el día trae pierna (§16.15).
   final bool planB;
+
+  /// Motivos del Plan B con sus datos (§16.24, plan 039). La misma
+  /// clasificación que la sección de cadena del informe.
+  final PlanBAdvice planBAdvice;
 
   /// Cuándo toca medir. null = sin línea base ni fecha acordada.
   final MeasurementDue? measurement;
@@ -311,12 +318,13 @@ class DashboardRepository {
         .getSingleOrNull();
 
     final eve = planSessions.isEmpty && await _eveOfTest(date, training);
-    final planB = planSessions.isEmpty &&
-        suggestPlanB(
-            dayHasLegs: dayHasLegs,
-            load: load,
-            soreness: soreness,
-            today: date);
+    // Cadena de piernas y motivos separados (§16.24, plan 039): no la racha
+    // global de días intensos.
+    final legChain = LegChainRepository(db);
+    final planBAdvice = planSessions.isEmpty
+        ? await legChain.planB(date, dayHasLegs: dayHasLegs, legs: (await legChain.chains(date)).legs)
+        : PlanBAdvice.none;
+    final planB = planBAdvice.show;
     return TodayDashboard(
       date: date,
       weekIndex: weekIndexFor(p.programStart, date),
@@ -338,6 +346,7 @@ class DashboardRepository {
           restingHrWarning(await recovery.restingHrRange(date), date),
       soreZones: persistentSoreness(soreness, date),
       planB: planB,
+      planBAdvice: planBAdvice,
       targetRounds: v3?.isV32 == true && date.weekday == DateTime.friday
           ? maintenanceRounds(v3!.week)
           : proposal?.rounds ?? view?.day.targetRounds,

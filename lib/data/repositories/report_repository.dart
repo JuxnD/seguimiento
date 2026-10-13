@@ -10,6 +10,7 @@ import '../database.dart';
 import '../history_import.dart' show firstDataDay;
 import 'exercise_repository.dart';
 import 'nutrition_repository.dart';
+import 'leg_chain_repository.dart';
 import 'profile_repository.dart';
 import 'readiness_repository.dart';
 import 'training_repository.dart';
@@ -255,6 +256,9 @@ class ReportRepository {
         ? await ReadinessRepository(db).week(from, to)
         : null;
 
+    // Misma cadena que el Plan B de Hoy, al cierre del periodo (plan 039).
+    final legChains = withPrevious ? await LegChainRepository(db).chains(to) : null;
+
     return ReportInput(
       kneeStairs: {for (final row in knees) parseDay(row.date): row.kneeStairs},
       mobilityBenchmarks: [
@@ -264,6 +268,7 @@ class ReportRepository {
               '· condiciones: ${row.conditions ?? 'desconocidas'}'
       ],
       recovery: recovery,
+      legChains: legChains,
       programStart: start,
       rangeStart: from,
       rangeEnd: to,

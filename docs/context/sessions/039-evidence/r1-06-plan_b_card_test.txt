@@ -1,0 +1,8 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: la tarjeta lista los motivos con sus días y la rodilla con su fecha
+00:03 +1: mañana verde: sin tarjeta, sólo la nota
+00:03 +2: (tearDownAll)
+00:03 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191605220-41284-e54249ab336743e9adbc2d37e2ed9bc8.json
+exit=0

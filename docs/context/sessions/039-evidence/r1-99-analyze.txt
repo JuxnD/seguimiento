@@ -1,0 +1,14 @@
+﻿Analyzing seguimiento-039-plan-b...                             
+
+   info - The import of 'dart:async' is unnecessary because all of the used elements are also provided by the import of 'package:flutter_test/flutter_test.dart' - test\ui\plan_b_card_test.dart:1:8 - unnecessary_import
+
+powershell.exe : 1 issue found. (ran in 31.2s)
+En C:\Users\Acer\AppData\Local\Temp\claude\C--My-Projects-kata\6db9cb30-df08-43e9-87db-e1d7b6a75d84\scratchpad\lease039
+.ps1: 8 Carácter: 1
++ & powershell -NoProfile -ExecutionPolicy Bypass -Command $inner *> "$ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (1 issue found. (ran in 31.2s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191815080-63536-0a70f378c39e40e885758e51a88a0bce.json
+exit=1

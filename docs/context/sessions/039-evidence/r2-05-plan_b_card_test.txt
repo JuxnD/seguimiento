@@ -1,0 +1,119 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: la tarjeta lista los motivos con sus días y la rodilla con su fecha
+00:02 +1: mañana verde: sin tarjeta, sólo la nota
+00:04 +2: teléfono 360×800 con texto ×1.0: tarjeta y acción alcanzables, sin desbordes
+00:04 +3: teléfono 360×800 con texto ×1.6: tarjeta y acción alcanzables, sin desbordes
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _HitTestableWidgetFinder:<Found 0 widgets with text "Empezar plan B" (considering only
+hit-testable ones): []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:153:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart line 153
+The test description was:
+  teléfono 360×800 con texto ×1.6: tarjeta y acción alcanzables, sin desbordes
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +3 -1: teléfono 360×800 con texto ×1.6: tarjeta y acción alcanzables, sin desbordes [E]
+  Test failed. See exception logs above.
+  The test description was: teléfono 360×800 con texto ×1.6: tarjeta y acción alcanzables, sin desbordes
+  
+00:05 +3 -1: teléfono 360×800 con texto ×2.0: tarjeta y acción alcanzables, sin desbordes
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:349:39)
+#6      main.mount (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:63:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:150:24)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _HitTestableWidgetFinder:<Found 0 widgets with text "Empezar plan B" (considering only
+hit-testable ones): []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:153:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart line 153
+The test description was:
+  teléfono 360×800 con texto ×2.0: tarjeta y acción alcanzables, sin desbordes
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +3 -2: teléfono 360×800 con texto ×2.0: tarjeta y acción alcanzables, sin desbordes [E]
+  Test failed. See exception logs above.
+  The test description was: teléfono 360×800 con texto ×2.0: tarjeta y acción alcanzables, sin desbordes
+  
+00:06 +3 -2: rojo de 032: manda el descanso y no hay botón de Plan B para entrenar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:349:39)
+#6      main.mount (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:63:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:172:22)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:06 +4 -2: día de test: el test va primero y no hay tarjeta de Plan B encima
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:349:39)
+#6      main.mount (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:63:16)
+#7      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-039-plan-b/test/ui/plan_b_card_test.dart:181:22)
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#10     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:07 +5 -2: (tearDownAll)
+00:07 +5 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T192612628-54204-9532483fcc544f368617aac10183c5a5.json
+exit=1
