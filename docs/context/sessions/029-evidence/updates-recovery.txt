@@ -1,0 +1,11 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/ui/updates_card_test.dart
+00:00 +0: 1.22 instalada sobre pública1.21 no acredita publicación
+00:01 +1: sin nueva instalada1.21.0 360 texto1.0
+00:01 +2: sin nueva instalada1.22.0 360 texto1.0
+00:01 +3: publicada nueva conserva URL y espera toque texto1.0
+00:02 +4: sin nueva instalada1.21.0 360 texto2.0
+00:02 +5: sin nueva instalada1.22.0 360 texto2.0
+00:02 +6: publicada nueva conserva URL y espera toque texto2.0
+00:02 +7: error404 conserva el motivo sin afirmar publicación
+00:02 +8: error503 conserva el motivo sin afirmar publicación
+00:02 +9: All tests passed!

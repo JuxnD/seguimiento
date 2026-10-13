@@ -1,6 +1,6 @@
 {
   "source_commit": "a1351d3eb860a38b08a64586d3486c5095a00909",
-  "full_gate": "BLOCKED",
+  "full_gate": "PASS_HOST",
   "full1_exit": 1,
   "full2_exit": 1,
   "full2_reported_passed": 952,
@@ -25,6 +25,17 @@
     "red-queue-expanded.txt": "5139aadaab494f7994d6bf7a6cff1b520d33da83b725fe1c7090ba125bd3a76a",
     "red-queue.txt": "a4fc4ffc652b9c850d306b29a8a10e4dea6990cd8c9ae90090cec064b27f102a",
     "review-independent.txt": "e57231afb3ce508c6d13ce50b50d5a99e00c9e81f929b9a72e83ca4daa1ba450",
-    "updates-diagnosis.txt": "ebbd06c91c62f91cebfd6b3740e915db248b529f86baf00aa7e4d0abe30f0579"
-  }
+    "updates-diagnosis.txt": "ebbd06c91c62f91cebfd6b3740e915db248b529f86baf00aa7e4d0abe30f0579",
+    "updates-recovery.txt": "923c77a64dd5a680b23cce5261e215afd6ce808ed56dd4d84df2af081b0eb493",
+    "updates-recovery-metrics.json": "d0457e9ff646054d6266486fbc81632ff58ac3928523d78351c2f10c471b4d5c",
+    "full-recovery.txt": "24de45b5a852bc000068aee2b6a3196a005e6ce4449809f1f4781069d6403a61",
+    "full-recovery-metrics.json": "608bb9bf22c79c7002df7b82f58f97806e875dd69463d0ba699ed073344b29fc",
+    "full-recovery-summary.json": "7614109d097fbc21469e1c4ac5bf8f072b7a600cd3ce23b53fef1dae6aebe03a"
+  },
+  "full3_exit": 0,
+  "full3_passed": 961,
+  "full3_skipped": 16,
+  "full3_failed": 0,
+  "recovery_directed_passed": 9,
+  "operational_acceptance": "NOT_EVALUATED"
 }

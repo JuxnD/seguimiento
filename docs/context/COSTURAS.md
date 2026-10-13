@@ -438,8 +438,11 @@ RevisiónClaude009 estática sobrea1351d3 sin bloqueantes nuevos: doblefalloDB+
 rollback y caché activeSessionProvider con SessionRecoveryException quedan
 no evaluados/mejora menor, sin vínculo ajeno demostrado. Véase recibo029;
 desvinculación conservadora describe archivo, no certifica caché en ese extremo.
-Full/formal029 BLOCKED entorno: full1 rojo957/16/4fixtures después34dirigidos
-verdes; full2 exit1/contador952/16/nueveupdatesno completar. Diagnóstico posterior
-errno112/C libre0; atribución causal completa pendiente. Tres limpiezas rechazadas,
-nada eliminado. Próximo ≥1GiB → mismo dirigido9updates → fullterminal sin relajar
-timeout90,oráculos o skips. Fuente a1351d3 intacta; véase recibo/evidencia029.
+Full029 host recuperada: después de capacidad≥1GiB, mismo dirigido9updates PASS
+y full3 terminal961/16/0fallos exit0 sobrea1351d3. PHPinterop sin skip,
+timeout90/concurrency1 y oráculos intactos. Full1 rojo957/16/4fixtures después34
+dirigidos verdes; full2 exit1/contador952/16/nueveupdatesno completar conservados.
+Diagnóstico posterior errno112/C libre0; contraste sin cambio de fuente apoya
+recuperación del entorno, sin probar causa completa de full2. Tres limpiezas
+rechazadas, nada eliminado. Contextvalidator18errores heredados y gates nativos/
+publicación/aceptación humana siguen pendientes. Véase recibo/evidencia029.

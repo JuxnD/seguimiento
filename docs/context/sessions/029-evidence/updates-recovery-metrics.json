@@ -1,0 +1,11 @@
+{
+  "Source": "a1351d3eb860a38b08a64586d3486c5095a00909",
+  "Documentation": "018b7c6",
+  "FreeBefore": 1692114944,
+  "FreeAfter": 1694478336,
+  "Exit": 0,
+  "SDK": "C:/seguimiento-sdk-3.22.0/flutter",
+  "TimeoutSeconds": 90,
+  "Concurrency": 1,
+  "Test": "test/ui/updates_card_test.dart"
+}

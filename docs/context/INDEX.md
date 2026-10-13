@@ -7,11 +7,13 @@ el asesor rechazó en74c26aa. Snapshot crítico se lee sin ocultar error;
 prep/restore/rollback completos en cola, callbacks retirados no pisan sesión
 nueva. [Recibo y gates](sessions/2026-10-12-entrega-local-integridad.md).
 Validación host se registra en recibo; sin nueva publicación/APK/Android/teléfono.
-**Gate full/formal BLOCKED por entorno:** full2 exit1, contador952/16 y nueve
-updates_card sin completar. Diagnóstico posterior de Flutter errno112 y C libre0;
-ninguna limpieza se ejecutó (tres rechazos automáticos). Fuente a1351d3 estable,
-dirigidos44/34 y revisión independiente20 aprobados. Reanudar requiere al menos
-1GiB libre → mismo dirigido9updates → suite completa terminal; no afirmar verde.
+**Gate host recuperado:** fuente a1351d3 intacta, dirigido updates_card9/9 y
+full3 terminal961aprobadas/16capturas opcionales históricas/0fallos, exit0;
+PHPinterop obligatorio sin omisión. Timeout90/concurrency1 conservados. Full1/full2,
+errno112 y tres rechazos de limpieza se preservan: nada se eliminó aquí. El
+contraste tras recuperar espacio no prueba por sí solo la causa de los nueve
+casos incompletos de full2. Dirigidos44/34 y revisión independiente20 aprobados.
+Validación nativa, publicación y aceptación humana siguen pendientes.
 
 **Mantenimiento026 local (12oct):** preferencias serializadas por ruta,
 líneas base limitadas al fin del informe y guardado único mientras el editor

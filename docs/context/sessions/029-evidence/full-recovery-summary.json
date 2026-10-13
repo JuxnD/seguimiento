@@ -1,0 +1,40 @@
+{
+  "result": "PASS",
+  "passed": 961,
+  "skipped": 16,
+  "failed": 0,
+  "exit": 0,
+  "duration": "10:14",
+  "source_commit": "a1351d3eb860a38b08a64586d3486c5095a00909",
+  "documentation_commit": "018b7c684e5f2296069453995cc8abdfe20ee24d",
+  "php_interop_skipped": false,
+  "inherited_skip_count_matches_full1": true,
+  "skip_inventory_basis": "Reporter cumulative counter plus unchanged source skip guards and loop cardinality; raw reporter can show next test at increment.",
+  "optional_capture_sources": [
+    {
+      "env": "AI_OUT",
+      "file": "test/ui/ai_actions_render_test.dart",
+      "count": 4
+    },
+    {
+      "env": "AI_HISTORY_OUT",
+      "file": "test/ui/ai_history_render_test.dart",
+      "count": 4
+    },
+    {
+      "env": "AI_OUT",
+      "file": "test/ui/meal_assistant_render_test.dart",
+      "count": 4
+    },
+    {
+      "env": "FIG3D_OUT",
+      "file": "test/ui/exercise_figure_3d_render_test.dart",
+      "count": 2
+    },
+    {
+      "env": "ILLUSTRATION_OUT",
+      "file": "test/ui/illustration_mockup_render_test.dart",
+      "count": 2
+    }
+  ]
+}

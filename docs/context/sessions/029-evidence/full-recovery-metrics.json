@@ -1,0 +1,12 @@
+{
+  "PHP": "C:\\xampp\\php\\php.exe",
+  "TimeoutSeconds": 90,
+  "Command": "flutter test --no-pub --timeout 90s --concurrency 1",
+  "Exit": 0,
+  "SDK": "C:/seguimiento-sdk-3.22.0/flutter",
+  "Documentation": "018b7c684e5f2296069453995cc8abdfe20ee24d",
+  "FreeAfter": 13157425152,
+  "FreeBefore": 1695588352,
+  "Source": "a1351d3eb860a38b08a64586d3486c5095a00909",
+  "Concurrency": 1
+}

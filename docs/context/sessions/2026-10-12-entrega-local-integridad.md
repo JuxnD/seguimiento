@@ -44,8 +44,10 @@ antigua pisa nueva). [red-queue-expanded.txt](029-evidence/red-queue-expanded.tx
 cola7/crítica8/store4/ZIPUI-reanudar/fotos. Éxito, cancelación, rollback exacto,
 preescritura fallida y campos3x6 frente a3x12 verificados.
 [analyze.txt](029-evidence/analyze.txt):sin incidencias. Bundle/PythonPASS repetidos.
-Suite completa combinada serializada NO quedó verde: véase bloqueo del entorno
-debajo. Timeout90s y concurrency1 intactos, PHPinterop obligatorio.
+Suite completa combinada serializada: full3 recuperada termina961aprobadas/
+16capturas opcionales históricas/0fallos, exit0. Los negativos anteriores y el
+contraste del entorno se conservan debajo. Timeout90s y concurrency1 intactos,
+PHPinterop obligatorio sin omisión.
 
 Full1 [full.txt](029-evidence/full.txt), fuente31b0d0e+029 (hashes en
 [full1-source.json](029-evidence/full1-source.json)):exit1,957pass/16skip/4fallos
@@ -101,18 +103,50 @@ rutas absolutas dentro del worktree y ausencia de reparse. **Nada se eliminó**;
 no se cambió shell/lenguaje ni se evadió el rechazo. Registro de hechos del tool,
 no stdout inventado: [cleanup-review-rejections.json](029-evidence/cleanup-review-rejections.json).
 
-Cierre documental autorizado por heartbeat, separado de pruebas: al iniciar
+Cierre documental histórico018b7c6 autorizado por heartbeat, separado de pruebas: al iniciar
 este cierre se verificaron905203712bytes disponibles (>100MiB, <1GiB), suficientes
 para evidencia/Git limitada; ningún Flutter/analyze/full ni limpieza se ejecutó.
-Gate **full/formaltesting BLOCKED por entorno**; implementación local y dirigidos
+Gate entonces **full/formaltesting BLOCKED por entorno**; implementación local y dirigidos
 quedan acreditados con sus alcances, no equivalen a validación operacional.
 
-Próximo paso: verificar margen≥1GiB; repetir exactamente dirigido de nueve
+Siguiente paso autorizado entonces: verificar margen≥1GiB; repetir exactamente dirigido de nueve
 updates_card sobre a1351d3 con SDK3.22 y timeout90; sólo si termina correctamente,
 ejecutar full serial con PHP real hasta terminal. Preservar negativos, contador
 observado y nuevas evidencias; no reducir asserts, omitir casos ni subir timeout.
 Supervisor sigue activo por pedido del owner y Claude vigilante debe recibir
 acuse tras recuperación; revisión/heartbeat no sustituyen esa verificación.
+
+## Recuperación contrastada y full3 terminal
+
+Coordinador reactivó sólo pruebas sobre fuente
+`a1351d3eb860a38b08a64586d3486c5095a00909` y documentación
+`018b7c684e5f2296069453995cc8abdfe20ee24d`, tras dos observadores confirmar
+capacidad≥1GiB. Ningún cambio de fuente/tests, limpieza, timeout ni oracle.
+`SEGUIMIENTO_ESTIMATE_PHP=C:/xampp/php/php.exe`; overrideGATEWAY ausente usa
+bundle verificado. SDK `C:/seguimiento-sdk-3.22.0/flutter`.
+
+`flutter test --no-pub --timeout 90s --concurrency 1 test/ui/updates_card_test.dart`:
+[raw](029-evidence/updates-recovery.txt),9/9PASS exit0, incluidos404/503;
+[métricas](029-evidence/updates-recovery-metrics.json): C libre antes1692114944,
+después1694478336bytes. Mismos nueve casos que full2 no completó y mismo archivo
+que el diagnóstico errno112 no pudo iniciar. Ese contraste refuta fallo persistente
+de esos casos bajo esta recuperación y favorece H1, sin aislar H3 ni demostrar
+la causa completa de los nueve incompletos de full2. H2 persistente no observada.
+
+Con margen aún≥1GiB, `flutter test --no-pub --timeout 90s --concurrency 1`:
+[full3 raw](029-evidence/full-recovery.txt), terminal10:14, **961PASS/16skip/
+0fallos, exit0**. [Métricas](029-evidence/full-recovery-metrics.json): antes1695588352,
+después13157425152bytes; capacidad recuperada externamente durante la corrida,
+sin limpieza de este ejecutor. Ningún otro Flutter de la coordinación en paralelo.
+PHPinterop obligatorio ejecutado,0skipinterop;16omitidas son las capturas opcionales
+históricas (AI_OUT4acciones+4comidas, AI_HISTORY_OUT4, FIG3D_OUT2,
+ILLUSTRATION_OUT2), sin omisiones nuevas. [Resumen](029-evidence/full-recovery-summary.json)
+conserva comparación del contador de omisiones contra full1 y lectura de fuente.
+
+**Gate de pruebas host recuperado y aprobado.** Full1/full2/diagnóstico/rechazos
+permanecen con sus hashes originales; PASS no convierte esas corridas en verdes.
+Implementación local completa y verificación host acreditadas; las restricciones
+nativas, publicación, validación humana y mejoras menores siguientes permanecen.
 
 ## Contexto y comprobación del diff
 
