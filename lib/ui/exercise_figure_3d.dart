@@ -373,6 +373,7 @@ class Figure3D {
     final index = stageAt(progress)?.kind == 'cut' ? key.floor() : key.round();
     return frames[index].props ?? props;
   }
+
   final String group;
   final String? focus;
   final String? variantGrip;

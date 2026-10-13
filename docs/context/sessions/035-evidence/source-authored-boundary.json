@@ -1,0 +1,22 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "98F3DA3F76F09DFFDA41CAF9C86A7CA3468A3702A368EFCBBA020E6C5A0860FE",
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\lib\\ui\\exercise_figure_3d.dart"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "107D9286E4FFD9145BB44BE9238C4A5ED852F64D30CF9328186704F11417BA90",
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\lib\\ui\\exercise_figure_3d_view.dart"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "864C17D7FB34B574C124904F269D335D420DE86C9452649A7DFF5B737B10D438",
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\test\\ui\\illustration_035_motion_test.dart"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "E1A3A6BBD7CC65C0AC817D567B0240DFDB38349EED28DEE722CE9F2CC3809EA6",
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\assets\\tecnica\\figuras3d.json"
+  }
+]

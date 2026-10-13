@@ -117,14 +117,22 @@ void main() {
       ['Barca / V-sit', 'V-up'],
       ['Dragon flag', 'Vela'],
       ['Dominadas'],
+      ['Aceleración 10–20 m'],
+      ['Calentamiento tipo FIFA 11+'],
     ];
+    final selectedGroup = int.parse(Platform.environment['ILLUSTRATION_035_CLIP']!);
+    expect(selectedGroup, inInclusiveRange(1, groups.length));
     const fps = 20;
     final manifest = <Map<String, Object?>>[];
     for (var group = 0; group < groups.length; group++) {
+      if (group + 1 != selectedGroup) continue;
       final figures = [for (final name in groups[group]) catalog.forExercise(name)!];
+      final part = group == 6 ? figureMotionParts(figures.single)[2] : null;
       final durations = [
         for (final fig in figures)
-          fig.hasMotion
+          part != null
+              ? part.endTime - part.startTime
+              : fig.hasMotion
               ? fig.motion.fold<double>(0, (sum, stage) => sum + stage.seconds)
               : .6 + 2 * (fig.frames.length - 1) * 3
       ];
@@ -141,12 +149,15 @@ void main() {
           final seconds = (frame / fps).clamp(0.0, durations[column] - 1e-6).toDouble();
           // Shorter paired demonstrations stop at the end of one actual cycle.
           // No time scaling or copied easing curve is used for the comparison.
-          final progress = figureMotionProgress(fig, seconds);
+          final progress = part == null
+              ? figureMotionProgress(fig, seconds)
+              : part.progressAt(fig, part.startTime + seconds);
           final stopped = frame / fps >= durations[column];
           final yaw = fig.name == 'Dominadas' ? 35.0 : fig.initialYaw;
           frameFigures.add({
             'name': fig.name,
             'seconds': seconds,
+            'timelineSeconds': seconds + (part?.startTime ?? 0),
             'progress': progress,
             'yaw': yaw,
             'pitch': fig.initialPitch,
@@ -160,7 +171,7 @@ void main() {
           final label = TextPainter(
             text: TextSpan(
                 text:
-                    '${fig.name}${stopped ? ' · Pausa al terminar su ciclo' : ''}\n${fig.hasMotion ? figureMotionCaption(fig, progress) : fig.frames[(progress * (fig.frames.length - 1)).round()].caption}',
+                    '${fig.name}${part != null ? ' · Sólo Parte 3' : ''}${stopped ? ' · Pausa al terminar su ciclo' : ''}\n${fig.hasMotion ? figureMotionCaption(fig, progress) : fig.frames[(progress * (fig.frames.length - 1)).round()].caption}',
                 style: const TextStyle(color: Colors.white, fontFamily: 'Roboto', fontSize: 12)),
             textDirection: TextDirection.ltr,
             maxLines: 4,
@@ -182,6 +193,9 @@ void main() {
       }
       manifest.add({
         'names': groups[group],
+        'clip': group + 1,
+        if (part != null) 'selectedPart': 3,
+        if (part != null) 'partBounds': [part.start, part.end, part.startTime, part.endTime],
         'fps': fps,
         'frames': count,
         'seconds': duration,
@@ -191,6 +205,7 @@ void main() {
         'timeline': 'figureMotionProgress production, real seconds; shorter paired cycle explicitly paused at end'
       });
     }
-    File('$animationOutput/manifest.json').writeAsStringSync(const JsonEncoder.withIndent('  ').convert(manifest));
+    File('$animationOutput/manifest-$selectedGroup.json')
+        .writeAsStringSync(const JsonEncoder.withIndent('  ').convert(manifest));
   }, skip: animationOutput == null);
 }

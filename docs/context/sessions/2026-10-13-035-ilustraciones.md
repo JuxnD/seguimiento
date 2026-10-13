@@ -205,3 +205,7 @@ se adelanta una fase con epsilon amplio. Nueva corrida pendiente.
 
 ### Contrato de continuidad authored
 El exportador tool/illustration_catalog.py impone continuous:true cuando existe motion. La prueba Python revisa todas las entradas authored del asset, además de las secuencias solicitadas: 11/11 terminal exit0 (authored-continuous-python.txt). La navegación manual/reduced-motion es estado del controlador y conserva este contrato; continuous:false con motion no es una combinación emitida por el catálogo. Producto b756 sin cambios. Intento SDK16:43 rechazado exit42 por concesión reasignada: ninguna prueba Dart ejecutada, pendiente nueva ventana.
+
+### Fronteras authored verificadas y captura ampliada
+26/26 dirigidas terminal PASS, analyze0, legacy parity PASS (logs authored-boundary; recibos shared16:49). El formato sólo insertó una línea en modelo. Catálogo authored continuous validado Python11PASS. Rojos Parte5 previos preservados.
+Capturador preparado una escena por comando, 7clips20fps:384+336+252+192+252+160+500=2076frames. Aceleración8s; FIFA sóloParte3 usa figureMotionParts/progressAt producción, tiempo real25.0s excluye cut (la previsión25.8 no coincide con asset, no se altera producto para satisfacer conteo). Cada clip guarda manifest separado con fuente/tiempo/progress/cámara; ensamblador conserva PNGsinredibujar y valida inventario antes GIF. Capturas aún pendientes nueva ventana; no afirmadas realizadas.
