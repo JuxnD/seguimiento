@@ -1,0 +1,76 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: guided figures keep bone lengths and finite reachable supports through every stage
+00:00 +1: guided independent world anchors stay fixed during demonstrated support phases
+00:00 +2: cat cow breathing and short foot change the rendered anatomy not only captions
+00:00 +3: local spine and bare foot anatomy preserve support and remain readable at phone size
+00:00 +4: physical variants retain their required world support and equipment contacts
+00:00 +5: guided plantar supports never point toes through the ground
+00:00 +6: seated soleus keeps knees forward above ankles and raised plank straight
+00:00 +7: guided floor hands and bed elbows respect their support surfaces
+00:00 +8: short foot detail leaves breathing room above the ankle instead of cropped shins
+00:00 +9: external rotation band remains visibly connected between the opened hands
+00:01 +10: accessory physical levels preserve straight tibial knees bed support and support hands
+00:01 +11: accessory loads are really painted at the selected limb rather than metadata only
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown while running async test code:
+Expected: a value greater than <100>
+  Actual: <0>
+   Which: is not a value greater than <100>
+tibialis_wall_loaded: actual load must be visible in the production painter.
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:149:31)
+#1      _expect (package:matcher/src/expect/expect.dart:144:3)
+#2      expect (package:matcher/src/expect/expect.dart:56:3)
+#3      expect (package:flutter_test/src/widget_tester.dart:474:18)
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:390:9)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:372:7)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown while running async test code:
+Expected: a value greater than <100>
+  Actual: <0>
+   Which: is not a value greater than <100>
+prone_y_t_loaded: actual load must be visible in the production painter.
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:149:31)
+#1      _expect (package:matcher/src/expect/expect.dart:144:3)
+#2      expect (package:matcher/src/expect/expect.dart:56:3)
+#3      expect (package:flutter_test/src/widget_tester.dart:474:18)
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:390:9)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:372:7)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +11 -1: accessory loads are really painted at the selected limb rather than metadata only [E]
+  Test failed. See exception logs above.
+  The test description was: accessory loads are really painted at the selected limb rather than metadata only
+  
+00:01 +11 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T185513718-47212-2a5c9cac3b564e088a6624970806cae6.json

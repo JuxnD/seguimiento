@@ -290,8 +290,9 @@ def _plan034(name, variant, result, cycle):
             for f in (a,b): f['caption']+=' · pies más lejos de la pared'
         if variant=='tibialis_wall_loaded':
             props.append(dict(type='guidedFootPack',joint='nearToe'))
+            a['nearLeg']['foot']=-35; b['nearLeg']['foot']=-55
             b['farLeg']['foot']=0
-            a['caption']='Asa de mochila en el pie cercano; talón firme'
+            a['caption']='Punta elevada; asa de mochila colgada del pie, talón firme'
             b['caption']='Eleva la punta con la mochila; baja con control'
         return cycle(a,b,contacts=['nearAnkle','farAnkle'],props=props,per_side=variant=='tibialis_wall_loaded',yaw=25)
     if name == 'Rotación externa con banda':
