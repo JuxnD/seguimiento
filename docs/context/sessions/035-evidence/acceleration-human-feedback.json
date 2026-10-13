@@ -1,0 +1,293 @@
+{
+  "status": "HUMAN_REJECTED_REOPENED",
+  "feedback": "mira la rodilla y la posicion de las piernas, el arco entre ambas hace un diamante",
+  "feedbackSource": "owner screenshot and root relay,2026-10-13",
+  "reviewSource": "9053c3d724fe6a7647a20bb10699e892509bc8b3",
+  "originalClip": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\6.gif",
+  "clipSha256": "a100677c1dad6b59385408e00abdd634000cc03ad8f5f7a56fbb2a06d9225c7d",
+  "originalCaptureSource": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+  "originalFrames": 160,
+  "fps": 20,
+  "affected": [
+    "Aceleración 10–20 m",
+    "Sprint lanzado",
+    "Calentamiento tipo FIFA 11+ / partes1 y10"
+  ],
+  "evidence": "160 original rendered frames; contact sheet12selected in build/qa/035/acceleration-human-review.png; swing foot angles and arms frozen within2.4s support; generic2.4s swap and0.8s cut hold",
+  "sourceFrames": [
+    {
+      "caption": "Apoyo: brazo contrario a la pierna",
+      "hip": [
+        0,
+        -26
+      ],
+      "torso": -65,
+      "gaze": 0,
+      "limbs": {
+        "nearLeg": {
+          "angles": [
+            116.77,
+            63.23
+          ],
+          "pin": [
+            0.0,
+            -1.0
+          ],
+          "bend": 1,
+          "foot": 0
+        },
+        "nearArm": {
+          "angles": [
+            125.0,
+            35.0
+          ],
+          "hand": 35,
+          "bend": 1
+        },
+        "farLeg": {
+          "angles": [
+            30.0,
+            130.0
+          ],
+          "foot": 0,
+          "bend": -1
+        },
+        "farArm": {
+          "angles": [
+            60.0,
+            -30.0
+          ],
+          "hand": -30,
+          "bend": 1
+        }
+      }
+    },
+    {
+      "caption": "Impulsa el cuerpo hacia delante",
+      "hip": [
+        4,
+        -26
+      ],
+      "torso": -65,
+      "gaze": 0,
+      "limbs": {
+        "nearLeg": {
+          "angles": [
+            124.37,
+            73.81
+          ],
+          "pin": [
+            0.0,
+            -1.0
+          ],
+          "bend": 1,
+          "foot": 0
+        },
+        "nearArm": {
+          "angles": [
+            125.0,
+            35.0
+          ],
+          "hand": 35,
+          "bend": 1
+        },
+        "farLeg": {
+          "angles": [
+            30.0,
+            130.0
+          ],
+          "foot": 0,
+          "bend": -1
+        },
+        "farArm": {
+          "angles": [
+            60.0,
+            -30.0
+          ],
+          "hand": -30,
+          "bend": 1
+        }
+      }
+    },
+    {
+      "caption": "Cambia el apoyo; la otra pierna avanza",
+      "hip": [
+        8,
+        -26
+      ],
+      "torso": -65,
+      "gaze": 0,
+      "limbs": {
+        "nearLeg": {
+          "angles": [
+            30.0,
+            130.0
+          ],
+          "foot": 0,
+          "bend": -1
+        },
+        "nearArm": {
+          "angles": [
+            60.0,
+            -30.0
+          ],
+          "hand": -30,
+          "bend": 1
+        },
+        "farLeg": {
+          "angles": [
+            111.83,
+            59.03
+          ],
+          "pin": [
+            10.0,
+            -1.0
+          ],
+          "bend": 1,
+          "foot": 0
+        },
+        "farArm": {
+          "angles": [
+            125.0,
+            35.0
+          ],
+          "hand": 35,
+          "bend": 1
+        }
+      }
+    },
+    {
+      "caption": "Impulsa con la otra pierna",
+      "hip": [
+        12,
+        -26
+      ],
+      "torso": -65,
+      "gaze": 0,
+      "limbs": {
+        "nearLeg": {
+          "angles": [
+            30.0,
+            130.0
+          ],
+          "foot": 0,
+          "bend": -1
+        },
+        "nearArm": {
+          "angles": [
+            60.0,
+            -30.0
+          ],
+          "hand": -30,
+          "bend": 1
+        },
+        "farLeg": {
+          "angles": [
+            120.97,
+            68.17
+          ],
+          "pin": [
+            10.0,
+            -1.0
+          ],
+          "bend": 1,
+          "foot": 0
+        },
+        "farArm": {
+          "angles": [
+            125.0,
+            35.0
+          ],
+          "hand": 35,
+          "bend": 1
+        }
+      }
+    },
+    {
+      "caption": "Nuevo tramo: vuelve a la salida de la demostración",
+      "hip": [
+        0,
+        -26
+      ],
+      "torso": -65,
+      "gaze": 0,
+      "limbs": {
+        "nearLeg": {
+          "angles": [
+            116.77,
+            63.23
+          ],
+          "pin": [
+            0.0,
+            -1.0
+          ],
+          "bend": 1,
+          "foot": 0
+        },
+        "nearArm": {
+          "angles": [
+            125.0,
+            35.0
+          ],
+          "hand": 35,
+          "bend": 1
+        },
+        "farLeg": {
+          "angles": [
+            30.0,
+            130.0
+          ],
+          "foot": 0,
+          "bend": -1
+        },
+        "farArm": {
+          "angles": [
+            60.0,
+            -30.0
+          ],
+          "hand": -30,
+          "bend": 1
+        }
+      }
+    }
+  ],
+  "sourceMotion": [
+    {
+      "label": "Primer impulso",
+      "kind": "interpolate",
+      "ground": "preserve",
+      "contacts": [
+        "nearAnkle"
+      ],
+      "part": "",
+      "seconds": 2.4
+    },
+    {
+      "label": "Cambio de apoyo",
+      "kind": "interpolate",
+      "ground": "preserve",
+      "contacts": [],
+      "part": "",
+      "seconds": 2.4
+    },
+    {
+      "label": "Impulso con la otra pierna",
+      "kind": "interpolate",
+      "ground": "preserve",
+      "contacts": [
+        "farAnkle"
+      ],
+      "part": "",
+      "seconds": 2.4
+    },
+    {
+      "label": "Nuevo tramo",
+      "kind": "cut",
+      "ground": "preserve",
+      "contacts": [],
+      "part": "",
+      "seconds": 0.8
+    }
+  ],
+  "fixStatus": "DESIGN_APPROVED_NOT_IMPLEMENTED"
+}
