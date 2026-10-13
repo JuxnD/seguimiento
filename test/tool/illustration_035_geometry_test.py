@@ -49,6 +49,14 @@ class Geometry035(unittest.TestCase):
         self.assertNotIn('manos permanecen firmes', frames[-1]['caption'])
 
     def test_requested_sequences_have_authored_phases(self):
+        root = Path(__file__).resolve().parents[2]
+        figures = json.loads((root/'assets/tecnica/figuras3d.json').read_text(encoding='utf-8'))['figures']
+        authored = [f for f in figures if f.get('motion')]
+        self.assertTrue(authored)
+        for figure in authored:
+            # Manual/reduced-motion is a controller state, never a mutation of
+            # the rig contract that would select legacy floor normalization.
+            self.assertIs(figure.get('continuous'), True, figure['name'])
         for name in ('90/90 de cadera', 'Aceleración 10–20 m', 'Burpees',
                      'Calentamiento tipo FIFA 11+', 'Barca / V-sit'):
             e = catalog.generate(name)

@@ -1,0 +1,6 @@
+Write-Error: 
+Line |
+   2 |  …  renders."; & 'C:/My Projects/seguimiento-122-integracion/plans/run-f …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | LEASE_MISMATCH
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T164301351-26976-ed7050c003664bb8af50ce9fb356efb1.json

@@ -202,3 +202,6 @@ Nuevo oráculo26 recorre todas43fronteras exactas i/n, antes/después1e-8,
 interiorescut/hold, pose de mundo/equipo/tiempo inverso y último endpoint.
 UIrealParte5 preservada como rojo causal. No se relaja un umbral visual ni
 se adelanta una fase con epsilon amplio. Nueva corrida pendiente.
+
+### Contrato de continuidad authored
+El exportador tool/illustration_catalog.py impone continuous:true cuando existe motion. La prueba Python revisa todas las entradas authored del asset, además de las secuencias solicitadas: 11/11 terminal exit0 (authored-continuous-python.txt). La navegación manual/reduced-motion es estado del controlador y conserva este contrato; continuous:false con motion no es una combinación emitida por el catálogo. Producto b756 sin cambios. Intento SDK16:43 rechazado exit42 por concesión reasignada: ninguna prueba Dart ejecutada, pendiente nueva ventana.

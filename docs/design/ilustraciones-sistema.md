@@ -206,7 +206,11 @@ Las figuras con etapas035 declaran su propio recorrido hacia delante:
 `interpolate` para transiciones, `hold` para sostener, `cut` para cambios
 anunciados de ejercicio o reinicio. Los contactos conservan coordenadas de
 mundo; vuelo no se normaliza al suelo. No activar continuidad sin una
-secuencia y apoyos explícitos. El curl conserva ángulos sagitales mediante
+secuencia y apoyos explícitos. El contrato generado exige `motion` ⇒
+`continuous: true`, comprobado sobre todas las entradas del asset. La consulta
+manual y el movimiento reducido son estados del controlador: no convierten
+una figura con etapas en `continuous: false` ni aplican el ajuste de suelo legado.
+El curl conserva ángulos sagitales mediante
 `planarAngles`, opt-in sólo para brazos sin pin y mano al plano del hombro;
 las demás figuras conservan la resolución histórica.
 
