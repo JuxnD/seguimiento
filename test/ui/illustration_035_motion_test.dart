@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/ui/exercise_figure_3d.dart';
 import 'package:seguimiento/ui/exercise_figure_3d_view.dart';
@@ -37,6 +38,41 @@ void main() {
         }
       }
     }
+  });
+  test('authored camera contains every key and intervening anatomical envelope', () {
+    final clipped = <String>[];
+    for (final name in selected) {
+      final fig = catalog.forExercise(name)!;
+      for (final size in [const Size(320, 285), const Size(360, 315), const Size(420, 600)]) {
+        for (final yaw in {fig.initialYaw, 0.0, 90.0}) {
+          final camera = cameraFor(fig, size, yaw: yaw, pitch: fig.initialPitch);
+          for (var step = 0; step <= fig.motion.length * 30; step++) {
+            final progress = step / (fig.motion.length * 30);
+            final body = liftSkeleton(fig.skeletonAt(progress), fig);
+            for (final entry in body.p.entries) {
+              // Renderer fingers extend 4 units beyond the wrist + .24 capsule;
+              // head/limb volumes must fit too, not merely their joint centers.
+              final radius = entry.key.endsWith('Hand')
+                  ? 4.3
+                  : entry.key == 'head'
+                      ? fig.dims.headRadius + .6
+                      : entry.key.endsWith('Toe') || entry.key.endsWith('Ankle')
+                          ? 1.2
+                          : 2.5;
+              final point = camera.project(entry.value);
+              final pad = radius * point.k;
+              if (point.offset.dx - pad < 0 || point.offset.dy - pad < 0 ||
+                  point.offset.dx + pad > size.width || point.offset.dy + pad > size.height) {
+                if (clipped.length < 20) {
+                  clipped.add('$name $size yaw=$yaw p=$progress ${entry.key}: ${point.offset} pad=$pad');
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(clipped, isEmpty);
   });
   test('declared fixed contacts stay fixed in world space, not just pixels', () {
     for (final name in selected) {
