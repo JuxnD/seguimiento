@@ -96,7 +96,7 @@ void main() {
     await tester.tap(copy);
     await tester.pumpAndSettle();
     const expected =
-        'Comentarios de IA · Seguimiento\nVerifica la evidencia antes de actuar.\n\nDato faltante\nFalta el registro.\nDel informe: Peso: sin registro';
+        'Comentarios de IA · My Prime\nVerifica la evidencia antes de actuar.\n\nDato faltante\nFalta el registro.\nDel informe: Peso: sin registro';
     final copied =
         platformCalls.where((c) => c.method == 'Clipboard.setData').last;
     expect(copied.arguments, {'text': expected});

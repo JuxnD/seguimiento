@@ -1,0 +1,10 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <ns0:title>My Prime — monograma MP, M-rayo</ns0:title>
+  <ns0:desc>Monograma sólido inclinado: M ascendente en rayo y P abierta. Maestro editable de la propuesta elegida; nombres de recursos internos conservados.</ns0:desc>
+  <ns0:g id="background">
+    <ns0:rect x="0" y="0" width="1024" height="1024" fill="#C1FF45" />
+  </ns0:g>
+  <ns0:g id="symbol">
+    <ns0:path d="M 212 666.56 L 299.2 456.41 L 375.94 456.41 L 391.63 486.06 L 602.66 357 L 582.6 413.68 L 772.7 413.68 C 804.09 413.68 818.91 431.12 808.45 461.64 L 785.78 527.91 C 776.18 554.94 760.49 568.9 729.1 568.9 L 587.83 568.9 L 607.89 511.34 L 706.42 511.34 C 711.66 511.34 714.27 507.86 716.02 502.62 L 724.74 473.85 L 597.42 473.85 L 532.02 666.56 L 427.38 666.56 L 488.42 492.16 L 371.58 566.28 L 351.52 540.99 L 305.3 666.56 Z" fill="#171A1B" />
+  </ns0:g>
+</ns0:svg>

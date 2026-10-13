@@ -7,6 +7,11 @@ Aplicación idéntica al checkpoint parcial0348eb5. [Causa, evidencia y gates](s
 **040 local, dirigido y pendiente R1:** tocar el sueño en Hoy edita (horas o acostarse/despertar con cruce de medianoche, procedencia manual/clock/edit_manual, nota) en vez de borrar; sudor sólo con agua conocida y pesajes confirmados comparables; el partido nuevo pregunta antes de usar los pesajes del día; recordatorios con origen (usuario / sin registrar) y «Quitar» por id en Hoy. [Recibo, rojos y límites](sessions/2026-10-13-040-registros.md). Sin esquema propio (25 de 034), sin Health Connect ni APK.
 
 **033 local, dirigido y pendiente R1:** coherencia core Hoy/informe, fútbol diario acumulado/detalle/edición porID, guard de guardado y confirmación duplicadas, hito10 traspersistencia sinactivar plan. Fallo/retry no pierde procedencia guiada. [Recibo, negativos y gates](sessions/2026-10-13-033-coherencia.md). Full sólo integración032/034/035; sin esquema/assets/APK/publicación ni aceptación humana nueva.
+**Marca036 local:** My Prime/MP-Mrayo aprobado por owner; maestroSVG, variantes,
+wordmark y recursos con comparación fuente→pipeline→30PNG. Nombre visible
+actualizado; identidad técnica/SQLite conservados.
+[Recibo y gates](sessions/2026-10-13-036-my-prime.md). SinFlutter036, APK,
+publicación ni validación nativa/teléfono; PNG no acredita app instalada.
 
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
 Claude fe0b565/8b1cac5/74c26aa en ramaJuxnD/026-integridad-diaria. Fotos/ZIP y

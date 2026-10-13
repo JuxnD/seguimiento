@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>Seguimiento — S en movimiento</title>
+  <desc>Una ruta continua forma la inicial S. El símbolo no representa una meta numérica ni una calificación.</desc>
+  <g id="background">
+    <rect x="0" y="0" width="1024" height="1024" fill="#0B0806" />
+  </g>
+  <g id="symbol">
+    <path d="M 664 348.6 C 614.6 282.1 533.85 272.6 453.1 296.35 C 348.6 329.6 333.4 410.35 389.45 460.7 C 424.6 493 488.25 505.35 565.2 529.1 C 647.85 558.55 695.35 600.35 667.8 676.35 C 638.35 756.15 518.65 780.85 421.75 759.95 C 380.9 751.4 352.4 734.3 330.55 707.7"
+      fill="none" stroke="#F08A34" stroke-width="102.6" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

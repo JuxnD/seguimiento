@@ -1,0 +1,36 @@
+test_allow_backup_enabled (__main__.AndroidPolicyTests.test_allow_backup_enabled) ... ok
+test_background_white (__main__.AndroidPolicyTests.test_background_white) ... ok
+test_cloud_empty (__main__.AndroidPolicyTests.test_cloud_empty) ... ok
+test_d2d_missing (__main__.AndroidPolicyTests.test_d2d_missing) ... ok
+test_default_normal_theme (__main__.AndroidPolicyTests.test_default_normal_theme) ... ok
+test_each_mode_and_domain_omission (__main__.AndroidPolicyTests.test_each_mode_and_domain_omission) ... ok
+test_inclusion_rejected (__main__.AndroidPolicyTests.test_inclusion_rejected) ... ok
+test_legacy_brand_reference_wrong (__main__.AndroidPolicyTests.test_legacy_brand_reference_wrong) ... ok
+test_legacy_consumer_missing (__main__.AndroidPolicyTests.test_legacy_consumer_missing) ... ok
+test_legacy_domain_omission (__main__.AndroidPolicyTests.test_legacy_domain_omission) ... ok
+test_modern_brand_reference_wrong (__main__.AndroidPolicyTests.test_modern_brand_reference_wrong) ... ok
+test_modern_consumer_missing (__main__.AndroidPolicyTests.test_modern_consumer_missing) ... ok
+test_parent_path_rejected (__main__.AndroidPolicyTests.test_parent_path_rejected) ... ok
+test_real_source_and_013_inputs (__main__.AndroidPolicyTests.test_real_source_and_013_inputs) ... FAIL
+test_unknown_domain_rejected (__main__.AndroidPolicyTests.test_unknown_domain_rejected) ... ok
+
+======================================================================
+FAIL: test_real_source_and_013_inputs (__main__.AndroidPolicyTests.test_real_source_and_013_inputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-036-my-prime\tool\android_policy_test.py", line 14, in test_real_source_and_013_inputs
+    self.assertEqual(result['violations'], [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['013_PNG_CHANGED'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'013_PNG_CHANGED'
+
+- ['013_PNG_CHANGED']
++ []
+
+----------------------------------------------------------------------
+Ran 15 tests in 20.935s
+
+FAILED (failures=1)

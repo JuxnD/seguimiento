@@ -1,4 +1,33 @@
-# Marca e íconos de Seguimiento
+# Marca My Prime (036 vigente)
+
+Nombre y MP/M-rayo final aprobados por owner. `seguimiento_icon.svg` es el
+maestro único del icono, con nombre interno conservado; carbón171A1B,
+limaC1FF45 y marfilF8F7F0. UIgeneral conserva su tema cálido.
+`my_prime_wordmark.svg` es el maestro editable de letras geométricas: sin
+fuente externa ni licencia tipográfica. Lema fuera del icono: «Construye tu
+mejor versión». Variantes inversa/una tinta se derivan del maestro.
+
+Ejecutar `python tool/icons.py`, `python tool/brand_assets.py`,
+`python tool/icon_vector_test.py` y `python tool/android_policy_test.py`.
+La hoja vigente está en `build/mockups/my-prime/proof-sheet.png`; no es captura
+de Android. `icon_preview.py` corresponde a la exploración histórica013.
+
+Renderer existente extendido a rellenoRGB explícito cerrado, un contorno
+M/L/C/Z; conserva trazo redondo legado con píxeles exactos. Estilos,
+transforms, múltiples subpaths, comandos desconocidos y fill/stroke ambiguo
+fallan. No PNGretocado manualmente ni segundo renderer.
+
+`icon_verify` regenera5fuentes+25PNGAndroid desde el maestro en directorio
+temporal y compara píxeles entregados, además de alpha/safezone/nombres.
+Una S antigua bien formada no puede pasar como MP. `android_policy_verify`
+conserva un pin independiente de30PNG revisados en036-evidence; no sobrescribir
+ese pin durante chequeos habituales. Cambio futuro exige decisión/revisión.
+
+Cambian etiquetas visibles. PackageId, claseSeguimientoApp, SQLite, rutas,
+firma y nombres de recursos siguen iguales. GatesFlutter/integración/nativo/
+APK/teléfono separados. La selección humana ya está satisfecha.
+
+## Historia013 (supersedida, conservar procedencia)
 
 Fuente editable única: `seguimiento_icon.svg`. Candidata013: **S en movimiento**,
 una ruta continua con la inicial de Seguimiento. Negro cálido `#0B0806` y naranja

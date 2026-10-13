@@ -368,7 +368,7 @@ class _AiConversationScreenState extends State<AiConversationScreen> {
   Future<void> _share() async {
     final box = context.findRenderObject() as RenderBox?;
     await Share.share(_shareText(),
-        subject: 'Consulta de IA · Seguimiento',
+        subject: 'Consulta de IA · My Prime',
         sharePositionOrigin:
             box == null ? null : box.localToGlobal(Offset.zero) & box.size);
   }

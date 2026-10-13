@@ -69,7 +69,7 @@ def verify(root=ROOT, check_icons=True):
 
     colors = xml(res / 'values/colors.xml')
     if colors is not None:
-        require({e.get('name'): e.text for e in colors}.get('seguimiento_background') == '#0B0806',
+        require({e.get('name'): e.text for e in colors}.get('seguimiento_background') == '#171A1B',
                 'BRAND_BACKGROUND')
     for folder in ('drawable', 'drawable-v21'):
         launch = xml(res / folder / 'launch_background.xml')
@@ -106,12 +106,12 @@ def verify(root=ROOT, check_icons=True):
         try:
             icon_verify.ROOT = root
             icons = icon_verify.verify()
-            approved = json.loads((root / 'docs/context/sessions/2026-10-09-013-logo-resources.json').read_text())
+            approved = json.loads((root / 'docs/context/sessions/036-evidence/resource-receipt.json').read_text())
             pngs = {p: v['sha256'] for p, v in icons.items() if p.endswith('.png')}
             require(len(pngs) == 30 and all(approved[p]['sha256'] == sha for p, sha in pngs.items()),
-                    '013_PNG_CHANGED')
+                    'BRAND_PNG_CHANGED')
         except (OSError, ValueError, KeyError, ET.ParseError) as error:
-            errors.append('013_RESOURCES:' + str(error))
+            errors.append('BRAND_RESOURCES:' + str(error))
         finally:
             icon_verify.ROOT = previous
     return {'status': 'VALIDATED_SOURCE_POLICY' if not errors else 'INVALID_SOURCE_POLICY',
