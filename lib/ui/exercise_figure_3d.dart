@@ -1561,6 +1561,15 @@ class _Scene {
 
   void render() {
     _floor();
+    if (fig.focus == 'nearFoot' && skel.footArch >= 0) {
+      // Anatomical detail uses the same foot primitive, without distant limbs
+      // occluding the arch or a whole shin cropped by the close camera.
+      final ankle = body.p['nearAnkle']!;
+      _capsule(ankle - const V3(0, 1.7, 0), ankle, .65, .7, _skin, nearOf(ankle), outline: false);
+      _foot('near');
+      _annotations();
+      return;
+    }
     _shadows();
     _backProps();
     final parts = <DepthPart>[];
@@ -2046,9 +2055,9 @@ class _Scene {
       final forward = (toe - a).unit;
       final lateral = V3.zAxis * (fig.mirrored ? -1 : 1);
       final near = nearOf(a);
-      _capsule(landmarks['heel']!, landmarks['arch']!, .75, .85, _skin, near);
-      _capsule(landmarks['arch']!, landmarks['metatarsal']!, .85, .8, _skin, near);
-      _capsule(a - const V3(0, .4, 0), landmarks['arch']!, .7, .65, _skin, near);
+      _capsule(landmarks['heel']!, landmarks['arch']!, .75, .85, _skin, near, outline: false);
+      _capsule(landmarks['arch']!, landmarks['metatarsal']!, .85, .8, _skin, near, outline: false);
+      _capsule(a - const V3(0, .4, 0), landmarks['arch']!, .7, .65, _skin, near, outline: false);
       for (var digit = 0; digit < 5; digit++) {
         final spread = lateral * ((digit - 2) * .38);
         final start = landmarks['metatarsal']! + spread;
@@ -2214,6 +2223,7 @@ class _Scene {
           _capsule(_world(_vector(pr['a'] as List)), _world(_vector(pr['b'] as List)), _num(pr['radius'], .55),
               _num(pr['radius'], .55), _metal, 1);
         case 'band':
+          if (pr['depthSorted'] == true) break;
           V3 point(Object? value) => value is String ? body.p[value]! : _world(_vector(value as List));
           final a = point(pr['a']), b = point(pr['b']);
           final pa = cam.project(a), pb = cam.project(b);
@@ -2299,6 +2309,19 @@ class _Scene {
     double zc(V3 v) => cam.view(v).z;
     for (final pr in props) {
       switch (pr['type']) {
+        case 'band':
+          if (pr['depthSorted'] != true) break;
+          V3 endpoint(Object? value) => value is String ? body.p[value]! : _world(_vector(value as List));
+          final start = endpoint(pr['a']), end = endpoint(pr['b']);
+          // Sort short physical segments with the body instead of drawing the
+          // whole band behind it. Legacy bands retain their original path.
+          for (var i = 0; i < 32; i++) {
+            final a = V3.lerp(start, end, i / 32), b = V3.lerp(start, end, (i + 1) / 32);
+            parts.add(DepthPart((zc(a) + zc(b)) / 2, () {
+              canvas.drawLine(cam.project(a).offset, cam.project(b).offset,
+                  Paint()..color = _contact..strokeWidth = math.max(2.5, cam.scale * .36)..strokeCap = StrokeCap.round);
+            }, 'guidedBand'));
+          }
         case 'bar':
           final bx = _num(pr['x']), by = _num(pr['y']), half = _num(pr['half'], 16);
           // La barra en tramos: la mano de adelante queda encima y la de atrás debajo.

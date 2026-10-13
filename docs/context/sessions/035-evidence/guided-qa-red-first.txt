@@ -1,0 +1,169 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: guided figures keep bone lengths and finite reachable supports through every stage
+00:00 +1: guided independent world anchors stay fixed during demonstrated support phases
+00:00 +2: cat cow breathing and short foot change the rendered anatomy not only captions
+00:00 +3: local spine and bare foot anatomy preserve support and remain readable at phone size
+00:00 +4: physical variants retain their required world support and equipment contacts
+00:00 +5: guided plantar supports never point toes through the ground
+00:00 +5 -1: guided plantar supports never point toes through the ground [E]
+  Expected: empty
+    Actual: [
+              'Bajada lateral del escalón/8/far toe=V3(0.50, 0.37, -9.30)',
+              'Bajada lateral del escalón/9/far toe=V3(0.73, 0.65, -9.30)',
+              'Bajada lateral del escalón/10/far toe=V3(0.95, 0.91, -9.30)',
+              'Bajada lateral del escalón/11/far toe=V3(1.18, 1.16, -9.30)',
+              'Bajada lateral del escalón/12/far toe=V3(1.40, 1.40, -9.30)',
+              'Bajada lateral del escalón/13/far toe=V3(1.62, 1.63, -9.30)',
+              'Bajada lateral del escalón/14/far toe=V3(1.84, 1.85, -9.30)',
+              'Bajada lateral del escalón/15/far toe=V3(2.05, 2.06, -9.30)',
+              'Bajada lateral del escalón/16/far toe=V3(2.26, 2.26, -9.30)',
+              'Bajada lateral del escalón/17/far toe=V3(2.46, 2.45, -9.30)',
+              'Bajada lateral del escalón/18/far toe=V3(2.66, 2.64, -9.30)',
+              'Bajada lateral del escalón/19/far toe=V3(2.85, 2.81, -9.30)',
+              'Bajada lateral del escalón/20/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/21/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/22/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/23/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/24/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/25/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/26/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/27/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/28/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/29/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/30/far toe=V3(3.04, 2.97, -9.30)',
+              'Bajada lateral del escalón/31/far toe=V3(3.04, 2.97, -9.30)',
+              ...
+            ]
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\ui\illustration_guided_geometry_test.dart 235:5  main.<fn>
+  
+00:00 +5 -1: seated soleus keeps knees forward above ankles and raised plank straight
+00:00 +5 -2: seated soleus keeps knees forward above ankles and raised plank straight [E]
+  Expected: empty
+    Actual: SubListIterable<String>:[
+              'seated_soleus_bilateral/0/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.00, -1.00, 3.30) ankle=V3(14.00, -1.00, 3.30)',
+              'seated_soleus_bilateral/0/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.00, -1.00, -3.30) ankle=V3(14.00, -1.00, -3.30)',
+              'seated_soleus_bilateral/1/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.00, -1.00, 3.30) ankle=V3(14.00, -1.11, 3.30)',
+              'seated_soleus_bilateral/1/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.00, -1.00, -3.30) ankle=V3(14.00, -1.11, -3.30)',
+              'seated_soleus_bilateral/2/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.01, -1.00, 3.30) ankle=V3(14.01, -1.22, 3.30)',
+              'seated_soleus_bilateral/2/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.01, -1.00, -3.30) ankle=V3(14.01, -1.22, -3.30)',
+              'seated_soleus_bilateral/3/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.01, -1.00, 3.30) ankle=V3(14.01, -1.32, 3.30)',
+              'seated_soleus_bilateral/3/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.01, -1.00, -3.30) ankle=V3(14.01, -1.32, -3.30)',
+              'seated_soleus_bilateral/4/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.02, -1.00, 3.30) ankle=V3(14.02, -1.43, 3.30)',
+              'seated_soleus_bilateral/4/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.02, -1.00, -3.30) ankle=V3(14.02, -1.43, -3.30)',
+              'seated_soleus_bilateral/5/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.04, -1.00, 3.30) ankle=V3(14.03, -1.54, 3.30)',
+              'seated_soleus_bilateral/5/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.04, -1.00, -3.30) ankle=V3(14.03, -1.54, -3.30)',
+              'seated_soleus_bilateral/6/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.06, -1.00, 3.30) ankle=V3(14.04, -1.65, 3.30)',
+              'seated_soleus_bilateral/6/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.06, -1.00, -3.30) ankle=V3(14.04, -1.65, -3.30)',
+              'seated_soleus_bilateral/7/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.08, -1.00, 3.30) ankle=V3(14.06, -1.75, 3.30)',
+              'seated_soleus_bilateral/7/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.08, -1.00, -3.30) ankle=V3(14.06, -1.75, -3.30)',
+              'seated_soleus_bilateral/8/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.11, -1.00, 3.30) ankle=V3(14.08, -1.86, 3.30)',
+              'seated_soleus_bilateral/8/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.11, -1.00, -3.30) ankle=V3(14.08, -1.86, -3.30)',
+              'seated_soleus_bilateral/9/near hip=V3(0.00, -15.00, 3.30) knee=V3(0.13, -1.00, 3.30) ankle=V3(14.10, -1.97, 3.30)',
+              'seated_soleus_bilateral/9/far hip=V3(0.00, -15.00, -3.30) knee=V3(0.13, -1.00, -3.30) ankle=V3(14.10, -1.97, -3.30)'
+            ]
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\ui\illustration_guided_geometry_test.dart 258:5  main.<fn>
+  
+00:00 +5 -2: guided floor hands and bed elbows respect their support surfaces
+00:00 +5 -3: guided floor hands and bed elbows respect their support surfaces [E]
+  Expected: empty
+    Actual: SubListIterable<String>:[
+              'Abducción de cadera de lado/0/far hand below floor',
+              'Abducción de cadera de lado/1/far hand below floor',
+              'Abducción de cadera de lado/2/far hand below floor',
+              'Abducción de cadera de lado/3/far hand below floor',
+              'Abducción de cadera de lado/4/far hand below floor',
+              'Abducción de cadera de lado/5/far hand below floor',
+              'Abducción de cadera de lado/6/far hand below floor',
+              'Abducción de cadera de lado/7/far hand below floor',
+              'Abducción de cadera de lado/8/far hand below floor',
+              'Abducción de cadera de lado/9/far hand below floor',
+              'Abducción de cadera de lado/10/far hand below floor',
+              'Abducción de cadera de lado/11/far hand below floor',
+              'Abducción de cadera de lado/12/far hand below floor',
+              'Abducción de cadera de lado/13/far hand below floor',
+              'Abducción de cadera de lado/14/far hand below floor',
+              'Abducción de cadera de lado/15/far hand below floor',
+              'Abducción de cadera de lado/16/far hand below floor',
+              'Abducción de cadera de lado/17/far hand below floor',
+              'Abducción de cadera de lado/18/far hand below floor',
+              'Abducción de cadera de lado/19/far hand below floor',
+              'Abducción de cadera de lado/20/far hand below floor',
+              'Abducción de cadera de lado/21/far hand below floor',
+              'Abducción de cadera de lado/22/far hand below floor',
+              'Abducción de cadera de lado/23/far hand below floor',
+              ...
+            ]
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\ui\illustration_guided_geometry_test.dart 281:5  main.<fn>
+  
+00:00 +5 -3: short foot detail leaves breathing room above the ankle instead of cropped shins
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown while running async test code:
+Expected: <0>
+  Actual: <2380>
+The foot detail must show its whole short ankle, without a shin cropped by the top edge.
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:149:31)
+#1      _expect (package:matcher/src/expect/expect.dart:144:3)
+#2      expect (package:matcher/src/expect/expect.dart:56:3)
+#3      expect (package:flutter_test/src/widget_tester.dart:474:18)
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:300:7)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:286:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +5 -4: short foot detail leaves breathing room above the ankle instead of cropped shins [E]
+  Test failed. See exception logs above.
+  The test description was: short foot detail leaves breathing room above the ankle instead of cropped shins
+  
+00:00 +5 -4: external rotation band remains visibly connected between the opened hands
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown while running async test code:
+Expected: a value greater than <94.08710845023663>
+  Actual: <0>
+   Which: is not a value greater than <94.08710845023663>
+A 3px band spanning the hands must remain mostly visible, not just an endpoint dot.
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:149:31)
+#1      _expect (package:matcher/src/expect/expect.dart:144:3)
+#2      expect (package:matcher/src/expect/expect.dart:56:3)
+#3      expect (package:flutter_test/src/widget_tester.dart:474:18)
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:325:7)
+<asynchronous suspension>
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:312:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +5 -5: external rotation band remains visibly connected between the opened hands [E]
+  Test failed. See exception logs above.
+  The test description was: external rotation band remains visibly connected between the opened hands
+  
+00:00 +5 -5: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T184045707-64300-2356622f47a74fe2a495189bbdb7cccf.json
