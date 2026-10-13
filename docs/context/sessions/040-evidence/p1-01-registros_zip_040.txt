@@ -1,0 +1,13 @@
+powershell.exe : Could not find a command named 
+"test,--no-pub,--concurrency,1,--timeout,90s,test/data/registros_zip_040_test.dart".
+En C:\Users\Acer\AppData\Local\Temp\claude\C--My-Projects-kata\6db9cb30-df08-43e9-87db-e1d7b6a75d84\scratchpad\lease040
+.ps1: 8 Carácter: 1
++ & powershell -NoProfile -ExecutionPolicy Bypass -Command $inner *> "$ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Could not find ...040_test.dart".:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Run 'flutter -h' (or 'flutter <command> -h') for available flutter commands and options.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T194916009-43064-b4449e60680b452b95c2ac498989ce0e.json
+exit=1
