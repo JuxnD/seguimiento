@@ -211,4 +211,108 @@ void main() {
     }
     expect(failures, isEmpty);
   });
+
+  test('guided plantar supports never point toes through the ground', () {
+    final failures = <String>[];
+    for (final name in ['Bajada lateral del escalón', 'Mesa invertida', 'Rodilla a la pared',
+      'Sentadilla isométrica en la pared', 'Sóleo en la pared', 'Tibial en la pared', 'Zancada del mundo']) {
+      final fig = catalog.forExercise(name)!;
+      for (var i = 0; i <= 60; i++) {
+        final body = liftSkeleton(fig.skeletonAt(i / 60), fig);
+        for (final side in ['near', 'far']) {
+          final toe = body.p['${side}Toe']!;
+          if (toe.y > .1 && failures.length < 40) failures.add('$name/$i/$side toe=$toe');
+        }
+      }
+    }
+    expect(failures, isEmpty);
+  });
+
+  test('seated soleus keeps knees forward above ankles and raised plank straight', () {
+    final failures = <String>[];
+    for (final key in ['seated_soleus_bilateral', 'seated_soleus_unilateral']) {
+      final fig = catalog.forExercise('Sóleo sentado con mochila', physicalVariantKey: key)!;
+      for (var i = 0; i <= 60; i++) {
+        final body = liftSkeleton(fig.skeletonAt(i / 60), fig);
+        for (final side in ['near','far']) {
+          final hip=body.p['${side}Hip']!, knee=body.p['${side}Knee']!, ankle=body.p['${side}Ankle']!;
+          if (knee.x - hip.x < 12 || (knee.y - hip.y).abs() > 5 || ankle.y-knee.y < 10) {
+            failures.add('$key/$i/$side hip=$hip knee=$knee ankle=$ankle');
+          }
+        }
+      }
+    }
+    final plank=catalog.forExercise('Plancha inversa con pies elevados')!;
+    final held=liftSkeleton(plank.skeletonAt(1/plank.motion.length),plank);
+    for(final side in ['near','far']) {
+      final hip=held.p['${side}Hip']!, knee=held.p['${side}Knee']!, ankle=held.p['${side}Ankle']!;
+      if ((knee-hip).unit.dot((ankle-knee).unit) < .999) failures.add('elevated plank $side knee bent');
+    }
+    expect(failures.take(20), isEmpty);
+  });
+
+  test('guided floor hands and bed elbows respect their support surfaces', () {
+    final failures=<String>[];
+    for(final name in ['Abducción de cadera de lado','Zancada del mundo']) {
+      final fig=catalog.forExercise(name)!;
+      for(var i=0;i<=60;i++) {
+        final body=liftSkeleton(fig.skeletonAt(i/60),fig);
+        for(final side in ['near','far']) {
+          if(body.p['${side}Hand']!.y>.1) failures.add('$name/$i/$side hand below floor');
+        }
+      }
+    }
+    final dorsal=catalog.forExercise('Dorsal en la cama')!;
+    final first=liftSkeleton(dorsal.skeletonAt(0),dorsal);
+    for(var i=0;i<=60;i++) {
+      final body=liftSkeleton(dorsal.skeletonAt(i/60),dorsal);
+      for(final side in ['near','far']) {
+        final drift=(body.p['${side}Elbow']!-first.p['${side}Elbow']!).length;
+        if(drift>.08) failures.add('Dorsal/$i/$side elbow drifts $drift');
+      }
+    }
+    expect(failures.take(30),isEmpty);
+  });
+
+  testWidgets('short foot detail leaves breathing room above the ankle instead of cropped shins', (tester) async {
+    final fig=catalog.forExercise('Pie corto')!;
+    await tester.runAsync(() async {
+      final recorder=ui.PictureRecorder();
+      paintFigure3D(ui.Canvas(recorder),const ui.Size(360,315),fig,0,yaw:fig.initialYaw,pitch:fig.initialPitch);
+      final picture=recorder.endRecording();
+      final image=await picture.toImage(360,315);
+      final rgba=(await image.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List();
+      var filled=0;
+      for(var y=0;y<24;y++) {
+        for(var x=0;x<360;x++) {
+          if(rgba[(y*360+x)*4+3]>0) filled++;
+        }
+      }
+      image.dispose();picture.dispose();
+      expect(filled,0,reason:'The foot detail must show its whole short ankle, without a shin cropped by the top edge.');
+    });
+  });
+
+
+  testWidgets('external rotation band remains visibly connected between the opened hands', (tester) async {
+    final fig=catalog.forExercise('Rotación externa con banda')!;
+    final progress=8/fig.motion.length;
+    final body=liftSkeleton(fig.skeletonAt(progress),fig);
+    final camera=cameraFor(fig,const ui.Size(360,315),yaw:fig.initialYaw,pitch:fig.initialPitch);
+    final projected=(camera.project(body.p['nearHand']!).offset-camera.project(body.p['farHand']!).offset).distance;
+    expect(projected,greaterThan(25),reason:'The default view must separate the two hands.');
+    await tester.runAsync(() async {
+      final recorder=ui.PictureRecorder();
+      paintFigure3D(ui.Canvas(recorder),const ui.Size(360,315),fig,progress,yaw:fig.initialYaw,pitch:fig.initialPitch);
+      final picture=recorder.endRecording();final image=await picture.toImage(360,315);
+      final rgba=(await image.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List();
+      var visible=0;
+      for(var i=0;i<rgba.length;i+=4) {
+        if(rgba[i]<100 && rgba[i+1]>170 && rgba[i+2]>150 && rgba[i+3]>200) visible++;
+      }
+      image.dispose();picture.dispose();
+      expect(visible,greaterThan(projected),reason:'A 3px band spanning the hands must remain mostly visible, not just an endpoint dot.');
+    });
+  });
+
 }
