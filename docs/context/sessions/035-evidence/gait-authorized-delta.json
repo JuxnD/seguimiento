@@ -1,0 +1,38 @@
+{
+  "beforeSource": "b7e353d2871b5e294d5f7976288127b6721902bb",
+  "authority": "owner running diamond feedback, acceleration-human-feedback.json",
+  "changedFigures": [
+    {
+      "name": "Aceleración 10–20 m",
+      "before": "9ad23daaa30f610f2fbd9f15b4cb9e9dfa6e0ffc9c7c8e5beaa0a96aa26e4cf0",
+      "after": "23210f9b95ec88994ba99dea5dad12f5770da88fa30397b17fb48bd0133ecc9f",
+      "framesBefore": 5,
+      "framesAfter": 10
+    },
+    {
+      "name": "Calentamiento tipo FIFA 11+",
+      "before": "56c58e7720f4b73351c4faefd8beedc4b69f38db9374830b80db50cee145b221",
+      "after": "56078f1da3e8521830f2fc49024f9c679fddcfe7df1a9813fcf3c9dcb205c26d",
+      "framesBefore": 44,
+      "framesAfter": 54
+    },
+    {
+      "name": "Sprint lanzado",
+      "before": "52468b0d8e88a432b1b733e45747d06ef899c349f744dc32c3366642d4a38a0b",
+      "after": "5ff8753d0c8dc59118bbb43dca6a8a0ad0161271a45b41ed400fdf8b5bb26cf2",
+      "framesBefore": 5,
+      "framesAfter": 10
+    }
+  ],
+  "physicalVariantsUnchanged": 18,
+  "baseCount": 111,
+  "oldBaselineFixture": "test/fixtures/illustration_035_mvp_hashes.json",
+  "oldBaselineSha256": "b7fa7553bdc20fcf2f37b07595fd146fb63ec6cde7ec2b71665ec7487ec893b3",
+  "oldBaselineRetained": true,
+  "old79Exceptions": [
+    "Aceleración 10–20 m",
+    "Calentamiento tipo FIFA 11+"
+  ],
+  "unchangedOld79": 77,
+  "newRunDurationSeconds": 3.5
+}

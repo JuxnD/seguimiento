@@ -184,7 +184,7 @@ void main() {
       ('Burpees', 2, 'nearHand'),
       ('Burpees', 2, 'farHand'),
       ('Aceleración 10–20 m', 0, 'nearAnkle'),
-      ('Aceleración 10–20 m', 2, 'farAnkle'),
+      ('Aceleración 10–20 m', 4, 'farAnkle'),
       for (var i = 0; i < 8; i++) ('90/90 de cadera', i, 'hip'),
     ]) {
       final fig = catalog.forExercise(spec.$1)!;
@@ -204,7 +204,7 @@ void main() {
   });
   test('running swing foot clears the floor while opposite foot supports', () {
     final fig = catalog.forExercise('Aceleración 10–20 m')!;
-    for (final spec in [(0, 'far'), (2, 'near')]) {
+    for (final spec in [(0, 'far'), (4, 'near')]) {
       for (var sample = 0; sample <= 60; sample++) {
         final body = liftSkeleton(fig.skeletonAt((spec.$1 + sample / 60) / fig.motion.length), fig);
         expect(body.p['${spec.$2}Ankle']!.y, lessThan(-4));

@@ -52,11 +52,13 @@ class GuidedContract(unittest.TestCase):
                 self.assertEqual(figure['name'], name)
                 self.assertNotEqual(figure['frames'], self.figures[name]['frames'], key)
 
-    def test_existing_79_figures_are_preserved_exactly(self):
+    def test_77_existing_figures_are_exact_and_only_owner_reopened_running_changes(self):
         baseline = json.loads((ROOT/'test/fixtures/illustration_035_mvp_hashes.json').read_text())
         self.assertEqual(len(baseline), 79)
-        for name, expected in baseline.items():
-            self.assertEqual(digest(self.figures[name]), expected, name)
+        changed = {name for name, expected in baseline.items() if digest(self.figures[name]) != expected}
+        # Owner reported the running diamond; FIFA parts1/10 use that same
+        # authored stride. The historical baseline is deliberately unchanged.
+        self.assertEqual(changed, {'Aceleración 10–20 m', 'Calentamiento tipo FIFA 11+'})
 
 
 if __name__ == '__main__':

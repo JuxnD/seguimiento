@@ -659,23 +659,40 @@ def generate(name):
                      ['Inclina','Vuelve al centro','Eleva las rodillas','Cambia de lado',
                       'Inclina al otro lado','Vuelve al centro','Eleva las rodillas','Regresa']]
     elif name == 'Aceleración 10–20 m':
-        # One stride in world coordinates. Grounded toes retain their world
-        # anchors; the next stride starts through an explicit reset cut.
+        # Support, recovery, propulsion, flight and opposite reception are
+        # distinct poses. A fixed free-leg angle made the old stride slide
+        # as a diamond instead of recovering its heel and advancing its knee.
+        half=[(0,-27,(3,-1),(2,-15),(50,-40),(140,50)),
+              (3,-27,(3,-1),(8,-17),(35,-55),(150,60)),
+              (6,-28,(3,-1),(18,-10),(30,-60),(150,60)),
+              (9,-29,(10,-14),(15,-4),(90,0),(90,0))]
+        captions=['Apoya bajo el cuerpo; recupera el talón libre',
+                  'Rodilla libre al frente; acompaña con el brazo contrario',
+                  'Extiende la pierna de apoyo hacia atrás',
+                  'Vuelo: prepara el contacto de la otra pierna']
         frames=[]
-        for x,sd,caption in [(0,'near','Apoyo: brazo contrario a la pierna'),
-                             (4,'near','Impulsa el cuerpo hacia delante'),
-                             (8,'far','Cambia el apoyo; la otra pierna avanza'),
-                             (12,'far','Impulsa con la otra pierna')]:
-            f=pose(caption,(x,-26),-65,nl=limb(30,130),fl=limb(30,130),
-                   na=arm(125,35),fa=arm(60,-30))
-            f[sd+'Leg']=reach(0 if sd=='near' else 10,-1,foot=0)
-            if sd=='far':f['nearArm'],f['farArm']=f['farArm'],f['nearArm']
-            frames.append(f)
+        for lap in range(2):
+            for i,(x,y,near,far,na,fa) in enumerate(half):
+                near=(near[0]+12*lap,near[1]);far=(far[0]+12*lap,far[1])
+                if lap: near,far,na,fa=far,near,fa,na
+                f=pose(captions[i],(x+12*lap,y),-65,
+                       nl=reach(*near,foot=0 if near[1]==-1 else -10),
+                       fl=reach(*far,foot=0 if far[1]==-1 else -10),
+                       na=arm(*na),fa=arm(*fa))
+                frames.append(f)
+        final=cp(frames[0]);final['hip']=(24,-27)
+        for side in ['nearLeg','farLeg']: final[side]['reach'][0]+=24
+        final['caption']='Completa la zancada: vuelve el primer apoyo'
+        frames.append(final)
         frames.append(cp(frames[0]));frames[-1]['caption']='Nuevo tramo: vuelve a la salida de la demostración'
         e['frames']=frames
-        e['motion']=[phase('Primer impulso',contacts=['nearAnkle']),
-                     phase('Cambio de apoyo'),phase('Impulso con la otra pierna',contacts=['farAnkle']),
-                     phase('Nuevo tramo',kind='cut',seconds=.8)]
+        e['motion']=[]
+        for side in ['near','far']:
+            e['motion'] += [phase('Recupera el talón y mueve el brazo contrario',contacts=[side+'Ankle'],seconds=.5),
+                            phase('Extiende el apoyo; rodilla libre al frente',contacts=[side+'Ankle'],seconds=.4),
+                            phase('Despegue y vuelo',ground='flight',seconds=.3),
+                            phase('Recepción con la otra pierna',ground='flight',seconds=.3)]
+        e['motion'].append(phase('Nuevo tramo: reinicio de la demostración',kind='cut',seconds=.5))
     elif name == 'Burpees':
         standing,crouch,plank_frame,collect,jump=e['frames']
         for f in (crouch,collect):

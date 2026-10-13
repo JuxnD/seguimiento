@@ -363,10 +363,8 @@ def _plan034(name, variant, result, cycle):
         return cycle(a,b,contacts=['nearHand','farHand'],props=props,yaw=35)
     if name == 'Sprint lanzado':
         e=existing('Aceleración 10–20 m')
-        for i,f in enumerate(e['frames']):
-            f['caption']=['Progresivo: entra al tramo','Tramo lanzado: impulsa hacia delante','Tramo lanzado: cambia el apoyo',
-                          'Salida controlada','Nueva demostración desde el inicio'][i]
-        return result(e['frames'],e['motion'],yaw=15)
+        for f in e['frames']: f['caption']='Tramo lanzado · '+f['caption']
+        return result(e['frames'],e['motion'],yaw=35)
     if name == 'Sentadilla isométrica en la pared':
         a=pose('Espalda a pared; pies adelantados',(-3,-23),-90,reach(13,-1),reach(13,-1))
         b=cp(a); b.update(hip=(-3,-15),caption='Desliza la espalda y sostén con rodillas flexionadas')
