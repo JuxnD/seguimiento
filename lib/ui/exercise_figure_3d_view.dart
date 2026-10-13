@@ -8,7 +8,8 @@ import 'exercise_figure_3d.dart';
 
 /// Catálogo de figuras 3D, leído una vez del asset.
 final figure3dProvider = FutureProvider<Figure3DCatalog>(
-  (ref) async => Figure3DCatalog.fromJsonString(await rootBundle.loadString(Figure3DCatalog.asset)),
+  (ref) async => Figure3DCatalog.fromJsonString(
+      await rootBundle.loadString(Figure3DCatalog.asset)),
 );
 
 const _bg = Color(0xFF0B0806);
@@ -47,7 +48,8 @@ String momentLabel(Figure3D fig, int i) {
 
 /// Posición del recorrido en el segundo `t` de la animación en bucle: va
 /// del primer momento al último y vuelve, con una pausa en cada uno.
-double loopProgress(double t, int keys, {double hold = 0.6, double move = 2.4}) {
+double loopProgress(double t, int keys,
+    {double hold = 0.6, double move = 2.4}) {
   if (keys < 2) return 0;
   final steps = keys - 1;
   final cycle = hold + 2 * steps * (move + hold);
@@ -73,7 +75,13 @@ double loopProgress(double t, int keys, {double hold = 0.6, double move = 2.4}) 
 /// Figura de técnica: el maniquí 3D si el ejercicio lo tiene y enseña la
 /// variante que pide la sesión; si no, las figuras planas de siempre.
 class ExerciseFigureView extends ConsumerWidget {
-  const ExerciseFigureView({super.key, required this.exercise, this.grip, this.loaded, this.side});
+  const ExerciseFigureView(
+      {super.key,
+      required this.exercise,
+      this.grip,
+      this.loaded,
+      this.side,
+      this.physicalVariantKey});
 
   final String exercise;
 
@@ -83,6 +91,7 @@ class ExerciseFigureView extends ConsumerWidget {
   final String? grip;
   final bool? loaded;
   final String? side;
+  final String? physicalVariantKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -92,12 +101,20 @@ class ExerciseFigureView extends ConsumerWidget {
     if (catalog.hasError) {
       return Column(children: [
         const Text('No se pudo cargar la ilustración.'),
-        TextButton(onPressed: () => ref.invalidate(figure3dProvider), child: const Text('Reintentar')),
+        TextButton(
+            onPressed: () => ref.invalidate(figure3dProvider),
+            child: const Text('Reintentar')),
       ]);
     }
-    final fig = catalog.valueOrNull?.forExercise(exercise, grip: grip, loaded: loaded, side: side);
+    final fig = catalog.valueOrNull?.forExercise(exercise,
+        grip: grip,
+        loaded: loaded,
+        side: side,
+        physicalVariantKey: physicalVariantKey);
     if (fig == null) {
-      return const Text('Este ejercicio todavía no tiene una ilustración. Puedes añadir una foto de referencia.');
+      return Text(physicalVariantKey == null
+          ? 'Este ejercicio todavía no tiene una ilustración. Puedes añadir una foto de referencia.'
+          : 'Esta variante todavía no tiene una ilustración. Puedes añadir una foto de referencia.');
     }
     return Figure3DMoments(figure: fig);
   }
@@ -115,7 +132,8 @@ class Figure3DMoments extends StatefulWidget {
   State<Figure3DMoments> createState() => _Figure3DMomentsState();
 }
 
-class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProviderStateMixin {
+class _Figure3DMomentsState extends State<Figure3DMoments>
+    with SingleTickerProviderStateMixin {
   final _pages = PageController(viewportFraction: 0.94);
 
   /// Reloj de la animación: solo se usa el tiempo transcurrido.
@@ -128,14 +146,16 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
   double _keyProgress(int i) => _n < 2 ? 0 : i / (_n - 1);
 
   /// Punto del recorrido que se ve ahora en la animación.
-  double get _loopProgress => loopProgress((_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6, _n);
+  double get _loopProgress => loopProgress(
+      (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6, _n);
 
   String _pageCaption(int i) => '${i + 1}/$_n · ${fig.frames[i].caption}';
 
   @override
   void initState() {
     super.initState();
-    _ticker = AnimationController(vsync: this, duration: const Duration(hours: 1));
+    _ticker =
+        AnimationController(vsync: this, duration: const Duration(hours: 1));
   }
 
   @override
@@ -195,25 +215,30 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
     }
   }
 
-  void _open(double progress) => Navigator.of(context).push(MaterialPageRoute<void>(
+  void _open(double progress) =>
+      Navigator.of(context).push(MaterialPageRoute<void>(
         fullscreenDialog: true,
-        builder: (_) => Figure3DFullScreen(figure: fig, initialProgress: progress),
+        builder: (_) =>
+            Figure3DFullScreen(figure: fig, initialProgress: progress),
       ));
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final captionStyle = text.labelLarge?.copyWith(color: scheme.onSurfaceVariant, fontWeight: FontWeight.w600);
+    final captionStyle = text.labelLarge
+        ?.copyWith(color: scheme.onSurfaceVariant, fontWeight: FontWeight.w600);
     Widget frame(double progress, String caption, Key key) => Semantics(
           image: true,
           label: '${fig.name}: $caption',
           child: Container(
             key: key,
             height: figure3dHeight,
-            decoration: BoxDecoration(color: _bg, borderRadius: BorderRadius.circular(14)),
+            decoration: BoxDecoration(
+                color: _bg, borderRadius: BorderRadius.circular(14)),
             clipBehavior: Clip.antiAlias,
-            child: CustomPaint(painter: Figure3DPainter(fig, progress), size: Size.infinite),
+            child: CustomPaint(
+                painter: Figure3DPainter(fig, progress), size: Size.infinite),
           ),
         );
 
@@ -230,10 +255,12 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
               children: [
                 GestureDetector(
                   onTap: () => _open(p),
-                  child: frame(p, fig.frames[key].caption, const ValueKey('figura3d-animada')),
+                  child: frame(p, fig.frames[key].caption,
+                      const ValueKey('figura3d-animada')),
                 ),
                 const SizedBox(height: 8),
-                Text(fig.frames[key].caption, textAlign: TextAlign.center, style: captionStyle),
+                Text(fig.frames[key].caption,
+                    textAlign: TextAlign.center, style: captionStyle),
               ],
             ),
           );
@@ -251,10 +278,12 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
             children: [
               GestureDetector(
                 onTap: () => _open(_keyProgress(i)),
-                child: frame(_keyProgress(i), fig.frames[i].caption, ValueKey('figura3d-$i')),
+                child: frame(_keyProgress(i), fig.frames[i].caption,
+                    ValueKey('figura3d-$i')),
               ),
               const SizedBox(height: 8),
-              Text(_pageCaption(i), textAlign: TextAlign.center, style: captionStyle),
+              Text(_pageCaption(i),
+                  textAlign: TextAlign.center, style: captionStyle),
             ],
           ),
         ),
@@ -266,7 +295,9 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
       children: [
         LayoutBuilder(
           builder: (context, c) => SizedBox(
-            height: figure3dHeight + 8 + _captionHeight(context, c.maxWidth, captionStyle),
+            height: figure3dHeight +
+                8 +
+                _captionHeight(context, c.maxWidth, captionStyle),
             child: stage,
           ),
         ),
@@ -293,28 +324,39 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
             // Reflow preserves the full action label with large text.
             if (fig.continuous)
               TextButton.icon(
-                onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
-                icon: Icon(_playing ? Icons.pause_circle_outline : Icons.play_circle_outline),
-                label: Text(_playing ? 'Ver momentos' : 'Ver movimiento', maxLines: 2, textAlign: TextAlign.center),
+                onPressed:
+                    MediaQuery.disableAnimationsOf(context) ? null : _toggle,
+                icon: Icon(_playing
+                    ? Icons.pause_circle_outline
+                    : Icons.play_circle_outline),
+                label: Text(_playing ? 'Ver momentos' : 'Ver movimiento',
+                    maxLines: 2, textAlign: TextAlign.center),
               ),
             IconButton(
               tooltip: 'Ampliar y girar',
               icon: const Icon(Icons.open_in_full),
               // Animando, se amplía la pose que se ve, no el inicio.
-              onPressed: () => _open(_playing ? _loopProgress : _keyProgress(_page)),
+              onPressed: () =>
+                  _open(_playing ? _loopProgress : _keyProgress(_page)),
             ),
           ],
         ),
         if (fig.muscles.isNotEmpty)
           Row(
             children: [
-              Container(width: 10, height: 10, decoration: const BoxDecoration(color: _muscle, shape: BoxShape.circle)),
+              Container(
+                  width: 10,
+                  height: 10,
+                  decoration: const BoxDecoration(
+                      color: _muscle, shape: BoxShape.circle)),
               const SizedBox(width: 8),
               Expanded(
                 child: Text.rich(
                   TextSpan(children: [
                     const TextSpan(text: 'Trabaja: '),
-                    TextSpan(text: fig.muscles, style: const TextStyle(fontWeight: FontWeight.w600)),
+                    TextSpan(
+                        text: fig.muscles,
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
                   ]),
                   style: text.bodyMedium,
                 ),
@@ -329,7 +371,8 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
 /// La figura en grande: arrastrar la gira (±60°), doble toque o el botón la
 /// devuelven a la vista inicial de perfil.
 class Figure3DFullScreen extends StatefulWidget {
-  const Figure3DFullScreen({super.key, required this.figure, this.initialProgress = 0});
+  const Figure3DFullScreen(
+      {super.key, required this.figure, this.initialProgress = 0});
 
   final Figure3D figure;
   final double initialProgress;
@@ -338,7 +381,8 @@ class Figure3DFullScreen extends StatefulWidget {
   State<Figure3DFullScreen> createState() => _Figure3DFullScreenState();
 }
 
-class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTickerProviderStateMixin {
+class _Figure3DFullScreenState extends State<Figure3DFullScreen>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _ticker;
   late double _yaw = widget.figure.initialYaw;
   late double _pitch = widget.figure.initialPitch;
@@ -352,7 +396,8 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _ticker = AnimationController(vsync: this, duration: const Duration(hours: 1));
+    _ticker =
+        AnimationController(vsync: this, duration: const Duration(hours: 1));
   }
 
   @override
@@ -419,13 +464,18 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                   animation: _ticker,
                   builder: (context, _) {
                     if (_playing) {
-                      _progress = loopProgress((_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6, _n);
+                      _progress = loopProgress(
+                          (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) /
+                              1e6,
+                          _n);
                     }
                     return Semantics(
                       image: true,
-                      label: '${fig.name}: ${fig.frames[(_progress * (_n - 1)).round()].caption}',
+                      label:
+                          '${fig.name}: ${fig.frames[(_progress * (_n - 1)).round()].caption}',
                       child: CustomPaint(
-                        painter: Figure3DPainter(fig, _progress, yaw: _yaw, pitch: _pitch),
+                        painter: Figure3DPainter(fig, _progress,
+                            yaw: _yaw, pitch: _pitch),
                         size: Size.infinite,
                       ),
                     );
@@ -434,7 +484,9 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
               ),
             ),
             ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: math.min(350, MediaQuery.sizeOf(context).height * .4)),
+              constraints: BoxConstraints(
+                  maxHeight:
+                      math.min(350, MediaQuery.sizeOf(context).height * .4)),
               child: SingleChildScrollView(
                   child: Column(children: [
                 Padding(
@@ -442,7 +494,8 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                   child: Text(
                     _playing ? 'En movimiento' : fig.frames[key].caption,
                     textAlign: TextAlign.center,
-                    style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                    style:
+                        text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
                 Padding(
@@ -463,40 +516,57 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                         ),
                       if (fig.continuous)
                         ActionChip(
-                          avatar: Icon(_playing ? Icons.pause : Icons.play_arrow, size: 18),
+                          avatar: Icon(
+                              _playing ? Icons.pause : Icons.play_arrow,
+                              size: 18),
                           label: Text(_playing ? 'Pausa' : 'Movimiento'),
-                          onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
+                          onPressed: MediaQuery.disableAnimationsOf(context)
+                              ? null
+                              : _toggle,
                         ),
                     ],
                   ),
                 ),
-                Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 4, children: [
-                  TextButton(onPressed: _reset, child: const Text('Vista inicial')),
-                  TextButton(
-                      onPressed: () => setState(() {
-                            _yaw = 0;
-                            _pitch = 8;
-                          }),
-                      child: const Text('De perfil')),
-                  TextButton(
-                      onPressed: () => setState(() {
-                            final body = liftSkeleton(fig.skeletonAt(_progress), fig);
-                            final front = body.front;
-                            if (front.y > .2) {
-                              _yaw = 0;
-                              _pitch = 75;
-                            } else {
-                              _yaw = math.atan2(front.x, front.z) * 180 / math.pi;
-                              _pitch = (-math.asin(front.y.clamp(-1, 1)) * 180 / math.pi).clamp(0, 85);
-                            }
-                          }),
-                      child: const Text('Ver apoyos')),
-                ]),
+                Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      TextButton(
+                          onPressed: _reset,
+                          child: const Text('Vista inicial')),
+                      TextButton(
+                          onPressed: () => setState(() {
+                                _yaw = 0;
+                                _pitch = 8;
+                              }),
+                          child: const Text('De perfil')),
+                      TextButton(
+                          onPressed: () => setState(() {
+                                final body = liftSkeleton(
+                                    fig.skeletonAt(_progress), fig);
+                                final front = body.front;
+                                if (front.y > .2) {
+                                  _yaw = 0;
+                                  _pitch = 75;
+                                } else {
+                                  _yaw = math.atan2(front.x, front.z) *
+                                      180 /
+                                      math.pi;
+                                  _pitch = (-math.asin(front.y.clamp(-1, 1)) *
+                                          180 /
+                                          math.pi)
+                                      .clamp(0, 85);
+                                }
+                              }),
+                          child: const Text('Ver apoyos')),
+                    ]),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                   child: Text(
                     'Arrastra para girar · doble toque para volver de perfil',
-                    style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                    style: text.bodySmall
+                        ?.copyWith(color: scheme.onSurfaceVariant),
                   ),
                 ),
               ])),

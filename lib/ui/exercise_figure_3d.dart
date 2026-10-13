@@ -49,7 +49,8 @@ class V3 {
   static V3 lift(Offset p, double z) => V3(p.dx, p.dy, z);
 
   @override
-  String toString() => 'V3(${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)}, ${z.toStringAsFixed(2)})';
+  String toString() =>
+      'V3(${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)}, ${z.toStringAsFixed(2)})';
 }
 
 double _deg(double rad) => rad * 180 / math.pi;
@@ -58,7 +59,8 @@ Offset _dir(double deg) => Offset(math.cos(_rad(deg)), math.sin(_rad(deg)));
 double _lerp(double a, double b, double t) => a + (b - a) * t;
 
 /// Interpola ángulos (grados) por el camino corto.
-double lerpAngle(double a, double b, double t) => a + ((((b - a) % 360) + 540) % 360 - 180) * t;
+double lerpAngle(double a, double b, double t) =>
+    a + ((((b - a) % 360) + 540) % 360 - 180) * t;
 
 // ---------------------------------------------------------------------------
 // Modelo: lo que exporta el generador.
@@ -88,14 +90,22 @@ class BodyDims {
         headRadius: _num(j['HEAD_R']),
       );
 
-  final double torso, upperArm, forearm, thigh, shin, foot, headOffset, headRadius;
+  final double torso,
+      upperArm,
+      forearm,
+      thigh,
+      shin,
+      foot,
+      headOffset,
+      headRadius;
 
   /// Medio ancho de hombros y de cadera: dónde quedan los lados en z.
   static const shoulderHalf = 4.5;
   static const hipHalf = 3.3;
 }
 
-double _num(Object? v, [double fallback = 0]) => v == null ? fallback : (v as num).toDouble();
+double _num(Object? v, [double fallback = 0]) =>
+    v == null ? fallback : (v as num).toDouble();
 
 Offset _pt(Object? v) {
   final l = v as List;
@@ -158,7 +168,8 @@ class LimbPose {
   final bool keepReachRadius;
 }
 
-V3 _vector(List<Object?> values) => V3(_num(values[0]), _num(values[1]), _num(values[2]));
+V3 _vector(List<Object?> values) =>
+    V3(_num(values[0]), _num(values[1]), _num(values[2]));
 
 @immutable
 class KeyPose {
@@ -180,8 +191,12 @@ class KeyPose {
         gaze: _num(j['gaze']),
         bodyZ: _num(j['bodyZ']),
         bodyRoll: _num(j['bodyRoll']),
-        shoulderOffset: j['shoulderOffset'] == null ? Offset.zero : _pt(j['shoulderOffset']),
-        props: j['props'] == null ? null : (j['props'] as List).cast<Map<String, Object?>>(),
+        shoulderOffset: j['shoulderOffset'] == null
+            ? Offset.zero
+            : _pt(j['shoulderOffset']),
+        props: j['props'] == null
+            ? null
+            : (j['props'] as List).cast<Map<String, Object?>>(),
         limbs: {
           for (final e in (j['limbs'] as Map<String, Object?>).entries)
             e.key: LimbPose.fromJson(e.value as Map<String, Object?>),
@@ -207,7 +222,12 @@ class KeyPose {
 /// Zona muscular resaltada: una cara de un segmento, no el cilindro entero.
 @immutable
 class FigureRegion {
-  const FigureRegion({required this.part, this.face = 'all', this.from = 0, this.to = 1, this.width = 90});
+  const FigureRegion(
+      {required this.part,
+      this.face = 'all',
+      this.from = 0,
+      this.to = 1,
+      this.width = 90});
 
   factory FigureRegion.fromJson(Map<String, Object?> j) => FigureRegion(
         part: j['part'] as String,
@@ -259,22 +279,37 @@ class Figure3D {
         name: j['name'] as String,
         muscles: j['muscles'] as String,
         regions: [
-          for (final r in (j['regions'] as List? ?? const [])) FigureRegion.fromJson(r as Map<String, Object?>)
+          for (final r in (j['regions'] as List? ?? const []))
+            FigureRegion.fromJson(r as Map<String, Object?>)
         ],
-        props: [for (final p in (j['props'] as List? ?? const [])) p as Map<String, Object?>],
-        annotations: [for (final p in (j['annotations'] as List? ?? const [])) p as Map<String, Object?>],
+        props: [
+          for (final p in (j['props'] as List? ?? const []))
+            p as Map<String, Object?>
+        ],
+        annotations: [
+          for (final p in (j['annotations'] as List? ?? const []))
+            p as Map<String, Object?>
+        ],
         gripZ: _num(j['gripZ'], 5),
         elbowOut: _num(j['elbowOut'], 0.25),
         pivot: j['pivot'] == null ? null : _pt(j['pivot']),
         flex: {
-          for (final e in (j['flex'] as Map<String, Object?>? ?? const {}).entries) e.key: (e.value as num).toInt()
+          for (final e
+              in (j['flex'] as Map<String, Object?>? ?? const {}).entries)
+            e.key: (e.value as num).toInt()
         },
-        frames: [for (final f in j['frames'] as List) KeyPose.fromJson(f as Map<String, Object?>)],
+        frames: [
+          for (final f in j['frames'] as List)
+            KeyPose.fromJson(f as Map<String, Object?>)
+        ],
         dims: dims,
         initialYaw: _num((j['view'] as Map<String, Object?>?)?['yaw'], 0),
-        initialPitch: _num((j['view'] as Map<String, Object?>?)?['pitch'], defaultPitch),
-        variantGrip: (j['variant'] as Map<String, Object?>?)?['grip'] as String?,
-        variantLoaded: (j['variant'] as Map<String, Object?>?)?['loaded'] as bool?,
+        initialPitch:
+            _num((j['view'] as Map<String, Object?>?)?['pitch'], defaultPitch),
+        variantGrip:
+            (j['variant'] as Map<String, Object?>?)?['grip'] as String?,
+        variantLoaded:
+            (j['variant'] as Map<String, Object?>?)?['loaded'] as bool?,
         group: j['group'] as String? ?? 'Otros',
         focus: j['focus'] as String?,
         continuous: j['continuous'] as bool? ?? true,
@@ -316,12 +351,17 @@ class Figure3D {
   /// ¿La figura enseña la variante que pide la sesión? Sin contexto (null),
   /// sí: desde el catálogo se muestra la figura tal cual.
   bool matches({String? grip, bool? loaded}) {
-    if (variantGrip case final g? when grip != null && gripKey(grip) != gripKey(g)) return false;
-    if (variantLoaded case final l? when loaded != null && loaded != l) return false;
+    if (variantGrip case final g?
+        when grip != null && gripKey(grip) != gripKey(g)) return false;
+    if (variantLoaded case final l? when loaded != null && loaded != l) {
+      return false;
+    }
     return true;
   }
 
-  late final List<Skeleton2D> _keys = [for (final f in frames) solveKeyPose(f, dims)];
+  late final List<Skeleton2D> _keys = [
+    for (final f in frames) solveKeyPose(f, dims)
+  ];
 
   /// Cara de la pared (x) y de qué lado está el cuerpo (+1 si a la derecha).
   late final (double, double)? _wall = () {
@@ -337,7 +377,8 @@ class Figure3D {
   /// Esqueleto en un punto del recorrido: 0 = primer momento, 1 = último.
   Skeleton2D skeletonAt(double progress) {
     if (!continuous || frames.length == 1) {
-      final key = _keys[(progress.clamp(0.0, 1.0) * (frames.length - 1)).round()];
+      final key =
+          _keys[(progress.clamp(0.0, 1.0) * (frames.length - 1)).round()];
       return key.bodyRoll.abs() > .001 ? key : _clearOfWall(key.grounded());
     }
     final x = progress.clamp(0.0, 1.0) * (frames.length - 1);
@@ -350,7 +391,9 @@ class Figure3D {
     // interpolación no lo despega ni lo hunde. Con pivote (rodillas fijas)
     // el apoyo ya está resuelto.
     final la = _keys[i].lowest, lb = _keys[i + 1].lowest;
-    if (pivot == null && la > -3 && lb > -3) s = s.shiftedY(_lerp(la, lb, u) - s.lowest);
+    if (pivot == null && la > -3 && lb > -3) {
+      s = s.shiftedY(_lerp(la, lb, u) - s.lowest);
+    }
     return _clearOfWall(s.grounded());
   }
 
@@ -373,14 +416,22 @@ class Figure3D {
     final hip = j['hip']!;
     for (final sd in const ['near', 'far']) {
       final ta = a.joints['${sd}Toe'], tb = b.joints['${sd}Toe'];
-      final ankle0 = j['${sd}Ankle'], knee0 = j['${sd}Knee'], foot = s.ends['${sd}Leg'];
-      if (ta == null || tb == null || ankle0 == null || knee0 == null || foot == null) continue;
+      final ankle0 = j['${sd}Ankle'],
+          knee0 = j['${sd}Knee'],
+          foot = s.ends['${sd}Leg'];
+      if (ta == null ||
+          tb == null ||
+          ankle0 == null ||
+          knee0 == null ||
+          foot == null) continue;
       if (gap(ta) > wallContact || gap(tb) > wallContact) continue;
       final fd = _dir(foot);
       // La punta toca la pared; el tobillo queda donde el pie lo deja, nunca
       // más cerca de la pared que en los momentos clave.
-      final minAnkle = math.min(gap(a.joints['${sd}Ankle']!), gap(b.joints['${sd}Ankle']!));
-      final ankleGap = math.max(_lerp(gap(ta), gap(tb), u) - fd.dx * side * dims.foot, minAnkle);
+      final minAnkle =
+          math.min(gap(a.joints['${sd}Ankle']!), gap(b.joints['${sd}Ankle']!));
+      final ankleGap = math.max(
+          _lerp(gap(ta), gap(tb), u) - fd.dx * side * dims.foot, minAnkle);
       final ax = wx + side * ankleGap;
       final len = (ankle0 - hip).distance;
       final dx = ax - hip.dx;
@@ -399,7 +450,8 @@ class Figure3D {
       // hacia el frente del muslo (opuesto a la cara flexora).
       final v = ankle0 - hip, w = knee0 - hip;
       final cross = v.dx * w.dy - v.dy * w.dx;
-      final bend = cross.abs() > 1e-6 ? cross.sign.toInt() : -(flex['${sd}Leg'] ?? 1);
+      final bend =
+          cross.abs() > 1e-6 ? cross.sign.toInt() : -(flex['${sd}Leg'] ?? 1);
       final (knee, ankle) = twoLink(hip, target, dims.thigh, dims.shin, bend);
       j['${sd}Knee'] = knee;
       j['${sd}Ankle'] = ankle;
@@ -462,14 +514,16 @@ class Figure3D {
           grow(Offset(_num(p['x']), _num(p['y']) - 2));
         case 'sofa':
           // Basta el frente del sofá: lo que importa es el hueco de los talones.
-          grow(Offset(math.max(_num(p['x1']), _num(p['x2']) - 9), _num(p['seat']) - 4));
+          grow(Offset(
+              math.max(_num(p['x1']), _num(p['x2']) - 9), _num(p['seat']) - 4));
         case 'wall':
           grow(Offset(_num(p['x']) - 2, -12));
       }
     }
     // El suelo entra en cuadro solo si algo apoya en él: colgado de la barra,
     // la figura se vería pequeña sobre un suelo vacío.
-    final grounded = _keys.any((k) => k.lowest > -4) || props.any((p) => p['type'] != 'bar' && p['type'] != 'backpack');
+    final grounded = _keys.any((k) => k.lowest > -4) ||
+        props.any((p) => p['type'] != 'bar' && p['type'] != 'backpack');
     grow(Offset(box.left, grounded ? 0.8 : box.bottom + 4));
     return box.inflate(2);
   }
@@ -477,22 +531,50 @@ class Figure3D {
 
 /// Catálogo de figuras 3D, buscado por nombre sin mayúsculas ni tildes.
 class Figure3DCatalog {
-  Figure3DCatalog(List<Figure3D> figures) : _byKey = {for (final f in figures) nameKey(f.name): f};
+  Figure3DCatalog(List<Figure3D> figures)
+      : _byKey = {for (final f in figures) nameKey(f.name): f};
 
   factory Figure3DCatalog.fromJsonString(String source) {
     final data = jsonDecode(source) as Map<String, Object?>;
     final dims = BodyDims.fromJson(data['consts'] as Map<String, Object?>);
-    return Figure3DCatalog([
-      for (final f in (data['figures'] as List).cast<Map<String, Object?>>()) Figure3D.fromJson(f, dims),
+    final catalog = Figure3DCatalog([
+      for (final f in (data['figures'] as List).cast<Map<String, Object?>>())
+        Figure3D.fromJson(f, dims),
     ]);
+    for (final raw in (data['physicalVariants'] as List? ?? const [])) {
+      final variant = raw as Map<String, Object?>;
+      final exercise = variant['exercise'] as String;
+      final key = variant['key'] as String;
+      final base = catalog._byKey[nameKey(exercise)];
+      if (base == null || key.isEmpty) {
+        throw const FormatException('Unknown physical variant exercise or key');
+      }
+      final figure = variant['useBase'] == true
+          ? base
+          : Figure3D.fromJson(variant['figure'] as Map<String, Object?>, dims);
+      if (nameKey(figure.name) != nameKey(exercise)) {
+        throw const FormatException(
+            'Physical variant belongs to a different exercise');
+      }
+      final identity = (nameKey(exercise), key);
+      if (catalog._physicalVariants.containsKey(identity)) {
+        throw const FormatException('Duplicate physical variant');
+      }
+      catalog._physicalVariants[identity] = figure;
+    }
+    return catalog;
   }
 
   static const asset = 'assets/tecnica/figuras3d.json';
 
   final Map<String, Figure3D> _byKey;
+  final Map<(String, String), Figure3D> _physicalVariants = {};
 
-  Figure3D? forExercise(String name, {String? grip, bool? loaded, String? side}) {
-    final base = _byKey[nameKey(name)];
+  Figure3D? forExercise(String name,
+      {String? grip, bool? loaded, String? side, String? physicalVariantKey}) {
+    final base = physicalVariantKey == null
+        ? _byKey[nameKey(name)]
+        : _physicalVariants[(nameKey(name), physicalVariantKey)];
     if (base == null) return null;
     final isPull = nameKey(name) == nameKey('Dominadas');
     final supinated = isPull && grip != null && gripKey(grip) == 'supina';
@@ -550,7 +632,9 @@ class Figure3DCatalog {
         pivot: base.pivot,
         flex: base.flex,
         dims: base.dims,
-        initialYaw: reflected ? (180 - base.initialYaw + 180) % 360 - 180 : base.initialYaw,
+        initialYaw: reflected
+            ? (180 - base.initialYaw + 180) % 360 - 180
+            : base.initialYaw,
         initialPitch: base.initialPitch,
         group: base.group,
         focus: base.focus,
@@ -567,11 +651,14 @@ class Figure3DCatalog {
 // ---------------------------------------------------------------------------
 
 /// IK de dos segmentos: (articulación media, extremo).
-(Offset, Offset) twoLink(Offset root, Offset target, double a, double b, int bend) {
+(Offset, Offset) twoLink(
+    Offset root, Offset target, double a, double b, int bend) {
   final dx = target.dx - root.dx, dy = target.dy - root.dy;
-  final d = math.sqrt(dx * dx + dy * dy).clamp((a - b).abs() + 0.01, a + b - 0.001);
+  final d =
+      math.sqrt(dx * dx + dy * dy).clamp((a - b).abs() + 0.01, a + b - 0.001);
   final base = math.atan2(dy, dx);
-  final alpha = math.acos(((a * a + d * d - b * b) / (2 * a * d)).clamp(-1.0, 1.0));
+  final alpha =
+      math.acos(((a * a + d * d - b * b) / (2 * a * d)).clamp(-1.0, 1.0));
   final ang = base + bend * alpha;
   final mid = root + Offset(math.cos(ang), math.sin(ang)) * a;
   final e = target - mid;
@@ -669,8 +756,14 @@ class Skeleton2D {
 
 Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
   final neck = p.hip + _dir(p.torso) * d.torso;
-  final shoulder = neck + _dir(p.torso + 90) * p.shoulderOffset.dx + _dir(p.torso) * p.shoulderOffset.dy;
-  final j = <String, Offset>{'hip': p.hip, 'neck': neck, 'head': neck + _dir(p.torso + p.gaze) * d.headOffset};
+  final shoulder = neck +
+      _dir(p.torso + 90) * p.shoulderOffset.dx +
+      _dir(p.torso) * p.shoulderOffset.dy;
+  final j = <String, Offset>{
+    'hip': p.hip,
+    'neck': neck,
+    'head': neck + _dir(p.torso + p.gaze) * d.headOffset
+  };
   final ends = <String, double>{};
   final grips = <String, String?>{};
   for (final name in limbNames) {
@@ -705,7 +798,9 @@ Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
     if (leg) {
       j['${side}Knee'] = mid;
       j['${side}Ankle'] = end;
-      j['${side}Toe'] = end + (l.end3 == null ? _dir(l.end) : Offset(l.end3!.x, l.end3!.y)) * d.foot;
+      j['${side}Toe'] = end +
+          (l.end3 == null ? _dir(l.end) : Offset(l.end3!.x, l.end3!.y)) *
+              d.foot;
     } else {
       j['${side}Elbow'] = mid;
       j['${side}Hand'] = end;
@@ -747,9 +842,11 @@ KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t) {
         _dir(pose.torso) * fig.dims.torso +
         _dir(pose.torso + 90) * pose.shoulderOffset.dx +
         _dir(pose.torso) * pose.shoulderOffset.dy;
-    final delta = Offset.lerp(anchor(a), anchor(b), t)! - (hip + _dir(torso) * fig.dims.torso);
+    final delta = Offset.lerp(anchor(a), anchor(b), t)! -
+        (hip + _dir(torso) * fig.dims.torso);
     final front = _dir(torso + 90), up = _dir(torso);
-    shoulderOffset = Offset(delta.dx * front.dx + delta.dy * front.dy, delta.dx * up.dx + delta.dy * up.dy);
+    shoulderOffset = Offset(delta.dx * front.dx + delta.dy * front.dy,
+        delta.dx * up.dx + delta.dy * up.dy);
   }
   final limbs = <String, LimbPose>{};
   for (final name in limbNames) {
@@ -759,8 +856,10 @@ KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t) {
       continue;
     }
     final joint = name.replaceFirst('Leg', 'Ankle').replaceFirst('Arm', 'Hand');
-    final pa = la.pin ?? (lb.pin == null ? null : solveKeyPose(a, fig.dims).joints[joint]);
-    final pb = lb.pin ?? (la.pin == null ? null : solveKeyPose(b, fig.dims).joints[joint]);
+    final pa = la.pin ??
+        (lb.pin == null ? null : solveKeyPose(a, fig.dims).joints[joint]);
+    final pb = lb.pin ??
+        (la.pin == null ? null : solveKeyPose(b, fig.dims).joints[joint]);
     limbs[name] = LimbPose(
       upper: lerpAngle(la.upper, lb.upper, t),
       lower: lerpAngle(la.lower, lb.lower, t),
@@ -768,7 +867,9 @@ KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t) {
       pin: pa != null && pb != null ? Offset.lerp(pa, pb, t) : null,
       bend: t < 0.5 ? la.bend : lb.bend,
       grip: t < 0.5 ? la.grip : lb.grip,
-      depth: la.depth == null && lb.depth == null ? null : _lerp(la.depth ?? lb.depth!, lb.depth ?? la.depth!, t),
+      depth: la.depth == null && lb.depth == null
+          ? null
+          : _lerp(la.depth ?? lb.depth!, lb.depth ?? la.depth!, t),
       pole: la.pole == null
           ? lb.pole
           : lb.pole == null
@@ -805,13 +906,18 @@ V3? _interpolateReach(LimbPose a, LimbPose b, double t) {
             ? a.reach3
             : V3.lerp(a.reach3!, b.reach3!, t);
   }
-  if (!a.keepReachRadius || !b.keepReachRadius || a.reach3 == null || b.reach3 == null) {
-    throw const FormatException('keepReachRadius requires reach3 on both adjacent poses');
+  if (!a.keepReachRadius ||
+      !b.keepReachRadius ||
+      a.reach3 == null ||
+      b.reach3 == null) {
+    throw const FormatException(
+        'keepReachRadius requires reach3 on both adjacent poses');
   }
   final va = a.reach3!, vb = b.reach3!;
   final ra = va.length, rb = vb.length;
   if (!ra.isFinite || !rb.isFinite || ra < 1e-9 || rb < 1e-9) {
-    throw const FormatException('keepReachRadius requires finite nonzero radii');
+    throw const FormatException(
+        'keepReachRadius requires finite nonzero radii');
   }
   final ua = va.unit, ub = vb.unit;
   final dot = ua.dot(ub).clamp(-1.0, 1.0);
@@ -826,7 +932,8 @@ V3? _interpolateReach(LimbPose a, LimbPose b, double t) {
             ? V3.zero
             : pole - ua * pole.dot(ua);
     if (!normal.length.isFinite || normal.length < 1e-9) {
-      throw const FormatException('antipodal reach3 requires a perpendicular pole');
+      throw const FormatException(
+          'antipodal reach3 requires a perpendicular pole');
     }
     final angle = math.acos(dot);
     direction = ua * math.cos(angle * t) + normal.unit * math.sin(angle * t);
@@ -887,12 +994,14 @@ V3 flexorNormal(V3 root, V3 mid, V3 end, V3 fallback) {
   final w = end - mid;
   final perp = w - du * w.dot(du);
   final fb = (fallback - du * fallback.dot(du)).unit;
-  final k = w.length == 0 ? 0.0 : (perp.length / (0.35 * w.length)).clamp(0.0, 1.0);
+  final k =
+      w.length == 0 ? 0.0 : (perp.length / (0.35 * w.length)).clamp(0.0, 1.0);
   if (k == 0) return fb;
   return (fb * (1 - k) + perp.unit * k).unit;
 }
 
-Offset _sagittalFlex(Offset d, int flex) => flex > 0 ? Offset(-d.dy, d.dx) : Offset(d.dy, -d.dx);
+Offset _sagittalFlex(Offset d, int flex) =>
+    flex > 0 ? Offset(-d.dy, d.dx) : Offset(d.dy, -d.dx);
 
 Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
   final d = fig.dims;
@@ -921,7 +1030,8 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
     if (j['${side}Knee'] case final knee?) {
       final spec = s.limbPoses[leg];
       final a = spec?.reach3 == null
-          ? V3.lift(j['${side}Ankle']!, spec?.depth ?? s.bodyZ + sz * BodyDims.hipHalf)
+          ? V3.lift(j['${side}Ankle']!,
+              spec?.depth ?? s.bodyZ + sz * BodyDims.hipHalf)
           : hip + spec!.reach3!;
       final k = spec?.depth == null && spec?.reach3 == null
           ? V3.lift(knee, s.bodyZ + sz * BodyDims.hipHalf)
@@ -929,12 +1039,17 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
       final toe = spec?.end3 != null
           ? a + spec!.end3!.unit * d.foot
           : spec?.reach3 != null
-              ? a + V3(math.cos(_rad(spec!.end)), math.sin(_rad(spec.end)), 0).unit * d.foot
-              : V3.lift(j['${side}Toe']!, (spec?.depth ?? s.bodyZ + sz * BodyDims.hipHalf) + sz * 0.3);
+              ? a +
+                  V3(math.cos(_rad(spec!.end)), math.sin(_rad(spec.end)), 0)
+                          .unit *
+                      d.foot
+              : V3.lift(j['${side}Toe']!,
+                  (spec?.depth ?? s.bodyZ + sz * BodyDims.hipHalf) + sz * 0.3);
       p['${side}Knee'] = k;
       p['${side}Ankle'] = a;
       p['${side}Toe'] = toe;
-      final f2 = _sagittalFlex((knee - j['hip']!) / d.thigh, fig.flex[leg] ?? 1);
+      final f2 =
+          _sagittalFlex((knee - j['hip']!) / d.thigh, fig.flex[leg] ?? 1);
       final fb = V3(f2.dx, f2.dy, 0);
       flexor['${side}Thigh'] = flexorNormal(hip, k, a, fb);
       flexor['${side}Shin'] = flexorNormal(a, k, hip, flexor['${side}Thigh']!);
@@ -943,13 +1058,18 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
     if (j['${side}Elbow'] case final elbow2?) {
       final hand2 = j['${side}Hand']!;
       final spec = s.limbPoses[arm];
-      final hand = spec?.reach3 == null ? V3.lift(hand2, spec?.depth ?? s.bodyZ + sz * fig.gripZ) : sh + spec!.reach3!;
+      final hand = spec?.reach3 == null
+          ? V3.lift(hand2, spec?.depth ?? s.bodyZ + sz * fig.gripZ)
+          : sh + spec!.reach3!;
       // Hacia dónde sale el codo: el de perfil, más un poco hacia afuera.
-      final mid2 = Offset.lerp(j['neck']!, hand2, d.upperArm / (d.upperArm + d.forearm))!;
+      final mid2 = Offset.lerp(
+          j['neck']!, hand2, d.upperArm / (d.upperArm + d.forearm))!;
       var out2 = elbow2 - mid2;
-      final flex2 = _sagittalFlex((elbow2 - j['neck']!) / d.upperArm, fig.flex[arm] ?? 1);
+      final flex2 =
+          _sagittalFlex((elbow2 - j['neck']!) / d.upperArm, fig.flex[arm] ?? 1);
       if (out2.distance < 0.6) out2 = -flex2;
-      final pole = spec?.pole ?? (V3(out2.dx, out2.dy, 0).unit + V3(0, 0, sz * fig.elbowOut));
+      final pole = spec?.pole ??
+          (V3(out2.dx, out2.dy, 0).unit + V3(0, 0, sz * fig.elbowOut));
       final e = ikJoint(sh, hand, d.upperArm, d.forearm, pole);
       p['${side}Elbow'] = e;
       p['${side}Hand'] = hand;
@@ -959,7 +1079,8 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
       final fb = V3(flex2.dx, flex2.dy, 0);
       final du = (e - sh).unit;
       flexor['${side}UpperArm'] = (fb - du * fb.dot(du)).unit;
-      flexor['${side}Forearm'] = flexorNormal(hand, e, sh, flexor['${side}UpperArm']!);
+      flexor['${side}Forearm'] =
+          flexorNormal(hand, e, sh, flexor['${side}UpperArm']!);
       final hd = _dir(s.ends[arm] ?? 0);
       endDir['${side}Hand'] = spec?.end3?.unit ?? V3(hd.dx, hd.dy, 0);
     }
@@ -972,7 +1093,9 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
     face: face,
     flexor: flexor,
     endDir: endDir,
-    grips: {for (final e in s.grips.entries) e.key.replaceAll('Arm', 'Hand'): e.value},
+    grips: {
+      for (final e in s.grips.entries) e.key.replaceAll('Arm', 'Hand'): e.value
+    },
   );
   final rolled = s.bodyRoll.abs() < .001 ? result : _rollBody(result, s, fig);
   return fig.mirrored ? _mirrorBody(rolled) : rolled;
@@ -985,7 +1108,9 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
 
 V3 _rotateAxis(V3 value, V3 axis, double degrees) {
   final u = axis.unit, angle = _rad(degrees);
-  return value * math.cos(angle) + u.cross(value) * math.sin(angle) + u * (u.dot(value) * (1 - math.cos(angle)));
+  return value * math.cos(angle) +
+      u.cross(value) * math.sin(angle) +
+      u * (u.dot(value) * (1 - math.cos(angle)));
 }
 
 Body3D _mirrorBody(Body3D original) {
@@ -996,28 +1121,46 @@ Body3D _mirrorBody(Body3D original) {
       front: reflect(original.front),
       headUp: reflect(original.headUp),
       face: reflect(original.face),
-      flexor: {for (final e in original.flexor.entries) e.key: reflect(e.value)},
-      endDir: {for (final e in original.endDir.entries) e.key: reflect(e.value)},
+      flexor: {
+        for (final e in original.flexor.entries) e.key: reflect(e.value)
+      },
+      endDir: {
+        for (final e in original.endDir.entries) e.key: reflect(e.value)
+      },
       grips: original.grips);
 }
 
 Body3D _rollBody(Body3D original, Skeleton2D skeleton, Figure3D figure) {
   final origin = original.p['hip']!;
   V3 direction(V3 value) => _rotateAxis(value, original.up, skeleton.bodyRoll);
-  final points = {for (final e in original.p.entries) e.key: origin + direction(e.value - origin)};
-  final endDir = {for (final e in original.endDir.entries) e.key: direction(e.value)};
-  for (final (name, spec) in skeleton.limbPoses.entries.map((e) => (e.key, e.value))) {
+  final points = {
+    for (final e in original.p.entries)
+      e.key: origin + direction(e.value - origin)
+  };
+  final endDir = {
+    for (final e in original.endDir.entries) e.key: direction(e.value)
+  };
+  for (final (name, spec)
+      in skeleton.limbPoses.entries.map((e) => (e.key, e.value))) {
     if (spec.reach3 == null) continue;
     final side = name.startsWith('near') ? 'near' : 'far';
     final leg = name.endsWith('Leg');
     final root = points['$side${leg ? 'Hip' : 'Shoulder'}']!;
     final end = root + spec.reach3!;
-    final mid = ikJoint(root, end, leg ? figure.dims.thigh : figure.dims.upperArm,
-        leg ? figure.dims.shin : figure.dims.forearm, spec.pole ?? direction(original.front));
+    final mid = ikJoint(
+        root,
+        end,
+        leg ? figure.dims.thigh : figure.dims.upperArm,
+        leg ? figure.dims.shin : figure.dims.forearm,
+        spec.pole ?? direction(original.front));
     points['$side${leg ? 'Knee' : 'Elbow'}'] = mid;
     points['$side${leg ? 'Ankle' : 'Hand'}'] = end;
-    if (spec.end3 != null) endDir['$side${leg ? 'Foot' : 'Hand'}'] = spec.end3!.unit;
-    if (leg) points['${side}Toe'] = end + endDir['${side}Foot']! * figure.dims.foot;
+    if (spec.end3 != null) {
+      endDir['$side${leg ? 'Foot' : 'Hand'}'] = spec.end3!.unit;
+    }
+    if (leg) {
+      points['${side}Toe'] = end + endDir['${side}Foot']! * figure.dims.foot;
+    }
   }
   return Body3D(
       p: points,
@@ -1025,7 +1168,9 @@ Body3D _rollBody(Body3D original, Skeleton2D skeleton, Figure3D figure) {
       front: direction(original.front),
       headUp: direction(original.headUp),
       face: direction(original.face),
-      flexor: {for (final e in original.flexor.entries) e.key: direction(e.value)},
+      flexor: {
+        for (final e in original.flexor.entries) e.key: direction(e.value)
+      },
       endDir: endDir,
       grips: original.grips);
 }
@@ -1065,7 +1210,8 @@ class Camera3D {
         _ce = math.cos(_rad(pitchDeg)),
         _se = math.sin(_rad(pitchDeg)) {
     final zc0 = distance * _ce;
-    position = V3(center.x + zc0 * _sy, center.y - distance * _se, center.z + zc0 * _cy);
+    position = V3(
+        center.x + zc0 * _sy, center.y - distance * _se, center.z + zc0 * _cy);
     final l = view(center + lightDir);
     final n = math.sqrt(l.x * l.x + l.y * l.y);
     light2 = n == 0 ? const Offset(0, -1) : Offset(l.x / n, l.y / n);
@@ -1092,7 +1238,11 @@ class Camera3D {
   Projected project(V3 p) {
     final v = view(p);
     final k = distance / (distance - v.z);
-    return Projected(Offset(size.width / 2 + v.x * k * scale, size.height / 2 + v.y * k * scale), k * scale, v.z);
+    return Projected(
+        Offset(size.width / 2 + v.x * k * scale,
+            size.height / 2 + v.y * k * scale),
+        k * scale,
+        v.z);
   }
 
   /// Profundidad horizontal (sin la inclinación): cuánto más cerca de la
@@ -1159,11 +1309,15 @@ Color _tone(Color c, double near) {
   final gray = Color.fromARGB(c.alpha, g, g, (g * 1.04).round().clamp(0, 255));
   final desat = Color.lerp(gray, c, 0.62 + 0.38 * near)!;
   final k = 0.62 + 0.38 * near;
-  return Color.fromARGB(c.alpha, (desat.red * k).round(), (desat.green * k).round(), (desat.blue * k).round());
+  return Color.fromARGB(c.alpha, (desat.red * k).round(),
+      (desat.green * k).round(), (desat.blue * k).round());
 }
 
 Color _scaled(Color c, double k, [double alpha = 1]) => Color.fromRGBO(
-    (c.red * k).round().clamp(0, 255), (c.green * k).round().clamp(0, 255), (c.blue * k).round().clamp(0, 255), alpha);
+    (c.red * k).round().clamp(0, 255),
+    (c.green * k).round().clamp(0, 255),
+    (c.blue * k).round().clamp(0, 255),
+    alpha);
 
 /// Degradado de volumen: borde iluminado, brillo, medio tono y sombra.
 Paint _shadePaint(Offset from, Offset to, _Mat m, double near) => Paint()
@@ -1203,15 +1357,19 @@ Path capsulePath(Offset a, double ra, Offset b, double rb) {
   path.lineTo(b.dx + rb * math.cos(phi + th), b.dy + rb * math.sin(phi + th));
   path.arcTo(Rect.fromCircle(center: b, radius: rb), phi + th, -2 * th, false);
   path.lineTo(a.dx + ra * math.cos(phi - th), a.dy + ra * math.sin(phi - th));
-  path.arcTo(Rect.fromCircle(center: a, radius: ra), phi - th, 2 * th - 2 * math.pi, false);
+  path.arcTo(Rect.fromCircle(center: a, radius: ra), phi - th,
+      2 * th - 2 * math.pi, false);
   return path..close();
 }
 
 /// Casco convexo (cadena monótona).
 List<Offset> convexHull(List<Offset> input) {
   if (input.length < 3) return [...input];
-  final pts = [...input]..sort((a, b) => a.dx != b.dx ? a.dx.compareTo(b.dx) : a.dy.compareTo(b.dy));
-  double cross(Offset o, Offset a, Offset b) => (a.dx - o.dx) * (b.dy - o.dy) - (a.dy - o.dy) * (b.dx - o.dx);
+  final pts = [
+    ...input
+  ]..sort((a, b) => a.dx != b.dx ? a.dx.compareTo(b.dx) : a.dy.compareTo(b.dy));
+  double cross(Offset o, Offset a, Offset b) =>
+      (a.dx - o.dx) * (b.dy - o.dy) - (a.dy - o.dy) * (b.dx - o.dx);
   final lo = <Offset>[], up = <Offset>[];
   for (final p in pts) {
     while (lo.length >= 2 && cross(lo[lo.length - 2], lo.last, p) <= 0) {
@@ -1251,7 +1409,11 @@ const _torsoSections = [
   for (var i = 0; i < s.length - 1; i++) {
     if (t <= s[i + 1].t) {
       final u = (t - s[i].t) / (s[i + 1].t - s[i].t);
-      return (w: _lerp(s[i].w, s[i + 1].w, u), d: _lerp(s[i].d, s[i + 1].d, u), o: _lerp(s[i].o, s[i + 1].o, u));
+      return (
+        w: _lerp(s[i].w, s[i + 1].w, u),
+        d: _lerp(s[i].d, s[i + 1].d, u),
+        o: _lerp(s[i].o, s[i + 1].o, u)
+      );
     }
   }
   return (w: s.last.w, d: s.last.d, o: s.last.o);
@@ -1263,14 +1425,17 @@ const _torsoSections = [
 
 /// Pinta una figura en un punto del recorrido (0 = primer momento, 1 = último).
 /// Sin `yaw` ni `pitch`, la vista inicial de la figura.
-void paintFigure3D(Canvas canvas, Size size, Figure3D fig, double progress, {double? yaw, double? pitch}) =>
-    _Scene(canvas, size, fig, fig.skeletonAt(progress), yaw ?? fig.initialYaw, pitch ?? fig.initialPitch, progress)
+void paintFigure3D(Canvas canvas, Size size, Figure3D fig, double progress,
+        {double? yaw, double? pitch}) =>
+    _Scene(canvas, size, fig, fig.skeletonAt(progress), yaw ?? fig.initialYaw,
+            pitch ?? fig.initialPitch, progress)
         .render();
 
 final _cameraCache = Expando<Map<(Size, double, double), Camera3D>>();
 
 /// Cámara con la que se pinta una figura en un lienzo de ese tamaño.
-Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defaultPitch}) {
+Camera3D cameraFor(Figure3D fig, Size size,
+    {double yaw = 0, double pitch = defaultPitch}) {
   final cache = _cameraCache[fig] ??= {};
   final key = (size, yaw, pitch);
   if (cache[key] case final previous?) return previous;
@@ -1279,26 +1444,38 @@ Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defa
     final body = liftSkeleton(fig.skeletonAt(step / 8), fig);
     world.addAll(body.p.values);
     final h = body.p['head']!;
-    world.addAll([h + V3(0, fig.dims.headRadius, 0), h - V3(0, fig.dims.headRadius, 0)]);
+    world.addAll(
+        [h + V3(0, fig.dims.headRadius, 0), h - V3(0, fig.dims.headRadius, 0)]);
   }
-  for (final prop in [...fig.props, for (final frame in fig.frames) ...?frame.props]) {
-    if (prop['type'] == 'bar') world.add(V3(_num(prop['x']), _num(prop['y']), 0));
+  for (final prop in [
+    ...fig.props,
+    for (final frame in fig.frames) ...?frame.props
+  ]) {
+    if (prop['type'] == 'bar') {
+      world.add(V3(_num(prop['x']), _num(prop['y']), 0));
+    }
     if (prop['type'] == 'box') {
-      final c = _vector(prop['center'] as List), extent = _vector(prop['size'] as List) * .5;
+      final c = _vector(prop['center'] as List),
+          extent = _vector(prop['size'] as List) * .5;
       for (final sign in [-1.0, 1.0]) {
         world.add(c + extent * sign);
       }
     }
   }
-  final minX = world.map((p) => p.x).reduce(math.min), maxX = world.map((p) => p.x).reduce(math.max);
-  final minY = world.map((p) => p.y).reduce(math.min), maxY = world.map((p) => p.y).reduce(math.max);
-  final minZ = world.map((p) => p.z).reduce(math.min), maxZ = world.map((p) => p.z).reduce(math.max);
+  final minX = world.map((p) => p.x).reduce(math.min),
+      maxX = world.map((p) => p.x).reduce(math.max);
+  final minY = world.map((p) => p.y).reduce(math.min),
+      maxY = world.map((p) => p.y).reduce(math.max);
+  final minZ = world.map((p) => p.z).reduce(math.min),
+      maxZ = world.map((p) => p.z).reduce(math.max);
   final center = V3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
-  final probe = Camera3D(yawDeg: yaw, pitchDeg: pitch, center: center, scale: 1, size: Size.zero);
+  final probe = Camera3D(
+      yawDeg: yaw, pitchDeg: pitch, center: center, scale: 1, size: Size.zero);
   final projected = world.map((p) => probe.project(p).offset).toList();
   final width = 2 * projected.map((p) => p.dx.abs()).reduce(math.max);
   final height = 2 * projected.map((p) => p.dy.abs()).reduce(math.max);
-  final scale = math.min(size.width / (width * 1.15 + 9), size.height / (height * 1.15 + 9));
+  final scale = math.min(
+      size.width / (width * 1.15 + 9), size.height / (height * 1.15 + 9));
   if (cache.length >= 32) cache.remove(cache.keys.first);
   return cache[key] = Camera3D(
     yawDeg: yaw,
@@ -1310,7 +1487,8 @@ Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defa
 }
 
 class _Scene {
-  _Scene(this.canvas, this.size, this.fig, this.skel, double yaw, double pitch, this.progress)
+  _Scene(this.canvas, this.size, this.fig, this.skel, double yaw, double pitch,
+      this.progress)
       : cam = cameraFor(fig, size, yaw: yaw, pitch: pitch),
         body = liftSkeleton(skel, fig);
 
@@ -1322,7 +1500,9 @@ class _Scene {
   final Body3D body;
   final double progress;
   List<Map<String, Object?>> get props =>
-      fig.frames[(progress.clamp(0, 1) * (fig.frames.length - 1)).round()].props ?? fig.props;
+      fig.frames[(progress.clamp(0, 1) * (fig.frames.length - 1)).round()]
+          .props ??
+      fig.props;
 
   late final double _zHip = cam.depth(body.p['hip']!);
 
@@ -1355,12 +1535,16 @@ class _Scene {
         text: TextSpan(
             text: annotation['text'] as String,
             style: const TextStyle(
-                color: Color(0xFFFFD097), fontSize: 12, fontFamily: 'Roboto', fontWeight: FontWeight.w600)),
+                color: Color(0xFFFFD097),
+                fontSize: 12,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w600)),
         textDirection: TextDirection.ltr,
       )..layout(maxWidth: size.width * .48);
       final corner = annotation['corner'] as String? ?? 'tl';
       final left = corner.endsWith('l') ? 10.0 : size.width - text.width - 26;
-      final top = corner.startsWith('t') ? 12.0 : size.height - text.height - 28;
+      final top =
+          corner.startsWith('t') ? 12.0 : size.height - text.height - 28;
       final rect = Rect.fromLTWH(left, top, text.width + 16, text.height + 12);
       final target = cam.project(joint).offset;
       canvas.drawLine(
@@ -1370,8 +1554,8 @@ class _Scene {
             ..color = const Color(0xFFD5A872)
             ..strokeWidth = 1.2);
       canvas.drawCircle(target, 3, Paint()..color = const Color(0xFFFF963A));
-      canvas.drawRRect(
-          RRect.fromRectAndRadius(rect, const Radius.circular(6)), Paint()..color = const Color(0xEF17100A));
+      canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(6)),
+          Paint()..color = const Color(0xEF17100A));
       text.paint(canvas, rect.topLeft + const Offset(8, 6));
       text.dispose();
     }
@@ -1383,12 +1567,19 @@ class _Scene {
     final box = fig.frameBox;
     final x0 = box.left - 10, x1 = box.right + 10;
     const zr = 20.0;
-    final corners = [V3(x0, 0, -zr), V3(x1, 0, -zr), V3(x1, 0, zr), V3(x0, 0, zr)].map(cam.project).toList();
+    final corners = [
+      V3(x0, 0, -zr),
+      V3(x1, 0, -zr),
+      V3(x1, 0, zr),
+      V3(x0, 0, zr)
+    ].map(cam.project).toList();
     final c = cam.project(V3((x0 + x1) / 2, 0, 0)).offset;
     final r = corners.map((p) => (p.offset - c).distance).reduce(math.max);
     canvas.drawPath(
       _poly([for (final p in corners) p.offset]),
-      Paint()..shader = ui.Gradient.radial(c, r, const [Color(0x8C3A291D), Color(0x003A291D)]),
+      Paint()
+        ..shader = ui.Gradient.radial(
+            c, r, const [Color(0x8C3A291D), Color(0x003A291D)]),
     );
   }
 
@@ -1397,15 +1588,18 @@ class _Scene {
     V3 fl(V3 v) => V3(v.x, -0.02, v.z);
     // Sombra difusa del cuerpo aplastado sobre el suelo (luz cenital).
     final hAvg = -(skel.joints['hip']!.dy + skel.joints['neck']!.dy) / 2;
-    final layer = Paint()..color = Color.fromRGBO(0, 0, 0, (0.62 - hAvg * 0.006).clamp(0.22, 0.6));
+    final layer = Paint()
+      ..color = Color.fromRGBO(0, 0, 0, (0.62 - hAvg * 0.006).clamp(0.22, 0.6));
     canvas.saveLayer(Offset.zero & size, layer);
     final fill = Paint()
       ..color = const Color(0xFF000000)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, (0.5 + hAvg * 0.03) * cam.scale);
+      ..maskFilter =
+          MaskFilter.blur(BlurStyle.normal, (0.5 + hAvg * 0.03) * cam.scale);
     void seg(String a, String b, double ra, double rb) {
       if (p[a] == null || p[b] == null) return;
       final pa = cam.project(fl(p[a]!)), pb = cam.project(fl(p[b]!));
-      canvas.drawPath(capsulePath(pa.offset, ra * pa.k, pb.offset, rb * pb.k), fill);
+      canvas.drawPath(
+          capsulePath(pa.offset, ra * pa.k, pb.offset, rb * pb.k), fill);
     }
 
     for (final s in const ['near', 'far']) {
@@ -1438,7 +1632,10 @@ class _Scene {
       final rx = cam.project(V3(v.x + 2.2, 0, v.z)).offset - c.offset;
       final rz = cam.project(V3(v.x, 0, v.z + 1.5)).offset - c.offset;
       canvas.drawOval(
-        Rect.fromCenter(center: c.offset, width: rx.distance * 2, height: math.max(rz.distance * 2, 2)),
+        Rect.fromCenter(
+            center: c.offset,
+            width: rx.distance * 2,
+            height: math.max(rz.distance * 2, 2)),
         Paint()
           ..color = Color.fromRGBO(0, 0, 0, 0.55 * a)
           ..maskFilter = MaskFilter.blur(BlurStyle.normal, 0.35 * cam.scale),
@@ -1449,14 +1646,17 @@ class _Scene {
   // --- volúmenes -----------------------------------------------------------
 
   /// Caja con centro y tres semiejes; solo las caras que miran a la cámara.
-  void _box(V3 c, List<V3> e, Color color, {double alpha = 1, double edge = 0.5}) {
+  void _box(V3 c, List<V3> e, Color color,
+      {double alpha = 1, double edge = 0.5}) {
     for (var k = 0; k < 3; k++) {
       for (final s in const [1.0, -1.0]) {
         final n = e[k] * s;
         final fc = c + n;
         if (!cam.faces(fc, n)) continue;
         final ei = e[(k + 1) % 3], ej = e[(k + 2) % 3];
-        final pts = [fc + ei + ej, fc - ei + ej, fc - ei - ej, fc + ei - ej].map((v) => cam.project(v).offset).toList();
+        final pts = [fc + ei + ej, fc - ei + ej, fc - ei - ej, fc + ei - ej]
+            .map((v) => cam.project(v).offset)
+            .toList();
         final lam = 0.42 + 0.58 * math.max(0, n.unit.dot(lightDir));
         final path = _poly(pts);
         canvas.drawPath(path, Paint()..color = _scaled(color, lam, alpha));
@@ -1472,13 +1672,17 @@ class _Scene {
   }
 
   /// Cápsula sombreada; devuelve su contorno para recortar zonas encima.
-  Path _capsule(V3 a, V3 b, double ra, double rb, _Mat m, double near, {bool outline = true}) {
+  Path _capsule(V3 a, V3 b, double ra, double rb, _Mat m, double near,
+      {bool outline = true}) {
     final pa = cam.project(a), pb = cam.project(b);
     final ka = ra * pa.k, kb = rb * pb.k;
     final path = capsulePath(pa.offset, ka, pb.offset, kb);
     final mid = (pa.offset + pb.offset) / 2;
-    final paint = _shadePaint(mid + _lit(pb.offset - pa.offset) * math.max(ka, kb),
-        mid - _lit(pb.offset - pa.offset) * math.max(ka, kb), m, near);
+    final paint = _shadePaint(
+        mid + _lit(pb.offset - pa.offset) * math.max(ka, kb),
+        mid - _lit(pb.offset - pa.offset) * math.max(ka, kb),
+        m,
+        near);
     canvas.drawPath(path, paint);
     if (outline) canvas.drawPath(path, _outline(cam, near));
     return path;
@@ -1501,8 +1705,15 @@ class _Scene {
       p.offset,
       rr,
       Paint()
-        ..shader = ui.Gradient.radial(p.offset, rr, [_tone(m.hi, near), _tone(m.mid, near), _tone(m.lo, near)],
-            const [0, 0.55, 1], TileMode.clamp, null, focal, rr * 0.08),
+        ..shader = ui.Gradient.radial(
+            p.offset,
+            rr,
+            [_tone(m.hi, near), _tone(m.mid, near), _tone(m.lo, near)],
+            const [0, 0.55, 1],
+            TileMode.clamp,
+            null,
+            focal,
+            rr * 0.08),
     );
     if (outline) canvas.drawCircle(p.offset, rr, _outline(cam, near));
   }
@@ -1529,7 +1740,9 @@ class _Scene {
       final full = h >= math.pi - 1e-6;
       final n = math.max(8, (2 * h / _rad(5)).ceil());
       final ths = [for (var i = 0; i <= n; i++) c - h + 2 * h * i / n];
-      final vis = [for (final th in ths) cam.faces(point(t, th), normal(t, th))];
+      final vis = [
+        for (final th in ths) cam.faces(point(t, th), normal(t, th))
+      ];
       int? first, last;
       if (full) {
         // Circular: se arranca en una muestra oculta para no partir el tramo.
@@ -1569,7 +1782,8 @@ class _Scene {
       for (var k = 0; k <= arc; k++) pr(ta, _lerp(a0, a1, k / arc)),
       for (final (t, _, e) in spans.sublist(1, spans.length - 1)) pr(t, e),
       for (var k = arc; k >= 0; k--) pr(tb, _lerp(b0, b1, k / arc)),
-      for (final (t, s0, _) in spans.sublist(1, spans.length - 1).reversed) pr(t, s0),
+      for (final (t, s0, _) in spans.sublist(1, spans.length - 1).reversed)
+        pr(t, s0),
     ];
     canvas.save();
     canvas.clipPath(clip);
@@ -1578,12 +1792,14 @@ class _Scene {
   }
 
   /// Superficie de una cápsula cónica con su marco: `front` define θ = 0.
-  (V3 Function(double, double), V3 Function(double, double)) _limbSurface(V3 a, V3 b, double ra, double rb, V3 front) {
+  (V3 Function(double, double), V3 Function(double, double)) _limbSurface(
+      V3 a, V3 b, double ra, double rb, V3 front) {
     final dd = (b - a).unit;
     final f = (front - dd * front.dot(dd)).unit;
     final s = dd.cross(f);
     V3 normal(double t, double th) => f * math.cos(th) + s * math.sin(th);
-    V3 point(double t, double th) => V3.lerp(a, b, t) + normal(t, th) * _lerp(ra, rb, t);
+    V3 point(double t, double th) =>
+        V3.lerp(a, b, t) + normal(t, th) * _lerp(ra, rb, t);
     return (point, normal);
   }
 
@@ -1593,10 +1809,13 @@ class _Scene {
       };
 
   /// Un segmento de extremidad con su ropa y sus zonas musculares.
-  Path _anatomicLimb(V3 a, V3 b, double ra, double rb, String part, double near) {
+  Path _anatomicLimb(
+      V3 a, V3 b, double ra, double rb, String part, double near) {
     final pa = cam.project(a), pb = cam.project(b);
     final delta = pb.offset - pa.offset;
-    if (delta.distance < 1) return _capsule(a, b, ra, rb, _skin, near, outline: false);
+    if (delta.distance < 1) {
+      return _capsule(a, b, ra, rb, _skin, near, outline: false);
+    }
     final normal = Offset(-delta.dy, delta.dx) / delta.distance;
     final samples = <(double, double)>[
       (0, ra),
@@ -1621,14 +1840,19 @@ class _Scene {
     ]) {
       path = Path.combine(PathOperation.union, path, Path()..addOval(cap));
     }
-    final mid = (pa.offset + pb.offset) / 2, width = math.max(ra * pa.k, rb * pb.k);
-    canvas.drawPath(path, _shadePaint(mid + _lit(delta) * width, mid - _lit(delta) * width, _skin, near));
+    final mid = (pa.offset + pb.offset) / 2,
+        width = math.max(ra * pa.k, rb * pb.k);
+    canvas.drawPath(
+        path,
+        _shadePaint(
+            mid + _lit(delta) * width, mid - _lit(delta) * width, _skin, near));
     // Los extremos se funden; no hay bisagras negras en codo o rodilla.
 
     return path;
   }
 
-  void _limb(String side, String part, String a, String b, double ra, double rb) {
+  void _limb(
+      String side, String part, String a, String b, double ra, double rb) {
     final pa = body.p['$side$a'], pb = body.p['$side$b'];
     if (pa == null || pb == null) return;
     final near = nearOf(V3.lerp(pa, pb, 0.5));
@@ -1642,17 +1866,26 @@ class _Scene {
     Paint paintOf(_Mat m) => _shadePaint(mid + lit * r, mid - lit * r, m, near);
     if (part == 'UpperArm' && fig.regions.any((r) => r.part == 'shoulder')) {
       // Deltoide: casquete que baja desde el hombro por el tercio de arriba.
-      _patch(point, normal, -0.15, 0.36, (_) => math.pi, (t) => _rad(t < 0.2 ? 180 : _lerp(180, 70, (t - 0.2) / 0.16)),
-          paintOf(_muscle), clip);
+      _patch(
+          point,
+          normal,
+          -0.15,
+          0.36,
+          (_) => math.pi,
+          (t) => _rad(t < 0.2 ? 180 : _lerp(180, 70, (t - 0.2) / 0.16)),
+          paintOf(_muscle),
+          clip);
     }
     for (final reg in fig.regions) {
       if (reg.part != part[0].toLowerCase() + part.substring(1)) continue;
       final halfW = reg.face == 'all' ? math.pi : _rad(reg.width);
-      _patch(point, normal, reg.from, reg.to, (_) => _faceAngle(reg.face), (_) => halfW, paintOf(_muscle), clip);
+      _patch(point, normal, reg.from, reg.to, (_) => _faceAngle(reg.face),
+          (_) => halfW, paintOf(_muscle), clip);
     }
     if (part == 'Thigh') {
       // Pantaloneta: marca dónde empieza la pierna y dónde está la cadera.
-      _patch(point, normal, -0.2, 0.26, (_) => 0, (_) => math.pi, paintOf(_shorts), clip);
+      _patch(point, normal, -0.2, 0.26, (_) => 0, (_) => math.pi,
+          paintOf(_shorts), clip);
     }
   }
 
@@ -1670,7 +1903,9 @@ class _Scene {
 
     V3 normal(double t, double th) {
       final s = _torsoAt(t);
-      return (fr * (math.cos(th) / s.d) + body.up.cross(body.front).unit * (math.sin(th) / s.w)).unit;
+      return (fr * (math.cos(th) / s.d) +
+              body.up.cross(body.front).unit * (math.sin(th) / s.w))
+          .unit;
     }
 
     final pts = <Offset>[];
@@ -1686,9 +1921,14 @@ class _Scene {
       final normal = Offset(-axis.dy, axis.dx) / axis.distance;
       final left = <Offset>[], right = <Offset>[];
       for (var row = 0; row <= 24; row++) {
-        final t = _lerp(_torsoSections.first.t, _torsoSections.last.t, row / 24);
-        final ring = [for (var k = 0; k < 32; k++) cam.project(point(t, k / 32 * 2 * math.pi)).offset];
-        ring.sort((a, b) => (a.dx * normal.dx + a.dy * normal.dy).compareTo(b.dx * normal.dx + b.dy * normal.dy));
+        final t =
+            _lerp(_torsoSections.first.t, _torsoSections.last.t, row / 24);
+        final ring = [
+          for (var k = 0; k < 32; k++)
+            cam.project(point(t, k / 32 * 2 * math.pi)).offset
+        ];
+        ring.sort((a, b) => (a.dx * normal.dx + a.dy * normal.dy)
+            .compareTo(b.dx * normal.dx + b.dy * normal.dy));
         left.add(ring.first);
         right.add(ring.last);
       }
@@ -1707,18 +1947,28 @@ class _Scene {
     Paint paintOf(_Mat m) => _shadePaint(c + lit * mx, c + lit * mn, m, 0.95);
     canvas.drawPath(hull, paintOf(_skin));
     // Espalda un tono más oscura que el pecho: de perfil se lee hacia dónde mira.
-    _patch(point, normal, -0.2, 1.1, (_) => math.pi, (_) => _rad(90), paintOf(_skinBack), hull);
+    _patch(point, normal, -0.2, 1.1, (_) => math.pi, (_) => _rad(90),
+        paintOf(_skinBack), hull);
     for (final reg in fig.regions.where((r) => r.part == 'torso')) {
       if (reg.face == 'lats') {
         // Dorsal: triángulo de la axila a la cintura, en el costado de atrás.
         for (final side in const [1.0, -1.0]) {
-          double u(double t) => ((t - reg.from) / (reg.to - reg.from)).clamp(0.0, 1.0);
-          _patch(point, normal, reg.from, reg.to, (t) => side * _rad(_lerp(138, 102, u(t))),
-              (t) => _rad(_lerp(12, 42, u(t))), paintOf(_muscle), hull);
+          double u(double t) =>
+              ((t - reg.from) / (reg.to - reg.from)).clamp(0.0, 1.0);
+          _patch(
+              point,
+              normal,
+              reg.from,
+              reg.to,
+              (t) => side * _rad(_lerp(138, 102, u(t))),
+              (t) => _rad(_lerp(12, 42, u(t))),
+              paintOf(_muscle),
+              hull);
         }
       } else {
         final halfW = reg.face == 'all' ? math.pi : _rad(reg.width);
-        _patch(point, normal, reg.from, reg.to, (_) => _faceAngle(reg.face), (_) => halfW, paintOf(_muscle), hull);
+        _patch(point, normal, reg.from, reg.to, (_) => _faceAngle(reg.face),
+            (_) => halfW, paintOf(_muscle), hull);
       }
     }
     // Línea del esternón y del abdomen: el frente del torso.
@@ -1747,7 +1997,8 @@ class _Scene {
         ..color = _ink.withOpacity(0.35),
     );
     // Pantaloneta: la pelvis se distingue del tronco.
-    _patch(point, normal, -0.3, 0.17, (_) => 0, (_) => math.pi, paintOf(_shorts), hull);
+    _patch(point, normal, -0.3, 0.17, (_) => 0, (_) => math.pi,
+        paintOf(_shorts), hull);
     canvas.drawPath(hull, _outline(cam, 1));
   }
 
@@ -1756,12 +2007,16 @@ class _Scene {
     final head = p['head']!;
     final r = d.headRadius;
     const near = 1.0;
-    _capsule(p['neck']! + body.headUp * 0.6, head - body.headUp * 1.5, 1.3, 1.15, _skin, near, outline: false);
+    _capsule(p['neck']! + body.headUp * 0.6, head - body.headUp * 1.5, 1.3,
+        1.15, _skin, near,
+        outline: false);
     final face = body.face, hu = body.headUp;
     final nose = head + face * (r * 0.95) - hu * 0.35;
     final noseFront = cam.view(nose).z > cam.view(head).z;
     if (!noseFront) _sphere(nose, 0.4, _skin, near, outline: false);
-    final headShape = _capsule(head - hu * .6, head + hu * .3, r * .82, r * .94, _skin, near, outline: false);
+    final headShape = _capsule(
+        head - hu * .6, head + hu * .3, r * .82, r * .94, _skin, near,
+        outline: false);
     // Pelo: casquete en la nuca y la coronilla. Se mueve con la cara, así
     // que de perfil se sabe hacia dónde mira la cabeza.
     final hc = cam.project(head);
@@ -1777,25 +2032,36 @@ class _Scene {
       hairC,
       r * hc.k * 1.05,
       Paint()
-        ..shader = ui.Gradient.radial(
-            hairC + cam.light2 * r * hc.k * 0.4, r * hc.k * 1.3, [_hair.hi, _hair.mid, _hair.lo], const [0, 0.5, 1]),
+        ..shader = ui.Gradient.radial(hairC + cam.light2 * r * hc.k * 0.4,
+            r * hc.k * 1.3, [_hair.hi, _hair.mid, _hair.lo], const [0, 0.5, 1]),
     );
     canvas.restore();
     canvas.drawPath(headShape, _outline(cam, near));
     // Ojos y orejas: solo los que miran a la cámara.
     for (final side in const [1.0, -1.0]) {
-      final ear = head + body.headUp.cross(body.face).unit * (side * r * 0.97) - face * 0.35;
+      final ear = head +
+          body.headUp.cross(body.face).unit * (side * r * 0.97) -
+          face * 0.35;
       if (cam.faces(ear, body.headUp.cross(body.face).unit * side)) {
         final e = cam.project(ear);
-        canvas.drawOval(Rect.fromCenter(center: e.offset, width: 1.1 * e.k, height: 1.5 * e.k),
+        canvas.drawOval(
+            Rect.fromCenter(
+                center: e.offset, width: 1.1 * e.k, height: 1.5 * e.k),
             Paint()..color = _tone(_skin.mid, near));
-        canvas.drawOval(Rect.fromCenter(center: e.offset, width: 1.1 * e.k, height: 1.5 * e.k), _outline(cam, 0.4));
+        canvas.drawOval(
+            Rect.fromCenter(
+                center: e.offset, width: 1.1 * e.k, height: 1.5 * e.k),
+            _outline(cam, 0.4));
       }
-      final eyeDir = (face * 0.8 + hu * 0.2 + body.headUp.cross(body.face).unit * (side * 0.5)).unit;
+      final eyeDir = (face * 0.8 +
+              hu * 0.2 +
+              body.headUp.cross(body.face).unit * (side * 0.5))
+          .unit;
       final eye = head + eyeDir * (r * 0.97);
       if (cam.faces(eye, eyeDir)) {
         final e = cam.project(eye);
-        canvas.drawCircle(e.offset, 0.42 * e.k, Paint()..color = const Color(0xFF241A13));
+        canvas.drawCircle(
+            e.offset, 0.42 * e.k, Paint()..color = const Color(0xFF241A13));
       }
     }
     if (noseFront) _sphere(nose, 0.4, _skin, near, outline: false);
@@ -1824,19 +2090,24 @@ class _Scene {
       (a - f * 0.9 + sole * 1.25, 0.85), // suela atrás
     ];
     final pts = <Offset>[
-      for (final (q, w) in prof) ...[cam.project(q + z * w).offset, cam.project(q - z * w).offset],
+      for (final (q, w) in prof) ...[
+        cam.project(q + z * w).offset,
+        cam.project(q - z * w).offset
+      ],
     ];
     final hull = _poly(convexHull(pts));
     final h = cam.project(a).offset, t = cam.project(toe).offset;
     final lit = _lit(t - h);
     final r = 1.4 * cam.project(a).k;
-    canvas.drawPath(hull, _shadePaint((h + t) / 2 + lit * r, (h + t) / 2 - lit * r, _shoe, near));
+    canvas.drawPath(hull,
+        _shadePaint((h + t) / 2 + lit * r, (h + t) / 2 - lit * r, _shoe, near));
     // Suela: banda clara en el costado que mira a la cámara.
     final zs = cam.faces(a, z) ? 1.0 : -1.0;
     final bottom = [prof[6], prof[5], prof[4]];
     final band = <Offset>[
       for (final (q, w) in bottom) cam.project(q + z * (zs * w)).offset,
-      for (final (q, w) in bottom.reversed) cam.project(q - sole * 0.55 + z * (zs * w)).offset,
+      for (final (q, w) in bottom.reversed)
+        cam.project(q - sole * 0.55 + z * (zs * w)).offset,
     ];
     canvas.drawPath(_poly(band), Paint()..color = _tone(_soleColor, near));
     canvas.drawPath(hull, _outline(cam, near));
@@ -1857,7 +2128,8 @@ class _Scene {
       final knuckles = Path();
       for (var k = 0; k <= 3; k++) {
         final supinated = body.grips['${side}Hand'] == 'bar_supina';
-        final q = cam.project(V3.lerp(a, b, k / 3) + V3(supinated ? .9 : -.9, -.55, 0));
+        final q = cam
+            .project(V3.lerp(a, b, k / 3) + V3(supinated ? .9 : -.9, -.55, 0));
         knuckles.addOval(Rect.fromCircle(center: q.offset, radius: 0.32 * q.k));
       }
       canvas.save();
@@ -1883,8 +2155,11 @@ class _Scene {
       // eje de una barra transversal. El pulgar rodea el objeto sujetado.
       final center = w + f * (grip == 'hold' ? 2.3 : 1.3);
       _capsule(w, center, .9, 1.05, _skin, near, outline: false);
-      _capsule(center - medial * .95, center + medial * .95, 1.0, 1.0, _skin, near);
-      _capsule(w + medial * .85 + f * .5, center + medial * .75 + th * .4, .45, .4, _skin, near, outline: false);
+      _capsule(
+          center - medial * .95, center + medial * .95, 1.0, 1.0, _skin, near);
+      _capsule(w + medial * .85 + f * .5, center + medial * .75 + th * .4, .45,
+          .4, _skin, near,
+          outline: false);
       return;
     }
     // Algo más grande que la proporción real: a 360 dp el apoyo tiene que leerse.
@@ -1897,19 +2172,28 @@ class _Scene {
     ];
     final pts = <Offset>[
       for (final (l, wd, tk) in prof)
-        for (final (sw, st) in const [(1.0, 1.0), (1.0, -1.0), (-1.0, 1.0), (-1.0, -1.0)])
+        for (final (sw, st) in const [
+          (1.0, 1.0),
+          (1.0, -1.0),
+          (-1.0, 1.0),
+          (-1.0, -1.0)
+        ])
           cam.project(w + f * l + medial * (sw * wd) + th * (st * tk)).offset,
     ];
-    final thumbA = w + medial * 1.1 + f * 0.6, thumbB = w + medial * 1.95 + f * 2.2;
+    final thumbA = w + medial * 1.1 + f * 0.6,
+        thumbB = w + medial * 1.95 + f * 2.2;
     final thumbFront = cam.view(thumbB).z > cam.view(w + f * 1.2).z;
     if (!thumbFront) _capsule(thumbA, thumbB, 0.5, 0.42, _skin, near);
     final hull = _poly(convexHull(pts));
     final h = cam.project(w).offset, t = cam.project(w + f * len).offset;
     final lit = _lit(t - h);
     final r = 1.0 * cam.project(w).k;
-    canvas.drawPath(hull, _shadePaint((h + t) / 2 + lit * r, (h + t) / 2 - lit * r, _skin, near));
+    canvas.drawPath(hull,
+        _shadePaint((h + t) / 2 + lit * r, (h + t) / 2 - lit * r, _skin, near));
     canvas.drawPath(hull, _outline(cam, near));
-    if (thumbFront) _capsule(thumbA, thumbB, 0.5, 0.42, _skin, near, outline: false);
+    if (thumbFront) {
+      _capsule(thumbA, thumbB, 0.5, 0.42, _skin, near, outline: false);
+    }
     // Cuatro dedos y pulgar diferenciados: el apoyo no parece un tubo.
     for (var i = 0; i < 4; i++) {
       final lateral = (i - 1.5) * .62;
@@ -1922,25 +2206,37 @@ class _Scene {
   void _bodyParts(List<DepthPart> parts) {
     final p = body.p;
     double zc(V3 v) => cam.view(v).z;
-    double zm(String a, String b) => p[a] == null || p[b] == null ? 0 : (zc(p[a]!) + zc(p[b]!)) / 2;
+    double zm(String a, String b) =>
+        p[a] == null || p[b] == null ? 0 : (zc(p[a]!) + zc(p[b]!)) / 2;
     for (final (side, sz) in const [('near', 1.0), ('far', -1.0)]) {
       parts
         ..add(DepthPart(
-            zm('${side}Hip', '${side}Knee'), () => _limb(side, 'Thigh', 'Hip', 'Knee', 2.4, 1.65), '${side}Thigh'))
+            zm('${side}Hip', '${side}Knee'),
+            () => _limb(side, 'Thigh', 'Hip', 'Knee', 2.4, 1.65),
+            '${side}Thigh'))
         ..add(DepthPart(
-            zm('${side}Knee', '${side}Ankle'), () => _limb(side, 'Shin', 'Knee', 'Ankle', 1.65, 1.05), '${side}Shin'))
-        ..add(DepthPart(zm('${side}Ankle', '${side}Toe') + 0.05, () => _foot(side), '${side}Foot'))
-        ..add(DepthPart(zm('${side}Shoulder', '${side}Elbow'),
-            () => _limb(side, 'UpperArm', 'Shoulder', 'Elbow', 1.55, 1.15), '${side}UpperArm'))
-        ..add(DepthPart(zm('${side}Elbow', '${side}Hand'), () => _limb(side, 'Forearm', 'Elbow', 'Hand', 1.15, 0.85),
+            zm('${side}Knee', '${side}Ankle'),
+            () => _limb(side, 'Shin', 'Knee', 'Ankle', 1.65, 1.05),
+            '${side}Shin'))
+        ..add(DepthPart(zm('${side}Ankle', '${side}Toe') + 0.05,
+            () => _foot(side), '${side}Foot'))
+        ..add(DepthPart(
+            zm('${side}Shoulder', '${side}Elbow'),
+            () => _limb(side, 'UpperArm', 'Shoulder', 'Elbow', 1.55, 1.15),
+            '${side}UpperArm'))
+        ..add(DepthPart(
+            zm('${side}Elbow', '${side}Hand'),
+            () => _limb(side, 'Forearm', 'Elbow', 'Hand', 1.15, 0.85),
             '${side}Forearm'));
       if (p['${side}Hand'] case final hand?) {
-        parts.add(DepthPart(zc(hand) + 0.1, () => _hand(side, sz), '${side}Hand'));
+        parts.add(
+            DepthPart(zc(hand) + 0.1, () => _hand(side, sz), '${side}Hand'));
       }
     }
     final zT = (zc(p['hip']!) + zc(p['neck']!)) / 2;
     parts.add(DepthPart(zT, _torso, 'torso'));
-    parts.add(DepthPart(zT + (zc(p['head']!) >= zc(p['hip']!) ? 0.2 : -0.2), _head, 'head'));
+    parts.add(DepthPart(
+        zT + (zc(p['head']!) >= zc(p['hip']!) ? 0.2 : -0.2), _head, 'head'));
   }
 
   // --- props ---------------------------------------------------------------
@@ -1951,14 +2247,22 @@ class _Scene {
     for (final pr in props) {
       switch (pr['type']) {
         case 'box':
-          final c = _world(_vector(pr['center'] as List)), extent = _vector(pr['size'] as List) * .5;
-          _box(c, [V3(extent.x, 0, 0), V3(0, extent.y, 0), V3(0, 0, extent.z)], const Color(0xFF536472),
+          final c = _world(_vector(pr['center'] as List)),
+              extent = _vector(pr['size'] as List) * .5;
+          _box(c, [V3(extent.x, 0, 0), V3(0, extent.y, 0), V3(0, 0, extent.z)],
+              const Color(0xFF536472),
               alpha: _num(pr['alpha'], 1));
         case 'tube':
-          _capsule(_world(_vector(pr['a'] as List)), _world(_vector(pr['b'] as List)), _num(pr['radius'], .55),
-              _num(pr['radius'], .55), _metal, 1);
+          _capsule(
+              _world(_vector(pr['a'] as List)),
+              _world(_vector(pr['b'] as List)),
+              _num(pr['radius'], .55),
+              _num(pr['radius'], .55),
+              _metal,
+              1);
         case 'band':
-          V3 point(Object? value) => value is String ? body.p[value]! : _world(_vector(value as List));
+          V3 point(Object? value) =>
+              value is String ? body.p[value]! : _world(_vector(value as List));
           final a = point(pr['a']), b = point(pr['b']);
           final pa = cam.project(a), pb = cam.project(b);
           canvas.drawLine(
@@ -1968,48 +2272,74 @@ class _Scene {
                 ..color = _contact
                 ..strokeWidth = math.max(2.5, cam.scale * .36)
                 ..strokeCap = StrokeCap.round);
-          canvas.drawCircle(pa.offset, math.max(3, cam.scale * .65), Paint()..color = _contact);
+          canvas.drawCircle(pa.offset, math.max(3, cam.scale * .65),
+              Paint()..color = _contact);
         case 'parallettes':
           for (final sign in [-1.0, 1.0]) {
             final hand = body.p[sign > 0 ? 'nearHand' : 'farHand']!;
-            _box(V3(hand.x, -2.5, hand.z), [const V3(5, 0, 0), const V3(0, 2.5, 0), const V3(0, 0, 1.1)],
+            _box(
+                V3(hand.x, -2.5, hand.z),
+                [const V3(5, 0, 0), const V3(0, 2.5, 0), const V3(0, 0, 1.1)],
                 const Color(0xFF536472));
           }
         case 'towel':
           final a = body.p['nearHand']!, b = body.p['farHand']!;
           final c = (a + b) * .5;
-          _box(V3(c.x + 2, -.25, c.z), [const V3(4, 0, 0), const V3(0, .25, 0), const V3(0, 0, 8)],
+          _box(
+              V3(c.x + 2, -.25, c.z),
+              [const V3(4, 0, 0), const V3(0, .25, 0), const V3(0, 0, 8)],
               const Color(0xFF337D77));
         case 'heldPack':
           final hand = body.p[pr['single'] == true ? 'farHand' : 'nearHand']!;
-          _box(hand + const V3(0, 4, 0), [const V3(2.8, 0, 0), const V3(0, 3.8, 0), const V3(0, 0, 2.2)],
+          _box(
+              hand + const V3(0, 4, 0),
+              [const V3(2.8, 0, 0), const V3(0, 3.8, 0), const V3(0, 0, 2.2)],
               const Color(0xFF34766E));
         case 'chestPack':
           break; // Se ordena en profundidad con el cuerpo, no detrás de él.
         case 'wall':
-          final x = _num(pr['x']), th = _num(pr['thick'], 3), top = _num(pr['top'], -80), dz = _num(pr['depth'], 22);
-          _box(V3(x - th / 2, top / 2, 0), [V3(th / 2, 0, 0), V3(0, -top / 2, 0), V3(0, 0, dz)],
+          final x = _num(pr['x']),
+              th = _num(pr['thick'], 3),
+              top = _num(pr['top'], -80),
+              dz = _num(pr['depth'], 22);
+          _box(
+              V3(x - th / 2, top / 2, 0),
+              [V3(th / 2, 0, 0), V3(0, -top / 2, 0), V3(0, 0, dz)],
               const Color(0xFF5E4636));
           // Zócalo: ayuda a leer dónde se juntan pared y suelo.
-          _box(V3(x + 0.25, -0.6, 0), [const V3(0.25, 0, 0), const V3(0, 0.6, 0), V3(0, 0, dz)],
+          _box(
+              V3(x + 0.25, -0.6, 0),
+              [const V3(0.25, 0, 0), const V3(0, 0.6, 0), V3(0, 0, dz)],
               const Color(0xFF7A6150));
         case 'sofa':
           _sofa(pr, 1);
         case 'cushion':
-          final x1 = _num(pr['x1']), x2 = _num(pr['x2']), h = _num(pr['h'], 1), dz = _num(pr['depth'], 8);
-          _box(V3((x1 + x2) / 2, -h / 2, 0), [V3((x2 - x1) / 2, 0, 0), V3(0, h / 2, 0), V3(0, 0, dz)],
+          final x1 = _num(pr['x1']),
+              x2 = _num(pr['x2']),
+              h = _num(pr['h'], 1),
+              dz = _num(pr['depth'], 8);
+          _box(
+              V3((x1 + x2) / 2, -h / 2, 0),
+              [V3((x2 - x1) / 2, 0, 0), V3(0, h / 2, 0), V3(0, 0, dz)],
               const Color(0xFFB07A4E));
         case 'bar':
           // Marco de la puerta: dos parantes y el dintel, detrás del cuerpo.
-          final bx = _num(pr['x']), by = _num(pr['y']), half = _num(pr['half'], 16);
+          final bx = _num(pr['x']),
+              by = _num(pr['y']),
+              half = _num(pr['half'], 16);
           final top = by - 10;
           // De perfil los dos parantes caen detrás del cuerpo: van tenues.
           for (final s in const [-1.0, 1.0]) {
-            _box(V3(bx, top / 2, s * (half + 1.2)), [const V3(2.2, 0, 0), V3(0, -top / 2, 0), const V3(0, 0, 1.2)],
+            _box(
+                V3(bx, top / 2, s * (half + 1.2)),
+                [const V3(2.2, 0, 0), V3(0, -top / 2, 0), const V3(0, 0, 1.2)],
                 const Color(0xFF4A382B),
-                alpha: 0.22, edge: 0.3);
+                alpha: 0.22,
+                edge: 0.3);
           }
-          _box(V3(bx, top - 1.5, 0), [const V3(2.2, 0, 0), const V3(0, 1.5, 0), V3(0, 0, half + 2.4)],
+          _box(
+              V3(bx, top - 1.5, 0),
+              [const V3(2.2, 0, 0), const V3(0, 1.5, 0), V3(0, 0, half + 2.4)],
               const Color(0xFF4A382B));
       }
     }
@@ -2017,23 +2347,37 @@ class _Scene {
 
   void _sofa(Map<String, Object?> pr, double alpha, {bool cut = false}) {
     final x1 = _num(pr['x1']), x2 = _num(pr['x2']);
-    final under = _num(pr['under']), seat = _num(pr['seat']), back = _num(pr['back']), bw = _num(pr['backW'], 7);
+    final under = _num(pr['under']),
+        seat = _num(pr['seat']),
+        back = _num(pr['back']),
+        bw = _num(pr['backW'], 7);
     final dz = _num(pr['depth'], 19);
     const base = Color(0xFF5C4A66);
     if (cut) {
       // Corte: el frente del sofá, translúcido, por encima de los pies: se
       // ve que los talones quedan trabados debajo.
       final c = V3((x1 + x2) / 2, (seat + under) / 2, 0);
-      _box(c, [V3((x2 - x1) / 2, 0, 0), V3(0, (under - seat) / 2, 0), V3(0, 0, dz)], base, alpha: alpha, edge: 0.9);
+      _box(
+          c,
+          [V3((x2 - x1) / 2, 0, 0), V3(0, (under - seat) / 2, 0), V3(0, 0, dz)],
+          base,
+          alpha: alpha,
+          edge: 0.9);
       return;
     }
-    _box(V3((x1 + x2) / 2, (seat + under) / 2, 0),
-        [V3((x2 - x1) / 2, 0, 0), V3(0, (under - seat) / 2, 0), V3(0, 0, dz)], base);
-    _box(V3(x1 + bw / 2, (back + seat) / 2, 0), [V3(bw / 2, 0, 0), V3(0, (seat - back) / 2, 0), V3(0, 0, dz)],
+    _box(
+        V3((x1 + x2) / 2, (seat + under) / 2, 0),
+        [V3((x2 - x1) / 2, 0, 0), V3(0, (under - seat) / 2, 0), V3(0, 0, dz)],
+        base);
+    _box(
+        V3(x1 + bw / 2, (back + seat) / 2, 0),
+        [V3(bw / 2, 0, 0), V3(0, (seat - back) / 2, 0), V3(0, 0, dz)],
         const Color(0xFF4E3E58));
     for (final fx in [x1 + 1.5, x2 - 1.5]) {
       for (final fz in [-dz + 1.5, dz - 1.5]) {
-        _box(V3(fx, under / 2, fz), [const V3(0.7, 0, 0), V3(0, -under / 2, 0), const V3(0, 0, 0.7)],
+        _box(
+            V3(fx, under / 2, fz),
+            [const V3(0.7, 0, 0), V3(0, -under / 2, 0), const V3(0, 0, 0.7)],
             const Color(0xFF3C2C22));
       }
     }
@@ -2044,18 +2388,25 @@ class _Scene {
     for (final pr in props) {
       switch (pr['type']) {
         case 'bar':
-          final bx = _num(pr['x']), by = _num(pr['y']), half = _num(pr['half'], 16);
+          final bx = _num(pr['x']),
+              by = _num(pr['y']),
+              half = _num(pr['half'], 16);
           // La barra en tramos: la mano de adelante queda encima y la de atrás debajo.
           const n = 8;
           for (var i = 0; i < n; i++) {
-            final a = V3(bx, by, _lerp(-half, half, i / n)), b = V3(bx, by, _lerp(-half, half, (i + 1) / n));
-            parts.add(DepthPart((zc(a) + zc(b)) / 2 - 0.4, () => _capsule(a, b, 0.75, 0.75, _metal, 1), 'bar'));
+            final a = V3(bx, by, _lerp(-half, half, i / n)),
+                b = V3(bx, by, _lerp(-half, half, (i + 1) / n));
+            parts.add(DepthPart((zc(a) + zc(b)) / 2 - 0.4,
+                () => _capsule(a, b, 0.75, 0.75, _metal, 1), 'bar'));
           }
         case 'chestPack':
           final c = body.p['hip']! + body.up * 11 + body.front * 5.5;
           parts.add(DepthPart(
               zc(c),
-              () => _box(c, [body.front * 2.8, body.up * 4.8, const V3(0, 0, 4)], const Color(0xFF34766E)),
+              () => _box(
+                  c,
+                  [body.front * 2.8, body.up * 4.8, const V3(0, 0, 4)],
+                  const Color(0xFF34766E)),
               'chestPack'));
         case 'backpack':
           final p = body.p;
@@ -2071,10 +2422,13 @@ class _Scene {
           for (final s in const [1.0, -1.0]) {
             final top = c + up * 5.0 - back * 1.6 + V3(0, 0, s * 2.7);
             final sh = p['neck']! + up * 0.6 + back * 0.3 + V3(0, 0, s * 3.0);
-            final fr = hip + up * (d.torso * 0.48) - back * 3.0 + V3(0, 0, s * 3.4);
+            final fr =
+                hip + up * (d.torso * 0.48) - back * 3.0 + V3(0, 0, s * 3.4);
             for (final (a, b) in [(top, sh), (sh, fr)]) {
-              parts.add(
-                  DepthPart((zc(a) + zc(b)) / 2 + 0.3, () => _capsule(a, b, 0.48, 0.48, _strap, nearOf(a)), 'strap'));
+              parts.add(DepthPart(
+                  (zc(a) + zc(b)) / 2 + 0.3,
+                  () => _capsule(a, b, 0.48, 0.48, _strap, nearOf(a)),
+                  'strap'));
             }
           }
       }
@@ -2087,7 +2441,9 @@ class _Scene {
       // El corte solo cubre pies y tobillos: lo que queda bajo el sofá.
       final pts = <Offset>[];
       for (final side in const ['near', 'far']) {
-        final a = body.p['${side}Ankle'], t = body.p['${side}Toe'], k = body.p['${side}Knee'];
+        final a = body.p['${side}Ankle'],
+            t = body.p['${side}Toe'],
+            k = body.p['${side}Knee'];
         if (a == null || t == null || k == null) continue;
         for (final q in [a, t, V3.lerp(a, k, 0.35)]) {
           for (final o in const [
