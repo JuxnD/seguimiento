@@ -1,0 +1,3 @@
+Formatted test/ui/illustration_guided_render_test.dart
+Formatted 2 files (1 changed) in 0.44 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T190221447-63372-bff3151ba2654f0cb6cce29447beb510.json

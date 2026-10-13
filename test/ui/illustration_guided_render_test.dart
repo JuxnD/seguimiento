@@ -59,8 +59,9 @@ void main() {
     ];
     expect(entries.length, 43);
     if (selectionFile != null) {
-      final selection = (jsonDecode(File(selectionFile).readAsStringSync()) as List).cast<Map<String,Object?>>();
-      entries.removeWhere((entry) => !selection.any((item) => item['name']==entry.name && item['key']==(entry.key ?? 'base')));
+      final selection = (jsonDecode(File(selectionFile).readAsStringSync()) as List).cast<Map<String, Object?>>();
+      entries.removeWhere(
+          (entry) => !selection.any((item) => item['name'] == entry.name && item['key'] == (entry.key ?? 'base')));
       expect(entries.length, selection.length);
     }
     final manifest = <Map<String, Object?>>[];
