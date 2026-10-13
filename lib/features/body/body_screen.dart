@@ -19,6 +19,8 @@ import 'photos_screen.dart';
 import 'ladders_screen.dart';
 import 'skills_screen.dart';
 import 'test_results_screen.dart';
+import 'mobility_benchmarks_screen.dart';
+import 'knee_history_card.dart';
 import '../../ui/theme.dart';
 
 class BodyScreen extends ConsumerWidget {
@@ -30,11 +32,15 @@ class BodyScreen extends ConsumerWidget {
     final checkIns = ref.watch(checkInsProvider);
     final profile = ref.watch(profileProvider).value;
     final unit = profile?.lengthUnit ?? LengthUnit.cm;
-    final lastCheck = (checkIns.value ?? const []).isEmpty ? null : checkIns.value!.first.date;
+    final lastCheck = (checkIns.value ?? const []).isEmpty
+        ? null
+        : checkIns.value!.first.date;
     final due = measurementDue(
       today: ref.watch(todayProvider),
       lastMeasurement: lastCheck,
-      agreed: profile?.nextMeasurementDate == null ? null : parseDay(profile!.nextMeasurementDate!),
+      agreed: profile?.nextMeasurementDate == null
+          ? null
+          : parseDay(profile!.nextMeasurementDate!),
       minDays: profile?.measureIntervalDays ?? 21,
       maxDays: profile?.measureIntervalMaxDays ?? 28,
     );
@@ -52,10 +58,21 @@ class BodyScreen extends ConsumerWidget {
             onWeight: () => _addWeight(context, ref),
             onMeasure: () => _openMeasurement(context, ref, null),
           ),
-          _DecisionCard(weights: weights.value ?? const [], checkIns: checkIns.value ?? const []),
+          _DecisionCard(
+              weights: weights.value ?? const [],
+              checkIns: checkIns.value ?? const []),
           const _SkillsCard(),
           const _LaddersCard(),
           const _TestCard(),
+          const KneeHistoryCard(),
+          AppCard(title: 'Movilidad', children: [
+            OutlinedButton(
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const MobilityBenchmarksScreen())),
+                child: const Text('Registrar y consultar mediciones'))
+          ]),
           AppCard(
             title: 'Peso',
             trailing: IconButton(
@@ -80,21 +97,27 @@ class BodyScreen extends ConsumerWidget {
                               color: _bodyColor,
                               title: formatLong(parseDay(w.date)),
                               subtitle: [
-                                weighMomentOf(w.moment, fasted: w.fasted).label.toLowerCase(),
+                                weighMomentOf(w.moment, fasted: w.fasted)
+                                    .label
+                                    .toLowerCase(),
                                 if (w.time != null) w.time!,
                               ].join(' · '),
                               value: fmtDec(w.kg),
                               valueLabel: 'kg',
                               onLongPress: () async {
                                 final repo = ref.read(bodyRepositoryProvider);
-                                final ok =
-                                    await guarded(context, () => repo.deleteWeight(w.id), failure: 'No se pudo borrar');
+                                final ok = await guarded(
+                                    context, () => repo.deleteWeight(w.id),
+                                    failure: 'No se pudo borrar');
                                 if (ok && context.mounted) {
                                   showUndoSnack(
                                       context,
                                       'Pesaje borrado',
-                                      () => repo.addWeight(parseDay(w.date), w.kg,
-                                          moment: weighMomentOf(w.moment, fasted: w.fasted), time: w.time));
+                                      () => repo.addWeight(
+                                          parseDay(w.date), w.kg,
+                                          moment: weighMomentOf(w.moment,
+                                              fasted: w.fasted),
+                                          time: w.time));
                                 }
                               },
                             ),
@@ -117,7 +140,8 @@ class BodyScreen extends ConsumerWidget {
                 data: (list) => list.isEmpty
                     ? const EmptyState(
                         icon: Icons.straighten,
-                        text: 'Sin tomas de medidas. La primera es tu línea base.',
+                        text:
+                            'Sin tomas de medidas. La primera es tu línea base.',
                       )
                     : Column(
                         children: [
@@ -125,7 +149,8 @@ class BodyScreen extends ConsumerWidget {
                             TypedTile(
                               icon: Icons.straighten,
                               color: _bodyColor,
-                              title: '${formatLong(c.date)}${c.time == null ? '' : ' ${c.time}'} · '
+                              title:
+                                  '${formatLong(c.date)}${c.time == null ? '' : ' ${c.time}'} · '
                                   '${c.fasted ? 'ayunas' : 'después de comer'}',
                               subtitle: [
                                 _summary(c, unit),
@@ -147,9 +172,11 @@ class BodyScreen extends ConsumerWidget {
                 icon: Icons.photo_library_outlined,
                 color: _bodyColor,
                 title: 'Fotos de progreso',
-                subtitle: 'Frente, perfil y espalda, con comparador lado a lado',
+                subtitle:
+                    'Frente, perfil y espalda, con comparador lado a lado',
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PhotosScreen())),
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const PhotosScreen())),
               ),
             ],
           ),
@@ -158,18 +185,25 @@ class BodyScreen extends ConsumerWidget {
     );
   }
 
-  String _summary(MeasurementCheckIn c, LengthUnit unit) =>
-      c.valuesCm.entries.map((e) => '${e.key.shortLabel} ${fmtDec(fromCm(e.value, unit))}').join(' · ');
+  String _summary(MeasurementCheckIn c, LengthUnit unit) => c.valuesCm.entries
+      .map((e) => '${e.key.shortLabel} ${fmtDec(fromCm(e.value, unit))}')
+      .join(' · ');
 
-  Future<void> _openMeasurement(BuildContext context, WidgetRef ref, MeasurementCheckIn? existing) =>
-      Navigator.push(context, MaterialPageRoute(builder: (_) => MeasurementFormScreen(existing: existing)));
+  Future<void> _openMeasurement(
+          BuildContext context, WidgetRef ref, MeasurementCheckIn? existing) =>
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => MeasurementFormScreen(existing: existing)));
 
-  Future<void> _addWeight(BuildContext context, WidgetRef ref) => addWeightDialog(context, ref);
+  Future<void> _addWeight(BuildContext context, WidgetRef ref) =>
+      addWeightDialog(context, ref);
 }
 
 /// Anotar un pesaje con su momento (§18.10). `date`: el día propuesto (hoy
 /// si no se da).
-Future<void> addWeightDialog(BuildContext context, WidgetRef ref, {DateTime? date}) async {
+Future<void> addWeightDialog(BuildContext context, WidgetRef ref,
+    {DateTime? date}) async {
   final result = await showDialog<(DateTime, double, WeighMoment)>(
     context: context,
     builder: (_) => _WeightDialog(today: date ?? ref.read(todayProvider)),
@@ -178,9 +212,8 @@ Future<void> addWeightDialog(BuildContext context, WidgetRef ref, {DateTime? dat
   final now = TimeOfDay.now();
   await guarded(
     context,
-    () => ref
-        .read(bodyRepositoryProvider)
-        .addWeight(result.$1, result.$2, moment: result.$3, time: timeKey(now.hour, now.minute)),
+    () => ref.read(bodyRepositoryProvider).addWeight(result.$1, result.$2,
+        moment: result.$3, time: timeKey(now.hour, now.minute)),
     ok: result.$3 == WeighMoment.ayunas
         ? 'Peso en ayunas guardado'
         : 'Peso guardado como referencia (${result.$3.label.toLowerCase()})',
@@ -200,10 +233,12 @@ class _DecisionCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (weights.isEmpty) return const SizedBox.shrink();
     final reading = twoWeekRule(
-      weeks: weeklyWeightAverages([for (final w in weights) (parseDay(w.date), w.kg, w.fasted)]),
+      weeks: weeklyWeightAverages(
+          [for (final w in weights) (parseDay(w.date), w.kg, w.fasted)]),
       abdomen: [
         for (final c in checkIns)
-          if (c.fasted && c.valuesCm[MeasureSite.abdomen] != null) (c.date, c.valuesCm[MeasureSite.abdomen]!),
+          if (c.fasted && c.valuesCm[MeasureSite.abdomen] != null)
+            (c.date, c.valuesCm[MeasureSite.abdomen]!),
       ],
       today: ref.watch(todayProvider),
     );
@@ -242,11 +277,13 @@ class _SkillsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final done = ref.watch(skillsProvider).valueOrNull ?? const {};
-    final next = skillRoadmap.where((s) => !done.containsKey(s.id)).take(2).toList();
+    final next =
+        skillRoadmap.where((s) => !done.containsKey(s.id)).take(2).toList();
     return AppCard(
       title: 'Habilidades',
       trailing: TextButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SkillsScreen())),
+        onPressed: () => Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const SkillsScreen())),
         child: const Text('Ver todas'),
       ),
       children: [
@@ -267,13 +304,15 @@ class _LaddersCard extends ConsumerWidget {
     return AppCard(
       title: 'Escaleras de core',
       trailing: TextButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LaddersScreen())),
+        onPressed: () => Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const LaddersScreen())),
         child: const Text('Ver'),
       ),
       children: [
-        for (final l in coreLadders)
+        for (final l in allLadders)
           if (advice[l.id] case final a?)
-            Text('${l.name}: peldaño ${a.step.step} de ${l.top}, ${a.step.exercise}'
+            Text(
+                '${l.name}: peldaño ${a.step.step} de ${l.top}, ${a.step.exercise}'
                 '${a.canStepUp ? ' · toca subir' : ''}'),
       ],
     );
@@ -291,7 +330,8 @@ class _TestCard extends ConsumerWidget {
     return AppCard(
       title: 'Test de condición',
       trailing: TextButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TestResultsScreen())),
+        onPressed: () => Navigator.push(context,
+            MaterialPageRoute(builder: (_) => const TestResultsScreen())),
         child: const Text('Ver'),
       ),
       children: [
@@ -330,7 +370,12 @@ class _WeightDialogState extends State<_WeightDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          NumberField(controller: _kg, label: 'Peso', suffix: 'kg', decimal: true, autofocus: true),
+          NumberField(
+              controller: _kg,
+              label: 'Peso',
+              suffix: 'kg',
+              decimal: true,
+              autofocus: true),
           DateTile(date: _date, onChanged: (v) => setState(() => _date = v)),
           Wrap(
             spacing: 6,
@@ -338,7 +383,9 @@ class _WeightDialogState extends State<_WeightDialog> {
             children: [
               for (final m in WeighMoment.values)
                 ChoiceChip(
-                    label: Text(m.label), selected: _moment == m, onSelected: (_) => setState(() => _moment = m)),
+                    label: Text(m.label),
+                    selected: _moment == m,
+                    onSelected: (_) => setState(() => _moment = m)),
             ],
           ),
           const SizedBox(height: 6),
@@ -351,7 +398,9 @@ class _WeightDialogState extends State<_WeightDialog> {
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar')),
         FilledButton(
           onPressed: () {
             final kg = parseNum(_kg.text);
@@ -393,10 +442,13 @@ class _BodyHero extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final latest = weights.isEmpty ? null : weights.first;
     final first = firstWeight;
-    final delta = latest == null || first == null || latest.id == first.id ? null : latest.kg - first.kg;
+    final delta = latest == null || first == null || latest.id == first.id
+        ? null
+        : latest.kg - first.kg;
     // El peso sube y baja día a día: lo que dice algo es el promedio de la
     // semana y su tendencia (§18.10).
-    final weeks = weeklyWeightAverages([for (final w in weights) (parseDay(w.date), w.kg, w.fasted)]);
+    final weeks = weeklyWeightAverages(
+        [for (final w in weights) (parseDay(w.date), w.kg, w.fasted)]);
     final week = weeks.isEmpty ? null : weeks.last;
     final prevWeek = weeks.length < 2 ? null : weeks[weeks.length - 2];
 
@@ -409,7 +461,8 @@ class _BodyHero extends StatelessWidget {
           : [
               'Promedio de la semana del ${formatShort(week.monday)} '
                   '(${week.count} ${week.count == 1 ? 'pesaje' : 'pesajes'})',
-              if (prevWeek != null) '${fmtDelta(week.kg - prevWeek.kg)} kg vs la anterior',
+              if (prevWeek != null)
+                '${fmtDelta(week.kg - prevWeek.kg)} kg vs la anterior',
               if (delta != null && prevWeek == null)
                 '${fmtDelta(delta)} kg desde ${formatShort(parseDay(first!.date))}',
             ].join(' · '),
@@ -417,16 +470,26 @@ class _BodyHero extends StatelessWidget {
       pills: [
         StatPill(
           icon: Icons.straighten,
-          label: due == null ? 'Sin medidas' : (due!.isDue ? 'Toca medir' : 'Medir en ${due!.daysLeft} d'),
+          label: due == null
+              ? 'Sin medidas'
+              : (due!.isDue ? 'Toca medir' : 'Medir en ${due!.daysLeft} d'),
           color: due?.isDue == true ? _bodyColor : null,
         ),
       ],
       children: [
         Row(
           children: [
-            Expanded(child: ActionButton(icon: Icons.monitor_weight_outlined, label: 'Peso', onPressed: onWeight)),
+            Expanded(
+                child: ActionButton(
+                    icon: Icons.monitor_weight_outlined,
+                    label: 'Peso',
+                    onPressed: onWeight)),
             const SizedBox(width: 8),
-            Expanded(child: ActionButton(icon: Icons.straighten, label: 'Medidas', onPressed: onMeasure)),
+            Expanded(
+                child: ActionButton(
+                    icon: Icons.straighten,
+                    label: 'Medidas',
+                    onPressed: onMeasure)),
           ],
         ),
         if (due?.isDue == true)

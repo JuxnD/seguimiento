@@ -1,0 +1,31 @@
+{
+  "head": "4b23a6fa1e29fe3e6d2bb00d1b5a6b1e4914b2a2",
+  "files": [
+    {
+      "path": "test/data/plan034_readiness_stairs_test.dart",
+      "sha256": "D4DE39A0CEF0212A502130CB1E6CDD9AAFF38CA91FE464FC8BA53CBAF10E4DF5"
+    },
+    {
+      "path": "test/ui/personal_radar_integration_test.dart",
+      "sha256": "C2BBEEC7092DD26E82EFEC9EA7792F7C13DD199161FB7B007A194ABCD4706587"
+    },
+    {
+      "path": "lib/data/repositories/readiness_repository.dart",
+      "sha256": "0A4ABA0BC9BF4EA025BABA9D5B95A6781AF95EA92A85B2D0A79D3D395B60A00A"
+    },
+    {
+      "path": "lib/domain/readiness.dart",
+      "sha256": "CF9421D975CB27B3DFE91D4B29C8E6215A3094D6E10AD4FD17F26EC7CF1DEF44"
+    },
+    {
+      "path": "test/support/radar_fixture.dart",
+      "sha256": "A4FC14CBA3E0258252C42222F61CF905BEB8B8BB079F9828046184D3112AE559"
+    },
+    {
+      "path": "test/support/radar_sql_fixture.dart",
+      "sha256": "3F42384E0A9D276D546A0E4B61E80B8E494AAAC298D98A4CA49DE538D5C00E1D"
+    }
+  ],
+  "generated": "59980C598E2D37C6E4B43EFF3FFC5DF70F545D0FA52170A9B4E014DD60CE2ECB",
+  "lock": "6D625ACCE6C72B2485197988D02D0EF85AD1FDC4AC6169B6381F422811D69C05"
+}

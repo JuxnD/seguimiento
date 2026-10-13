@@ -27,6 +27,8 @@ Map<String, Object?> freezeGuidedDay(PlanDayDraft day) => {
             'rirMin': e.rirMin,
             'rirMax': e.rirMax,
             'notes': e.notes,
+            'purpose': e.purpose,
+            'physicalVariantKey': e.physicalVariantKey,
             'supersetGroup': e.supersetGroup,
           }
       ],
@@ -39,7 +41,10 @@ PlanDayDraft thawGuidedDay(Map<String, Object?> j) => PlanDayDraft(
       restBetweenRoundsSec: j['rest'] as int?,
       notes: j['notes'] as String?,
       coreEpochs: (j['coreEpochs'] as Map?)?.cast<String, String>() ?? const {},
-      exercises: [for (final raw in j['exercises']! as List) _exercise((raw as Map).cast<String, Object?>())],
+      exercises: [
+        for (final raw in j['exercises']! as List)
+          _exercise((raw as Map).cast<String, Object?>())
+      ],
     );
 PlanExerciseDraft _exercise(Map<String, Object?> j) => PlanExerciseDraft(
       name: j['name'] as String,
@@ -58,4 +63,6 @@ PlanExerciseDraft _exercise(Map<String, Object?> j) => PlanExerciseDraft(
       rirMax: j['rirMax'] as int?,
       notes: j['notes'] as String?,
       supersetGroup: j['supersetGroup'] as String?,
+      purpose: j['purpose'] as String?,
+      physicalVariantKey: j['physicalVariantKey'] as String?,
     );

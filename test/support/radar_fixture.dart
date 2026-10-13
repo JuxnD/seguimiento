@@ -1,6 +1,31 @@
 import 'package:seguimiento/domain/enums.dart';
 import 'package:seguimiento/domain/fitness_test.dart';
 import 'package:seguimiento/domain/progress_metrics.dart';
+import 'package:seguimiento/domain/test_protocol.dart';
+
+/// Opt-in FICTITIOUS known setup, not a default/backfill for actual legacy rows.
+TestResult knownRadarTest(
+    {required int round,
+    required String item,
+    required double value,
+    DateTime? date,
+    String? side,
+    bool clean = true}) {
+  final conditions =
+      canonicalTestConditions(item, {'variant': 'fixture-control'});
+  return TestResult(
+      round: round,
+      item: item,
+      value: value,
+      date: date,
+      side: side,
+      clean: clean,
+      attemptId: (legTests.any((t) => t.id == item) ? 1000 : 0) + round,
+      protocolId: 'v31_12',
+      conditions: conditions,
+      baselineKey:
+          testBaselineKey(TestProtocolId.v31_12, item, side, conditions));
+}
 
 final radarDay = DateTime(2026, 10, 10);
 List<TestResult> radarTests() => [
@@ -11,14 +36,14 @@ List<TestResult> radarTests() => [
         ('broad_jump', 165.0, 180.0)
       ])
         for (final (round, value, day) in [(1, a, 1), (2, b, 9)])
-          TestResult(
+          knownRadarTest(
               round: round,
               item: id,
               value: value,
               date: DateTime(2026, 10, day)),
       for (final (round, value, day) in [(1, 16.0, 1), (2, 20.0, 9)])
         for (final side in ['I', 'D'])
-          TestResult(
+          knownRadarTest(
               round: round,
               item: 'bulgarian_split_squat',
               side: side,

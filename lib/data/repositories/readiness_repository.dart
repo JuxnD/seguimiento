@@ -6,6 +6,7 @@ import '../../domain/daily_routines.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/fitness_test.dart';
+import '../../domain/test_protocol.dart';
 import '../../domain/readiness.dart';
 import '../database.dart';
 import 'coach_repository.dart';
@@ -50,27 +51,33 @@ class ReadinessRepository {
   final AppDatabase db;
 
   /// Lectura del día. `testOrAttemptToday`: hoy toca test o intento.
-  Future<ReadinessAdvice> readinessOn(DateTime date, {bool testOrAttemptToday = false}) async {
+  Future<ReadinessAdvice> readinessOn(DateTime date,
+      {bool testOrAttemptToday = false}) async {
     final d0 = dateOnly(date);
     final key = dayKey(d0);
     final load = await CoachRepository(db).loadItems(d0);
     final morning = await RecoveryRepository(db).morningOn(d0);
-    // Escaleras: la molestia de rodilla anotada hoy. Un 0 no se guarda, así
-    // que sin fila es "sin dato", no 0: responder dolor o enfermo no dice nada
-    // de la rodilla. El campo propio de escaleras llega con 034.
-    final sore = await (db.select(db.sorenessLogs)..where((t) => t.date.equals(key) & t.zone.equals('Rodilla')))
+    // Datos independientes: escaleras tiene respuesta nullable propia.
+    final sore = await (db.select(db.sorenessLogs)
+          ..where((t) => t.date.equals(key) & t.zone.equals('Rodilla')))
         .getSingleOrNull();
-    final stairs = sore?.level;
+    final stairs = morning?.kneeStairs;
     final hrRows = await (db.select(db.morningChecks)
-          ..where((t) => t.date.isSmallerThanValue(key) & t.restingHr.isNotNull())
-          ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)])
+          ..where(
+              (t) => t.date.isSmallerThanValue(key) & t.restingHr.isNotNull())
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
+          ])
           ..limit(readinessHrBaseMax))
         .get();
-    final sleep = await (db.select(db.sleepLogs)..where((t) => t.date.equals(key))).getSingleOrNull();
+    final sleep = await (db.select(db.sleepLogs)
+          ..where((t) => t.date.equals(key)))
+        .getSingleOrNull();
     return readiness(ReadinessInput(
       today: d0,
       load: load,
       stairs: stairs,
+      kneeSoreness: sore?.level,
       muscleSoreness: morning?.muscleSoreness,
       ill: morning?.ill,
       restingHrToday: morning?.restingHr,
@@ -89,13 +96,20 @@ class ReadinessRepository {
   String _decisionId(DateTime date) => '$readinessProposalKind:${dayKey(date)}';
 
   /// "Entrenar igual": se guarda con la fecha y las razones que se vieron.
-  Future<void> trainAnyway(DateTime date, ReadinessAdvice advice, {DateTime? now}) {
+  Future<void> trainAnyway(DateTime date, ReadinessAdvice advice,
+      {DateTime? now}) {
     final today = dayKey(dateOnly(now ?? DateTime.now()));
-    return db.into(db.coachProposals).insertOnConflictUpdate(CoachProposalsCompanion.insert(
+    return db
+        .into(db.coachProposals)
+        .insertOnConflictUpdate(CoachProposalsCompanion.insert(
           id: _decisionId(date),
           kind: readinessProposalKind,
           status: 'rechazada',
-          evidence: jsonEncode({'level': advice.level.name, 'reasons': advice.reasons, 'missing': advice.missing}),
+          evidence: jsonEncode({
+            'level': advice.level.name,
+            'reasons': advice.reasons,
+            'missing': advice.missing
+          }),
           createdOn: dayKey(dateOnly(date)),
           decidedOn: Value(today),
         ));
@@ -103,7 +117,10 @@ class ReadinessRepository {
 
   /// ¿Se eligió entrenar igual ese día?
   Future<bool> trainedAnyway(DateTime date) async =>
-      (await (db.select(db.coachProposals)..where((t) => t.id.equals(_decisionId(date)))).getSingleOrNull())?.status ==
+      (await (db.select(db.coachProposals)
+                ..where((t) => t.id.equals(_decisionId(date))))
+              .getSingleOrNull())
+          ?.status ==
       'rechazada';
 
   /// Se guardó la recuperación activa **completa** ese día. La aceptación es
@@ -158,10 +175,12 @@ class ReadinessRepository {
       '$testMoveProposalKind:${dayKey(dateOnly(start))}:$round:${part.name}:';
 
   /// Movimientos de un test de un plan (el v3.1 que empezó `start`), en orden.
-  Future<List<TestMove>> moves(DateTime start, int round, TestPart part) async {
-    final prefix = _movePrefix(start, round, part);
+  Future<List<TestMove>> moves(DateTime start, int round, TestPart part,
+      {TestScheduleKey? key}) async {
+    final prefix = key?.prefix ?? _movePrefix(start, round, part);
     final rows = await (db.select(db.coachProposals)
-          ..where((t) => t.kind.equals(testMoveProposalKind) & t.id.like('$prefix%'))
+          ..where((t) =>
+              t.kind.equals(testMoveProposalKind) & t.id.like('$prefix%'))
           ..orderBy([(t) => OrderingTerm(expression: t.id)]))
         .get();
     return [for (final r in rows) _move(r)];
@@ -181,8 +200,9 @@ class ReadinessRepository {
 
   /// Día que le toca ahora a ese test: el del calendario o el del último
   /// movimiento.
-  Future<DateTime?> currentTestDate(DateTime start, int round, TestPart part) async {
-    final done = await moves(start, round, part);
+  Future<DateTime?> currentTestDate(DateTime start, int round, TestPart part,
+      {TestScheduleKey? key}) async {
+    final done = await moves(start, round, part, key: key);
     if (done.isNotEmpty) return done.last.to;
     final s = dateOnly(start);
     for (var i = 0; i < 70; i++) {
@@ -204,17 +224,19 @@ class ReadinessRepository {
     required DateTime from,
     required List<String> reasons,
     DateTime? now,
+    TestScheduleKey? key,
   }) =>
       db.transaction(() async {
-        final done = await moves(start, round, part);
+        final done = await moves(start, round, part, key: key);
         if (done.length >= maxTestMoves) return null;
-        final current = await currentTestDate(start, round, part);
+        final current = await currentTestDate(start, round, part, key: key);
         if (current == null || current != dateOnly(from)) {
-          throw ArgumentError('El test $round (${part.name}) no toca el ${dayKey(dateOnly(from))}');
+          throw ArgumentError(
+              'El test $round (${part.name}) no toca el ${dayKey(dateOnly(from))}');
         }
         final to = addDays(current, 1);
         await db.into(db.coachProposals).insert(CoachProposalsCompanion.insert(
-              id: '${_movePrefix(start, round, part)}${done.length + 1}',
+              id: '${key?.prefix ?? _movePrefix(start, round, part)}${done.length + 1}',
               kind: testMoveProposalKind,
               status: 'aceptada',
               evidence: jsonEncode({
@@ -233,16 +255,43 @@ class ReadinessRepository {
 
   /// El test que toca `date` en el v3.1 que empezó `start`, con los
   /// movimientos de ese plan aplicados. `moves`: veces que ya se movió.
-  Future<({int round, TestPart part, int moves})?> effectiveScheduledTest(DateTime start, DateTime date) async {
+  Future<({int round, TestPart part, int moves})?> effectiveScheduledTest(
+      DateTime start, DateTime date,
+      {String scheme = 'v3.1',
+      TestProtocolId protocol = TestProtocolId.v31_12}) async {
+    if (protocol != TestProtocolId.v31_12 || scheme != 'v3.1') {
+      for (final round in [1, 2, 3]) {
+        for (final part in TestPart.values) {
+          final key = TestScheduleKey(
+              scheme: scheme,
+              blockStart: start,
+              protocolId: protocol,
+              round: round,
+              part: part);
+          final current = await currentTestDate(start, round, part, key: key);
+          if (current == dateOnly(date)) {
+            return (
+              round: round,
+              part: part,
+              moves: (await moves(start, round, part, key: key)).length
+            );
+          }
+        }
+      }
+      return null;
+    }
     final s = dateOnly(start);
     final d = dateOnly(date);
     final planned = scheduledTest(s, d);
-    if (planned != null && (await moves(s, planned.round, planned.part)).isEmpty) {
+    if (planned != null &&
+        (await moves(s, planned.round, planned.part)).isEmpty) {
       return (round: planned.round, part: planned.part, moves: 0);
     }
     // Un test de este plan movido a este día (manda su último movimiento).
     final rows = await (db.select(db.coachProposals)
-          ..where((t) => t.kind.equals(testMoveProposalKind) & t.id.like('$testMoveProposalKind:${dayKey(s)}:%'))
+          ..where((t) =>
+              t.kind.equals(testMoveProposalKind) &
+              t.id.like('$testMoveProposalKind:${dayKey(s)}:%'))
           ..orderBy([(t) => OrderingTerm(expression: t.id)]))
         .get();
     final last = <String, TestMove>{};
@@ -252,7 +301,11 @@ class ReadinessRepository {
     }
     for (final m in last.values) {
       if (m.to != d) continue;
-      return (round: m.round, part: m.part, moves: (await moves(s, m.round, m.part)).length);
+      return (
+        round: m.round,
+        part: m.part,
+        moves: (await moves(s, m.round, m.part)).length
+      );
     }
     return null;
   }

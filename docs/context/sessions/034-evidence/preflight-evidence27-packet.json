@@ -1,0 +1,201 @@
+{
+  "head": "85f92c6542138a06d2dd94ce74fbed7c9424b8be",
+  "files": [
+    {
+      "path": "lib/data/exercise_details.dart",
+      "sha256": "9127EB8B1A484AE73DED15A5B9A21A8A53CB2BA67E1D7000DF03A257DD780237"
+    },
+    {
+      "path": "lib/data/guided_plan_snapshot.dart",
+      "sha256": "383522EA2CB5AE0B94586F5D5416575BCA0CD99717598AFC03FA9D7A1A058FCD"
+    },
+    {
+      "path": "lib/data/plan_v32_template.dart",
+      "sha256": "46C58565C1FAA71A134AD76C2192DDF02C906A9E3C9D3453D995A19E79DBB51F"
+    },
+    {
+      "path": "lib/data/repositories/dashboard_repository.dart",
+      "sha256": "6EC7E19965688EF4A7226CC360A998C18A64A2C9948FA001594858C0001C7C3F"
+    },
+    {
+      "path": "lib/data/repositories/exercise_repository.dart",
+      "sha256": "BC99AEB5A952EB08C78677E927741AF4585EAC2720854E0E4EA9973CF246F969"
+    },
+    {
+      "path": "lib/data/repositories/fitness_test_repository.dart",
+      "sha256": "2EB5F20FF9D17CC5ED0844468581851BFCCA28F8CD8ED9491147E6B1EC52EBFF"
+    },
+    {
+      "path": "lib/data/repositories/ladder_repository.dart",
+      "sha256": "C236C78427041706F061F292A6F48A67D28E54D1E4DB212DFD9AC03307EB3C92"
+    },
+    {
+      "path": "lib/data/repositories/mobility_benchmark_repository.dart",
+      "sha256": "E1FB19D405A58A80BEEE2A91A253FCE63389D9926B03123A042802C7C256795E"
+    },
+    {
+      "path": "lib/data/repositories/plan_repository.dart",
+      "sha256": "22053260C83690A8CF3A5F7EA896B53A9AC0E091AE95AACEAC819096ECC9152A"
+    },
+    {
+      "path": "lib/data/repositories/readiness_repository.dart",
+      "sha256": "0A4ABA0BC9BF4EA025BABA9D5B95A6781AF95EA92A85B2D0A79D3D395B60A00A"
+    },
+    {
+      "path": "lib/data/repositories/recovery_repository.dart",
+      "sha256": "D56602BC1D8A57353A5346156CE0E5905B2EB44969893D72121E55DD02314E40"
+    },
+    {
+      "path": "lib/data/repositories/report_repository.dart",
+      "sha256": "2C64ABD1C0B01DABF0FB6FBB9CB87A3505DAC4836E057A76C309FCB487A067E6"
+    },
+    {
+      "path": "lib/data/repositories/training_repository.dart",
+      "sha256": "2B9563C47AFAFF64483C7CF1FA1E6A194F46218793198C32026B866BFA5A0292"
+    },
+    {
+      "path": "lib/domain/active_session.dart",
+      "sha256": "F5DEDDD2FEF00C766D8F2B93FECAFB5B469A2AA0FA9DEC5621F61515FA43F7DB"
+    },
+    {
+      "path": "lib/domain/core_ladders.dart",
+      "sha256": "E46EC99338EC6F6D8328B5ED309A5858B0DB46F18826FB867B36FB87E2EEEA23"
+    },
+    {
+      "path": "lib/domain/fitness_test.dart",
+      "sha256": "2A10520A218BA0C36E2C90A313776D76B98094AC2666D22BB261EAB034E2F657"
+    },
+    {
+      "path": "lib/domain/ladder_prescription_proof.dart",
+      "sha256": "626D3E2047EB3F5363AB6E07533128F1DD577EE88654FDF1889C788C0DDCDF36"
+    },
+    {
+      "path": "lib/domain/plan_v3.dart",
+      "sha256": "9D7D080D9B35C630C7BE3407B19F0A445F4D981D24080B97D6040A8C0CB990E0"
+    },
+    {
+      "path": "lib/domain/plan_v32.dart",
+      "sha256": "2110BF86B1932A6FC5A480DC556D7976B291A60B3A0471E2EB99872ECE27AA40"
+    },
+    {
+      "path": "lib/domain/progress_metrics.dart",
+      "sha256": "334A9C89748F84CADFECF651542C62457CCEC6FA8A6259B25D4E906C613D1C90"
+    },
+    {
+      "path": "lib/domain/report/report_builder.dart",
+      "sha256": "8B27B63CD778554C94D64167230304251F39385D9E4E48A7D4800DDE3794C811"
+    },
+    {
+      "path": "lib/domain/report/report_input.dart",
+      "sha256": "960383F1CCAD9541EBDEFF02146F21EE3CE6CCBE9B287B7DD9D1D78075D6AEE5"
+    },
+    {
+      "path": "lib/domain/series_side_proof.dart",
+      "sha256": "6D4829E692E464876C7DE65FA52EEF5A054D67FF1A9E24A0A3253CA5D19AE83B"
+    },
+    {
+      "path": "lib/domain/test_attempt_evidence.dart",
+      "sha256": "CA8B700772F9CCDBBFFEB86BC9F6E0F45A5115C1E8A80EF0E13AB164935AE28E"
+    },
+    {
+      "path": "lib/domain/test_protocol.dart",
+      "sha256": "F1BC8E64C6E0873AEF9FC1BDF98A3DB8130420DCC2CE1DE1F8F6EA4B2E154C87"
+    },
+    {
+      "path": "lib/features/body/body_screen.dart",
+      "sha256": "0879E47CD33147D1E597C82EDFC3088679BFB67C0896B5D45CAC83D28D4DE493"
+    },
+    {
+      "path": "lib/features/body/knee_history_card.dart",
+      "sha256": "42B19F792BBA21EC635F0F8945E33AB55742E4B837ECE0E30A11FFFF19607092"
+    },
+    {
+      "path": "lib/features/body/mobility_benchmarks_screen.dart",
+      "sha256": "08410D5C4CE4CA40CAAFEE7C396829B46BA2797F407A68812CCBE9F5826E1B8A"
+    },
+    {
+      "path": "lib/features/body/test_results_screen.dart",
+      "sha256": "8C2528063B37B71B74D21F3692A407CD8FC297F6C1911A014AE12B7C8184208D"
+    },
+    {
+      "path": "lib/features/home/home_screen.dart",
+      "sha256": "7E3129EC0196F34004DAF08CBDDD36F56944EEE94EC293BD81CA5BB1BA5A2C26"
+    },
+    {
+      "path": "lib/features/home/morning_check_screen.dart",
+      "sha256": "ACD50B651F62E52739B4BFD893BB1BDDF32B5A183FF920427A805AC8DF1EEEF0"
+    },
+    {
+      "path": "lib/features/home/readiness_card.dart",
+      "sha256": "8374023E29BB5CDFBF59A8606C371B1656992CDBA9E42A98182C89D3CB705345"
+    },
+    {
+      "path": "lib/features/plan/plan_screen.dart",
+      "sha256": "4B4614A2BB710D1FC5A944DEFBACE97BB1B7F57D79632A7A39BFA8F889D2EBED"
+    },
+    {
+      "path": "lib/features/plan/v3_activation.dart",
+      "sha256": "049B969FC256EB5364C88AF312D79B76E3BD5F6FCD607F3CF2B489486CA77CFE"
+    },
+    {
+      "path": "lib/features/training/guided_session_screen.dart",
+      "sha256": "5B159AC1E1E4F1227F6FAD922CF15F1099F8C9B28EF4E7CCDCA1325649046975"
+    },
+    {
+      "path": "lib/features/training/technique_sheet.dart",
+      "sha256": "EF16D4002D421470203D749C5ECD5BDFE99FB08B68CAB748E765814531EC9D85"
+    },
+    {
+      "path": "lib/features/training/test_mode_screen.dart",
+      "sha256": "EEC9DAD276604EDCE71D27B9EC444CD8AE5B26FA6055FF3717B576DA1FC60784"
+    },
+    {
+      "path": "lib/features/training/training_screen.dart",
+      "sha256": "C4935A95929C1CB1F4D734DBA0CD9AA92353CDD6E17DBF8EA5245D192AB4C31E"
+    },
+    {
+      "path": "lib/ui/exercise_figure_3d_view.dart",
+      "sha256": "86D9DA817D65928BF02E62FF163CE40BC4FE60E7316608F03492E3A7CF3CCD85"
+    },
+    {
+      "path": "lib/ui/exercise_figure_3d.dart",
+      "sha256": "E5AC66B22D99C344B3FF827B4936410C1536160546CA763C8233C0362B12710F"
+    },
+    {
+      "path": "test/data/plan034_attempt_cycle_test.dart",
+      "sha256": "0BD431FB7F9A9FFA6498798E3AB01AFA426662BC2E20F9966174D62BF5743C48"
+    },
+    {
+      "path": "test/data/plan034_attempt_history_test.dart",
+      "sha256": "512043CFBF62FAC2A38E697C899894C4DF286A3547E883F45AF6B5FAAEF1BD03"
+    },
+    {
+      "path": "test/data/plan034_ladder_integrity_test.dart",
+      "sha256": "0D47D0A288B2D74DFFC7D27D30ACDBB1DBB4A6A951965448EAE84858B9F09500"
+    },
+    {
+      "path": "test/data/plan034_maintenance_data_test.dart",
+      "sha256": "39A8DC6A737F0CB4A7C3B83402F6ED054923C266C3B591674252B08400B91AAB"
+    },
+    {
+      "path": "test/domain/plan034_attempt_evidence_test.dart",
+      "sha256": "A04CEC8EFDA484B6BFBBAEF7E2053CC3DE3FD5EB89BEFA646AC63F3ABB8FF547"
+    },
+    {
+      "path": "test/domain/plan034_benchmarks_knee_test.dart",
+      "sha256": "02CB4BF7608EB88A446E0BBE3EAE0B2102CC1451EC14A1CCC9E8EE33C2C956BA"
+    },
+    {
+      "path": "test/domain/plan034_prescription_test.dart",
+      "sha256": "0DB6FCD6AE33E84C72453BA85C1B57C77BFEBCBCDBB69BC5A8C73EFC435F3B7D"
+    },
+    {
+      "path": "test/domain/plan034_template_test.dart",
+      "sha256": "953E5F2F9A816BADBE578619045727FAB7AD63A783219470FA11C1B7BEFA7944"
+    },
+    {
+      "path": "test/ui/illustration_physical_variant_test.dart",
+      "sha256": "3D2D018F95BBBE93E19D6DBF6958BEF695A081A026CB95F7808C5929805ACE9A"
+    }
+  ]
+}

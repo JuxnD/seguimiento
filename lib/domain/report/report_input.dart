@@ -46,7 +46,11 @@ class Targets {
 }
 
 class PlanVersionInfo {
-  const PlanVersionInfo({required this.number, required this.validFrom, required this.dayTypes, this.notes});
+  const PlanVersionInfo(
+      {required this.number,
+      required this.validFrom,
+      required this.dayTypes,
+      this.notes});
 
   /// 1-based: v1, v2…
   final int number;
@@ -198,7 +202,8 @@ class SessionEntry {
           incomplete: incomplete,
         );
 
-  List<String> get progressionBlockers => progressionEvidence?.unmet ?? ['rondas sin registrar'];
+  List<String> get progressionBlockers =>
+      progressionEvidence?.unmet ?? ['rondas sin registrar'];
 }
 
 class MobilityEntry {
@@ -250,7 +255,12 @@ class MealItemEntry {
 }
 
 class MealEntry {
-  const MealEntry({required this.date, required this.slot, this.time, this.items = const [], this.notes});
+  const MealEntry(
+      {required this.date,
+      required this.slot,
+      this.time,
+      this.items = const [],
+      this.notes});
 
   final DateTime date;
   final MealSlot slot;
@@ -270,7 +280,11 @@ class WeightEntry {
 }
 
 class MeasurementEntry {
-  const MeasurementEntry({required this.date, required this.site, required this.valueCm, this.fasted = true});
+  const MeasurementEntry(
+      {required this.date,
+      required this.site,
+      required this.valueCm,
+      this.fasted = true});
 
   final DateTime date;
   final MeasureSite site;
@@ -308,12 +322,18 @@ class ReportInput {
     this.previous,
     this.notes,
     this.recovery,
+    this.kneeStairs = const {},
+    this.mobilityBenchmarks = const [],
   });
 
   final DateTime programStart;
 
   /// Recuperación activa de la semana (§19.17); null = no se calculó.
   final ReadinessWeek? recovery;
+  final Map<DateTime, int?> kneeStairs;
+
+  /// Explicit optional measurements; never converted into training workload.
+  final List<String> mobilityBenchmarks;
   final DateTime rangeStart;
 
   /// Inclusivo.
@@ -333,6 +353,7 @@ class ReportInput {
   /// Últimas rondas por tipo, conservadas para lectores cuantitativos legados.
   /// La evaluación de progresión requiere sessionsBeforeRange.
   final Map<SessionType, int> roundsBeforeRange;
+
   /// Última sesión completa por tipo antes del rango. Los enteros legados
   /// anteriores no prueban calidad ni permiso para progresar.
   final Map<SessionType, SessionEntry> sessionsBeforeRange;

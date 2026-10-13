@@ -17,6 +17,9 @@ import '../../data/repositories/plan_repository.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/active_session.dart';
 import '../../domain/core_ladders.dart';
+import '../../domain/series_side_proof.dart';
+import '../../domain/accessory_quality_proof.dart';
+import 'accessory_criteria_editor.dart';
 import '../../domain/dates.dart';
 import '../../domain/energy.dart';
 import '../../domain/format.dart';
@@ -36,7 +39,8 @@ import '../../ui/widgets.dart';
 import '../../ui/theme.dart';
 import 'technique_sheet.dart';
 import '../../data/repositories/goal_repository.dart';
-import '../../domain/adaptive_coach.dart' show ProposalRecord, proposalHidden, strengthProposalId;
+import '../../domain/adaptive_coach.dart'
+    show ProposalRecord, proposalHidden, strengthProposalId;
 
 /// Convierte el día del plan en algo que el guion entiende.
 ScriptDay scriptDayFrom(PlanDayDraft day) => ScriptDay(
@@ -105,13 +109,15 @@ class GuidedSessionScreen extends ConsumerStatefulWidget {
   final String? mode;
 
   @override
-  ConsumerState<GuidedSessionScreen> createState() => _GuidedSessionScreenState();
+  ConsumerState<GuidedSessionScreen> createState() =>
+      _GuidedSessionScreenState();
 }
 
 class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
-  late final List<ScriptStep> _steps =
-      buildScript(scriptDayFrom(widget.day), rounds: widget.roundsOverride, coreVariant: widget.coreVariant);
-  late final int _exercisesPerRound = widget.day.main.isEmpty ? 1 : widget.day.main.length;
+  late final List<ScriptStep> _steps = buildScript(scriptDayFrom(widget.day),
+      rounds: widget.roundsOverride, coreVariant: widget.coreVariant);
+  late final int _exercisesPerRound =
+      widget.day.main.isEmpty ? 1 : widget.day.main.length;
 
   late final DateTime _startedAt = widget.resume?.startedAt ?? clock.now();
   late DateTime? _workStartedAt = widget.resume?.workStartedAt;
@@ -163,12 +169,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   DateTime? _warmupTimerEnds;
   DateTime? _approachRestEnds;
 
-  List<WarmupItem> _buildWarmup() => buildWarmup(scriptDayFrom(widget.day), ownWarmup: _warmupExercises.isNotEmpty);
+  List<WarmupItem> _buildWarmup() => buildWarmup(scriptDayFrom(widget.day),
+      ownWarmup: _warmupExercises.isNotEmpty);
 
   /// Molestias de hoy o ayer (≥ 3): se avisan arriba del calentamiento.
   Future<void> _loadSoreness() async {
     try {
-      final byDay = await ref.read(recoveryRepositoryProvider).sorenessRange(widget.date);
+      final byDay =
+          await ref.read(recoveryRepositoryProvider).sorenessRange(widget.date);
       final d0 = dateOnly(widget.date);
       final zones = <String, int>{};
       for (final e in byDay.entries) {
@@ -202,12 +210,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// Al marcar toda la aproximación corren los 2 min antes de la primera
   /// serie que cuenta.
   void _armApproachRest() {
-    final approach = _warmupItems.where((i) => i.stage == WarmupStage.aproximacion);
-    final complete = approach.isNotEmpty && approach.every((i) => _warmupMarked.contains(i.key));
+    final approach =
+        _warmupItems.where((i) => i.stage == WarmupStage.aproximacion);
+    final complete = approach.isNotEmpty &&
+        approach.every((i) => _warmupMarked.contains(i.key));
     if (!complete) {
       _approachRestEnds = null;
     } else {
-      _approachRestEnds ??= clock.now().add(const Duration(seconds: warmupApproachRestSec));
+      _approachRestEnds ??=
+          clock.now().add(const Duration(seconds: warmupApproachRestSec));
     }
   }
 
@@ -223,7 +234,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     }
   }
 
-  int get _warmupMarkedCount => _warmupItems.where((i) => _warmupMarked.contains(i.key)).length;
+  int get _warmupMarkedCount =>
+      _warmupItems.where((i) => _warmupMarked.contains(i.key)).length;
 
   /// Una clave de técnica para el paso: de la ficha, de la movilidad o del
   /// catálogo, en ese orden.
@@ -243,9 +255,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// desde la próxima sesión y hoy no cuenta como limpia.
   Future<void> _markLumbar(CoreLadder ladder) async {
     if (_lumbar.contains(ladder.id)) return;
-    final step = await ref
-        .read(ladderRepositoryProvider)
-        .lumbar(ladder, widget.date, eventKey: 'guided:${_startedAt.toIso8601String()}');
+    final step = await ref.read(ladderRepositoryProvider).lumbar(
+        ladder, widget.date,
+        eventKey: 'guided:${_startedAt.toIso8601String()}');
     if (!mounted) return;
     setState(() => _lumbar.add(ladder.id));
     _persist();
@@ -259,7 +271,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   Widget? _lumbarChip(String exercise) {
     final ladder = ladderOf(exercise);
-    if (ladder == null) return null;
+    if (ladder == null || ladder.accessory) return null;
     final marked = _lumbar.contains(ladder.id);
     return Padding(
       padding: const EdgeInsets.only(top: 4),
@@ -269,6 +281,69 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         onPressed: marked ? null : () => _markLumbar(ladder),
       ),
     );
+  }
+
+  Widget? _accessoryAlarmChip(String exercise) {
+    final ladder = ladderOf(exercise);
+    if (ladder?.accessory != true ||
+        ladder?.alarm == null ||
+        !widget.day.coreEpochs.containsKey(ladder!.id)) return null;
+    const alarms = {
+      'copenhagen': 'groin_over_3',
+      'seated_soleus': 'achilles_next_morning',
+      'band_external_rotation': 'shoulder_pinch',
+      'support_hold': 'inner_elbow',
+      'flying_sprint': 'hamstring_pinch'
+    };
+    if (ladder.id == 'seated_soleus' &&
+        !dateOnly(clock.now()).isAfter(dateOnly(widget.date))) return null;
+    final signal = alarms[ladder.id]!;
+    final marked = _accessoryProof(ladder).alarm == signal;
+    return ActionChip(
+        label: Text(
+            marked ? 'Señal registrada' : 'Registrar señal: ${ladder.alarm}'),
+        onPressed: marked
+            ? null
+            : () async {
+                final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (c) => AlertDialog(
+                            title: const Text('Confirmar señal concreta'),
+                            content: Text(ladder.alarm!),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(c, false),
+                                  child: const Text('Cancelar')),
+                              FilledButton(
+                                  onPressed: () => Navigator.pop(c, true),
+                                  child: const Text('Registrar y parar'))
+                            ]));
+                if (confirm != true || !mounted) return;
+                final ok = await guarded(
+                    context,
+                    () => ref.read(ladderRepositoryProvider).accessoryAlarm(
+                        ladder, signal, widget.date,
+                        eventKey: 'guided:${_startedAt.toIso8601String()}'),
+                    failure: 'No se pudo guardar la señal');
+                if (!ok || !mounted) return;
+                final p = _accessoryProof(ladder);
+                setState(() => _accessoryProofs[ladder.id] =
+                    AccessoryQualityProof(
+                            identity: p.identity,
+                            variantConfirmed: p.variantConfirmed,
+                            pause2Confirmed: p.pause2Confirmed,
+                            relaxed: p.relaxed,
+                            alarmFree: false,
+                            alarm: signal,
+                            achillesCheckedOn: ladder.id == 'seated_soleus'
+                                ? dayKey(clock.now())
+                                : p.achillesCheckedOn)
+                        .encode());
+                _persist();
+                ref.invalidate(ladderAdviceProvider);
+                showSnack(context, ladder.alarm!);
+                await _finishEarly(confirmed: true);
+              });
   }
 
   late int _index = widget.resume?.index ?? 0;
@@ -294,7 +369,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   bool get _doneReady => clock.now().difference(_stepShownAt) >= _doneGuard;
 
   bool get _canSkipRest =>
-      _restStartedAt != null && clock.now().difference(_restStartedAt!).inSeconds >= _skipRestGuardSec;
+      _restStartedAt != null &&
+      clock.now().difference(_restStartedAt!).inSeconds >= _skipRestGuardSec;
 
   void _tapDone() {
     if (!_doneReady) return;
@@ -306,6 +382,42 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   late bool? _techniqueOk = widget.resume?.techniqueOk;
   late bool? _fullRange = widget.resume?.fullRange;
   late bool? _recoveryOk = widget.resume?.recoveryOk;
+  late final Map<String, String> _accessoryProofs = {
+    ...?widget.resume?.accessoryProofs
+  };
+
+  AccessoryQualityProof _accessoryProof(CoreLadder ladder) =>
+      AccessoryQualityProof.decode(_accessoryProofs[ladder.id]) ??
+      AccessoryQualityProof(
+          identity: widget.day.coreEpochs[ladder.id] ?? 'unknown');
+
+  Future<void> _setAccessoryProof(String id, AccessoryQualityProof p) async {
+    final before = Map<String, String>.of(_accessoryProofs);
+    if (p.identity == 'unknown') {
+      showSnack(context,
+          'La variante de origen es desconocida; no acredita progresión.');
+      return;
+    }
+    setState(() => _accessoryProofs[id] = p.encode());
+    final savedId = _savedId;
+    if (savedId == null) {
+      _persist();
+      return;
+    }
+    final ok = await guarded(
+        context,
+        () => ref
+            .read(trainingRepositoryProvider)
+            .setAccessoryProofs(savedId, _accessoryProofs),
+        failure: 'No se pudo guardar la evidencia de la progresión');
+    if (!ok && mounted) {
+      setState(() {
+        _accessoryProofs
+          ..clear()
+          ..addAll(before);
+      });
+    }
+  }
 
   void _setCriteria(void Function() change) {
     setState(change);
@@ -317,7 +429,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     // Ya guardada: los criterios van directo a la sesión.
     unawaited(ref
         .read(trainingRepositoryProvider)
-        .setProgressionCriteria(id, techniqueOk: _techniqueOk, fullRange: _fullRange, recoveryOk: _recoveryOk)
+        .setProgressionCriteria(id,
+            techniqueOk: _techniqueOk,
+            fullRange: _fullRange,
+            recoveryOk: _recoveryOk)
         .catchError((Object _) {}));
   }
 
@@ -336,14 +451,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       final draft = _buildDraft()..pendingReview = true;
       final repo = ref.read(trainingRepositoryProvider);
       final store = ref.read(activeSessionStoreProvider);
-      final hadTen = await repo.firstCleanTen(excludeSessionId: draft.id) != null;
+      final hadTen =
+          await repo.firstCleanTen(excludeSessionId: draft.id) != null;
       final v2 = await repo.v2ProgressionContext(draft, requireLink: true);
       final id = await repo.save(draft);
       _savedId = id;
       await store.clear();
       milestone = !hadTen && v2;
       milestoneRounds = draft.roundsDone;
-      final rounds = draft.roundsDone == null ? '' : '${draft.roundsDone} rondas · ';
+      final rounds =
+          draft.roundsDone == null ? '' : '${draft.roundsDone} rondas · ';
       unawaited(_notifications.scheduleReviewReminder(
         after: const Duration(hours: 1),
         body: '${_sessionType.label}: ${rounds}falta el RPE y las notas.',
@@ -357,7 +474,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       _savingPending = false;
     }
     if (mounted && milestone) {
-      await showRecordCelebration(context, rounds: milestoneRounds!, milestone: true);
+      await showRecordCelebration(context,
+          rounds: milestoneRounds!, milestone: true);
     }
   }
 
@@ -375,12 +493,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
     WakelockPlus.enable();
     // Una sesión retomada en mitad de un descanso vuelve a programar su aviso.
-    if (widget.resume != null && _current is RestStep && _restStartedAt != null) {
-      final left = (_current as RestStep).seconds - clock.now().difference(_restStartedAt!).inSeconds;
+    if (widget.resume != null &&
+        _current is RestStep &&
+        _restStartedAt != null) {
+      final left = (_current as RestStep).seconds -
+          clock.now().difference(_restStartedAt!).inSeconds;
       if (left > 0) {
-        unawaited(ref
-            .read(notificationServiceProvider)
-            .scheduleRestEnd(inSeconds: Duration(seconds: left), nextLabel: (_current as RestStep).nextLabel));
+        unawaited(ref.read(notificationServiceProvider).scheduleRestEnd(
+            inSeconds: Duration(seconds: left),
+            nextLabel: (_current as RestStep).nextLabel));
       }
     }
     _persist();
@@ -388,7 +509,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   Future<void> _restoreLumbar() async {
     try {
-      final events = await ref.read(ladderRepositoryProvider).lumbarFor('guided:${_startedAt.toIso8601String()}');
+      final events = await ref
+          .read(ladderRepositoryProvider)
+          .lumbarFor('guided:${_startedAt.toIso8601String()}');
       if (!mounted || events.isEmpty) return;
       setState(() => _lumbar.addAll(events));
       _persist();
@@ -398,35 +521,37 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 
   /// Foto del estado en disco: si Android mata la app, se retoma desde aquí.
-  void _persist() => unawaited(ref.read(activeSessionStoreProvider).save(GuidedSnapshot(
-        date: dayKey(widget.date),
-        startedAt: _startedAt,
-        planDayId: widget.planDayId ?? -1,
-        sessionType: widget.sessionType,
-        coreVariant: widget.coreVariant,
-        roundsOverride: widget.roundsOverride,
-        light: widget.light,
-        phase: _phase,
-        index: _index,
-        workStartedAt: _workStartedAt,
-        workEndedAt: _workEndedAt,
-        endedAt: _endedAt,
-        restStartedAt: _restStartedAt,
-        restAccumSec: _restAccumSec,
-        reps: _reps,
-        done: List.of(_done),
-        roundMarks: List.of(_roundMarks),
-        roundRests: List.of(_roundRests),
-        techniqueOk: _techniqueOk,
-        fullRange: _fullRange,
-        recoveryOk: _recoveryOk,
-        effectiveDay: freezeGuidedDay(widget.day),
-        note: widget.note,
-        mode: widget.mode,
-        lumbar: List.of(_lumbar),
-        warmupDone: List.of(_warmupMarked),
-        warmupSkipped: _warmupSkipped,
-      )));
+  void _persist() =>
+      unawaited(ref.read(activeSessionStoreProvider).save(GuidedSnapshot(
+            date: dayKey(widget.date),
+            startedAt: _startedAt,
+            planDayId: widget.planDayId ?? -1,
+            sessionType: widget.sessionType,
+            coreVariant: widget.coreVariant,
+            roundsOverride: widget.roundsOverride,
+            light: widget.light,
+            phase: _phase,
+            index: _index,
+            workStartedAt: _workStartedAt,
+            workEndedAt: _workEndedAt,
+            endedAt: _endedAt,
+            restStartedAt: _restStartedAt,
+            restAccumSec: _restAccumSec,
+            reps: _reps,
+            done: List.of(_done),
+            roundMarks: List.of(_roundMarks),
+            roundRests: List.of(_roundRests),
+            techniqueOk: _techniqueOk,
+            fullRange: _fullRange,
+            recoveryOk: _recoveryOk,
+            accessoryProofs: Map.of(_accessoryProofs),
+            effectiveDay: freezeGuidedDay(widget.day),
+            note: widget.note,
+            mode: widget.mode,
+            lumbar: List.of(_lumbar),
+            warmupDone: List.of(_warmupMarked),
+            warmupSkipped: _warmupSkipped,
+          )));
 
   /// Claves de técnica y última carga usada de cada ejercicio del guion.
   Future<void> _loadGuides() async {
@@ -441,9 +566,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       // Doble progresión: lo que toca subir hoy según la última vez (§19.2).
       final hints = <String, String>{};
       for (final e in widget.day.exercises) {
-        if (e.repsMax == null || e.sets == null || hints.containsKey(e.name)) continue;
+        if (e.repsMax == null || e.sets == null || hints.containsKey(e.name)) {
+          continue;
+        }
         if (widget.day.type.isCircuit && e.block == null) continue;
-        final last = await training.lastStrengthEvidence(e.name, widget.date, mode: widget.mode);
+        final last = await training.lastStrengthEvidence(e.name, widget.date,
+            mode: widget.mode);
         final hint = strengthProgressionHint(
           evidence: last,
           date: widget.date,
@@ -460,10 +588,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         ProposalRecord? decided;
         if (hint != null && last != null) {
           try {
-            decided = await GoalRepository(ref.read(databaseProvider)).proposal(strengthProposalId(e.name, last.sessionId));
-          } on Object {/* Sin base legible no hay decisión: queda la regla de 008. */}
+            decided = await GoalRepository(ref.read(databaseProvider))
+                .proposal(strengthProposalId(e.name, last.sessionId));
+          } on Object {
+            /* Sin base legible no hay decisión: queda la regla de 008. */
+          }
         }
-        if (hint != null && !proposalHidden(decided, widget.date)) hints[e.name] = hint;
+        if (hint != null && !proposalHidden(decided, widget.date)) {
+          hints[e.name] = hint;
+        }
       }
       final loads = <String, double>{};
       for (final g in guides.values.where((g) => g.tracksLoad)) {
@@ -475,7 +608,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         final steps = progressionSteps(g.progressionNote);
         if (steps.isEmpty) continue;
         final last = await training.lastVariant(g.name);
-        variants[g.name] = last != null && steps.contains(last) ? last : steps.first;
+        variants[g.name] =
+            last != null && steps.contains(last) ? last : steps.first;
       }
       if (!mounted) return;
       setState(() {
@@ -512,7 +646,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   DateTime get _clock => _endedAt ?? clock.now();
   int get _totalSec => _clock.difference(_startedAt).inSeconds;
-  int get _warmupSec => (_workStartedAt ?? clock.now()).difference(_startedAt).inSeconds;
+  int get _warmupSec =>
+      (_workStartedAt ?? clock.now()).difference(_startedAt).inSeconds;
 
   /// Descanso en curso: lo que va de la cuenta regresiva actual.
   int get _restNowSec {
@@ -528,7 +663,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// enfriamiento − descanso), para que ambos muestren el mismo número.
   int get _netSec {
     if (_workStartedAt == null) return 0;
-    final span = (_workEndedAt ?? clock.now()).difference(_workStartedAt!).inSeconds;
+    final span =
+        (_workEndedAt ?? clock.now()).difference(_workStartedAt!).inSeconds;
     final net = span - _restSec;
     return net < 0 ? 0 : net;
   }
@@ -560,7 +696,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// Peso más reciente para estimar las kcal; null si no hay pesajes.
   double? get _weightKg => ref.read(latestWeightProvider);
 
-  SessionType get _sessionType => widget.sessionType ?? widget.day.type.asSessionType;
+  SessionType get _sessionType =>
+      widget.sessionType ?? widget.day.type.asSessionType;
 
   /// kcal aproximadas hasta ahora (MET por fase × peso × tiempo).
   double? get _kcal => sessionKcal(
@@ -573,13 +710,18 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       );
 
   /// Repeticiones ya hechas de un ejercicio en esta sesión.
-  int _repsSoFar(String exercise) => _done.where((d) => d.exercise == exercise).fold(0, (sum, d) => sum + d.reps);
-  int get _cooldownSec => _workEndedAt == null ? 0 : _clock.difference(_workEndedAt!).inSeconds;
+  int _repsSoFar(String exercise) => _done
+      .where((d) => d.exercise == exercise)
+      .fold(0, (sum, d) => sum + d.reps);
+  int get _cooldownSec =>
+      _workEndedAt == null ? 0 : _clock.difference(_workEndedAt!).inSeconds;
 
   /// Metas del perfil (6 min antes y 3 min después por defecto). Menos de
   /// 1 min no es enfriar: esa es una definición, no una meta.
-  late final int _warmupGoalSec = ref.read(profileProvider).value?.minWarmupSec ?? 360;
-  late final int _cooldownGoalSec = ref.read(profileProvider).value?.cooldownTargetSec ?? 180;
+  late final int _warmupGoalSec =
+      ref.read(profileProvider).value?.minWarmupSec ?? 360;
+  late final int _cooldownGoalSec =
+      ref.read(profileProvider).value?.cooldownTargetSec ?? 180;
   static const _cooldownMinSec = Targets.minCooldownSecDefault;
 
   int get _restRemaining {
@@ -589,13 +731,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     return step.seconds - elapsed;
   }
 
-  int get _holdSinceStart => _holdStartedAt == null ? 0 : clock.now().difference(_holdStartedAt!).inSeconds;
+  int get _holdSinceStart => _holdStartedAt == null
+      ? 0
+      : clock.now().difference(_holdStartedAt!).inSeconds;
 
   /// Segundos que faltan para colocarse (0 si ya corre el aguante).
-  int get _holdLeadIn => _holdStartedAt == null ? 0 : (_holdLeadInSec - _holdSinceStart).clamp(0, _holdLeadInSec);
+  int get _holdLeadIn => _holdStartedAt == null
+      ? 0
+      : (_holdLeadInSec - _holdSinceStart).clamp(0, _holdLeadInSec);
 
   /// Segundos aguantados.
-  int get _holdElapsed => _holdStartedAt == null ? 0 : (_holdSinceStart - _holdLeadInSec).clamp(0, 1 << 30);
+  int get _holdElapsed => _holdStartedAt == null
+      ? 0
+      : (_holdSinceStart - _holdLeadInSec).clamp(0, 1 << 30);
 
   void _tick() {
     if (_phase == GuidedPhase.calentamiento) _tickWarmup();
@@ -643,10 +791,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           context: context,
           builder: (c) => AlertDialog(
             title: const Text('Calentamiento a medias'),
-            content: Text('Marcaste $done de ${_warmupItems.length} pasos. Queda anotado tal cual en la sesión.'),
+            content: Text(
+                'Marcaste $done de ${_warmupItems.length} pasos. Queda anotado tal cual en la sesión.'),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Empezar igual')),
-              FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir calentando')),
+              TextButton(
+                  onPressed: () => Navigator.pop(c, true),
+                  child: const Text('Empezar igual')),
+              FilledButton(
+                  onPressed: () => Navigator.pop(c, false),
+                  child: const Text('Seguir calentando')),
             ],
           ),
         );
@@ -660,11 +813,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         context: context,
         builder: (c) => AlertDialog(
           title: const Text('Calentamiento corto'),
-          content: Text('Llevas ${formatDuration(_warmupSec)} de ${formatDuration(_warmupGoalSec)}. '
+          content: Text(
+              'Llevas ${formatDuration(_warmupSec)} de ${formatDuration(_warmupGoalSec)}. '
               'Con menos de la meta sueles rendir peor.'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Empezar igual')),
-            FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir calentando')),
+            TextButton(
+                onPressed: () => Navigator.pop(c, true),
+                child: const Text('Empezar igual')),
+            FilledButton(
+                onPressed: () => Navigator.pop(c, false),
+                child: const Text('Seguir calentando')),
           ],
         ),
       );
@@ -696,7 +854,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       _restStartedAt = clock.now();
       // Con la app en segundo plano el sonido no llega: la notificación sí.
       unawaited(notifications
-          .scheduleRestEnd(inSeconds: Duration(seconds: step.seconds), nextLabel: step.nextLabel)
+          .scheduleRestEnd(
+              inSeconds: Duration(seconds: step.seconds),
+              nextLabel: step.nextLabel)
           .then(_warnIfInexact));
     }
   }
@@ -722,13 +882,22 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   void _completeWork() {
     final step = _current as WorkStep;
     final amount = step.isHold
-        ? (_holdStartedAt == null || _holdElapsed == 0 ? step.holdSec! : _holdElapsed)
+        ? (_holdStartedAt == null || _holdElapsed == 0
+            ? step.holdSec!
+            : _holdElapsed)
         : (_reps ?? step.targetReps ?? 0);
     _done.add(DoneStep(step.exercise, amount, step.isRound,
-        loadKg: _loadFor(step.exercise), variant: _variants[step.exercise]));
+        loadKg: _loadFor(step.exercise),
+        variant: _variants[step.exercise],
+        side: switch (step.side) {
+          'izquierdo' => 'I',
+          'derecho' => 'D',
+          _ => null
+        }));
 
     // Al cerrar la última parada de una ronda, queda la marca de la vuelta.
-    if (step.isRound && _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
+    if (step.isRound &&
+        _done.where((d) => d.isRound).length % _exercisesPerRound == 0) {
       if (_roundRests.length == _roundMarks.length) _roundRests.add(0);
       _roundMarks.add(clock.now().difference(_workStartedAt!).inSeconds);
       unawaited(HapticFeedback.mediumImpact());
@@ -765,11 +934,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         context: context,
         builder: (c) => AlertDialog(
           title: const Text('Enfriamiento muy corto'),
-          content: Text('Llevas ${formatDuration(_cooldownSec)}. Menos de 1 min no cuenta como enfriar '
+          content: Text(
+              'Llevas ${formatDuration(_cooldownSec)}. Menos de 1 min no cuenta como enfriar '
               '(la meta es ${formatDuration(_cooldownGoalSec)}).'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Terminar')),
-            FilledButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir')),
+            TextButton(
+                onPressed: () => Navigator.pop(c, true),
+                child: const Text('Terminar')),
+            FilledButton(
+                onPressed: () => Navigator.pop(c, false),
+                child: const Text('Seguir')),
           ],
         ),
       );
@@ -788,20 +962,27 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     _advance();
   }
 
-  Future<void> _finishEarly() async {
+  Future<void> _finishEarly({bool confirmed = false}) async {
     final pending = _steps.length - _index;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('¿Terminar antes?'),
-        content: Text('Quedan $pending pasos del plan. La sesión se guarda como incompleta, '
-            'con lo que alcanzaste a hacer.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Terminar')),
-        ],
-      ),
-    );
+    final ok = confirmed
+        ? true
+        : await showDialog<bool>(
+            context: context,
+            builder: (c) => AlertDialog(
+              title: const Text('¿Terminar antes?'),
+              content: Text(
+                  'Quedan $pending pasos del plan. La sesión se guarda como incompleta, '
+                  'con lo que alcanzaste a hacer.'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(c, false),
+                    child: const Text('Seguir')),
+                FilledButton(
+                    onPressed: () => Navigator.pop(c, true),
+                    child: const Text('Terminar')),
+              ],
+            ),
+          );
     if (ok != true) return;
     setState(() {
       // El índice queda donde iba: de él salen "incompleta" y las rondas
@@ -814,6 +995,21 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   }
 
   /// Versión ligera y nota del v3, juntas en el contexto de la sesión.
+  String? _coreWithSideProof() {
+    final metadata = <String, String>{...widget.day.coreEpochs};
+    for (final entry in _accessoryProofs.entries) {
+      metadata[AccessoryQualityProof.key(entry.key)] = entry.value;
+    }
+    for (final name in _done.map((d) => d.exercise).toSet()) {
+      final sides =
+          _done.where((d) => d.exercise == name).map((d) => d.side).toList();
+      if (sides.any((s) => s != null)) {
+        metadata[SeriesSideProof.key(name)] = SeriesSideProof.encode(sides);
+      }
+    }
+    return metadata.isEmpty ? null : jsonEncode(metadata);
+  }
+
   String? _contextNote() {
     final parts = [
       if (widget.light) 'Versión ligera (venía cargado del día anterior)',
@@ -821,14 +1017,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       for (final l in _lumbar) 'Molestia lumbar: $l',
       if (_warmupItems.isNotEmpty && _workStartedAt != null)
         warmupRecord(
-            done: _warmupMarkedCount, total: _warmupItems.length, seconds: _warmupSec, skipped: _warmupSkipped),
+            done: _warmupMarkedCount,
+            total: _warmupItems.length,
+            seconds: _warmupSec,
+            skipped: _warmupSkipped),
     ];
     return parts.isEmpty ? null : parts.join('. ');
   }
 
   SessionDraft _buildDraft() {
     final isCircuit = widget.day.type.isCircuit;
-    final rounds = isCircuit ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound) : null;
+    final rounds = isCircuit
+        ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound)
+        : null;
     return SessionDraft(
       id: _savedId,
       pendingReview: _savedId != null,
@@ -841,19 +1042,29 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       cooldownSec: _cooldownSec,
       restSec: _restSec,
       roundsDone: rounds,
-      plannedRounds: isCircuit ? (widget.roundsOverride ?? widget.day.targetRounds) : workStepCount(_steps),
+      plannedRounds: isCircuit
+          ? (widget.roundsOverride ?? widget.day.targetRounds)
+          : workStepCount(_steps),
       incomplete: _index < _steps.length,
       roundMarksSec: List.of(_roundMarks),
-      roundRestSec: _roundRests.length == _roundMarks.length ? List.of(_roundRests) : null,
+      roundRestSec: _roundRests.length == _roundMarks.length
+          ? List.of(_roundRests)
+          : null,
       context: _contextNote(),
       mode: widget.mode,
-      coreEpochs: widget.day.coreEpochs.isEmpty ? null : jsonEncode(widget.day.coreEpochs),
-      techniqueOk: isCircuit ? _techniqueOk : null,
-      fullRange: isCircuit ? _fullRange : null,
-      recoveryOk: isCircuit ? _recoveryOk : null,
+      coreEpochs: _coreWithSideProof(),
+      sideEvidenceAuthored: true,
+      techniqueOk: _techniqueOk,
+      fullRange: _fullRange,
+      recoveryOk: _recoveryOk,
       sets: [
         for (final d in _done)
-          SetDraft(exercise: d.exercise, reps: d.reps, loadKg: d.loadKg, variant: d.variant, rir: d.rir),
+          SetDraft(
+              exercise: d.exercise,
+              reps: d.reps,
+              loadKg: d.loadKg,
+              variant: d.variant,
+              rir: d.rir),
       ],
     );
   }
@@ -869,13 +1080,17 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         if (didPop) return;
         final navigator = Navigator.of(context);
         // Ya guardada como pendiente: salir no pierde nada.
-        if (_done.isEmpty || _savedId != null || await _confirmExit()) navigator.pop();
+        if (_done.isEmpty || _savedId != null || await _confirmExit()) {
+          navigator.pop();
+        }
       },
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.day.type.label),
           actions: [
-            if (_phase == GuidedPhase.trabajo) TextButton(onPressed: _finishEarly, child: const Text('Terminar')),
+            if (_phase == GuidedPhase.trabajo)
+              TextButton(
+                  onPressed: _finishEarly, child: const Text('Terminar')),
           ],
         ),
         body: Column(
@@ -894,11 +1109,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                   transitionBuilder: (child, anim) => FadeTransition(
                     opacity: anim,
                     child: SlideTransition(
-                      position: Tween(begin: const Offset(0.12, 0), end: Offset.zero).animate(anim),
+                      position:
+                          Tween(begin: const Offset(0.12, 0), end: Offset.zero)
+                              .animate(anim),
                       child: child,
                     ),
                   ),
-                  child: KeyedSubtree(key: ValueKey('${_phase.name}-$_index'), child: _body(finished)),
+                  child: KeyedSubtree(
+                      key: ValueKey('${_phase.name}-$_index'),
+                      child: _body(finished)),
                 ),
               ),
             ),
@@ -926,7 +1145,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       );
 
   Widget _body(bool finished) {
-    if (_phase == GuidedPhase.calentamiento && _warmupItems.isNotEmpty) return _guidedWarmup();
+    if (_phase == GuidedPhase.calentamiento && _warmupItems.isNotEmpty) {
+      return _guidedWarmup();
+    }
     if (_phase == GuidedPhase.calentamiento) {
       return _PhasePanel(
         title: 'Calentando',
@@ -970,19 +1191,34 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final next = _nextWorkLabel();
     return Column(
       children: [
-        Text(step.counterLabel.toUpperCase(), style: text.titleMedium?.copyWith(letterSpacing: 2)),
-        if (step.blockName != null) Text('Bloque ${step.blockName}', style: text.bodySmall),
+        Text(step.counterLabel.toUpperCase(),
+            style: text.titleMedium?.copyWith(letterSpacing: 2)),
+        if (step.blockName != null)
+          Text('Bloque ${step.blockName}', style: text.bodySmall),
         const SizedBox(height: 8),
         Text(
           step.exercise,
           textAlign: TextAlign.center,
-          style: text.headlineMedium?.copyWith(color: scheme.primary, fontWeight: FontWeight.w800),
+          style: text.headlineMedium
+              ?.copyWith(color: scheme.primary, fontWeight: FontWeight.w800),
         ),
+        if (widget.day.exercises
+                .where((e) => e.name == step.exercise)
+                .firstOrNull
+                ?.purpose
+            case final purpose?)
+          Text('Para qué: $purpose',
+              textAlign: TextAlign.center, style: text.bodySmall),
         if (step.side != null)
           Text('Lado ${step.side}',
-              style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800, color: scheme.onSurface)),
-        if (step.grip != null) Text('Agarre ${step.grip}', style: text.titleMedium),
-        _RepsSoFar(exercise: step.exercise, reps: _repsSoFar(step.exercise), seconds: step.isHold),
+              style: text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800, color: scheme.onSurface)),
+        if (step.grip != null)
+          Text('Agarre ${step.grip}', style: text.titleMedium),
+        _RepsSoFar(
+            exercise: step.exercise,
+            reps: _repsSoFar(step.exercise),
+            seconds: step.isHold),
         if (_guides[step.exercise]?.hasGuide ?? false)
           TextButton.icon(
             onPressed: () => _showGuide(_guides[step.exercise]!, step: step),
@@ -997,8 +1233,11 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
               label: Text('Toca subir: $up'),
             ),
           ),
-        if (!step.isRound && (_guides[step.exercise]?.tracksLoad ?? false)) _loadRow(step.exercise),
-        if (progressionSteps(_guides[step.exercise]?.progressionNote).isNotEmpty) _variantRow(step.exercise),
+        if (!step.isRound && (_guides[step.exercise]?.tracksLoad ?? false))
+          _loadRow(step.exercise),
+        if (progressionSteps(_guides[step.exercise]?.progressionNote)
+            .isNotEmpty)
+          _variantRow(step.exercise),
         const Spacer(),
         // El anillo se llena al llegar al objetivo: ajustar reps se ve.
         if (target != null)
@@ -1020,7 +1259,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                   label: '',
                   size: 200,
                   stroke: 14,
-                  color: (_reps ?? 0) >= target ? scheme.primary : scheme.primary.withOpacity(0.6),
+                  color: (_reps ?? 0) >= target
+                      ? scheme.primary
+                      : scheme.primary.withOpacity(0.6),
                 ),
               ),
               IconButton.filledTonal(
@@ -1035,12 +1276,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           _hold(step)
         else
           Text(step.stepTarget,
-              textAlign: TextAlign.center, style: text.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
+              textAlign: TextAlign.center,
+              style: text.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
         const Spacer(),
         if (next != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: Text('Después: $next', textAlign: TextAlign.center, style: text.bodyLarge),
+            child: Text('Después: $next',
+                textAlign: TextAlign.center, style: text.bodyLarge),
           ),
         _sessionProgress(),
         const SizedBox(height: 12),
@@ -1063,13 +1306,15 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       return Column(
         children: [
           Text(step.stepTarget,
-              textAlign: TextAlign.center, style: text.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
+              textAlign: TextAlign.center,
+              style: text.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
           const SizedBox(height: 16),
           FilledButton.icon(
             style: FilledButton.styleFrom(minimumSize: const Size(220, 56)),
             onPressed: _startHold,
             icon: const Icon(Icons.timer_outlined),
-            label: Text(step.side == null ? 'Empezar' : 'Empezar lado ${step.side}'),
+            label: Text(
+                step.side == null ? 'Empezar' : 'Empezar lado ${step.side}'),
           ),
         ],
       );
@@ -1079,16 +1324,22 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     return ProgressRing(
       progress: leadIn > 0 ? 1 - leadIn / _holdLeadInSec : elapsed / max,
       // La práctica de pino va en minutos: "300 s" no se lee.
-      value: leadIn > 0 ? '$leadIn' : (max >= 120 ? formatDuration(elapsed) : '$elapsed s'),
+      value: leadIn > 0
+          ? '$leadIn'
+          : (max >= 120 ? formatDuration(elapsed) : '$elapsed s'),
       sublabel: leadIn > 0
           ? 'colócate'
           : elapsed < min
               ? 'mínimo ${holdLabel(min, null)}'
-              : (min == max ? 'listo' : 'ya puedes soltar · máx ${holdLabel(max, null)}'),
+              : (min == max
+                  ? 'listo'
+                  : 'ya puedes soltar · máx ${holdLabel(max, null)}'),
       label: '',
       size: 200,
       stroke: 14,
-      color: leadIn > 0 || elapsed < min ? scheme.primary.withOpacity(0.6) : scheme.primary,
+      color: leadIn > 0 || elapsed < min
+          ? scheme.primary.withOpacity(0.6)
+          : scheme.primary,
     );
   }
 
@@ -1105,7 +1356,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         tooltip: 'Variante',
         initialValue: current,
         onSelected: (v) => setState(() => _variants[exercise] = v),
-        itemBuilder: (_) => [for (final s in steps) PopupMenuItem(value: s, child: Text(s))],
+        itemBuilder: (_) =>
+            [for (final s in steps) PopupMenuItem(value: s, child: Text(s))],
         child: Chip(
           avatar: const Icon(Icons.swap_vert, size: 18),
           label: Text('Variante: $current'),
@@ -1134,7 +1386,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           onPressed: kg > 0 ? () => set(kg - 1) : null,
           icon: const Icon(Icons.remove_circle_outline),
         ),
-        Text(kg == 0 ? 'Sin carga' : 'Carga ${fmtDec(kg)} kg', style: Theme.of(context).textTheme.titleMedium),
+        Text(kg == 0 ? 'Sin carga' : 'Carga ${fmtDec(kg)} kg',
+            style: Theme.of(context).textTheme.titleMedium),
         IconButton(
           tooltip: 'Más carga',
           onPressed: () => set(kg + 1),
@@ -1147,7 +1400,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// Claves de técnica en el momento de hacerlo, con el enlace al video. Con
   /// el paso, la hoja sabe la variante: agarre del plan y si va con carga
   /// (en el circuito no se registra carga: va sin mochila).
-  Future<void> _showGuide(ExerciseRow guide, {WorkStep? step}) => showTechniqueSheet(
+  Future<void> _showGuide(ExerciseRow guide, {WorkStep? step}) =>
+      showTechniqueSheet(
         anchor: guide.anchor,
         context,
         exercise: guide.name,
@@ -1156,7 +1410,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         mediaUrl: guide.mediaUrl,
         grip: step?.grip,
         side: step?.side,
-        loaded: step == null ? null : !step.isRound && guide.tracksLoad && _loadFor(step.exercise) != null,
+        purpose: widget.day.exercises
+            .where((e) => e.name == guide.name)
+            .firstOrNull
+            ?.purpose,
+        physicalVariantKey: widget.day.exercises
+            .where((e) => e.name == guide.name)
+            .firstOrNull
+            ?.physicalVariantKey,
+        loaded: step == null
+            ? null
+            : !step.isRound &&
+                guide.tracksLoad &&
+                _loadFor(step.exercise) != null,
       );
 
   Widget _rest(RestStep step) {
@@ -1166,7 +1432,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     // Si este descanso viene de cerrar una ronda, se celebra la vuelta.
     final prev = _index > 0 ? _steps[_index - 1] : null;
     final roundsClosed = _done.where((d) => d.isRound).length;
-    final closedRound = prev is WorkStep && prev.isRound && roundsClosed > 0 && roundsClosed % _exercisesPerRound == 0
+    final closedRound = prev is WorkStep &&
+            prev.isRound &&
+            roundsClosed > 0 &&
+            roundsClosed % _exercisesPerRound == 0
         ? prev.position
         : null;
     final laps = _roundWork;
@@ -1175,10 +1444,18 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         if (closedRound != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: _RoundBadge(round: closedRound, lapSec: laps.isEmpty ? null : laps.last),
+            child: _RoundBadge(
+                round: closedRound, lapSec: laps.isEmpty ? null : laps.last),
           ),
-        Text('DESCANSO', style: Theme.of(context).textTheme.titleMedium?.copyWith(letterSpacing: 2)),
-        if (prev is WorkStep && !prev.isRound && !prev.isHold && _done.isNotEmpty)
+        Text('DESCANSO',
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(letterSpacing: 2)),
+        if (prev is WorkStep &&
+            !prev.isRound &&
+            !prev.isHold &&
+            _done.isNotEmpty)
           _RirPicker(
             exercise: prev.exercise,
             value: _done.last.rir,
@@ -1186,6 +1463,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           ),
         if (prev is WorkStep && _done.isNotEmpty)
           if (_lumbarChip(prev.exercise) case final chip?) chip,
+        if (prev is WorkStep && _done.isNotEmpty)
+          if (_accessoryAlarmChip(prev.exercise) case final chip?) chip,
         const SizedBox(height: 16),
         ProgressRing(
           progress: left,
@@ -1201,7 +1480,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         const SizedBox(height: 4),
         Text(step.nextLabel,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontWeight: FontWeight.w700)),
         if (_nextGuide case final guide?)
           TextButton.icon(
             onPressed: () => _showGuide(guide, step: _nextWorkStep),
@@ -1236,12 +1518,17 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           child: LinearProgressIndicator(
             value: total == 0 ? 0 : done / total,
             minHeight: 8,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+            backgroundColor:
+                Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
         ),
         const SizedBox(height: 6),
-        Text(widget.day.type.isCircuit ? '$done de $total ejercicios hechos' : '$done de $total series hechas',
-            textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+            widget.day.type.isCircuit
+                ? '$done de $total ejercicios hechos'
+                : '$done de $total series hechas',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }
@@ -1255,24 +1542,32 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final total = _warmupItems.length;
     final done = _warmupMarkedCount;
     final restLeft = _approachRestEnds?.difference(clock.now()).inSeconds;
-    final stages = [for (final s in WarmupStage.values) if (_warmupItems.any((i) => i.stage == s)) s];
+    final stages = [
+      for (final s in WarmupStage.values)
+        if (_warmupItems.any((i) => i.stage == s)) s
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('CALENTAMIENTO', textAlign: TextAlign.center, style: text.titleMedium?.copyWith(letterSpacing: 2)),
-        Text('${formatDuration(_warmupSec)} · $done de $total pasos', textAlign: TextAlign.center, style: text.bodyMedium),
+        Text('CALENTAMIENTO',
+            textAlign: TextAlign.center,
+            style: text.titleMedium?.copyWith(letterSpacing: 2)),
+        Text('${formatDuration(_warmupSec)} · $done de $total pasos',
+            textAlign: TextAlign.center, style: text.bodyMedium),
         const SizedBox(height: 8),
         Expanded(
           child: ListView(
             key: const ValueKey('warmup-list'),
             children: [
-              for (final note in soreWarmupNotes(_soreZones, order: sorenessZones))
+              for (final note
+                  in soreWarmupNotes(_soreZones, order: sorenessZones))
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.healing_outlined, size: 18, color: scheme.error),
+                      Icon(Icons.healing_outlined,
+                          size: 18, color: scheme.error),
                       const SizedBox(width: 6),
                       Expanded(child: Text(note, style: text.bodySmall)),
                     ],
@@ -1282,10 +1577,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                 ListTile(
                   dense: true,
                   leading: const Icon(Icons.directions_run),
-                  title: Text('Primero: ${w.name}${w.holdSecMin == null ? '' : ' (${w.holdSecMin! ~/ 60} min)'}'),
+                  title: Text(
+                      'Primero: ${w.name}${w.holdSecMin == null ? '' : ' (${w.holdSecMin! ~/ 60} min)'}'),
                   trailing: _guides[w.name] == null
                       ? null
-                      : TextButton(onPressed: () => _showGuide(_guides[w.name]!), child: const Text('Cómo')),
+                      : TextButton(
+                          onPressed: () => _showGuide(_guides[w.name]!),
+                          child: const Text('Cómo')),
                 ),
               for (final stage in stages) ...[
                 Padding(
@@ -1298,7 +1596,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                               : stage.label,
                       style: text.labelLarge),
                 ),
-                for (final item in _warmupItems.where((i) => i.stage == stage)) _warmupTile(item, scheme, text),
+                for (final item in _warmupItems.where((i) => i.stage == stage))
+                  _warmupTile(item, scheme, text),
               ],
               if (restLeft != null)
                 Padding(
@@ -1308,7 +1607,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                         ? 'Descansa ${formatDuration(restLeft)} antes de la primera serie que cuenta'
                         : 'Listo: ya puedes empezar',
                     textAlign: TextAlign.center,
-                    style: text.titleSmall?.copyWith(color: restLeft > 0 ? scheme.primary : AppColors.body),
+                    style: text.titleSmall?.copyWith(
+                        color: restLeft > 0 ? scheme.primary : AppColors.body),
                   ),
                 ),
             ],
@@ -1327,7 +1627,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             TextButton(
               onPressed: () => showModalBottomSheet<void>(
                 context: context,
-                builder: (_) => SafeArea(child: Padding(padding: const EdgeInsets.all(12), child: _planPreview())),
+                builder: (_) => SafeArea(
+                    child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: _planPreview())),
               ),
               child: const Text('Lo que viene'),
             ),
@@ -1349,20 +1652,30 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final marked = _warmupMarked.contains(item.key);
     final running = _warmupTimerKey == item.key && _warmupTimerEnds != null;
     final cues = _warmupCues(item.exercise);
-    final left = running ? _warmupTimerEnds!.difference(clock.now()).inSeconds.clamp(0, item.seconds ?? 0) : null;
+    final left = running
+        ? _warmupTimerEnds!
+            .difference(clock.now())
+            .inSeconds
+            .clamp(0, item.seconds ?? 0)
+        : null;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 3),
       child: ListTile(
         key: ValueKey('warmup-${item.key}'),
         leading: Checkbox(value: marked, onChanged: (_) => _toggleWarmup(item)),
         title: Text('${item.exercise} · ${item.dose}'),
-        subtitle: Text([if (item.note != null) item.note!, if (cues.isNotEmpty) cues.first].join(' · '),
-            maxLines: 2, overflow: TextOverflow.ellipsis),
-        onTap: () => showTechniqueSheet(context, exercise: item.exercise, cues: cues),
+        subtitle: Text(
+            [if (item.note != null) item.note!, if (cues.isNotEmpty) cues.first]
+                .join(' · '),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis),
+        onTap: () =>
+            showTechniqueSheet(context, exercise: item.exercise, cues: cues),
         trailing: item.seconds == null || marked
             ? null
             : running
-                ? Text(formatDuration(left!), style: text.titleMedium?.copyWith(color: scheme.primary))
+                ? Text(formatDuration(left!),
+                    style: text.titleMedium?.copyWith(color: scheme.primary))
                 : IconButton(
                     tooltip: 'Empezar ${item.seconds} s',
                     icon: const Icon(Icons.timer_outlined),
@@ -1377,14 +1690,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final seen = <String>{};
     final lines = [
       for (final s in _steps)
-        if (s is WorkStep && seen.add(s.exercise)) [s.exercise, s.targetLabel, if (s.grip != null) s.grip!].join(' · '),
+        if (s is WorkStep && seen.add(s.exercise))
+          [s.exercise, s.targetLabel, if (s.grip != null) s.grip!].join(' · '),
     ];
     final isCircuit = widget.day.type.isCircuit;
     final rounds = widget.roundsOverride ?? widget.day.targetRounds;
     return AppCard(
       margin: EdgeInsets.zero,
-      title:
-          isCircuit && rounds != null ? 'Lo que viene · $rounds ${rounds == 1 ? 'ronda' : 'rondas'}' : 'Lo que viene',
+      title: isCircuit && rounds != null
+          ? 'Lo que viene · $rounds ${rounds == 1 ? 'ronda' : 'rondas'}'
+          : 'Lo que viene',
       children: [
         for (final w in _warmupExercises)
           Padding(
@@ -1392,11 +1707,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text('Calienta con: ${w.name}${w.holdSecMin == null ? '' : ' (${w.holdSecMin! ~/ 60} min)'}',
+                  child: Text(
+                      'Calienta con: ${w.name}${w.holdSecMin == null ? '' : ' (${w.holdSecMin! ~/ 60} min)'}',
                       style: Theme.of(context).textTheme.titleSmall),
                 ),
                 if (_guides[w.name] case final g?)
-                  TextButton(onPressed: () => _showGuide(g), child: const Text('Cómo')),
+                  TextButton(
+                      onPressed: () => _showGuide(g),
+                      child: const Text('Cómo')),
               ],
             ),
           ),
@@ -1412,14 +1730,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// En el enfriamiento, lo logrado: motiva a cerrar bien en vez de cortar.
   Widget _doneSoFar() {
     final isCircuit = widget.day.type.isCircuit;
-    final rounds = isCircuit ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound) : null;
+    final rounds = isCircuit
+        ? completedRounds(_steps, _index, exercisesPerRound: _exercisesPerRound)
+        : null;
     final reps = _done.fold<int>(0, (a, d) => a + d.reps);
     final lastWork = _steps.take(_index).whereType<WorkStep>().lastOrNull;
     return AppCard(
       margin: EdgeInsets.zero,
       title: 'Ya hiciste',
       children: [
-        if (lastWork != null && !lastWork.isRound && !lastWork.isHold && _done.isNotEmpty)
+        if (lastWork != null &&
+            !lastWork.isRound &&
+            !lastWork.isHold &&
+            _done.isNotEmpty)
           _RirPicker(
             exercise: lastWork.exercise,
             value: _done.last.rir,
@@ -1427,6 +1750,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           ),
         if (lastWork != null && _done.isNotEmpty)
           if (_lumbarChip(lastWork.exercise) case final chip?) chip,
+        if (lastWork != null && _done.isNotEmpty)
+          if (_accessoryAlarmChip(lastWork.exercise) case final chip?) chip,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -1470,7 +1795,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   String? _nextWorkLabel() {
     for (var i = _index + 1; i < _steps.length; i++) {
       final s = _steps[i];
-      if (s is WorkStep) return '${s.exercise}${s.side == null ? '' : ' (lado ${s.side})'} · ${s.stepTarget}';
+      if (s is WorkStep) {
+        return '${s.exercise}${s.side == null ? '' : ' (lado ${s.side})'} · ${s.stepTarget}';
+      }
     }
     return null;
   }
@@ -1478,10 +1805,14 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   Widget _summary() {
     final draft = _buildDraft();
     final laps = _roundWork;
-    final measuredRests = _roundRests.length == _roundMarks.length && _roundMarks.isNotEmpty;
+    final measuredRests =
+        _roundRests.length == _roundMarks.length && _roundMarks.isNotEmpty;
     return ListView(
       children: [
-        _CompletionHeader(draft: draft, lapsSec: laps, color: styleForDay(widget.day.type).color),
+        _CompletionHeader(
+            draft: draft,
+            lapsSec: laps,
+            color: styleForDay(widget.day.type).color),
         const SizedBox(height: 12),
         // Sin el margen de AppCard: aquí ya hay padding y quedaba más angosta
         // que la cabecera.
@@ -1496,26 +1827,38 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
                 _SummaryRow('Descanso', formatDuration(draft.restSec)),
                 _SummaryRow('Enfriamiento', formatDuration(draft.cooldownSec)),
                 _SummaryRow('Total', formatDuration(draft.totalSec)),
-                if (_kcal != null) _SummaryRow('Gasto aproximado', '≈ ${fmtInt(_kcal!)} kcal'),
+                if (_kcal != null)
+                  _SummaryRow('Gasto aproximado', '≈ ${fmtInt(_kcal!)} kcal'),
                 const Divider(),
                 if (draft.roundsDone != null)
-                  _SummaryRow('Rondas', '${draft.roundsDone} de ${draft.plannedRounds ?? '—'}')
+                  _SummaryRow('Rondas',
+                      '${draft.roundsDone} de ${draft.plannedRounds ?? '—'}')
                 else
-                  _SummaryRow('Series', '${_done.length} de ${draft.plannedRounds ?? '—'}'),
+                  _SummaryRow('Series',
+                      '${_done.length} de ${draft.plannedRounds ?? '—'}'),
                 if (laps.isNotEmpty)
                   _SummaryRow(
-                      measuredRests ? 'Trabajo por ronda' : 'Tiempo por ronda', laps.map(formatDuration).join(' · ')),
+                      measuredRests ? 'Trabajo por ronda' : 'Tiempo por ronda',
+                      laps.map(formatDuration).join(' · ')),
                 if (measuredRests && _roundRests.length > 1)
                   _SummaryRow(
-                      'Descanso por ronda', _roundRests.take(_roundRests.length - 1).map(formatDuration).join(' · ')),
+                      'Descanso por ronda',
+                      _roundRests
+                          .take(_roundRests.length - 1)
+                          .map(formatDuration)
+                          .join(' · ')),
                 const Divider(),
-                for (final e in _exerciseTotals().entries) _SummaryRow(e.key, '${e.value} reps'),
+                for (final e in _exerciseTotals().entries)
+                  _SummaryRow(e.key, '${e.value} reps'),
                 if (draft.incomplete) const _SummaryRow('Cierre', 'Incompleta'),
               ],
             ),
           ),
         ),
-        if (widget.day.type.isCircuit) ...[
+        if (widget.day.type.isCircuit ||
+            widget.day.exercises.any((e) => e.block == ladderBlock) ||
+            widget.day.coreEpochs.keys
+                .any((id) => ladderById(id)?.accessory == true)) ...[
           const SizedBox(height: 12),
           Card(
             margin: EdgeInsets.zero,
@@ -1524,19 +1867,31 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('¿Cómo salió?', style: Theme.of(context).textTheme.titleSmall),
-                  const Text('Con las tres en "Sí" (y sin series partidas) la regla propone subir una ronda.'),
+                  Text('¿Cómo salió?',
+                      style: Theme.of(context).textTheme.titleSmall),
+                  Text(widget.day.type.isCircuit
+                      ? 'Con las tres en "Sí" (y sin series partidas) la regla propone subir una ronda.'
+                      : 'La escalera requiere técnica, rango y recuperación conocidos, series completas y dos sesiones con el criterio.'),
                   const SizedBox(height: 4),
                   TriToggle(
-                      label: 'Técnica buena en la última ronda',
+                      label: widget.day.type.isCircuit
+                          ? 'Técnica buena en la última ronda'
+                          : 'Técnica buena en todas las series',
                       value: _techniqueOk,
                       onChanged: (v) => _setCriteria(() => _techniqueOk = v)),
                   TriToggle(
-                      label: 'Rango completo', value: _fullRange, onChanged: (v) => _setCriteria(() => _fullRange = v)),
+                      label: 'Rango completo',
+                      value: _fullRange,
+                      onChanged: (v) => _setCriteria(() => _fullRange = v)),
                   TriToggle(
                       label: 'Recuperación normal',
                       value: _recoveryOk,
                       onChanged: (v) => _setCriteria(() => _recoveryOk = v)),
+                  AccessoryCriteriaEditor(
+                      epochs: widget.day.coreEpochs,
+                      proofs: _accessoryProofs,
+                      date: widget.date,
+                      onChanged: _setAccessoryProof),
                 ],
               ),
             ),
@@ -1572,10 +1927,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       Navigator.pop(context);
       return;
     }
-    if (!await confirmDelete(context, 'la sesión que acabas de terminar')) return;
+    if (!await confirmDelete(context, 'la sesión que acabas de terminar')) {
+      return;
+    }
     if (!mounted) return;
-    final ok =
-        await guarded(context, () => ref.read(trainingRepositoryProvider).delete(id), failure: 'No se pudo borrar');
+    final ok = await guarded(
+        context, () => ref.read(trainingRepositoryProvider).delete(id),
+        failure: 'No se pudo borrar');
     if (!ok || !mounted) return;
     unawaited(_notifications.cancelReviewReminder());
     Navigator.pop(context);
@@ -1588,8 +1946,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         title: const Text('¿Salir sin guardar?'),
         content: const Text('Se pierde todo lo de esta sesión.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Salir')),
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Seguir')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: const Text('Salir')),
         ],
       ),
     );
@@ -1600,7 +1962,8 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 /// "¿Cuántas te quedaban?": RIR de la serie que acaba de cerrar (§19.2).
 /// Tocar el mismo valor lo borra.
 class _RirPicker extends StatelessWidget {
-  const _RirPicker({required this.exercise, required this.value, required this.onChanged});
+  const _RirPicker(
+      {required this.exercise, required this.value, required this.onChanged});
 
   final String exercise;
   final int? value;
@@ -1613,7 +1976,8 @@ class _RirPicker extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8, bottom: 4),
       child: Column(
         children: [
-          Text('$exercise: ¿cuántas te quedaban? (RIR)', textAlign: TextAlign.center, style: text.bodyMedium),
+          Text('$exercise: ¿cuántas te quedaban? (RIR)',
+              textAlign: TextAlign.center, style: text.bodyMedium),
           const SizedBox(height: 4),
           Wrap(
             spacing: 6,
@@ -1651,7 +2015,8 @@ class _Stat extends StatelessWidget {
 /// "Llevas 36 reps de Flexiones": el acumulado del ejercicio en pantalla,
 /// sin contar la serie que se está haciendo.
 class _RepsSoFar extends StatelessWidget {
-  const _RepsSoFar({required this.exercise, required this.reps, this.seconds = false});
+  const _RepsSoFar(
+      {required this.exercise, required this.reps, this.seconds = false});
 
   final String exercise;
   final int reps;
@@ -1664,10 +2029,15 @@ class _RepsSoFar extends StatelessWidget {
         padding: const EdgeInsets.only(top: 6),
         child: Text(
           reps == 0
-              ? (seconds ? 'Aún sin segundos registrados en esta sesión' : 'Aún sin reps registradas en esta sesión')
+              ? (seconds
+                  ? 'Aún sin segundos registrados en esta sesión'
+                  : 'Aún sin reps registradas en esta sesión')
               : 'Llevas $reps ${seconds ? 's' : 'reps'} de $exercise',
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
       );
 }
@@ -1685,11 +2055,14 @@ class _KcalLine extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.local_fire_department, size: 16, color: AppColors.kcal),
+        const Icon(Icons.local_fire_department,
+            size: 16, color: AppColors.kcal),
         const SizedBox(width: 4),
         Flexible(
           child: Text(
-            kcal == null ? 'Registra tu peso para estimar las kcal' : '≈ ${fmtInt(kcal!)} kcal (aprox.)',
+            kcal == null
+                ? 'Registra tu peso para estimar las kcal'
+                : '≈ ${fmtInt(kcal!)} kcal (aprox.)',
             style: text.labelLarge,
             overflow: TextOverflow.ellipsis,
           ),
@@ -1718,7 +2091,8 @@ class _SummaryRow extends StatelessWidget {
 }
 
 class _BigButton extends StatelessWidget {
-  const _BigButton({required this.label, required this.icon, required this.onTap});
+  const _BigButton(
+      {required this.label, required this.icon, required this.onTap});
 
   final String label;
   final IconData icon;
@@ -1748,10 +2122,8 @@ class _BigButton extends StatelessWidget {
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(color: scheme.onPrimary, fontWeight: FontWeight.w800),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: scheme.onPrimary, fontWeight: FontWeight.w800),
                   ),
                 ),
               ],
@@ -1777,7 +2149,8 @@ class _RoundBadge extends StatelessWidget {
       tween: Tween(begin: 0.4, end: 1),
       duration: const Duration(milliseconds: 700),
       curve: Curves.elasticOut,
-      builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+      builder: (context, scale, child) =>
+          Transform.scale(scale: scale, child: child),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
@@ -1791,8 +2164,13 @@ class _RoundBadge extends StatelessWidget {
             const Icon(Icons.check_circle, color: green),
             const SizedBox(width: 8),
             Text(
-              lapSec == null ? 'Ronda $round lista' : 'Ronda $round lista · ${formatDuration(lapSec!)}',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: green, fontWeight: FontWeight.w800),
+              lapSec == null
+                  ? 'Ronda $round lista'
+                  : 'Ronda $round lista · ${formatDuration(lapSec!)}',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: green, fontWeight: FontWeight.w800),
             ),
           ],
         ),
@@ -1830,7 +2208,11 @@ class _PhasePanel extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Column(
       children: [
-        Text(title.toUpperCase(), style: Theme.of(context).textTheme.titleMedium?.copyWith(letterSpacing: 2)),
+        Text(title.toUpperCase(),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(letterSpacing: 2)),
         const SizedBox(height: 16),
         ProgressRing(
           progress: goalProgress(seconds, goalSec),
@@ -1842,10 +2224,14 @@ class _PhasePanel extends StatelessWidget {
           color: done ? AppColors.body : scheme.primary,
         ),
         const SizedBox(height: 8),
-        Text(detail, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
+        Text(detail,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge),
         const Spacer(),
         if (footer != null) ...[footer!, const SizedBox(height: 12)],
-        SizedBox(height: 110, child: _BigButton(label: action, icon: icon, onTap: onAction)),
+        SizedBox(
+            height: 110,
+            child: _BigButton(label: action, icon: icon, onTap: onAction)),
       ],
     );
   }
@@ -1854,7 +2240,8 @@ class _PhasePanel extends StatelessWidget {
 /// Cierre de sesión: medalla animada y un mensaje con el dato real de hoy
 /// frente a la sesión anterior del mismo tipo.
 class _CompletionHeader extends ConsumerStatefulWidget {
-  const _CompletionHeader({required this.draft, required this.lapsSec, required this.color});
+  const _CompletionHeader(
+      {required this.draft, required this.lapsSec, required this.color});
 
   final SessionDraft draft;
   final List<int> lapsSec;
@@ -1864,8 +2251,10 @@ class _CompletionHeader extends ConsumerStatefulWidget {
   ConsumerState<_CompletionHeader> createState() => _CompletionHeaderState();
 }
 
-class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with SingleTickerProviderStateMixin {
-  late final AnimationController _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))
+class _CompletionHeaderState extends ConsumerState<_CompletionHeader>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _anim = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 1200))
     ..forward();
   late final Future<SessionComparison> _comparison = _compare();
 
@@ -1878,12 +2267,15 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
   Future<SessionComparison> _compare() async {
     final d = widget.draft;
     final repo = ref.read(trainingRepositoryProvider);
-    final previous = await repo.previousTiming(d.type, d.date, planDayId: d.planDayId, mode: d.mode);
+    final previous = await repo.previousTiming(d.type, d.date,
+        planDayId: d.planDayId, mode: d.mode);
     final best = d.type.isCircuit ? await repo.bestRounds() : null;
     // Misma regla que Hoy y el informe: cuentan las rondas hechas, aunque la
     // sesión se cerrara antes; no cuentan las estimadas.
-    final record =
-        d.type.isCircuit && d.roundsDone != null && !d.roundsEstimated && isRecord(d.roundsDone!, best);
+    final record = d.type.isCircuit &&
+        d.roundsDone != null &&
+        !d.roundsEstimated &&
+        isRecord(d.roundsDone!, best);
     final current = RoundTimingEvidence(
         sessionId: d.id,
         date: d.date,
@@ -1892,7 +2284,8 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
         mode: d.mode,
         exerciseProtocol: d.exerciseProtocol,
         rounds: d.roundsDone,
-        basis: d.roundRestSec.length == d.roundMarksSec.length && d.roundMarksSec.isNotEmpty
+        basis: d.roundRestSec.length == d.roundMarksSec.length &&
+                d.roundMarksSec.isNotEmpty
             ? TimingBasis.work
             : TimingBasis.lap,
         durationsSec: widget.lapsSec,
@@ -1917,7 +2310,8 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
       future: _comparison,
       builder: (context, snap) {
         final c = snap.data;
-        final (title, body) = c == null ? ('Sesión terminada', '') : sessionPraise(c);
+        final (title, body) =
+            c == null ? ('Sesión terminada', '') : sessionPraise(c);
         final record = c?.isRecord ?? false;
         final color = record ? AppColors.record : widget.color;
         return AnimatedBuilder(
@@ -1946,10 +2340,16 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
                         shape: BoxShape.circle,
                         color: color.withOpacity(0.18),
                         boxShadow: [
-                          BoxShadow(color: color.withOpacity(0.45 * _anim.value), blurRadius: 32, spreadRadius: 4),
+                          BoxShadow(
+                              color: color.withOpacity(0.45 * _anim.value),
+                              blurRadius: 32,
+                              spreadRadius: 4),
                         ],
                       ),
-                      child: Icon(record ? Icons.emoji_events : Icons.military_tech, size: 56, color: color),
+                      child: Icon(
+                          record ? Icons.emoji_events : Icons.military_tech,
+                          size: 56,
+                          color: color),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -1957,11 +2357,15 @@ class _CompletionHeaderState extends ConsumerState<_CompletionHeader> with Singl
                     opacity: _anim.value,
                     child: Column(
                       children: [
-                        Text(title, style: text.headlineMedium?.copyWith(fontWeight: FontWeight.w900, color: color)),
+                        Text(title,
+                            style: text.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.w900, color: color)),
                         if (body.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 6),
-                            child: Text(body, textAlign: TextAlign.center, style: text.titleMedium),
+                            child: Text(body,
+                                textAlign: TextAlign.center,
+                                style: text.titleMedium),
                           ),
                       ],
                     ),

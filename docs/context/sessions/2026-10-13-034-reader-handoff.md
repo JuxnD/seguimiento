@@ -1,0 +1,26 @@
+# 034: checkpoint parcial y propuesta de división de lectores
+
+Estado: no R1 final, no aprobación total034. Fuente parcial compila: último analyze lib+24 testpaths0; últimas siete pruebas SQLite/codec/snapshot PASS, validación UI/paquete43 bloqueada por diagnóstico NativeIO/FakeAsync. El archivo de coordinación conserva raw/recibos y la cancelación acotada. Root decide el GO y la actividad de Claude; este documento por sí solo no concede ownership.
+
+## Slice lector propuesto a Claude en WT nuevo desde SHA del checkpoint
+
+- lib/data/repositories/readiness_repository.dart: sólo sección Tests movidos y resolver efectivo; preservar lectura readinessOn/stairs/legacyseverity ya corregida. Integrar protocolo31 tipado con movimientos legacy permitidos sólo31, protocolo32 independiente con igual start, límite2, tercera sin escritura, fecha efectiva común. Añadir resultado de agenda claro que puedan consumir otras superficies sin duplicar reglas.
+- lib/data/reminder_scheduler.dart y lib/domain/reminders.dart: agenda efectivamente movida en mensajes y fecha, benchmark programado y estado completo/desconocido. No IA, permisos ni notificaciones externas reales. Preservar defaults/orígenes de032/040.
+- lib/data/repositories/report_repository.dart, lib/domain/report/report_input.dart, lib/domain/report/report_builder.dart: historial de intentos/condiciones/fecha/sesión linked odesvinculada; comparación/dosis sólo con núcleo compartido y línea base compatible. Hold/perSide inventories usan allLadders. Reporte recibe y muestra agenda efectiva; no fingir elegibilidad del legado.
+- lib/data/repositories/mobility_benchmark_repository.dart: añadir lectura/resolver de programación cada28d desde bloque y desplazamiento si testpiernas efectivo coincide; conservar save/validación existente/append/NULLs, no nuevo esquema. Repo actual sólo save y watch; el core puro mobilityBenchmarkDue no tiene callers completos.
+
+Tests propios de repositorios/recordatorios/reportes/agenda/benchmarks y los harness existentes afectados. No full (uno al final037), no SDK sin lease supervisor, fuente congelada y serial1/90s, pruebas sintéticas. Antes de entregar declarar inventario exacto, rojo funcional, hashes y candidato limpio. No copiar WIP de034 ni asumir que el checkpoint está cerrado.
+
+## Contratos públicos existentes en este SHA
+
+- TestProtocolId v31_12/v32_13. TestScheduleKey: schemeString, blockStartDateTime, protocolIdEnum, roundInt, partTestPart; prefix incorpora todos. Legacy031 prefixes sólo para31. ReadinessRepository.currentTestDate/moves/moveTest aceptan key opcional; effectiveScheduledTest(start,date,{scheme,protocol}) devuelve nullable(round,part,moves). Su coherencia31 nueva vslegacy requiere completar/tests, no se afirma correcta por tener firmas.
+- FitnessTestRepository.all(): List<TestResult>; attempts(): List<FitnessTestAttempt> generado25. Header id/dateString/round/partString/protocolIdString/scheme/blockStartString?/sessionIdInt?; rows TestResult attemptIdInt?/conditionsString?/baselineKeyString?/protocolId(defaultlegacy31)/dateDateTime?. Históricos sin cabecera/condiciones siguen visibles desconocidos. No UPDATE/DELETE porfecha o prefijo para lectores.
+- domain/test_attempt_evidence.dart: observedAttemptValue(results,attemptId,item,{asOf,maxAgeDays?}), eligibleAttempts(results,item,{asOf,protocol?,conditions?,maxAgeDays?}), comparableAttemptImprovement(first,later). Evidencia protocol/item/conditions/date/value/id; ambas piernas del mismo intento/fecha/condiciones conocidas. No eligibleTestValue global como sustituto en superficie nueva.
+- domain/core_ladders.dart: coreLadders conserva inventario3; allLadders añade7, ladderById y ladderOf. Reutilizar inventories para informe, sin motor alternativo.
+- MobilityBenchmarkRepository.save(date,item,side?,value?,touches?,conditions?,blockStart?) es append validado: knee_to_wall cmI/D no negativos, seated_pike firmado, pancake cm>=0, shoulder_wall bool conocido, deep_squat s>=0. No imputar60s. Historial watch ordena date/id descendiente.
+
+## Rutas reservadas a034 durante este relevo
+
+Schema tables/database/generated, FitnessTestRepository writers, TrainingRepository completo, LadderRepository, core_ladders/accessory/quality/sides/prescription/test_attempt_evidence/test_protocol/plan_v32 y ReadinessInput core; DashboardRepository; Plan/Body/Home/Training UI (incluye TestMode), activation y plantillas; migraciones/restores/cápsulas/ActiveSession. Claude no edita esas rutas ni cambia firmas compartidas; solicita adaptación a034/root con evidencia.034 no edita las rutas lectoras propuestas tras GO. Las dos secciones de ReadinessRepository se integran por contratos completos y revisión, no ours/theirs global.
+
+H1/H2/H3 del audit externo pendientes y conocidos: aviso3d/benchmark callers; sinImpact domina80 yrestOnly, fútbol intenso comparte039>=45min (decisiónroot antes fuente); TestMode broad_jump debe respetar semáforo desde todas las entradas, sin fabricar resultados. Fuentes035/036/039/040 sólo se incorporan por commits aceptados y en037, nunca WIP.

@@ -6,9 +6,23 @@
 library;
 
 import 'enums.dart';
+import 'accessory_quality_proof.dart';
+import 'core_ladders.dart' show v32AccessoryLadders;
+
+Map<String, String> _accessoryProofs(Object? raw) {
+  if (raw == null) return const {};
+  final values = (raw as Map).cast<String, String>();
+  if (values.length > 7 ||
+      values.keys.any((id) => !v32AccessoryLadders.any((l) => l.id == id)) ||
+      values.values.any((v) => AccessoryQualityProof.decode(v) == null)) {
+    throw const FormatException('Evidencia de accesorio inválida');
+  }
+  return Map.unmodifiable(values);
+}
 
 /// Nota de contexto de una sesión cuyo plan de origen no se puede identificar.
-const recoveredPlanNote = 'Recuperada tras restaurar: no se pudo identificar el plan de origen';
+const recoveredPlanNote =
+    'Recuperada tras restaurar: no se pudo identificar el plan de origen';
 
 sealed class ActiveSession {
   const ActiveSession({required this.date, required this.startedAt});
@@ -37,7 +51,8 @@ sealed class ActiveSession {
 
 /// Una serie o parada ya hecha en el cronómetro guiado.
 class DoneStep {
-  const DoneStep(this.exercise, this.reps, this.isRound, {this.loadKg, this.variant, this.rir});
+  const DoneStep(this.exercise, this.reps, this.isRound,
+      {this.loadKg, this.variant, this.rir, this.side});
 
   final String exercise;
   final int reps;
@@ -51,8 +66,10 @@ class DoneStep {
 
   /// Repeticiones en reserva al terminar la serie (§19.2). null = sin anotar.
   final int? rir;
+  final String? side;
 
-  DoneStep withRir(int? value) => DoneStep(exercise, reps, isRound, loadKg: loadKg, variant: variant, rir: value);
+  DoneStep withRir(int? value) => DoneStep(exercise, reps, isRound,
+      loadKg: loadKg, variant: variant, rir: value, side: side);
 
   Map<String, Object?> toJson() => {
         'e': exercise,
@@ -61,6 +78,7 @@ class DoneStep {
         if (loadKg != null) 'kg': loadKg,
         if (variant != null) 'v': variant,
         if (rir != null) 'rir': rir,
+        if (side != null) 'side': side,
       };
 
   static DoneStep fromJson(Map<String, Object?> j) => DoneStep(
@@ -70,7 +88,13 @@ class DoneStep {
         loadKg: (j['kg'] as num?)?.toDouble(),
         variant: j['v'] as String?,
         rir: (j['rir'] as num?)?.toInt(),
+        side: _side(j['side']),
       );
+
+  static String? _side(Object? value) {
+    if (value == null || value == 'I' || value == 'D') return value as String?;
+    throw const FormatException('Lado de serie desconocido');
+  }
 }
 
 /// Fases del cronómetro guiado. El nombre se persiste.
@@ -99,6 +123,7 @@ class GuidedSnapshot extends ActiveSession {
     this.techniqueOk,
     this.fullRange,
     this.recoveryOk,
+    this.accessoryProofs = const {},
     this.effectiveDay,
     this.note,
     this.mode,
@@ -139,6 +164,7 @@ class GuidedSnapshot extends ActiveSession {
   final bool? techniqueOk;
   final bool? fullRange;
   final bool? recoveryOk;
+  final Map<String, String> accessoryProofs;
 
   /// Día efectivo ya compuesto: escalera, descarga y dosis congeladas.
   /// null en snapshots legados, que usan la reconstrucción compatible.
@@ -161,7 +187,9 @@ class GuidedSnapshot extends ActiveSession {
     return _fromJson({
       ...toJson(),
       'planDayId': -1,
-      'note': n == null || n.isEmpty ? recoveredPlanNote : (n.contains(recoveredPlanNote) ? n : '$n. $recoveredPlanNote'),
+      'note': n == null || n.isEmpty
+          ? recoveredPlanNote
+          : (n.contains(recoveredPlanNote) ? n : '$n. $recoveredPlanNote'),
     });
   }
 
@@ -189,6 +217,7 @@ class GuidedSnapshot extends ActiveSession {
         'techniqueOk': techniqueOk,
         'fullRange': fullRange,
         'recoveryOk': recoveryOk,
+        if (accessoryProofs.isNotEmpty) 'accessoryProofs': accessoryProofs,
         'effectiveDay': effectiveDay,
         'note': note,
         'mode': mode,
@@ -213,17 +242,30 @@ class GuidedSnapshot extends ActiveSession {
         restStartedAt: _date(j['restStartedAt']),
         restAccumSec: (j['restAccumSec'] as num?)?.toInt() ?? 0,
         reps: (j['reps'] as num?)?.toInt(),
-        done: [for (final d in j['done']! as List) DoneStep.fromJson((d as Map).cast<String, Object?>())],
-        roundMarks: [for (final m in j['roundMarks']! as List) (m as num).toInt()],
-        roundRests: [for (final m in (j['roundRests'] as List?) ?? const []) (m as num).toInt()],
+        done: [
+          for (final d in j['done']! as List)
+            DoneStep.fromJson((d as Map).cast<String, Object?>())
+        ],
+        roundMarks: [
+          for (final m in j['roundMarks']! as List) (m as num).toInt()
+        ],
+        roundRests: [
+          for (final m in (j['roundRests'] as List?) ?? const [])
+            (m as num).toInt()
+        ],
         techniqueOk: j['techniqueOk'] as bool?,
         fullRange: j['fullRange'] as bool?,
         recoveryOk: j['recoveryOk'] as bool?,
+        accessoryProofs: _accessoryProofs(j['accessoryProofs']),
         effectiveDay: (j['effectiveDay'] as Map?)?.cast<String, Object?>(),
         note: j['note'] as String?,
         mode: j['mode'] as String?,
-        lumbar: [for (final x in (j['lumbar'] as List?) ?? const []) x as String],
-        warmupDone: [for (final x in (j['warmupDone'] as List?) ?? const []) x as String],
+        lumbar: [
+          for (final x in (j['lumbar'] as List?) ?? const []) x as String
+        ],
+        warmupDone: [
+          for (final x in (j['warmupDone'] as List?) ?? const []) x as String
+        ],
         warmupSkipped: j['warmupSkipped'] == true,
       );
 }
@@ -326,13 +368,18 @@ class TimerSnapshot extends ActiveSession {
         phase: j['phase']! as String,
         workStartedAt: _date(j['workStartedAt']),
         workEndedAt: _date(j['workEndedAt']),
-        roundMarks: [for (final m in (j['roundMarks'] as List?) ?? const []) (m as num).toInt()],
+        roundMarks: [
+          for (final m in (j['roundMarks'] as List?) ?? const [])
+            (m as num).toInt()
+        ],
         partial: (j['partial'] as num?)?.toInt(),
         worst: {
           for (final e in ((j['worst'] as Map?) ?? const {}).entries)
             int.parse(e.key as String): (e.value as num).toInt(),
         },
-        exercises: [for (final e in (j['exercises'] as List?) ?? const []) e as String],
+        exercises: [
+          for (final e in (j['exercises'] as List?) ?? const []) e as String
+        ],
       );
 }
 

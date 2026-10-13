@@ -1,0 +1,173 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_cycle_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_cycle_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_cycle_test.dart: edit second exact attempt preserves first; delete auxiliary unlinks only second
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_cycle_test.dart: changing conditions on edit appends another baseline and keeps old session detail
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_cycle_test.dart: (tearDownAll)
+00:00 +2: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart: (setUpAll)
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart: 034 saving a second real attempt preserves first results and session
+00:01 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart: (tearDownAll)
+00:01 +3: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart
+00:01 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: (setUpAll)
+00:01 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: latest unknown technique/range/recovery breaks previous clean targets
+00:02 +4: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: any split row at 0 invalidates whole latest target
+00:02 +5: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: any split row at 1 invalidates whole latest target
+00:02 +6: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: any split row at 3 invalidates whole latest target
+00:02 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: any failure row at 0 invalidates whole latest target
+00:02 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: any failure row at 1 invalidates whole latest target
+00:02 +9: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: any failure row at 3 invalidates whole latest target
+00:02 +10: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: prescribed goals-only latest target breaks older complete targets; unrelated hollow does not
+00:02 +11: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_ladder_integrity_test.dart: (tearDownAll)
+00:02 +11: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart
+00:02 +11: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart: (setUpAll)
+00:02 +11: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart: genuine24→25 upgrade preserves every original column and row; negative mutation is detected
+00:03 +12: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart: genuineZIP24→25→reopen→second restore preserves original data and local device flags
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:66:42)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:68:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:66:42)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:68:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:70:63)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:72:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:70:63)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart:72:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:03 +13: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_upgrade24_test.dart: (tearDownAll)
+00:03 +13: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart
+00:04 +13: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart: (setUpAll)
+00:04 +13: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart: schema25 declared target and nullable unknowns, zero remains distinct
+00:04 +14: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart: (tearDownAll)
+00:04 +14: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_data_test.dart
+00:05 +14: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_data_test.dart: (setUpAll)
+00:05 +14: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_data_test.dart: only complete explicitly prescribed maintenance is neutral; edit invalidates proof
+00:05 +15: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_data_test.dart: (tearDownAll)
+00:05 +15: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_template_test.dart
+00:06 +15: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_template_test.dart: all seven days retain a guide and a separate nonempty purpose
+00:06 +15 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_template_test.dart: all seven days retain a guide and a separate nonempty purpose [E]
+  Expected: empty
+    Actual: ['1:Pike push-up', '2:Flexiones diamante', '5:Flexiones', '5:Sentadillas']
+  Every inherited and new exercise needs the shared content reference.
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\plan034_template_test.dart 19:5         main.<fn>
+  
+00:06 +15 -1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_prescription_test.dart
+00:06 +15 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_prescription_test.dart: neutral maintenance does not advance and partial target breaks
+00:06 +16 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_prescription_test.dart: versioned prescription is bound to epoch; corrupt or unknown proof stays unknown
+00:06 +17 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_prescription_test.dart: two repeated same-side performances cannot prove bilateral criterion
+00:06 +18 -1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_benchmarks_knee_test.dart
+00:07 +18 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_benchmarks_knee_test.dart: signed pike allowed; same negative is rejected for other units and regular reps
+00:07 +19 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_benchmarks_knee_test.dart: shoulder boolean false is known and null unknown; numeric substitution invalid
+00:07 +20 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_benchmarks_knee_test.dart: benchmarks recur every28days without calendar month rounding
+00:07 +21 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_benchmarks_knee_test.dart: knee thresholds and dominant rest; consecutive three days cannot cross gaps
+00:07 +22 -1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_attempt_evidence_test.dart
+00:08 +22 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_attempt_evidence_test.dart: same round multiple attempts remain individually eligible and compare only exact known baseline
+00:08 +23 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_attempt_evidence_test.dart: bilateral sides cannot be joined across attempts or unknown setup
+00:08 +24 -1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/illustration_physical_variant_test.dart
+00:09 +24 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/illustration_physical_variant_test.dart: physical variants resolve by exercise and explicit key without substituting a base pose
+00:09 +25 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/illustration_physical_variant_test.dart: the shared view shows the selected physical pose or explicit absence
+00:09 +26 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T183345748-34508-8a6760e1bdce4c6b801db5e11f970abc.json

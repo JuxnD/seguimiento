@@ -8,6 +8,7 @@ import '../../data/repositories/plan_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
+import '../../domain/plan_v32.dart';
 import '../../ui/widgets.dart';
 import 'plan_edit_screen.dart';
 import 'v3_activation.dart';
@@ -24,7 +25,8 @@ class _V3ActivationCard extends ConsumerWidget {
     return AppCard(
       title: 'Plan v3.1',
       children: [
-        const Text('Tirón + hombro, empuje + brazos, piernas + potencia el miércoles, torso B y el viernes de '
+        const Text(
+            'Tirón + hombro, empuje + brazos, piernas + potencia el miércoles, torso B y el viernes de '
             'referencia (circuito hasta las 10 limpias; luego Cindy y Tabata). 9 semanas: bloque 1 de 5, '
             'descarga, bloque 2 de 3 y pruebas. Arranca un lunes.'),
         const SizedBox(height: 8),
@@ -45,7 +47,9 @@ class _V3ActivationCard extends ConsumerWidget {
                   selectableDayPredicate: (d) => d.weekday == DateTime.monday,
                   helpText: 'Lunes de inicio',
                 );
-                if (picked != null && context.mounted) await activateV31(context, ref, dateOnly(picked));
+                if (picked != null && context.mounted) {
+                  await activateV31(context, ref, dateOnly(picked));
+                }
               },
               child: const Text('Otro lunes'),
             ),
@@ -65,7 +69,10 @@ class _PlancheCard extends ConsumerStatefulWidget {
 }
 
 class _PlancheCardState extends ConsumerState<_PlancheCard> {
-  late bool _on = ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true;
+  late bool _on =
+      ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true;
+  late bool _rings =
+      ref.read(localFlagsProvider).get<bool>(FlagKeys.hasRings) == true;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +82,8 @@ class _PlancheCardState extends ConsumerState<_PlancheCard> {
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: const Text('Tengo las mini paralelas'),
-          subtitle: const Text('Martes, jueves y viernes, ~10 min al inicio: muñecas, inclinación de planche y, el '
+          subtitle: const Text(
+              'Martes, jueves y viernes, ~10 min al inicio: muñecas, inclinación de planche y, el '
               'martes, flexiones pseudo-planche. El tuck entra con 3 × 30 s de inclinación. En descarga, solo '
               'inclinaciones. Con dolor de muñeca o codo, una semana solo inclinaciones suaves.'),
           value: _on,
@@ -86,6 +94,19 @@ class _PlancheCardState extends ConsumerState<_PlancheCard> {
             ref.invalidate(dashboardProvider);
           },
         ),
+        SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Tengo anillas disponibles'),
+            subtitle: const Text(
+                'Permite el último peldaño de support; no cambia el nivel automáticamente.'),
+            value: _rings,
+            onChanged: (v) async {
+              setState(() => _rings = v);
+              await ref.read(localFlagsProvider).set(FlagKeys.hasRings, v);
+              ref.invalidate(dashboardProvider);
+              ref.invalidate(ladderAdviceProvider);
+              ref.invalidate(ladderDecisionsProvider);
+            }),
       ],
     );
   }
@@ -106,13 +127,25 @@ class PlanScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (list) {
           if (list.isEmpty) {
-            return const AppCard(children: [EmptyHint('Sin plan. Crea la versión 1.')]);
+            return const AppCard(
+                children: [EmptyHint('Sin plan. Crea la versión 1.')]);
           }
-          final hasV3 = list.any((v) => v.scheme == v31Scheme);
+          final hasV3 =
+              list.any((v) => v.scheme == v31Scheme || v.scheme == v32Scheme);
           return ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
-              if (!hasV3 && setup != null && !setup.isNewInstall) const _V3ActivationCard(),
+              if (!list.any((v) => v.scheme == v32Scheme))
+                AppCard(title: 'Plan v3.2', children: [
+                  const Text(
+                      'Revisa la semana nueva antes de activarla. Conserva historial y metas.'),
+                  OutlinedButton(
+                      onPressed: () => activateV32(
+                          context, ref, nextMonday(addDays(DateTime.now(), 1))),
+                      child: const Text('Revisar y activar v3.2')),
+                ]),
+              if (!hasV3 && setup != null && !setup.isNewInstall)
+                const _V3ActivationCard(),
               if (!hasV3 && setup?.isNewInstall == true)
                 AppCard(children: [
                   const Text(
@@ -139,7 +172,11 @@ class PlanScreen extends ConsumerWidget {
                 ]),
               if (hasV3) const _PlancheCard(),
               for (var i = list.length - 1; i >= 0; i--)
-                _VersionCard(versionId: list[i].id, number: i + 1, validFrom: parseDay(list[i].validFrom), notes: list[i].notes),
+                _VersionCard(
+                    versionId: list[i].id,
+                    number: i + 1,
+                    validFrom: parseDay(list[i].validFrom),
+                    notes: list[i].notes),
             ],
           );
         },
@@ -152,7 +189,10 @@ class PlanScreen extends ConsumerWidget {
               : (await ref.read(planRepositoryProvider).load(list.last.id)
                 ..validFrom = dateOnly(DateTime.now()));
           if (context.mounted) {
-            await Navigator.push(context, MaterialPageRoute(builder: (_) => PlanEditScreen(draft: draft)));
+            await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => PlanEditScreen(draft: draft)));
           }
         },
         icon: const Icon(Icons.add),
@@ -163,7 +203,11 @@ class PlanScreen extends ConsumerWidget {
 }
 
 class _VersionCard extends ConsumerWidget {
-  const _VersionCard({required this.versionId, required this.number, required this.validFrom, this.notes});
+  const _VersionCard(
+      {required this.versionId,
+      required this.number,
+      required this.validFrom,
+      this.notes});
 
   final int versionId;
   final int number;
@@ -181,32 +225,42 @@ class _VersionCard extends ConsumerWidget {
           final draft = await ref.read(planRepositoryProvider).load(versionId)
             ..validFrom = dateOnly(DateTime.now());
           if (context.mounted) {
-            await Navigator.push(context, MaterialPageRoute(builder: (_) => PlanEditScreen(draft: draft)));
+            await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => PlanEditScreen(draft: draft)));
           }
         },
       ),
       children: [
-        if (notes != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(notes!)),
+        if (notes != null)
+          Padding(
+              padding: const EdgeInsets.only(bottom: 8), child: Text(notes!)),
         ref.watch(planDraftProvider(versionId)).when(
-          loading: () => const LinearProgressIndicator(),
-          error: (e, _) => Text('Error: $e'),
-          data: (plan) {
-            return Column(
-              children: [
-                for (final day in plan.days)
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                    title: Text('${weekdayLong(day.weekday)} · ${day.type.label}'
-                        '${day.targetRounds == null ? '' : ' · meta ${day.targetRounds} rondas'}'),
-                    subtitle: day.exercises.isEmpty
-                        ? null
-                        : Text(day.exercises.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ')),
-                  ),
-              ],
-            );
-          },
-        ),
+              loading: () => const LinearProgressIndicator(),
+              error: (e, _) => Text('Error: $e'),
+              data: (plan) {
+                return Column(
+                  children: [
+                    for (final day in plan.days)
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                        title: Text(
+                            '${weekdayLong(day.weekday)} · ${day.type.label}'
+                            '${day.targetRounds == null ? '' : ' · meta ${day.targetRounds} rondas'}'),
+                        subtitle: day.exercises.isEmpty
+                            ? null
+                            : Text(day.exercises
+                                .map((e) => '${e.name} ${e.targetLabel}'
+                                        '${e.purpose == null ? '' : ' · Para qué: ${e.purpose}'}'
+                                    .trim())
+                                .join('\n')),
+                      ),
+                  ],
+                );
+              },
+            ),
       ],
     );
   }

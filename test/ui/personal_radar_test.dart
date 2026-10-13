@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart' show Value;
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/repositories/fitness_test_repository.dart';
-import 'package:seguimiento/domain/fitness_test.dart';
 import 'package:seguimiento/domain/progress_metrics.dart';
 import 'package:seguimiento/features/report/personal_radar_widget.dart';
 import 'package:seguimiento/ui/theme.dart';
 import '../support/radar_fixture.dart';
+import '../support/radar_sql_fixture.dart';
 import '../support/sqlite_host.dart';
 import '../support/test_fonts.dart';
 
@@ -252,16 +251,10 @@ void main() {
     try {
       for (final r in [
         ...radarTests(),
-        TestResult(
+        knownRadarTest(
             round: 3, item: 'pullup', value: 12, clean: false, date: radarDay)
       ]) {
-        await db.into(db.fitnessTests).insert(FitnessTestsCompanion.insert(
-            date: '2026-10-${r.date!.day.toString().padLeft(2, '0')}',
-            round: r.round,
-            item: r.item,
-            value: r.value,
-            side: Value(r.side),
-            clean: Value(r.clean)));
+        await insertRadarTestSql(db, r);
       }
       final rows = await FitnessTestRepository(db).all();
       final radar = buildPersonalRadar(
@@ -329,9 +322,9 @@ void main() {
         (tester) async {
       final tests = [
         ...radarTests().where((r) => r.item != 'pullup'),
-        TestResult(
+        knownRadarTest(
             round: 1, item: 'pullup', value: 5, date: DateTime(2026, 10, 1)),
-        TestResult(
+        knownRadarTest(
             round: 2, item: 'pullup', value: 12, date: DateTime(2026, 10, 9))
       ];
       final radar = buildPersonalRadar(

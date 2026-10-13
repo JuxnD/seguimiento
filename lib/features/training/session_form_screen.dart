@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,13 +10,17 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/progress.dart';
 import '../../domain/session_math.dart';
+import '../../domain/core_ladders.dart';
+import '../../domain/accessory_quality_proof.dart';
+import 'accessory_criteria_editor.dart';
 import '../../ui/record_celebration.dart';
 import '../../ui/widgets.dart';
 
 /// Alta y edición de una sesión. Acepta un borrador ya poblado por el
 /// contador de rondas.
 class SessionFormScreen extends ConsumerStatefulWidget {
-  const SessionFormScreen({super.key, required this.draft, this.celebrate = true});
+  const SessionFormScreen(
+      {super.key, required this.draft, this.celebrate = true});
 
   final SessionDraft draft;
 
@@ -27,20 +32,52 @@ class SessionFormScreen extends ConsumerStatefulWidget {
 }
 
 class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
-  late final SessionDraft d = widget.draft;
-  late final _total = TextEditingController(text: d.totalSec == 0 ? '' : formatDuration(d.totalSec));
-  late final _warmup = TextEditingController(text: d.warmupSec == 0 ? '' : formatDuration(d.warmupSec));
-  late final _cooldown = TextEditingController(text: d.cooldownSec == 0 ? '' : formatDuration(d.cooldownSec));
-  late final _rest = TextEditingController(text: d.restSec == 0 ? '' : formatDuration(d.restSec));
-  late final _rounds = TextEditingController(text: d.roundsDone?.toString() ?? '');
+  // The editor is a manual boundary even when the input came from a timer.
+  late final SessionDraft d = widget.draft..enterManualEditing();
+  late final _total = TextEditingController(
+      text: d.totalSec == 0 ? '' : formatDuration(d.totalSec));
+  late final _warmup = TextEditingController(
+      text: d.warmupSec == 0 ? '' : formatDuration(d.warmupSec));
+  late final _cooldown = TextEditingController(
+      text: d.cooldownSec == 0 ? '' : formatDuration(d.cooldownSec));
+  late final _rest = TextEditingController(
+      text: d.restSec == 0 ? '' : formatDuration(d.restSec));
+  late final _rounds =
+      TextEditingController(text: d.roundsDone?.toString() ?? '');
   late final _context = TextEditingController(text: d.context ?? '');
   late final _notes = TextEditingController(text: d.notes ?? '');
   late final _limiting = TextEditingController(text: d.limitingExercise ?? '');
   bool _saving = false;
+  Map<String, String> get _epochs {
+    try {
+      return d.coreEpochs == null
+          ? {}
+          : (jsonDecode(d.coreEpochs!) as Map).cast<String, String>();
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Map<String, String> get _accessoryProofs => {
+        for (final ladder in v32AccessoryLadders)
+          if (d.accessoryCriteriaEdits[ladder.id] ??
+                  _epochs[AccessoryQualityProof.key(ladder.id)]
+              case final raw?)
+            ladder.id: raw,
+      };
 
   @override
   void dispose() {
-    for (final c in [_total, _warmup, _cooldown, _rest, _rounds, _context, _notes, _limiting]) {
+    for (final c in [
+      _total,
+      _warmup,
+      _cooldown,
+      _rest,
+      _rounds,
+      _context,
+      _notes,
+      _limiting
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -57,7 +94,9 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
   Future<void> _loadPlanExercises() async {
     final view = await ref.read(planRepositoryProvider).dayFor(d.date);
     if (view == null || view.day.exercises.isEmpty) {
-      if (mounted) showSnack(context, 'El plan no tiene ejercicios para ese día');
+      if (mounted) {
+        showSnack(context, 'El plan no tiene ejercicios para ese día');
+      }
       return;
     }
     setState(() {
@@ -74,13 +113,15 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
 
   Future<void> _estimateRounds() async {
     _syncTimes();
-    final historical = await ref.read(trainingRepositoryProvider).historicalMeanRoundSec();
+    final historical =
+        await ref.read(trainingRepositoryProvider).historicalMeanRoundSec();
     if (!mounted) return;
     final result = await showDialog<int>(
       context: context,
       // Las vueltas del contador incluyen el descanso: se estima sobre el
       // tiempo de circuito con descansos, no sobre el neto.
-      builder: (_) => _EstimateDialog(netSec: d.spanSec, historicalMeanSec: historical),
+      builder: (_) =>
+          _EstimateDialog(netSec: d.spanSec, historicalMeanSec: historical),
     );
     if (result != null) {
       setState(() {
@@ -105,9 +146,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
   /// Deja constancia de los descansos originales: el informe se audita.
   void _audit(List<int> before) {
     if ((d.context ?? '').contains('Descansos corregidos a mano')) return;
-    final original = before.take(before.length - 1).map(formatDuration).join(' · ');
+    final original =
+        before.take(before.length - 1).map(formatDuration).join(' · ');
     final note = 'Descansos corregidos a mano (antes: $original)';
-    _context.text = _context.text.trim().isEmpty ? note : '${_context.text.trim()}. $note';
+    _context.text =
+        _context.text.trim().isEmpty ? note : '${_context.text.trim()}. $note';
     d.context = _context.text;
   }
 
@@ -117,7 +160,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     final laps = lapDurations(d.roundMarksSec);
     final result = await showDialog<List<int>>(
       context: context,
-      builder: (_) => _RestsDialog(rests: d.roundRestSec.take(gaps).toList(), laps: laps),
+      builder: (_) =>
+          _RestsDialog(rests: d.roundRestSec.take(gaps).toList(), laps: laps),
     );
     if (result == null) return;
     setState(() {
@@ -138,7 +182,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     final exercises = ref.read(exercisesProvider).value ?? [];
     final res = await showDialog<_NewExercise>(
       context: context,
-      builder: (_) => _AddExerciseDialog(known: exercises.map((e) => e.name).toList()),
+      builder: (_) =>
+          _AddExerciseDialog(known: exercises.map((e) => e.name).toList()),
     );
     if (res == null) return;
     setState(() {
@@ -169,11 +214,16 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       context: context,
       builder: (c) => AlertDialog(
         title: const Text('No es lo que toca hoy'),
-        content: Text('El plan pide ${planned.label.toLowerCase()} y estás registrando '
+        content: Text(
+            'El plan pide ${planned.label.toLowerCase()} y estás registrando '
             '${d.type.label.toLowerCase()}.\n\nSi guardas, queda marcada como fuera de plan.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Corregir')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Guardar igual')),
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Corregir')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: const Text('Guardar igual')),
         ],
       ),
     );
@@ -189,7 +239,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     // Movilidad: sin RPE ni fases; no entra en la regla de progresión.
     if (d.type == SessionType.movilidad) return true;
     if (d.rpe == null) {
-      final rpe = await showDialog<int>(context: context, builder: (_) => const _RpeDialog());
+      final rpe = await showDialog<int>(
+          context: context, builder: (_) => const _RpeDialog());
       if (rpe == null || !mounted) return false;
       setState(() => d.rpe = rpe);
     }
@@ -204,9 +255,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     }
     // Día ligero que se pasó de la meta o salió exigente: es para recuperar
     // (§16.8). Con RPE 9–10 ya se preguntó arriba.
-    final overRounds = d.plannedRounds != null && (int.tryParse(_rounds.text) ?? 0) > d.plannedRounds!;
+    final overRounds = d.plannedRounds != null &&
+        (int.tryParse(_rounds.text) ?? 0) > d.plannedRounds!;
     final rpe = d.rpe ?? 0;
-    if (d.type == SessionType.circuitoLigero && (overRounds || (rpe >= 7 && rpe < 9))) {
+    if (d.type == SessionType.circuitoLigero &&
+        (overRounds || (rpe >= 7 && rpe < 9))) {
       final ok = await _confirm(
         'Día de recuperación',
         '${overRounds ? 'Hiciste ${_rounds.text} rondas y la meta era ${d.plannedRounds}' : 'RPE $rpe'} en el '
@@ -217,8 +270,10 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     }
     const minPhaseSec = 60;
     final shortPhases = [
-      if (d.totalSec > 0 && d.warmupSec < minPhaseSec) 'calentamiento de ${formatDuration(d.warmupSec)}',
-      if (d.totalSec > 0 && d.cooldownSec < minPhaseSec) 'enfriamiento de ${formatDuration(d.cooldownSec)}',
+      if (d.totalSec > 0 && d.warmupSec < minPhaseSec)
+        'calentamiento de ${formatDuration(d.warmupSec)}',
+      if (d.totalSec > 0 && d.cooldownSec < minPhaseSec)
+        'enfriamiento de ${formatDuration(d.cooldownSec)}',
     ];
     if (shortPhases.isNotEmpty) {
       final ok = await _confirm(
@@ -232,7 +287,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
     return true;
   }
 
-  Future<bool> _confirm(String title, String body, {required String keep}) async {
+  Future<bool> _confirm(String title, String body,
+      {required String keep}) async {
     if (!mounted) return false;
     final ok = await showDialog<bool>(
       context: context,
@@ -240,8 +296,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         title: Text(title),
         content: Text(body),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Corregir')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(keep)),
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Corregir')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true), child: Text(keep)),
         ],
       ),
     );
@@ -265,13 +324,17 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       final repo = ref.read(trainingRepositoryProvider);
       final repeated = await repo.repeatedSetsBefore(d);
       if (!mounted) return;
-      if (repeated != null && !await _confirm('Mismos números que la última sesión',
-          'Todas las series coinciden con el registro del ${formatShort(repeated.date)}. '
-          '¿Entrenaste y fueron los mismos números? Confirma o corrige.', keep: 'Guardar igual')) return;
+      if (repeated != null &&
+          !await _confirm(
+              'Mismos números que la última sesión',
+              'Todas las series coinciden con el registro del ${formatShort(repeated.date)}. '
+                  '¿Entrenaste y fueron los mismos números? Confirma o corrige.',
+              keep: 'Guardar igual')) return;
       if (!mounted) return;
       final original = d.id == null ? null : await repo.load(d.id!);
       final hadTen = await repo.firstCleanTen(excludeSessionId: d.id) != null;
-      final v2 = await repo.v2ProgressionContext(d, requireLink: d.pendingReview);
+      final v2 =
+          await repo.v2ProgressionContext(d, requireLink: d.pendingReview);
       if (!mounted) return;
       final pendingReview = d.pendingReview;
       d.pendingReview = false;
@@ -287,7 +350,8 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
       if (!saved) return;
       unawaited(ref.read(notificationServiceProvider).cancelReviewReminder());
       if (!hadTen && original?.cleanTen != true && v2) {
-        await showRecordCelebration(context, rounds: d.roundsDone!, milestone: true);
+        await showRecordCelebration(context,
+            rounds: d.roundsDone!, milestone: true);
       } else if (widget.celebrate) {
         await _celebrateIfRecord(repo);
       }
@@ -329,233 +393,308 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
         title: Text(d.id == null ? 'Nueva sesión' : 'Editar sesión'),
         actions: [
           if (d.id != null)
-            IconButton(tooltip: 'Borrar', 
+            IconButton(
+              tooltip: 'Borrar',
               icon: const Icon(Icons.delete_outline),
-              onPressed: _saving ? null : () async {
-                if (await confirmDelete(context, 'la sesión')) {
-                  if (!context.mounted) return;
-                  final ok = await guarded(context, () => ref.read(trainingRepositoryProvider).delete(d.id!), failure: 'No se pudo borrar');
-                  if (ok && context.mounted) Navigator.pop(context, true);
-                }
-              },
+              onPressed: _saving
+                  ? null
+                  : () async {
+                      if (await confirmDelete(context, 'la sesión')) {
+                        if (!context.mounted) return;
+                        final ok = await guarded(
+                            context,
+                            () => ref
+                                .read(trainingRepositoryProvider)
+                                .delete(d.id!),
+                            failure: 'No se pudo borrar');
+                        if (ok && context.mounted) Navigator.pop(context, true);
+                      }
+                    },
             ),
         ],
       ),
-      body: AbsorbPointer(absorbing: _saving, child: ExcludeFocus(excluding: _saving, child: ListView(
-        padding: const EdgeInsets.only(bottom: 96),
-        children: [
-          AppCard(
-            title: 'Cuándo',
-            children: [
-              DateTile(date: d.date, onChanged: (v) => setState(() => d.date = v)),
-              TimeTile(time: d.startTime, onChanged: (v) => setState(() => d.startTime = v)),
-              const SizedBox(height: 8),
-              // Cinco tipos no caben en un SegmentedButton de teléfono.
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
+      body: AbsorbPointer(
+          absorbing: _saving,
+          child: ExcludeFocus(
+              excluding: _saving,
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 96),
                 children: [
-                  for (final t in SessionType.values)
-                    ChoiceChip(
-                      label: Text(t.label),
-                      selected: d.type == t,
-                      onSelected: (_) => setState(() => d.type = t),
+                  AppCard(
+                    title: 'Cuándo',
+                    children: [
+                      DateTile(
+                          date: d.date,
+                          onChanged: (v) => setState(() => d.date = v)),
+                      TimeTile(
+                          time: d.startTime,
+                          onChanged: (v) => setState(() => d.startTime = v)),
+                      const SizedBox(height: 8),
+                      // Cinco tipos no caben en un SegmentedButton de teléfono.
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          for (final t in SessionType.values)
+                            ChoiceChip(
+                              label: Text(t.label),
+                              selected: d.type == t,
+                              onSelected: (_) => setState(() => d.type = t),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  AppCard(
+                    title: 'Tiempos',
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                              child: DurationField(
+                                  controller: _total,
+                                  label: 'Total',
+                                  onChanged: (_) => setState(() {}))),
+                          const SizedBox(width: 8),
+                          Expanded(
+                              child: DurationField(
+                                  controller: _warmup,
+                                  label: 'Calentamiento',
+                                  onChanged: (_) => setState(() {}))),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: DurationField(
+                                  controller: _rest,
+                                  label: 'Descansos',
+                                  onChanged: (_) => setState(() {}))),
+                          const SizedBox(width: 8),
+                          Expanded(
+                              child: DurationField(
+                                  controller: _cooldown,
+                                  label: 'Enfriamiento',
+                                  onChanged: (_) => setState(() {}))),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                          'Trabajo neto (sin descansos): ${net == null ? '—' : formatDuration(net)}',
+                          style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: NumberField(
+                              controller: _rounds,
+                              label: 'Rondas',
+                              onChanged: (_) =>
+                                  setState(() => d.roundsEstimated = false),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          OutlinedButton.icon(
+                            onPressed: _estimateRounds,
+                            icon: const Icon(Icons.calculate_outlined),
+                            label: const Text('Estimar'),
+                          ),
+                        ],
+                      ),
+                      if (d.roundsEstimated)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 6),
+                          child: Text(
+                              'Rondas estimadas por tiempo (se marca en el informe)'),
+                        ),
+                      if (d.roundMarksSec.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            d.roundWorkSec != null
+                                ? 'Trabajo por ronda: ${d.roundWorkSec!.map(formatDuration).join(' · ')}'
+                                : 'Vueltas (con descanso): ${lapDurations(d.roundMarksSec).map(formatDuration).join(' · ')}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      if (d.roundWorkSec case final work?
+                          when work.length > 1) ...[
+                        for (final k in suspectRounds(work, d.roundRestSec))
+                          _SuspectRound(
+                            round: k,
+                            work: work,
+                            rests: d.roundRestSec,
+                            onReassign: (sec) =>
+                                setState(() => _shiftRest(k - 1, sec)),
+                          ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed: _editRests,
+                            icon: const Icon(Icons.tune, size: 18),
+                            label: const Text('Corregir descansos'),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  AppCard(
+                    title: 'Ejercicios',
+                    trailing: Wrap(
+                      children: [
+                        IconButton(
+                          tooltip: 'Cargar del plan',
+                          icon: const Icon(Icons.playlist_add),
+                          onPressed: _loadPlanExercises,
+                        ),
+                        IconButton(
+                            tooltip: 'Añadir',
+                            icon: const Icon(Icons.add),
+                            onPressed: _addExercise),
+                      ],
                     ),
-                ],
-              ),
-            ],
-          ),
-          AppCard(
-            title: 'Tiempos',
-            children: [
-              Row(
-                children: [
-                  Expanded(child: DurationField(controller: _total, label: 'Total', onChanged: (_) => setState(() {}))),
-                  const SizedBox(width: 8),
-                  Expanded(
-                      child: DurationField(controller: _warmup, label: 'Calentamiento', onChanged: (_) => setState(() {}))),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                      child: DurationField(controller: _rest, label: 'Descansos', onChanged: (_) => setState(() {}))),
-                  const SizedBox(width: 8),
-                  Expanded(
-                      child: DurationField(controller: _cooldown, label: 'Enfriamiento', onChanged: (_) => setState(() {}))),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text('Trabajo neto (sin descansos): ${net == null ? '—' : formatDuration(net)}',
-                  style: Theme.of(context).textTheme.titleSmall),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: NumberField(
-                      controller: _rounds,
-                      label: 'Rondas',
-                      onChanged: (_) => setState(() => d.roundsEstimated = false),
+                    children: [
+                      if (groups.isEmpty)
+                        const EmptyHint(
+                            'Sin ejercicios. Cárgalos del plan o añádelos.'),
+                      for (final entry in groups.entries) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                                child: Text(entry.key,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall)),
+                            IconButton(
+                              tooltip: 'Añadir otra serie',
+                              icon: const Icon(Icons.add_circle_outline),
+                              onPressed: () =>
+                                  setState(() => d.sets.add(SetDraft(
+                                        exercise: entry.key,
+                                        reps: entry.value.last.reps,
+                                      ))),
+                            ),
+                          ],
+                        ),
+                        for (var i = 0; i < entry.value.length; i++)
+                          _SetRow(
+                            index: i + 1,
+                            set: entry.value[i],
+                            onChanged: () => setState(() {}),
+                            onDelete: () =>
+                                setState(() => d.sets.remove(entry.value[i])),
+                            warnFailure: ref
+                                    .watch(profileProvider)
+                                    .value
+                                    ?.neverToFailure ??
+                                true,
+                          ),
+                        const Divider(),
+                      ],
+                    ],
+                  ),
+                  if (d.outOfPlan)
+                    AppCard(
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.warning_amber),
+                            const SizedBox(width: 8),
+                            Expanded(
+                                child: Text(
+                                    'Fuera de plan: el día pedía otra cosa.',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium)),
+                          ],
+                        ),
+                      ],
                     ),
+                  if (d.incomplete)
+                    AppCard(
+                      children: [
+                        Text('Cerrada antes de completar el plan'
+                            '${d.plannedRounds == null ? '' : ' (${d.roundsDone ?? 0} de ${d.plannedRounds})'}.'),
+                      ],
+                    ),
+                  AppCard(
+                    title: 'Regla de progresión',
+                    children: [
+                      Text(d.sets.any((s) => ladderOf(s.exercise) != null)
+                          ? 'La escalera requiere técnica, rango y recuperación conocidos, dos sesiones completas con el criterio y al menos14días en el peldaño.'
+                          : 'Solo se sube de ronda con las tres en verde, sin series partidas y sin fallo.'),
+                      const SizedBox(height: 8),
+                      TriToggle(
+                        label: 'Técnica buena',
+                        value: d.techniqueOk,
+                        onChanged: (v) => setState(() => d.techniqueOk = v),
+                      ),
+                      TriToggle(
+                        label: 'Rango completo',
+                        value: d.fullRange,
+                        onChanged: (v) => setState(() => d.fullRange = v),
+                      ),
+                      TriToggle(
+                        label: 'Recuperación normal',
+                        value: d.recoveryOk,
+                        onChanged: (v) => setState(() => d.recoveryOk = v),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: _estimateRounds,
-                    icon: const Icon(Icons.calculate_outlined),
-                    label: const Text('Estimar'),
+                  if (_epochs.keys
+                      .any((id) => ladderById(id)?.accessory == true))
+                    AccessoryCriteriaEditor(
+                        allowAlarmRecording: true,
+                        epochs: _epochs,
+                        proofs: _accessoryProofs,
+                        date: d.date,
+                        onChanged: (id, p) async {
+                          setState(
+                              () => d.accessoryCriteriaEdits[id] = p.encode());
+                        }),
+                  AppCard(
+                    title: 'Sensaciones y contexto',
+                    children: [
+                      RpeSelector(
+                          value: d.rpe,
+                          onChanged: (v) => setState(() => d.rpe = v)),
+                      const SizedBox(height: 12),
+                      _LimitingPicker(
+                        value: _limiting.text.trim().isEmpty
+                            ? null
+                            : _limiting.text.trim(),
+                        // Primero los ejercicios de esta sesión: casi siempre es uno de ellos.
+                        options: {
+                          ...d.sets.map((s) => s.exercise),
+                          if (d.sets.isEmpty)
+                            ...(ref.watch(exercisesProvider).value ?? [])
+                                .map((e) => e.name),
+                        }.toList(),
+                        onChanged: (v) =>
+                            setState(() => _limiting.text = v ?? ''),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _context,
+                        decoration: const InputDecoration(
+                          labelText: 'Contexto',
+                          hintText: 'Oficina, fútbol intenso ayer, dormí 5 h…',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _notes,
+                        decoration: const InputDecoration(
+                            labelText: 'Notas', border: OutlineInputBorder()),
+                        maxLines: 3,
+                      ),
+                    ],
                   ),
                 ],
-              ),
-              if (d.roundsEstimated)
-                const Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Text('Rondas estimadas por tiempo (se marca en el informe)'),
-                ),
-              if (d.roundMarksSec.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    d.roundWorkSec != null
-                        ? 'Trabajo por ronda: ${d.roundWorkSec!.map(formatDuration).join(' · ')}'
-                        : 'Vueltas (con descanso): ${lapDurations(d.roundMarksSec).map(formatDuration).join(' · ')}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              if (d.roundWorkSec case final work? when work.length > 1) ...[
-                for (final k in suspectRounds(work, d.roundRestSec))
-                  _SuspectRound(
-                    round: k,
-                    work: work,
-                    rests: d.roundRestSec,
-                    onReassign: (sec) => setState(() => _shiftRest(k - 1, sec)),
-                  ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    onPressed: _editRests,
-                    icon: const Icon(Icons.tune, size: 18),
-                    label: const Text('Corregir descansos'),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          AppCard(
-            title: 'Ejercicios',
-            trailing: Wrap(
-              children: [
-                IconButton(
-                  tooltip: 'Cargar del plan',
-                  icon: const Icon(Icons.playlist_add),
-                  onPressed: _loadPlanExercises,
-                ),
-                IconButton(tooltip: 'Añadir', icon: const Icon(Icons.add), onPressed: _addExercise),
-              ],
-            ),
-            children: [
-              if (groups.isEmpty) const EmptyHint('Sin ejercicios. Cárgalos del plan o añádelos.'),
-              for (final entry in groups.entries) ...[
-                Row(
-                  children: [
-                    Expanded(child: Text(entry.key, style: Theme.of(context).textTheme.titleSmall)),
-                    IconButton(tooltip: 'Añadir otra serie', 
-                      icon: const Icon(Icons.add_circle_outline),
-                      onPressed: () => setState(() => d.sets.add(SetDraft(
-                            exercise: entry.key,
-                            reps: entry.value.last.reps,
-                          ))),
-                    ),
-                  ],
-                ),
-                for (var i = 0; i < entry.value.length; i++)
-                  _SetRow(
-                    index: i + 1,
-                    set: entry.value[i],
-                    onChanged: () => setState(() {}),
-                    onDelete: () => setState(() => d.sets.remove(entry.value[i])),
-                    warnFailure: ref.watch(profileProvider).value?.neverToFailure ?? true,
-                  ),
-                const Divider(),
-              ],
-            ],
-          ),
-          if (d.outOfPlan)
-            AppCard(
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.warning_amber),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text('Fuera de plan: el día pedía otra cosa.',
-                        style: Theme.of(context).textTheme.bodyMedium)),
-                  ],
-                ),
-              ],
-            ),
-          if (d.incomplete)
-            AppCard(
-              children: [
-                Text('Cerrada antes de completar el plan'
-                    '${d.plannedRounds == null ? '' : ' (${d.roundsDone ?? 0} de ${d.plannedRounds})'}.'),
-              ],
-            ),
-          AppCard(
-            title: 'Regla de progresión',
-            children: [
-              const Text('Solo se sube de ronda con las tres en verde, sin series partidas y sin fallo.'),
-              const SizedBox(height: 8),
-              TriToggle(
-                label: 'Técnica buena',
-                value: d.techniqueOk,
-                onChanged: (v) => setState(() => d.techniqueOk = v),
-              ),
-              TriToggle(
-                label: 'Rango completo',
-                value: d.fullRange,
-                onChanged: (v) => setState(() => d.fullRange = v),
-              ),
-              TriToggle(
-                label: 'Recuperación normal',
-                value: d.recoveryOk,
-                onChanged: (v) => setState(() => d.recoveryOk = v),
-              ),
-            ],
-          ),
-          AppCard(
-            title: 'Sensaciones y contexto',
-            children: [
-              RpeSelector(value: d.rpe, onChanged: (v) => setState(() => d.rpe = v)),
-              const SizedBox(height: 12),
-              _LimitingPicker(
-                value: _limiting.text.trim().isEmpty ? null : _limiting.text.trim(),
-                // Primero los ejercicios de esta sesión: casi siempre es uno de ellos.
-                options: {
-                  ...d.sets.map((s) => s.exercise),
-                  if (d.sets.isEmpty) ...(ref.watch(exercisesProvider).value ?? []).map((e) => e.name),
-                }.toList(),
-                onChanged: (v) => setState(() => _limiting.text = v ?? ''),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _context,
-                decoration: const InputDecoration(
-                  labelText: 'Contexto',
-                  hintText: 'Oficina, fútbol intenso ayer, dormí 5 h…',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _notes,
-                decoration: const InputDecoration(labelText: 'Notas', border: OutlineInputBorder()),
-                maxLines: 3,
-              ),
-            ],
-          ),
-        ],
-      ))),
+              ))),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _saving ? null : _save,
         icon: const Icon(Icons.save),
@@ -568,7 +707,11 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
 /// ⚠ de una ronda que se comió el descanso previo, con la propuesta de
 /// devolvérselo (§16.9).
 class _SuspectRound extends StatelessWidget {
-  const _SuspectRound({required this.round, required this.work, required this.rests, required this.onReassign});
+  const _SuspectRound(
+      {required this.round,
+      required this.work,
+      required this.rests,
+      required this.onReassign});
 
   final int round;
   final List<int> work;
@@ -593,7 +736,9 @@ class _SuspectRound extends StatelessWidget {
             ),
           ),
           if (sec > 0)
-            TextButton(onPressed: () => onReassign(sec), child: Text('Pasar $sec s al descanso')),
+            TextButton(
+                onPressed: () => onReassign(sec),
+                child: Text('Pasar $sec s al descanso')),
         ],
       ),
     );
@@ -613,7 +758,9 @@ class _RestsDialog extends StatefulWidget {
 }
 
 class _RestsDialogState extends State<_RestsDialog> {
-  late final _fields = [for (final r in widget.rests) TextEditingController(text: '$r')];
+  late final _fields = [
+    for (final r in widget.rests) TextEditingController(text: '$r')
+  ];
 
   @override
   void dispose() {
@@ -626,7 +773,9 @@ class _RestsDialogState extends State<_RestsDialog> {
   /// Trabajo que le queda a la ronda siguiente con el descanso escrito.
   String _workLabel(int i) {
     final v = int.tryParse(_fields[i].text.trim());
-    return v == null ? '' : 'R${i + 2} ${formatDuration(widget.laps[i + 1] - v)}';
+    return v == null
+        ? ''
+        : 'R${i + 2} ${formatDuration(widget.laps[i + 1] - v)}';
   }
 
   List<int>? get _values {
@@ -649,7 +798,8 @@ class _RestsDialogState extends State<_RestsDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('En segundos. Lo que sumes a un descanso sale del trabajo de la ronda siguiente.'),
+            const Text(
+                'En segundos. Lo que sumes a un descanso sale del trabajo de la ronda siguiente.'),
             const SizedBox(height: 8),
             for (var i = 0; i < _fields.length; i++)
               Padding(
@@ -662,13 +812,15 @@ class _RestsDialogState extends State<_RestsDialog> {
                         controller: _fields[i],
                         keyboardType: TextInputType.number,
                         onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(suffixText: 's', isDense: true),
+                        decoration: const InputDecoration(
+                            suffixText: 's', isDense: true),
                       ),
                     ),
                     const SizedBox(width: 8),
                     SizedBox(
                       width: 80,
-                      child: Text(_workLabel(i), style: Theme.of(context).textTheme.bodySmall),
+                      child: Text(_workLabel(i),
+                          style: Theme.of(context).textTheme.bodySmall),
                     ),
                   ],
                 ),
@@ -677,8 +829,13 @@ class _RestsDialogState extends State<_RestsDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-        FilledButton(onPressed: values == null ? null : () => Navigator.pop(context, values), child: const Text('Usar')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar')),
+        FilledButton(
+            onPressed:
+                values == null ? null : () => Navigator.pop(context, values),
+            child: const Text('Usar')),
       ],
     );
   }
@@ -713,7 +870,8 @@ class _SetRow extends StatelessWidget {
             child: TextFormField(
               initialValue: set.reps == 0 ? '' : '${set.reps}',
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'reps', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'reps', border: OutlineInputBorder()),
               onChanged: (v) {
                 set.reps = int.tryParse(v) ?? 0;
                 onChanged();
@@ -725,7 +883,10 @@ class _SetRow extends StatelessWidget {
             Expanded(
               child: TextFormField(
                 initialValue: set.splitDetail ?? '',
-                decoration: const InputDecoration(labelText: 'partida', hintText: '12+3', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'partida',
+                    hintText: '12+3',
+                    border: OutlineInputBorder()),
                 onChanged: (v) => set.splitDetail = v,
               ),
             )
@@ -749,11 +910,16 @@ class _SetRow extends StatelessWidget {
             onPressed: () {
               set.toFailure = !set.toFailure;
               // El plan dice no entrenar al fallo: se registra, pero se avisa.
-              if (set.toFailure && warnFailure) showSnack(context, 'El plan pide no llegar al fallo (RIR 1–3)');
+              if (set.toFailure && warnFailure) {
+                showSnack(context, 'El plan pide no llegar al fallo (RIR 1–3)');
+              }
               onChanged();
             },
           ),
-          IconButton(tooltip: 'Quitar', icon: const Icon(Icons.close), onPressed: onDelete),
+          IconButton(
+              tooltip: 'Quitar',
+              icon: const Icon(Icons.close),
+              onPressed: onDelete),
         ],
       ),
     );
@@ -761,7 +927,8 @@ class _SetRow extends StatelessWidget {
 }
 
 class _ExerciseAutocomplete extends StatelessWidget {
-  const _ExerciseAutocomplete({required this.controller, required this.label, required this.options});
+  const _ExerciseAutocomplete(
+      {required this.controller, required this.label, required this.options});
 
   final TextEditingController controller;
   final String label;
@@ -773,14 +940,16 @@ class _ExerciseAutocomplete extends StatelessWidget {
       initialValue: controller.value,
       optionsBuilder: (value) => value.text.isEmpty
           ? options
-          : options.where((o) => o.toLowerCase().contains(value.text.toLowerCase())),
+          : options
+              .where((o) => o.toLowerCase().contains(value.text.toLowerCase())),
       onSelected: (v) => controller.text = v,
       fieldViewBuilder: (context, textController, focusNode, onSubmit) {
         textController.addListener(() => controller.text = textController.text);
         return TextField(
           controller: textController,
           focusNode: focusNode,
-          decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+          decoration: InputDecoration(
+              labelText: label, border: const OutlineInputBorder()),
         );
       },
     );
@@ -824,7 +993,8 @@ class _AddExerciseDialogState extends State<_AddExerciseDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _ExerciseAutocomplete(controller: _name, label: 'Ejercicio', options: widget.known),
+          _ExerciseAutocomplete(
+              controller: _name, label: 'Ejercicio', options: widget.known),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -836,14 +1006,17 @@ class _AddExerciseDialogState extends State<_AddExerciseDialog> {
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar')),
         FilledButton(
           onPressed: () {
             final name = _name.text.trim();
             if (name.isEmpty) return;
             Navigator.pop(
               context,
-              _NewExercise(name, int.tryParse(_sets.text) ?? 1, int.tryParse(_reps.text) ?? 0),
+              _NewExercise(name, int.tryParse(_sets.text) ?? 1,
+                  int.tryParse(_reps.text) ?? 0),
             );
           },
           child: const Text('Añadir'),
@@ -865,8 +1038,11 @@ class _EstimateDialog extends StatefulWidget {
 
 class _EstimateDialogState extends State<_EstimateDialog> {
   late final _mean = TextEditingController(
-      text: widget.historicalMeanSec == null ? '' : formatDuration(widget.historicalMeanSec!));
-  late final _rest = TextEditingController(text: widget.historicalMeanSec == null ? '30' : '0');
+      text: widget.historicalMeanSec == null
+          ? ''
+          : formatDuration(widget.historicalMeanSec!));
+  late final _rest = TextEditingController(
+      text: widget.historicalMeanSec == null ? '30' : '0');
 
   @override
   void dispose() {
@@ -890,7 +1066,10 @@ class _EstimateDialogState extends State<_EstimateDialog> {
         children: [
           Text('Tiempo de circuito: ${formatDuration(widget.netSec)}'),
           const SizedBox(height: 12),
-          DurationField(controller: _mean, label: 'Tiempo medio por ronda', onChanged: (_) => setState(() {})),
+          DurationField(
+              controller: _mean,
+              label: 'Tiempo medio por ronda',
+              onChanged: (_) => setState(() {})),
           const SizedBox(height: 8),
           NumberField(
             controller: _rest,
@@ -908,12 +1087,18 @@ class _EstimateDialogState extends State<_EstimateDialog> {
               ),
             ),
           const SizedBox(height: 12),
-          Text('≈ $_result rondas', style: Theme.of(context).textTheme.headlineSmall),
+          Text('≈ $_result rondas',
+              style: Theme.of(context).textTheme.headlineSmall),
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-        FilledButton(onPressed: _result == 0 ? null : () => Navigator.pop(context, _result), child: const Text('Usar')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar')),
+        FilledButton(
+            onPressed:
+                _result == 0 ? null : () => Navigator.pop(context, _result),
+            child: const Text('Usar')),
       ],
     );
   }
@@ -922,7 +1107,8 @@ class _EstimateDialogState extends State<_EstimateDialog> {
 /// Ejercicio limitante con chips de un toque. "Ninguno" es una opción
 /// explícita: hay sesiones en las que nada costó más que lo demás.
 class _LimitingPicker extends StatelessWidget {
-  const _LimitingPicker({required this.value, required this.options, required this.onChanged});
+  const _LimitingPicker(
+      {required this.value, required this.options, required this.onChanged});
 
   final String? value;
   final List<String> options;
@@ -930,11 +1116,15 @@ class _LimitingPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final all = [...options, if (value != null && !options.contains(value)) value!];
+    final all = [
+      ...options,
+      if (value != null && !options.contains(value)) value!
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('¿Qué te costó más?', style: Theme.of(context).textTheme.labelLarge),
+        Text('¿Qué te costó más?',
+            style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 6),
         Wrap(
           spacing: 6,
@@ -955,8 +1145,11 @@ class _LimitingPicker extends StatelessWidget {
               avatar: const Icon(Icons.add, size: 16),
               label: const Text('Otro'),
               onPressed: () async {
-                final other = await promptText(context, title: 'Ejercicio limitante', label: 'Nombre');
-                if (other != null && other.trim().isNotEmpty) onChanged(other.trim());
+                final other = await promptText(context,
+                    title: 'Ejercicio limitante', label: 'Nombre');
+                if (other != null && other.trim().isNotEmpty) {
+                  onChanged(other.trim());
+                }
               },
             ),
           ],
@@ -982,12 +1175,16 @@ class _RpeDialogState extends State<_RpeDialog> {
   Widget build(BuildContext context) => AlertDialog(
         title: const Text('¿Qué tan duro fue?'),
         content: SingleChildScrollView(
-          child: RpeSelector(value: _value, onChanged: (v) => setState(() => _value = v)),
+          child: RpeSelector(
+              value: _value, onChanged: (v) => setState(() => _value = v)),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Volver')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Volver')),
           FilledButton(
-            onPressed: _value == null ? null : () => Navigator.pop(context, _value),
+            onPressed:
+                _value == null ? null : () => Navigator.pop(context, _value),
             child: const Text('Guardar'),
           ),
         ],

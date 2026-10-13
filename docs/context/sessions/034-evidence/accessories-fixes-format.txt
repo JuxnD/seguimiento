@@ -1,0 +1,3 @@
+Formatted test/data/plan034_rings_gate_test.dart
+Formatted 65 files (1 changed) in 1.15 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T195124945-60424-0fca81e02d334e6982153e40b2228b3e.json

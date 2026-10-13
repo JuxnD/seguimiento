@@ -1,0 +1,9 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_template_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_template_test.dart: all seven days retain a guide and a separate nonempty purpose
+00:00 +1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/schema25_personal_guard_test.dart
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/schema25_personal_guard_test.dart: (setUpAll)
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/schema25_personal_guard_test.dart: pending profile rejects only a new attempt row
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/schema25_personal_guard_test.dart: pending profile rejects only a new benchmark row
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/schema25_personal_guard_test.dart: (tearDownAll)
+00:00 +3: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T183735845-69428-a118db2113d54153a4b16ac88a128499.json

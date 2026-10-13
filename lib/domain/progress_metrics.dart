@@ -3,6 +3,7 @@ import 'fitness_test.dart';
 import 'enums.dart';
 import 'cindy_protocol.dart';
 import 'session_math.dart';
+import 'test_attempt_evidence.dart';
 
 enum RadarAxis {
   pull('Tirón', 'pullup', 'reps'),
@@ -99,7 +100,8 @@ class RadarObservation {
       required this.quality,
       required this.raw,
       List<TestResult> testRows = const [],
-      this.cindy})
+      this.cindy,
+      this.baseline})
       : testRows = List.unmodifiable(testRows);
   final String sourceKey, protocol, reason, quality, raw;
   final double? value;
@@ -107,6 +109,7 @@ class RadarObservation {
   final bool eligible;
   final List<TestResult> testRows;
   final CindyObservation? cindy;
+  final String? baseline;
 }
 
 class RadarAxisEvidence {
@@ -180,13 +183,7 @@ PersonalRadar buildPersonalRadar(
       return byDate == 0 ? a.sourceKey.compareTo(b.sourceKey) : byDate;
     });
     final eligible = observations.where((o) => o.eligible).toList();
-    RadarObservation? last = eligible.lastOrNull;
-    if (axis.testId != null) {
-      final round = latestEligibleTestRound(tests, axis.testId!, asOf: cutoff);
-      final shared =
-          eligible.where((o) => o.testRows.first.round == round).firstOrNull;
-      if (shared != null) last = shared;
-    }
+    final RadarObservation? last = eligible.lastOrNull;
     final old = last != null &&
         freshness != null &&
         daysBetween(last.date!, cutoff) > freshness.maxAgeDays;
@@ -194,7 +191,12 @@ PersonalRadar buildPersonalRadar(
     final refIssue = _referenceError(ref, axis, cutoff);
     axes.add(RadarAxisEvidence(
         axis: axis,
-        firstEligible: eligible.firstOrNull,
+        firstEligible: axis.testId == null
+            ? eligible.firstOrNull
+            : eligible
+                .where(
+                    (o) => o.baseline != null && o.baseline == last?.baseline)
+                .firstOrNull,
         lastEligible: last,
         current: old ? null : last,
         latestObserved:
@@ -235,13 +237,18 @@ String _referenceError(RadarReference? ref, RadarAxis axis, DateTime cutoff) {
 List<RadarObservation> _testEvidence(
     RadarAxis axis, List<TestResult> tests, DateTime cutoff) {
   final item = testItem(axis.testId!)!;
-  final rounds =
-      tests.where((r) => r.item == item.id).map((r) => r.round).toSet();
+  final keys = tests
+      .where((r) => r.item == item.id)
+      .map((r) => (r.attemptId, r.round))
+      .toSet();
   return [
-    for (final round in rounds)
+    for (final key in keys)
       () {
-        final rows =
-            tests.where((r) => r.item == item.id && r.round == round).toList();
+        final round = key.$2;
+        final rows = tests
+            .where((r) =>
+                r.item == item.id && r.round == round && r.attemptId == key.$1)
+            .toList();
         final dates = rows
             .where((r) => r.date != null)
             .map((r) => dayKey(r.date!))
@@ -261,25 +268,31 @@ List<RadarObservation> _testEvidence(
             (item.perSide
                 ? rows.map((r) => r.side).toSet().containsAll(['I', 'D'])
                 : rows.single.side == null);
-        final value = testValue(tests, round, item.id);
-        final apt = structurallyValid &&
-            eligibleTestValue(tests, round, item.id, asOf: cutoff) != null;
+        final value = testValue(rows, round, item.id);
+        final attempt = key.$1 == null
+            ? null
+            : observedAttemptValue(rows, key.$1!, item.id, asOf: cutoff);
+        final apt = structurallyValid && attempt != null;
         final reasons = [
           if (!structurallyValid || value == null)
             'Parcial, valor/lado inválido o filas duplicadas',
           if (rows.any((r) => !r.clean)) 'Técnica declarada con dudas',
           if (rows.any((r) => r.date == null)) 'Fecha sin registrar',
           if (dates.length > 1) 'Fechas distintas en el mismo intento',
+          if (attempt == null && rows.every((r) => r.clean))
+            'Condiciones o identidad del intento desconocidas; sin dosis ni comparación',
           if (dated.any((d) => d.isAfter(cutoff)))
             'Fecha futura respecto del corte'
         ];
         return RadarObservation(
-            sourceKey: 'test:${item.id}:T$round',
+            sourceKey:
+                'test:${item.id}:T$round${key.$1 == null ? '' : ':attempt:${key.$1.toString().padLeft(12, '0')}'}',
             protocol: axis.protocol,
             value: structurallyValid ? value : null,
             date: date,
             orderDate: dated.lastOrNull,
             eligible: apt,
+            baseline: attempt?.baseline,
             reason: reasons.join('. '),
             quality: rows.every((r) => r.clean)
                 ? 'Técnica declarada limpia'

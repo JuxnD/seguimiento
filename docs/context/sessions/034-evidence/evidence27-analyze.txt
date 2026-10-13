@@ -1,0 +1,9 @@
+Analyzing 12 items...                                           
+
+   info - Local variables should be final - lib\domain\progress_metrics.dart:186:5 - prefer_final_locals
+   info - Use 'const' for final variables initialized to a constant value - lib\features\body\test_results_screen.dart:305:15 - prefer_const_declarations
+   info - Use 'const' with the constructor to improve performance - test\data\plan034_attempt_cycle_test.dart:64:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - test\domain\plan034_benchmarks_knee_test.dart:16:14 - prefer_const_constructors
+
+4 issues found. (ran in 8.9s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T182727485-33572-eecb3c443d6f443b855a328900063abc.json

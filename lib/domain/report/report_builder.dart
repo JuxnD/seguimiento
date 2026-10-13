@@ -24,6 +24,21 @@ String buildReport(ReportInput input) {
   _recovery(b, s);
   _nutrition(b, s);
   _body(b, s);
+  if (input.kneeStairs.isNotEmpty) {
+    b.writeln('## Rodilla en escaleras (0–10)');
+    for (final entry in input.kneeStairs.entries) {
+      b.writeln(
+          '- ${dayKey(entry.key)}: ${entry.value == null ? 'sin dato' : '${entry.value}/10'}');
+    }
+    b.writeln();
+  }
+  if (input.mobilityBenchmarks.isNotEmpty) {
+    b.writeln('## Mediciones de movilidad (sin carga de entrenamiento)');
+    for (final line in input.mobilityBenchmarks) {
+      b.writeln('- $line');
+    }
+    b.writeln();
+  }
   _alerts(b, s);
   _notes(b, s);
   return b.toString().trimRight();
@@ -43,9 +58,11 @@ void _header(StringBuffer b, ReportStats s) {
   final planLabel = switch (plans.length) {
     0 => 'Sin plan',
     1 => 'Plan v${plans.first.number}',
-    _ => 'Plan ${plans.map((p) => 'v${p.number} (desde ${formatShort(p.validFrom)})').join(' → ')}',
+    _ =>
+      'Plan ${plans.map((p) => 'v${p.number} (desde ${formatShort(p.validFrom)})').join(' → ')}',
   };
-  b.writeln('$weekLabel desde inicio (${formatShort(i.programStart)}) · $planLabel');
+  b.writeln(
+      '$weekLabel desde inicio (${formatShort(i.programStart)}) · $planLabel');
   b.writeln();
 }
 
@@ -59,12 +76,16 @@ void _summary(StringBuffer b, ReportStats s) {
   final sessions = s.expectedTraining == 0
       ? '$done'
       : '$done/${s.expectedTraining}${ahead > 0 ? ' (${ahead == 1 ? 'queda 1' : 'quedan $ahead'} en el plan)' : ''}';
-  final foot = s.expectedFootball > 0 ? '${i.football.length}/${s.expectedFootball}' : '${i.football.length}';
+  final foot = s.expectedFootball > 0
+      ? '${i.football.length}/${s.expectedFootball}'
+      : '${i.football.length}';
   b.writeln('- Sesiones: $sessions · Fútbol: $foot');
   final mobility = i.mobility;
   if (mobility.isNotEmpty) {
-    final minutes = (mobility.fold<int>(0, (a, m) => a + m.totalSec) / 60).round();
-    b.writeln('- Movilidad (opcional): ${mobility.length} (${fmtInt(minutes)} min)');
+    final minutes =
+        (mobility.fold<int>(0, (a, m) => a + m.totalSec) / 60).round();
+    b.writeln(
+        '- Movilidad (opcional): ${mobility.length} (${fmtInt(minutes)} min)');
   }
 
   final max = s.maxRoundsInRange;
@@ -87,7 +108,9 @@ void _summary(StringBuffer b, ReportStats s) {
       if (prevByType[e.key] case final before?)
         '${e.key.label} $before → ${e.value} (${fmtDelta(e.value - before, decimals: 0)})',
   ];
-  if (compared.isNotEmpty) b.writeln('- Rondas vs semana anterior, por tipo: ${compared.join(' · ')}');
+  if (compared.isNotEmpty) {
+    b.writeln('- Rondas vs semana anterior, por tipo: ${compared.join(' · ')}');
+  }
 
   final logged = s.loggedDays.length;
   final elapsed = s.elapsedDays.length;
@@ -95,23 +118,29 @@ void _summary(StringBuffer b, ReportStats s) {
   if (logged == 0) {
     b.writeln('- Nutrición: sin registros');
   } else if (closed == 0) {
-    b.writeln('- Nutrición: $logged ${logged == 1 ? 'día registrado' : 'días registrados'}, ninguno cerrado '
+    b.writeln(
+        '- Nutrición: $logged ${logged == 1 ? 'día registrado' : 'días registrados'}, ninguno cerrado '
         '(falta desayuno, almuerzo o cena): sin promedios');
   } else {
     final prev = s.previous;
-    String vs(double now, double? before) => before == null ? '' : ' (${fmtDelta(now - before, decimals: 0)} vs semana anterior)';
+    String vs(double now, double? before) => before == null
+        ? ''
+        : ' (${fmtDelta(now - before, decimals: 0)} vs semana anterior)';
     // Las metas que regían en estos días (plan 009), no las de hoy.
     final goals = s.input.goals;
     final days = s.closedDays;
-    final pMin = GoalSpan.over(goals, GoalMetric.proteinaMin, days, fallback: t.proteinMin);
-    final pMax = GoalSpan.over(goals, GoalMetric.proteinaMax, days, fallback: t.proteinMax);
+    final pMin = GoalSpan.over(goals, GoalMetric.proteinaMin, days,
+        fallback: t.proteinMin);
+    final pMax = GoalSpan.over(goals, GoalMetric.proteinaMax, days,
+        fallback: t.proteinMax);
     final proteinGoal = pMin.single != null && pMax.single != null
         ? '${fmtInt(pMin.single!)}–${fmtInt(pMax.single!)}'
         : pMin.segments.isEmpty && pMax.segments.isEmpty
             ? 'histórica no registrada'
             : 'mínimo ${pMin.label(fmtInt)}, máximo ${pMax.label(fmtInt)}';
     final kcal = GoalSpan.fromReferences(days, s.input.kcalReferenceOn);
-    b.writeln('- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta $proteinGoal)'
+    b.writeln(
+        '- Proteína promedio: ${fmtInt(s.avgProtein!)} g (meta $proteinGoal)'
         '${vs(s.avgProtein!, prev?.avgProtein)} · '
         'kcal promedio: ${fmtInt(s.avgKcal!)} (meta ${kcal.label(fmtInt)})'
         '${vs(s.avgKcal!, prev?.avgKcal)} · '
@@ -122,14 +151,19 @@ void _summary(StringBuffer b, ReportStats s) {
           '- Días bajo ${fmtInt(value)} kcal: ${s.daysBelowFloor.length}');
     } else {
       final judged = days.where((d) => s.floorOn(d).comparable).length;
-    b.writeln('- Piso de alerta kcal: ${floor.label(fmtInt)} · '
+      b.writeln('- Piso de alerta kcal: ${floor.label(fmtInt)} · '
           '${s.daysBelowFloor.length}/$judged días bajo piso con referencia válida');
     }
   }
 
   final steps = s.steps;
-  final stepsGoal = GoalSpan.over(s.input.goals, GoalMetric.pasos,
-      [for (final d in s.input.steps.keys) if (stepsGoalFor(dateOnly(d), t.stepsTarget) != null) d],
+  final stepsGoal = GoalSpan.over(
+      s.input.goals,
+      GoalMetric.pasos,
+      [
+        for (final d in s.input.steps.keys)
+          if (stepsGoalFor(dateOnly(d), t.stepsTarget) != null) d
+      ],
       fallback: t.stepsTarget);
   if (steps != null) {
     final n = steps.days;
@@ -140,8 +174,11 @@ void _summary(StringBuffer b, ReportStats s) {
             '${steps.weekdayDays - steps.weekdaysGoalUnknown == 1 ? 'día' : 'días'} en meta'
             '${steps.weekdaysGoalUnknown == 0 ? '' : '; ${steps.weekdaysGoalUnknown} con meta histórica no registrada'})';
     final before = s.previous?.steps?.average;
-    final vs = before == null ? '' : ' (${fmtDelta(steps.average - before, decimals: 0)} vs semana anterior)';
-    b.writeln('- Pasos: ${fmtInt(steps.average)}/día ($n ${n == 1 ? 'día registrado' : 'días registrados'})'
+    final vs = before == null
+        ? ''
+        : ' (${fmtDelta(steps.average - before, decimals: 0)} vs semana anterior)';
+    b.writeln(
+        '- Pasos: ${fmtInt(steps.average)}/día ($n ${n == 1 ? 'día registrado' : 'días registrados'})'
         '$vs$weekday');
   }
 
@@ -154,11 +191,13 @@ void _summary(StringBuffer b, ReportStats s) {
   // Totales del rango: lo que el promedio no dice.
   final p = summarizePeriod(i);
   if (p.activeSec > 0 || p.stepsTotal > 0) {
-    b.writeln('- Movimiento: ${formatDuration(p.activeSec)} activo · ${fmtInt(p.stepsTotal)} pasos '
+    b.writeln(
+        '- Movimiento: ${formatDuration(p.activeSec)} activo · ${fmtInt(p.stepsTotal)} pasos '
         '(≈ ${fmtDec(p.distanceKm)} km)');
   }
   if (p.kcalBurned case final k? when k > 0) {
-    b.writeln('- Gasto aprox. por actividad: ≈ ${fmtInt(k)} kcal (entrenamiento ${fmtInt(p.kcalTraining ?? 0)} · '
+    b.writeln(
+        '- Gasto aprox. por actividad: ≈ ${fmtInt(k)} kcal (entrenamiento ${fmtInt(p.kcalTraining ?? 0)} · '
         'fútbol ${fmtInt(p.kcalFootball ?? 0)} · caminar ${fmtInt(p.kcalSteps ?? 0)}; con ${fmtDec(p.weightKg!)} kg, ±30 %)');
   }
 
@@ -168,9 +207,12 @@ void _summary(StringBuffer b, ReportStats s) {
     final base = fasted.isNotEmpty ? fasted : w;
     final avg = base.map((x) => x.kg).reduce((a, c) => a + c) / base.length;
     final tag = fasted.isNotEmpty ? 'en ayunas' : 'sin ayunas';
-    final delta = i.baselineWeight == null ? '' : ' · Δ vs línea base: ${fmtDelta(avg - i.baselineWeight!.kg)} kg';
+    final delta = i.baselineWeight == null
+        ? ''
+        : ' · Δ vs línea base: ${fmtDelta(avg - i.baselineWeight!.kg)} kg';
     final n = base.length;
-    b.writeln('- Peso promedio: ${fmtDec(avg)} kg ($tag, $n ${n == 1 ? 'pesaje' : 'pesajes'})$delta');
+    b.writeln(
+        '- Peso promedio: ${fmtDec(avg)} kg ($tag, $n ${n == 1 ? 'pesaje' : 'pesajes'})$delta');
   }
   b.writeln();
 }
@@ -183,14 +225,19 @@ void _sessions(StringBuffer b, ReportStats s) {
     b.writeln();
     return;
   }
-  b.writeln('| Día | Tipo | Total | Cal/Enf | Descanso | Neto | Rondas | RPE | Series partidas | Contexto |');
+  b.writeln(
+      '| Día | Tipo | Total | Cal/Enf | Descanso | Neto | Rondas | RPE | Series partidas | Contexto |');
   b.writeln('|---|---|---|---|---|---|---|---|---|---|');
   for (final x in list) {
-    final net =
-        circuitNetSec(totalSec: x.totalSec, warmupSec: x.warmupSec, cooldownSec: x.cooldownSec, restSec: x.restSec);
+    final net = circuitNetSec(
+        totalSec: x.totalSec,
+        warmupSec: x.warmupSec,
+        cooldownSec: x.cooldownSec,
+        restSec: x.restSec);
     final rounds = _roundsCell(x);
     final splits = x.sets.where((e) => e.split).length;
-    b.writeln('| ${_dayLabel(x.date, x.startTime)} | ${x.typeLabel}${x.outOfPlan ? ' ⚠ fuera de plan' : ''} | '
+    b.writeln(
+        '| ${_dayLabel(x.date, x.startTime)} | ${x.typeLabel}${x.outOfPlan ? ' ⚠ fuera de plan' : ''} | '
         '${formatDuration(x.totalSec)} | '
         '${formatDuration(x.warmupSec)} / ${formatDuration(x.cooldownSec)} | '
         '${x.restSec == 0 ? '—' : formatDuration(x.restSec)} | ${formatDuration(net)} | $rounds | '
@@ -205,7 +252,8 @@ void _sessions(StringBuffer b, ReportStats s) {
       // Cortada antes de tiempo dice lo que duró: "en 20 min" la hacía pasar
       // por una marca comparable (auditoría del 5 oct).
       final work = x.totalSec - x.warmupSec - x.cooldownSec;
-      b.writeln('- Cindy: ${x.roundsDone} ${x.roundsDone == 1 ? 'ronda' : 'rondas'} + ${x.extraReps ?? 0} reps '
+      b.writeln(
+          '- Cindy: ${x.roundsDone} ${x.roundsDone == 1 ? 'ronda' : 'rondas'} + ${x.extraReps ?? 0} reps '
           '${x.incomplete ? 'en ${formatDuration(work)} (cortada antes de los 20 min: no es marca)' : 'en 20 min'}');
     }
     if (x.roundWorkSec.isNotEmpty) {
@@ -225,15 +273,20 @@ void _sessions(StringBuffer b, ReportStats s) {
           '(media ${valid.isEmpty ? '—' : formatDuration(meanSec(valid)!)}'
           '${delta == null ? '' : ' · R1→R${x.roundWorkSec.length} ${fmtDelta(delta, decimals: 0)} s'})');
       final rests = x.roundRestSec.take(x.roundRestSec.length - 1).toList();
-      if (rests.isNotEmpty) b.writeln('- Descanso entre rondas: ${rests.map(formatDuration).join(' · ')}');
+      if (rests.isNotEmpty) {
+        b.writeln(
+            '- Descanso entre rondas: ${rests.map(formatDuration).join(' · ')}');
+      }
       if (suspects.isNotEmpty) {
-        b.writeln('- ⚠ ${suspects.map((i) => 'R${i + 1}').join(', ')} fuera de la media: el descanso previo fue de '
+        b.writeln(
+            '- ⚠ ${suspects.map((i) => 'R${i + 1}').join(', ')} fuera de la media: el descanso previo fue de '
             'menos de 5 s y la ronda duró mucho más que las demás (probable descanso contado como trabajo). '
             'Se corrige en la sesión, "Pasar 30 s al descanso".');
       }
     } else if (x.lapsSec.isNotEmpty) {
       // Sin descansos medidos cada vuelta lleva dentro el descanso previo.
-      b.writeln('- Vueltas (con descanso): ${x.lapsSec.map(formatDuration).join(' · ')} '
+      b.writeln(
+          '- Vueltas (con descanso): ${x.lapsSec.map(formatDuration).join(' · ')} '
           '(media ${formatDuration(meanSec(x.lapsSec)!)})');
     }
     final byExercise = <String, List<SetEntry>>{};
@@ -241,17 +294,21 @@ void _sessions(StringBuffer b, ReportStats s) {
       byExercise.putIfAbsent(set.exercise, () => []).add(set);
     }
     for (final e in byExercise.entries) {
-      final sets = [...e.value]..sort((a, c) => a.setIndex.compareTo(c.setIndex));
+      final sets = [...e.value]
+        ..sort((a, c) => a.setIndex.compareTo(c.setIndex));
       final hold = s.input.holdExercises.contains(e.key);
       b.writeln(
           '- ${e.key}: ${s.input.perSideExercises.contains(e.key) && sets.length.isEven ? _perSideLabel(sets, seconds: hold) : sets.map((x) => _setLabel(x, seconds: hold)).join(' · ')}');
     }
     final extra = [
-      if (x.limitingExercise != null && x.limitingExercise!.isNotEmpty) 'Limitante: ${x.limitingExercise}',
+      if (x.limitingExercise != null && x.limitingExercise!.isNotEmpty)
+        'Limitante: ${x.limitingExercise}',
       if (x.rpe != null) 'RPE ${x.rpe}',
     ];
     if (extra.isNotEmpty) b.writeln('- ${extra.join(' · ')}');
-    if (x.notes != null && x.notes!.trim().isNotEmpty) b.writeln('- Notas: ${x.notes!.trim()}');
+    if (x.notes != null && x.notes!.trim().isNotEmpty) {
+      b.writeln('- Notas: ${x.notes!.trim()}');
+    }
     b.writeln();
   }
 }
@@ -294,15 +351,19 @@ void _volume(StringBuffer b, ReportStats s) {
   // Semana en curso: contra el mismo punto de la anterior, no contra la
   // semana entera (1 día hecho contra 7 siempre "baja"; §16.8).
   final partial = s.inProgress && s.previous != null;
-  final before = partial ? s.previous!.volumeFirstDays(s.elapsedCount) : s.previous?.volumeByExercise;
+  final before = partial
+      ? s.previous!.volumeFirstDays(s.elapsedCount)
+      : s.previous?.volumeByExercise;
   b.writeln('## Volumen por ejercicio');
   if (partial) {
-    b.writeln('Semana en curso (${s.elapsedCount} de ${s.days.length} días): se compara con los mismos '
+    b.writeln(
+        'Semana en curso (${s.elapsedCount} de ${s.days.length} días): se compara con los mismos '
         '${s.elapsedCount} primeros días de la anterior.');
     b.writeln();
   }
   final holds = s.input.holdExercises;
-  String unit(String exercise, num v) => holds.contains(exercise) ? '$v s' : '$v';
+  String unit(String exercise, num v) =>
+      holds.contains(exercise) ? '$v s' : '$v';
   if (before == null) {
     b.writeln('| Ejercicio | Reps o s |');
     b.writeln('|---|---|');
@@ -310,11 +371,13 @@ void _volume(StringBuffer b, ReportStats s) {
       b.writeln('| ${e.key} | ${unit(e.key, e.value)} |');
     }
   } else {
-    b.writeln('| Ejercicio | Reps o s | ${partial ? 'Anterior, mismo punto' : 'Semana anterior'} | Δ |');
+    b.writeln(
+        '| Ejercicio | Reps o s | ${partial ? 'Anterior, mismo punto' : 'Semana anterior'} | Δ |');
     b.writeln('|---|---|---|---|');
     for (final e in now.entries) {
       final prev = before[e.key];
-      b.writeln('| ${e.key} | ${unit(e.key, e.value)} | ${prev == null ? '—' : unit(e.key, prev)} | '
+      b.writeln(
+          '| ${e.key} | ${unit(e.key, e.value)} | ${prev == null ? '—' : unit(e.key, prev)} | '
           '${prev == null ? 'nuevo' : fmtDelta(e.value - prev, decimals: 0)} |');
     }
   }
@@ -325,7 +388,8 @@ void _football(StringBuffer b, ReportStats s) {
   final list = [...s.input.football]..sort((a, c) => a.date.compareTo(c.date));
   if (list.isEmpty) return;
   b.writeln('## Fútbol');
-  b.writeln('| Día | Formato | Min | Pasos | Intensidad | Fatiga | Golpe | Notas |');
+  b.writeln(
+      '| Día | Formato | Min | Pasos | Intensidad | Fatiga | Golpe | Notas |');
   b.writeln('|---|---|---|---|---|---|---|---|');
   for (final f in list) {
     final knock = switch (f.knock) { true => 'sí', false => 'no', null => '—' };
@@ -357,13 +421,21 @@ void _nutrition(StringBuffer b, ReportStats s) {
     return;
   }
   final hasOther = meals.any((m) => m.slot == MealSlot.otro);
-  final slots = [MealSlot.desayuno, MealSlot.almuerzo, MealSlot.merienda, MealSlot.cena, if (hasOther) MealSlot.otro];
-  b.writeln('| Día | ${slots.map((x) => x.label).join(' | ')} | kcal | Proteína |');
+  final slots = [
+    MealSlot.desayuno,
+    MealSlot.almuerzo,
+    MealSlot.merienda,
+    MealSlot.cena,
+    if (hasOther) MealSlot.otro
+  ];
+  b.writeln(
+      '| Día | ${slots.map((x) => x.label).join(' | ')} | kcal | Proteína |');
   b.writeln('|---|${'---|' * slots.length}---|---|');
   for (final d in s.elapsedDays.isEmpty ? s.days : s.elapsedDays) {
     final dayMeals = meals.where((m) => dayKey(m.date) == dayKey(d)).toList();
     final cells = slots.map((slot) {
-      final m = Macros.sum(dayMeals.where((x) => x.slot == slot).map((x) => x.macros));
+      final m = Macros.sum(
+          dayMeals.where((x) => x.slot == slot).map((x) => x.macros));
       final any = dayMeals.any((x) => x.slot == slot);
       return any ? '${fmtInt(m.kcal)} · ${fmtInt(m.protein)} g' : '—';
     });
@@ -379,20 +451,23 @@ void _nutrition(StringBuffer b, ReportStats s) {
   final totalKcal = verifiedKcal + referenceKcal + freeKcal;
   if (totalKcal > 0) {
     b.writeln();
-    b.writeln('Procedencia de las kcal: ${_pct(verifiedKcal, totalKcal)} de etiqueta · '
+    b.writeln(
+        'Procedencia de las kcal: ${_pct(verifiedKcal, totalKcal)} de etiqueta · '
         '${_pct(referenceKcal, totalKcal)} de tablas de referencia · '
         '${_pct(freeKcal, totalKcal)} estimado a ojo');
   }
   if (s.closedDays.isNotEmpty) {
     b.writeln();
-    b.writeln('Promedio (días cerrados): ${fmtInt(s.avgKcal!)} kcal · P ${fmtInt(s.avgProtein!)} g · '
+    b.writeln(
+        'Promedio (días cerrados): ${fmtInt(s.avgKcal!)} kcal · P ${fmtInt(s.avgProtein!)} g · '
         'C ${fmtInt(s.avgCarbs!)} g · G ${fmtInt(s.avgFat!)} g');
   }
   b.writeln();
 
   b.writeln('### Detalle de comidas');
-  final sorted = [...meals]..sort((a, c) => '${dayKey(a.date)} ${a.slot.index} ${a.time ?? ''}'
-      .compareTo('${dayKey(c.date)} ${c.slot.index} ${c.time ?? ''}'));
+  final sorted = [...meals]..sort((a, c) =>
+      '${dayKey(a.date)} ${a.slot.index} ${a.time ?? ''}'
+          .compareTo('${dayKey(c.date)} ${c.slot.index} ${c.time ?? ''}'));
   String? currentDay;
   for (final m in sorted) {
     final k = dayKey(m.date);
@@ -401,10 +476,14 @@ void _nutrition(StringBuffer b, ReportStats s) {
       b.writeln('- **${_dayLabel(m.date, null)}**');
     }
     final items = m.items
-        .map((it) => it.quantityLabel == null ? it.label : '${it.label} ${it.quantityLabel}')
+        .map((it) => it.quantityLabel == null
+            ? it.label
+            : '${it.label} ${it.quantityLabel}')
         .join(', ');
     final time = m.time == null ? '' : ' ${m.time}';
-    final note = m.notes == null || m.notes!.trim().isEmpty ? '' : ' — ${m.notes!.trim()}';
+    final note = m.notes == null || m.notes!.trim().isEmpty
+        ? ''
+        : ' — ${m.notes!.trim()}';
     b.writeln('  - ${m.slot.label}$time: ${items.isEmpty ? '(vacía)' : items} '
         '→ ${fmtInt(m.macros.kcal)} kcal · ${fmtInt(m.macros.protein)} g P$note');
   }
@@ -416,9 +495,12 @@ void _body(StringBuffer b, ReportStats s) {
   if (i.measurementsInRange.isEmpty) return;
   final unit = i.targets.lengthUnit;
   b.writeln('## Medidas');
-  final dates = i.measurementsInRange.map((m) => dayKey(m.date)).toSet().toList()..sort();
+  final dates =
+      i.measurementsInRange.map((m) => dayKey(m.date)).toSet().toList()..sort();
   final conditions = dates.map((k) {
-    final fasted = i.measurementsInRange.where((m) => dayKey(m.date) == k).every((m) => m.fasted);
+    final fasted = i.measurementsInRange
+        .where((m) => dayKey(m.date) == k)
+        .every((m) => m.fasted);
     return '${formatShort(parseDay(k))} (${fasted ? 'ayunas' : 'sin ayunas'})';
   });
   b.writeln('Tomadas: ${conditions.join(', ')} · unidad: ${unit.label}');
@@ -426,8 +508,10 @@ void _body(StringBuffer b, ReportStats s) {
   b.writeln('| Medida | Línea base | Actual | Δ |');
   b.writeln('|---|---|---|---|');
   if (i.baselineWeight != null && i.weightsInRange.isNotEmpty) {
-    final last = ([...i.weightsInRange]..sort((a, c) => a.date.compareTo(c.date))).last;
-    b.writeln('| Peso (kg) | ${fmtDec(i.baselineWeight!.kg)} (${formatShort(i.baselineWeight!.date)}) | '
+    final last =
+        ([...i.weightsInRange]..sort((a, c) => a.date.compareTo(c.date))).last;
+    b.writeln(
+        '| Peso (kg) | ${fmtDec(i.baselineWeight!.kg)} (${formatShort(i.baselineWeight!.date)}) | '
         '${fmtDec(last.kg)} | ${fmtDelta(last.kg - i.baselineWeight!.kg)} |');
   }
   for (final site in MeasureSite.values) {
@@ -438,13 +522,16 @@ void _body(StringBuffer b, ReportStats s) {
     final base = i.baselineMeasurements[site];
     final cur = fromCm(current.valueCm, unit);
     if (base == null || dayKey(base.date) == dayKey(current.date)) {
-      b.writeln('| ${site.label} | ${fmtDec(cur)} (línea base) | ${fmtDec(cur)} | — |');
+      b.writeln(
+          '| ${site.label} | ${fmtDec(cur)} (línea base) | ${fmtDec(cur)} | — |');
     } else {
       final baseV = fromCm(base.valueCm, unit);
       // Ayunas contra después de comer: el delta se da, pero no se lee como
       // progreso (§16.10).
-      final mismatch = base.fasted != current.fasted ? ' (condiciones distintas)' : '';
-      b.writeln('| ${site.label} | ${fmtDec(baseV)} (${formatShort(base.date)}) | ${fmtDec(cur)} | '
+      final mismatch =
+          base.fasted != current.fasted ? ' (condiciones distintas)' : '';
+      b.writeln(
+          '| ${site.label} | ${fmtDec(baseV)} (${formatShort(base.date)}) | ${fmtDec(cur)} | '
           '${fmtDelta(cur - baseV)}$mismatch |');
     }
   }
@@ -454,14 +541,18 @@ void _body(StringBuffer b, ReportStats s) {
     byDate.putIfAbsent(dayKey(m.date), () => {})[m.site] = m.valueCm;
   }
   final withBoth = (byDate.entries
-          .where((e) => e.value.containsKey(MeasureSite.hombros) && e.value.containsKey(MeasureSite.cinturaEstrecha))
+          .where((e) =>
+              e.value.containsKey(MeasureSite.hombros) &&
+              e.value.containsKey(MeasureSite.cinturaEstrecha))
           .toList()
         ..sort((a, c) => a.key.compareTo(c.key)))
       .lastOrNull;
   if (withBoth != null) {
-    final ratio = withBoth.value[MeasureSite.hombros]! / withBoth.value[MeasureSite.cinturaEstrecha]!;
+    final ratio = withBoth.value[MeasureSite.hombros]! /
+        withBoth.value[MeasureSite.cinturaEstrecha]!;
     b.writeln();
-    b.writeln('Índice hombros ÷ cintura: ${fmtDec(ratio, decimals: 2)} (referencia estética ≈ 1,6)');
+    b.writeln(
+        'Índice hombros ÷ cintura: ${fmtDec(ratio, decimals: 2)} (referencia estética ≈ 1,6)');
   }
   b.writeln();
 }

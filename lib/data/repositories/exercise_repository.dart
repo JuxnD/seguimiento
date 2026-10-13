@@ -1,15 +1,17 @@
 import 'package:drift/drift.dart';
 
 import '../database.dart';
+import '../exercise_details.dart';
 
 class ExerciseRepository {
   ExerciseRepository(this.db);
 
   final AppDatabase db;
 
-  Stream<List<ExerciseRow>> watchAll() =>
-      (db.select(db.exercises)..orderBy([(t) => OrderingTerm(expression: t.name.collate(Collate.noCase))]))
-          .watch();
+  Stream<List<ExerciseRow>> watchAll() => (db.select(db.exercises)
+        ..orderBy(
+            [(t) => OrderingTerm(expression: t.name.collate(Collate.noCase))]))
+      .watch();
 
   /// Devuelve el id del ejercicio con ese nombre (sin distinguir mayúsculas)
   /// o lo crea. Normaliza espacios.
@@ -48,13 +50,21 @@ class ExerciseRepository {
       {for (final e in await db.select(db.exercises).get()) e.id: e.name};
 
   Future<void> rename(int id, String name) =>
-      (db.update(db.exercises)..where((t) => t.id.equals(id))).write(ExercisesCompanion(name: Value(name.trim())));
+      (db.update(db.exercises)..where((t) => t.id.equals(id)))
+          .write(ExercisesCompanion(name: Value(name.trim())));
 }
 
 extension ExerciseGuideX on ExerciseRow {
   /// Claves de técnica, una por línea.
-  List<String> get cues =>
-      (formCues ?? '').split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+  List<String> get cues => (formCues ?? '')
+      .split('\n')
+      .map((l) => l.trim())
+      .where((l) => l.isNotEmpty)
+      .toList();
 
-  bool get hasGuide => cues.isNotEmpty || mediaUrl != null || progressionNote != null;
+  bool get hasGuide =>
+      cues.isNotEmpty ||
+      mediaUrl != null ||
+      progressionNote != null ||
+      exerciseDetail(name) != null;
 }

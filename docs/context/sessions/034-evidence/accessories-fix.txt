@@ -1,0 +1,10 @@
+Only one file or directory is expected.
+
+Usage: dart fix [arguments]
+-h, --help                      Print this usage information.
+-n, --dry-run                   Preview the proposed changes but make no changes.
+    --apply                     Apply the proposed changes.
+    --code=<code1,code2,...>    Apply fixes for one (or more) diagnostic codes.
+
+Run "dart help" to see global options.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T194042679-23124-4203f4ad6e2046aa99a74a7830c454c4.json

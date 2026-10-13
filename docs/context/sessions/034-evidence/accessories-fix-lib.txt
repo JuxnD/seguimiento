@@ -1,0 +1,20 @@
+Computing fixes in lib...
+Applying fixes...
+
+data\repositories\ladder_repository.dart
+  curly_braces_in_flow_control_structures - 4 fixes
+
+data\repositories\training_repository.dart
+  curly_braces_in_flow_control_structures - 2 fixes
+
+features\training\exercise_library_screen.dart
+  unused_import - 1 fix
+
+features\training\guided_session_screen.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+features\training\session_form_screen.dart
+  curly_braces_in_flow_control_structures - 3 fixes
+
+11 fixes made in 5 files.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T194106596-34356-f11fb66bf8a649828a3d1894e6400478.json

@@ -1,0 +1,74 @@
+[INFO] Generating build script...
+[INFO] Generating build script completed, took 538ms
+
+[INFO] Precompiling build script......
+[INFO] Precompiling build script... completed, took 5.2s
+
+[INFO] Initializing inputs
+[INFO] Building new asset graph...
+[INFO] Building new asset graph completed, took 2.0s
+
+[INFO] Checking for unexpected pre-existing outputs....
+[INFO] Checking for unexpected pre-existing outputs. completed, took 1ms
+
+[INFO] Running build...
+[INFO] Generating SDK summary...
+[INFO] 2.8s elapsed, 0/16 actions completed.
+[INFO] 4.8s elapsed, 0/16 actions completed.
+[INFO] 5.8s elapsed, 0/16 actions completed.
+[INFO] Generating SDK summary completed, took 5.8s
+
+[INFO] 6.9s elapsed, 5/57 actions completed.
+[INFO] 7.9s elapsed, 22/69 actions completed.
+[INFO] 8.9s elapsed, 42/77 actions completed.
+[INFO] 10.0s elapsed, 52/82 actions completed.
+[INFO] 11.1s elapsed, 75/106 actions completed.
+[INFO] 22.3s elapsed, 100/118 actions completed.
+[INFO] 23.4s elapsed, 100/118 actions completed.
+[INFO] 24.4s elapsed, 102/119 actions completed.
+[INFO] 28.7s elapsed, 104/120 actions completed.
+[INFO] 30.1s elapsed, 104/120 actions completed.
+[INFO] 31.1s elapsed, 136/150 actions completed.
+[INFO] 32.1s elapsed, 167/182 actions completed.
+[INFO] 33.2s elapsed, 200/218 actions completed.
+[INFO] 35.0s elapsed, 250/266 actions completed.
+[INFO] 36.1s elapsed, 297/302 actions completed.
+[INFO] 37.1s elapsed, 330/346 actions completed.
+[INFO] 38.2s elapsed, 363/379 actions completed.
+[INFO] 39.2s elapsed, 380/396 actions completed.
+[INFO] 40.3s elapsed, 413/429 actions completed.
+[INFO] 41.4s elapsed, 431/447 actions completed.
+[INFO] 42.5s elapsed, 533/546 actions completed.
+[INFO] 43.5s elapsed, 565/581 actions completed.
+[INFO] 44.5s elapsed, 583/599 actions completed.
+[INFO] 45.6s elapsed, 593/609 actions completed.
+[INFO] 46.6s elapsed, 606/622 actions completed.
+[INFO] 47.6s elapsed, 616/632 actions completed.
+[INFO] 48.7s elapsed, 625/641 actions completed.
+[INFO] 49.8s elapsed, 634/650 actions completed.
+[INFO] 50.9s elapsed, 644/660 actions completed.
+[INFO] 51.9s elapsed, 658/669 actions completed.
+[INFO] 52.9s elapsed, 667/683 actions completed.
+[INFO] 54.0s elapsed, 681/697 actions completed.
+[INFO] 55.0s elapsed, 690/706 actions completed.
+[INFO] 56.0s elapsed, 695/711 actions completed.
+[INFO] 57.0s elapsed, 709/725 actions completed.
+[INFO] 58.1s elapsed, 723/739 actions completed.
+[INFO] 59.1s elapsed, 728/744 actions completed.
+[INFO] 1m 0s elapsed, 737/753 actions completed.
+[INFO] 1m 1s elapsed, 749/765 actions completed.
+[INFO] 1m 2s elapsed, 759/775 actions completed.
+[INFO] 1m 3s elapsed, 765/781 actions completed.
+[INFO] 1m 4s elapsed, 779/795 actions completed.
+[INFO] 1m 5s elapsed, 802/805 actions completed.
+[INFO] 1m 7s elapsed, 1153/1154 actions completed.
+[INFO] 1m 8s elapsed, 1307/1308 actions completed.
+[INFO] 1m 9s elapsed, 1503/1503 actions completed.
+[INFO] Running build completed, took 1m 9s
+
+[INFO] Caching finalized dependency graph...
+[INFO] Caching finalized dependency graph completed, took 156ms
+
+[INFO] Succeeded after 1m 9s with 462 outputs (1616 actions)
+
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T170724869-27804-74ee3feb43e94e1288df932c37f4df18.json

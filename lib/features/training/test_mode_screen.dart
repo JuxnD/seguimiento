@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
@@ -8,24 +9,40 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../domain/dates.dart' show formatDuration, dateOnly, dayKey;
 import '../../domain/fitness_test.dart';
+import '../../domain/test_protocol.dart';
+import '../../domain/test_attempt_evidence.dart';
 import '../../ui/widgets.dart';
 import 'pre_attempt_card.dart';
 
 /// Modo test (§19.11): lista guiada, un resultado por prueba (por lado si
 /// toca), calidad limpia / con dudas y cronómetro de 3 min entre pruebas.
 class TestModeScreen extends ConsumerStatefulWidget {
-  const TestModeScreen({super.key, required this.date, required this.round, required this.part});
+  const TestModeScreen(
+      {super.key,
+      required this.date,
+      required this.round,
+      required this.part,
+      this.scheduleKey,
+      this.attemptId,
+      this.newAttempt = false});
 
   final DateTime date;
   final int round;
   final TestPart part;
+  final TestScheduleKey? scheduleKey;
+  final int? attemptId;
+  final bool newAttempt;
 
   @override
   ConsumerState<TestModeScreen> createState() => _TestModeScreenState();
 }
 
 class _TestModeScreenState extends ConsumerState<TestModeScreen> {
-  late final _items = widget.part == TestPart.torso ? torsoTests : legTests;
+  TestProtocolId get _protocol =>
+      widget.scheduleKey?.protocolId ?? TestProtocolId.v31_12;
+  late final _items = protocolItems(_protocol, widget.part);
+  int? _attemptId;
+  final _conditions = <String, Map<String, Object?>>{};
   bool _loaded = false;
   bool _changed = false;
   final _errors = <String, String>{};
@@ -53,7 +70,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
               _changed = true;
             })));
 
-  double? _value(TestItem t, String side) => double.tryParse(_field(t, side).text.trim().replaceAll(',', '.'));
+  double? _value(TestItem t, String side) =>
+      double.tryParse(_field(t, side).text.trim().replaceAll(',', '.'));
 
   bool get _hasAny => _fields.values.any((c) => c.text.trim().isNotEmpty);
 
@@ -64,15 +82,40 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   }
 
   Future<void> _load() async {
-    final rows = await ref.read(fitnessTestRepositoryProvider).all();
+    final repo = ref.read(fitnessTestRepositoryProvider);
+    final rows = await repo.resultsFor(widget.round, widget.part,
+        protocol: _protocol,
+        key: widget.scheduleKey,
+        attemptId: widget.attemptId);
     if (!mounted) return;
-    final partRows = rows.where((r) => r.round == widget.round && _items.any((t) => t.id == r.item)).toList();
+    final partRows = rows
+        .where(
+            (r) => r.round == widget.round && _items.any((t) => t.id == r.item))
+        .toList();
     final today = dateOnly(clock.now());
-    final dates = partRows.where((r) => r.date != null).map((r) => dayKey(r.date!)).toSet();
+    final dates = partRows
+        .where((r) => r.date != null)
+        .map((r) => dayKey(r.date!))
+        .toSet();
     final invalid = partRows.any((r) => r.date == null);
     final mixed = dates.length > 1;
-    final future = partRows.any((r) => r.date != null && dateOnly(r.date!).isAfter(today));
-    _editing = partRows.isNotEmpty;
+    final future =
+        partRows.any((r) => r.date != null && dateOnly(r.date!).isAfter(today));
+    _attemptId = widget.newAttempt ? null : partRows.firstOrNull?.attemptId;
+    _editing = !widget.newAttempt && partRows.isNotEmpty;
+    for (final r in partRows) {
+      if (r.conditions != null) {
+        try {
+          final parsed =
+              (jsonDecode(r.conditions!) as Map).cast<String, Object?>();
+          canonicalTestConditions(r.item, parsed);
+          _conditions[r.item] = parsed;
+        } catch (_) {
+          _dateIssue =
+              'Hay condiciones sin validar; el registro original se conserva.';
+        }
+      }
+    }
     _dateNeedsConfirmation = _editing && (invalid || mixed || future);
     _dateIssue = [
       if (invalid) 'Hay resultados sin fecha válida.',
@@ -81,12 +124,19 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     ].join(' ');
     // Only a uniform valid non-future date belongs to the whole stored part.
     // A conflicting legacy date is not replaced until explicit confirmation.
-    _executionDate = _editing && !_dateNeedsConfirmation ? dateOnly(partRows.first.date!) : today;
+    _executionDate = _editing && !_dateNeedsConfirmation
+        ? dateOnly(partRows.first.date!)
+        : today;
     for (final t in _items) {
       for (final side in _sides(t)) {
-        final r = rows.where((r) => r.round == widget.round && r.item == t.id && (r.side ?? '') == side).firstOrNull;
+        final r = rows
+            .where((r) =>
+                r.round == widget.round &&
+                r.item == t.id &&
+                (r.side ?? '') == side)
+            .firstOrNull;
         final c = _field(t, side);
-        if (r != null) {
+        if (r != null && !widget.newAttempt) {
           c.text = r.value.toString();
           if (!r.clean) _doubtful.add(_key(t, side));
         }
@@ -100,7 +150,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
 
   void _startRest() {
     _ticker?.cancel();
-    setState(() => _restEndsAt = clock.now().add(const Duration(seconds: testRestSec)));
+    setState(() =>
+        _restEndsAt = clock.now().add(const Duration(seconds: testRestSec)));
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       final end = _restEndsAt;
       if (end == null) return;
@@ -164,6 +215,11 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
             part: widget.part,
             results: results,
             totalSec: 0,
+            protocol: _protocol,
+            scheme: widget.scheduleKey?.scheme ?? 'v3.1',
+            blockStart: widget.scheduleKey?.blockStart,
+            attemptId: _attemptId,
+            conditions: _conditions,
           ),
     );
     if (!mounted) return;
@@ -171,7 +227,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     if (!ok) return;
     ref.invalidate(fitnessTestsProvider);
     ref.invalidate(dashboardProvider);
-    showSnack(context, 'Test ${widget.round} guardado: ${results.length} resultados.');
+    showSnack(context,
+        'Test ${widget.round} guardado: ${results.length} resultados.');
     Navigator.pop(context, true);
   }
 
@@ -183,8 +240,12 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
         title: const Text('¿Salir sin guardar?'),
         content: const Text('Los resultados anotados se pierden.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Seguir')),
-          TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Salir')),
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Seguir')),
+          TextButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: const Text('Salir')),
         ],
       ),
     );
@@ -194,7 +255,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final previous = ref.watch(fitnessTestsProvider).valueOrNull ?? const <TestResult>[];
+    final previous =
+        ref.watch(fitnessTestsProvider).valueOrNull ?? const <TestResult>[];
     final rest = _restEndsAt?.difference(clock.now());
     final torso = widget.part == TestPart.torso;
     return PopScope(
@@ -204,7 +266,9 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
         if (await _confirmLeave() && context.mounted) Navigator.pop(context);
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('Test ${widget.round} · ${torso ? 'torso y core' : 'piernas'}')),
+        appBar: AppBar(
+            title: Text(
+                'Test ${widget.round} · ${torso ? 'torso y core' : 'piernas'}')),
         body: !_loaded
             ? const Center(child: CircularProgressIndicator())
             : ListView(
@@ -212,9 +276,12 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                 children: [
                   AppCard(
                     children: [
-                      Text(_dateNeedsConfirmation ? 'Fecha del intento sin confirmar: revisa la fecha de toda esta parte. $_dateIssue' :
-                        'Fecha del intento: ${dayKey(_executionDate)}${_dateWasConfirmed ? ' (confirmada para esta parte)' : _editing ? ' (conservada)' : ''}'),
-                      if (!_editing || _dateNeedsConfirmation || _dateWasConfirmed)
+                      Text(_dateNeedsConfirmation
+                          ? 'Fecha del intento sin confirmar: revisa la fecha de toda esta parte. $_dateIssue'
+                          : 'Fecha del intento: ${dayKey(_executionDate)}${_dateWasConfirmed ? ' (confirmada para esta parte)' : _editing ? ' (conservada)' : ''}'),
+                      if (!_editing ||
+                          _dateNeedsConfirmation ||
+                          _dateWasConfirmed)
                         TextButton(
                             onPressed: () async {
                               final picked = await showDatePicker(
@@ -251,7 +318,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                     ],
                   ),
                   PreAttemptCard(torso: torso),
-                  for (final (i, t) in _items.indexed) _itemCard(context, i + 1, t, previous),
+                  for (final (i, t) in _items.indexed)
+                    _itemCard(context, i + 1, t, previous),
                 ],
               ),
         bottomNavigationBar: SafeArea(
@@ -269,13 +337,19 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                       : OutlinedButton.icon(
                           onPressed: _stopRest,
                           icon: const Icon(Icons.stop_circle_outlined),
-                          label: Text('Descanso ${formatDuration(rest.inSeconds + 1)}'),
+                          label: Text(
+                              'Descanso ${formatDuration(rest.inSeconds + 1)}'),
                         ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: _loaded && _hasAny && !_saving && !_dateNeedsConfirmation ? _save : null,
+                    onPressed: _loaded &&
+                            _hasAny &&
+                            !_saving &&
+                            !_dateNeedsConfirmation
+                        ? _save
+                        : null,
                     icon: const Icon(Icons.check),
                     label: const Text('Guardar test'),
                   ),
@@ -288,15 +362,156 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     );
   }
 
-  Widget _itemCard(BuildContext context, int n, TestItem t, List<TestResult> previous) {
+  Widget _itemCard(
+      BuildContext context, int n, TestItem t, List<TestResult> previous) {
     final text = Theme.of(context).textTheme;
+    final currentConditions = _conditions[t.id] == null
+        ? null
+        : canonicalTestConditions(t.id, _conditions[t.id]!);
     final before = [
-      for (var r = 1; r < widget.round; r++)
-        if (testValue(previous, r, t.id) case final v?) 'Test $r: ${formatTestValue(t, v)}',
+      if (currentConditions != null)
+        for (final evidence in eligibleAttempts(previous, t.id,
+            asOf: clock.now(),
+            protocol: _protocol.name,
+            conditions: currentConditions))
+          'Intento ${evidence.attemptId} comparable: ${formatTestValue(t, evidence.value)}',
     ];
     return AppCard(
       title: '$n. ${t.name}',
       children: [
+        TextButton(
+            onPressed: () async {
+              final previous = _conditions[t.id];
+              final variant = TextEditingController(
+                  text: previous?['variant'] as String? ?? '');
+              final support = TextEditingController(
+                  text: previous?['support'] as String? ?? '');
+              final height = TextEditingController(
+                  text: previous?['heightCm']?.toString() ?? '');
+              String? grip = previous?['grip'] as String?;
+              final gripRelevant =
+                  ['pullup', 'dead_hang', 'hanging_leg_raise'].contains(t.id);
+              final supportRelevant = [
+                'dips',
+                'one_arm_pushup',
+                'pike_pushup',
+                'pistol_box',
+                'reverse_plank_forearm'
+              ].contains(t.id);
+              final raw = await showDialog<Map<String, Object?>>(
+                  context: context,
+                  builder: (c) => StatefulBuilder(
+                      builder: (c, update) => AlertDialog(
+                            title: Text('Condiciones · ${t.name}'),
+                            content: SingleChildScrollView(
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                  const Text(
+                                      'Repite estas condiciones en el retest. Vacío significa desconocido.'),
+                                  TextField(
+                                      controller: variant,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Variante física')),
+                                  if (gripRelevant)
+                                    DropdownButtonFormField<String>(
+                                        value: grip,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Agarre'),
+                                        items: [
+                                          for (final name in [
+                                            'prona',
+                                            'supina',
+                                            'neutro'
+                                          ])
+                                            DropdownMenuItem(
+                                                value: name, child: Text(name))
+                                        ],
+                                        onChanged: (v) =>
+                                            update(() => grip = v)),
+                                  if (supportRelevant) ...[
+                                    TextField(
+                                        controller: support,
+                                        decoration: const InputDecoration(
+                                            labelText:
+                                                'Apoyo (suelo, mesa, paralelas…)')),
+                                    TextField(
+                                        controller: height,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
+                                        decoration: const InputDecoration(
+                                            labelText:
+                                                'Altura del apoyo (cm)')),
+                                  ],
+                                ])),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(c),
+                                  child: const Text('Cancelar')),
+                              FilledButton(
+                                  onPressed: () =>
+                                      Navigator.pop(c, <String, Object?>{
+                                        if (variant.text.trim().isNotEmpty)
+                                          'variant': variant.text.trim(),
+                                        if (gripRelevant && grip != null)
+                                          'grip': grip,
+                                        if (supportRelevant &&
+                                            support.text.trim().isNotEmpty)
+                                          'support': support.text.trim(),
+                                        if (supportRelevant &&
+                                            height.text.trim().isNotEmpty)
+                                          'heightCm': double.tryParse(
+                                              height.text.replaceAll(',', '.')),
+                                      }),
+                                  child: const Text('Confirmar'))
+                            ],
+                          )));
+              variant.dispose();
+              support.dispose();
+              height.dispose();
+              if (raw == null || !context.mounted) return;
+              try {
+                final values = raw.isEmpty ? null : raw;
+                if (values != null) canonicalTestConditions(t.id, values);
+                if (widget.newAttempt &&
+                    _conditions[t.id] != null &&
+                    values != null &&
+                    jsonEncode(_conditions[t.id]) != jsonEncode(values)) {
+                  final accepted = await showDialog<bool>(
+                      context: context,
+                      builder: (c) => AlertDialog(
+                              title: const Text('Nueva línea base'),
+                              content: const Text(
+                                  'Las condiciones cambiaron. Se conservarán ambos intentos sin compararlos.'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(c, false),
+                                    child: const Text('Cancelar')),
+                                FilledButton(
+                                    onPressed: () => Navigator.pop(c, true),
+                                    child: const Text('Crear línea base'))
+                              ]));
+                  if (accepted != true) return;
+                }
+                setState(() {
+                  if (values == null) {
+                    _conditions.remove(t.id);
+                  } else {
+                    _conditions[t.id] = values;
+                  }
+                  _changed = true;
+                });
+              } catch (_) {
+                if (context.mounted) {
+                  showSnack(context,
+                      'Condiciones inválidas o no pertinentes para esta prueba');
+                }
+              }
+            },
+            child: Text(
+                'Condiciones: ${_conditions[t.id] == null ? 'desconocidas' : _conditions[t.id]!.values.join(' · ')}')),
+        if (before.isEmpty)
+          const Text('Sin referencia comparable bajo estas condiciones.'),
         Text(
           [
             switch (t.unit) {
@@ -317,10 +532,12 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                 child: TextField(
                   key: ValueKey('test-value-${t.id}-$side'),
                   controller: _field(t, side),
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(
-                    labelText:
-                        side.isEmpty ? t.unit.short : '${side == 'I' ? 'Izquierda' : 'Derecha'} (${t.unit.short})',
+                    labelText: side.isEmpty
+                        ? t.unit.short
+                        : '${side == 'I' ? 'Izquierda' : 'Derecha'} (${t.unit.short})',
                     errorText: _errors[_key(t, side)],
                     border: const OutlineInputBorder(),
                     isDense: true,

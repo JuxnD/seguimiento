@@ -1,0 +1,15 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-red/test/data/plan034_attempt_history_test.dart
+00:00 +0: 034 saving a second real attempt preserves first results and session
+00:00 +0 -1: 034 saving a second real attempt preserves first results and session [E]
+  Invalid argument(s): Failed to load dynamic library 'sqlite3.dll': The specified module could not be found.
+   (error code: 126)
+  dart:ffi                                                        new DynamicLibrary.open
+  package:sqlite3/src/ffi/load_library.dart 81:27                 _defaultOpen
+  package:sqlite3/src/ffi/load_library.dart 127:12                OpenDynamicLibrary.openSqlite
+  package:sqlite3/src/ffi/api.dart 13:39                          sqlite3
+  package:drift/native.dart 365:12                                _NativeDelegate.openDatabase
+  package:drift/src/sqlite3/database.dart 79:19                   Sqlite3Delegate.open
+  package:drift/src/runtime/executor/helpers/engines.dart 442:22  DelegatedDatabase.ensureOpen.<fn>
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T165322529-51732-30d2ba756a5e4dd8a233615348225bb8.json

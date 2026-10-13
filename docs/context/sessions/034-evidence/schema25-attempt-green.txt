@@ -1,0 +1,10 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart: schema25 declared target and nullable unknowns, zero remains distinct
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_schema25_test.dart: (tearDownAll)
+00:00 +1: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart: (setUpAll)
+00:01 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart: 034 saving a second real attempt preserves first results and session
+00:01 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_attempt_history_test.dart: (tearDownAll)
+00:01 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T170745896-67176-2bf86cc1097a4a5cbcfbfb3f80d14b33.json

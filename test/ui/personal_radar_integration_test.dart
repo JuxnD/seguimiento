@@ -51,9 +51,10 @@ class _Today extends TodayNotifier {
 void main() {
   setUpAll(useHostSqlite);
   Future<void> tSetSurface(WidgetTester t) async {
-    await t.binding.setSurfaceSize(const Size(360,900));
+    await t.binding.setSurfaceSize(const Size(360, 900));
     addTearDown(() => t.binding.setSurfaceSize(null));
   }
+
   Future<void> settle(WidgetTester t) async {
     for (var i = 0; i < 25; i++) {
       await t.pump(const Duration(milliseconds: 100));
@@ -69,27 +70,46 @@ void main() {
   }
 
   Future<void> show(WidgetTester t, AppDatabase db,
-      {double scale = 1, Widget home = const SummaryScreen(), ActiveSession? pending, DateTime Function()? decisionClock}) async {
+      {double scale = 1,
+      Widget home = const SummaryScreen(),
+      ActiveSession? pending,
+      DateTime Function()? decisionClock}) async {
     await loadTestFonts(t);
     final theme = buildGymTheme();
     await t.pumpWidget(ProviderScope(
         overrides: [
-          databaseHostProvider
-              .overrideWithValue(DatabaseHost(File('unused.sqlite'), (_) => openInMemoryDatabase(), initial: db)),
+          databaseHostProvider.overrideWithValue(DatabaseHost(
+              File('unused.sqlite'), (_) => openInMemoryDatabase(),
+              initial: db)),
           todayProvider.overrideWith(_Today.new),
-          decisionClockProvider.overrideWithValue(decisionClock ?? () => DateTime(2026, 10, 10, 12)),
-          localFlagsProvider.overrideWithValue(LocalFlags(File('build/qa/011/no-flags.json'))),
-          if (pending != null) activeSessionProvider.overrideWith((ref) async => pending),
-          activeSessionStoreProvider.overrideWithValue(ActiveSessionStore(File('build/qa/011/no-active.json'))),
+          decisionClockProvider.overrideWithValue(
+              decisionClock ?? () => DateTime(2026, 10, 10, 12)),
+          localFlagsProvider.overrideWithValue(
+              LocalFlags(File('build/qa/011/no-flags.json'))),
+          if (pending != null)
+            activeSessionProvider.overrideWith((ref) async => pending),
+          activeSessionStoreProvider.overrideWithValue(
+              ActiveSessionStore(File('build/qa/011/no-active.json'))),
         ],
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: theme.copyWith(textTheme: theme.textTheme.apply(fontFamily: 'Roboto'),
-        appBarTheme: theme.appBarTheme.copyWith(titleTextStyle: theme.appBarTheme.titleTextStyle?.copyWith(fontFamily:'Roboto')),
-        segmentedButtonTheme: SegmentedButtonThemeData(style: theme.segmentedButtonTheme.style?.copyWith(textStyle:WidgetStateProperty.all(const TextStyle(fontFamily:'Roboto',fontWeight:FontWeight.w600,fontSize:13)))),
-        inputDecorationTheme:theme.inputDecorationTheme.copyWith(labelStyle:const TextStyle(fontFamily:'Roboto'))),
-            builder: (context, child) =>
-                MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)), child: child!),
+            theme: theme.copyWith(
+                textTheme: theme.textTheme.apply(fontFamily: 'Roboto'),
+                appBarTheme: theme.appBarTheme.copyWith(
+                    titleTextStyle: theme.appBarTheme.titleTextStyle
+                        ?.copyWith(fontFamily: 'Roboto')),
+                segmentedButtonTheme: SegmentedButtonThemeData(
+                    style: theme.segmentedButtonTheme.style?.copyWith(
+                        textStyle: WidgetStateProperty.all(const TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13)))),
+                inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+                    labelStyle: const TextStyle(fontFamily: 'Roboto'))),
+            builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!),
             home: RepaintBoundary(key: const Key('radar011-shot'), child: home))));
     await settle(t);
   }
@@ -97,14 +117,17 @@ void main() {
   Future<void> shot(WidgetTester t, String name) async {
     final target = Platform.environment['RADAR_011_OUT'];
     if (target == null) return;
-    final boundary = t.renderObject<RenderRepaintBoundary>(find.byKey(const Key('radar011-shot')));
+    final boundary = t.renderObject<RenderRepaintBoundary>(
+        find.byKey(const Key('radar011-shot')));
     await t.runAsync(() async {
       final image = await boundary.toImage(pixelRatio: 2);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
       final folder = Directory(target)..createSync(recursive: true);
-      File('${folder.path}/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+      File('${folder.path}/$name.png')
+          .writeAsBytesSync(bytes!.buffer.asUint8List());
       image.dispose();
-      final radar = t.widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget)).radar;
+      final radar =
+          t.widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget)).radar;
       File('${folder.path}/$name.json').writeAsStringSync(jsonEncode({
         'synthetic': true,
         'viewport': '360dp',
@@ -123,7 +146,12 @@ void main() {
               'referenceFrom': e.reference?.from.toIso8601String(),
               'observations': [
                 for (final o in e.observations)
-                  {'source': o.sourceKey, 'raw': o.raw, 'quality': o.quality, 'reason': o.reason}
+                  {
+                    'source': o.sourceKey,
+                    'raw': o.raw,
+                    'quality': o.quality,
+                    'reason': o.reason
+                  }
               ],
             }
         ]
@@ -138,7 +166,9 @@ void main() {
     await settle(t);
   }
 
-  testWidgets('referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados', (t) async {
+  testWidgets(
+      'referencia guardar/cancelar SQLite, rutas abrir/cancelar sin resultados',
+      (t) async {
     final db = openInMemoryDatabase();
     try {
       await seedRadarSql(db);
@@ -160,9 +190,16 @@ void main() {
       await t.tap(find.text('Guardar'));
       await settle(t);
       expect(
-          (await GoalRepository(db).history()).current(GoalMetric.refDominadas, DateTime(2026, 10, 10))!.effectiveFrom,
+          (await GoalRepository(db).history())
+              .current(GoalMetric.refDominadas, DateTime(2026, 10, 10))!
+              .effectiveFrom,
           DateTime(2026, 10, 10));
-      expect(t.widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget)).radar.axis(RadarAxis.pull).currentPercent,
+      expect(
+          t
+              .widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget))
+              .radar
+              .axis(RadarAxis.pull)
+              .currentPercent,
           40);
       final rows = (await db.select(db.fitnessTests).get()).length;
       final sessions = (await db.select(db.sessions).get()).length;
@@ -172,10 +209,21 @@ void main() {
       await settle(t);
       expect(find.byType(TestResultsScreen), findsOneWidget);
       expect(find.textContaining('16–22 nov'), findsNothing);
-      await t.tap(find.text('T3 torso'));
+      final test3 = find.text('T3 torso');
+      await t.scrollUntilVisible(test3, 300,
+          scrollable: find
+              .descendant(
+                  of: find.byType(TestResultsScreen),
+                  matching: find.byType(Scrollable))
+              .first);
+      await settle(t);
+      expect(test3.hitTestable(), findsOneWidget);
+      await t.tap(test3);
       await settle(t);
       expect(find.byType(TestModeScreen), findsOneWidget);
-      expect(dateOnly(t.widget<TestModeScreen>(find.byType(TestModeScreen)).date), dateOnly(DateTime.now()));
+      expect(
+          dateOnly(t.widget<TestModeScreen>(find.byType(TestModeScreen)).date),
+          dateOnly(DateTime.now()));
       await t.pageBack();
       await settle(t);
       await t.pageBack();
@@ -188,7 +236,8 @@ void main() {
     }
   });
   for (final scale in [1.0, 1.6, 2.0]) {
-    testWidgets('SQL→Tu progreso viewport inicial360 texto$scale y detalle', (t) async {
+    testWidgets('SQL→Tu progreso viewport inicial360 texto$scale y detalle',
+        (t) async {
       await t.binding.setSurfaceSize(const Size(360, 900));
       addTearDown(() => t.binding.setSurfaceSize(null));
       final db = openInMemoryDatabase();
@@ -196,7 +245,9 @@ void main() {
         await seedRadarSql(db);
         await show(t, db, scale: scale);
         expect(find.text('Tus capacidades'), findsOneWidget);
-        final radar = t.widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget)).radar;
+        final radar = t
+            .widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget))
+            .radar;
         expect(radar.axes.where((e) => e.currentPercent != null).length, 6);
         // Initial screenshot without scroll or ensureVisible: proves hierarchy.
         await shot(t, 'seis-inicial-360-texto$scale');
@@ -206,14 +257,16 @@ void main() {
         await settle(t);
         await shot(t, 'seis-detalle-360-texto$scale');
         expect(find.textContaining('Última apta: 8 reps'), findsOneWidget);
-        expect(find.textContaining('Referencia común: 10 reps'), findsOneWidget);
+        expect(
+            find.textContaining('Referencia común: 10 reps'), findsOneWidget);
         expect(t.takeException(), isNull);
       } finally {
         await close(t, db);
       }
     });
   }
-  testWidgets('dos ejes/sin referencia y pasado no cambia por decisión de hoy', (t) async {
+  testWidgets('dos ejes/sin referencia y pasado no cambia por decisión de hoy',
+      (t) async {
     final db = openInMemoryDatabase();
     try {
       await seedRadarSql(db, complete: false, references: false);
@@ -221,7 +274,8 @@ void main() {
           .write(const ProfilesCompanion(startDate: Value('2026-01-01')));
       await show(t, db);
       await shot(t, 'dos-sin-referencia');
-      await t.scrollUntilVisible(find.byTooltip('Anterior'), 250, scrollable: find.byType(Scrollable).first);
+      await t.scrollUntilVisible(find.byTooltip('Anterior'), 250,
+          scrollable: find.byType(Scrollable).first);
       await settle(t);
       await t.tap(find.byTooltip('Anterior'));
       await settle(t);
@@ -235,20 +289,30 @@ void main() {
       await t.tap(find.text('Guardar'));
       await settle(t);
       expect(
-          t.widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget)).radar.axis(RadarAxis.pull).reference, isNull);
+          t
+              .widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget))
+              .radar
+              .axis(RadarAxis.pull)
+              .reference,
+          isNull);
       expect(
-          (await GoalRepository(db).history()).current(GoalMetric.refDominadas, DateTime(2026, 10, 10))!.effectiveFrom,
+          (await GoalRepository(db).history())
+              .current(GoalMetric.refDominadas, DateTime(2026, 10, 10))!
+              .effectiveFrom,
           DateTime(2026, 10, 10));
       expect(t.takeException(), isNull);
     } finally {
       await close(t, db);
     }
   });
-  testWidgets('Cindy cancelada conserva pendiente y no crea sesión nueva', (t) async {
+  testWidgets('Cindy cancelada conserva pendiente y no crea sesión nueva',
+      (t) async {
     final db = openInMemoryDatabase();
     try {
-      final pending =
-          CounterSnapshot(date: '2026-10-09', startedAt: DateTime(2026, 10, 9, 12), phase: CounterPhase.circuit);
+      final pending = CounterSnapshot(
+          date: '2026-10-09',
+          startedAt: DateTime(2026, 10, 9, 12),
+          phase: CounterPhase.circuit);
       await show(t, db, pending: pending);
       final axis = find.byKey(const Key('radar-axis-circuit'));
       await t.ensureVisible(axis);
@@ -269,31 +333,41 @@ void main() {
       expect(find.text('Hay una sesión sin terminar'), findsOneWidget);
       final context = t.element(find.byType(SummaryScreen));
       final container = ProviderScope.containerOf(context);
-      expect((await container.read(activeSessionProvider.future)), same(pending));
+      expect(
+          (await container.read(activeSessionProvider.future)), same(pending));
       await t.tapAt(const Offset(8, 8));
       await settle(t);
       expect((await db.select(db.sessions).get()), isEmpty);
-      expect((await container.read(activeSessionProvider.future)), same(pending));
+      expect(
+          (await container.read(activeSessionProvider.future)), same(pending));
       expect(t.takeException(), isNull);
     } finally {
       await close(t, db);
     }
   });
-  testWidgets('pasos ausentes≠0 y adaptador proteína histórica por día', (t) async {
+  testWidgets('pasos ausentes≠0 y adaptador proteína histórica por día',
+      (t) async {
     final db = openInMemoryDatabase();
     try {
       await (db.update(db.profiles)..where((p) => p.id.equals(1)))
           .write(const ProfilesCompanion(startDate: Value('2026-10-05')));
-      await db.into(db.dailySteps).insert(DailyStepsCompanion.insert(date: '2026-10-05', steps: 0));
+      await db
+          .into(db.dailySteps)
+          .insert(DailyStepsCompanion.insert(date: '2026-10-05', steps: 0));
       final goals = GoalRepository(db);
-      await (db.delete(db.goalVersions)..where((v) => v.metric.equals('proteinaMin') | v.metric.equals('pasos'))).go();
-      await goals.scheduleGoal(GoalMetric.pasos, 5000, effectiveFrom: DateTime(2026, 10, 5), origin: GoalOrigin.perfil);
+      await (db.delete(db.goalVersions)
+            ..where((v) =>
+                v.metric.equals('proteinaMin') | v.metric.equals('pasos')))
+          .go();
+      await goals.scheduleGoal(GoalMetric.pasos, 5000,
+          effectiveFrom: DateTime(2026, 10, 5), origin: GoalOrigin.perfil);
       await goals.scheduleGoal(GoalMetric.proteinaMin, 130,
           effectiveFrom: DateTime(2026, 10, 5), origin: GoalOrigin.perfil);
       await goals.scheduleGoal(GoalMetric.proteinaMin, 160,
           effectiveFrom: DateTime(2026, 10, 9), origin: GoalOrigin.perfil);
       await show(t, db);
-      await t.scrollUntilVisible(find.text('Pasos'), 300, scrollable: find.byType(Scrollable).first);
+      await t.scrollUntilVisible(find.text('Pasos'), 300,
+          scrollable: find.byType(Scrollable).first);
       await settle(t);
       final chart = t.widget<DailyBarsChart>(find.byType(DailyBarsChart));
       expect(chart.metric, 'steps');
@@ -304,89 +378,149 @@ void main() {
       expect(chart.goalResolver!(DateTime(2026, 10, 10), 'steps'), isNull);
       expect(chart.days!.where((d) => d.value != null).length, 1);
       await show(t, db, home: const ReportScreen());
-      await t.scrollUntilVisible(find.byType(ChartsSection), 300, scrollable: find.byType(Scrollable).first);
+      await t.scrollUntilVisible(find.byType(ChartsSection), 300,
+          scrollable: find.byType(Scrollable).first);
       await settle(t);
       final section = t.widget<ChartsSection>(find.byType(ChartsSection));
       final old = section.goalResolver!(DateTime(2026, 10, 6), 'proteinMin')!;
-      final current = section.goalResolver!(DateTime(2026, 10, 9), 'proteinMin')!;
+      final current =
+          section.goalResolver!(DateTime(2026, 10, 9), 'proteinMin')!;
       expect((old.value, old.to), (130, DateTime(2026, 10, 8)));
       expect((current.value, current.to), (160, null));
-      expect(section.goalResolver!(DateTime(2026, 10, 4), 'proteinMin'), isNull);
+      expect(
+          section.goalResolver!(DateTime(2026, 10, 4), 'proteinMin'), isNull);
       expect(current.covers(DateTime(2026, 11, 30)), isTrue);
       expect(t.takeException(), isNull);
     } finally {
       await close(t, db);
     }
   });
-  testWidgets('Cindy abre cronómetro real con checklist y cancelar no escribe SQLite', (t) async {
-    final db=openInMemoryDatabase();
+  testWidgets(
+      'Cindy abre cronómetro real con checklist y cancelar no escribe SQLite',
+      (t) async {
+    final db = openInMemoryDatabase();
     try {
-      wakelock.wakelockPlusPlatformInstance=_NoWakelock();
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (_) async=>null);
-      await show(t,db);
-      final axis=find.byKey(const Key('radar-axis-circuit'));
-      await t.ensureVisible(axis);await settle(t);await t.tap(axis);await settle(t);
-      await t.ensureVisible(find.text('Registrar Circuito'));await settle(t);await t.tap(find.text('Registrar Circuito'));await settle(t);
-      await t.tap(find.text('Abrir prueba'));await settle(t);
-      expect(find.byType(AmrapScreen),findsOneWidget);
-      expect(t.widget<AmrapScreen>(find.byType(AmrapScreen)).attempt,isTrue);
-      expect((await db.select(db.sessions).get()),isEmpty);
-      await t.pageBack();await settle(t);
-      expect((await db.select(db.sessions).get()),isEmpty);
-      expect(t.takeException(),isNull);
-    } finally {await close(t,db);}
+      wakelock.wakelockPlusPlatformInstance = _NoWakelock();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, (_) async => null);
+      await show(t, db);
+      final axis = find.byKey(const Key('radar-axis-circuit'));
+      await t.ensureVisible(axis);
+      await settle(t);
+      await t.tap(axis);
+      await settle(t);
+      await t.ensureVisible(find.text('Registrar Circuito'));
+      await settle(t);
+      await t.tap(find.text('Registrar Circuito'));
+      await settle(t);
+      await t.tap(find.text('Abrir prueba'));
+      await settle(t);
+      expect(find.byType(AmrapScreen), findsOneWidget);
+      expect(t.widget<AmrapScreen>(find.byType(AmrapScreen)).attempt, isTrue);
+      expect((await db.select(db.sessions).get()), isEmpty);
+      await t.pageBack();
+      await settle(t);
+      expect((await db.select(db.sessions).get()), isEmpty);
+      expect(t.takeException(), isNull);
+    } finally {
+      await close(t, db);
+    }
   });
-  testWidgets('anillo proteína variable muestra días1/2 y kcal conserva promedio', (t) async {
-    await t.binding.setSurfaceSize(const Size(360,900)); addTearDown(() => t.binding.setSurfaceSize(null));
-    final db=openInMemoryDatabase();
+  testWidgets(
+      'anillo proteína variable muestra días1/2 y kcal conserva promedio',
+      (t) async {
+    await t.binding.setSurfaceSize(const Size(360, 900));
+    addTearDown(() => t.binding.setSurfaceSize(null));
+    final db = openInMemoryDatabase();
     try {
-      await (db.update(db.profiles)..where((p)=>p.id.equals(1))).write(const ProfilesCompanion(startDate:Value('2026-10-05')));
-      await (db.delete(db.goalVersions)..where((v)=>v.metric.equals('proteinaMin') | v.metric.equals('kcal') | v.metric.equals('kcalFutbol'))).go();
-      final goals=GoalRepository(db);
-      await goals.scheduleGoal(GoalMetric.proteinaMin,130,effectiveFrom:DateTime(2026,10,5),origin:GoalOrigin.perfil);
-      await goals.scheduleGoal(GoalMetric.proteinaMin,160,effectiveFrom:DateTime(2026,10,10),origin:GoalOrigin.perfil);
-      await goals.scheduleGoal(GoalMetric.kcal,2400,effectiveFrom:DateTime(2026,10,5),origin:GoalOrigin.perfil);
-      await goals.scheduleGoal(GoalMetric.kcalFutbol,2800,effectiveFrom:DateTime(2026,10,5),origin:GoalOrigin.perfil);
-      final nutrition=NutritionRepository(db);
-      for (final day in [DateTime(2026,10,9),DateTime(2026,10,10)]) {
-        await nutrition.saveMeal(MealDraft(date:day,slot:MealSlot.desayuno,items:[MealItemDraft(label:'FICTICIO',quantity:1,quantityUnit:'porción',macros:const Macros(kcal:2400,protein:140))]));
-        await nutrition.setClosed(day,true);
+      await (db.update(db.profiles)..where((p) => p.id.equals(1)))
+          .write(const ProfilesCompanion(startDate: Value('2026-10-05')));
+      await (db.delete(db.goalVersions)
+            ..where((v) =>
+                v.metric.equals('proteinaMin') |
+                v.metric.equals('kcal') |
+                v.metric.equals('kcalFutbol')))
+          .go();
+      final goals = GoalRepository(db);
+      await goals.scheduleGoal(GoalMetric.proteinaMin, 130,
+          effectiveFrom: DateTime(2026, 10, 5), origin: GoalOrigin.perfil);
+      await goals.scheduleGoal(GoalMetric.proteinaMin, 160,
+          effectiveFrom: DateTime(2026, 10, 10), origin: GoalOrigin.perfil);
+      await goals.scheduleGoal(GoalMetric.kcal, 2400,
+          effectiveFrom: DateTime(2026, 10, 5), origin: GoalOrigin.perfil);
+      await goals.scheduleGoal(GoalMetric.kcalFutbol, 2800,
+          effectiveFrom: DateTime(2026, 10, 5), origin: GoalOrigin.perfil);
+      final nutrition = NutritionRepository(db);
+      for (final day in [DateTime(2026, 10, 9), DateTime(2026, 10, 10)]) {
+        await nutrition
+            .saveMeal(MealDraft(date: day, slot: MealSlot.desayuno, items: [
+          MealItemDraft(
+              label: 'FICTICIO',
+              quantity: 1,
+              quantityUnit: 'porción',
+              macros: const Macros(kcal: 2400, protein: 140))
+        ]));
+        await nutrition.setClosed(day, true);
       }
-      await show(t,db,scale:2);
-      await t.scrollUntilVisible(find.text('Comida'),300,scrollable:find.byType(Scrollable).first);await settle(t);
-      final rings=t.widgetList<ProgressRing>(find.byType(ProgressRing)).toList();
-      expect(rings.where((r)=>r.label=='kcal/día'),isEmpty);
-      final protein=rings.singleWhere((r)=>r.label=='Días que alcanzaron mínimo');
-      expect((protein.progress,protein.value),(0.5,'1/2'));
-      expect(protein.sublabel,'Promedio 140 g/día');
-      expect(find.text('Promedio kcal/día'),findsOneWidget);
-      expect(find.textContaining('Referencias kcal: 2.400'),findsOneWidget);
-      expect(find.textContaining('2.800'),findsOneWidget);
-      expect(t.takeException(),isNull);
-    } finally {await close(t,db);}
+      await show(t, db, scale: 2);
+      await t.scrollUntilVisible(find.text('Comida'), 300,
+          scrollable: find.byType(Scrollable).first);
+      await settle(t);
+      final rings =
+          t.widgetList<ProgressRing>(find.byType(ProgressRing)).toList();
+      expect(rings.where((r) => r.label == 'kcal/día'), isEmpty);
+      final protein =
+          rings.singleWhere((r) => r.label == 'Días que alcanzaron mínimo');
+      expect((protein.progress, protein.value), (0.5, '1/2'));
+      expect(protein.sublabel, 'Promedio 140 g/día');
+      expect(find.text('Promedio kcal/día'), findsOneWidget);
+      expect(find.textContaining('Referencias kcal: 2.400'), findsOneWidget);
+      expect(find.textContaining('2.800'), findsOneWidget);
+      expect(t.takeException(), isNull);
+    } finally {
+      await close(t, db);
+    }
   });
-  testWidgets('referencia confirma día real al cruzar medianoche sin backdate', (t) async {
-    final db=openInMemoryDatabase();
+  testWidgets('referencia confirma día real al cruzar medianoche sin backdate',
+      (t) async {
+    final db = openInMemoryDatabase();
     try {
-      var now=DateTime(2026,10,10,23,59);
-      await show(t,db,decisionClock:()=>now);
+      var now = DateTime(2026, 10, 10, 23, 59);
+      await show(t, db, decisionClock: () => now);
       await selectPull(t);
-      await t.ensureVisible(find.text('Definir referencia de Tirón'));await settle(t);await t.tap(find.text('Definir referencia de Tirón'));await settle(t);
-      await t.enterText(find.byKey(const Key('radar-reference-value')),'10');
-      now=DateTime(2026,10,11,0,1);
-      await t.tap(find.text('Guardar'));await settle(t);
-      final row=(await GoalRepository(db).history()).versions.where((v)=>v.metric==GoalMetric.refDominadas).single;
-      expect((row.effectiveFrom,row.acceptedAt),(DateTime(2026,10,11),DateTime(2026,10,11)));
-      expect(t.widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget)).radar.axis(RadarAxis.pull).reference,isNull);
-      expect(t.takeException(),isNull);
-    }finally{await close(t,db);}
+      await t.ensureVisible(find.text('Definir referencia de Tirón'));
+      await settle(t);
+      await t.tap(find.text('Definir referencia de Tirón'));
+      await settle(t);
+      await t.enterText(find.byKey(const Key('radar-reference-value')), '10');
+      now = DateTime(2026, 10, 11, 0, 1);
+      await t.tap(find.text('Guardar'));
+      await settle(t);
+      final row = (await GoalRepository(db).history())
+          .versions
+          .where((v) => v.metric == GoalMetric.refDominadas)
+          .single;
+      expect((row.effectiveFrom, row.acceptedAt),
+          (DateTime(2026, 10, 11), DateTime(2026, 10, 11)));
+      expect(
+          t
+              .widget<PersonalRadarWidget>(find.byType(PersonalRadarWidget))
+              .radar
+              .axis(RadarAxis.pull)
+              .reference,
+          isNull);
+      expect(t.takeException(), isNull);
+    } finally {
+      await close(t, db);
+    }
   });
-  testWidgets('Tu progreso conecta radar real incluso sin pruebas', (tester) async {
+  testWidgets('Tu progreso conecta radar real incluso sin pruebas',
+      (tester) async {
     final db = openInMemoryDatabase();
     try {
       await tSetSurface(tester);
       await show(tester, db);
-      await shot(tester,'sin-registros-inicial');
+      await shot(tester, 'sin-registros-inicial');
       expect(find.byType(PersonalRadarWidget), findsOneWidget);
       expect(tester.takeException(), isNull);
     } finally {

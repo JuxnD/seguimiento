@@ -1,4 +1,5 @@
 import 'dates.dart';
+part 'accessory_ladders.dart';
 
 // Escaleras de core del v3.1 (§19.10): V-up el jueves y dragon flag el lunes,
 // desde el peldaño 1. Se propone subir cuando el criterio sale en 2 sesiones
@@ -18,18 +19,22 @@ const ladderCleanSessions = 2;
 /// Lo que pide el criterio de un ejercicio: `sets` series de al menos
 /// `value` (reps, o segundos si es aguante). Por lado: `sets` por cada lado.
 class LadderGoal {
-  const LadderGoal(this.exercise, this.sets, this.value, {this.hold = false, this.perSide = false});
+  const LadderGoal(this.exercise, this.sets, this.value,
+      {this.hold = false, this.perSide = false, this.rir});
 
   final String exercise;
   final int sets;
   final int value;
   final bool hold;
   final bool perSide;
+  final int? rir;
 
   /// ¿Las series de una sesión lo cumplen? Por lado se guardan de dos en dos.
-  bool metBy(List<int> values) => values.where((v) => v >= value).length >= sets * (perSide ? 2 : 1);
+  bool metBy(List<int> values) =>
+      values.where((v) => v >= value).length >= sets * (perSide ? 2 : 1);
 
-  String get label => '$sets × $value${hold ? ' s' : ''}${perSide ? ' por lado' : ''}';
+  String get label =>
+      '$sets × $value${hold ? ' s' : ''}${perSide ? ' por lado' : ''}';
 }
 
 class LadderStep {
@@ -49,6 +54,9 @@ class LadderStep {
     this.notes,
     this.goals = const [],
     this.hollowSec,
+    this.physicalVariantKey,
+    this.pauseSec,
+    this.relaxed = false,
   });
 
   final int step;
@@ -72,12 +80,23 @@ class LadderStep {
 
   /// Peldaño 1: hollow de acompañamiento (3 × N s), parte del criterio.
   final int? hollowSec;
+  final String? physicalVariantKey;
+  final int? pauseSec;
+  final bool relaxed;
 
-  String get criterion => goals.isEmpty ? 'Último peldaño' : goals.map((g) => '${g.exercise} ${g.label}').join(' + ');
+  String get criterion => goals.isEmpty
+      ? 'Último peldaño'
+      : goals.map((g) => '${g.exercise} ${g.label}').join(' + ');
 }
 
 class CoreLadder {
-  const CoreLadder({required this.id, required this.name, required this.weekday, required this.steps});
+  const CoreLadder(
+      {required this.id,
+      required this.name,
+      required this.weekday,
+      required this.steps,
+      this.accessory = false,
+      this.alarm});
 
   final String id;
   final String name;
@@ -85,9 +104,12 @@ class CoreLadder {
   /// Día del v3.1 en que va (lunes el dragon flag, jueves el V-up).
   final int weekday;
   final List<LadderStep> steps;
+  final bool accessory;
+  final String? alarm;
 
-  LadderStep stepAt(int n) => steps[(n.clamp(1, steps.length)) - 1];
-  int get top => steps.length;
+  int get bottom => steps.first.step;
+  LadderStep stepAt(int n) => steps[(n.clamp(bottom, top)) - bottom];
+  int get top => steps.last.step;
 
   /// ¿Este ejercicio es de la escalera? (incluye el hollow del peldaño 1).
   bool owns(String exercise) => steps.any((s) => s.exercise == exercise);
@@ -95,71 +117,79 @@ class CoreLadder {
 
 const hollowHold = 'Hollow body hold';
 
-const dragonFlagLadder = CoreLadder(id: 'dragon_flag', name: 'Dragon flag', weekday: DateTime.monday, steps: [
-  LadderStep(
-    step: 1,
-    exercise: 'Encogimiento inverso',
-    prescription: '3 × 8–12, bajada en 3 s + hollow 3 × 30–40 s',
-    repsMin: 8,
-    repsMax: 12,
-    rir: 2,
-    rest: 60,
-    restMax: 90,
-    notes: 'Bajada en 3 s; la lumbar no se arquea.',
-    hollowSec: 40,
-    goals: [LadderGoal('Encogimiento inverso', 3, 12), LadderGoal(hollowHold, 3, 40, hold: true)],
-  ),
-  LadderStep(
-    step: 2,
-    exercise: 'Vela',
-    prescription: '3 × 10–20 s',
-    holdMin: 10,
-    holdMax: 20,
-    rest: 90,
-    notes: 'Hombros en el suelo; cadera y piernas en vertical.',
-    goals: [LadderGoal('Vela', 3, 20, hold: true)],
-  ),
-  LadderStep(
-    step: 3,
-    exercise: 'Negativo de dragon flag recogido',
-    prescription: '3 × 3–5, bajada de 4 s',
-    repsMin: 3,
-    repsMax: 5,
-    rest: 120,
-    notes: 'Rodillas recogidas, bajada de 4 s, sin arquear la lumbar.',
-    goals: [LadderGoal('Negativo de dragon flag recogido', 3, 5)],
-  ),
-  LadderStep(
-    step: 4,
-    exercise: 'Negativo de dragon flag a una pierna',
-    prescription: '3 × 3–5',
-    repsMin: 3,
-    repsMax: 5,
-    rest: 120,
-    notes: 'Una pierna estirada, la otra recogida.',
-    goals: [LadderGoal('Negativo de dragon flag a una pierna', 3, 5)],
-  ),
-  LadderStep(
-    step: 5,
-    exercise: 'Negativo de dragon flag',
-    prescription: '3 × 3–5, bajada de 5 s',
-    repsMin: 3,
-    repsMax: 5,
-    rest: 120,
-    notes: 'Cuerpo recto, bajada de 5 s.',
-    goals: [LadderGoal('Negativo de dragon flag', 3, 5)],
-  ),
-  LadderStep(
-    step: 6,
-    exercise: 'Dragon flag',
-    prescription: '3 × 3–5',
-    repsMin: 3,
-    repsMax: 5,
-    rest: 120,
-  ),
-]);
+const dragonFlagLadder = CoreLadder(
+    id: 'dragon_flag',
+    name: 'Dragon flag',
+    weekday: DateTime.monday,
+    steps: [
+      LadderStep(
+        step: 1,
+        exercise: 'Encogimiento inverso',
+        prescription: '3 × 8–12, bajada en 3 s + hollow 3 × 30–40 s',
+        repsMin: 8,
+        repsMax: 12,
+        rir: 2,
+        rest: 60,
+        restMax: 90,
+        notes: 'Bajada en 3 s; la lumbar no se arquea.',
+        hollowSec: 40,
+        goals: [
+          LadderGoal('Encogimiento inverso', 3, 12),
+          LadderGoal(hollowHold, 3, 40, hold: true)
+        ],
+      ),
+      LadderStep(
+        step: 2,
+        exercise: 'Vela',
+        prescription: '3 × 10–20 s',
+        holdMin: 10,
+        holdMax: 20,
+        rest: 90,
+        notes: 'Hombros en el suelo; cadera y piernas en vertical.',
+        goals: [LadderGoal('Vela', 3, 20, hold: true)],
+      ),
+      LadderStep(
+        step: 3,
+        exercise: 'Negativo de dragon flag recogido',
+        prescription: '3 × 3–5, bajada de 4 s',
+        repsMin: 3,
+        repsMax: 5,
+        rest: 120,
+        notes: 'Rodillas recogidas, bajada de 4 s, sin arquear la lumbar.',
+        goals: [LadderGoal('Negativo de dragon flag recogido', 3, 5)],
+      ),
+      LadderStep(
+        step: 4,
+        exercise: 'Negativo de dragon flag a una pierna',
+        prescription: '3 × 3–5',
+        repsMin: 3,
+        repsMax: 5,
+        rest: 120,
+        notes: 'Una pierna estirada, la otra recogida.',
+        goals: [LadderGoal('Negativo de dragon flag a una pierna', 3, 5)],
+      ),
+      LadderStep(
+        step: 5,
+        exercise: 'Negativo de dragon flag',
+        prescription: '3 × 3–5, bajada de 5 s',
+        repsMin: 3,
+        repsMax: 5,
+        rest: 120,
+        notes: 'Cuerpo recto, bajada de 5 s.',
+        goals: [LadderGoal('Negativo de dragon flag', 3, 5)],
+      ),
+      LadderStep(
+        step: 6,
+        exercise: 'Dragon flag',
+        prescription: '3 × 3–5',
+        repsMin: 3,
+        repsMax: 5,
+        rest: 120,
+      ),
+    ]);
 
-const vUpLadder = CoreLadder(id: 'v_up', name: 'V-up', weekday: DateTime.thursday, steps: [
+const vUpLadder =
+    CoreLadder(id: 'v_up', name: 'V-up', weekday: DateTime.thursday, steps: [
   LadderStep(
     step: 1,
     exercise: 'Tuck-up',
@@ -169,7 +199,10 @@ const vUpLadder = CoreLadder(id: 'v_up', name: 'V-up', weekday: DateTime.thursda
     rir: 2,
     rest: 60,
     hollowSec: 30,
-    goals: [LadderGoal('Tuck-up', 3, 12), LadderGoal(hollowHold, 3, 30, hold: true)],
+    goals: [
+      LadderGoal('Tuck-up', 3, 12),
+      LadderGoal(hollowHold, 3, 30, hold: true)
+    ],
   ),
   LadderStep(
     step: 2,
@@ -200,24 +233,102 @@ const vUpLadder = CoreLadder(id: 'v_up', name: 'V-up', weekday: DateTime.thursda
   ),
 ]);
 
-const coreLadders = [dragonFlagLadder, vUpLadder];
+const reversePlankLadder = CoreLadder(
+    id: 'reverse_plank',
+    name: 'Plancha inversa',
+    weekday: DateTime.thursday,
+    steps: [
+      LadderStep(
+          step: 0,
+          exercise: 'Mesa invertida',
+          prescription: '3 × 20–30 s',
+          holdMin: 20,
+          holdMax: 30,
+          goals: [LadderGoal('Mesa invertida', 3, 30, hold: true)]),
+      LadderStep(
+          step: 1,
+          exercise: 'Plancha inversa sobre antebrazos',
+          prescription: '3 × 20–45 s',
+          holdMin: 20,
+          holdMax: 45,
+          notes:
+              'Codos bajo hombros; costillas abajo. Termina si cae la cadera.',
+          goals: [
+            LadderGoal('Plancha inversa sobre antebrazos', 3, 45, hold: true)
+          ]),
+      LadderStep(
+          step: 2,
+          exercise: 'Plancha inversa sobre las manos',
+          prescription: '3 × 20–45 s',
+          holdMin: 20,
+          holdMax: 45,
+          goals: [
+            LadderGoal('Plancha inversa sobre las manos', 3, 45, hold: true)
+          ]),
+      LadderStep(
+          step: 3,
+          exercise: 'Plancha inversa a una pierna',
+          prescription: '3 × 30–40 s, alterna cada 10 s',
+          holdMin: 30,
+          holdMax: 40,
+          goals: [
+            LadderGoal('Plancha inversa a una pierna', 3, 40, hold: true)
+          ]),
+      LadderStep(
+          step: 4,
+          exercise: 'Plancha inversa con patada',
+          prescription: '2 × 10 por pierna',
+          sets: 2,
+          repsMin: 10,
+          perSide: true,
+          goals: [
+            LadderGoal('Plancha inversa con patada', 2, 10, perSide: true)
+          ]),
+      LadderStep(
+          step: 5,
+          exercise: 'Plancha inversa con pies elevados',
+          prescription: '3 × 30–45 s',
+          holdMin: 30,
+          holdMax: 45),
+    ]);
 
-CoreLadder? ladderById(String id) => coreLadders.where((l) => l.id == id).firstOrNull;
+const coreLadders = [dragonFlagLadder, vUpLadder, reversePlankLadder];
+
+CoreLadder? ladderById(String id) =>
+    allLadders.where((l) => l.id == id).firstOrNull;
 
 /// La escalera que trae este ejercicio (el hollow no: va en las dos).
-CoreLadder? ladderOf(String exercise) =>
-    exercise == hollowHold ? null : coreLadders.where((l) => l.owns(exercise)).firstOrNull;
+CoreLadder? ladderOf(String exercise) => exercise == hollowHold
+    ? null
+    : allLadders.where((l) => l.owns(exercise)).firstOrNull;
 
 /// Una sesión con series de la escalera: valores por ejercicio (reps o s).
 class LadderSession {
-  const LadderSession({required this.date, required this.sets});
+  const LadderSession(
+      {required this.date,
+      required this.sets,
+      this.sessionId = 0,
+      this.sides = const {},
+      this.rirs = const {},
+      this.accessoryQualified = false,
+      this.maintenance = false});
 
-  final DateTime date;
+  final DateTime? date;
   final Map<String, List<int>> sets;
+  final int sessionId;
+  final Map<String, List<String?>> sides;
+  final Map<String, List<int?>> rirs;
+  final bool accessoryQualified;
+  final bool maintenance;
 }
 
 class LadderAdvice {
-  const LadderAdvice({required this.step, required this.daysOnStep, required this.cleanInARow, required this.canStepUp});
+  const LadderAdvice(
+      {required this.step,
+      required this.daysOnStep,
+      required this.cleanInARow,
+      required this.canStepUp,
+      this.nextStepBlockedReason});
 
   final LadderStep step;
   final int daysOnStep;
@@ -225,23 +336,60 @@ class LadderAdvice {
   /// Sesiones seguidas (las últimas) que cumplen el criterio.
   final int cleanInARow;
   final bool canStepUp;
+  final String? nextStepBlockedReason;
 
   String get status {
+    if (nextStepBlockedReason != null) return nextStepBlockedReason!;
     if (step.goals.isEmpty) return 'Último peldaño.';
-    if (canStepUp) return 'Criterio cumplido $cleanInARow sesiones seguidas: toca subir.';
-    final days = daysOnStep < ladderMinDays ? ' · ${ladderMinDays - daysOnStep} días para poder subir' : '';
+    if (canStepUp) {
+      return 'Criterio cumplido $cleanInARow sesiones seguidas: toca subir.';
+    }
+    final days = daysOnStep < ladderMinDays
+        ? ' · ${ladderMinDays - daysOnStep} días para poder subir'
+        : '';
     return '$cleanInARow de $ladderCleanSessions sesiones seguidas con el criterio$days';
   }
 }
 
 /// ¿Toca subir? `sessions`: las del peldaño actual (desde `since`, sin las de
 /// días con molestia lumbar), en cualquier orden.
-LadderAdvice ladderAdvice(CoreLadder ladder, int step, DateTime since, List<LadderSession> sessions, DateTime today) {
+LadderAdvice ladderAdvice(CoreLadder ladder, int step, DateTime since,
+    List<LadderSession> sessions, DateTime today) {
   final s = ladder.stepAt(step);
-  final sorted = [...sessions]..sort((a, b) => b.date.compareTo(a.date));
+  final sorted = [...sessions]..sort((a, b) {
+      if (a.date == null || b.date == null) {
+        if (a.date == null && b.date == null) {
+          return b.sessionId.compareTo(a.sessionId);
+        }
+        // Uncertain current-step chronology cannot prove two consecutive targets.
+        return a.date == null ? -1 : 1;
+      }
+      final date = b.date!.compareTo(a.date!);
+      return date == 0 ? b.sessionId.compareTo(a.sessionId) : date;
+    });
   var inARow = 0;
   for (final x in sorted) {
-    if (s.goals.isEmpty || !s.goals.every((g) => g.metBy(x.sets[g.exercise] ?? const []))) break;
+    if (x.maintenance) continue;
+    if (ladder.accessory && !x.accessoryQualified) break;
+    if (s.goals.isEmpty ||
+        !s.goals.every((g) {
+          final values = x.sets[g.exercise] ?? const <int>[];
+          if (g.rir != null) {
+            final rirs = x.rirs[g.exercise];
+            if (rirs == null ||
+                rirs.length != values.length ||
+                rirs.any((r) => r != g.rir)) return false;
+          }
+          if (!g.perSide) return g.metBy(values);
+          final sides = x.sides[g.exercise];
+          if (sides == null || sides.length != values.length) return false;
+          return ['I', 'D'].every((side) =>
+              [
+                for (var i = 0; i < values.length; i++)
+                  if (sides[i] == side && values[i] >= g.value) values[i]
+              ].length >=
+              g.sets);
+        })) break;
     inARow++;
   }
   final days = daysBetween(dateOnly(since), dateOnly(today));
@@ -249,6 +397,9 @@ LadderAdvice ladderAdvice(CoreLadder ladder, int step, DateTime since, List<Ladd
     step: s,
     daysOnStep: days,
     cleanInARow: inARow,
-    canStepUp: s.goals.isNotEmpty && step < ladder.top && inARow >= ladderCleanSessions && days >= ladderMinDays,
+    canStepUp: s.goals.isNotEmpty &&
+        step < ladder.top &&
+        inARow >= ladderCleanSessions &&
+        days >= ladderMinDays,
   );
 }

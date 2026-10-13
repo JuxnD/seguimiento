@@ -25,6 +25,8 @@ class PlanExerciseDraft {
     this.rirMax,
     this.notes,
     this.supersetGroup,
+    this.purpose,
+    this.physicalVariantKey,
   });
 
   String name;
@@ -49,6 +51,8 @@ class PlanExerciseDraft {
 
   /// Superserie: los del mismo grupo se alternan serie a serie (§18.9).
   String? supersetGroup;
+  String? purpose;
+  String? physicalVariantKey;
 
   bool get isHold => holdSecMin != null;
 
@@ -69,6 +73,8 @@ class PlanExerciseDraft {
         rirMax: rirMax,
         notes: notes,
         supersetGroup: supersetGroup,
+        purpose: purpose,
+        physicalVariantKey: physicalVariantKey,
       );
 
   /// '(A) ' cuando el bloque alterna variantes.
@@ -102,7 +108,10 @@ class PlanExerciseDraft {
       else if (reps != null)
         '$reps reps',
       if (perSide) 'por lado',
-      if (rirMin != null) (rirMax == null || rirMax == rirMin) ? 'RIR $rirMin' : 'RIR $rirMin–$rirMax',
+      if (rirMin != null)
+        (rirMax == null || rirMax == rirMin)
+            ? 'RIR $rirMin'
+            : 'RIR $rirMin–$rirMax',
       if (rest != null) 'desc. $rest',
       if (grip != null && grip!.isNotEmpty) grip!,
     ];
@@ -130,7 +139,8 @@ class PlanDayDraft {
   final Map<String, String> coreEpochs;
 
   /// Trabajo principal del día (sin los bloques extra).
-  List<PlanExerciseDraft> get main => exercises.where((e) => e.block == null).toList();
+  List<PlanExerciseDraft> get main =>
+      exercises.where((e) => e.block == null).toList();
 
   /// Bloques extra, agrupados por nombre de bloque.
   Map<String, List<PlanExerciseDraft>> get blocks {
@@ -155,14 +165,20 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
         name: e.name,
         sets: e.sets == null || e.sets! < 3 ? e.sets : e.sets! - 1,
         repsMin: e.repsMin,
-        repsMax: e.repsMin == null || e.repsMax == null || e.repsMax! - e.repsMin! <= 2 ? e.repsMax : e.repsMin! + 2,
+        repsMax: e.repsMin == null ||
+                e.repsMax == null ||
+                e.repsMax! - e.repsMin! <= 2
+            ? e.repsMax
+            : e.repsMin! + 2,
         restSec: e.restSec,
         restSecMax: e.restSecMax,
         grip: e.grip,
         block: e.block,
         variant: e.variant,
         holdSecMin: e.holdSecMin,
-        holdSecMax: e.holdSecMin == null || e.holdSecMax == null || e.holdSecMax! - e.holdSecMin! <= 10
+        holdSecMax: e.holdSecMin == null ||
+                e.holdSecMax == null ||
+                e.holdSecMax! - e.holdSecMin! <= 10
             ? e.holdSecMax
             : e.holdSecMin! + 10,
         perSide: e.perSide,
@@ -170,13 +186,17 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
         rirMax: e.rirMax,
         notes: e.notes,
         supersetGroup: e.supersetGroup,
+        purpose: e.purpose,
+        physicalVariantKey: e.physicalVariantKey,
       );
 
   final circuit = day.type.isCircuit;
   return PlanDayDraft(
     weekday: day.weekday,
     type: day.type,
-    targetRounds: day.targetRounds == null ? null : (day.targetRounds! > 1 ? day.targetRounds! - 1 : 1),
+    targetRounds: day.targetRounds == null
+        ? null
+        : (day.targetRounds! > 1 ? day.targetRounds! - 1 : 1),
     restBetweenRoundsSec: day.restBetweenRoundsSec,
     notes: day.notes,
     coreEpochs: day.coreEpochs,
@@ -191,7 +211,8 @@ PlanDayDraft lightVersion(PlanDayDraft day) {
 /// (mínimo 1), sin tocar las rondas del circuito ni los tiempos. El lastre se
 /// quita a mano: el cronómetro lo recuerda. `half`: la del v3.1 (§19.4), la
 /// mitad de las series redondeando hacia arriba (4 → 2, 3 → 2, 2 → 1).
-PlanDayDraft deloadVersion(PlanDayDraft day, {bool half = false}) => PlanDayDraft(
+PlanDayDraft deloadVersion(PlanDayDraft day, {bool half = false}) =>
+    PlanDayDraft(
       weekday: day.weekday,
       type: day.type,
       targetRounds: day.targetRounds,
@@ -202,15 +223,20 @@ PlanDayDraft deloadVersion(PlanDayDraft day, {bool half = false}) => PlanDayDraf
           if (e.sets == null || (day.type.isCircuit && e.block == null))
             e
           else
-            e.copyWith(sets: half ? (e.sets! + 1) ~/ 2 : (e.sets! > 1 ? e.sets! - 1 : 1)),
+            e.copyWith(
+                sets: half
+                    ? (e.sets! + 1) ~/ 2
+                    : (e.sets! > 1 ? e.sets! - 1 : 1)),
       ],
     );
 
 class PlanDraft {
-  PlanDraft({required this.validFrom, this.notes, required this.days, this.scheme});
+  PlanDraft(
+      {required this.validFrom, this.notes, required this.days, this.scheme});
 
-  factory PlanDraft.empty(DateTime validFrom) =>
-      PlanDraft(validFrom: validFrom, days: [for (var w = 1; w <= 7; w++) PlanDayDraft(weekday: w)]);
+  factory PlanDraft.empty(DateTime validFrom) => PlanDraft(
+      validFrom: validFrom,
+      days: [for (var w = 1; w <= 7; w++) PlanDayDraft(weekday: w)]);
 
   DateTime validFrom;
   String? notes;
@@ -247,20 +273,28 @@ class PlanDayView {
 String? planDraftProblem(PlanDraft draft) {
   for (final day in draft.days) {
     final label = weekdayLong(day.weekday);
-    if (day.type.isCircuit && day.targetRounds != null && day.targetRounds! <= 0) {
+    if (day.type.isCircuit &&
+        day.targetRounds != null &&
+        day.targetRounds! <= 0) {
       return '$label: la meta de rondas debe ser mayor que 0';
     }
     if (!day.type.isTraining) continue;
     for (final e in day.exercises.where((e) => e.name.trim().isNotEmpty)) {
       final name = '$label, ${e.name.trim()}';
-      if (e.sets != null && e.sets! <= 0) return '$name: las series deben ser más de 0';
+      if (e.sets != null && e.sets! <= 0) {
+        return '$name: las series deben ser más de 0';
+      }
       if (e.repsMin != null && e.repsMax != null && e.repsMin! > e.repsMax!) {
         return '$name: reps mínimas (${e.repsMin}) mayores que las máximas (${e.repsMax})';
       }
-      if (e.restSec != null && e.restSecMax != null && e.restSec! > e.restSecMax!) {
+      if (e.restSec != null &&
+          e.restSecMax != null &&
+          e.restSec! > e.restSecMax!) {
         return '$name: descanso mínimo mayor que el máximo';
       }
-      if (e.holdSecMin != null && e.holdSecMax != null && e.holdSecMin! > e.holdSecMax!) {
+      if (e.holdSecMin != null &&
+          e.holdSecMax != null &&
+          e.holdSecMin! > e.holdSecMax!) {
         return '$name: sostén mínimo mayor que el máximo';
       }
     }
@@ -275,14 +309,17 @@ class PlanRepository {
   final ExerciseRepository exercises;
 
   /// Orden de creación: define el número de versión (v1, v2…).
-  Stream<List<PlanVersionRow>> watchVersions() =>
-      (db.select(db.planVersions)..orderBy([(t) => OrderingTerm(expression: t.id)])).watch();
+  Stream<List<PlanVersionRow>> watchVersions() => (db.select(db.planVersions)
+        ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+      .watch();
 
-  Future<List<PlanVersionRow>> versions() =>
-      (db.select(db.planVersions)..orderBy([(t) => OrderingTerm(expression: t.id)])).get();
+  Future<List<PlanVersionRow>> versions() => (db.select(db.planVersions)
+        ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+      .get();
 
   /// Vigente en `day`: mayor validFrom ≤ day; empate → la más reciente.
-  Future<PlanVersionRow?> activeVersion(DateTime day) => (db.select(db.planVersions)
+  Future<PlanVersionRow?> activeVersion(DateTime day) => (db
+          .select(db.planVersions)
         ..where((t) => t.validFrom.isSmallerOrEqualValue(dayKey(day)))
         ..orderBy([
           (t) => OrderingTerm(expression: t.validFrom, mode: OrderingMode.desc),
@@ -298,7 +335,10 @@ class PlanRepository {
     if (v.scheme == null) return parseDay(v.validFrom);
     final all = await (db.select(db.planVersions)
           ..where((t) => t.validFrom.isSmallerOrEqualValue(v.validFrom))
-          ..orderBy([(t) => OrderingTerm(expression: t.validFrom, mode: OrderingMode.desc)]))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.validFrom, mode: OrderingMode.desc)
+          ]))
         .get();
     var start = parseDay(v.validFrom);
     for (final x in all) {
@@ -310,7 +350,9 @@ class PlanRepository {
 
   /// ¿Ya hay una versión con este esquema (el v3)?
   Future<bool> hasScheme(String scheme) async =>
-      (await (db.select(db.planVersions)..where((t) => t.scheme.equals(scheme))).get()).isNotEmpty;
+      (await (db.select(db.planVersions)..where((t) => t.scheme.equals(scheme)))
+              .get())
+          .isNotEmpty;
 
   Future<int> versionNumber(int versionId) async {
     final all = await versions();
@@ -318,8 +360,12 @@ class PlanRepository {
   }
 
   Future<PlanDraft> load(int versionId) async {
-    final v = await (db.select(db.planVersions)..where((t) => t.id.equals(versionId))).getSingle();
-    final days = await (db.select(db.planDays)..where((t) => t.planVersionId.equals(versionId))).get();
+    final v = await (db.select(db.planVersions)
+          ..where((t) => t.id.equals(versionId)))
+        .getSingle();
+    final days = await (db.select(db.planDays)
+          ..where((t) => t.planVersionId.equals(versionId)))
+        .get();
     final names = await exercises.namesById();
     final draft = PlanDraft.empty(parseDay(v.validFrom))
       ..notes = v.notes
@@ -351,6 +397,8 @@ class PlanRepository {
             rirMax: e.rirMax,
             notes: e.notes,
             supersetGroup: e.supersetGroup,
+            purpose: e.purpose,
+            physicalVariantKey: e.physicalVariantKey,
           )));
     }
     return draft;
@@ -358,24 +406,30 @@ class PlanRepository {
 
   /// Las versiones son inmutables: guardar siempre crea una nueva.
   Future<int> saveAsNewVersion(PlanDraft draft) => db.transaction(() async {
-        final versionId = await db.into(db.planVersions).insert(PlanVersionsCompanion.insert(
-              validFrom: dayKey(draft.validFrom),
-              notes: Value(_blankToNull(draft.notes)),
-              scheme: Value(draft.scheme),
-            ));
+        final versionId =
+            await db.into(db.planVersions).insert(PlanVersionsCompanion.insert(
+                  validFrom: dayKey(draft.validFrom),
+                  notes: Value(_blankToNull(draft.notes)),
+                  scheme: Value(draft.scheme),
+                ));
         for (final d in draft.days) {
-          final dayId = await db.into(db.planDays).insert(PlanDaysCompanion.insert(
+          final dayId = await db
+              .into(db.planDays)
+              .insert(PlanDaysCompanion.insert(
                 planVersionId: versionId,
                 weekday: d.weekday,
                 type: d.type,
                 targetRounds: Value(d.type.isCircuit ? d.targetRounds : null),
-                restBetweenRoundsSec: Value(d.type.isCircuit ? d.restBetweenRoundsSec : null),
+                restBetweenRoundsSec:
+                    Value(d.type.isCircuit ? d.restBetweenRoundsSec : null),
                 notes: Value(_blankToNull(d.notes)),
               ));
           if (!d.type.isTraining) continue;
           var pos = 0;
           for (final e in d.exercises.where((e) => e.name.trim().isNotEmpty)) {
-            await db.into(db.planExercises).insert(PlanExercisesCompanion.insert(
+            await db
+                .into(db.planExercises)
+                .insert(PlanExercisesCompanion.insert(
                   planDayId: dayId,
                   position: pos++,
                   exerciseId: await exercises.getOrCreate(e.name),
@@ -394,6 +448,8 @@ class PlanRepository {
                   rirMax: Value(e.rirMax),
                   notes: Value(_blankToNull(e.notes)),
                   supersetGroup: Value(_blankToNull(e.supersetGroup)),
+                  purpose: Value(_blankToNull(e.purpose)),
+                  physicalVariantKey: Value(_blankToNull(e.physicalVariantKey)),
                 ));
           }
         }
@@ -404,7 +460,8 @@ class PlanRepository {
     final v = await activeVersion(date);
     if (v == null) return null;
     final row = await (db.select(db.planDays)
-          ..where((t) => t.planVersionId.equals(v.id) & t.weekday.equals(date.weekday)))
+          ..where((t) =>
+              t.planVersionId.equals(v.id) & t.weekday.equals(date.weekday)))
         .getSingleOrNull();
     if (row == null) return null;
     final draft = await load(v.id);
@@ -420,10 +477,14 @@ class PlanRepository {
   /// Un día concreto del plan por su id (para retomar una sesión: las
   /// versiones son inmutables, así que es el mismo guion). null si ya no existe.
   Future<PlanDayView?> dayById(int planDayId) async {
-    final row = await (db.select(db.planDays)..where((t) => t.id.equals(planDayId))).getSingleOrNull();
+    final row = await (db.select(db.planDays)
+          ..where((t) => t.id.equals(planDayId)))
+        .getSingleOrNull();
     if (row == null) return null;
     final draft = await load(row.planVersionId);
-    final version = await (db.select(db.planVersions)..where((t) => t.id.equals(row.planVersionId))).getSingle();
+    final version = await (db.select(db.planVersions)
+          ..where((t) => t.id.equals(row.planVersionId)))
+        .getSingle();
     return PlanDayView(
       versionNumber: await versionNumber(row.planVersionId),
       dayId: row.id,
@@ -434,7 +495,9 @@ class PlanRepository {
   }
 
   /// Cambia cuando cambia cualquier versión; útil para refrescar "Hoy".
-  Stream<PlanDayView?> watchDayFor(DateTime date) => db.select(db.planVersions).watch().asyncMap((_) => dayFor(date));
+  Stream<PlanDayView?> watchDayFor(DateTime date) =>
+      db.select(db.planVersions).watch().asyncMap((_) => dayFor(date));
 }
 
-String? _blankToNull(String? s) => (s == null || s.trim().isEmpty) ? null : s.trim();
+String? _blankToNull(String? s) =>
+    (s == null || s.trim().isEmpty) ? null : s.trim();

@@ -1,0 +1,12 @@
+Analyzing seguimiento-034-plan-v32-tests...                     
+
+  error - The method 'ReadinessRepository' isn't defined for the type 'TrainingRepository' - lib\data\repositories\training_repository.dart:691:29 - undefined_method
+  error - The getter 'rpe' isn't defined for the type 'FootballGameRow' - lib\data\repositories\training_repository.dart:704:21 - undefined_getter
+  error - The getter 'rpe' isn't defined for the type 'FootballGameRow' - lib\data\repositories\training_repository.dart:704:38 - undefined_getter
+   info - Statements in a for should be enclosed in a block - lib\data\repositories\training_repository.dart:707:87 - curly_braces_in_flow_control_structures
+   info - Unnecessary braces in a string interpolation - lib\domain\test_protocol.dart:15:35 - unnecessary_brace_in_string_interps
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\training\test_mode_screen.dart:359:55 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\training\test_mode_screen.dart:366:47 - use_build_context_synchronously
+
+7 issues found. (ran in 19.0s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T170833091-42560-cb994efbb4f44895bad1c5727e87a047.json

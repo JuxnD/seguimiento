@@ -1,0 +1,14 @@
+Computing fixes in lib...
+Applying fixes...
+
+domain\test_attempt_evidence.dart
+  curly_braces_in_flow_control_structures - 2 fixes
+
+features\body\test_results_screen.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+ui\exercise_figure_3d.dart
+  curly_braces_in_flow_control_structures - 8 fixes
+
+11 fixes made in 3 files.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T182659659-55432-cfc9754109d74fec9a212c9a5ef7f4a0.json

@@ -1,0 +1,72 @@
+Computing fixes in lib...
+Applying fixes...
+
+data\repositories\dashboard_repository.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+data\repositories\fitness_test_repository.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+data\repositories\ladder_repository.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+data\repositories\plan_repository.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+data\repositories\readiness_repository.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+data\repositories\recovery_repository.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+data\repositories\training_repository.dart
+  curly_braces_in_flow_control_structures - 7 fixes
+
+domain\core_ladders.dart
+  curly_braces_in_flow_control_structures - 2 fixes
+
+domain\fitness_test.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+domain\plan_v3.dart
+  curly_braces_in_flow_control_structures - 3 fixes
+
+domain\plan_v32.dart
+  curly_braces_in_flow_control_structures - 4 fixes
+
+domain\report\report_builder.dart
+  curly_braces_in_flow_control_structures - 3 fixes
+
+domain\test_protocol.dart
+  curly_braces_in_flow_control_structures - 5 fixes
+
+features\body\knee_history_card.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+features\body\mobility_benchmarks_screen.dart
+  curly_braces_in_flow_control_structures - 2 fixes
+  unused_import - 1 fix
+
+features\body\test_results_screen.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+features\home\home_screen.dart
+  curly_braces_in_flow_control_structures - 8 fixes
+
+features\home\morning_check_screen.dart
+  curly_braces_in_flow_control_structures - 2 fixes
+
+features\plan\plan_screen.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+features\training\guided_session_screen.dart
+  curly_braces_in_flow_control_structures - 7 fixes
+
+features\training\test_mode_screen.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+features\training\training_screen.dart
+  curly_braces_in_flow_control_structures - 2 fixes
+
+57 fixes made in 22 files.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T181542466-53624-dd59b44b90d441c9a5f36aa4285e9465.json

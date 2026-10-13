@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/search.dart';
 import '../../data/catalog_updates.dart';
-import '../../domain/mobility.dart';
+import '../../data/exercise_details.dart';
 import '../../ui/exercise_figure_3d_view.dart';
 import '../../ui/exercise_figure_3d.dart';
 import 'technique_sheet.dart';
@@ -13,7 +13,8 @@ class ExerciseLibraryScreen extends ConsumerStatefulWidget {
   const ExerciseLibraryScreen({super.key});
 
   @override
-  ConsumerState<ExerciseLibraryScreen> createState() => _ExerciseLibraryScreenState();
+  ConsumerState<ExerciseLibraryScreen> createState() =>
+      _ExerciseLibraryScreenState();
 }
 
 class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
@@ -30,19 +31,26 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
         error: (_, __) => Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
           const Text('No se pudieron abrir las ilustraciones.'),
-          FilledButton(onPressed: () => ref.invalidate(figure3dProvider), child: const Text('Reintentar')),
+          FilledButton(
+              onPressed: () => ref.invalidate(figure3dProvider),
+              child: const Text('Reintentar')),
         ])),
         data: (data) {
-          final all = data.all.toList()..sort((a, b) => a.name.compareTo(b.name));
+          final all = data.all.toList()
+            ..sort((a, b) => a.name.compareTo(b.name));
           final groups = all.map((f) => f.group).toSet().toList()..sort();
           final matching = all
-              .where((f) => nameKey(f.name).contains(nameKey(_query)) && (_group == null || f.group == _group))
+              .where((f) =>
+                  nameKey(f.name).contains(nameKey(_query)) &&
+                  (_group == null || f.group == _group))
               .toList();
           return Column(children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: TextField(
-                decoration: const InputDecoration(labelText: 'Busca un ejercicio', prefixIcon: Icon(Icons.search)),
+                decoration: const InputDecoration(
+                    labelText: 'Busca un ejercicio',
+                    prefixIcon: Icon(Icons.search)),
                 onChanged: (value) => setState(() => _query = value),
               ),
             ),
@@ -52,17 +60,21 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
                 Expanded(child: Text(_group ?? 'Todos los ejercicios')),
                 PopupMenuButton<String>(
                   tooltip: 'Filtrar por grupo',
-                  onSelected: (value) => setState(() => _group = value == 'todos' ? null : value),
+                  onSelected: (value) =>
+                      setState(() => _group = value == 'todos' ? null : value),
                   itemBuilder: (_) => [
                     const PopupMenuItem(value: 'todos', child: Text('Todos')),
-                    for (final group in groups) PopupMenuItem(value: group, child: Text(group)),
+                    for (final group in groups)
+                      PopupMenuItem(value: group, child: Text(group)),
                   ],
                   icon: const Icon(Icons.filter_list),
                 ),
               ]),
             ),
             if (matching.isEmpty)
-              const Expanded(child: Center(child: Text('No hay coincidencias. Prueba otro nombre.')))
+              const Expanded(
+                  child: Center(
+                      child: Text('No hay coincidencias. Prueba otro nombre.')))
             else
               Expanded(
                   child: ListView.separated(
@@ -72,16 +84,21 @@ class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
                 itemBuilder: (context, i) {
                   final figure = matching[i];
                   return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     leading: SizedBox(
                         width: 70,
                         height: 76,
-                        child: RepaintBoundary(child: CustomPaint(painter: Figure3DPainter(figure, 0)))),
+                        child: RepaintBoundary(
+                            child: CustomPaint(
+                                painter: Figure3DPainter(figure, 0)))),
                     title: Text(figure.name),
                     subtitle: Text(figure.group),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () =>
-                        Navigator.push(context, MaterialPageRoute<void>(builder: (_) => _GuideScreen(figure: figure))),
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                            builder: (_) => _GuideScreen(figure: figure))),
                   );
                 },
               )),
@@ -109,12 +126,15 @@ class _GuideScreenState extends State<_GuideScreen> {
   Widget build(BuildContext context) {
     final figure = widget.figure;
     final pull = nameKey(figure.name) == nameKey('Dominadas');
-    final guide = exerciseGuides.where((g) => nameKey(g.name) == nameKey(figure.name)).firstOrNull;
-    final mobility = [...mobilityNight.exercises, ...legRecovery.exercises]
+    final guide = exerciseGuides
         .where((g) => nameKey(g.name) == nameKey(figure.name))
         .firstOrNull;
-    final loadable = {nameKey('Dominadas'), nameKey('Fondos en barra'), nameKey('Flexiones diamante')}
-        .contains(nameKey(figure.name));
+    final mobility = mobilityReference(figure.name);
+    final loadable = {
+      nameKey('Dominadas'),
+      nameKey('Fondos en barra'),
+      nameKey('Flexiones diamante')
+    }.contains(nameKey(figure.name));
     return Scaffold(
       appBar: AppBar(title: const Text('Guía del ejercicio')),
       body: Column(children: [
@@ -154,7 +174,10 @@ class _GuideScreenState extends State<_GuideScreen> {
                 side: figure.perSide ? _side : null,
                 grip: pull ? _grip : null,
                 loaded: loadable ? _loaded : null,
-                cues: guide?.formCues ?? mobility?.formCues ?? const [],
+                purpose: exercisePurpose(figure.name),
+                cues: guide?.formCues.isNotEmpty == true
+                    ? guide!.formCues
+                    : mobility?.formCues ?? const [],
                 progressionNote: guide?.progressionNote,
                 mediaUrl: guide?.mediaUrl,
                 anchor: guide?.anchor)),

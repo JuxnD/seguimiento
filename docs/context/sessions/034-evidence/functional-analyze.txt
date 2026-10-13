@@ -1,0 +1,62 @@
+Analyzing 3 items...                                            
+
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\dashboard_repository.dart:260:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\fitness_test_repository.dart:147:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\ladder_repository.dart:225:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\plan_repository.dart:285:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\readiness_repository.dart:274:13 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\recovery_repository.dart:35:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\training_repository.dart:267:21 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\training_repository.dart:528:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\training_repository.dart:567:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\training_repository.dart:580:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\training_repository.dart:618:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\training_repository.dart:872:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\training_repository.dart:956:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\core_ladders.dart:326:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\core_ladders.dart:342:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\fitness_test.dart:161:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\plan_v3.dart:176:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\plan_v3.dart:229:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\plan_v3.dart:231:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\plan_v32.dart:28:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\plan_v32.dart:32:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\plan_v32.dart:34:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\plan_v32.dart:36:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\report\report_builder.dart:112:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\report\report_builder.dart:276:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\report\report_builder.dart:308:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\test_protocol.dart:37:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\test_protocol.dart:50:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\test_protocol.dart:54:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\test_protocol.dart:58:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\domain\test_protocol.dart:61:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\body\knee_history_card.dart:71:9 - curly_braces_in_flow_control_structures
+warning - Unused import: '../../domain/dates.dart' - lib\features\body\mobility_benchmarks_screen.dart:5:8 - unused_import
+   info - Statements in an if should be enclosed in a block - lib\features\body\mobility_benchmarks_screen.dart:40:19 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\body\mobility_benchmarks_screen.dart:43:19 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\body\test_results_screen.dart:247:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:426:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:431:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:774:25 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:1197:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:1435:17 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:1789:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:1793:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:1797:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\morning_check_screen.dart:112:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\home\morning_check_screen.dart:209:31 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\plan\plan_screen.dart:51:19 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\guided_session_screen.dart:468:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\guided_session_screen.dart:495:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\guided_session_screen.dart:898:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\guided_session_screen.dart:974:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\guided_session_screen.dart:1038:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\guided_session_screen.dart:1683:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\guided_session_screen.dart:1807:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\test_mode_screen.dart:507:19 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\training_screen.dart:69:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\training\training_screen.dart:720:7 - curly_braces_in_flow_control_structures
+
+57 issues found. (ran in 12.8s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T181059686-29132-a2090b550a1a4c2cbda273dbdebcdf57.json

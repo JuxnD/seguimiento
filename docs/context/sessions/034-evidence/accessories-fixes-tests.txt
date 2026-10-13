@@ -1,0 +1,26 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: copenhagen: actual known criterion twice and14days; unknown/partial latest breaks
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: seated_soleus: actual known criterion twice and14days; unknown/partial latest breaks
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: tibialis_wall: actual known criterion twice and14days; unknown/partial latest breaks
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: band_external_rotation: actual known criterion twice and14days; unknown/partial latest breaks
+00:00 +4: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: prone_y_t: actual known criterion twice and14days; unknown/partial latest breaks
+00:00 +5: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: support_hold: actual known criterion twice and14days; unknown/partial latest breaks
+00:00 +6: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: flying_sprint: actual known criterion twice and14days; unknown/partial latest breaks
+00:00 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_ladders_test.dart: (tearDownAll)
+00:00 +7: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_contexts_test.dart
+00:01 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_contexts_test.dart: (setUpAll)
+00:01 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_contexts_test.dart: only four explicit accessory contexts freeze maintenance; primary targets stay targets
+00:01 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_maintenance_contexts_test.dart: (tearDownAll)
+00:01 +8: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_rings_gate_test.dart
+00:02 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_rings_gate_test.dart: (setUpAll)
+00:02 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_rings_gate_test.dart: without rings criterion keeps protraction; confirmed rings permits3; disabled again preserves history
+00:02 +9: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_rings_gate_test.dart: Achilles clearance cannot be written before the following morning
+00:02 +10: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_rings_gate_test.dart: (tearDownAll)
+00:02 +10: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_daily_reference_test.dart
+00:03 +10: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_daily_reference_test.dart: all daily movements resolve contextual purpose and physical cues in shared library reference
+00:03 +11: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_radar_baselines_test.dart
+00:04 +11: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_radar_baselines_test.dart: legacy unknown remains observed; no percentage/dose or invented known baseline
+00:04 +12: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/plan034_radar_baselines_test.dart: same-round attempts stay separate; first baseline matches latest setup
+00:04 +13: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T195210263-55864-99d145e68c514ea5bde185d08c6397ed.json

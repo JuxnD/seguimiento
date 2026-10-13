@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/fitness_test.dart';
+import '../../domain/test_protocol.dart';
 import '../../domain/plan_v3.dart' show v31Scheme;
 import '../database.dart';
 
@@ -12,28 +13,65 @@ class FitnessTestRepository {
 
   final AppDatabase db;
 
-  Future<List<TestResult>> all() async => [
-        for (final r
-            in await (db.select(db.fitnessTests)..orderBy([(t) => OrderingTerm(expression: t.id)])).get())
-          TestResult(
-              round: r.round,
-              item: r.item,
-              value: r.value,
-              side: r.side,
-              clean: r.clean,
-              date: recordedTestDate(r.date)),
-      ];
+  Future<List<TestResult>> all() async {
+    final attempts = {
+      for (final a in await db.select(db.fitnessTestAttempts).get()) a.id: a
+    };
+    return [
+      for (final r in await (db.select(db.fitnessTests)
+            ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+          .get())
+        TestResult(
+            round: r.round,
+            item: r.item,
+            value: r.value,
+            side: r.side,
+            clean: r.clean,
+            attemptId: r.attemptId,
+            protocolId: attempts[r.attemptId]?.protocolId ?? 'v31_12',
+            conditions: r.conditions,
+            baselineKey: r.baselineKey,
+            date: recordedTestDate(r.date)),
+    ];
+  }
 
   /// Completo sólo cuando están todos los intentos, incluidos ambos lados.
-  Future<bool> done(int round, TestPart part) async {
-    final results = await all();
-    return itemsFor(part).every((t) => testValue(results, round, t.id) != null);
+  Future<List<TestResult>> resultsFor(int round, TestPart part,
+      {TestProtocolId protocol = TestProtocolId.v31_12,
+      TestScheduleKey? key,
+      int? attemptId}) async {
+    final headers = (await attempts()).where((a) =>
+        a.round == round &&
+        a.part == part.name &&
+        a.protocolId == protocol.name &&
+        (key == null ||
+            (a.scheme == key.scheme &&
+                a.blockStart == dayKey(key.blockStart))));
+    final selected = attemptId ?? headers.firstOrNull?.id;
+    return (await all())
+        .where((r) =>
+            r.round == round &&
+            protocolItems(protocol, part).any((i) => i.id == r.item) &&
+            (selected != null
+                ? r.attemptId == selected
+                : protocol == TestProtocolId.v31_12 && r.attemptId == null))
+        .toList();
+  }
+
+  Future<bool> done(int round, TestPart part,
+      {TestProtocolId protocol = TestProtocolId.v31_12,
+      TestScheduleKey? key}) async {
+    final results = await resultsFor(round, part, protocol: protocol, key: key);
+    return protocolItems(protocol, part)
+        .every((t) => testValue(results, round, t.id) != null);
   }
 
   Future<TestStatus> status(int round, TestPart part) async {
     if (await done(round, part)) return TestStatus.complete;
     final ids = itemsFor(part).map((t) => t.id).toSet();
-    return (await all()).any((r) => r.round == round && ids.contains(r.item)) ? TestStatus.partial : TestStatus.pending;
+    return (await all()).any((r) => r.round == round && ids.contains(r.item))
+        ? TestStatus.partial
+        : TestStatus.pending;
   }
 
   /// Editar desde Cuerpo conserva el día original; no crea actividad hoy.
@@ -45,7 +83,9 @@ class FitnessTestRepository {
 
   Future<DateTime?> recordedDateFor(int round, TestPart part) async {
     final row = await (db.select(db.fitnessTests)
-          ..where((t) => t.round.equals(round) & t.item.isIn(itemsFor(part).map((t) => t.id)))
+          ..where((t) =>
+              t.round.equals(round) &
+              t.item.isIn(itemsFor(part).map((t) => t.id)))
           ..orderBy([(t) => OrderingTerm(expression: t.id)])
           ..limit(1))
         .getSingleOrNull();
@@ -69,67 +109,127 @@ class FitnessTestRepository {
     return null;
   }
 
-  /// Guarda una parte del test (reemplaza lo que hubiera de esas pruebas en
-  /// esa ronda) y una sesión de tipo "otro" en modo test, para que el día
-  /// cuente como entrenado.
-  Future<void> save({
+  Future<List<FitnessTestAttempt>> attempts() =>
+      (db.select(db.fitnessTestAttempts)
+            ..orderBy([(t) => OrderingTerm.desc(t.id)]))
+          .get();
+
+  Future<int> save({
     required DateTime date,
     required int round,
     required TestPart part,
     required List<TestResult> results,
     required int totalSec,
-  }) {
+    TestProtocolId protocol = TestProtocolId.v31_12,
+    String scheme = 'v3.1',
+    DateTime? blockStart,
+    int? attemptId,
+    Map<String, Map<String, Object?>> conditions = const {},
+  }) async {
     if (round < 1 || round > 3 || totalSec < 0 || results.isEmpty) {
       throw const FormatException('Test vacío o duración inválida');
     }
-    final allowed = itemsFor(part).map((t) => t.id).toSet();
+    if ((protocol == TestProtocolId.v32_13 &&
+            (scheme != 'v3.2' || blockStart == null)) ||
+        (protocol == TestProtocolId.v31_12 && scheme == 'v3.2')) {
+      throw const FormatException('Identidad de plan y protocolo incompleta');
+    }
+    final allowed = {for (final t in protocolItems(protocol, part)) t.id: t};
     final keys = <String>{};
+    final normalized = <String, String?>{};
     for (final r in results) {
-      final item = testItem(r.item);
+      final item = allowed[r.item];
       if (r.round != round ||
           item == null ||
-          !allowed.contains(r.item) ||
           testResultError(item, r.value) != null ||
           (item.perSide ? r.side != 'I' && r.side != 'D' : r.side != null) ||
-          !keys.add('${r.item}|${r.side}')) throw FormatException('Resultado inválido: ${r.item}');
+          !keys.add('${r.item}|${r.side}')) {
+        throw FormatException('Resultado inválido: ${r.item}');
+      }
+      normalized[r.item] =
+          conditions.containsKey(r.item) && conditions[r.item]!.isNotEmpty
+              ? canonicalTestConditions(r.item, conditions[r.item]!)
+              : null;
     }
     return db.transaction(() async {
-      final ids = itemsFor(part).map((t) => t.id).toSet();
-      await (db.delete(db.fitnessTests)..where((t) => t.round.equals(round) & t.item.isIn(ids))).go();
-      for (final r in results) {
-        await db.into(db.fitnessTests).insert(FitnessTestsCompanion.insert(
-              date: dayKey(date),
-              round: round,
-              item: r.item,
-              side: Value(r.side),
-              value: r.value,
-              clean: Value(r.clean),
-            ));
+      FitnessTestAttempt? previous;
+      var editId = attemptId;
+      if (attemptId != null) {
+        previous = await (db.select(db.fitnessTestAttempts)
+              ..where((t) => t.id.equals(attemptId)))
+            .getSingle();
+        if (previous.protocolId != protocol.name ||
+            previous.round != round ||
+            previous.part != part.name ||
+            previous.scheme != scheme ||
+            previous.blockStart !=
+                (blockStart == null ? null : dayKey(blockStart))) {
+          throw const FormatException('La identidad del intento no coincide');
+        }
+        final oldRows = await (db.select(db.fitnessTests)
+              ..where((t) => t.attemptId.equals(attemptId)))
+            .get();
+        if (oldRows.any((r) =>
+            normalized.containsKey(r.item) &&
+            r.conditions != normalized[r.item])) {
+          // A changed measurement setup is another baseline, not a rewrite.
+          editId = null;
+          previous = null;
+        }
       }
-      final context = 'Test $round · ${part == TestPart.torso ? 'torso, core y habilidades' : 'piernas'}';
-      final detail =
-          '$context · duración sin medir\n${results.map((r) => '${testItem(r.item)!.name}${r.side == null ? '' : ' (${r.side})'}: ${formatTestValue(testItem(r.item)!, r.value)}${r.clean ? '' : ' (con dudas)'}').join('\n')}';
-      final existing = await (db.select(db.sessions)
-            ..where((t) => t.date.equals(dayKey(date)) & t.mode.equals('test') & t.context.like('$context%')))
-          .getSingleOrNull();
-      if (existing == null) {
-        await db.into(db.sessions).insert(SessionsCompanion.insert(
-              date: dayKey(date),
-              type: SessionType.otro,
-              // Introducir resultados no mide trabajo. No convertir el
-              // tiempo con la pantalla abierta en gasto energético.
-              totalSec: const Value(0),
-              mode: const Value('test'),
-              context: Value(detail),
-            ));
+      final title =
+          'Test $round · ${part == TestPart.torso ? 'torso, core y habilidades' : 'piernas'}';
+      final detail = '$title · ${protocol.name} · duración sin medir\n'
+          '${results.map((r) => '${allowed[r.item]!.name}${r.side == null ? '' : ' (${r.side})'}: '
+              '${formatTestValue(allowed[r.item]!, r.value)}${r.clean ? '' : ' (con dudas)'}'
+              ' · condiciones: ${normalized[r.item] ?? 'desconocidas'}').join('\n')}';
+      int sessionId;
+      if (previous?.sessionId case final linked?) {
+        sessionId = linked;
+        await (db.update(db.sessions)..where((t) => t.id.equals(linked))).write(
+            SessionsCompanion(
+                date: Value(dayKey(date)), context: Value(detail)));
       } else {
-        await (db.update(db.sessions)..where((t) => t.id.equals(existing.id))).write(SessionsCompanion(
-            context: Value(detail),
+        sessionId = await db.into(db.sessions).insert(SessionsCompanion.insert(
+            date: dayKey(date),
+            type: SessionType.otro,
             totalSec: const Value(0),
-            warmupSec: const Value(0),
-            cooldownSec: const Value(0),
-            restSec: const Value(0)));
+            mode: const Value('test'),
+            context: Value(detail)));
       }
+      final id = editId ??
+          await db.into(db.fitnessTestAttempts).insert(
+              FitnessTestAttemptsCompanion.insert(
+                  date: dayKey(date),
+                  round: round,
+                  part: part.name,
+                  protocolId: protocol.name,
+                  scheme: scheme,
+                  blockStart:
+                      Value(blockStart == null ? null : dayKey(blockStart)),
+                  sessionId: Value(sessionId)));
+      if (editId != null) {
+        await (db.update(db.fitnessTestAttempts)..where((t) => t.id.equals(id)))
+            .write(FitnessTestAttemptsCompanion(
+                date: Value(dayKey(date)), sessionId: Value(sessionId)));
+        await (db.delete(db.fitnessTests)..where((t) => t.attemptId.equals(id)))
+            .go();
+      }
+      for (final r in results) {
+        final condition = normalized[r.item];
+        await db.into(db.fitnessTests).insert(FitnessTestsCompanion.insert(
+            date: dayKey(date),
+            round: round,
+            item: r.item,
+            side: Value(r.side),
+            value: r.value,
+            clean: Value(r.clean),
+            attemptId: Value(id),
+            conditions: Value(condition),
+            baselineKey:
+                Value(testBaselineKey(protocol, r.item, r.side, condition))));
+      }
+      return id;
     });
   }
 }

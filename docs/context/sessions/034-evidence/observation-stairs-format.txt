@@ -1,0 +1,14 @@
+Formatted lib/data/repositories/ladder_repository.dart
+Formatted lib/data/repositories/training_repository.dart
+Formatted lib/domain/accessory_quality_proof.dart
+Formatted lib/domain/readiness.dart
+Formatted lib/features/plan/plan_screen.dart
+Formatted lib/features/training/accessory_criteria_editor.dart
+Formatted lib/features/training/guided_session_screen.dart
+Formatted test/data/plan034_accessory_ladders_test.dart
+Formatted test/data/plan034_accessory_observation_test.dart
+Formatted test/data/readiness_repository_test.dart
+Formatted test/ui/personal_radar_integration_test.dart
+Formatted test/ui/plan034_equipment_and_criteria_test.dart
+Formatted 71 files (12 changed) in 1.96 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T202248044-32144-a763ef2001df433cabad78d22d680262.json

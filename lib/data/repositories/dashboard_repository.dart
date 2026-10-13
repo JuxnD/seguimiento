@@ -4,12 +4,15 @@ import '../../domain/daily_routines.dart' show recoveryActiveId;
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/fitness_test.dart';
+import '../../domain/test_protocol.dart';
+import '../../domain/plan_v32.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/football_summary.dart';
 import '../../domain/recovery.dart';
-import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
+import '../../domain/session_script.dart'
+    show preBlocks, tabataBlock, warmupBlock;
 import '../../domain/goal_history.dart';
 import '../../domain/technique_session.dart';
 import '../database.dart';
@@ -60,7 +63,8 @@ class TodayDashboard {
     this.proposal,
     this.roundsDecision,
     this.midweekGame = false,
-    this.load = const LoadReading(todayLoad: 0, todayCount: 0, intenseStreak: 0),
+    this.load =
+        const LoadReading(todayLoad: 0, todayCount: 0, intenseStreak: 0),
     this.restingHrWarning,
     this.soreZones = const [],
     this.planB = false,
@@ -115,9 +119,12 @@ class TodayDashboard {
   /// Conserva el row representativo para hidratación/lectores legados; el
   /// acumulado usa todos y no mezcla pesajes entre partidos.
   List<FootballGameRow> get gamesToday => footballGamesToday.isNotEmpty
-      ? footballGamesToday : [if (footballToday != null) footballToday!];
-  FootballDaySummary get footballSummary => FootballDaySummary(date,
-      gamesToday.map((g) => (minutes: g.minutes, intensity: g.intensity, format: g.format)));
+      ? footballGamesToday
+      : [if (footballToday != null) footballToday!];
+  FootballDaySummary get footballSummary => FootballDaySummary(
+      date,
+      gamesToday.map((g) =>
+          (minutes: g.minutes, intensity: g.intensity, format: g.format)));
 
   /// Partido de ayer si fue intenso (≥ 8) o hubo golpe: hoy se baja la carga.
   final FootballGameRow? hardFootballYesterday;
@@ -147,7 +154,8 @@ class TodayDashboard {
   /// celebra (§16.9).
   final DateTime? recordDate;
 
-  bool get recentRecord => recordDate != null && daysBetween(recordDate!, date) <= 6;
+  bool get recentRecord =>
+      recordDate != null && daysBetween(recordDate!, date) <= 6;
 
   /// Día dentro del Plan v3 (semana, fase, descarga). null fuera del v3.
   final V3Day? v3;
@@ -186,7 +194,8 @@ class TodayDashboard {
   /// Lo del día está hecho. Un partido lo cumple en días de fútbol o descanso;
   /// en un día de entrenamiento no reemplaza la sesión del plan (la racha sí
   /// lo cuenta).
-  bool get trained => sessionsToday > 0 || (footballToday != null && !dayType.isTraining);
+  bool get trained =>
+      sessionsToday > 0 || (footballToday != null && !dayType.isTraining);
   double? get proteinProgress =>
       proteinMin == null ? null : goalProgress(macros.protein, proteinMin!);
   double? get kcalProgress =>
@@ -197,7 +206,8 @@ class TodayDashboard {
 }
 
 class RecordSuspect {
-  const RecordSuspect({required this.sessionId, required this.date, required this.plannedType});
+  const RecordSuspect(
+      {required this.sessionId, required this.date, required this.plannedType});
 
   final int sessionId;
   final DateTime date;
@@ -213,7 +223,8 @@ class DashboardRepository {
   final ProfileRepository profile;
 
   /// `planche`: llegaron las mini paralelas (§19.7).
-  Future<TodayDashboard> today({DateTime? now, bool planche = false}) async {
+  Future<TodayDashboard> today(
+      {DateTime? now, bool planche = false, bool rings = false}) async {
     final date = dateOnly(now ?? DateTime.now());
     // Lo que ya rige hoy pasa al perfil antes de leerlo (plan 009).
     await GoalRepository(db).projectDueGoals(date);
@@ -228,24 +239,44 @@ class DashboardRepository {
     final view = await plan.dayFor(date);
     final training = TrainingRepository(db, ExerciseRepository(db));
     final v3 = await training.blockDay(view, date);
+    final effective = view == null
+        ? null
+        : v3?.isV32 == true
+            ? await training.withV31Blocks(view.day, date, v3,
+                planche: planche, rings: rings)
+            : view.day;
     // El viernes del v3.1 deja de ser circuito cuando ya salieron 10 limpias.
-    final type =
-        v3 != null && v3.isV31 && v3.resistance != null ? DayType.resistencia : view?.day.type ?? DayType.descanso;
-    var proposal = type == DayType.progresion ? await training.progressionProposal(date) : null;
+    final type = v3 != null && v3.isV31 && v3.resistance != null
+        ? DayType.resistencia
+        : effective?.type ?? DayType.descanso;
+    var proposal = type == DayType.progresion && v3?.isV32 != true
+        ? await training.progressionProposal(date)
+        : null;
     // Lo decidido sobre esa misma propuesta de rondas (plan 009).
     ProposalStatus? roundsDecision;
-    if (proposal != null && proposal.canProgress && proposal.sessionId != null) {
-      final id = roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
+    if (proposal != null &&
+        proposal.canProgress &&
+        proposal.sessionId != null) {
+      final id = roundsProposalId(
+          fromRounds: proposal.lastRounds,
+          toRounds: proposal.rounds,
+          sessionId: proposal.sessionId!);
       final decided = await GoalRepository(db).proposal(id);
       roundsDecision = decided?.status;
-      if (proposalHidden(decided, date)) proposal = heldProposal(proposal, decided!.status);
+      if (proposalHidden(decided, date)) {
+        proposal = heldProposal(proposal, decided!.status);
+      }
     }
 
-    final sessions =
-        await (db.select(db.sessions)..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions)).get();
+    final sessions = await (db.select(db.sessions)
+          ..where((t) => t.date.equals(dayKey(date)) & db.trainingSessions))
+        .get();
     final test = await _fitnessTest(date, v3);
     final planSessions = sessions.where((s) => s.mode != 'test').toList();
-    final torsoComplete = date.weekday == DateTime.monday && test?.part == TestPart.torso && test!.done;
+    final torsoComplete =
+        (v3?.isV32 == true || date.weekday == DateTime.monday) &&
+            test?.part == TestPart.torso &&
+            test!.done;
     final meals = await nutrition.range(date, date);
     final footballGames = await (db.select(db.footballGames)
           ..where((t) => t.date.equals(dayKey(date)))
@@ -269,38 +300,56 @@ class DashboardRepository {
     final recovery = RecoveryRepository(db);
     final soreness = await recovery.sorenessRange(date);
     final dayHasLegs = view != null &&
-        (view.day.type == DayType.piernas || view.day.exercises.any((e) => legExercises.contains(e.name)));
+        (view.day.type == DayType.piernas ||
+            view.day.exercises.any((e) => legExercises.contains(e.name)));
 
     final lastMeasurement = await (db.select(db.measurements)
-          ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)])
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
+          ])
           ..limit(1))
         .getSingleOrNull();
 
     final eve = planSessions.isEmpty && await _eveOfTest(date, training);
-    final planB = planSessions.isEmpty && suggestPlanB(dayHasLegs: dayHasLegs, load: load, soreness: soreness, today: date);
+    final planB = planSessions.isEmpty &&
+        suggestPlanB(
+            dayHasLegs: dayHasLegs,
+            load: load,
+            soreness: soreness,
+            today: date);
     return TodayDashboard(
       date: date,
       weekIndex: weekIndexFor(p.programStart, date),
       dayType: type,
       planVersion: view?.versionNumber,
-      planSummary: view == null ? null : _summary(view.day),
-      mainExercises: view == null ? const [] : _mainLines(view.day, v3),
+      planSummary: effective == null ? null : _summary(effective),
+      mainExercises: effective == null ? const [] : _mainLines(effective, v3),
       blockExercises: view == null || view.day.type == DayType.resistencia
           ? const []
-          : blockLines(await training.withV31Blocks(view.day, date, v3, planche: planche)),
-      midweekGame: type == DayType.resistencia && (v3?.isV31 ?? false) && await _gameThisWeekBefore(date),
+          : blockLines(v3?.isV32 == true
+              ? effective!
+              : await training.withV31Blocks(view.day, date, v3,
+                  planche: planche, rings: rings)),
+      midweekGame: type == DayType.resistencia &&
+          (v3?.isV31 ?? false) &&
+          await _gameThisWeekBefore(date),
       load: load,
-      restingHrWarning: restingHrWarning(await recovery.restingHrRange(date), date),
+      restingHrWarning:
+          restingHrWarning(await recovery.restingHrRange(date), date),
       soreZones: persistentSoreness(soreness, date),
       planB: planB,
-      targetRounds: proposal?.rounds ?? view?.day.targetRounds,
+      targetRounds: v3?.isV32 == true && date.weekday == DateTime.friday
+          ? maintenanceRounds(v3!.week)
+          : proposal?.rounds ?? view?.day.targetRounds,
       roundsDecision: roundsDecision,
       proposal: proposal,
-      roundsDone: sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
+      roundsDone:
+          sessions.map((s) => s.roundsDone).whereType<int>().firstOrNull,
       sessionsToday: planSessions.length + (torsoComplete ? 1 : 0),
       footballToday: football,
       footballGamesToday: footballGames,
-      hardFootballYesterday: yesterday != null && isHardGame(yesterday) ? yesterday : null,
+      hardFootballYesterday:
+          yesterday != null && isHardGame(yesterday) ? yesterday : null,
       streak: await _streak(date),
       macros: Macros.sum(meals.map((m) => m.macros)),
       proteinMin: protein.comparable ? protein.value!.round() : null,
@@ -309,8 +358,10 @@ class DashboardRepository {
       proteinReference: protein,
       kcalReference: kcal,
       stepsReference: steps,
-      stepsToday:
-          (await (db.select(db.dailySteps)..where((t) => t.date.equals(dayKey(date)))).getSingleOrNull())?.steps,
+      stepsToday: (await (db.select(db.dailySteps)
+                ..where((t) => t.date.equals(dayKey(date))))
+              .getSingleOrNull())
+          ?.steps,
       stepsGoal: steps.comparable ? steps.value!.round() : null,
       roundsRecord: record,
       recordSuspect: record == null ? null : await _recordSuspect(record),
@@ -322,7 +373,8 @@ class DashboardRepository {
       coach: coach,
       strength: view == null || type == DayType.resistencia
           ? const []
-          : await coachRepo.strengthAdvices(view.day, date, planDayId: view.dayId),
+          : await coachRepo.strengthAdvices(effective!, date,
+              planDayId: view.dayId),
       techniqueSuggested: planSessions.isEmpty &&
           suggestTechniqueSession(
             deload: v3?.reducedVolume ?? false,
@@ -331,8 +383,11 @@ class DashboardRepository {
           ),
       measurement: measurementDue(
         today: date,
-        lastMeasurement: lastMeasurement == null ? null : parseDay(lastMeasurement.date),
-        agreed: p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!),
+        lastMeasurement:
+            lastMeasurement == null ? null : parseDay(lastMeasurement.date),
+        agreed: p.nextMeasurementDate == null
+            ? null
+            : parseDay(p.nextMeasurementDate!),
         minDays: p.measureIntervalDays,
         maxDays: p.measureIntervalMaxDays,
       ),
@@ -345,28 +400,50 @@ class DashboardRepository {
     final tomorrow = addDays(date, 1);
     final v3 = await training.blockDay(await plan.dayFor(tomorrow), tomorrow);
     if (v3 == null || !v3.isV31) return false;
-    final start = addDays(tomorrow, -(tomorrow.weekday - 1) - (v3.week - 1) * 7);
-    return await ReadinessRepository(db).effectiveScheduledTest(start, tomorrow) != null ||
+    final start =
+        addDays(tomorrow, -(tomorrow.weekday - 1) - (v3.week - 1) * 7);
+    return await ReadinessRepository(db).effectiveScheduledTest(start, tomorrow,
+                scheme: v3.scheme,
+                protocol:
+                    v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12) !=
+            null ||
         dateOnly(v3.testDate) == tomorrow;
   }
 
   static DateTime? _v31StartFor(DateTime date, V3Day? v3) =>
-      v3 == null || !v3.isV31 ? null : addDays(date, -(date.weekday - 1) - (v3.week - 1) * 7);
+      v3 == null || !v3.isV31
+          ? null
+          : addDays(date, -(date.weekday - 1) - (v3.week - 1) * 7);
 
-  Future<({int round, TestPart part, bool done})?> _fitnessTest(DateTime date, V3Day? v3) async {
+  Future<({int round, TestPart part, bool done})?> _fitnessTest(
+      DateTime date, V3Day? v3) async {
     final start = _v31StartFor(date, v3);
     if (start == null) return null;
     // Con los tests movidos por la recuperación activa (§19.17).
-    final t = await ReadinessRepository(db).effectiveScheduledTest(start, date);
+    final protocol = v3!.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12;
+    final t = await ReadinessRepository(db).effectiveScheduledTest(start, date,
+        scheme: v3.scheme, protocol: protocol);
     if (t == null) return null;
-    return (round: t.round, part: t.part, done: await FitnessTestRepository(db).done(t.round, t.part));
+    final key = TestScheduleKey(
+        scheme: v3.scheme,
+        blockStart: start,
+        protocolId: protocol,
+        round: t.round,
+        part: t.part);
+    return (
+      round: t.round,
+      part: t.part,
+      done: await FitnessTestRepository(db)
+          .done(t.round, t.part, protocol: protocol, key: key)
+    );
   }
 
   /// La sesión del récord, si el plan de ese día no era de circuito.
   /// Lo principal del día. El miércoles de resistencia muestra solo lo de la
   /// semana: la ronda de Cindy (o de las 10 por tiempo) o los 4 del Tabata.
   static List<String> _mainLines(PlanDayDraft day, V3Day? v3) {
-    final resistance = day.type == DayType.resistencia || (v3 != null && v3.isV31 && v3.resistance != null);
+    final resistance = day.type == DayType.resistencia ||
+        (v3 != null && v3.isV31 && v3.resistance != null);
     if (resistance && v3?.resistance == ResistanceMode.tabata) {
       return [
         for (final e in day.exercises)
@@ -374,7 +451,9 @@ class DashboardRepository {
       ];
     }
     if (resistance && v3?.resistance == ResistanceMode.cindy) {
-      return ['20 min: ${day.main.map((e) => '${e.repsMin ?? ''} ${e.name.toLowerCase()}'.trim()).join(' + ')}'];
+      return [
+        '20 min: ${day.main.map((e) => '${e.repsMin ?? ''} ${e.name.toLowerCase()}'.trim()).join(' + ')}'
+      ];
     }
     return day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).toList();
   }
@@ -391,7 +470,8 @@ class DashboardRepository {
   Future<bool> _gameThisWeekBefore(DateTime friday) async {
     final monday = addDays(friday, -(friday.weekday - 1));
     final rows = await (db.select(db.footballGames)
-          ..where((t) => t.date.isBetweenValues(dayKey(monday), dayKey(addDays(friday, -1)))))
+          ..where((t) => t.date
+              .isBetweenValues(dayKey(monday), dayKey(addDays(friday, -1)))))
         .get();
     return rows.isNotEmpty;
   }
@@ -426,16 +506,22 @@ class DashboardRepository {
     return game != null && isHardGame(game);
   }
 
-  Future<FootballGameRow?> _lastGame(DateTime day) => (db.select(db.footballGames)
-        ..where((t) => t.date.equals(dayKey(day)))
-        ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
-        ..limit(1))
-      .getSingleOrNull();
+  Future<FootballGameRow?> _lastGame(DateTime day) =>
+      (db.select(db.footballGames)
+            ..where((t) => t.date.equals(dayKey(day)))
+            ..orderBy([
+              (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)
+            ])
+            ..limit(1))
+          .getSingleOrNull();
 
   String _summary(PlanDayDraft day) {
-    final rounds = day.targetRounds == null ? null : '${day.targetRounds} rondas';
-    final exercises = day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ');
-    return [if (rounds != null) rounds, if (exercises.isNotEmpty) exercises].join(' · ');
+    final rounds =
+        day.targetRounds == null ? null : '${day.targetRounds} rondas';
+    final exercises =
+        day.main.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ');
+    return [if (rounds != null) rounds, if (exercises.isNotEmpty) exercises]
+        .join(' · ');
   }
 
   /// Días seguidos entrenando, sin que el descanso planificado los rompa. Un
@@ -458,7 +544,9 @@ class DashboardRepository {
     // Mapa weekday → tipo por versión, para no recargar el plan por día.
     final byVersion = <int, Map<int, DayType>>{};
     for (final v in versions) {
-      final days = await (db.select(db.planDays)..where((t) => t.planVersionId.equals(v.id))).get();
+      final days = await (db.select(db.planDays)
+            ..where((t) => t.planVersionId.equals(v.id)))
+          .get();
       byVersion[v.id] = {for (final d in days) d.weekday: d.type};
     }
     DayType typeFor(DateTime day) {
@@ -480,22 +568,27 @@ class DashboardRepository {
 
 /// Un partido que pide bajar la sesión del día siguiente: intensidad 8 o más,
 /// o terminó con golpe o molestia.
-bool isHardGame(FootballGameRow game) => (game.intensity ?? 0) >= 8 || game.knock == true;
+bool isHardGame(FootballGameRow game) =>
+    (game.intensity ?? 0) >= 8 || game.knock == true;
 
 /// Una línea por bloque y variante: "Core A: Elevación de piernas colgado
 /// 3×8–12 · Hollow body hold 2×20–40 s". El Tabata no va (tiene su propia
 /// línea cuando toca); el calentamiento y el pino dicen que van antes.
 List<String> blockLines(PlanDayDraft day) {
   final groups = <String, List<PlanExerciseDraft>>{};
-  for (final e in day.exercises.where((e) => e.block != null && e.block != tabataBlock)) {
+  for (final e in day.exercises
+      .where((e) => e.block != null && e.block != tabataBlock)) {
     final name = e.block == warmupBlock
         ? 'Para calentar'
         : preBlocks.contains(e.block)
             ? 'Antes, sin fatiga'
             : e.block![0].toUpperCase() + e.block!.substring(1);
-    groups.putIfAbsent(e.variant == null ? name : '$name ${e.variant}', () => []).add(e);
+    groups
+        .putIfAbsent(e.variant == null ? name : '$name ${e.variant}', () => [])
+        .add(e);
   }
   return [
-    for (final g in groups.entries) '${g.key}: ${g.value.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ')}',
+    for (final g in groups.entries)
+      '${g.key}: ${g.value.map((e) => '${e.name} ${e.targetLabel}'.trim()).join(' · ')}',
   ];
 }

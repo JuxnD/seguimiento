@@ -1,0 +1,43 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_readiness_stairs_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_readiness_stairs_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_readiness_stairs_test.dart: explicit stairs zero is known independently of generic knee soreness
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_readiness_stairs_test.dart: generic knee pain preserves severity with own source; it never fills stairs
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_readiness_stairs_test.dart: missing stairs remains unknown even when generic knee pain was recorded
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_readiness_stairs_test.dart: (tearDownAll)
+00:00 +3: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_observation_test.dart
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_observation_test.dart: (setUpAll)
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_observation_test.dart: legacy7 stays byte-identical unknown; optional date is strict and preserved
+00:00 +4: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_observation_test.dart: soleus legacy/date-future cannot qualify; explicit checked date crosses writer and advisor
+00:01 +5: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_observation_test.dart: manual alarm writes only on save, atomically, once across replays and later dates; cannot erase
+00:01 +6: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_observation_test.dart: linked/unlinked snapshots retain legacy7 and dated8 payload bytes without backfill
+00:01 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_accessory_observation_test.dart: (tearDownAll)
+00:01 +7: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart
+00:02 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart: (setUpAll)
+00:02 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <null>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart:68:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart line 68
+The test description was:
+  direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves
+  level/history
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +7 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history [E]
+  Test failed. See exception logs above.
+  The test description was: direct v3.2 exposes real equipment switch; default unknown, true enables and false preserves level/history
+  
+03:05 +7 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_equipment_and_criteria_test.dart: soleus same-day offers no tomorrow confirmation; following morning captures dated explicit response
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T203106991-35968-1161e39c50314b09b1a91bfd584c0f8d.json

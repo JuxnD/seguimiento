@@ -1,17 +1,27 @@
 import 'package:drift/drift.dart';
+import 'dart:convert';
+import 'package:clock/clock.dart';
 
 import '../../domain/core_ladders.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
+import '../../domain/plan_v32.dart';
 import '../../domain/progress.dart';
 import '../../domain/progress_evidence.dart';
 import '../../domain/session_math.dart';
 import '../database.dart';
+import '../exercise_details.dart' show exercisePurpose;
 import '../seed_plan.dart' show plancheBlock;
+import '../plan_v32_template.dart' show orderV32Exercises;
 import 'exercise_repository.dart';
 import 'ladder_repository.dart';
 import 'plan_repository.dart';
+import 'readiness_repository.dart';
+import '../../domain/readiness.dart';
+import '../../domain/series_side_proof.dart';
+import '../../domain/ladder_prescription_proof.dart';
+import '../../domain/accessory_quality_proof.dart';
 
 class SetDraft {
   SetDraft({
@@ -69,6 +79,7 @@ class SessionDraft {
     this.extraReps,
     this.imported = false,
     this.coreEpochs,
+    this.sideEvidenceAuthored = false,
     List<SetDraft>? sets,
     List<int>? roundMarksSec,
     List<int>? roundRestSec,
@@ -118,6 +129,32 @@ class SessionDraft {
   /// Del historial anterior a la app (§16.16): editar la conserva.
   bool imported;
   String? coreEpochs;
+  bool sideEvidenceAuthored;
+  Map<String, List<List<Object?>>>? manualSeriesBaseline;
+  final Map<String, String> accessoryCriteriaEdits = {};
+
+  void enterManualEditing() {
+    if (sideEvidenceAuthored) manualSeriesBaseline = seriesSignatures(sets);
+    sideEvidenceAuthored = false;
+  }
+
+  static Map<String, List<List<Object?>>> seriesSignatures(
+          List<SetDraft> sets) =>
+      {
+        for (final name in sets.map((s) => s.exercise).toSet())
+          name: [
+            for (final s in sets.where((s) => s.exercise == name))
+              [
+                s.reps,
+                s.loadKg,
+                s.variant,
+                s.rir,
+                s.split,
+                s.splitDetail,
+                s.toFailure
+              ]
+          ]
+      };
 
   /// En orden de ejecución; el índice de serie se calcula por ejercicio.
   final List<SetDraft> sets;
@@ -132,27 +169,47 @@ class SessionDraft {
   /// Trabajo de cada ronda, sin descansos. null si no hay descansos medidos.
   List<int>? get roundWorkSec => roundWork(roundMarksSec, roundRestSec);
 
-  ProgressionProposal? get progressionEvidence => imported || roundsEstimated ? null : proposeProgression(
-      lastRounds: roundsDone, lastPlanned: plannedRounds, lastDate: date, sessionId: id,
-      anySplit: sets.any((s) => s.split), anyFailure: sets.any((s) => s.toFailure),
-      techniqueOk: techniqueOk, fullRange: fullRange, recoveryOk: recoveryOk, incomplete: incomplete);
+  ProgressionProposal? get progressionEvidence => imported || roundsEstimated
+      ? null
+      : proposeProgression(
+          lastRounds: roundsDone,
+          lastPlanned: plannedRounds,
+          lastDate: date,
+          sessionId: id,
+          anySplit: sets.any((s) => s.split),
+          anyFailure: sets.any((s) => s.toFailure),
+          techniqueOk: techniqueOk,
+          fullRange: fullRange,
+          recoveryOk: recoveryOk,
+          incomplete: incomplete);
 
-  bool get cleanTen => type == SessionType.progresion && (roundsDone ?? 0) >= 10 &&
+  bool get cleanTen =>
+      type == SessionType.progresion &&
+      (roundsDone ?? 0) >= 10 &&
       progressionEvidence?.canProgress == true;
 
   /// Only recorded dose and equipment form the comparison protocol. No side
   /// is inferred from set ordering and missing exercises stay unknown.
   String? get exerciseProtocol {
     if (sets.isEmpty) return null;
-    final keys = sets.map((s) => '${s.exercise}|${s.reps}|${s.variant}|${s.loadKg}').toSet().toList()..sort();
+    final keys = sets
+        .map((s) => '${s.exercise}|${s.reps}|${s.variant}|${s.loadKg}')
+        .toSet()
+        .toList()
+      ..sort();
     return keys.join(';');
   }
 
   /// Trabajo neto: sin calentamiento, enfriamiento ni descansos.
-  int get netSec => circuitNetSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec, restSec: restSec);
+  int get netSec => circuitNetSec(
+      totalSec: totalSec,
+      warmupSec: warmupSec,
+      cooldownSec: cooldownSec,
+      restSec: restSec);
 
   /// Tiempo de circuito con descansos: sobre esto se miden las vueltas.
-  int get spanSec => circuitSpanSec(totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec);
+  int get spanSec => circuitSpanSec(
+      totalSec: totalSec, warmupSec: warmupSec, cooldownSec: cooldownSec);
 }
 
 /// Fila de lista: sesión con conteos para mostrar sin abrirla.
@@ -172,26 +229,146 @@ class TrainingRepository {
   // ---------- Sesiones ----------
 
   Stream<List<SessionSummary>> watchRecent({int limit = 60}) {
-    final splitCount = db.sessionSets.id.count(filter: db.sessionSets.split.equals(true));
+    final splitCount =
+        db.sessionSets.id.count(filter: db.sessionSets.split.equals(true));
     final q = db.select(db.sessions).join([
-      leftOuterJoin(db.sessionSets, db.sessionSets.sessionId.equalsExp(db.sessions.id)),
+      leftOuterJoin(
+          db.sessionSets, db.sessionSets.sessionId.equalsExp(db.sessions.id)),
     ])
       ..addColumns([splitCount])
       ..groupBy([db.sessions.id])
       ..orderBy([
         OrderingTerm(expression: db.sessions.date, mode: OrderingMode.desc),
-        OrderingTerm(expression: db.sessions.startTime, mode: OrderingMode.desc),
+        OrderingTerm(
+            expression: db.sessions.startTime, mode: OrderingMode.desc),
       ])
       ..limit(limit);
-    return q
-        .watch()
-        .map((rows) => rows.map((r) => SessionSummary(r.readTable(db.sessions), r.read(splitCount) ?? 0)).toList());
+    return q.watch().map((rows) => rows
+        .map((r) =>
+            SessionSummary(r.readTable(db.sessions), r.read(splitCount) ?? 0))
+        .toList());
   }
 
   Future<int> save(SessionDraft d) => db.transaction(() async {
-        final limitingId = (d.limitingExercise == null || d.limitingExercise!.trim().isEmpty)
+        final original = d.id == null
             ? null
-            : await exercises.getOrCreate(d.limitingExercise!);
+            : await (db.select(db.sessions)..where((t) => t.id.equals(d.id!)))
+                .getSingle();
+        final originalMetadata = original?.coreEpochs == null
+            ? <String, String>{}
+            : (jsonDecode(original!.coreEpochs!) as Map).cast<String, String>();
+
+        var effectiveCoreEpochs = d.coreEpochs;
+        if (!d.sideEvidenceAuthored) {
+          if (d.id == null) {
+            if (effectiveCoreEpochs != null) {
+              final metadata = (jsonDecode(effectiveCoreEpochs) as Map)
+                  .cast<String, String>();
+              if (d.manualSeriesBaseline == null) {
+                metadata.removeWhere((key, _) =>
+                    key.startsWith(SeriesSideProof.prefix) ||
+                    key.startsWith(LadderPrescriptionProof.prefix) ||
+                    key.startsWith(AccessoryQualityProof.prefix));
+              } else {
+                final after = SessionDraft.seriesSignatures(d.sets);
+                for (final name in {
+                  ...d.manualSeriesBaseline!.keys,
+                  ...after.keys
+                }) {
+                  if (jsonEncode(d.manualSeriesBaseline![name]) ==
+                      jsonEncode(after[name])) continue;
+                  metadata.remove(SeriesSideProof.key(name));
+                  final ladder = ladderOf(name);
+                  if (ladder != null) {
+                    metadata.remove(LadderPrescriptionProof.key(ladder.id));
+                    _invalidateAccessoryProof(metadata, ladder.id);
+                  }
+                }
+              }
+              effectiveCoreEpochs =
+                  metadata.isEmpty ? null : jsonEncode(metadata);
+            }
+          } else {
+            final previous = await (db.select(db.sessions)
+                  ..where((t) => t.id.equals(d.id!)))
+                .getSingle();
+            effectiveCoreEpochs = previous.coreEpochs;
+            if (effectiveCoreEpochs != null) {
+              final metadata = (jsonDecode(effectiveCoreEpochs) as Map)
+                  .cast<String, String>();
+              final before = await (db.select(db.sessionSets)
+                    ..where((t) => t.sessionId.equals(d.id!))
+                    ..orderBy([(t) => OrderingTerm(expression: t.setIndex)]))
+                  .get();
+              final names = await exercises.namesById();
+              final changedNames = {
+                ...before.map((s) => names[s.exerciseId]),
+                ...d.sets.map((s) => s.exercise)
+              };
+              for (final name in changedNames.whereType<String>()) {
+                final oldSignature = [
+                  for (final s
+                      in before.where((s) => names[s.exerciseId] == name))
+                    [
+                      s.reps,
+                      s.loadKg,
+                      s.variant,
+                      s.rir,
+                      s.split,
+                      s.splitDetail,
+                      s.toFailure
+                    ]
+                ];
+                final newSignature = [
+                  for (final s in d.sets.where((s) => s.exercise == name))
+                    [
+                      s.reps,
+                      s.loadKg,
+                      s.variant,
+                      s.rir,
+                      s.split,
+                      s.splitDetail,
+                      s.toFailure
+                    ]
+                ];
+                if (jsonEncode(oldSignature) != jsonEncode(newSignature)) {
+                  metadata.remove(SeriesSideProof.key(name));
+                  final ladder = ladderOf(name);
+                  if (ladder != null) {
+                    metadata.remove(LadderPrescriptionProof.key(ladder.id));
+                    _invalidateAccessoryProof(metadata, ladder.id);
+                  }
+                }
+              }
+              effectiveCoreEpochs =
+                  metadata.isEmpty ? null : jsonEncode(metadata);
+            }
+          }
+        }
+        if (d.accessoryCriteriaEdits.isNotEmpty) {
+          final metadata = effectiveCoreEpochs == null
+              ? <String, String>{}
+              : (jsonDecode(effectiveCoreEpochs) as Map).cast<String, String>();
+          for (final entry in d.accessoryCriteriaEdits.entries) {
+            final ladder = ladderById(entry.key),
+                proof = AccessoryQualityProof.decode(entry.value);
+            if (ladder?.accessory != true ||
+                proof == null ||
+                metadata[entry.key] != proof.identity) {
+              throw const FormatException(
+                  'La evidencia editada no corresponde a la prescripción de origen');
+            }
+            _validateAccessoryObservation(entry.key, proof, d.date,
+                previous: AccessoryQualityProof.decode(
+                    originalMetadata[AccessoryQualityProof.key(entry.key)]));
+            metadata[AccessoryQualityProof.key(entry.key)] = entry.value;
+          }
+          effectiveCoreEpochs = jsonEncode(metadata);
+        }
+        final limitingId =
+            (d.limitingExercise == null || d.limitingExercise!.trim().isEmpty)
+                ? null
+                : await exercises.getOrCreate(d.limitingExercise!);
         final data = SessionsCompanion(
           date: Value(dayKey(d.date)),
           startTime: Value(d.startTime),
@@ -217,16 +394,21 @@ class TrainingRepository {
           mode: Value(d.mode),
           extraReps: Value(d.extraReps),
           imported: Value(d.imported),
-          coreEpochs: Value(d.coreEpochs),
+          coreEpochs: Value(effectiveCoreEpochs),
         );
         final int id;
         if (d.id == null) {
           id = await db.into(db.sessions).insert(data);
         } else {
           id = d.id!;
-          await (db.update(db.sessions)..where((t) => t.id.equals(id))).write(data);
-          await (db.delete(db.sessionSets)..where((t) => t.sessionId.equals(id))).go();
-          await (db.delete(db.sessionRounds)..where((t) => t.sessionId.equals(id))).go();
+          await (db.update(db.sessions)..where((t) => t.id.equals(id)))
+              .write(data);
+          await (db.delete(db.sessionSets)
+                ..where((t) => t.sessionId.equals(id)))
+              .go();
+          await (db.delete(db.sessionRounds)
+                ..where((t) => t.sessionId.equals(id)))
+              .go();
         }
 
         final perExercise = <int, int>{};
@@ -239,7 +421,8 @@ class TrainingRepository {
                 setIndex: idx,
                 reps: s.reps,
                 split: Value(s.split),
-                splitDetail: Value(s.split ? _blankToNull(s.splitDetail) : null),
+                splitDetail:
+                    Value(s.split ? _blankToNull(s.splitDetail) : null),
                 toFailure: Value(s.toFailure),
                 loadKg: Value(s.loadKg),
                 variant: Value(_blankToNull(s.variant)),
@@ -256,12 +439,17 @@ class TrainingRepository {
                 restSec: Value(work == null ? null : d.roundRestSec[i]),
               ));
         }
+        for (final entry in d.accessoryCriteriaEdits.entries) {
+          await _recordAccessoryAlarmOnce(
+              id, entry.key, AccessoryQualityProof.decode(entry.value)!);
+        }
         d.id = id;
         return id;
       });
 
   Future<SessionDraft> load(int id) async {
-    final r = await (db.select(db.sessions)..where((t) => t.id.equals(id))).getSingle();
+    final r = await (db.select(db.sessions)..where((t) => t.id.equals(id)))
+        .getSingle();
     final names = await exercises.namesById();
     final sets = await (db.select(db.sessionSets)
           ..where((t) => t.sessionId.equals(id))
@@ -284,7 +472,8 @@ class TrainingRepository {
       roundsDone: r.roundsDone,
       roundsEstimated: r.roundsEstimated,
       rpe: r.rpe,
-      limitingExercise: r.limitingExerciseId == null ? null : names[r.limitingExerciseId],
+      limitingExercise:
+          r.limitingExerciseId == null ? null : names[r.limitingExerciseId],
       context: r.context,
       notes: r.notes,
       outOfPlan: r.outOfPlan,
@@ -312,7 +501,9 @@ class TrainingRepository {
           ),
       ],
       roundMarksSec: rounds.map((x) => x.elapsedSec).toList(),
-      roundRestSec: rounds.every((x) => x.restSec != null) ? rounds.map((x) => x.restSec!).toList() : null,
+      roundRestSec: rounds.every((x) => x.restSec != null)
+          ? rounds.map((x) => x.restSec!).toList()
+          : null,
     );
   }
 
@@ -323,16 +514,20 @@ class TrainingRepository {
     final query = db.selectOnly(db.sessions)..addColumns([best]);
     query.where(excludeSessionId == null
         ? db.countedCircuitRounds
-        : db.countedCircuitRounds & db.sessions.id.equals(excludeSessionId).not());
+        : db.countedCircuitRounds &
+            db.sessions.id.equals(excludeSessionId).not());
     return query.map((r) => r.read(best)).getSingle();
   }
 
   /// La sesión anterior del mismo tipo (antes de `date`), con el trabajo de
   /// cada ronda (o sus vueltas, si es anterior al esquema 8), para comparar al
   /// cerrar. null si es la primera.
-  Future<(DateTime, int?, List<int>)?> previousOfType(SessionType type, DateTime date) async {
+  Future<(DateTime, int?, List<int>)?> previousOfType(
+      SessionType type, DateTime date) async {
     final evidence = await previousTiming(type, date);
-    return evidence == null ? null : (evidence.date, evidence.rounds, evidence.durationsSec);
+    return evidence == null
+        ? null
+        : (evidence.date, evidence.rounds, evidence.durationsSec);
   }
 
   Future<RoundTimingEvidence?> previousTiming(SessionType type, DateTime date,
@@ -344,7 +539,9 @@ class TrainingRepository {
               t.imported.equals(false) &
               t.roundsEstimated.equals(false) &
               t.incomplete.equals(false) &
-              (planDayId == null ? const Constant(true) : t.planDayId.equals(planDayId)) &
+              (planDayId == null
+                  ? const Constant(true)
+                  : t.planDayId.equals(planDayId)) &
               (mode == null ? t.mode.isNull() : t.mode.equals(mode)))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
@@ -357,7 +554,8 @@ class TrainingRepository {
           ..where((t) => t.sessionId.equals(row.id))
           ..orderBy([(t) => OrderingTerm(expression: t.roundIndex)]))
         .get();
-    final measuredWork = rounds.isNotEmpty && rounds.every((r) => r.workSec != null);
+    final measuredWork =
+        rounds.isNotEmpty && rounds.every((r) => r.workSec != null);
     final work = measuredWork
         ? rounds.map((r) => r.workSec!).toList()
         : lapDurations(rounds.map((r) => r.elapsedSec).toList());
@@ -382,7 +580,9 @@ class TrainingRepository {
     final out = <SessionType, int>{};
     for (final type in SessionType.values.where((t) => t.isCircuit)) {
       final row = await (db.select(db.sessions)
-            ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.equalsValue(type))
+            ..where((t) =>
+                t.date.isSmallerThanValue(dayKey(date)) &
+                t.type.equalsValue(type))
             ..where((t) => t.roundsDone.isNotNull())
             ..orderBy([
               (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
@@ -398,7 +598,9 @@ class TrainingRepository {
   /// Última sesión de un tipo antes de `date`, completa (con series).
   Future<SessionDraft?> lastOfType(SessionType type, DateTime date) async {
     final row = await (db.select(db.sessions)
-          ..where((t) => t.type.equalsValue(type) & t.date.isSmallerThanValue(dayKey(date)))
+          ..where((t) =>
+              t.type.equalsValue(type) &
+              t.date.isSmallerThanValue(dayKey(date)))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
@@ -419,12 +621,23 @@ class TrainingRepository {
   /// Última sesión de la plantilla/protocolo comparable, excluyendo el ID
   /// editado. Una coincidencia parcial de series no se considera duplicado.
   Future<SessionDraft?> repeatedSetsBefore(SessionDraft draft) async {
-    if (draft.sets.isEmpty || draft.sets.any((s) => s.exercise.trim().isEmpty)) return null;
+    if (draft.sets.isEmpty ||
+        draft.sets.any((s) => s.exercise.trim().isEmpty)) {
+      return null;
+    }
     final rows = await (db.select(db.sessions)
-          ..where((t) => t.type.equalsValue(draft.type) & t.date.isSmallerOrEqualValue(dayKey(draft.date)) &
-              (draft.id == null ? const Constant(true) : t.id.equals(draft.id!).not()) &
-              (draft.mode == null ? t.mode.isNull() : t.mode.equals(draft.mode!)) &
-              (draft.planDayId == null ? t.planDayId.isNull() : t.planDayId.equals(draft.planDayId!)))
+          ..where((t) =>
+              t.type.equalsValue(draft.type) &
+              t.date.isSmallerOrEqualValue(dayKey(draft.date)) &
+              (draft.id == null
+                  ? const Constant(true)
+                  : t.id.equals(draft.id!).not()) &
+              (draft.mode == null
+                  ? t.mode.isNull()
+                  : t.mode.equals(draft.mode!)) &
+              (draft.planDayId == null
+                  ? t.planDayId.isNull()
+                  : t.planDayId.equals(draft.planDayId!)))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
@@ -433,15 +646,25 @@ class TrainingRepository {
     for (final row in rows) {
       final previous = await load(row.id);
       final protocol = previous.sets.length == draft.sets.length &&
-          List.generate(draft.sets.length, (i) => previous.sets[i].exercise.trim() == draft.sets[i].exercise.trim())
-              .every((same) => same);
+          List.generate(
+              draft.sets.length,
+              (i) =>
+                  previous.sets[i].exercise.trim() ==
+                  draft.sets[i].exercise.trim()).every((same) => same);
       if (draft.planDayId == null && !protocol) continue;
       if (!protocol) return null;
       for (var i = 0; i < draft.sets.length; i++) {
         final a = draft.sets[i], b = previous.sets[i];
-        if (a.reps != b.reps || a.loadKg != b.loadKg || a.rir != b.rir || a.split != b.split ||
-            a.toFailure != b.toFailure || _blankToNull(a.variant) != _blankToNull(b.variant) ||
-            (a.split && _blankToNull(a.splitDetail) != _blankToNull(b.splitDetail))) return null;
+        if (a.reps != b.reps ||
+            a.loadKg != b.loadKg ||
+            a.rir != b.rir ||
+            a.split != b.split ||
+            a.toFailure != b.toFailure ||
+            _blankToNull(a.variant) != _blankToNull(b.variant) ||
+            (a.split &&
+                _blankToNull(a.splitDetail) != _blankToNull(b.splitDetail))) {
+          return null;
+        }
       }
       return previous;
     }
@@ -451,23 +674,35 @@ class TrainingRepository {
   /// La marca física no autoriza afirmar un hito de otro programa. Una
   /// sesión guiada desvinculada conserva su guion, pero no se retargetea al
   /// plan del día para acreditar el hito específico del circuito legado.
-  Future<bool> v2ProgressionContext(SessionDraft draft, {bool requireLink = false}) async {
-    if (!draft.cleanTen || (requireLink && draft.planDayId == null)) return false;
+  Future<bool> v2ProgressionContext(SessionDraft draft,
+      {bool requireLink = false}) async {
+    if (!draft.cleanTen || (requireLink && draft.planDayId == null)) {
+      return false;
+    }
     final plan = PlanRepository(db, exercises);
-    final view = draft.planDayId == null ? await plan.dayFor(draft.date) : await plan.dayById(draft.planDayId!);
-    return view != null && view.scheme == null && view.day.type == DayType.progresion;
+    final view = draft.planDayId == null
+        ? await plan.dayFor(draft.date)
+        : await plan.dayById(draft.planDayId!);
+    return view != null &&
+        view.scheme == null &&
+        view.day.type == DayType.progresion;
   }
 
   /// Fecha de la primera progresión de 10 rondas o más que cumplió la regla
   /// de calidad, antes de `before`. Desde el viernes siguiente, el viernes del
   /// v3.1 deja el circuito y alterna Cindy y Tabata (§19.1).
-  Future<DateTime?> firstCleanTen({DateTime? before, int? excludeSessionId}) async {
+  Future<DateTime?> firstCleanTen(
+      {DateTime? before, int? excludeSessionId}) async {
     final rows = await (db.select(db.sessions)
           ..where((t) =>
               t.type.equalsValue(SessionType.progresion) &
               t.roundsDone.isBiggerOrEqualValue(10) &
-              (excludeSessionId == null ? const Constant(true) : t.id.equals(excludeSessionId).not()) &
-              (before == null ? const Constant(true) : t.date.isSmallerThanValue(dayKey(before))))
+              (excludeSessionId == null
+                  ? const Constant(true)
+                  : t.id.equals(excludeSessionId).not()) &
+              (before == null
+                  ? const Constant(true)
+                  : t.date.isSmallerThanValue(dayKey(before))))
           ..orderBy([(t) => OrderingTerm(expression: t.date)]))
         .get();
     for (final r in rows) {
@@ -480,28 +715,37 @@ class TrainingRepository {
   /// Día del bloque (v3 o v3.1) para el día del plan `view`. El viernes del
   /// v3.1 depende de si ya salieron 10 rondas limpias. null fuera del bloque.
   Future<V3Day?> blockDay(PlanDayView? view, DateTime date) async {
-    if (view == null || !isBlockScheme(view.scheme) || view.validFrom == null) return null;
-    final cleanTen =
-        view.scheme == v31Scheme && date.weekday == DateTime.friday ? await firstCleanTen(before: date) : null;
-    return v3Day(view.validFrom!, date, scheme: view.scheme!, cleanTen: cleanTen);
+    if (view == null || !isBlockScheme(view.scheme) || view.validFrom == null) {
+      return null;
+    }
+    final cleanTen = view.scheme == v31Scheme && date.weekday == DateTime.friday
+        ? await firstCleanTen(before: date)
+        : null;
+    return v3Day(view.validFrom!, date,
+        scheme: view.scheme!, cleanTen: cleanTen);
   }
 
   /// Series del ejercicio en la última sesión de fuerza del mismo día de la
   /// semana antes de `date` (el lunes se compara con el lunes: las dominadas
   /// del lunes van con mochila y las del jueves son supinas). Vacío si no hay.
-  Future<List<SetDraft>> lastStrengthSets(String exercise, DateTime date) async {
+  Future<List<SetDraft>> lastStrengthSets(
+      String exercise, DateTime date) async {
     final exId = await exercises.idOf(exercise);
     if (exId == null) return const [];
-    final circuit = SessionType.values.where((t) => t.isCircuit || t == SessionType.resistencia).map((t) => t.name);
+    final circuit = SessionType.values
+        .where((t) => t.isCircuit || t == SessionType.resistencia)
+        .map((t) => t.name);
     final rows = await (db.select(db.sessions)
-          ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.isNotIn(circuit))
+          ..where((t) =>
+              t.date.isSmallerThanValue(dayKey(date)) & t.type.isNotIn(circuit))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
           ])
           ..limit(40))
         .get();
-    for (final r in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
+    for (final r
+        in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
       final sets = await (db.select(db.sessionSets)
             ..where((t) => t.sessionId.equals(r.id) & t.exerciseId.equals(exId))
             ..orderBy([(t) => OrderingTerm(expression: t.id)]))
@@ -525,22 +769,29 @@ class TrainingRepository {
 
   /// Same weekday limits weekly protocol changes; explicit session/plan and
   /// set provenance remain available to the policy instead of being discarded.
-  Future<StrengthSessionEvidence?> lastStrengthEvidence(String exercise, DateTime date, {String? mode}) async {
+  Future<StrengthSessionEvidence?> lastStrengthEvidence(
+      String exercise, DateTime date,
+      {String? mode}) async {
     final exId = await exercises.idOf(exercise);
     if (exId == null) return null;
-    final circuit =
-        SessionType.values.where((t) => t.isCircuit || t == SessionType.resistencia).map((t) => t.name);
+    final circuit = SessionType.values
+        .where((t) => t.isCircuit || t == SessionType.resistencia)
+        .map((t) => t.name);
     final rows = await (db.select(db.sessions)
-          ..where((t) => t.date.isSmallerThanValue(dayKey(date)) & t.type.isNotIn(circuit) &
-            (mode == null ? t.mode.isNull() : t.mode.equals(mode)))
+          ..where((t) =>
+              t.date.isSmallerThanValue(dayKey(date)) &
+              t.type.isNotIn(circuit) &
+              (mode == null ? t.mode.isNull() : t.mode.equals(mode)))
           ..orderBy([
             (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc),
             (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)
           ]))
         .get();
-    for (final row in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
+    for (final row
+        in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
       final sets = await (db.select(db.sessionSets)
-            ..where((t) => t.sessionId.equals(row.id) & t.exerciseId.equals(exId))
+            ..where(
+                (t) => t.sessionId.equals(row.id) & t.exerciseId.equals(exId))
             ..orderBy([(t) => OrderingTerm(expression: t.id)]))
           .get();
       if (sets.isEmpty) continue;
@@ -574,16 +825,21 @@ class TrainingRepository {
     final exId = await exercises.idOf('Inclinación de planche');
     if (exId == null) return false;
     final last = await (db.select(db.sessionSets).join([
-      innerJoin(db.sessions, db.sessions.id.equalsExp(db.sessionSets.sessionId)),
+      innerJoin(
+          db.sessions, db.sessions.id.equalsExp(db.sessionSets.sessionId)),
     ])
-          ..where(db.sessionSets.exerciseId.equals(exId) & db.sessions.date.isSmallerThanValue(dayKey(before)))
-          ..orderBy([OrderingTerm(expression: db.sessions.date, mode: OrderingMode.desc)]))
+          ..where(db.sessionSets.exerciseId.equals(exId) &
+              db.sessions.date.isSmallerThanValue(dayKey(before)))
+          ..orderBy([
+            OrderingTerm(expression: db.sessions.date, mode: OrderingMode.desc)
+          ]))
         .get();
     if (last.isEmpty) return false;
     final sessionId = last.first.readTable(db.sessions).id;
     final sets = [
       for (final r in last)
-        if (r.readTable(db.sessions).id == sessionId) r.readTable(db.sessionSets)
+        if (r.readTable(db.sessions).id == sessionId)
+          r.readTable(db.sessionSets)
     ];
     return sets.where((s) => s.reps >= 30).length >= 3;
   }
@@ -591,14 +847,40 @@ class TrainingRepository {
   /// El día con el bloque de planche al inicio, si toca (v3.1, mini
   /// paralelas, martes/jueves/viernes). Igual para empezar y para retomar: el
   /// guion tiene que ser el mismo.
-  Future<PlanDayDraft> withPlanche(PlanDayDraft day, DateTime date, V3Day? v3, {required bool enabled}) async {
+  Future<PlanDayDraft> withPlanche(PlanDayDraft day, DateTime date, V3Day? v3,
+      {required bool enabled}) async {
     if (!enabled || v3 == null || !v3.isV31) return day;
-    final block = plancheBlock(
-      weekday: date.weekday,
-      deload: v3.reducedVolume,
-      tuckReady: await plancheTuckReady(date),
-    );
+    final block = v3.isV32 && date.weekday == DateTime.thursday
+        ? <PlanExerciseDraft>[
+            PlanExerciseDraft(
+                name: 'Muñecas (planche)',
+                sets: 1,
+                holdSecMin: 120,
+                block: 'planche'),
+            PlanExerciseDraft(
+                name: 'Support hold en paralelas',
+                sets: 2,
+                holdSecMin: 30,
+                block: 'planche',
+                physicalVariantKey: 'support_parallels',
+                purpose: v32Purposes['Support hold en paralelas']),
+          ]
+        : plancheBlock(
+            weekday: date.weekday,
+            deload: v3.reducedVolume,
+            tuckReady: await plancheTuckReady(date),
+          );
     if (block.isEmpty) return day;
+    if (v3.isV32 && date.weekday == DateTime.tuesday) {
+      block.add(PlanExerciseDraft(
+          name: 'Support hold en paralelas',
+          sets: 3,
+          holdSecMin: 20,
+          holdSecMax: 30,
+          block: 'planche',
+          physicalVariantKey: 'support_parallels',
+          purpose: v32Purposes['Support hold en paralelas']));
+    }
     return PlanDayDraft(
       weekday: day.weekday,
       type: day.type,
@@ -612,9 +894,12 @@ class TrainingRepository {
   /// El día con el peldaño actual de la escalera de core (§19.10): dragon
   /// flag el lunes y V-up el jueves del v3.1. Va antes de lo opcional. En la
   /// descarga, dos series.
-  Future<PlanDayDraft> withLadder(PlanDayDraft day, DateTime date, V3Day? v3) async {
+  Future<PlanDayDraft> withLadder(
+      PlanDayDraft day, DateTime date, V3Day? v3) async {
     if (v3 == null || !v3.isV31) return day;
-    final ladder = coreLadders.where((l) => l.weekday == date.weekday).firstOrNull;
+    final ladder = coreLadders
+        .where((l) => l.id != 'reverse_plank' && l.weekday == date.weekday)
+        .firstOrNull;
     if (ladder == null) return day;
     final state = await LadderRepository(db).state(ladder, today: date);
     final step = state.current;
@@ -633,7 +918,9 @@ class TrainingRepository {
         rirMax: step.rir,
         perSide: step.perSide,
         block: ladderBlock,
-        notes: 'Peldaño ${step.step} de ${ladder.top} de la escalera del ${ladder.name}.'
+        purpose: exercisePurpose(step.exercise),
+        notes:
+            'Peldaño ${step.step} de ${ladder.top} de la escalera del ${ladder.name}.'
             '${step.notes == null ? '' : ' ${step.notes}'}',
       ),
       if (step.hollowSec case final sec?)
@@ -655,36 +942,356 @@ class TrainingRepository {
       targetRounds: day.targetRounds,
       restBetweenRoundsSec: day.restBetweenRoundsSec,
       notes: day.notes,
-      exercises: [...day.exercises.take(at), ...block, ...day.exercises.skip(at)],
+      exercises: [
+        ...day.exercises.take(at),
+        ...block,
+        ...day.exercises.skip(at)
+      ],
       coreEpochs: {...day.coreEpochs, ladder.id: state.identity},
     );
   }
 
   /// Los bloques que el v3.1 agrega al día: planche (si hay paralelas) y la
   /// escalera de core. Igual para Hoy, para empezar y para retomar.
-  Future<PlanDayDraft> withV31Blocks(PlanDayDraft day, DateTime date, V3Day? v3, {required bool planche}) async =>
-      withLadder(await withPlanche(day, date, v3, enabled: planche), date, v3);
+  Future<PlanDayDraft> withV31Blocks(PlanDayDraft day, DateTime date, V3Day? v3,
+      {required bool planche, bool rings = false}) async {
+    var result = await withLadder(
+        await withPlanche(day, date, v3, enabled: planche), date, v3);
+    if (v3?.isV32 != true) return result;
+    final stopped = await (db.select(db.ladderEvents)
+          ..where((t) =>
+              t.date.equals(dayKey(date)) &
+              t.eventKey.like('accessoryAlarm:hamstring_pinch:%')))
+        .get();
+    result = await withAccessoryLadders(result, date, v3!, rings: rings);
+    if (!planche &&
+        rings &&
+        [DateTime.tuesday, DateTime.thursday].contains(date.weekday)) {
+      final support = ladderById('support_hold')!;
+      final state = await LadderRepository(db).state(support, today: date);
+      if (state.current.physicalVariantKey == 'support_rings') {
+        final e = PlanExerciseDraft(
+            name: state.current.exercise,
+            sets: date.weekday == DateTime.thursday ? 2 : 3,
+            holdSecMin: date.weekday == DateTime.thursday ? 30 : 20,
+            holdSecMax: 30,
+            physicalVariantKey: 'support_rings',
+            purpose: exercisePurpose(state.current.exercise));
+        result.exercises.add(e);
+        result = await withAccessoryLadders(result, date, v3, rings: rings);
+      }
+    }
+    for (final exercise in result.exercises.where((e) =>
+        e.name == 'Copenhague' && e.physicalVariantKey == 'copenhagen_short')) {
+      exercise.repsMin = v3.week <= 2
+          ? 3
+          : v3.week <= 4
+              ? 7
+              : 12;
+      exercise.repsMax = v3.week <= 2
+          ? 5
+          : v3.week <= 4
+              ? 10
+              : 15;
+    }
+    if (date.weekday == DateTime.friday) {
+      result.targetRounds = maintenanceRounds(v3.week);
+    }
+    if ([DateTime.thursday, DateTime.friday].contains(date.weekday)) {
+      final state =
+          await LadderRepository(db).state(reversePlankLadder, today: date);
+      final step = state.current;
+      result = PlanDayDraft(
+          weekday: result.weekday,
+          type: result.type,
+          targetRounds: result.targetRounds,
+          restBetweenRoundsSec: result.restBetweenRoundsSec,
+          notes: result.notes,
+          exercises: [
+            ...result.exercises,
+            PlanExerciseDraft(
+                name: step.exercise,
+                sets: date.weekday == DateTime.friday ? 2 : step.sets,
+                repsMin: step.repsMin,
+                repsMax: step.repsMax,
+                holdSecMin: step.holdMin,
+                holdSecMax: step.holdMax,
+                perSide: step.perSide,
+                restSec: step.rest,
+                block: ladderBlock,
+                purpose: 'Cadena posterior y control de cadera.',
+                notes: step.notes)
+          ],
+          coreEpochs: {
+            ...result.coreEpochs,
+            reversePlankLadder.id: state.identity,
+            if (date.weekday == DateTime.friday)
+              LadderPrescriptionProof.key(reversePlankLadder.id):
+                  LadderPrescriptionProof.maintenance(
+                      identity: state.identity,
+                      sets: 2,
+                      minimum: step.holdMin ?? step.repsMin ?? 1,
+                      perSide: step.perSide)
+          });
+    }
+    final morning = await (db.select(db.morningChecks)
+          ..where((t) => t.date.equals(dayKey(date))))
+        .getSingleOrNull();
+    final readiness = await ReadinessRepository(db).readinessOn(date);
+    if (morning?.kneeStairs == null) {
+      result.notes =
+          '${result.notes ?? ''} · Escaleras: sin registro, no equivale a0.';
+    }
+    final mode = kneeTrainingMode(morning?.kneeStairs,
+        restOnly: readiness.action == SuggestedAction.restOnly);
+    if (mode == KneeTrainingMode.rest) {
+      return PlanDayDraft(
+          weekday: result.weekday,
+          type: DayType.descanso,
+          notes: 'Descanso indicado: ${readiness.reasons.join(' · ')}'
+              '${stopped.isEmpty ? '' : ' · Pinchazo en isquio confirmado: parar el día.'}');
+    }
+    if (stopped.isNotEmpty) {
+      return PlanDayDraft(
+          weekday: day.weekday,
+          type: DayType.descanso,
+          notes:
+              'Pinchazo en isquio confirmado: parar el día. Registro conservado.');
+    }
+    if (mode == KneeTrainingMode.isometricsOnly) {
+      return PlanDayDraft(
+          weekday: result.weekday,
+          type: DayType.trenSuperior,
+          notes: 'Escaleras ≥5: sólo isométricos; avisa al entrenador.',
+          exercises: [
+            PlanExerciseDraft(
+                name: 'Sentadilla isométrica en la pared',
+                sets: 5,
+                holdSecMin: 45,
+                purpose: v32Purposes['Sentadilla isométrica en la pared'])
+          ]);
+    }
+    final hardMidweek = date.weekday == DateTime.wednesday &&
+        (await (db.select(db.footballGames)
+                  ..where((t) => t.date.isBetweenValues(
+                      dayKey(addDays(date, -2)), dayKey(addDays(date, -1)))))
+                .get())
+            .any((g) => g.intensity != null && g.intensity! >= 8);
+    if (mode == KneeTrainingMode.noImpact) {
+      result.exercises.removeWhere((e) => [
+            'Sprint lanzado',
+            'Salto vertical',
+            'Salto largo',
+            'Salto de patinador',
+            'Aterrizaje clavado'
+          ].contains(e.name));
+      for (final e
+          in result.exercises.where((e) => e.name == 'Aceleración 10–20 m')) {
+        e.notes = 'Sólo 80% por rodilla/fútbol reciente.';
+      }
+      result.exercises.removeWhere((e) => e.name == 'Aceleración 10–20 m');
+    } else if (hardMidweek) {
+      result.exercises.removeWhere((e) => e.name == 'Sprint lanzado');
+      for (final e
+          in result.exercises.where((e) => e.name == 'Aceleración 10–20 m')) {
+        e.notes = 'Sólo 80% por fútbol duro el lunes o martes.';
+      }
+    }
+    orderV32Exercises(result);
+    return result;
+  }
+
+  /// Sesiones que se guardaron solas al terminar el cronómetro y aún no se
+  Future<void> setAccessoryProofs(int id, Map<String, String> proofs) =>
+      db.transaction(() async {
+        final session = await (db.select(db.sessions)
+              ..where((t) => t.id.equals(id)))
+            .getSingle();
+        final metadata = session.coreEpochs == null
+            ? <String, String>{}
+            : (jsonDecode(session.coreEpochs!) as Map).cast<String, String>();
+        for (final entry in proofs.entries) {
+          final ladder = ladderById(entry.key),
+              proof = AccessoryQualityProof.decode(entry.value);
+          if (ladder?.accessory != true ||
+              proof == null ||
+              metadata[entry.key] != proof.identity) {
+            throw const FormatException(
+                'La evidencia no coincide con el peldaño prescrito');
+          }
+          _validateAccessoryObservation(
+              entry.key, proof, parseDay(session.date),
+              previous: AccessoryQualityProof.decode(
+                  metadata[AccessoryQualityProof.key(entry.key)]));
+          await _recordAccessoryAlarmOnce(id, entry.key, proof);
+          metadata[AccessoryQualityProof.key(entry.key)] = entry.value;
+        }
+        await (db.update(db.sessions)..where((t) => t.id.equals(id)))
+            .write(SessionsCompanion(coreEpochs: Value(jsonEncode(metadata))));
+      });
+
+  void _invalidateAccessoryProof(Map<String, String> metadata, String ladder) {
+    final key = AccessoryQualityProof.key(ladder),
+        old = AccessoryQualityProof.decode(
+            metadata[AccessoryQualityProof.key(ladder)]);
+    if (old?.alarm == null) {
+      metadata.remove(key);
+    } else {
+      // An edit invalidates achievement evidence, never an observed alarm.
+      metadata[key] = AccessoryQualityProof(
+              identity: old!.identity,
+              alarmFree: false,
+              alarm: old.alarm,
+              achillesCheckedOn: old.achillesCheckedOn)
+          .encode();
+    }
+  }
+
+  void _validateAccessoryObservation(
+      String ladder, AccessoryQualityProof proof, DateTime sessionDate,
+      {AccessoryQualityProof? previous}) {
+    if (proof.alarm != null &&
+        AccessoryQualityProof.alarmsByLadder[ladder] != proof.alarm) {
+      throw const FormatException('Señal no pertinente para esta guía');
+    }
+    if (previous?.alarm != null &&
+        (proof.alarm != previous!.alarm || proof.alarmFree == true)) {
+      throw const FormatException(
+          'La señal observada forma parte del historial; no se borra al editar');
+    }
+    if (ladder == 'seated_soleus' &&
+        (proof.alarmFree == true || proof.alarm == 'achilles_next_morning')) {
+      final checked = proof.achillesCheckedDate;
+      if (checked == null ||
+          !checked.isAfter(dateOnly(sessionDate)) ||
+          checked.isAfter(dateOnly(clock.now()))) {
+        throw const FormatException(
+            'La respuesta del Aquiles requiere fecha explícita desde la mañana siguiente, nunca futura');
+      }
+    }
+  }
+
+  Future<void> _recordAccessoryAlarmOnce(
+      int sessionId, String ladderId, AccessoryQualityProof proof) async {
+    final alarm = proof.alarm;
+    if (alarm == null) return;
+    final seen = await (db.select(db.ladderEvents)
+          ..where((t) =>
+              t.ladder.equals(ladderId) &
+              t.eventKey.like('accessoryAlarm:$alarm:%:session:$sessionId')))
+        .get();
+    if (seen.isNotEmpty) return;
+    await LadderRepository(db).accessoryAlarm(
+        ladderById(ladderId)!, alarm, dateOnly(clock.now()),
+        eventKey: 'session:$sessionId');
+  }
+
+  Future<PlanDayDraft> withAccessoryLadders(
+      PlanDayDraft day, DateTime date, V3Day v3,
+      {bool rings = false}) async {
+    final metadata = <String, String>{...day.coreEpochs};
+    for (final ladder in v32AccessoryLadders) {
+      final candidates =
+          day.exercises.where((e) => ladder.owns(e.name)).toList();
+      if (candidates.isEmpty) continue;
+      final state = await LadderRepository(db).state(ladder, today: date);
+      final step = state.current;
+      if (ladder.id == 'support_hold' &&
+          step.physicalVariantKey == 'support_rings' &&
+          !rings) {
+        day.exercises.removeWhere((e) => ladder.owns(e.name));
+        day.notes =
+            '${day.notes ?? ''} · Support en anillas no incluido: equipo no confirmado.';
+        continue;
+      }
+      metadata[ladder.id] = state.identity;
+      for (final e in candidates) {
+        final prescribedSets = e.sets;
+        e.physicalVariantKey = step.physicalVariantKey;
+        e.perSide = step.perSide;
+        e.rirMin = step.rir ?? e.rirMin;
+        e.rirMax = step.rir ?? e.rirMax;
+        e.notes =
+            'Peldaño ${step.step}: ${step.prescription}${ladder.alarm == null ? '' : ' · ${ladder.alarm}'}';
+        if (ladder.id == 'copenhagen') {
+          e.repsMin = step.step == 1
+              ? (v3.week <= 2
+                  ? 3
+                  : v3.week <= 4
+                      ? 7
+                      : 12)
+              : 5;
+          e.repsMax = step.step == 1
+              ? (v3.week <= 2
+                  ? 5
+                  : v3.week <= 4
+                      ? 10
+                      : 15)
+              : 5;
+        } else if (ladder.id == 'flying_sprint') {
+          e.sets = step.sets;
+          e.repsMin = 1;
+          e.repsMax = 1;
+          e.restSec = 120;
+          e.restSecMax = 180;
+        } else if (ladder.id == 'seated_soleus' &&
+            date.weekday == DateTime.friday) {
+          e.repsMin = 15;
+          e.repsMax = 15;
+        } else if (ladder.id == 'tibialis_wall' &&
+            date.weekday == DateTime.friday) {
+          e.repsMin = 20;
+          e.repsMax = 20;
+        }
+        final maintenance = date.weekday == DateTime.thursday &&
+                ['support_hold', 'band_external_rotation']
+                    .contains(ladder.id) ||
+            date.weekday == DateTime.friday &&
+                ['seated_soleus', 'tibialis_wall'].contains(ladder.id);
+        if (maintenance && prescribedSets != null) {
+          metadata[LadderPrescriptionProof.key(ladder.id)] =
+              LadderPrescriptionProof.maintenance(
+                  identity: state.identity,
+                  sets: prescribedSets,
+                  minimum: e.holdSecMin ?? e.repsMin ?? 1,
+                  perSide: step.perSide);
+        }
+      }
+    }
+    return PlanDayDraft(
+        weekday: day.weekday,
+        type: day.type,
+        targetRounds: day.targetRounds,
+        restBetweenRoundsSec: day.restBetweenRoundsSec,
+        notes: day.notes,
+        exercises: day.exercises,
+        coreEpochs: metadata);
+  }
 
   /// Sesiones que se guardaron solas al terminar el cronómetro y aún no se
   /// revisan (falta el RPE). Las más recientes primero.
   Stream<List<SessionRow>> watchPendingReview() => (db.select(db.sessions)
         ..where((t) => t.pendingReview.equals(true))
-        ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)]))
+        ..orderBy(
+            [(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)]))
       .watch();
 
   /// La sesión de ese tipo en ese día (la última si hay varias), o null.
   Future<int?> sessionsOn(DateTime date, SessionType type) async {
     final row = await (db.select(db.sessions)
           ..where((t) => t.date.equals(dayKey(date)) & t.type.equalsValue(type))
-          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
+          ..orderBy(
+              [(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
           ..limit(1))
         .getSingleOrNull();
     return row?.id;
   }
 
   /// Anota los tres criterios de calidad de una sesión ya guardada.
-  Future<void> setProgressionCriteria(int id, {bool? techniqueOk, bool? fullRange, bool? recoveryOk}) =>
-      (db.update(db.sessions)..where((t) => t.id.equals(id))).write(SessionsCompanion(
+  Future<void> setProgressionCriteria(int id,
+          {bool? techniqueOk, bool? fullRange, bool? recoveryOk}) =>
+      (db.update(db.sessions)..where((t) => t.id.equals(id)))
+          .write(SessionsCompanion(
         techniqueOk: Value(techniqueOk),
         fullRange: Value(fullRange),
         recoveryOk: Value(recoveryOk),
@@ -696,7 +1303,8 @@ class TrainingRepository {
     if (exId == null) return null;
     final row = await (db.select(db.sessionSets)
           ..where((t) => t.exerciseId.equals(exId) & t.variant.isNotNull())
-          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
+          ..orderBy(
+              [(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
           ..limit(1))
         .getSingleOrNull();
     return row?.variant;
@@ -708,20 +1316,30 @@ class TrainingRepository {
     if (exId == null) return null;
     final row = await (db.select(db.sessionSets)
           ..where((t) => t.exerciseId.equals(exId) & t.loadKg.isNotNull())
-          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
+          ..orderBy(
+              [(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)])
           ..limit(1))
         .getSingleOrNull();
     return row?.loadKg;
   }
 
-  Future<void> delete(int id) => (db.delete(db.sessions)..where((t) => t.id.equals(id))).go();
+  Future<void> delete(int id) => db.transaction(() async {
+        // Results survive deletion of their auxiliary activity. No textual lookup.
+        await (db.update(db.fitnessTestAttempts)
+              ..where((t) => t.sessionId.equals(id)))
+            .write(const FitnessTestAttemptsCompanion(sessionId: Value(null)));
+        await (db.delete(db.sessions)..where((t) => t.id.equals(id))).go();
+      });
 
   /// Duración media por ronda (incluye transición) en las últimas sesiones
   /// con contador. Base para estimar rondas cuando se pierde la cuenta.
   Future<int?> historicalMeanRoundSec({int lastSessions = 5}) async {
     final ids = await (db.selectOnly(db.sessionRounds, distinct: true)
           ..addColumns([db.sessionRounds.sessionId])
-          ..orderBy([OrderingTerm(expression: db.sessionRounds.sessionId, mode: OrderingMode.desc)])
+          ..orderBy([
+            OrderingTerm(
+                expression: db.sessionRounds.sessionId, mode: OrderingMode.desc)
+          ])
           ..limit(lastSessions))
         .map((r) => r.read(db.sessionRounds.sessionId)!)
         .get();
@@ -740,20 +1358,27 @@ class TrainingRepository {
 
   // ---------- Fútbol ----------
 
-  Stream<List<FootballGameRow>> watchFootball({int limit = 60}) => (db.select(db.footballGames)
-        ..orderBy([(t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)])
-        ..limit(limit))
-      .watch();
+  Stream<List<FootballGameRow>> watchFootball({int limit = 60}) =>
+      (db.select(db.footballGames)
+            ..orderBy([
+              (t) => OrderingTerm(expression: t.date, mode: OrderingMode.desc)
+            ])
+            ..limit(limit))
+          .watch();
 
   Future<int> saveFootball(FootballGamesCompanion data) async {
     if (data.id.present) {
-      await (db.update(db.footballGames)..where((t) => t.id.equals(data.id.value))).write(data);
+      await (db.update(db.footballGames)
+            ..where((t) => t.id.equals(data.id.value)))
+          .write(data);
       return data.id.value;
     }
     return db.into(db.footballGames).insert(data);
   }
 
-  Future<void> deleteFootball(int id) => (db.delete(db.footballGames)..where((t) => t.id.equals(id))).go();
+  Future<void> deleteFootball(int id) =>
+      (db.delete(db.footballGames)..where((t) => t.id.equals(id))).go();
 }
 
-String? _blankToNull(String? s) => (s == null || s.trim().isEmpty) ? null : s.trim();
+String? _blankToNull(String? s) =>
+    (s == null || s.trim().isEmpty) ? null : s.trim();

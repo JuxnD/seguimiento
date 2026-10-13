@@ -368,3 +368,6 @@ y `keepReachRadius` opt-in, recorridos y comprensión pendiente:
 [Diseño014](../design/calentamiento-014.md) y
 [recibo014](sessions/2026-10-10-014-calentamiento.md).
 No atribuir estas figuras a unAPK anterior ni a la instalación del owner.
+
+
+034 checkpoint parcial: contratos25/attempts/escaleras y source de3.2 para repartir lectores. Analyze lib+24 testpaths0, últimos7SQLite PASS, UIequipo/paquete43 pendiente de diagnóstico; NO R1final. Ver [checkpoint034](sessions/2026-10-13-034-functional-checkpoint.md) y [propuesta de relevo lector](sessions/2026-10-13-034-reader-handoff.md). Source35/36/39/40 no integrado aquí; cierre completo037 pendiente.

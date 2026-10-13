@@ -1,0 +1,119 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: una sola fecha apta no demuestra un cambio entre fechas
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: sólo un prefijo parcial no demuestra el denominador de Cindy
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: conteo extremo no acredita receta por overflow de entero
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: helper extraído conserva receta y export público del timer
+00:00 +4: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: referencias inválidas no producen coordenada ni defaults
+00:00 +5: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: cambio de referencia escala ambos perfiles; no cambia delta crudo
+00:00 +6: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: política documentada separa histórica de actual; sin política no caduca
+00:00 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: inválidos, fechas desconocidas y bilateral mixto conservan payload
+00:00 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: Cindy importada/estimada/cortada/30min/Tabata/dudas sigue observada
+00:00 +9: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: receta distinta/lastre/variante/partial desconocido no normaliza
+00:00 +10: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: primera/última apta por fecha, no mayor T ni máximo
+00:00 +11: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: bilateral parcial/dudoso posterior y futuro no reemplazan apta
+00:00 +12: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: misma referencia ambos perfiles, >100 crudo y cero observado
+00:00 +13: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: Cindy misma receta con parciales diferentes y ventana real20
+00:00 +14: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_metrics_test.dart: sin referencias crudo, seis ejes aptos cierran sólo con referencias
+00:00 +15: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart
+00:00 +15: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: (setUpAll)
+00:00 +15: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: el lunes trae el peldaño del dragon flag y el jueves el del V-up, antes de lo opcional
+00:01 +16: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: peldaño 1 desde el lunes del v3.1; sube tras 2 sesiones limpias y 2 semanas
+00:01 +17: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: molestia lumbar: baja un peldaño y esa sesión no cuenta como limpia
+00:01 +18: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: día de test: el lunes de la semana 1 en Hoy, y al guardarlo cuenta como entrenado
+00:01 +19: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: el informe no toma el Tabata por aguantes; sí la vela y el hollow
+00:01 +20: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: martes del 6 oct: el v3.1 nuevo ya lo trae; uno activado antes se corrige
+00:01 +21: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/ladders_and_tests_data_test.dart: (tearDownAll)
+00:01 +21: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart
+00:02 +21: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: (setUpAll)
+00:02 +21: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: SQLite completo, corte y referencia común desde vigencia real
+00:02 +22: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: bilateral parcial, futuro e inválido no ocultan apta anterior
+00:02 +23: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: Cindy flags/ventana/receta y orden DDFFSS son observaciones
+00:03 +24: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: 300 sesiones por lotes equivalen a core completo sin perder inicio
+00:03 +25: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: ZIP restore SQLite y databaseGeneration releen referencias del radar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart:154:70)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart:171:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart:154:70)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart:171:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:04 +26: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: providers observan editar/borrar evidencia antigua y referencias sin invalidación manual
+00:04 +27: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/personal_radar_repository_test.dart: (tearDownAll)
+00:04 +27: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart
+00:04 +27: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: (setUpAll)
+00:04 +27: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: cero real frente a ausentes y callbacks sin escritura/rutas
+00:05 +28: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: dos ejes no rellenan huecos y sin refs mantiene crudo
+00:05 +29: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: SQLite→008→núcleo→UI conserva dudas/fecha/bilateral
+00:06 +30: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: touch canvas, teclado, semántica y mostrar inicio
+00:06 +31: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: renderer real360 texto1.0, >100 conserva crudo
+00:06 +32: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: renderer real360 texto1.6, >100 conserva crudo
+00:06 +33: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: renderer real360 texto2.0, >100 conserva crudo
+00:06 +34: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: widget muestra valor/ref común y tap evidencia sin rutas
+00:06 +35: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/personal_radar_test.dart: (tearDownAll)
+00:06 +35: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart
+00:07 +35: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: escaleras empiezan en el peldaño 1: dragon flag el lunes, V-up el jueves
+00:07 +36: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: escaleras sube con el criterio en 2 sesiones seguidas y 2 semanas en el peldaño
+00:07 +37: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: escaleras nunca antes de 2 semanas en el peldaño
+00:07 +38: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: escaleras la última sesión sin el criterio corta la racha; el hollow también cuenta
+00:07 +39: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: escaleras por lado: 3 × 8 en cada lado
+00:07 +40: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: escaleras el último peldaño no propone subir
+00:07 +41: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: escaleras el hollow no es de ninguna escalera; los peldaños sí
+00:07 +42: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: test de condición Test 1 el lun 12 y el mié 14; Test 2 en la descarga; Test 3 con las pruebas del 11 dic
+00:07 +43: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: test de condición 12 pruebas de torso y 4 de piernas
+00:07 +44: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: test de condición dosis inicial: reps al 70–75 %, aguantes al 50–60 %
+00:07 +45: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/core_ladders_test.dart: test de condición por lado cuenta el más débil; mejora contra el Test 1
+00:07 +46: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_evidence_test.dart
+00:07 +46: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_evidence_test.dart: duraciones una vez, protocolo y base explícitos
+00:07 +47: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_evidence_test.dart: mantiene política RIR ausente, bloquea fallo, partición y mezcla
+00:07 +48: C:/My Projects/seguimiento-034-plan-v32-tests/test/domain/progress_evidence_test.dart: observado visible, apto exige fecha, ambos lados y limpio; T3 parcial no oculta T2
+00:07 +49: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T195236499-66896-593c52fb63a041748c82407de537bf42.json

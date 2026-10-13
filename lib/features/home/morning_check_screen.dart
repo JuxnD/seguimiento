@@ -30,6 +30,7 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   /// Cómo amaneció (plan 009): 1 descansado, 2 normal, 3 cansado; null sin
   /// responder.
   int? _feeling;
+  int? _kneeStairs;
   final _sore = <String, int>{};
 
   /// Dolor muscular general 0–10 y "enfermo, fiebre o dolor agudo" (§19.17).
@@ -38,7 +39,6 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   int _muscle = 0;
   bool _ill = false;
   bool _loading = true;
-
 
   @override
   void initState() {
@@ -57,18 +57,27 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   Future<void> _load() async {
     setState(() => _loading = true);
     final weights = await ref.read(bodyRepositoryProvider).weightsOn(_date);
-    final fasted = weights.where((w) => weighMomentOf(w.moment, fasted: w.fasted) == WeighMoment.ayunas).firstOrNull;
+    final fasted = weights
+        .where((w) =>
+            weighMomentOf(w.moment, fasted: w.fasted) == WeighMoment.ayunas)
+        .firstOrNull;
     final hr = await ref.read(recoveryRepositoryProvider).restingHrOn(_date);
     final morning = await ref.read(recoveryRepositoryProvider).morningOn(_date);
     final feeling = morning?.feeling;
-    final sleep = (await ref.read(sleepRepositoryProvider).range(_date, _date))[dayKey(_date)];
-    final sore = (await ref.read(recoveryRepositoryProvider).sorenessRange(_date, days: 1))[_date] ?? const {};
+    final sleep = (await ref
+        .read(sleepRepositoryProvider)
+        .range(_date, _date))[dayKey(_date)];
+    final sore = (await ref
+            .read(recoveryRepositoryProvider)
+            .sorenessRange(_date, days: 1))[_date] ??
+        const {};
     if (!mounted) return;
     setState(() {
       _kg.text = fasted == null ? '' : fmtDec(fasted.kg);
       _hr.text = hr?.toString() ?? '';
       _sleep = sleep;
       _feeling = feeling;
+      _kneeStairs = morning?.kneeStairs;
       _muscle = morning?.muscleSoreness ?? 0;
       _ill = morning?.ill ?? false;
       _sore
@@ -88,14 +97,20 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
     final now = TimeOfDay.now();
     final ok = await guarded(context, () async {
       if (kg != null && kg > 0) {
-        await ref
-            .read(bodyRepositoryProvider)
-            .addWeight(_date, kg, moment: WeighMoment.ayunas, time: timeKey(now.hour, now.minute));
+        await ref.read(bodyRepositoryProvider).addWeight(_date, kg,
+            moment: WeighMoment.ayunas, time: timeKey(now.hour, now.minute));
       }
       await ref.read(recoveryRepositoryProvider).setRestingHr(_date, hr);
       await ref.read(recoveryRepositoryProvider).setFeeling(_date, _feeling);
-      await ref.read(recoveryRepositoryProvider).setReadinessAnswers(_date, muscleSoreness: _muscle, ill: _ill);
-      if (_sleep != null) await ref.read(sleepRepositoryProvider).set(_date, _sleep!);
+      await ref
+          .read(recoveryRepositoryProvider)
+          .setKneeStairs(_date, _kneeStairs);
+      await ref
+          .read(recoveryRepositoryProvider)
+          .setReadinessAnswers(_date, muscleSoreness: _muscle, ill: _ill);
+      if (_sleep != null) {
+        await ref.read(sleepRepositoryProvider).set(_date, _sleep!);
+      }
       await ref.read(recoveryRepositoryProvider).setSoreness(_date, _sore);
     }, ok: 'Registro de la mañana guardado');
     if (!ok || !mounted) return;
@@ -129,10 +144,19 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                       },
                     ),
                     const SizedBox(height: 8),
-                    NumberField(controller: _kg, label: 'Peso en ayunas', suffix: 'kg', decimal: true),
+                    NumberField(
+                        controller: _kg,
+                        label: 'Peso en ayunas',
+                        suffix: 'kg',
+                        decimal: true),
                     const SizedBox(height: 8),
-                    NumberField(controller: _hr, label: 'Pulso en reposo al despertar', suffix: 'lpm'),
-                    Text('Acostado, antes de levantarte: cuenta 60 s o usa el reloj.', style: text.bodySmall),
+                    NumberField(
+                        controller: _hr,
+                        label: 'Pulso en reposo al despertar',
+                        suffix: 'lpm'),
+                    Text(
+                        'Acostado, antes de levantarte: cuenta 60 s o usa el reloj.',
+                        style: text.bodySmall),
                   ],
                 ),
                 AppCard(
@@ -141,15 +165,21 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                     Wrap(
                       spacing: 6,
                       children: [
-                        for (final (v, label) in const [(1, 'Descansado'), (2, 'Normal'), (3, 'Cansado')])
+                        for (final (v, label) in const [
+                          (1, 'Descansado'),
+                          (2, 'Normal'),
+                          (3, 'Cansado')
+                        ])
                           ChoiceChip(
                             label: Text(label),
                             selected: _feeling == v,
-                            onSelected: (_) => setState(() => _feeling = _feeling == v ? null : v),
+                            onSelected: (_) => setState(
+                                () => _feeling = _feeling == v ? null : v),
                           ),
                       ],
                     ),
-                    Text('"Cansado" pone la recuperación primero en Hoy. Sin respuesta no se toma como descanso.',
+                    Text(
+                        '"Cansado" pone la recuperación primero en Hoy. Sin respuesta no se toma como descanso.',
                         style: text.bodySmall),
                   ],
                 ),
@@ -164,15 +194,21 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                           ChoiceChip(
                             label: Text(fmtDec(h)),
                             selected: _sleep == h,
-                            onSelected: (_) => setState(() => _sleep = _sleep == h ? null : h),
+                            onSelected: (_) =>
+                                setState(() => _sleep = _sleep == h ? null : h),
                           ),
                         // Lo que no es un botón (10 h 11 min) se escribe y se ve aquí.
                         ChoiceChip(
-                          label: Text(_sleep != null && !isSleepOption(_sleep) ? 'Otro: ${formatSleepHours(_sleep!)}' : 'Otro'),
+                          label: Text(_sleep != null && !isSleepOption(_sleep)
+                              ? 'Otro: ${formatSleepHours(_sleep!)}'
+                              : 'Otro'),
                           selected: _sleep != null && !isSleepOption(_sleep),
                           onSelected: (_) async {
-                            final hours = await askSleepHours(context, initial: isSleepOption(_sleep) ? null : _sleep);
-                            if (hours != null && mounted) setState(() => _sleep = hours);
+                            final hours = await askSleepHours(context,
+                                initial: isSleepOption(_sleep) ? null : _sleep);
+                            if (hours != null && mounted) {
+                              setState(() => _sleep = hours);
+                            }
                           },
                         ),
                       ],
@@ -190,27 +226,51 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                             max: 10,
                             divisions: 10,
                             label: '$_muscle',
-                            onChanged: (v) => setState(() => _muscle = v.round()),
+                            onChanged: (v) =>
+                                setState(() => _muscle = v.round()),
                           ),
                         ),
-                        SizedBox(width: 24, child: Text('$_muscle', textAlign: TextAlign.end)),
+                        SizedBox(
+                            width: 24,
+                            child: Text('$_muscle', textAlign: TextAlign.end)),
                       ],
                     ),
-                    Text('Agujetas o cansancio en los músculos, de 0 a 10. Con 6 o más, Hoy propone recuperación activa.',
+                    Text(
+                        'Agujetas o cansancio en los músculos, de 0 a 10. Con 6 o más, Hoy propone recuperación activa.',
                         style: text.bodySmall),
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Enfermo, con fiebre o con dolor agudo'),
+                      title:
+                          const Text('Enfermo, con fiebre o con dolor agudo'),
                       subtitle: const Text('Hoy queda en solo descanso.'),
                       value: _ill,
                       onChanged: (v) => setState(() => _ill = v),
                     ),
                   ],
                 ),
+                AppCard(title: 'Rodilla en escaleras al despertar', children: [
+                  DropdownButtonFormField<int>(
+                      value: _kneeStairs,
+                      decoration: const InputDecoration(
+                          labelText: '0 = nada · sin dato es desconocido'),
+                      items: [
+                        const DropdownMenuItem<int>(
+                            value: null, child: Text('Sin dato')),
+                        for (var value = 0; value <= 10; value++)
+                          DropdownMenuItem(
+                              value: value, child: Text('$value / 10'))
+                      ],
+                      onChanged: (v) => setState(() => _kneeStairs = v)),
+                  const Text(
+                      '0–2: normal; 3–4: sin saltos ni sprint; ≥5: isométricos si no se indicó descanso. '
+                      'Tres días seguidos ≥3: aplaza piernas o test.'),
+                ]),
                 AppCard(
                   title: 'Molestias (0 = nada · 10 = no puedo)',
                   children: [
-                    Text('En escaleras o al caminar. Si una no baja en 3 días, Hoy avisa.', style: text.bodySmall),
+                    Text(
+                        'En escaleras o al caminar. Si una no baja en 3 días, Hoy avisa.',
+                        style: text.bodySmall),
                     for (final zone in sorenessZones)
                       Row(
                         children: [
@@ -221,10 +281,14 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                               max: 10,
                               divisions: 10,
                               label: '${_sore[zone] ?? 0}',
-                              onChanged: (v) => setState(() => _sore[zone] = v.round()),
+                              onChanged: (v) =>
+                                  setState(() => _sore[zone] = v.round()),
                             ),
                           ),
-                          SizedBox(width: 24, child: Text('${_sore[zone] ?? 0}', textAlign: TextAlign.end)),
+                          SizedBox(
+                              width: 24,
+                              child: Text('${_sore[zone] ?? 0}',
+                                  textAlign: TextAlign.end)),
                         ],
                       ),
                   ],

@@ -1,0 +1,19 @@
+Formatted lib/data/plan_v32_template.dart
+Formatted lib/data/repositories/training_repository.dart
+Formatted lib/domain/plan_v32.dart
+Formatted lib/domain/progress_metrics.dart
+Formatted lib/domain/test_attempt_evidence.dart
+Formatted lib/features/body/test_results_screen.dart
+Formatted lib/features/training/technique_sheet.dart
+Formatted lib/features/training/test_mode_screen.dart
+Formatted lib/ui/exercise_figure_3d_view.dart
+Formatted lib/ui/exercise_figure_3d.dart
+Formatted test/data/plan034_attempt_cycle_test.dart
+Formatted test/data/plan034_maintenance_data_test.dart
+Formatted test/domain/plan034_attempt_evidence_test.dart
+Formatted test/domain/plan034_benchmarks_knee_test.dart
+Formatted test/domain/plan034_prescription_test.dart
+Formatted test/domain/plan034_template_test.dart
+Formatted test/ui/illustration_physical_variant_test.dart
+Formatted 49 files (17 changed) in 1.06 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T182649221-55432-f5b47a36bb8b4381bfcc32c1c490228b.json

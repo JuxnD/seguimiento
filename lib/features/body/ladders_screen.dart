@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../domain/core_ladders.dart';
 import '../../domain/dates.dart';
+import '../../data/local_flags.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets.dart';
 
@@ -12,22 +13,29 @@ import '../../ui/widgets.dart';
 class LaddersScreen extends ConsumerWidget {
   const LaddersScreen({super.key});
 
-  Future<void> _change(BuildContext context, WidgetRef ref, CoreLadder ladder, int current) async {
+  Future<void> _change(BuildContext context, WidgetRef ref, CoreLadder ladder,
+      int current) async {
     final picked = await showDialog<int>(
       context: context,
       builder: (c) => SimpleDialog(
         title: Text('Escalera del ${ladder.name}'),
         children: [
-          for (final s in ladder.steps)
+          for (final s in ladder.steps.where((s) =>
+              s.physicalVariantKey != 'support_rings' ||
+              ref.read(localFlagsProvider).get<bool>(FlagKeys.hasRings) ==
+                  true))
             SimpleDialogOption(
               onPressed: () => Navigator.pop(c, s.step),
-              child: Text('${s.step}. ${s.exercise}${s.step == current ? ' (actual)' : ''}'),
+              child: Text(
+                  '${s.step}. ${s.exercise}${s.step == current ? ' (actual)' : ''}'),
             ),
         ],
       ),
     );
     if (picked == null || picked == current) return;
-    await ref.read(ladderRepositoryProvider).setStep(ladder, picked, ref.read(todayProvider));
+    await ref
+        .read(ladderRepositoryProvider)
+        .setStep(ladder, picked, ref.read(todayProvider));
     ref.invalidate(ladderAdviceProvider);
     ref.invalidate(dashboardProvider);
   }
@@ -54,18 +62,25 @@ class LaddersScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            for (final l in coreLadders)
+            for (final l in allLadders)
               if (byId[l.id] case final a?)
                 AppCard(
                   title: '${l.name} · ${weekdayLong(l.weekday).toLowerCase()}',
-                  trailing: TextButton(onPressed: () => _change(context, ref, l, a.step.step), child: const Text('Cambiar')),
+                  trailing: TextButton(
+                      onPressed: () => _change(context, ref, l, a.step.step),
+                      child: const Text('Cambiar')),
                   children: [
-                    Text('Peldaño ${a.step.step} de ${l.top}: ${a.step.exercise}', style: text.titleSmall),
+                    Text(
+                        'Peldaño ${a.step.step} de ${l.top}: ${a.step.exercise}',
+                        style: text.titleSmall),
                     Text(a.step.prescription, style: text.bodySmall),
                     const SizedBox(height: 6),
-                    if (a.step.goals.isNotEmpty) Text('Para subir: ${a.step.criterion}', style: text.bodyMedium),
+                    if (a.step.goals.isNotEmpty)
+                      Text('Para subir: ${a.step.criterion}',
+                          style: text.bodyMedium),
                     Text(a.status,
-                        style: text.bodySmall?.copyWith(color: a.canStepUp ? AppColors.record : null)),
+                        style: text.bodySmall?.copyWith(
+                            color: a.canStepUp ? AppColors.record : null)),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
@@ -75,25 +90,37 @@ class LaddersScreen extends ConsumerWidget {
                           FilledButton.tonal(
                             onPressed: () async {
                               // La misma decisión que en Hoy: acepta y sube a la vez (plan 009).
-                              await ref.read(ladderRepositoryProvider).acceptStepUp(l, ref.read(todayProvider));
+                              await ref
+                                  .read(ladderRepositoryProvider)
+                                  .acceptStepUp(
+                                      l, ref.read(todayProvider),
+                                      ringsAvailable: ref
+                                              .read(localFlagsProvider)
+                                              .get<bool>(FlagKeys.hasRings) ==
+                                          true);
                               ref.invalidate(ladderDecisionsProvider);
                               ref.invalidate(ladderAdviceProvider);
                               ref.invalidate(dashboardProvider);
                             },
-                            child: Text('Subir a ${l.stepAt(a.step.step + 1).exercise}'),
+                            child: Text(
+                                'Subir a ${l.stepAt(a.step.step + 1).exercise}'),
                           ),
-                        OutlinedButton.icon(
-                          onPressed: () async {
-                            final step = await ref.read(ladderRepositoryProvider).lumbar(l, ref.read(todayProvider));
-                            ref.invalidate(ladderAdviceProvider);
-                            ref.invalidate(dashboardProvider);
-                            if (context.mounted) {
-                              showSnack(context, '${l.name}: peldaño $step, ${l.stepAt(step).exercise}.');
-                            }
-                          },
-                          icon: const Icon(Icons.healing_outlined),
-                          label: const Text('Molestia lumbar'),
-                        ),
+                        if (!l.accessory)
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              final step = await ref
+                                  .read(ladderRepositoryProvider)
+                                  .lumbar(l, ref.read(todayProvider));
+                              ref.invalidate(ladderAdviceProvider);
+                              ref.invalidate(dashboardProvider);
+                              if (context.mounted) {
+                                showSnack(context,
+                                    '${l.name}: peldaño $step, ${l.stepAt(step).exercise}.');
+                              }
+                            },
+                            icon: const Icon(Icons.healing_outlined),
+                            label: const Text('Molestia lumbar'),
+                          ),
                       ],
                     ),
                     const Divider(height: 20),
@@ -110,11 +137,15 @@ class LaddersScreen extends ConsumerWidget {
                                       ? Icons.radio_button_checked
                                       : Icons.radio_button_unchecked,
                               size: 18,
-                              color: s.step <= a.step.step ? AppColors.record : null,
+                              color: s.step <= a.step.step
+                                  ? AppColors.record
+                                  : null,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: Text('${s.step}. ${s.exercise} · ${s.prescription}', style: text.bodySmall),
+                              child: Text(
+                                  '${s.step}. ${s.exercise} · ${s.prescription}',
+                                  style: text.bodySmall),
                             ),
                           ],
                         ),

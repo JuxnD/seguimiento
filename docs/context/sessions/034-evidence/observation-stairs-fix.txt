@@ -1,0 +1,8 @@
+Computing fixes in lib...
+Applying fixes...
+
+domain\readiness.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+1 fix made in 1 file.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T202334436-39104-92d82140a7fd4f94952bc15e6f3e96fd.json

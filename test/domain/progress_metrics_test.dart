@@ -8,14 +8,14 @@ import 'package:seguimiento/features/training/v3_timers.dart' as timer;
 
 void main() {
   test('una sola fecha apta no demuestra un cambio entre fechas', () {
-    final single = buildPersonalRadar(
-        tests: [TestResult(round: 1, item: 'pullup', value: 8, date: radarDay)],
-        asOf: radarDay);
+    final single = buildPersonalRadar(tests: [
+      knownRadarTest(round: 1, item: 'pullup', value: 8, date: radarDay)
+    ], asOf: radarDay);
     expect(single.axis(RadarAxis.pull).current?.value, 8);
     expect(single.axis(RadarAxis.pull).changePercent, isNull);
     final sameDay = buildPersonalRadar(tests: [
-      TestResult(round: 1, item: 'pullup', value: 5, date: radarDay),
-      TestResult(round: 2, item: 'pullup', value: 8, date: radarDay)
+      knownRadarTest(round: 1, item: 'pullup', value: 5, date: radarDay),
+      knownRadarTest(round: 2, item: 'pullup', value: 8, date: radarDay)
     ], asOf: radarDay);
     expect(sameDay.axis(RadarAxis.pull).changePercent, isNull);
   });
@@ -160,7 +160,7 @@ void main() {
       () {
     for (final value in [-1.0, 1.5, double.nan, double.infinity]) {
       final radar = buildPersonalRadar(tests: [
-        TestResult(round: 1, item: 'pullup', value: value, date: radarDay)
+        knownRadarTest(round: 1, item: 'pullup', value: value, date: radarDay)
       ], asOf: radarDay);
       expect(radar.axis(RadarAxis.pull).current, isNull);
       expect(
@@ -169,13 +169,13 @@ void main() {
     }
     final radar = buildPersonalRadar(tests: [
       const TestResult(round: 1, item: 'pullup', value: 3),
-      TestResult(
+      knownRadarTest(
           round: 1,
           item: 'bulgarian_split_squat',
           side: 'I',
           value: 20,
           date: DateTime(2026, 10, 1)),
-      TestResult(
+      knownRadarTest(
           round: 1,
           item: 'bulgarian_split_squat',
           side: 'D',
@@ -235,18 +235,17 @@ void main() {
       expect(axis.observations.single.cindy, same(row));
     }
     final missing = buildPersonalRadar(tests: [], asOf: radarDay);
-    final zero = buildPersonalRadar(
-        tests: [TestResult(round: 1, item: 'pullup', value: 0, date: radarDay)],
-        references: radarReferences(),
-        asOf: radarDay);
+    final zero = buildPersonalRadar(tests: [
+      knownRadarTest(round: 1, item: 'pullup', value: 0, date: radarDay)
+    ], references: radarReferences(), asOf: radarDay);
     expect(missing.axis(RadarAxis.pull).current, isNull);
     expect(zero.axis(RadarAxis.pull).currentPercent, 0);
   });
   test('primera/última apta por fecha, no mayor T ni máximo', () {
     final radar = buildPersonalRadar(tests: [
-      TestResult(
+      knownRadarTest(
           round: 3, item: 'pullup', value: 10, date: DateTime(2026, 10, 1)),
-      TestResult(
+      knownRadarTest(
           round: 1, item: 'pullup', value: 8, date: DateTime(2026, 10, 9))
     ], asOf: radarDay);
     expect(radar.axis(RadarAxis.pull).firstEligible?.value, 10);
@@ -255,13 +254,13 @@ void main() {
   test('bilateral parcial/dudoso posterior y futuro no reemplazan apta', () {
     final radar = buildPersonalRadar(tests: [
       ...radarTests(),
-      TestResult(
+      knownRadarTest(
           round: 3,
           item: 'bulgarian_split_squat',
           side: 'I',
           value: 30,
           date: radarDay),
-      TestResult(
+      knownRadarTest(
           round: 3,
           item: 'pullup',
           value: 99,
@@ -276,9 +275,9 @@ void main() {
   });
   test('misma referencia ambos perfiles, >100 crudo y cero observado', () {
     final radar = buildPersonalRadar(tests: [
-      TestResult(
+      knownRadarTest(
           round: 1, item: 'pullup', value: 0, date: DateTime(2026, 10, 1)),
-      TestResult(
+      knownRadarTest(
           round: 2, item: 'pullup', value: 12, date: DateTime(2026, 10, 9))
     ], references: radarReferences(), asOf: radarDay);
     final pull = radar.axis(RadarAxis.pull);

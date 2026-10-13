@@ -1,0 +1,39 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_readiness_stairs_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: explicit stairs zero is known independently of generic knee soreness
+00:00 +0 -1: explicit stairs zero is known independently of generic knee soreness [E]
+  Expected: not contains 'Escaleras: sin dato'
+    Actual: [
+              'Sueño: sin dato',
+              'Pulso: sin dato',
+              'Escaleras: sin dato',
+              'Dolor muscular: sin dato'
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan034_readiness_stairs_test.dart 18:5   main.<fn>
+  
+00:00 +0 -1: generic knee pain preserves severity with own source; it never fills stairs
+00:00 +0 -2: generic knee pain preserves severity with own source; it never fills stairs [E]
+  Expected: contains 'Dolor anotado en Rodilla 5/10'
+    Actual: ['Rodilla en escaleras 5/10']
+     Which: does not contain 'Dolor anotado en Rodilla 5/10'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan034_readiness_stairs_test.dart 32:5   main.<fn>
+  
+00:00 +0 -2: missing stairs remains unknown even when generic knee pain was recorded
+00:00 +0 -3: missing stairs remains unknown even when generic knee pain was recorded [E]
+  Expected: contains 'Escaleras: sin dato'
+    Actual: ['Sueño: sin dato', 'Pulso: sin dato', 'Dolor muscular: sin dato']
+     Which: does not contain 'Escaleras: sin dato'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan034_readiness_stairs_test.dart 44:5   main.<fn>
+  
+00:00 +0 -3: (tearDownAll)
+00:00 +0 -3: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T200353512-20172-6ee98ef2c03d450baf9f11b2d94f2843.json

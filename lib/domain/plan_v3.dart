@@ -5,6 +5,7 @@
 library;
 
 import 'dates.dart';
+import 'plan_v32.dart';
 
 /// Marca de las versiones del plan que siguen esta periodización.
 const v3Scheme = 'v3';
@@ -28,11 +29,15 @@ extension V3PhaseLabel on V3Phase {
 
   /// Qué significa la fase, en una línea para Hoy.
   String get hint => switch (this) {
-        V3Phase.acumulacion => 'Aprender los patrones nuevos. RIR 2–3 la primera semana, luego 1–2.',
-        V3Phase.descarga => 'Volumen −40 %: una serie menos por ejercicio y sin lastre.',
+        V3Phase.acumulacion =>
+          'Aprender los patrones nuevos. RIR 2–3 la primera semana, luego 1–2.',
+        V3Phase.descarga =>
+          'Volumen −40 %: una serie menos por ejercicio y sin lastre.',
         V3Phase.intensificacion => 'Lastre y variantes difíciles. RIR 1–2.',
-        V3Phase.pico => 'Semana normal; la última baja el volumen hasta el miércoles y cierra con el test.',
-        V3Phase.bloque1 => 'Series cerca del fallo (RIR 1–2) con doble progresión.',
+        V3Phase.pico =>
+          'Semana normal; la última baja el volumen hasta el miércoles y cierra con el test.',
+        V3Phase.bloque1 =>
+          'Series cerca del fallo (RIR 1–2) con doble progresión.',
         V3Phase.bloque2 => 'Lastre y variantes difíciles. RIR 1–2.',
       };
 }
@@ -64,7 +69,9 @@ V3Phase v3Phase(int week) => switch (week) {
 /// Una serie menos y sin lastre: semanas 4 y 8 enteras, y la 10 de lunes a
 /// miércoles (−30 % antes del test).
 bool v3ReducedVolume(int week, int weekday) =>
-    week == 4 || week == 8 || (week == v3Weeks && weekday <= DateTime.wednesday);
+    week == 4 ||
+    week == 8 ||
+    (week == v3Weeks && weekday <= DateTime.wednesday);
 
 /// Cindy las semanas impares, Tabata las pares. Las de control cambian: la 4
 /// es el test de Cindy y la 8 las 10 rondas por tiempo; la 10 cierra con
@@ -86,7 +93,8 @@ ResistanceMode v3Resistance(int week) => switch (week) {
     };
 
 /// Viernes de la semana 10: el test final (18 dic si se empieza el 12 oct).
-DateTime v3TestDate(DateTime start) => addDays(dateOnly(start), (v3Weeks - 1) * 7 + 4);
+DateTime v3TestDate(DateTime start) =>
+    addDays(dateOnly(start), (v3Weeks - 1) * 7 + 4);
 
 /// Viernes de medición en ayunas: semanas 4 y 8 (6 nov y 4 dic).
 List<DateTime> v3MeasurementDates(DateTime start) =>
@@ -116,7 +124,8 @@ const v31Scheme = 'v3.1';
 const v31Weeks = 9;
 
 /// Versiones con periodización por semanas (v3 o v3.1).
-bool isBlockScheme(String? scheme) => scheme == v3Scheme || scheme == v31Scheme;
+bool isBlockScheme(String? scheme) =>
+    scheme == v3Scheme || scheme == v31Scheme || scheme == v32Scheme;
 
 V3Phase v31Phase(int week) => switch (week) {
       <= 5 => V3Phase.bloque1,
@@ -129,12 +138,15 @@ V3Phase v31Phase(int week) => switch (week) {
 bool v31ReducedVolume(int week) => week == 6;
 
 /// Viernes de pruebas: Cindy, máximo de dominadas estrictas y L-sit máximo.
-DateTime v31TestDate(DateTime start) => addDays(dateOnly(start), (v31Weeks - 1) * 7 + 4);
+DateTime v31TestDate(DateTime start) =>
+    addDays(dateOnly(start), (v31Weeks - 1) * 7 + 4);
 
 /// Sábados de medición en ayunas: abdomen cada 2 semanas (17 oct, 31 oct,
 /// 14 nov, 28 nov y 12 dic) y medidas completas el 14 nov y el 12 dic (§19.4).
-List<DateTime> v31MeasurementDates(DateTime start) =>
-    [for (final week in [1, 3, 5, 7, 9]) addDays(dateOnly(start), (week - 1) * 7 + 5)];
+List<DateTime> v31MeasurementDates(DateTime start) => [
+      for (final week in [1, 3, 5, 7, 9])
+        addDays(dateOnly(start), (week - 1) * 7 + 5)
+    ];
 
 /// Las dos mediciones completas (las demás son solo abdomen).
 List<DateTime> v31FullMeasurementDates(DateTime start) =>
@@ -160,7 +172,9 @@ DateTime? v31NextMeasurement(DateTime start, DateTime today) {
   DateTime? cleanTen,
 }) {
   final day = dateOnly(date);
-  if (day == dateOnly(testDate)) return (mode: ResistanceMode.cindy, cindyTest: true);
+  if (day == dateOnly(testDate)) {
+    return (mode: ResistanceMode.cindy, cindyTest: true);
+  }
   if (cleanTen == null) return null;
   final first = nextWeekday(addDays(dateOnly(cleanTen), 1), DateTime.friday);
   if (day.isBefore(first)) return null;
@@ -200,15 +214,24 @@ class V3Day {
   /// EMOM de burpees del viernes (solo v3): (minutos, burpees por minuto).
   final (int, int)? burpees;
 
-  bool get isV31 => scheme == v31Scheme;
+  bool get isV31 => scheme == v31Scheme || scheme == v32Scheme;
+  bool get isV32 => scheme == v32Scheme;
   int get totalWeeks => isV31 ? v31Weeks : v3Weeks;
-  String get title => isV31 ? 'Plan v3.1' : 'Cierre de año';
+  String get title => isV32
+      ? 'Plan v3.2'
+      : isV31
+          ? 'Plan v3.1'
+          : 'Cierre de año';
 
   /// Qué pide la semana, en una línea.
   String get hint {
     if (!isV31) return phase.hint;
-    if (phase == V3Phase.descarga) return 'Descarga: mitad de series, misma intensidad, sin lastre extra.';
-    if (week == 1) return 'Semana 1: RIR 2–3 para aprender los patrones nuevos.';
+    if (phase == V3Phase.descarga) {
+      return 'Descarga: mitad de series, misma intensidad, sin lastre extra.';
+    }
+    if (week == 1) {
+      return 'Semana 1: RIR 2–3 para aprender los patrones nuevos.';
+    }
     return phase.hint;
   }
 
@@ -222,13 +245,17 @@ class V3Day {
 
 /// `cleanTen`: fecha de la primera progresión de 10 rondas limpias; decide el
 /// viernes del v3.1.
-V3Day? v3Day(DateTime start, DateTime date, {String scheme = v3Scheme, DateTime? cleanTen}) {
+V3Day? v3Day(DateTime start, DateTime date,
+    {String scheme = v3Scheme, DateTime? cleanTen}) {
   final week = v3WeekIndex(start, date);
   if (week == null) return null;
-  if (scheme == v31Scheme) {
+  if (scheme == v31Scheme || scheme == v32Scheme) {
     final testDate = v31TestDate(start);
-    final friday =
-        date.weekday == DateTime.friday ? v31Friday(date: date, testDate: testDate, cleanTen: cleanTen) : null;
+    final friday = scheme == v32Scheme
+        ? null
+        : date.weekday == DateTime.friday
+            ? v31Friday(date: date, testDate: testDate, cleanTen: cleanTen)
+            : null;
     return V3Day(
       scheme: scheme,
       week: week,

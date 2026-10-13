@@ -15,7 +15,8 @@ import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/recovery.dart' show planBTorso;
 import '../../domain/session_math.dart';
-import '../../domain/session_script.dart' show preBlocks, tabataBlock, warmupBlock;
+import '../../domain/session_script.dart'
+    show preBlocks, tabataBlock, warmupBlock;
 import '../../domain/technique_session.dart';
 import '../../ui/hero.dart';
 import '../../ui/session_style.dart';
@@ -39,7 +40,8 @@ import '../../domain/adaptive_coach.dart';
 /// libre, que no inventa rondas.
 /// `light`: true arranca con la versión ligera marcada (botón de Hoy); null
 /// la sugiere si el día anterior hubo un partido intenso o con golpe.
-Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? date, bool? light}) async {
+Future<void> startGuidedSession(BuildContext context, WidgetRef ref,
+    {DateTime? date, bool? light}) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
   final day = date ?? dateOnly(DateTime.now());
@@ -54,12 +56,18 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
         content: const Text('No hay ejercicios planificados para este día. '
             'Puedes usar el cronómetro libre y registrar la sesión a mano.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Cronómetro libre')),
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Cancelar')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: const Text('Cronómetro libre')),
         ],
       ),
     );
-    if (libre == true && context.mounted) await startFreeCounter(context, ref, date: day);
+    if (libre == true && context.mounted) {
+      await startFreeCounter(context, ref, date: day);
+    }
     return;
   }
 
@@ -70,10 +78,15 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
       context: context,
       builder: (c) => AlertDialog(
         title: Text('Hoy toca ${planDay.type.label.toLowerCase()}'),
-        content: const Text('Si entrenas igual, la sesión queda marcada como fuera de plan.'),
+        content: const Text(
+            'Si entrenas igual, la sesión queda marcada como fuera de plan.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Entrenar igual')),
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Cancelar')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: const Text('Entrenar igual')),
         ],
       ),
     );
@@ -87,35 +100,91 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   // §19.4). El viernes del v3.1 pasa a Cindy o Tabata tras 10 limpias.
   final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, day);
   if (!context.mounted) return;
-  if (planDay.type == DayType.resistencia || (v3 != null && v3.isV31 && v3.resistance != null)) {
-    await _startResistance(context, ref, day, view, v3?.resistance ?? ResistanceMode.cindy,
+  final (deloaded, note) = _v3Adjust(planDay, v3);
+  final adjusted = await ref.read(trainingRepositoryProvider).withV31Blocks(
+      deloaded, day, v3,
+      planche:
+          ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) ==
+              true,
+      rings: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasRings) == true);
+  if (!context.mounted) return;
+
+  if (adjusted.type == DayType.descanso) {
+    await showDialog<void>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('Hoy corresponde descansar'),
+        content: Text(adjusted.notes ?? 'El plan de hoy indica descanso.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(c), child: const Text('Entendido'))
+        ],
+      ),
+    );
+    return;
+  }
+  if (adjusted.type == DayType.resistencia ||
+      (v3 != null && v3.isV31 && v3.resistance != null)) {
+    await _startResistance(
+        context, ref, day, view, v3?.resistance ?? ResistanceMode.cindy,
         cindyTest: v3?.cindyTest ?? false);
     return;
   }
-  final (deloaded, note) = _v3Adjust(planDay, v3);
-  final adjusted = await ref.read(trainingRepositoryProvider).withV31Blocks(deloaded, day, v3,
-      planche: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
-  if (!context.mounted) return;
 
   // Antes de arrancar: rondas objetivo y, si el bloque alterna, qué variante.
-  final variants = adjusted.exercises.map((e) => e.variant).whereType<String>().toSet().toList()..sort();
+  if (adjusted.notes
+          ?.contains('Support en anillas no incluido: equipo no confirmado.') ==
+      true) {
+    final continueWithout = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+                title: const Text('Support en anillas pendiente de equipo'),
+                content: const Text(
+                    'Tu nivel3 se conserva. Esta sesión no incluye support porque las anillas no están confirmadas. Puedes revisar el equipo en Plan antes de empezar.'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(c, false),
+                      child: const Text('Volver y revisar Plan')),
+                  FilledButton(
+                      onPressed: () => Navigator.pop(c, true),
+                      child: const Text('Empezar sin ese bloque'))
+                ]));
+    if (!context.mounted) return;
+    if (continueWithout == false) {
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (_) => const PlanScreen()));
+      return;
+    }
+    if (continueWithout != true) return;
+  }
+  final variants = adjusted.exercises
+      .map((e) => e.variant)
+      .whereType<String>()
+      .toSet()
+      .toList()
+    ..sort();
   // El día de progresión propone la meta según la regla; no la sube solo.
-  var proposal =
-      planDay.type == DayType.progresion ? await ref.read(trainingRepositoryProvider).progressionProposal(day) : null;
+  var proposal = planDay.type == DayType.progresion && v3?.isV32 != true
+      ? await ref.read(trainingRepositoryProvider).progressionProposal(day)
+      : null;
   // Lo decidido en Hoy sobre esta misma propuesta (plan 009): "hoy no" o
   // "mantener" dejan las rondas de la última vez.
   String? roundsId;
   if (proposal != null && proposal.canProgress && proposal.sessionId != null) {
-    roundsId =
-        roundsProposalId(fromRounds: proposal.lastRounds, toRounds: proposal.rounds, sessionId: proposal.sessionId!);
-    final decided = await GoalRepository(ref.read(databaseProvider)).proposal(roundsId);
+    roundsId = roundsProposalId(
+        fromRounds: proposal.lastRounds,
+        toRounds: proposal.rounds,
+        sessionId: proposal.sessionId!);
+    final decided =
+        await GoalRepository(ref.read(databaseProvider)).proposal(roundsId);
     if (proposalHidden(decided, day)) {
       proposal = heldProposal(proposal, decided!.status);
       roundsId = null;
     }
   }
   if (!context.mounted) return;
-  final suggestLight = light ?? await ref.read(dashboardRepositoryProvider).hardGameBefore(day);
+  final suggestLight =
+      light ?? await ref.read(dashboardRepositoryProvider).hardGameBefore(day);
   if (!context.mounted) return;
   final setup = await showDialog<_SessionSetup>(
     context: context,
@@ -131,8 +200,9 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref, {DateTime? 
   // Empezar con las rondas que propuso la regla es aceptarlas (confirmación
   // existente del diálogo; plan 009 la registra).
   if (roundsId != null && proposal != null && setup.rounds == proposal.rounds) {
-    await GoalRepository(ref.read(databaseProvider))
-        .decideProposal(roundsId, 'rondas', ProposalStatus.aceptada, today: day);
+    await GoalRepository(ref.read(databaseProvider)).decideProposal(
+        roundsId, 'rondas', ProposalStatus.aceptada,
+        today: day);
   }
   if (!context.mounted) return;
 
@@ -179,7 +249,8 @@ Future<void> startPlanB(BuildContext context, WidgetRef ref) async {
       ),
       date: day,
       sessionType: SessionType.trenSuperior,
-      note: 'Plan B (solo torso): carga alta o molestia en la pierna; piernas hasta 48 h después',
+      note:
+          'Plan B (solo torso): carga alta o molestia en la pierna; piernas hasta 48 h después',
     ),
   );
 }
@@ -190,7 +261,8 @@ PlanDayDraft techniqueDayDraft(DateTime day) => PlanDayDraft(
       type: DayType.trenSuperior,
       notes: techniqueNote,
       exercises: [
-        for (final (name, sets, reps, hold, rest, perSide, grip, block) in techniqueTemplate)
+        for (final (name, sets, reps, hold, rest, perSide, grip, block)
+            in techniqueTemplate)
           PlanExerciseDraft(
             name: name,
             sets: sets,
@@ -235,19 +307,25 @@ Future<void> startTechniqueSession(BuildContext context, WidgetRef ref) async {
 
 /// Miércoles de resistencia del v3: Cindy, Tabata o 10 rondas por tiempo.
 /// Se propone lo de la semana y se puede cambiar.
-Future<void> _startResistance(
-    BuildContext context, WidgetRef ref, DateTime day, PlanDayView view, ResistanceMode suggested,
+Future<void> _startResistance(BuildContext context, WidgetRef ref, DateTime day,
+    PlanDayView view, ResistanceMode suggested,
     {bool cindyTest = false}) async {
   final mode = await showDialog<ResistanceMode>(
     context: context,
     builder: (c) => SimpleDialog(
       title: const Text('Resistencia'),
       children: [
-        for (final m in [suggested, ...ResistanceMode.values.where((m) => m != suggested)])
+        for (final m in [
+          suggested,
+          ...ResistanceMode.values.where((m) => m != suggested)
+        ])
           SimpleDialogOption(
             onPressed: () => Navigator.pop(c, m),
-            child: Text(m == suggested ? '${m.label} · toca esta semana' : m.label,
-                style: m == suggested ? const TextStyle(fontWeight: FontWeight.w700) : null),
+            child: Text(
+                m == suggested ? '${m.label} · toca esta semana' : m.label,
+                style: m == suggested
+                    ? const TextStyle(fontWeight: FontWeight.w700)
+                    : null),
           ),
       ],
     ),
@@ -257,13 +335,17 @@ Future<void> _startResistance(
   // el navegador, el aviso y el repositorio se toman antes.
   switch (mode) {
     case ResistanceMode.cindy:
-      await _runTimer(context, ref, date: day, mode: 'cindy', cindyTest: cindyTest && mode == suggested);
+      await _runTimer(context, ref,
+          date: day, mode: 'cindy', cindyTest: cindyTest && mode == suggested);
     case ResistanceMode.tabata:
       final names = [
         for (final e in view.day.exercises)
           if (e.block == tabataBlock) e.name
       ];
-      await _runTimer(context, ref, date: day, mode: 'tabata', exercises: names.isEmpty ? tabataExercises : names);
+      await _runTimer(context, ref,
+          date: day,
+          mode: 'tabata',
+          exercises: names.isEmpty ? tabataExercises : names);
     case ResistanceMode.porTiempo:
       await _runGuided(
         context,
@@ -291,7 +373,10 @@ Future<void> _startResistance(
 Future<void> startCindyTest(BuildContext context, WidgetRef ref) async {
   final allowed = await _noPendingSession(context, ref);
   if (!context.mounted || !allowed) return;
-  await _runTimer(context, ref, date: dateOnly(ref.read(decisionClockProvider)()), mode: 'cindy', cindyTest: true);
+  await _runTimer(context, ref,
+      date: dateOnly(ref.read(decisionClockProvider)()),
+      mode: 'cindy',
+      cindyTest: true);
 }
 
 Future<void> _runTimer(
@@ -313,14 +398,19 @@ Future<void> _runTimer(
   void save(TimerSnapshot s) => unawaited(store.save(s));
   final draft = await nav.push<SessionDraft>(MaterialPageRoute(
     builder: (_) => mode == 'cindy'
-        ? AmrapScreen(date: date, resume: resume, onSnapshot: save, attempt: cindyTest)
-        : TabataScreen(date: date, exercises: exercises, resume: resume, onSnapshot: save),
+        ? AmrapScreen(
+            date: date, resume: resume, onSnapshot: save, attempt: cindyTest)
+        : TabataScreen(
+            date: date, exercises: exercises, resume: resume, onSnapshot: save),
   ));
   await _clearActive(container);
   if (draft == null) return;
   // Cindy de prueba (línea base o la de cada 4 semanas): queda anotado.
   if (cindyTest) {
-    draft.context = [if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(), 'Cindy de prueba'].join('. ');
+    draft.context = [
+      if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(),
+      'Cindy de prueba'
+    ].join('. ');
   }
   await _saveThenReview(nav, messenger, repo, draft);
 }
@@ -328,7 +418,10 @@ Future<void> _runTimer(
 /// Guarda primero (sin revisar) y luego abre el formulario: si se sale sin
 /// guardar, la sesión no se pierde (§16.9).
 Future<void> _saveThenReview(
-    NavigatorState nav, ScaffoldMessengerState messenger, TrainingRepository repo, SessionDraft draft) async {
+    NavigatorState nav,
+    ScaffoldMessengerState messenger,
+    TrainingRepository repo,
+    SessionDraft draft) async {
   draft.pendingReview = true;
   try {
     await repo.save(draft);
@@ -339,16 +432,20 @@ Future<void> _saveThenReview(
   final stored = await repo.load(draft.id!);
   if (!nav.mounted) return;
   final saved = await nav.push<bool>(
-    MaterialPageRoute(builder: (_) => SessionFormScreen(draft: stored, celebrate: false)),
+    MaterialPageRoute(
+        builder: (_) => SessionFormScreen(draft: stored, celebrate: false)),
   );
   if (saved != true) {
-    messenger.showSnackBar(const SnackBar(content: Text('Quedó guardada sin revisar: falta el RPE. Está en Hoy.')));
+    messenger.showSnackBar(const SnackBar(
+        content:
+            Text('Quedó guardada sin revisar: falta el RPE. Está en Hoy.')));
   }
 }
 
 /// EMOM de burpees del viernes (§18.10): se suma a la sesión de densidad del
 /// día (o crea una si no hay).
-Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day, int minutes, int reps) async {
+Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day,
+    int minutes, int reps) async {
   final messenger = ScaffoldMessenger.of(context);
   final repo = ref.read(trainingRepositoryProvider);
   final result = await Navigator.push<EmomResult>(
@@ -356,18 +453,26 @@ Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day,
     MaterialPageRoute(builder: (_) => EmomScreen(minutes: minutes, reps: reps)),
   );
   if (result == null) return;
-  final note = 'EMOM $minutes × $reps burpees: ${result.completeMinutes}/$minutes minutos completos';
+  final note =
+      'EMOM $minutes × $reps burpees: ${result.completeMinutes}/$minutes minutos completos';
   try {
     final existing = await repo.sessionsOn(day, SessionType.densidad);
     final draft = existing == null
-        ? SessionDraft(date: day, type: SessionType.densidad, pendingReview: true)
+        ? SessionDraft(
+            date: day, type: SessionType.densidad, pendingReview: true)
         : await repo.load(existing);
-    draft.sets.addAll([for (final r in result.perMinute) SetDraft(exercise: 'Burpees', reps: r)]);
-    draft.context = [if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(), note].join('. ');
+    draft.sets.addAll([
+      for (final r in result.perMinute) SetDraft(exercise: 'Burpees', reps: r)
+    ]);
+    draft.context = [
+      if ((draft.context ?? '').trim().isNotEmpty) draft.context!.trim(),
+      note
+    ].join('. ');
     await repo.save(draft);
     messenger.showSnackBar(SnackBar(content: Text(note)));
   } on Object catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text('No se pudo guardar el EMOM: $e')));
+    messenger.showSnackBar(
+        SnackBar(content: Text('No se pudo guardar el EMOM: $e')));
   }
 }
 
@@ -375,13 +480,15 @@ Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day,
 /// solo cuando se guarda o se descarta: si se sale del formulario sin
 /// guardar, la sesión terminada queda pendiente en Hoy (§16.9). Antes se
 /// borraba siempre y la sesión se perdía.
-Future<void> _runGuided(BuildContext context, GuidedSessionScreen screen) async {
+Future<void> _runGuided(
+    BuildContext context, GuidedSessionScreen screen) async {
   final container = ProviderScope.containerOf(context, listen: false);
   // La sesión se guarda sola al terminar y Hoy se recarga: el widget que
   // lanzó esto puede desmontarse. Navegador y aviso se toman antes.
   final nav = Navigator.of(context);
   final messenger = ScaffoldMessenger.of(context);
-  final draft = await nav.push<SessionDraft>(MaterialPageRoute(builder: (_) => screen));
+  final draft =
+      await nav.push<SessionDraft>(MaterialPageRoute(builder: (_) => screen));
   if (draft == null) {
     // Descartada desde el cronómetro.
     await _clearActive(container);
@@ -390,7 +497,8 @@ Future<void> _runGuided(BuildContext context, GuidedSessionScreen screen) async 
   if (!nav.mounted) return;
   // El cierre del cronómetro ya celebró: el formulario no lo repite.
   final saved = await nav.push<bool>(
-    MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: false)),
+    MaterialPageRoute(
+        builder: (_) => SessionFormScreen(draft: draft, celebrate: false)),
   );
   if (saved == true) {
     await _clearActive(container);
@@ -418,10 +526,15 @@ Future<bool> _noPendingSession(BuildContext context, WidgetRef ref) async {
     context: context,
     builder: (c) => AlertDialog(
       title: const Text('Hay una sesión sin terminar'),
-      content: Text('Empezó ${describeActiveSession(pending)}. Si empiezas otra, esa se descarta.'),
+      content: Text(
+          'Empezó ${describeActiveSession(pending)}. Si empiezas otra, esa se descarta.'),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Descartarla')),
-        FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Retomarla')),
+        TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: const Text('Descartarla')),
+        FilledButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: const Text('Retomarla')),
       ],
     ),
   );
@@ -441,7 +554,8 @@ String describeActiveSession(ActiveSession s) {
 }
 
 /// Retoma el cronómetro que Android cerró, en el punto exacto donde iba.
-Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSession session) async {
+Future<void> resumeActiveSession(
+    BuildContext context, WidgetRef ref, ActiveSession session) async {
   switch (session) {
     case final GuidedSnapshot s:
       // El guion congelado manda. Plan B, sesión técnica y sesiones de un plan
@@ -453,7 +567,8 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
           day = thawGuidedDay(s.effectiveDay!);
         } on Object {
           if (!context.mounted) return;
-          await _askAboutLostScript(context, 'El guion guardado de esa sesión no se puede leer.');
+          await _askAboutLostScript(
+              context, 'El guion guardado de esa sesión no se puede leer.');
           return;
         }
         // La restauración ya soltó el id (ActiveSessionStore.protectedRestore). Aquí solo se
@@ -461,14 +576,17 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         // plan, marcada como recuperada.
         int? linkId;
         if (s.planDayId >= 0) {
-          final view = await ref.read(planRepositoryProvider).dayById(s.planDayId);
+          final view =
+              await ref.read(planRepositoryProvider).dayById(s.planDayId);
           if (!context.mounted) return;
           if (view != null) linkId = s.planDayId;
         }
         final recovered = s.planDayId >= 0 && linkId == null;
         var note = s.note;
         if (recovered && !(note ?? '').contains(recoveredPlanNote)) {
-          note = note == null || note.isEmpty ? recoveredPlanNote : '$note. $recoveredPlanNote';
+          note = note == null || note.isEmpty
+              ? recoveredPlanNote
+              : '$note. $recoveredPlanNote';
         }
         if (!context.mounted) return;
         await _runGuided(
@@ -492,7 +610,9 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
       // plan, y tras restaurar puede ser de otro día. Solo se reconstruye solo
       // si lo ya hecho cabe en ese día; si no hay con qué comprobarlo, se
       // pregunta con lo que se sabe. Nunca se descarta en silencio.
-      final view = s.planDayId < 0 ? null : await ref.read(planRepositoryProvider).dayById(s.planDayId);
+      final view = s.planDayId < 0
+          ? null
+          : await ref.read(planRepositoryProvider).dayById(s.planDayId);
       if (!context.mounted) return;
       if (view == null) {
         await _askAboutLostScript(context,
@@ -500,7 +620,8 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         return;
       }
       final names = {for (final e in view.day.exercises) e.name};
-      final proven = s.done.isNotEmpty && s.done.every((d) => names.contains(d.exercise));
+      final proven =
+          s.done.isNotEmpty && s.done.every((d) => names.contains(d.exercise));
       if (!proven) {
         final choice = await _askAboutLostScript(
           context,
@@ -510,16 +631,23 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         );
         if (choice != _LostChoice.use || !context.mounted) return;
       }
-      final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, parseDay(s.date));
+      final v3 = await ref
+          .read(trainingRepositoryProvider)
+          .blockDay(view, parseDay(s.date));
       final (deloaded, note) = _v3Adjust(view.day, v3);
       // Legado1.20 no incluía escaleras. Añadirlas aquí desplazaría índices
       // de una sesión anterior. Las sesiones nuevas llevan día efectivo.
-      final adjusted = await ref.read(trainingRepositoryProvider).withPlanche(deloaded, parseDay(s.date), v3,
-          enabled: ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) == true);
+      final adjusted = await ref.read(trainingRepositoryProvider).withPlanche(
+          deloaded, parseDay(s.date), v3,
+          enabled:
+              ref.read(localFlagsProvider).get<bool>(FlagKeys.hasParallettes) ==
+                  true);
       if (!context.mounted) return;
       final effective = s.light ? lightVersion(adjusted) : adjusted;
       // Sin prueba de que sea el día de la sesión, se retoma pero no se vincula.
-      final legacyNote = proven ? note : (note == null ? recoveredPlanNote : '$note. $recoveredPlanNote');
+      final legacyNote = proven
+          ? note
+          : (note == null ? recoveredPlanNote : '$note. $recoveredPlanNote');
       await _runGuided(
         context,
         GuidedSessionScreen(
@@ -536,7 +664,8 @@ Future<void> resumeActiveSession(BuildContext context, WidgetRef ref, ActiveSess
         ),
       );
     case final CounterSnapshot s:
-      await _runCounter(context, date: parseDay(s.date), outOfPlan: s.outOfPlan, resume: s);
+      await _runCounter(context,
+          date: parseDay(s.date), outOfPlan: s.outOfPlan, resume: s);
     case final TimerSnapshot s:
       final date = parseDay(s.date);
       final v3 = await ref
@@ -556,18 +685,26 @@ enum _LostChoice { use, pending, discard }
 
 /// La sesión guardada no se puede rearmar con certeza. No se borra ni se
 /// reconstruye con otro día: queda pendiente salvo que se elija descartarla.
-Future<_LostChoice> _askAboutLostScript(BuildContext context, String reason, {bool canUse = false}) async {
+Future<_LostChoice> _askAboutLostScript(BuildContext context, String reason,
+    {bool canUse = false}) async {
   final container = ProviderScope.containerOf(context, listen: false);
   final choice = await showDialog<_LostChoice>(
     context: context,
     builder: (c) => AlertDialog(
       title: const Text('Sesión sin su guion'),
-      content: Text('$reason Sigue guardada: déjala pendiente o descártala para poder empezar otra.'),
+      content: Text(
+          '$reason Sigue guardada: déjala pendiente o descártala para poder empezar otra.'),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(c, _LostChoice.discard), child: const Text('Descartarla')),
-        TextButton(onPressed: () => Navigator.pop(c, _LostChoice.pending), child: const Text('Dejarla pendiente')),
+        TextButton(
+            onPressed: () => Navigator.pop(c, _LostChoice.discard),
+            child: const Text('Descartarla')),
+        TextButton(
+            onPressed: () => Navigator.pop(c, _LostChoice.pending),
+            child: const Text('Dejarla pendiente')),
         if (canUse)
-          FilledButton(onPressed: () => Navigator.pop(c, _LostChoice.use), child: const Text('Retomar con ese día')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, _LostChoice.use),
+              child: const Text('Retomar con ese día')),
       ],
     ),
   );
@@ -597,7 +734,8 @@ class _SetupDialog extends StatefulWidget {
   final ProgressionProposal? proposal;
 
   /// Anota los criterios que faltan y devuelve la propuesta recalculada.
-  final Future<ProgressionProposal?> Function(ProgressionProposal)? onRecordCriteria;
+  final Future<ProgressionProposal?> Function(ProgressionProposal)?
+      onRecordCriteria;
 
   /// Empieza con la versión ligera marcada.
   final bool light;
@@ -610,7 +748,8 @@ class _SetupDialogState extends State<_SetupDialog> {
   late bool _light = widget.light;
   late ProgressionProposal? _proposal = widget.proposal;
   late final _rounds = TextEditingController(text: _roundsFor(_light));
-  late String? _variant = widget.variants.isEmpty ? null : widget.variants.first;
+  late String? _variant =
+      widget.variants.isEmpty ? null : widget.variants.first;
 
   PlanDayDraft get _day => _light ? lightVersion(widget.day) : widget.day;
 
@@ -619,8 +758,13 @@ class _SetupDialogState extends State<_SetupDialog> {
   /// ligera quita una ronda.
   String _roundsFor(bool light) {
     final proposed = _proposal?.rounds;
-    if (proposed != null) return '${light && proposed > 1 ? proposed - 1 : proposed}';
-    return (light ? lightVersion(widget.day) : widget.day).targetRounds?.toString() ?? '';
+    if (proposed != null) {
+      return '${light && proposed > 1 ? proposed - 1 : proposed}';
+    }
+    return (light ? lightVersion(widget.day) : widget.day)
+            .targetRounds
+            ?.toString() ??
+        '';
   }
 
   Future<void> _recordCriteria(ProgressionProposal p) async {
@@ -647,7 +791,9 @@ class _SetupDialogState extends State<_SetupDialog> {
     // tiene su cronómetro.
     final groups = <String, List<PlanExerciseDraft>>{};
     for (final e in day.exercises) {
-      if (e.block == null || e.block == tabataBlock || !(e.variant == null || e.variant == _variant)) continue;
+      if (e.block == null ||
+          e.block == tabataBlock ||
+          !(e.variant == null || e.variant == _variant)) continue;
       groups.putIfAbsent(e.block!, () => []).add(e);
     }
     String title(String block) => block == warmupBlock
@@ -660,10 +806,13 @@ class _SetupDialogState extends State<_SetupDialog> {
           children: [
             const SizedBox(height: 8),
             Text(title(block), style: Theme.of(context).textTheme.labelLarge),
-            for (final e in groups[block]!) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
+            for (final e in groups[block]!)
+              Text('• ${e.name} ${e.targetLabel}'.trimRight()),
           ],
         );
-    final before = groups.keys.where((b) => b == warmupBlock || preBlocks.contains(b)).toList();
+    final before = groups.keys
+        .where((b) => b == warmupBlock || preBlocks.contains(b))
+        .toList();
     final after = groups.keys.where((b) => !before.contains(b)).toList();
     return AlertDialog(
       title: Text(widget.day.type.label),
@@ -674,7 +823,8 @@ class _SetupDialogState extends State<_SetupDialog> {
           children: [
             for (final b in before) group(b),
             if (before.isNotEmpty) const SizedBox(height: 8),
-            for (final e in day.main) Text('• ${e.name} ${e.targetLabel}'.trimRight()),
+            for (final e in day.main)
+              Text('• ${e.name} ${e.targetLabel}'.trimRight()),
             for (final b in after) group(b),
             const SizedBox(height: 8),
             SwitchListTile(
@@ -697,7 +847,10 @@ class _SetupDialogState extends State<_SetupDialog> {
                 _ProposalCard(
                   proposal: p,
                   onUse: (r) => _rounds.text = '$r',
-                  onRecord: widget.onRecordCriteria == null || p.sessionId == null ? null : () => _recordCriteria(p),
+                  onRecord:
+                      widget.onRecordCriteria == null || p.sessionId == null
+                          ? null
+                          : () => _recordCriteria(p),
                 ),
               NumberField(controller: _rounds, label: 'Rondas objetivo'),
               const Padding(
@@ -710,7 +863,10 @@ class _SetupDialogState extends State<_SetupDialog> {
               const Text('Variante del bloque'),
               const SizedBox(height: 6),
               SegmentedButton<String>(
-                segments: [for (final v in widget.variants) ButtonSegment(value: v, label: Text(v))],
+                segments: [
+                  for (final v in widget.variants)
+                    ButtonSegment(value: v, label: Text(v))
+                ],
                 selected: {_variant!},
                 onSelectionChanged: (s) => setState(() => _variant = s.first),
               ),
@@ -719,12 +875,17 @@ class _SetupDialogState extends State<_SetupDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar')),
         FilledButton(
           onPressed: () => Navigator.pop(
             context,
             // 0 rondas o vacío: se usa la meta del plan.
-            _SessionSetup(isCircuit ? _positiveOrNull(int.tryParse(_rounds.text)) : null, _variant, light: _light),
+            _SessionSetup(
+                isCircuit ? _positiveOrNull(int.tryParse(_rounds.text)) : null,
+                _variant,
+                light: _light),
           ),
           child: const Text('Empezar'),
         ),
@@ -735,7 +896,8 @@ class _SetupDialogState extends State<_SetupDialog> {
 
 /// Qué propone la regla de progresión y por qué.
 class _ProposalCard extends StatelessWidget {
-  const _ProposalCard({required this.proposal, required this.onUse, this.onRecord});
+  const _ProposalCard(
+      {required this.proposal, required this.onUse, this.onRecord});
 
   final ProgressionProposal proposal;
   final ValueChanged<int> onUse;
@@ -747,13 +909,17 @@ class _ProposalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = proposal;
     final text = Theme.of(context).textTheme;
-    final when = p.lastDate == null ? 'la última' : 'la del ${formatShort(p.lastDate!)}';
+    final when =
+        p.lastDate == null ? 'la última' : 'la del ${formatShort(p.lastDate!)}';
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(p.canProgress ? 'Propuesta: ${p.rounds} rondas' : 'Propuesta: mantener ${p.rounds}',
+          Text(
+              p.canProgress
+                  ? 'Propuesta: ${p.rounds} rondas'
+                  : 'Propuesta: mantener ${p.rounds}',
               style: text.titleSmall),
           Text(
             p.canProgress
@@ -764,8 +930,11 @@ class _ProposalCard extends StatelessWidget {
           Wrap(
             spacing: 4,
             children: [
-              TextButton(onPressed: () => onUse(p.rounds), child: Text('Usar ${p.rounds}')),
-              if (onRecord != null && p.unmet.any((u) => u.endsWith('sin registrar')))
+              TextButton(
+                  onPressed: () => onUse(p.rounds),
+                  child: Text('Usar ${p.rounds}')),
+              if (onRecord != null &&
+                  p.unmet.any((u) => u.endsWith('sin registrar')))
                 TextButton.icon(
                   onPressed: onRecord,
                   icon: const Icon(Icons.fact_check_outlined, size: 18),
@@ -783,8 +952,8 @@ class _ProposalCard extends StatelessWidget {
 /// propuesta y devuelve la propuesta recalculada (null si se canceló). Sin
 /// estos tres datos la regla nunca deja subir: la meta del viernes se
 /// quedaba fija (§16.9).
-Future<ProgressionProposal?> recordProgressionCriteria(
-    BuildContext context, WidgetRef ref, ProgressionProposal proposal, DateTime day) async {
+Future<ProgressionProposal?> recordProgressionCriteria(BuildContext context,
+    WidgetRef ref, ProgressionProposal proposal, DateTime day) async {
   final id = proposal.sessionId;
   if (id == null) return null;
   final repo = ref.read(trainingRepositoryProvider);
@@ -799,13 +968,15 @@ Future<ProgressionProposal?> recordProgressionCriteria(
     ),
   );
   if (result == null) return null;
-  await repo.setProgressionCriteria(id, techniqueOk: result.$1, fullRange: result.$2, recoveryOk: result.$3);
+  await repo.setProgressionCriteria(id,
+      techniqueOk: result.$1, fullRange: result.$2, recoveryOk: result.$3);
   ref.invalidate(dashboardProvider);
   return repo.progressionProposal(day);
 }
 
 class _CriteriaDialog extends StatefulWidget {
-  const _CriteriaDialog({required this.date, required this.rounds, required this.initial});
+  const _CriteriaDialog(
+      {required this.date, required this.rounds, required this.initial});
 
   final DateTime? date;
   final int rounds;
@@ -823,7 +994,9 @@ class _CriteriaDialogState extends State<_CriteriaDialog> {
   @override
   Widget build(BuildContext context) {
     final date = widget.date;
-    final when = date == null ? 'la última sesión' : 'el ${weekdayShort(date.weekday)} ${formatShort(date)}';
+    final when = date == null
+        ? 'la última sesión'
+        : 'el ${weekdayShort(date.weekday)} ${formatShort(date)}';
     return AlertDialog(
       title: const Text('¿Cómo fue?'),
       content: SingleChildScrollView(
@@ -831,40 +1004,57 @@ class _CriteriaDialogState extends State<_CriteriaDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Las ${widget.rounds} rondas de $when. Con las tres en "Sí" la regla propone subir una.'),
+            Text(
+                'Las ${widget.rounds} rondas de $when. Con las tres en "Sí" la regla propone subir una.'),
             const SizedBox(height: 8),
             TriToggle(
                 label: 'Técnica buena en la última ronda',
                 value: _technique,
                 onChanged: (v) => setState(() => _technique = v)),
-            TriToggle(label: 'Rango completo', value: _range, onChanged: (v) => setState(() => _range = v)),
-            TriToggle(label: 'Recuperación normal', value: _recovery, onChanged: (v) => setState(() => _recovery = v)),
+            TriToggle(
+                label: 'Rango completo',
+                value: _range,
+                onChanged: (v) => setState(() => _range = v)),
+            TriToggle(
+                label: 'Recuperación normal',
+                value: _recovery,
+                onChanged: (v) => setState(() => _recovery = v)),
           ],
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar')),
         FilledButton(
-            onPressed: () => Navigator.pop(context, (_technique, _range, _recovery)), child: const Text('Guardar')),
+            onPressed: () =>
+                Navigator.pop(context, (_technique, _range, _recovery)),
+            child: const Text('Guardar')),
       ],
     );
   }
 }
 
 /// Cronómetro sin plan: mide tiempos y cuenta vueltas genéricas.
-Future<void> startFreeCounter(BuildContext context, WidgetRef ref, {DateTime? date, bool outOfPlan = false}) async {
+Future<void> startFreeCounter(BuildContext context, WidgetRef ref,
+    {DateTime? date, bool outOfPlan = false}) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
-  await _runCounter(context, date: date ?? dateOnly(DateTime.now()), outOfPlan: outOfPlan);
+  await _runCounter(context,
+      date: date ?? dateOnly(DateTime.now()), outOfPlan: outOfPlan);
 }
 
 Future<void> _runCounter(BuildContext context,
-    {required DateTime date, required bool outOfPlan, CounterSnapshot? resume}) async {
+    {required DateTime date,
+    required bool outOfPlan,
+    CounterSnapshot? resume}) async {
   final container = ProviderScope.containerOf(context, listen: false);
   try {
     final result = await Navigator.push<CounterResult>(
       context,
-      MaterialPageRoute(builder: (_) => RoundCounterScreen(date: date, outOfPlan: outOfPlan, resume: resume)),
+      MaterialPageRoute(
+          builder: (_) => RoundCounterScreen(
+              date: date, outOfPlan: outOfPlan, resume: resume)),
     );
     if (result == null || !context.mounted) return;
     final draft = SessionDraft(
@@ -885,9 +1075,13 @@ Future<void> _runCounter(BuildContext context,
 }
 
 /// true si se guardó (o se borró) la sesión; null si se salió sin guardar.
-Future<bool?> openSessionForm(BuildContext context, SessionDraft draft, {bool celebrate = true}) =>
+Future<bool?> openSessionForm(BuildContext context, SessionDraft draft,
+        {bool celebrate = true}) =>
     Navigator.push<bool>(
-        context, MaterialPageRoute(builder: (_) => SessionFormScreen(draft: draft, celebrate: celebrate)));
+        context,
+        MaterialPageRoute(
+            builder: (_) =>
+                SessionFormScreen(draft: draft, celebrate: celebrate)));
 
 class TrainingScreen extends ConsumerWidget {
   const TrainingScreen({super.key});
@@ -907,13 +1101,16 @@ class TrainingScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Guías de ejercicios',
             icon: const Icon(Icons.menu_book_outlined),
-            onPressed: () =>
-                Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ExerciseLibraryScreen())),
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (_) => const ExerciseLibraryScreen())),
           ),
           IconButton(
             tooltip: 'Plan semanal',
             icon: const Icon(Icons.calendar_view_week),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlanScreen())),
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (_) => const PlanScreen())),
           ),
         ],
       ),
@@ -926,16 +1123,22 @@ class TrainingScreen extends ConsumerWidget {
             child: OutlinedButton.icon(
               icon: const Icon(Icons.menu_book_outlined),
               label: const Text('Consultar guías de ejercicios'),
-              onPressed: () =>
-                  Navigator.push(context, MaterialPageRoute<void>(builder: (_) => const ExerciseLibraryScreen())),
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (_) => const ExerciseLibraryScreen())),
             ),
           ),
           HeroCard(
             color: style.color,
-            overline: dashboard == null ? 'Hoy' : 'Hoy · semana ${dashboard.weekIndex}',
+            overline: dashboard == null
+                ? 'Hoy'
+                : 'Hoy · semana ${dashboard.weekIndex}',
             // Mientras carga no se muestra "Descanso": parpadeaba en gris al abrir.
             title: dashboard == null ? ' ' : dayType.label,
-            subtitle: dashboard?.targetRounds == null ? null : 'Meta: ${dashboard!.targetRounds} rondas',
+            subtitle: dashboard?.targetRounds == null
+                ? null
+                : 'Meta: ${dashboard!.targetRounds} rondas',
             icon: style.icon,
             pills: [
               if (dashboard != null)
@@ -947,14 +1150,18 @@ class TrainingScreen extends ConsumerWidget {
                   color: dashboard.streak >= 3 ? style.color : null,
                 ),
               if (dashboard?.roundsRecord != null)
-                StatPill(icon: Icons.emoji_events_outlined, label: 'Récord ${dashboard!.roundsRecord}'),
+                StatPill(
+                    icon: Icons.emoji_events_outlined,
+                    label: 'Récord ${dashboard!.roundsRecord}'),
             ],
             children: [
               FilledButton.icon(
                 onPressed: () => startGuidedSession(context, ref),
                 style: FilledButton.styleFrom(backgroundColor: style.color),
                 icon: const Icon(Icons.play_arrow),
-                label: Text(dayType.isTraining ? 'Empezar ${dayType.label.toLowerCase()}' : 'Empezar sesión'),
+                label: Text(dayType.isTraining
+                    ? 'Empezar ${dayType.label.toLowerCase()}'
+                    : 'Empezar sesión'),
               ),
               const SizedBox(height: 8),
               Row(
@@ -963,7 +1170,8 @@ class TrainingScreen extends ConsumerWidget {
                     child: ActionButton(
                       icon: Icons.edit_note,
                       label: 'A mano',
-                      onPressed: () => openSessionForm(context, SessionDraft(date: dateOnly(DateTime.now()))),
+                      onPressed: () => openSessionForm(context,
+                          SessionDraft(date: dateOnly(DateTime.now()))),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -971,8 +1179,10 @@ class TrainingScreen extends ConsumerWidget {
                     child: ActionButton(
                       icon: Icons.sports_soccer,
                       label: 'Fútbol',
-                      onPressed: () =>
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const FootballFormScreen())),
                     ),
                   ),
                 ],
@@ -997,11 +1207,14 @@ class TrainingScreen extends ConsumerWidget {
                 data: (list) => list.isEmpty
                     ? EmptyState(
                         icon: Icons.fitness_center,
-                        text: 'Aún no hay sesiones. La primera marca la línea base.',
+                        text:
+                            'Aún no hay sesiones. La primera marca la línea base.',
                         actionLabel: 'Empezar ahora',
                         onAction: () => startGuidedSession(context, ref),
                       )
-                    : Column(children: [for (final s in list) _SessionTile(summary: s)]),
+                    : Column(children: [
+                        for (final s in list) _SessionTile(summary: s)
+                      ]),
               ),
             ],
           ),
@@ -1016,10 +1229,14 @@ class TrainingScreen extends ConsumerWidget {
                         icon: Icons.sports_soccer,
                         text: 'Sin partidos registrados.',
                         actionLabel: 'Registrar partido',
-                        onAction: () =>
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const FootballFormScreen())),
+                        onAction: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const FootballFormScreen())),
                       )
-                    : Column(children: [for (final g in list) _FootballTile(game: g)]),
+                    : Column(children: [
+                        for (final g in list) _FootballTile(game: g)
+                      ]),
               ),
             ],
           ),
@@ -1039,8 +1256,11 @@ class _SessionTile extends ConsumerWidget {
     final s = summary.row;
     final date = parseDay(s.date);
     final style = styleForSession(s.type);
-    final net =
-        circuitNetSec(totalSec: s.totalSec, warmupSec: s.warmupSec, cooldownSec: s.cooldownSec, restSec: s.restSec);
+    final net = circuitNetSec(
+        totalSec: s.totalSec,
+        warmupSec: s.warmupSec,
+        cooldownSec: s.cooldownSec,
+        restSec: s.restSec);
     final flags = [
       if (s.pendingReview) '⚠ sin revisar: falta RPE',
       if (s.outOfPlan) 'fuera de plan',
@@ -1050,14 +1270,19 @@ class _SessionTile extends ConsumerWidget {
     return TypedTile(
       icon: style.icon,
       color: style.color,
-      title: '${s.type.label} · ${weekdayShort(date.weekday)} ${formatShort(date)}',
+      title:
+          '${s.type.label} · ${weekdayShort(date.weekday)} ${formatShort(date)}',
       subtitle: [
         'Neto ${formatDuration(net)}',
         if (s.rpe != null) 'RPE ${s.rpe}',
         ...flags,
       ].join(' · '),
-      value: s.roundsDone == null ? null : '${s.roundsEstimated ? '~' : ''}${s.roundsDone}',
-      valueLabel: s.roundsDone == null ? null : (s.plannedRounds == null ? 'rondas' : 'de ${s.plannedRounds}'),
+      value: s.roundsDone == null
+          ? null
+          : '${s.roundsEstimated ? '~' : ''}${s.roundsDone}',
+      valueLabel: s.roundsDone == null
+          ? null
+          : (s.plannedRounds == null ? 'rondas' : 'de ${s.plannedRounds}'),
       onTap: () async {
         final draft = await ref.read(trainingRepositoryProvider).load(s.id);
         if (context.mounted) await openSessionForm(context, draft);
@@ -1078,7 +1303,8 @@ class _FootballTile extends StatelessWidget {
     return TypedTile(
       icon: style.icon,
       color: style.color,
-      title: 'Fútbol ${game.format} · ${weekdayShort(date.weekday)} ${formatShort(date)}',
+      title:
+          'Fútbol ${game.format} · ${weekdayShort(date.weekday)} ${formatShort(date)}',
       subtitle: [
         if (game.steps != null) '${game.steps} pasos',
         if (game.intensity != null) 'intensidad ${game.intensity}',
@@ -1086,7 +1312,10 @@ class _FootballTile extends StatelessWidget {
       ].join(' · '),
       value: '${game.minutes}',
       valueLabel: 'min',
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FootballFormScreen(existing: game))),
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => FootballFormScreen(existing: game))),
     );
   }
 }

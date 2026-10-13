@@ -16,7 +16,8 @@ enum TestUnit {
 }
 
 class TestItem {
-  const TestItem(this.id, this.name, this.unit, {this.perSide = false, this.hint});
+  const TestItem(this.id, this.name, this.unit,
+      {this.perSide = false, this.hint});
 
   final String id;
   final String name;
@@ -35,12 +36,14 @@ const torsoTests = [
   TestItem('wall_handstand', 'Pino pecho a la pared', TestUnit.seconds),
   TestItem('pullup', 'Dominadas pronas estrictas', TestUnit.reps),
   TestItem('dips', 'Fondos en paralelas', TestUnit.reps),
-  TestItem('one_arm_pushup', 'Flexión a una mano', TestUnit.reps, perSide: true),
+  TestItem('one_arm_pushup', 'Flexión a una mano', TestUnit.reps,
+      perSide: true),
   TestItem('pike_pushup', 'Pike push-up', TestUnit.reps),
   TestItem('hanging_leg_raise', 'Elevaciones colgado estrictas', TestUnit.reps),
   TestItem('hollow_hold', 'Hollow hold con la lumbar pegada', TestUnit.seconds),
   TestItem('tuck_up', 'Tuck-up', TestUnit.reps),
-  TestItem('reverse_crunch', 'Encogimiento inverso con bajada de 3 s', TestUnit.reps),
+  TestItem('reverse_crunch', 'Encogimiento inverso con bajada de 3 s',
+      TestUnit.reps),
   TestItem('tuck_lsit', 'L-sit recogido', TestUnit.seconds),
   TestItem('pushup', 'Flexiones normales', TestUnit.reps),
   TestItem('dead_hang', 'Colgarse de la barra', TestUnit.seconds),
@@ -48,15 +51,22 @@ const torsoTests = [
 
 /// Miércoles: piernas, después del FIFA 11+ y antes de la sesión.
 const legTests = [
-  TestItem('broad_jump', 'Salto largo desde parado', TestUnit.cm, hint: 'El mejor de 3 intentos.'),
-  TestItem('bulgarian_split_squat', 'Búlgara sin peso', TestUnit.reps, perSide: true),
-  TestItem('sl_calf_raise', 'Elevación de talón a una pierna', TestUnit.reps, perSide: true),
-  TestItem('pistol_box', 'Pistol a la altura de la cama o silla', TestUnit.reps, perSide: true),
+  TestItem('broad_jump', 'Salto largo desde parado', TestUnit.cm,
+      hint: 'El mejor de 3 intentos.'),
+  TestItem('bulgarian_split_squat', 'Búlgara sin peso', TestUnit.reps,
+      perSide: true),
+  TestItem('sl_calf_raise', 'Elevación de talón a una pierna', TestUnit.reps,
+      perSide: true),
+  TestItem('pistol_box', 'Pistol a la altura de la cama o silla', TestUnit.reps,
+      perSide: true),
 ];
 
 const allTests = [...torsoTests, ...legTests];
 
-TestItem? testItem(String id) => allTests.where((t) => t.id == id).firstOrNull;
+TestItem? testItem(String id) => id == 'reverse_plank_forearm'
+    ? const TestItem('reverse_plank_forearm',
+        'Plancha inversa sobre antebrazos', TestUnit.seconds)
+    : allTests.where((t) => t.id == id).firstOrNull;
 
 /// Descanso entre pruebas.
 const testRestSec = 180;
@@ -65,7 +75,8 @@ enum TestPart { torso, piernas }
 
 enum TestStatus { pending, partial, complete }
 
-List<TestItem> itemsFor(TestPart part) => part == TestPart.torso ? torsoTests : legTests;
+List<TestItem> itemsFor(TestPart part) =>
+    part == TestPart.torso ? torsoTests : legTests;
 
 String? testResultError(TestItem item, double? value) {
   if (value == null || !value.isFinite) return 'Escribe un número finito';
@@ -101,7 +112,16 @@ class TestResult {
       required this.value,
       this.side,
       this.clean = true,
-      this.date});
+      this.date,
+      this.attemptId,
+      this.protocolId = 'v31_12',
+      this.conditions,
+      this.baselineKey});
+
+  final int? attemptId;
+  final String protocolId;
+  final String? conditions;
+  final String? baselineKey;
 
   final int round;
   final String item;
@@ -125,13 +145,21 @@ DateTime? recordedTestDate(String raw) {
 double? testValue(List<TestResult> results, int round, String item) {
   final definition = testItem(item);
   if (definition == null) return null;
-  final rows =
-      results.where((r) => r.round == round && r.item == item && testResultError(definition, r.value) == null).toList();
-  if (testItem(item)?.perSide == true && (!rows.any((r) => r.side == 'I') || !rows.any((r) => r.side == 'D'))) {
+  final rows = results
+      .where((r) =>
+          r.round == round &&
+          r.item == item &&
+          testResultError(definition, r.value) == null)
+      .toList();
+  if (testItem(item)?.perSide == true &&
+      (!rows.any((r) => r.side == 'I') || !rows.any((r) => r.side == 'D'))) {
     return null;
   }
   if (rows.length != (definition.perSide ? 2 : 1)) return null;
-  if (rows.any((r) => definition.perSide ? r.side != 'I' && r.side != 'D' : r.side != null)) return null;
+  if (rows.any((r) =>
+      definition.perSide ? r.side != 'I' && r.side != 'D' : r.side != null)) {
+    return null;
+  }
   final xs = rows.map((r) => r.value).toList();
   if (xs.isEmpty) return null;
   return xs.reduce((a, b) => a < b ? a : b);
@@ -143,22 +171,33 @@ double? eligibleTestValue(List<TestResult> results, int round, String item,
     {DateTime? asOf, int? maxAgeDays}) {
   final value = testValue(results, round, item);
   if (value == null) return null;
-  final rows = results.where((r) => r.round == round && r.item == item).toList();
+  final rows =
+      results.where((r) => r.round == round && r.item == item).toList();
   if (rows.any((r) =>
       !r.clean ||
       r.date == null ||
       (asOf != null &&
           (dateOnly(r.date!).isAfter(dateOnly(asOf)) ||
-              (maxAgeDays != null && daysBetween(r.date!, asOf) > maxAgeDays))))) return null;
+              (maxAgeDays != null &&
+                  daysBetween(r.date!, asOf) > maxAgeDays))))) return null;
   // I/D guardados en fechas distintas no prueban un único intento bilateral.
   if (rows.map((r) => dayKey(r.date!)).toSet().length != 1) return null;
   return value;
 }
 
-int? latestEligibleTestRound(List<TestResult> results, String item, {DateTime? asOf, int? maxAgeDays}) {
-  final rounds = results.where((r) => r.item == item).map((r) => r.round).toSet().toList()..sort();
+int? latestEligibleTestRound(List<TestResult> results, String item,
+    {DateTime? asOf, int? maxAgeDays}) {
+  final rounds = results
+      .where((r) => r.item == item)
+      .map((r) => r.round)
+      .toSet()
+      .toList()
+    ..sort();
   final eligible = rounds
-      .where((round) => eligibleTestValue(results, round, item, asOf: asOf, maxAgeDays: maxAgeDays) != null)
+      .where((round) =>
+          eligibleTestValue(results, round, item,
+              asOf: asOf, maxAgeDays: maxAgeDays) !=
+          null)
       .toList();
   eligible.sort((a, b) {
     final da = results.firstWhere((r) => r.round == a && r.item == item).date!;
@@ -171,7 +210,9 @@ int? latestEligibleTestRound(List<TestResult> results, String item, {DateTime? a
 
 /// % de mejora respecto del Test 1.
 double? improvement(double? first, double? later) =>
-    first == null || later == null || first == 0 ? null : (later - first) / first * 100;
+    first == null || later == null || first == 0
+        ? null
+        : (later - first) / first * 100;
 
 /// Dosis inicial (§19.11): reps, el tope del rango al 70–75 % del máximo;
 /// isométricos, series del 50–60 % del máximo. null en el salto.
@@ -185,7 +226,9 @@ String? initialDose(TestItem item, double max) {
   final lo = (max * .70).floor();
   final hi = (max * .75).round();
   if (hi < 1) return null;
-  return lo == hi || lo < 1 ? 'Tope del rango: $hi reps' : 'Tope del rango: $lo–$hi reps';
+  return lo == hi || lo < 1
+      ? 'Tope del rango: $hi reps'
+      : 'Tope del rango: $lo–$hi reps';
 }
 
 String formatTestValue(TestItem item, double v) => !v.isFinite || v < 0

@@ -48,6 +48,7 @@ class ReadinessInput {
     required this.today,
     required this.load,
     this.stairs,
+    this.kneeSoreness,
     this.muscleSoreness,
     this.ill,
     this.restingHrToday,
@@ -64,6 +65,9 @@ class ReadinessInput {
 
   /// Molestia al bajar escaleras, 0–10. null = no se anotó.
   final int? stairs;
+
+  /// Molestia registrada por zona Rodilla; no prueba escaleras.
+  final int? kneeSoreness;
 
   /// Dolor muscular general, 0–10. null = no se anotó.
   final int? muscleSoreness;
@@ -114,13 +118,16 @@ class ReadinessAdvice {
       };
 
   /// Con test o intento hoy y un día que no es verde, se propone moverlo.
-  bool get moveTestToTomorrow => testOrAttemptToday && level != ReadinessLevel.green;
+  bool get moveTestToTomorrow =>
+      testOrAttemptToday && level != ReadinessLevel.green;
 
   /// Verde sin datos que falten. Un verde con huecos no es "estás recuperado".
   bool get confident => missing.isEmpty;
 
   String get title => switch (level) {
-        ReadinessLevel.green => confident ? 'Hoy: el plan normal' : 'Hoy: el plan normal, con datos incompletos',
+        ReadinessLevel.green => confident
+            ? 'Hoy: el plan normal'
+            : 'Hoy: el plan normal, con datos incompletos',
         ReadinessLevel.yellow => 'Hoy: recuperación activa',
         ReadinessLevel.red => 'Hoy: solo descanso',
       };
@@ -130,8 +137,10 @@ class ReadinessAdvice {
         ReadinessLevel.green => confident
             ? 'Sin señales de carga alta.'
             : 'Sin señales de carga alta en lo anotado; falta ${missing.join(', ').toLowerCase()}.',
-        ReadinessLevel.yellow => 'Movilidad, activación suave y soltar piernas, a 3–4/10. Nunca al fallo.',
-        ReadinessLevel.red => 'Solo isométricos de rodilla suaves y movilidad. Si es enfermedad o dolor agudo, descansa.',
+        ReadinessLevel.yellow =>
+          'Movilidad, activación suave y soltar piernas, a 3–4/10. Nunca al fallo.',
+        ReadinessLevel.red =>
+          'Solo isométricos de rodilla suaves y movilidad. Si es enfermedad o dolor agudo, descansa.',
       };
 }
 
@@ -141,7 +150,8 @@ ReadinessAdvice readiness(ReadinessInput i) {
   final yellow = <String>[];
   final missing = <String>[];
 
-  int dayLoad(DateTime d) => i.load.where((x) => dateOnly(x.date) == d).fold(0, (a, x) => a + x.load);
+  int dayLoad(DateTime d) =>
+      i.load.where((x) => dateOnly(x.date) == d).fold(0, (a, x) => a + x.load);
 
   // Últimos 3 días, en orden.
   final window = [for (var k = 2; k >= 0; k--) addDays(d0, -k)];
@@ -152,17 +162,26 @@ ReadinessAdvice readiness(ReadinessInput i) {
   ];
   final load3 = windowItems.fold(0, (a, x) => a + x.load);
   if (load3 >= readinessLoad3Days) {
-    final detail = windowItems.map((x) => '${weekdayShort(x.date.weekday)} ${fmtInt(x.load)}').join(' · ');
+    final detail = windowItems
+        .map((x) => '${weekdayShort(x.date.weekday)} ${fmtInt(x.load)}')
+        .join(' · ');
     yellow.add('Carga de los últimos 3 días: ${fmtInt(load3)} ($detail)');
   }
 
-  final games = i.load.where((x) => x.isFootball && !dateOnly(x.date).isBefore(addDays(d0, -1)) && !dateOnly(x.date).isAfter(d0));
-  if (games.length >= readinessGames2Days) yellow.add('${games.length} partidos entre ayer y hoy');
+  final games = i.load.where((x) =>
+      x.isFootball &&
+      !dateOnly(x.date).isBefore(addDays(d0, -1)) &&
+      !dateOnly(x.date).isAfter(d0));
+  if (games.length >= readinessGames2Days) {
+    yellow.add('${games.length} partidos entre ayer y hoy');
+  }
 
   // Aguda:crónica, solo con historial suficiente.
   double? ratio;
   if (i.load.isNotEmpty) {
-    final first = i.load.map((x) => dateOnly(x.date)).reduce((a, b) => a.isBefore(b) ? a : b);
+    final first = i.load
+        .map((x) => dateOnly(x.date))
+        .reduce((a, b) => a.isBefore(b) ? a : b);
     final historyDays = daysBetween(first, d0) + 1;
     if (historyDays >= readinessMinHistoryDays) {
       var acute = 0;
@@ -175,7 +194,8 @@ ReadinessAdvice readiness(ReadinessInput i) {
       if (chronic > 0) {
         ratio = (acute / 7) / (chronic / 28);
         if (ratio > readinessAcuteChronic) {
-          yellow.add('Carga aguda:crónica ${fmtDec(ratio, decimals: 2)} (7 días frente a 28)');
+          yellow.add(
+              'Carga aguda:crónica ${fmtDec(ratio, decimals: 2)} (7 días frente a 28)');
         }
       }
     }
@@ -184,7 +204,9 @@ ReadinessAdvice readiness(ReadinessInput i) {
   // Esfuerzo alto ayer y poco sueño.
   final yesterday = addDays(d0, -1);
   final hardYesterday = i.load
-      .where((x) => dateOnly(x.date) == yesterday && (x.effort ?? 0) >= readinessHardEffort)
+      .where((x) =>
+          dateOnly(x.date) == yesterday &&
+          (x.effort ?? 0) >= readinessHardEffort)
       .map((x) => x.effort!)
       .fold<int?>(null, (a, e) => a == null || e > a ? e : a);
   final sleep = i.sleepHours;
@@ -203,11 +225,13 @@ ReadinessAdvice readiness(ReadinessInput i) {
   if (i.restingHrToday == null) {
     missing.add('Pulso: sin dato');
   } else if (base.length < readinessHrBaseMin) {
-    missing.add('Pulso: sin base (${base.length} de $readinessHrBaseMin lecturas)');
+    missing.add(
+        'Pulso: sin base (${base.length} de $readinessHrBaseMin lecturas)');
   } else {
     final mean = base.reduce((a, b) => a + b) / base.length;
     final rise = i.restingHrToday! - mean;
-    final text = 'Pulso en reposo ${i.restingHrToday}: +${rise.round()} sobre tu base (${mean.round()})';
+    final text =
+        'Pulso en reposo ${i.restingHrToday}: +${rise.round()} sobre tu base (${mean.round()})';
     if (rise >= readinessHrRed) {
       red.add(text);
     } else if (rise >= readinessHrYellow) {
@@ -222,6 +246,16 @@ ReadinessAdvice readiness(ReadinessInput i) {
     red.add('Rodilla en escaleras $stairs/10');
   } else if (stairs >= readinessStairsYellow) {
     yellow.add('Rodilla en escaleras $stairs/10');
+  }
+
+  // Conserva la severidad del registro legado con su propia procedencia.
+  // Sus umbrales existentes siguen vigentes; nunca completa el dato escaleras.
+  if (i.kneeSoreness case final pain?) {
+    if (pain >= readinessStairsRed) {
+      red.add('Dolor anotado en Rodilla $pain/10');
+    } else if (pain >= readinessStairsYellow) {
+      yellow.add('Dolor anotado en Rodilla $pain/10');
+    }
   }
 
   final sore = i.muscleSoreness;
@@ -296,7 +330,8 @@ String? readinessEveningNotice(List<LoadItem> load, DateTime today) {
   final d0 = dateOnly(today);
   final from = addDays(d0, -1);
   final total = load
-      .where((x) => !dateOnly(x.date).isBefore(from) && !dateOnly(x.date).isAfter(d0))
+      .where((x) =>
+          !dateOnly(x.date).isBefore(from) && !dateOnly(x.date).isAfter(d0))
       .fold(0, (a, x) => a + x.load);
   if (total < readinessLoad3Days) return null;
   return 'Carga de ayer y hoy: ${fmtInt(total)}. Mañana probablemente toca recuperación activa. '

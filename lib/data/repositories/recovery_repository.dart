@@ -23,64 +23,103 @@ class RecoveryRepository {
 
   /// Dolor muscular general 0–10 y "enfermo, fiebre o dolor agudo"
   /// (§19.17); null borra la respuesta.
-  Future<void> setReadinessAnswers(DateTime day, {required int? muscleSoreness, required bool? ill}) =>
-      _setMorning(day, MorningChecksCompanion(muscleSoreness: Value(muscleSoreness), ill: Value(ill)));
+  Future<void> setReadinessAnswers(DateTime day,
+          {required int? muscleSoreness, required bool? ill}) =>
+      _setMorning(
+          day,
+          MorningChecksCompanion(
+              muscleSoreness: Value(muscleSoreness), ill: Value(ill)));
+
+  Future<void> setKneeStairs(DateTime day, int? level) {
+    if (level != null && (level < 0 || level > 10)) {
+      throw const FormatException('Escaleras: 0 a 10');
+    }
+    return _setMorning(day, MorningChecksCompanion(kneeStairs: Value(level)));
+  }
 
   Future<MorningCheckRow?> morningOn(DateTime day) =>
-      (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull();
+      (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day))))
+          .getSingleOrNull();
 
   Future<int?> feelingOn(DateTime day) async =>
-      (await (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull())?.feeling;
+      (await (db.select(db.morningChecks)
+                ..where((t) => t.date.equals(dayKey(day))))
+              .getSingleOrNull())
+          ?.feeling;
 
-  Future<void> _setMorning(DateTime day, MorningChecksCompanion change) => db.transaction(() async {
+  Future<void> _setMorning(DateTime day, MorningChecksCompanion change) =>
+      db.transaction(() async {
         final key = dayKey(day);
-        await db
-            .into(db.morningChecks)
-            .insert(MorningChecksCompanion.insert(date: key), mode: InsertMode.insertOrIgnore);
-        await (db.update(db.morningChecks)..where((t) => t.date.equals(key))).write(change);
-        final row = await (db.select(db.morningChecks)..where((t) => t.date.equals(key))).getSingle();
-        if (row.restingHr == null && row.feeling == null && row.muscleSoreness == null && row.ill == null) {
-          await (db.delete(db.morningChecks)..where((t) => t.date.equals(key))).go();
+        await db.into(db.morningChecks).insert(
+            MorningChecksCompanion.insert(date: key),
+            mode: InsertMode.insertOrIgnore);
+        await (db.update(db.morningChecks)..where((t) => t.date.equals(key)))
+            .write(change);
+        final row = await (db.select(db.morningChecks)
+              ..where((t) => t.date.equals(key)))
+            .getSingle();
+        if (row.restingHr == null &&
+            row.feeling == null &&
+            row.muscleSoreness == null &&
+            row.ill == null &&
+            row.kneeStairs == null) {
+          await (db.delete(db.morningChecks)..where((t) => t.date.equals(key)))
+              .go();
         }
       });
 
   Future<int?> restingHrOn(DateTime day) async =>
-      (await (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull())?.restingHr;
+      (await (db.select(db.morningChecks)
+                ..where((t) => t.date.equals(dayKey(day))))
+              .getSingleOrNull())
+          ?.restingHr;
 
   /// Lecturas de los últimos `days` días hasta `today` (incluido).
-  Future<Map<DateTime, int>> restingHrRange(DateTime today, {int days = 14}) async {
+  Future<Map<DateTime, int>> restingHrRange(DateTime today,
+      {int days = 14}) async {
     final rows = await (db.select(db.morningChecks)
-          ..where((t) => t.date.isBetweenValues(dayKey(addDays(today, -(days - 1))), dayKey(today))))
+          ..where((t) => t.date.isBetweenValues(
+              dayKey(addDays(today, -(days - 1))), dayKey(today))))
         .get();
-    return {for (final r in rows) if (r.restingHr != null) parseDay(r.date): r.restingHr!};
+    return {
+      for (final r in rows)
+        if (r.restingHr != null) parseDay(r.date): r.restingHr!
+    };
   }
 
   // ---------- Molestias ----------
 
   /// Reemplaza las molestias del día. Las de nivel 0 no se guardan.
-  Future<void> setSoreness(DateTime day, Map<String, int> levels) => db.transaction(() async {
-        await (db.delete(db.sorenessLogs)..where((t) => t.date.equals(dayKey(day)))).go();
+  Future<void> setSoreness(DateTime day, Map<String, int> levels) =>
+      db.transaction(() async {
+        await (db.delete(db.sorenessLogs)
+              ..where((t) => t.date.equals(dayKey(day))))
+            .go();
         for (final e in levels.entries.where((e) => e.value > 0)) {
-          await db.into(db.sorenessLogs).insert(SorenessLogsCompanion.insert(date: dayKey(day), zone: e.key, level: e.value));
+          await db.into(db.sorenessLogs).insert(SorenessLogsCompanion.insert(
+              date: dayKey(day), zone: e.key, level: e.value));
         }
       });
 
   /// Una molestia suelta (al terminar una rutina): queda la más alta del día
   /// para esa zona; no borra las demás.
-  Future<void> addSoreness(DateTime day, String zone, int level) => db.transaction(() async {
+  Future<void> addSoreness(DateTime day, String zone, int level) =>
+      db.transaction(() async {
         final key = dayKey(day);
-        final prev = await (db.select(db.sorenessLogs)..where((t) => t.date.equals(key) & t.zone.equals(zone)))
+        final prev = await (db.select(db.sorenessLogs)
+              ..where((t) => t.date.equals(key) & t.zone.equals(zone)))
             .getSingleOrNull();
         if (prev != null && prev.level >= level) return;
-        await db
-            .into(db.sorenessLogs)
-            .insertOnConflictUpdate(SorenessLogsCompanion.insert(date: key, zone: zone, level: level));
+        await db.into(db.sorenessLogs).insertOnConflictUpdate(
+            SorenessLogsCompanion.insert(date: key, zone: zone, level: level));
       });
 
   /// Día → zona → nivel, de los últimos `days` días hasta `today`.
-  Future<Map<DateTime, Map<String, int>>> sorenessRange(DateTime today, {int days = 7}) async {
+  Future<Map<DateTime, Map<String, int>>> sorenessRange(DateTime today,
+      {int days = 7}) async {
     final rows = await (db.select(db.sorenessLogs)
-          ..where((t) => t.date.isBetweenValues(dayKey(addDays(today, -(days - 1))), dayKey(today))))
+          ..where((t) => t.date.isBetweenValues(
+              dayKey(addDays(today, -(days - 1))), dayKey(today))))
         .get();
     final out = <DateTime, Map<String, int>>{};
     for (final r in rows) {
@@ -89,10 +128,11 @@ class RecoveryRepository {
     return out;
   }
 
-  Stream<List<SorenessLogRowView>> watchDay(DateTime day) => (db.select(db.sorenessLogs)
-        ..where((t) => t.date.equals(dayKey(day))))
-      .watch()
-      .map((rows) => [for (final r in rows) SorenessLogRowView(r.zone, r.level)]);
+  Stream<List<SorenessLogRowView>> watchDay(DateTime day) =>
+      (db.select(db.sorenessLogs)..where((t) => t.date.equals(dayKey(day))))
+          .watch()
+          .map((rows) =>
+              [for (final r in rows) SorenessLogRowView(r.zone, r.level)]);
 
   // ---------- Habilidades ----------
 
@@ -103,7 +143,8 @@ class RecoveryRepository {
 
   /// null quita el logro.
   Future<void> setSkill(String skill, DateTime? date) => date == null
-      ? (db.delete(db.skillAchievements)..where((t) => t.skill.equals(skill))).go()
+      ? (db.delete(db.skillAchievements)..where((t) => t.skill.equals(skill)))
+          .go()
       : db.into(db.skillAchievements).insertOnConflictUpdate(
             SkillAchievementsCompanion.insert(skill: skill, date: dayKey(date)),
           );

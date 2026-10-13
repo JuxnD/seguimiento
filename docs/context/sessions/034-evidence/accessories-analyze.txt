@@ -1,0 +1,16 @@
+Analyzing 20 items...                                           
+
+warning - The '!' will have no effect because the receiver can't be null - lib\data\repositories\training_repository.dart:971:28 - unnecessary_non_null_assertion
+warning - The '!' will have no effect because the receiver can't be null - lib\data\repositories\training_repository.dart:983:49 - unnecessary_non_null_assertion
+warning - The '!' will have no effect because the receiver can't be null - lib\features\training\guided_session_screen.dart:298:33 - unnecessary_non_null_assertion
+  error - The property 'exercise' can't be unconditionally accessed because the receiver can be 'null' - lib\features\training\guided_session_screen.dart:1461:38 - unchecked_use_of_nullable_value
+  error - The property 'exercise' can't be unconditionally accessed because the receiver can be 'null' - lib\features\training\guided_session_screen.dart:1747:42 - unchecked_use_of_nullable_value
+   info - Statements in a for should be enclosed in a block - test\data\plan034_rings_gate_test.dart:30:7 - curly_braces_in_flow_control_structures
+   info - Use 'const' with the constructor to improve performance - test\data\plan034_rings_gate_test.dart:89:19 - prefer_const_constructors
+   info - Method invocation or property access on a 'dynamic' target - test\data\plan034_rings_gate_test.dart:96:9 - avoid_dynamic_calls
+   info - Statements in an if should be enclosed in a block - test\support\radar_sql_fixture.dart:35:7 - curly_braces_in_flow_control_structures
+warning - Unused import: 'package:drift/drift.dart' - test\ui\personal_radar_test.dart:8:8 - unused_import
+warning - Unused import: 'package:seguimiento/domain/fitness_test.dart' - test\ui\personal_radar_test.dart:11:8 - unused_import
+
+11 issues found. (ran in 7.8s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T194140205-63236-35a344dddf564260af5eb05da37950b2.json

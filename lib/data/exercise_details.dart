@@ -6,6 +6,9 @@
 library;
 
 import '../domain/search.dart';
+import '../domain/plan_v32.dart';
+import '../domain/daily_routines.dart';
+import '../domain/mobility.dart';
 
 class ExerciseDetail {
   const ExerciseDetail({
@@ -44,9 +47,11 @@ class ExerciseDetail {
 
   /// Pasos para la sesión: `loaded` false = sin carga; null = sin contexto
   /// (catálogo), se muestran todos.
-  List<String> stepsFor({bool? loaded}) => [if (loaded != false) ...loadedSteps, ...steps];
+  List<String> stepsFor({bool? loaded}) =>
+      [if (loaded != false) ...loadedSteps, ...steps];
 
-  String? easierFor({bool? loaded}) => loaded == false ? easierUnloaded ?? easier : easier;
+  String? easierFor({bool? loaded}) =>
+      loaded == false ? easierUnloaded ?? easier : easier;
 }
 
 /// El detalle de un ejercicio por nombre (sin mayúsculas ni tildes), o null.
@@ -55,9 +60,255 @@ ExerciseDetail? exerciseDetail(String name) => _byKey[nameKey(name)];
 /// Unidad de las repeticiones del ejercicio ('reps' si no tiene otra).
 String repsUnit(String name) => exerciseDetail(name)?.unit ?? 'reps';
 
-final _byKey = {for (final e in exerciseDetails.entries) nameKey(e.key): e.value};
+/// Shared descriptive reference; custom exercises without a guide stay unknown.
+String? exercisePurpose(String name) {
+  final detail = exerciseDetail(name);
+  final specific = v32Purposes[name];
+  if (specific != null) return '${v32PurposeGoals[name]}: $specific';
+  final mobility = mobilityReference(name);
+  if (mobility?.purpose != null) return 'Sin lesiones: ${mobility!.purpose}';
+  return detail == null
+      ? null
+      : 'Fuerte: trabajar ${detail.muscles.toLowerCase()} con control.';
+}
+
+MobilityExercise? mobilityReference(String name) => [
+      ...morningActiva().exercises,
+      ...nightSuelta(withLegs: true).exercises,
+      ...recoveryActivation,
+      ...mobilityNight.exercises,
+      ...legRecovery.exercises,
+    ].where((e) => nameKey(e.name) == nameKey(name)).firstOrNull;
+
+final _byKey = {
+  for (final e in exerciseDetails.entries) nameKey(e.key): e.value
+};
 
 const exerciseDetails = <String, ExerciseDetail>{
+  'Pike push-up': ExerciseDetail(
+      muscles: 'Hombros, tríceps y control del tronco',
+      steps: [
+        'Apoya manos y pies; eleva la cadera formando una V invertida.',
+        'Flexiona los codos y lleva la cabeza hacia el suelo delante de las manos.',
+        'Empuja hasta extender los brazos manteniendo la cadera alta.'
+      ],
+      mistakes: [
+        'Convertirlo en una flexión horizontal.',
+        'Dejar caer la cabeza sin control.'
+      ],
+      easier: 'Menor recorrido con un apoyo estable para la cabeza.',
+      harder: 'Eleva los pies sobre un apoyo estable.'),
+  'Flexiones diamante': ExerciseDetail(
+      muscles: 'Tríceps, pecho y control del tronco',
+      steps: [
+        'Manos cerca una de otra bajo el pecho; cuerpo alineado.',
+        'Baja el pecho entre las manos con los codos controlados.',
+        'Empuja sin hundir la cadera ni levantar sólo los hombros.'
+      ],
+      mistakes: [
+        'Forzar una posición de muñecas que molesta.',
+        'Abrir los codos bruscamente.'
+      ],
+      easier: 'Manos algo más separadas o apoyadas en una superficie elevada.',
+      harder: 'Mochila estable cuando el rango prescrito salga limpio.'),
+  'Flexiones': ExerciseDetail(
+      muscles: 'Pecho, tríceps, hombros y control del tronco',
+      steps: [
+        'Manos algo más abiertas que los hombros; cuerpo alineado de cabeza a talones.',
+        'Flexiona los codos y baja el pecho sin perder la alineación.',
+        'Empuja el suelo hasta extender los brazos.'
+      ],
+      mistakes: [
+        'Cadera caída o adelantada respecto al pecho.',
+        'Recortar el recorrido para terminar más repeticiones.'
+      ],
+      easier: 'Manos elevadas sobre un apoyo firme.',
+      harder: 'Mochila estable o pies elevados.'),
+  'Sentadillas': ExerciseDetail(
+      muscles: 'Cuádriceps, glúteos y control de rodilla y cadera',
+      steps: [
+        'Pies en una separación cómoda; mantén el apoyo de todo el pie.',
+        'Flexiona rodillas y cadera con las rodillas siguiendo la dirección de los pies.',
+        'Sube con control manteniendo talones apoyados.'
+      ],
+      mistakes: [
+        'Talones despegados sin control.',
+        'Rodillas que colapsan hacia dentro.'
+      ],
+      easier: 'Baja hasta una silla estable o reduce el recorrido.',
+      harder: 'Carga abrazada al pecho sin perder el control.'),
+  'Copenhague': ExerciseDetail(
+      muscles: 'Aductores y tronco',
+      steps: [
+        'De lado, apoya la rodilla superior sobre la cama para palanca corta.',
+        'Codo bajo el hombro; eleva y baja la cadera manteniendo el cuerpo alineado.',
+        'Repite por ambos lados.'
+      ],
+      mistakes: ['Cadera girada o caída.'],
+      easier: 'Palanca corta con rodilla apoyada.',
+      harder:
+          'Palanca larga con tobillo apoyado; reinicia en5reps tras15limpias en2sesiones y14días.',
+      note: 'Dolor en la ingle >3: baja un peldaño.'),
+  'Sóleo sentado con mochila': ExerciseDetail(
+      muscles: 'Sóleo',
+      steps: [
+        'Siéntate con las rodillas flexionadas y los pies apoyados.',
+        'Coloca la mochila sobre las rodillas.',
+        'Eleva los talones y baja de forma controlada.'
+      ],
+      mistakes: ['Extender la rodilla en vez de mover el talón.'],
+      easier: 'Ambos pies con menos peso.',
+      harder: 'Más peso y después una pierna; criterio3×20 aRIR1.',
+      note: 'Registra molestias en Aquiles a la mañana siguiente.'),
+  'Tibial en la pared': ExerciseDetail(
+      muscles: 'Tibial anterior',
+      steps: [
+        'Apoya la espalda en la pared y separa los talones aproximadamente un pie.',
+        'Mantén talones apoyados y eleva las puntas.',
+        'Baja con control.'
+      ],
+      mistakes: ['Levantar talones.'],
+      easier: 'Acerca los pies.',
+      harder: 'Alcanza2×25; después aleja pies o añade mochila.'),
+  'Rotación externa con banda': ExerciseDetail(
+      muscles: 'Manguito rotador',
+      steps: [
+        'Codo flexionado al costado, brazo estable.',
+        'Rota el antebrazo hacia fuera contra la banda.',
+        'Vuelve lento sin girar el tronco.'
+      ],
+      mistakes: ['Separar el codo o girar el tronco.'],
+      easier: 'Banda más suave.',
+      harder: 'Tras2×20limpias, brazo a90/90.',
+      note: 'Detente ante pinzamiento anterior.'),
+  'Y-T prono': ExerciseDetail(
+      muscles: 'Trapecio inferior y escápulas',
+      steps: [
+        'Boca abajo, eleva los brazos enY y luego enT.',
+        'Pausa2s sin elevar hombros hacia orejas.'
+      ],
+      mistakes: ['Arquear la lumbar.'],
+      easier: 'Suelo sin carga.',
+      harder: 'Tras2×12conpausa2s, borde de cama y0.5–1kg.'),
+  'Support hold en paralelas': ExerciseDetail(
+      muscles: 'Cintura escapular, brazos rectos',
+      steps: [
+        'Con paralelas estables, sostén el cuerpo con codos rectos.',
+        'Empuja las barras y mantén protracción activa.'
+      ],
+      mistakes: ['Flexionar codos o hundir los hombros.'],
+      easier: 'Apoyo asistido con pies.',
+      harder: '3×30s; protracción activa y después anillas disponibles.',
+      note: 'Dolor interno de codo: detente. Requiere equipo.'),
+  'Sprint lanzado': ExerciseDetail(
+      muscles: 'Piernas y coordinación de carrera',
+      steps: [
+        'Usa espacio seguro:20mprogresivos y20mlanzados.',
+        'Sem1–2 al85–90%; luego95% con técnica relajada.',
+        '3–4repeticiones, descanso2–3min.'
+      ],
+      mistakes: ['Salir al máximo sin tramo progresivo.'],
+      easier: 'Aceleraciones al80% por rodilla/fútbol duro reciente.',
+      harder: 'De85–90% a95% y4repeticiones.',
+      note: 'Pinchazo isquio: termina el día.',
+      unit: 'sprints'),
+  'Scap pull-up': ExerciseDetail(
+      muscles: 'Escápulas y espalda',
+      steps: [
+        'Colgado de la barra con brazos rectos.',
+        'Baja los hombros y eleva suavemente el torso sin doblar codos.'
+      ],
+      mistakes: ['Hacer una dominada doblando codos.'],
+      easier: 'Sin barra: deslizamientos en pared.'),
+  'Sentadilla isométrica en la pared': ExerciseDetail(
+      muscles: 'Cuádriceps',
+      steps: [
+        'Espalda apoyada en pared, pies firmes.',
+        'Mantén30–45s con esfuerzo7/10 sin colapsar rodillas.'
+      ],
+      mistakes: ['Rodillas hacia dentro.'],
+      easier: 'Menos profundidad.',
+      harder: 'Tras4×45s, mochila sobre muslos y después una pierna.'),
+  'Abducción de cadera de lado': ExerciseDetail(
+      muscles: 'Glúteo medio',
+      steps: [
+        'Acostado de lado, pelvis estable.',
+        'Eleva la pierna superior sin girarla ni mover la cadera.'
+      ],
+      mistakes: ['Girar el tronco.'],
+      easier: 'Sin banda.',
+      harder:
+          'Banda en tobillos y después plancha lateral con pierna elevada.'),
+  'Nórdico inverso': ExerciseDetail(
+      muscles: 'Cuádriceps',
+      steps: [
+        'De rodillas sobre superficie acolchada.',
+        'Cuerpo alineado de rodillas a hombros; inclínate atrás en3s.',
+        'Vuelve manteniendo la línea.'
+      ],
+      mistakes: ['Doblar la cadera.'],
+      easier: 'Menos rango.',
+      harder: 'Más rango y pausa abajo.'),
+  'Bajada lateral del escalón': ExerciseDetail(
+      muscles: 'Pierna y control de rodilla',
+      steps: [
+        'De pie sobre un escalón, desciende lateralmente la otra pierna.',
+        'Baja en3s con rodilla sobre el pie.',
+        'Sube sin impulso.'
+      ],
+      mistakes: ['Rodilla hacia dentro.'],
+      easier: 'Escalón bajo.',
+      harder: 'Escalón más alto y mochila.'),
+  'Aterrizaje clavado': ExerciseDetail(
+      muscles: 'Piernas y estabilización',
+      steps: [
+        'Salta y aterriza con ambas rodillas alineadas con pies.',
+        'Estabiliza antes del siguiente salto.'
+      ],
+      mistakes: ['Rebotar sin estabilizar o colapsar rodillas.'],
+      easier: 'Bilateral.',
+      harder: 'Una pierna desde sem3; después salto lateral.'),
+  'Mesa invertida': ExerciseDetail(
+      muscles: 'Cadena posterior',
+      steps: [
+        'Manos en suelo, rodillas a90°.',
+        'Eleva cadera hasta formar mesa y mantén20–30s.'
+      ],
+      mistakes: ['Cadera baja.'],
+      harder: '3×30s, dos sesiones y14días para proponer antebrazos.'),
+  'Plancha inversa sobre antebrazos': ExerciseDetail(
+      muscles: 'Glúteo, isquios y hombro posterior',
+      steps: [
+        'Codos debajo de hombros, dedos hacia pies.',
+        'Aprieta glúteos y sube cadera recta de hombros a talones.',
+        'Costillas abajo y hombros lejos de orejas; termina si cae cadera.'
+      ],
+      easier: 'Mesa invertida.',
+      harder: 'Sobre manos tras3×45s en2sesiones y14días.'),
+  'Plancha inversa sobre las manos': ExerciseDetail(
+      muscles: 'Cadena posterior',
+      steps: [
+        'Manos en suelo, brazos rectos.',
+        'Mantén línea de hombros a talones con cadera alta.'
+      ],
+      easier: 'Antebrazos o mesa.',
+      harder: 'Una pierna tras3×45s en2sesiones y14días.'),
+  'Plancha inversa a una pierna': ExerciseDetail(
+      muscles: 'Cadena posterior y control de pelvis',
+      steps: [
+        'Desde plancha inversa eleva una pierna.',
+        'Alterna cada10s sin girar la cadera.'
+      ],
+      mistakes: ['Pelvis girada.'],
+      easier: 'Ambos pies.',
+      harder: 'Patada alterna tras3×40s en2sesiones y14días.'),
+  'Plancha inversa con pies elevados': ExerciseDetail(
+      muscles: 'Cadena posterior',
+      steps: [
+        'Pies sobre la cama y manos en suelo.',
+        'Mantén30–45s sin bajar cadera.'
+      ],
+      easier: 'Pies en suelo.'),
   'Pino pecho a la pared': ExerciseDetail(
     muscles: 'Hombros, tríceps, core, equilibrio',
     steps: [
@@ -68,7 +319,11 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Brazos bloqueados, empuja el suelo, aprieta abdomen y glúteo: cuerpo en línea recta.',
       'Para bajar, camina con las manos hacia afuera y baja los pies por la pared.',
     ],
-    mistakes: ['Arquear la espalda en forma de banana.', 'Doblar los codos.', 'Dejarse caer de cabeza en vez de bajar caminando.'],
+    mistakes: [
+      'Arquear la espalda en forma de banana.',
+      'Doblar los codos.',
+      'Dejarse caer de cabeza en vez de bajar caminando.'
+    ],
     easier: 'Quédate en la L con los pies en la pared (20–30 s).',
     harder: 'Acércate más a la pared o separa un pie unos segundos.',
   ),
@@ -76,17 +331,24 @@ const exerciseDetails = <String, ExerciseDetail>{
     muscles: 'Dorsal, bíceps, espalda alta',
     // El lunes va prona con mochila; el jueves, supina; en el circuito, sin
     // carga: la mochila es condicional.
-    loadedSteps: ['Si va con mochila: correas ajustadas y el peso envuelto en una toalla para que no se mueva.'],
+    loadedSteps: [
+      'Si va con mochila: correas ajustadas y el peso envuelto en una toalla para que no se mueva.'
+    ],
     steps: [
       'Cuélgate con los brazos estirados y los hombros activos (prono: un poco más ancho que los hombros; '
           'supino: al ancho de los hombros).',
       'Sube llevando los codos hacia las costillas hasta pasar la barbilla sobre la barra.',
       'Baja en 2 segundos hasta estirar los brazos por completo.',
     ],
-    mistakes: ['Medias repeticiones arriba o abajo.', 'Balancear las piernas para ayudarte.', 'Encoger los hombros hacia las orejas.'],
+    mistakes: [
+      'Medias repeticiones arriba o abajo.',
+      'Balancear las piernas para ayudarte.',
+      'Encoger los hombros hacia las orejas.'
+    ],
     easier: 'Sin mochila, o con 2,5 kg.',
     easierUnloaded: 'Solo la bajada lenta (negativos de 3–4 s).',
-    harder: 'Sube 2–5 kg cuando completes todas las series al tope con RIR 1–2.',
+    harder:
+        'Sube 2–5 kg cuando completes todas las series al tope con RIR 1–2.',
   ),
   'Remo invertido (mesa)': ExerciseDetail(
     muscles: 'Espalda media, dorsal, deltoide posterior, bíceps',
@@ -97,7 +359,11 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Lleva el pecho al borde juntando las escápulas; pausa 1 s arriba.',
       'Baja controlado hasta estirar los brazos.',
     ],
-    mistakes: ['Dejar caer la cadera.', 'Tirar con el cuello hacia la mesa.', 'Usar una mesa que se mueve.'],
+    mistakes: [
+      'Dejar caer la cadera.',
+      'Tirar con el cuello hacia la mesa.',
+      'Usar una mesa que se mueve.'
+    ],
     easier: 'Pies en el suelo con las rodillas dobladas.',
     harder: 'Pausa de 2 s arriba o mochila sobre el pecho.',
   ),
@@ -109,7 +375,11 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Sube los brazos hacia los lados hasta la altura de los hombros, guiando con los codos.',
       'Baja en 2 segundos sin soltar la tensión.',
     ],
-    mistakes: ['Subir las manos más alto que los codos.', 'Encoger los trapecios.', 'Balancear el torso.'],
+    mistakes: [
+      'Subir las manos más alto que los codos.',
+      'Encoger los trapecios.',
+      'Balancear el torso.'
+    ],
     easier: 'Pisa la banda con un solo pie para tener menos tensión.',
     harder: 'Pisa la banda más abierta o agárrala más corta.',
   ),
@@ -121,7 +391,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Tira hacia la frente separando las manos; los codos quedan altos, a la altura de los hombros.',
       'Al final, los pulgares apuntan hacia atrás; vuelve lento.',
     ],
-    mistakes: ['Bajar los codos y convertirlo en un remo.', 'Echarse atrás con todo el cuerpo.'],
+    mistakes: [
+      'Bajar los codos y convertirlo en un remo.',
+      'Echarse atrás con todo el cuerpo.'
+    ],
     easier: 'Acércate al anclaje.',
     harder: 'Aléjate o pausa 2 s con los codos atrás.',
   ),
@@ -143,7 +416,11 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Sube las piernas rectas metiendo la pelvis, hasta tocar la barra con los empeines.',
       'Baja controlado, sin balanceo, hasta quedar colgado de nuevo.',
     ],
-    mistakes: ['Usar el balanceo para subir.', 'Doblar mucho las rodillas.', 'Soltar el abdomen al bajar.'],
+    mistakes: [
+      'Usar el balanceo para subir.',
+      'Doblar mucho las rodillas.',
+      'Soltar el abdomen al bajar.'
+    ],
     easier: 'Elevación de piernas a 90°.',
     harder: 'Toca la barra en cada repetición con 1 s de pausa arriba.',
   ),
@@ -155,7 +432,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Desliza las manos hacia adelante, bajando el cuerpo en bloque.',
       'Llega solo hasta donde mantengas la espalda neutra y vuelve tirando con el abdomen.',
     ],
-    mistakes: ['Hundir la zona lumbar.', 'Volver empujando con la cadera primero.'],
+    mistakes: [
+      'Hundir la zona lumbar.',
+      'Volver empujando con la cadera primero.'
+    ],
     easier: 'Recorrido corto, o frente a una pared que te frene.',
     harder: 'Recorrido completo o desde los pies en vez de las rodillas.',
   ),
@@ -167,7 +447,11 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Baja hasta que el hombro quede a la altura del codo.',
       'Sube empujando hasta bloquear los codos, sin rebotar abajo.',
     ],
-    mistakes: ['Bajar demasiado con dolor en el hombro.', 'Hombros encogidos.', 'Abrir mucho los codos.'],
+    mistakes: [
+      'Bajar demasiado con dolor en el hombro.',
+      'Hombros encogidos.',
+      'Abrir mucho los codos.'
+    ],
     easier: 'Sin mochila, o solo la bajada lenta (negativos de 3–4 s).',
     harder: 'Más peso en la mochila o pausa de 1 s abajo.',
   ),
@@ -191,8 +475,13 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Baja con el codo pegado al cuerpo, cadera y hombros paralelos al suelo.',
       'Sube sin girar el torso.',
     ],
-    mistakes: ['Girar la cadera hacia arriba.', 'Abrir el codo hacia afuera.', 'Juntar los pies demasiado pronto.'],
-    easier: 'Mano elevada en una mesa (escalera: mesa → silla → escalón → suelo).',
+    mistakes: [
+      'Girar la cadera hacia arriba.',
+      'Abrir el codo hacia afuera.',
+      'Juntar los pies demasiado pronto.'
+    ],
+    easier:
+        'Mano elevada en una mesa (escalera: mesa → silla → escalón → suelo).',
     harder: 'Pies más juntos o bajada de 3 s.',
   ),
   'Flexiones con pies elevados': ExerciseDetail(
@@ -238,7 +527,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Brazos rectos y hombros ligeramente activos, sin hundirte en las orejas.',
       'Respira normal y acumula el tiempo en varias series (2–3 min en total).',
     ],
-    mistakes: ['Encoger los hombros hacia las orejas.', 'Soltar con un salto brusco.'],
+    mistakes: [
+      'Encoger los hombros hacia las orejas.',
+      'Soltar con un salto brusco.'
+    ],
     easier: 'Con los pies apoyados en una silla.',
     harder: 'Colgado a una mano por momentos, alternando.',
   ),
@@ -252,7 +544,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Saltos verticales y laterales cortos, 30 s.',
       'Aceleraciones progresivas de 10–20 m y cambios de dirección, 4–6.',
     ],
-    mistakes: ['Saltártelo los días de partido.', 'Hacerlo con prisa y sin control de rodilla.'],
+    mistakes: [
+      'Saltártelo los días de partido.',
+      'Hacerlo con prisa y sin control de rodilla.'
+    ],
     easier: 'Menos repeticiones, mismo orden.',
     harder: 'Añade los sprints al final del bloque de saltos.',
   ),
@@ -265,7 +560,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Aterriza suave en la parte delantera del pie, rodillas alineadas con las puntas.',
       'Reinicia antes del siguiente salto: calidad, no cansancio.',
     ],
-    mistakes: ['Rodillas que se van hacia dentro al aterrizar.', 'Encadenar saltos cansado.'],
+    mistakes: [
+      'Rodillas que se van hacia dentro al aterrizar.',
+      'Encadenar saltos cansado.'
+    ],
     easier: 'Saltos más bajos, centrados en aterrizar bien.',
     harder: 'Saltos seguidos con contacto corto (pliometría reactiva).',
   ),
@@ -290,7 +588,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Aterriza en una sola pierna, con la rodilla sobre el pie (sin que se vaya hacia dentro).',
       'La pierna libre cruza por detrás; pausa 1 s y salta al otro lado.',
     ],
-    mistakes: ['Rodilla hacia dentro.', 'Aterrizar con el tronco muy inclinado.'],
+    mistakes: [
+      'Rodilla hacia dentro.',
+      'Aterrizar con el tronco muy inclinado.'
+    ],
     easier: 'Salto corto apoyando un instante la pierna libre.',
     harder: 'Más distancia, sin pausa entre saltos.',
   ),
@@ -303,8 +604,12 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Rodilla arriba y brazos fuertes de la cadera a la mejilla.',
       'Desacelera poco a poco; camina de vuelta y descansa completo.',
     ],
-    mistakes: ['Hacerlas cansado o sin calentar.', 'Pasos largos desde el inicio.'],
-    note: 'Solo si tienes un espacio seguro. Si no, haz las aceleraciones en el calentamiento del partido.',
+    mistakes: [
+      'Hacerlas cansado o sin calentar.',
+      'Pasos largos desde el inicio.'
+    ],
+    note:
+        'Solo si tienes un espacio seguro. Si no, haz las aceleraciones en el calentamiento del partido.',
     easier: 'Al 80 %, o en una cuesta suave.',
     harder: 'Al 100 % con salida desde el suelo.',
   ),
@@ -316,7 +621,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Baja recto hasta que el muslo de adelante quede casi horizontal.',
       'Sube empujando con el talón de adelante.',
     ],
-    mistakes: ['Rodilla de adelante hacia dentro.', 'Empujar con la pierna de atrás.'],
+    mistakes: [
+      'Rodilla de adelante hacia dentro.',
+      'Empujar con la pierna de atrás.'
+    ],
     easier: 'Sin mochila, o sujetándote de una pared.',
     harder: 'Más peso en la mochila o bajada de 3 s.',
   ),
@@ -340,8 +648,12 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Déjate caer hacia adelante lo más lento posible (3–5 s).',
       'Frena con las manos al final y empújate para volver arriba.',
     ],
-    mistakes: ['Doblar la cadera (sentarte atrás) para hacerlo más fácil.', 'Caer sin control al final.'],
-    note: 'Normal sentir agujetas fuertes las primeras 2 semanas. Empieza con 2 series.',
+    mistakes: [
+      'Doblar la cadera (sentarte atrás) para hacerlo más fácil.',
+      'Caer sin control al final.'
+    ],
+    note:
+        'Normal sentir agujetas fuertes las primeras 2 semanas. Empieza con 2 series.',
     easier: 'Recorrido corto: baja solo hasta donde controles.',
     harder: 'Bajada completa con un empujón mínimo de las manos.',
   ),
@@ -364,7 +676,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Camina erguido sin inclinarte hacia el lado del peso.',
       'Abdomen apretado; cambia de mano a mitad de recorrido.',
     ],
-    mistakes: ['Inclinarse hacia el peso.', 'Encoger el hombro del lado de la mochila.'],
+    mistakes: [
+      'Inclinarse hacia el peso.',
+      'Encoger el hombro del lado de la mochila.'
+    ],
     easier: 'Menos peso o menos distancia.',
     harder: 'Más peso o caminar más lento.',
   ),
@@ -400,7 +715,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Levanta las dos piernas unos centímetros sin inclinarte atrás.',
       'Baja controlado sin descansar los talones del todo.',
     ],
-    mistakes: ['Echar el torso atrás para levantar las piernas.', 'Doblar las rodillas.'],
+    mistakes: [
+      'Echar el torso atrás para levantar las piernas.',
+      'Doblar las rodillas.'
+    ],
     note: 'Al principio las piernas casi no despegan. Es normal.',
     easier: 'Una pierna a la vez.',
     harder: 'Pausa de 2 s arriba en cada repetición.',
@@ -493,10 +811,15 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Exhala y lleva las rodillas hacia la cara hasta que la cadera despegue del suelo, sin impulso.',
       'Baja en 3 segundos hasta que la cadera vuelva a tocar el suelo; la zona lumbar no se arquea.',
     ],
-    mistakes: ['Balancear las piernas para coger impulso.', 'Empujar fuerte con las manos.', 'Dejar caer la cadera de golpe.'],
+    mistakes: [
+      'Balancear las piernas para coger impulso.',
+      'Empujar fuerte con las manos.',
+      'Dejar caer la cadera de golpe.'
+    ],
     easier: 'Solo lleva las rodillas al pecho sin despegar la cadera.',
     harder: 'Piernas más estiradas o pausa de 1 s arriba.',
-    note: 'Peldaño 1 del dragon flag. Si la lumbar se arquea o molesta, vuelve un peldaño.',
+    note:
+        'Peldaño 1 del dragon flag. Si la lumbar se arquea o molesta, vuelve un peldaño.',
   ),
   'Vela': ExerciseDetail(
     muscles: 'Abdomen, control de la pelvis',
@@ -505,8 +828,12 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Sube cadera y piernas hasta la vertical; los hombros se quedan en el suelo.',
       'Aguanta con el cuerpo recto de hombros a pies.',
     ],
-    mistakes: ['Doblar la cadera (las piernas se van hacia la cara).', 'Apoyar el peso en el cuello.'],
-    note: 'Peldaño 2 del dragon flag. Meta para subir: 3 × 20 s con la cadera vertical.',
+    mistakes: [
+      'Doblar la cadera (las piernas se van hacia la cara).',
+      'Apoyar el peso en el cuello.'
+    ],
+    note:
+        'Peldaño 2 del dragon flag. Meta para subir: 3 × 20 s con la cadera vertical.',
   ),
   'Negativo de dragon flag recogido': ExerciseDetail(
     muscles: 'Todo el core, dorsal',
@@ -553,8 +880,13 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Arriba quedas equilibrado sobre los glúteos, sin apoyar las manos.',
       'Vuelve despacio a la posición hollow sin que la lumbar se despegue.',
     ],
-    mistakes: ['Tirar del cuello con la cabeza.', 'Arquear la espalda al volver.', 'Dejarse caer al suelo entre repeticiones.'],
-    easier: 'Brazos a los lados del cuerpo en lugar de por encima de la cabeza.',
+    mistakes: [
+      'Tirar del cuello con la cabeza.',
+      'Arquear la espalda al volver.',
+      'Dejarse caer al suelo entre repeticiones.'
+    ],
+    easier:
+        'Brazos a los lados del cuerpo en lugar de por encima de la cabeza.',
     harder: 'V-up a una pierna (alternando) y después V-up completo.',
     note: 'Peldaño 1 del V-up.',
   ),
@@ -575,7 +907,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Toca los pies arriba, en V, equilibrado sobre los glúteos.',
       'Baja despacio a hollow sin que la lumbar se despegue.',
     ],
-    mistakes: ['Doblar las rodillas.', 'Dejarse caer al suelo entre repeticiones.'],
+    mistakes: [
+      'Doblar las rodillas.',
+      'Dejarse caer al suelo entre repeticiones.'
+    ],
     note: 'Peldaño 3 del V-up. Meta: 3 × 12.',
   ),
   'V-up con bajada lenta': ExerciseDetail(
@@ -602,7 +937,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Balancea una pierna adelante y atrás, relajada, cada vez un poco más alto.',
       'Luego de lado a lado por delante del cuerpo. Cambia de pierna.',
     ],
-    mistakes: ['Arquear la espalda baja para subir más.', 'Patear con fuerza desde el primer balanceo.'],
+    mistakes: [
+      'Arquear la espalda baja para subir más.',
+      'Patear con fuerza desde el primer balanceo.'
+    ],
   ),
   'Retracciones escapulares': ExerciseDetail(
     muscles: 'Trapecio medio e inferior, romboides',
@@ -631,7 +969,10 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Aprieta el glúteo y sube la cadera hasta formar una línea de hombros a rodillas.',
       'Pausa 1 s arriba y baja despacio.',
     ],
-    mistakes: ['Arquear la espalda baja en lugar de usar el glúteo.', 'Empujar con los dedos de los pies.'],
+    mistakes: [
+      'Arquear la espalda baja en lugar de usar el glúteo.',
+      'Empujar con los dedos de los pies.'
+    ],
   ),
   'Dislocaciones con banda': ExerciseDetail(
     muscles: 'Hombros, pecho, espalda alta',
@@ -640,7 +981,11 @@ const exerciseDetails = <String, ExerciseDetail>{
       'Pásala por encima de la cabeza y llévala atrás sólo hasta donde estés cómodo, sin forzar ni doblar los codos.',
       'Vuelve al frente igual de lento.',
     ],
-    mistakes: ['Forzar el recorrido o agarrar demasiado cerrado.', 'Arquear la espalda baja.'],
-    note: 'Es un pase de banda, no una luxación. Mantén un recorrido cómodo; detente si duele.',
+    mistakes: [
+      'Forzar el recorrido o agarrar demasiado cerrado.',
+      'Arquear la espalda baja.'
+    ],
+    note:
+        'Es un pase de banda, no una luxación. Mantén un recorrido cómodo; detente si duele.',
   ),
 };
