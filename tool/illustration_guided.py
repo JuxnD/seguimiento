@@ -126,6 +126,7 @@ def generate(name, variant=None):
         return cycle(a,b,contacts=['nearAnkle','farAnkle'],yaw=65)
     if name == 'Pie corto':
         a=pose('Pie descalzo apoyado; dedos largos')
+        a['footArch']=0
         b=cp(a); b.update(caption='Eleva suavemente el arco sin encoger los dedos',footArch=.6)
         return cycle(a,b,contacts=['nearAnkle','farAnkle'],barefoot=True,focus='nearFoot',per_side=True,yaw=20)
     if name in ('Pike sentado','Pancake'):
@@ -185,18 +186,44 @@ def _plan034(name, variant, result, cycle):
     from illustration_catalog import pose, limb, arm, reach, phase, box, bench, tube, squat, generate as existing
     if name == 'Copenhague':
         long = variant == 'copenhagen_long'
-        # Side support is authored in world coordinates after a 90° body roll.
-        a=pose('Antebrazo al suelo; '+('tobillo' if long else 'rodilla')+' superior sobre cama',
-               (0,-15.7),180,limb(0,0),limb(0,0),arm(90,0),arm(90,0))
-        a['bodyRoll']=-90
-        a['farArm'].update(reach3=[9,10,0],pole=[0,1,0],end3=[1,0,0])
-        a['nearLeg']=limb(0,0 if long else 90)
-        b=cp(a); b['caption']='Sostén pelvis alineada y pierna inferior elevada'
         support_x=28 if long else 14
-        # Position the support top beneath the selected knee/ankle in world.
-        props=bench(support_x,-18 if long else -17.4,width=10,depth=7)
-        return result([a,b,cp(b)],[phase('Colocación y sostén',kind='hold'),phase('Sostén y respira',kind='hold',seconds=3)],
-                      props=props,per_side=True,yaw=25,pitch=25)
+        length=28 if long else 14
+        def supported(y):
+            # Closed chain: superior knee/ankle on bed and inferior elbow on
+            # floor. Solve hip-x and torso rotation with anatomical lengths.
+            def constraints(x,t):
+                ux,uy=math.cos(t),math.sin(t); fx,fy=-uy,ux
+                hip_top=(x+fx*3.3,y+fy*3.3)
+                shoulder_bottom=(x+ux*18-fx*4.5,y+uy*18-fy*4.5)
+                return ((support_x-hip_top[0])**2+(-19-hip_top[1])**2-length**2,
+                        (-18-shoulder_bottom[0])**2+(-1.2-shoulder_bottom[1])**2-100)
+            x,t=0.,math.pi
+            for _ in range(30):
+                f,g=constraints(x,t)
+                if max(abs(f),abs(g))<1e-10: break
+                h=1e-5; fx,gx=constraints(x+h,t); ft,gt=constraints(x,t+h)
+                a,b,c,d=(fx-f)/h,(ft-f)/h,(gx-g)/h,(gt-g)/h
+                det=a*d-b*c
+                x-=(d*f-b*g)/det; t-=(-c*f+a*g)/det
+            ux,uy=math.cos(t),math.sin(t); front=(-uy,ux)
+            hip_top=(x+front[0]*3.3,y+front[1]*3.3)
+            shoulder=(x+ux*18-front[0]*4.5,y+uy*18-front[1]*4.5)
+            f=pose('Eleva o baja la pelvis; apoyos inmóviles',(x,y),math.degrees(t),
+                   limb(0,0),limb(0,0),arm(90,0),arm(90,0))
+            f['bodyRoll']=-90
+            knee=[support_x-hip_top[0],-19-hip_top[1],0]
+            target=cp(knee)
+            if not long: target[2]=14
+            f['nearLeg'].update(reach3=target,pole=knee,end3=[1,0,0] if long else [0,0,1])
+            f['farArm'].update(reach3=[-9-shoulder[0],-1.2-shoulder[1],0],
+                               pole=[-18-shoulder[0],-1.2-shoulder[1],0],end3=[1,0,0])
+            return f
+        up=[supported(-13.7-2*i/16) for i in range(17)]
+        up[0]['caption']='Codo al suelo; '+('tobillo' if long else 'rodilla')+' superior sobre cama'
+        up[-1]['caption']='Pelvis alineada; sostén sin girarte'
+        frames=up+[cp(up[-1])]+[cp(f) for f in reversed(up[:-1])]
+        motions=[phase('Eleva la pelvis',seconds=.15) for _ in up[1:]]+[phase('Sostén',kind='hold',seconds=2)]+[phase('Baja con control',seconds=.15) for _ in up[1:]]
+        return result(frames,motions,props=bench(support_x,-18 if long else -17.4,width=10,depth=7),per_side=True,yaw=25,pitch=25)
     if name == 'Sóleo sentado con mochila':
         a=pose('Sentado; mochila sobre muslos, antepiés apoyados',(0,-15),-90,
                limb(0,90,foot=0),limb(0,90,foot=0),arm(60,20),arm(60,20))
@@ -205,7 +232,15 @@ def _plan034(name, variant, result, cycle):
             # The toe is fixed at (19,-1); ankle follows a radius5 arc.
             angle=math.radians(35)
             b[sd+'Leg']=reach(19-5*math.cos(angle),-1-5*math.sin(angle),foot=35)
-        return cycle(a,b,props=bench(-4,-13.5,width=17,depth=10)+[box([7,-18,0],[9,5,12])],per_side=variant=='seated_soleus_unilateral',yaw=25)
+        sweep=[]
+        for i in range(9):
+            f=cp(a); angle=math.radians(35*i/8)
+            for sd in (['near'] if variant=='seated_soleus_unilateral' else ['near','far']):
+                f[sd+'Leg']=reach(19-5*math.cos(angle),-1-5*math.sin(angle),foot=35*i/8)
+            f['caption']=a['caption'] if i==0 else b['caption']; sweep.append(f)
+        frames=sweep+[cp(sweep[-1])]+[cp(f) for f in reversed(sweep[:-1])]
+        motions=[phase('Eleva el talón',seconds=.3) for _ in sweep[1:]]+[phase('Pausa arriba',kind='hold',seconds=1)]+[phase('Baja',seconds=.3) for _ in sweep[1:]]
+        return result(frames,motions,props=bench(-4,-13.5,width=17,depth=10)+[box([7,-18,0],[9,5,12])],per_side=variant=='seated_soleus_unilateral',yaw=25)
     if name == 'Tibial en la pared':
         a=pose('Espalda apoyada; talones firmes',(0,-28),-90,reach(7,-1),reach(7,-1))
         b=cp(a); b['caption']='Levanta las puntas; conserva los talones en el suelo'
@@ -226,7 +261,16 @@ def _plan034(name, variant, result, cycle):
                                               sign*9*math.sin(math.radians(55 if opened else 5))],
                                       pole=[0,1,0],end3=[1,0,0])
         if overhead: a['caption']='Brazos a altura de hombro; codos a 90°'; b['caption']='Rota los antebrazos hacia arriba sin mover los codos'
-        return cycle(a,b,props=[dict(type='band',a='nearHand',b='farHand')],yaw=70)
+        sweep=[]
+        for i in range(9):
+            f=cp(a); theta=math.radians(90*i/8 if overhead else 5+50*i/8)
+            for sd,sign in [('near',1),('far',-1)]:
+                f[sd+'Arm']['reach3']=([9*math.cos(theta),-9*math.sin(theta),sign*10] if overhead else
+                                       [9*math.cos(theta),10,sign*9*math.sin(theta)])
+            f['caption']=a['caption'] if i==0 else b['caption']; sweep.append(f)
+        frames=sweep+[cp(sweep[-1])]+[cp(f) for f in reversed(sweep[:-1])]
+        motions=[phase('Rota hacia fuera',seconds=.3) for _ in sweep[1:]]+[phase('Pausa',kind='hold',seconds=1)]+[phase('Regresa',seconds=.3) for _ in sweep[1:]]
+        return result(frames,motions,props=[dict(type='band',a='nearHand',b='farHand')],yaw=70)
     if name == 'Support hold en paralelas':
         a=pose('Manos sobre apoyos; codos rectos',(0,-30),-90,
                limb(90,90),limb(90,90),arm(90,90,hand=0,grip='bar_parallel'),arm(90,90,hand=0,grip='bar_parallel'))
@@ -234,8 +278,13 @@ def _plan034(name, variant, result, cycle):
         b['nearLeg']=limb(105,155,foot=0); b['farLeg']=limb(105,155,foot=0)
         # Hands remain y=-29: bars/rings are at that same height.
         if variant=='support_rings':
-            props=[dict(type='ring',center=[0,-29,z],radius=2.2) for z in [-5,5]]
-            props += [tube([0,-70,z],[0,-31.2,z],.25) for z in [-5,5]]
+            props=[]
+            for z in [-5,5]:
+                for i in range(24):
+                    angles=[2*math.pi*i/24,2*math.pi*(i+1)/24]
+                    points=[[2.2*math.cos(t),-26.8+2.2*math.sin(t),z] for t in angles]
+                    props.append(tube(*points,.35))
+                props.append(tube([0,-70,z],[0,-29,z],.25))
             a['caption']='Manos en anillas; codos rectos'
         else:
             props=[tube([-9,-29,z],[9,-29,z],.65) for z in [-5,5]]
@@ -259,7 +308,7 @@ def _plan034(name, variant, result, cycle):
             return f
         return cycle(kneeling(90,'Arrodillado; cadera y tronco alineados'),
                      kneeling(68,'Inclina el bloque hacia atrás desde las rodillas'),
-                     contacts=['nearKnee','farKnee'],props=[box([0,-.3,0],[10,.6,18])],yaw=15)
+                     contacts=['nearKnee','farKnee'],props=[box([0,-.3,0],[10,.6,18])],yaw=15,pivot=(0,-1.6))
     if name == 'Bajada lateral del escalón':
         a=pose('Un pie en el escalón; pierna libre al lado',(0,-34),-90,reach(0,-7),reach(0,-7),arm(30,30),arm(30,30))
         a['nearLeg']['depth']=6; a['farLeg']['depth']=-9

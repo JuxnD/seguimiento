@@ -1,0 +1,73 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: guided figures keep bone lengths and finite reachable supports through every stage
+00:00 +0 -1: guided figures keep bone lengths and finite reachable supports through every stage [E]
+  Expected: empty
+    Actual: [
+              'Nórdico inverso/2: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/3: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/4: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/5: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/6: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/7: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/8: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/9: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/10: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/11: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/12: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/13: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/14: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/15: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/16: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/17: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/18: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/19: FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee',
+              'Nórdico inverso/42: FormatException: Apoyo de etapa no conservado: Nórdico inverso/2/nearKnee',
+              'Nórdico inverso/43: FormatException: Apoyo de etapa no conservado: Nórdico inverso/2/nearKnee',
+              'Nórdico inverso/44: FormatException: Apoyo de etapa no conservado: Nórdico inverso/2/nearKnee',
+              'Nórdico inverso/45: FormatException: Apoyo de etapa no conservado: Nórdico inverso/2/nearKnee',
+              'Nórdico inverso/46: FormatException: Apoyo de etapa no conservado: Nórdico inverso/2/nearKnee',
+              'Nórdico inverso/47: FormatException: Apoyo de etapa no conservado: Nórdico inverso/2/nearKnee',
+              ...
+            ]
+  
+  package:matcher                                      expect
+  package:flutter_test/src/widget_tester.dart 474:18   expect
+  test\ui\illustration_guided_geometry_test.dart 44:5  main.<fn>
+  
+00:00 +0 -1: guided independent world anchors stay fixed during demonstrated support phases
+00:00 +0 -2: guided independent world anchors stay fixed during demonstrated support phases [E]
+  FormatException: Apoyo de etapa no conservado: Nórdico inverso/0/nearKnee
+  package:seguimiento/ui/exercise_figure_3d.dart 429:11  Figure3D.skeletonAt
+  test\ui\illustration_guided_geometry_test.dart 68:39   main.<fn>
+  
+00:00 +0 -2: cat cow breathing and short foot change the rendered anatomy not only captions
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: empty
+  Actual: [
+            'Gato-camello: 0 changed channels',
+            'Respiración 90/90: 0 changed channels',
+            'Pie corto: 0 changed channels'
+          ]
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart:107:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart line 107
+The test description was:
+  cat cow breathing and short foot change the rendered anatomy not only captions
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: cat cow breathing and short foot change the rendered anatomy not only captions [E]
+  Test failed. See exception logs above.
+  The test description was: cat cow breathing and short foot change the rendered anatomy not only captions
+  
+00:00 +0 -3: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T181244321-27352-c14af02c5b66419da5e99def8b8f6260.json

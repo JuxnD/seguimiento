@@ -101,9 +101,11 @@ class Geometry035(unittest.TestCase):
                     'Elevaciones en straddle','Negativo de dragon flag','Negativo de dragon flag a una pierna',
                     'Negativo de dragon flag recogido','Vela'}
         current = json.loads((root/'assets/tecnica/figuras3d.json').read_text(encoding='utf-8'))['figures']
-        self.assertEqual({f['name'] for f in current}, set(baseline))
+        # Phase2 adds32 independent identities; no historical identity may
+        # disappear. Exact111/11 coverage is checked by guided_contract_test.
+        self.assertTrue(set(baseline) <= {f['name'] for f in current})
         for f in current:
-            if f['name'] in selected: continue
+            if f['name'] in selected or f['name'] not in baseline: continue
             digest = hashlib.sha256(json.dumps(f,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
             self.assertEqual(digest,baseline[f['name']],f['name'])
 

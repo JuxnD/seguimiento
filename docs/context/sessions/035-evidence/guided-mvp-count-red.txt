@@ -1,0 +1,46 @@
+.........F.
+======================================================================
+FAIL: test_unselected_asset_entries_are_unchanged (__main__.Geometry035.test_unselected_asset_entries_are_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 104, in test_unselected_asset_entries_are_unchanged
+    self.assertEqual({f['name'] for f in current}, set(baseline))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the first set but not the second:
+'Sentadilla isométrica en la pared'
+'Abducción de cadera de lado'
+'Sprint lanzado'
+'Plancha inversa sobre las manos'
+'Dorsal en la cama'
+'Support hold en paralelas'
+'Pike sentado'
+'Pie corto'
+'Tibial en la pared'
+'Bajada lateral del escalón'
+'Pectoral en el marco de la puerta'
+'Pancake'
+'Copenhague'
+'Mesa invertida'
+'Rodilla a la pared'
+'Sentadilla profunda'
+'Nórdico inverso'
+'Sóleo en la pared'
+'Y-T prono'
+'Deslizamientos en la pared'
+'Plancha inversa con pies elevados'
+'Muñecas a cuatro patas'
+'Plancha inversa a una pierna'
+'Scap pull-up'
+'Gato-camello'
+'Aterrizaje clavado'
+'Respiración 90/90'
+'Libro abierto'
+'Rotación externa con banda'
+'Zancada del mundo'
+'Sóleo sentado con mochila'
+'Plancha inversa sobre antebrazos'
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.036s
+
+FAILED (failures=1)

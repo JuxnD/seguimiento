@@ -176,6 +176,9 @@ class KeyPose {
       this.bodyZ = 0,
       this.bodyRoll = 0,
       this.shoulderOffset = Offset.zero,
+      this.spineBend = 0,
+      this.breath = 0,
+      this.footArch = -1,
       this.props,
       required this.limbs});
 
@@ -184,6 +187,9 @@ class KeyPose {
         hip: _pt(j['hip']),
         torso: _num(j['torso']),
         gaze: _num(j['gaze']),
+        spineBend: _num(j['spineBend']),
+        breath: _num(j['breath']),
+        footArch: _num(j['footArch'], -1),
         bodyZ: _num(j['bodyZ']),
         bodyRoll: _num(j['bodyRoll']),
         shoulderOffset: j['shoulderOffset'] == null ? Offset.zero : _pt(j['shoulderOffset']),
@@ -202,6 +208,7 @@ class KeyPose {
 
   /// Cabeceo respecto del torso: positivo baja la barbilla.
   final double gaze, bodyZ, bodyRoll;
+  final double spineBend, breath, footArch;
 
   /// Scapular anchor relative to neck, in body units (~3.2cm):
   /// dx toward chest/front, dy along hip→neck. Not world X/Y.
@@ -498,6 +505,9 @@ class Figure3D {
         joints: j,
         torso: s.torso,
         gaze: s.gaze,
+        spineBend: s.spineBend,
+        breath: s.breath,
+        footArch: s.footArch,
         ends: s.ends,
         grips: s.grips,
         limbPoses: s.limbPoses,
@@ -641,6 +651,9 @@ class Figure3DCatalog {
           hip: frame.hip,
           torso: frame.torso,
           gaze: frame.gaze,
+        spineBend: frame.spineBend,
+        breath: frame.breath,
+        footArch: frame.footArch,
           bodyZ: frame.bodyZ,
           bodyRoll: frame.bodyRoll,
           shoulderOffset: frame.shoulderOffset,
@@ -748,10 +761,14 @@ class Skeleton2D {
       this.limbPoses = const {},
       this.bodyZ = 0,
       this.bodyRoll = 0,
-      this.shoulderOffset = Offset.zero});
+      this.shoulderOffset = Offset.zero,
+      this.spineBend = 0,
+      this.breath = 0,
+      this.footArch = -1});
 
   final Map<String, Offset> joints;
   final double torso, gaze, bodyZ, bodyRoll;
+  final double spineBend, breath, footArch;
   final Offset shoulderOffset;
 
   /// Ángulo del pie ('nearLeg') o de los dedos ('nearArm'), en grados.
@@ -787,6 +804,9 @@ class Skeleton2D {
         joints: {for (final e in joints.entries) e.key: e.value + d},
         torso: torso,
         gaze: gaze,
+        spineBend: spineBend,
+        breath: breath,
+        footArch: footArch,
         ends: ends,
         grips: grips,
         limbPoses: limbPoses,
@@ -852,6 +872,9 @@ Skeleton2D solveKeyPose(KeyPose p, BodyDims d, {bool exactExtension = false}) {
       joints: j,
       torso: p.torso,
       gaze: p.gaze,
+        spineBend: p.spineBend,
+        breath: p.breath,
+        footArch: p.footArch,
       ends: ends,
       grips: grips,
       limbPoses: p.limbs,
@@ -924,6 +947,9 @@ KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t, {Offset? pivot}) 
     hip: hip,
     torso: torso,
     gaze: _lerp(a.gaze, b.gaze, t),
+    spineBend: _lerp(a.spineBend, b.spineBend, t),
+    breath: _lerp(a.breath, b.breath, t),
+    footArch: _lerp(a.footArch, b.footArch, t),
     bodyZ: _lerp(a.bodyZ, b.bodyZ, t),
     bodyRoll: lerpAngle(a.bodyRoll, b.bodyRoll, t),
     shoulderOffset: shoulderOffset,
@@ -1422,6 +1448,24 @@ double _framingRadius(String joint, BodyDims dims) => joint.endsWith('Hand')
                 ? 5.5
                 : 3.5;
 
+/// Local anatomical detail, shared by the painter and geometric inspection.
+/// Supports remain on the same plane; the toe stays long while the arch rises.
+Map<String, V3> shortFootLandmarks(Body3D body, double activation, {String side = 'near'}) {
+  final ankle = body.p['${side}Ankle']!;
+  final forward = (body.p['${side}Toe']! - ankle).unit;
+  const down = V3(0, 1, 0);
+  return {
+    'heel': ankle - forward + down * .4,
+    'metatarsal': ankle + forward * 3.2 + down * .4,
+    'arch': ankle + forward * 1.4 - down * (.4 + activation),
+    'toe': ankle + forward * 5 + down * .4,
+  };
+}
+
+V3 spineCenterline(Body3D body, BodyDims dims, double bend, double fraction) =>
+    body.p['hip']! + body.up * (dims.torso * fraction) +
+    body.front * (bend * math.sin(math.pi * fraction.clamp(0.0, 1.0)));
+
 /// Cámara con la que se pinta una figura en un lienzo de ese tamaño.
 Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defaultPitch}) {
   final cache = _cameraCache[fig] ??= {};
@@ -1429,7 +1473,19 @@ Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defa
   if (cache[key] case final previous?) return previous;
   final world = <V3>[];
   for (final progress in fig._framingProgress) {
-    final body = liftSkeleton(fig.skeletonAt(progress), fig);
+    final skeleton = fig.skeletonAt(progress);
+    final body = liftSkeleton(skeleton, fig);
+    if (fig.focus == 'nearFoot' && skeleton.footArch >= 0) {
+      final foot = shortFootLandmarks(body, skeleton.footArch);
+      for (final point in foot.values) {
+        for (final x in [-1.5, 1.5]) {
+          for (final y in [-2.5, 1.0]) {
+            for (final z in [-2.0, 2.0]) { world.add(point + V3(x,y,z)); }
+          }
+        }
+      }
+      continue;
+    }
     if (fig.hasMotion) {
       // Project the enclosing volume, so a wrist center inside the canvas
       // cannot conceal clipped fingers. The eight corners cover any camera.
@@ -1833,6 +1889,12 @@ class _Scene {
     final up = body.up, fr = body.front;
     V3 point(double t, double th) {
       final s = _torsoAt(t);
+      if (skel.spineBend != 0 || skel.breath != 0) {
+        final expansion = skel.breath * math.pow(math.sin(math.pi * t.clamp(0.0, 1.0)), 2);
+        return spineCenterline(body,d,skel.spineBend,t) +
+            fr * (s.o + (s.d + expansion) * math.cos(th)) +
+            body.up.cross(body.front).unit * ((s.w + expansion) * math.sin(th));
+      }
       return hip +
           up * (d.torso * t) +
           fr * (s.o + s.d * math.cos(th)) +
@@ -1976,6 +2038,22 @@ class _Scene {
   void _foot(String side) {
     final a = body.p['${side}Ankle'], toe = body.p['${side}Toe'];
     if (a == null || toe == null) return;
+    if (side == 'near' && skel.footArch >= 0) {
+      final landmarks = shortFootLandmarks(body, skel.footArch, side: side);
+      final forward = (toe-a).unit;
+      final lateral = V3.zAxis * (fig.mirrored ? -1 : 1);
+      final near = nearOf(a);
+      _capsule(landmarks['heel']!,landmarks['arch']!,.75,.85,_skin,near);
+      _capsule(landmarks['arch']!,landmarks['metatarsal']!,.85,.8,_skin,near);
+      _capsule(a - const V3(0,.4,0),landmarks['arch']!,.7,.65,_skin,near);
+      for(var digit=0;digit<5;digit++) {
+        final spread=lateral*((digit-2)*.38);
+        final start=landmarks['metatarsal']!+spread;
+        final end=landmarks['toe']!+spread-forward*(digit*.12);
+        _capsule(start,end,digit==0?.28:.22,digit==0?.24:.18,_skin,near);
+      }
+      return;
+    }
     final f = (toe - a).unit;
     // La suela mira al lado contrario del empeine (en el plano de perfil).
     final lateral = body.up.cross(body.front).unit;
@@ -2047,7 +2125,9 @@ class _Scene {
         : (body.endDir['${side}Hand'] ?? const V3(1, 0, 0)).unit;
     var across = V3.zAxis - f * f.dot(V3.zAxis);
     if (across.length < .1) across = const V3(1, 0, 0) - f * f.x;
-    final medial = across.unit * -sz;
+    // Dorsal wrist support rotates the palm about its longitudinal axis;
+    // thumb side changes with it. Legacy open hands keep the exact path.
+    final medial = across.unit * -sz * (grip == 'dorsum' ? -1 : 1);
     final th = f.cross(medial).unit;
     if (grip == 'handle' || grip == 'hold') {
       // El asa o la sujeción corporal prolonga la muñeca; no hereda el

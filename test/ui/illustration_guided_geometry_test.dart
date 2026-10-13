@@ -24,76 +24,180 @@ void main() {
         try {
           final body = liftSkeleton(fig.skeletonAt(progress), fig);
           for (final side in ['near', 'far']) {
-            for (final spec in [('Shoulder','Elbow',10.0),('Elbow','Hand',9.0),('Hip','Knee',14.0),('Knee','Ankle',14.0)]) {
+            for (final spec in [
+              ('Shoulder', 'Elbow', 10.0),
+              ('Elbow', 'Hand', 9.0),
+              ('Hip', 'Knee', 14.0),
+              ('Knee', 'Ankle', 14.0)
+            ]) {
               final length = (body.p['$side${spec.$1}']! - body.p['$side${spec.$2}']!).length;
-              if (!length.isFinite || (length-spec.$3).abs()>.4) {
-                if (failures.length<80) failures.add('${entry.key}/$sample/$side${spec.$2}: $length');
+              if (!length.isFinite || (length - spec.$3).abs() > .4) {
+                if (failures.length < 80) failures.add('${entry.key}/$sample/$side${spec.$2}: $length');
               }
             }
           }
         } on FormatException catch (e) {
-          if (failures.length<80) failures.add('${entry.key}/$sample: $e');
+          if (failures.length < 80) failures.add('${entry.key}/$sample: $e');
         }
       }
     }
-    expect(failures,isEmpty);
+    for(final failure in failures) { print(failure); }
+    expect(failures, isEmpty);
   });
 
   test('guided independent world anchors stay fixed during demonstrated support phases', () {
     const anchors = {
-      'Gato-camello': ['nearHand','farHand','nearKnee','farKnee'],
-      'Respiración 90/90': ['hip','nearKnee','farKnee','nearAnkle','farAnkle'],
-      'Muñecas a cuatro patas': ['nearHand','farHand','nearKnee','farKnee'],
-      'Pike sentado': ['hip','nearAnkle','farAnkle'],
-      'Pancake': ['hip','nearAnkle','farAnkle'],
-      'Sóleo en la pared': ['nearHand','farHand','nearAnkle','farAnkle'],
+      'Gato-camello': ['nearHand', 'farHand', 'nearKnee', 'farKnee'],
+      'Respiración 90/90': ['hip', 'nearKnee', 'farKnee', 'nearAnkle', 'farAnkle'],
+      'Muñecas a cuatro patas': ['nearHand', 'farHand', 'nearKnee', 'farKnee'],
+      'Pike sentado': ['hip', 'nearAnkle', 'farAnkle'],
+      'Pancake': ['hip', 'nearAnkle', 'farAnkle'],
+      'Sóleo en la pared': ['nearHand', 'farHand', 'nearAnkle', 'farAnkle'],
       'Rodilla a la pared': ['nearAnkle'],
-      'Scap pull-up': ['nearHand','farHand'],
-      'Tibial en la pared': ['nearAnkle','farAnkle'],
-      'Sentadilla isométrica en la pared': ['nearAnkle','farAnkle'],
-      'Nórdico inverso': ['nearKnee','farKnee'],
+      'Scap pull-up': ['nearHand', 'farHand'],
+      'Tibial en la pared': ['nearAnkle', 'farAnkle'],
+      'Sentadilla isométrica en la pared': ['nearAnkle', 'farAnkle'],
+      'Nórdico inverso': ['nearKnee', 'farKnee'],
       'Bajada lateral del escalón': ['nearAnkle'],
-      'Mesa invertida': ['nearHand','farHand','nearAnkle','farAnkle'],
+      'Mesa invertida': ['nearHand', 'farHand', 'nearAnkle', 'farAnkle'],
     };
-    final failures=<String>[];
+    final failures = <String>[];
     for (final entry in anchors.entries) {
-      final fig=catalog.forExercise(entry.key)!;
-      final first=liftSkeleton(fig.skeletonAt(0),fig);
-      for(var i=1;i<=60;i++) {
-        final body=liftSkeleton(fig.skeletonAt(i/60),fig);
-        for(final key in entry.value) {
-          final drift=(body.p[key]!-first.p[key]!).length;
-          if(drift>.08 && failures.length<50) failures.add('${entry.key}/$i/$key: $drift');
+      final fig = catalog.forExercise(entry.key)!;
+      final first = liftSkeleton(fig.skeletonAt(0), fig);
+      for (var i = 1; i <= 60; i++) {
+        final body = liftSkeleton(fig.skeletonAt(i / 60), fig);
+        for (final key in entry.value) {
+          final drift = (body.p[key]! - first.p[key]!).length;
+          if (drift > .08 && failures.length < 50) failures.add('${entry.key}/$i/$key: $drift');
         }
       }
     }
-    expect(failures,isEmpty);
+    expect(failures, isEmpty);
   });
 
   testWidgets('cat cow breathing and short foot change the rendered anatomy not only captions', (tester) async {
-    final unchanged=<String>[];
-    for(final name in ['Gato-camello','Respiración 90/90','Pie corto']) {
+    final unchanged = <String>[];
+    for (final name in ['Gato-camello', 'Respiración 90/90', 'Pie corto']) {
       // Remove head-only motion: the torso/foot itself must visibly change.
-      final fixture=jsonDecode(jsonEncode(data)) as Map<String,Object?>;
-      final raw=(fixture['figures'] as List).cast<Map<String,Object?>>().firstWhere((f)=>f['name']==name);
-      for(final frame in (raw['frames'] as List).cast<Map<String,Object?>>()) { frame['gaze']=0; }
-      final fig=Figure3DCatalog.fromJsonString(jsonEncode(fixture)).forExercise(name)!;
-      final images=<List<int>>[];
+      final fixture = jsonDecode(jsonEncode(data)) as Map<String, Object?>;
+      final raw = (fixture['figures'] as List).cast<Map<String, Object?>>().firstWhere((f) => f['name'] == name);
+      for (final frame in (raw['frames'] as List).cast<Map<String, Object?>>()) {
+        frame['gaze'] = 0;
+      }
+      final fig = Figure3DCatalog.fromJsonString(jsonEncode(fixture)).forExercise(name)!;
+      final images = <List<int>>[];
       await tester.runAsync(() async {
-        for(final progress in [0.0,1.0/fig.motion.length]) {
-          final recorder=ui.PictureRecorder();
-          final canvas=ui.Canvas(recorder);
-          paintFigure3D(canvas,const ui.Size(420,360),fig,progress,yaw:fig.initialYaw,pitch:fig.initialPitch);
-          final picture=recorder.endRecording();
-          final image=await picture.toImage(420,360);
-          images.add((await image.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List());
-          image.dispose();picture.dispose();
+        for (final progress in [0.0, 1.0 / fig.motion.length]) {
+          final recorder = ui.PictureRecorder();
+          final canvas = ui.Canvas(recorder);
+          paintFigure3D(canvas, const ui.Size(420, 360), fig, progress, yaw: fig.initialYaw, pitch: fig.initialPitch);
+          final picture = recorder.endRecording();
+          final image = await picture.toImage(420, 360);
+          images.add((await image.toByteData(format: ui.ImageByteFormat.rawRgba))!.buffer.asUint8List());
+          image.dispose();
+          picture.dispose();
         }
       });
-      var changed=0;
-      for(var i=0;i<images[0].length;i++) { if(images[0][i]!=images[1][i]) changed++; }
-      if(changed<100) unchanged.add('$name: $changed changed channels');
+      var changed = 0;
+      for (var i = 0; i < images[0].length; i++) {
+        if (images[0][i] != images[1][i]) changed++;
+      }
+      if (changed < 100) unchanged.add('$name: $changed changed channels');
     }
-    expect(unchanged,isEmpty);
+    expect(unchanged, isEmpty);
+  });
+
+  test('local spine and bare foot anatomy preserve support and remain readable at phone size', () {
+    final cat=catalog.forExercise('Gato-camello')!;
+    final rounded=cat.skeletonAt(1/cat.motion.length), extended=cat.skeletonAt(3/cat.motion.length);
+    final rb=liftSkeleton(rounded,cat), eb=liftSkeleton(extended,cat);
+    final neutral=(rb.p['hip']!+rb.p['neck']!)*.5;
+    expect((spineCenterline(rb,cat.dims,rounded.spineBend,.5)-neutral).dot(rb.front),lessThan(-.5));
+    expect((spineCenterline(eb,cat.dims,extended.spineBend,.5)-neutral).dot(eb.front),greaterThan(.5));
+    expect((rb.p['hip']!-eb.p['hip']!).length,lessThan(.001));
+    expect((rb.p['neck']!-eb.p['neck']!).length,lessThan(.001));
+    final foot=catalog.forExercise('Pie corto')!;
+    final start=foot.skeletonAt(0),active=foot.skeletonAt(1/foot.motion.length);
+    final sb=liftSkeleton(start,foot),ab=liftSkeleton(active,foot);
+    final a=shortFootLandmarks(sb,start.footArch), b=shortFootLandmarks(ab,active.footArch);
+    for(final anchor in ['heel','metatarsal','toe']) { expect((a[anchor]!-b[anchor]!).length,lessThan(.001)); }
+    expect(b['arch']!.y,lessThan(a['arch']!.y-.4));
+    expect((b['toe']!-b['metatarsal']!).length,closeTo(1.8,.001));
+    final cam=cameraFor(foot,const ui.Size(320,285),yaw:foot.initialYaw,pitch:foot.initialPitch);
+    expect((cam.project(b['toe']!).offset-cam.project(b['heel']!).offset).distance,greaterThan(70));
+    expect((cam.project(b['arch']!).offset-cam.project(a['arch']!).offset).distance,greaterThan(5));
+  });
+
+  test('physical variants retain their required world support and equipment contacts', () {
+    final failures=<String>[];
+    void check(String label,double error,[double tolerance=.08]) {
+      if(error>tolerance && failures.length<100) failures.add('$label: $error');
+    }
+    for(final key in ['copenhagen_short','copenhagen_long']) {
+      final fig=catalog.forExercise('Copenhague',physicalVariantKey:key)!;
+      final support=key.endsWith('long')?'nearAnkle':'nearKnee';
+      final first=liftSkeleton(fig.skeletonAt(0),fig);
+      for(var i=0;i<=100;i++) {
+        final body=liftSkeleton(fig.skeletonAt(i/100),fig);
+        check('$key/elbow/$i',(body.p['farElbow']!-first.p['farElbow']!).length);
+        check('$key/support/$i',(body.p[support]!-first.p[support]!).length);
+        check('$key/floor/$i',(body.p['farElbow']!.y+1.2).abs());
+        check('$key/bed/$i',(body.p[support]!.y+19).abs());
+      }
+      expect((liftSkeleton(fig.skeletonAt(.4),fig).p['hip']!-first.p['hip']!).length,greaterThan(1));
+      final seat=(fig.props.first['center'] as List).cast<num>();
+      final size=(fig.props.first['size'] as List).cast<num>();
+      final surface=seat[1]-size[1]/2;
+      expect(surface,closeTo(key.endsWith('long')?-18:-17.4,.001));
+    }
+    for(final key in ['support_parallels','support_rings']) {
+      final fig=catalog.forExercise('Support hold en paralelas',physicalVariantKey:key)!;
+      final first=liftSkeleton(fig.skeletonAt(0),fig);
+      for(var i=0;i<=60;i++) {
+        final body=liftSkeleton(fig.skeletonAt(i/60),fig);
+        for(final side in ['near','far']) {
+          check('$key/hand/$side/$i',(body.p['${side}Hand']!-first.p['${side}Hand']!).length);
+          check('$key/barHeight/$side/$i',(body.p['${side}Hand']!.y+29).abs());
+          if(body.p['${side}Toe']!.y>=-.9) failures.add('$key free feet/$side/$i');
+        }
+      }
+      final tubes=fig.props.where((p)=>p['type']=='tube').toList();
+      expect(tubes.length,key=='support_rings'?50:6);
+    }
+    for(final key in ['band_rotation_side','band_rotation_90_90']) {
+      final fig=catalog.forExercise('Rotación externa con banda',physicalVariantKey:key)!;
+      final first=liftSkeleton(fig.skeletonAt(0),fig);
+      for(var i=0;i<=100;i++) {
+        final body=liftSkeleton(fig.skeletonAt(i/100),fig);
+        for(final side in ['near','far']) { check('$key/elbow/$side/$i',(body.p['${side}Elbow']!-first.p['${side}Elbow']!).length); }
+      }
+    }
+    for(final key in ['seated_soleus_bilateral','seated_soleus_unilateral']) {
+      final fig=catalog.forExercise('Sóleo sentado con mochila',physicalVariantKey:key)!;
+      final first=liftSkeleton(fig.skeletonAt(0),fig);
+      for(var i=0;i<=100;i++) {
+        final body=liftSkeleton(fig.skeletonAt(i/100),fig);
+        for(final side in ['near','far']) { check('$key/toe/$side/$i',(body.p['${side}Toe']!-first.p['${side}Toe']!).length); }
+        if(key.endsWith('unilateral')) check('$key/inactive/$i',(body.p['farAnkle']!-first.p['farAnkle']!).length);
+      }
+      final peak=fig.motion.indexWhere((stage)=>stage.kind=='hold')/fig.motion.length;
+      expect(liftSkeleton(fig.skeletonAt(peak),fig).p['nearAnkle']!.y,lessThan(-2));
+    }
+    for(final key in ['landing_bilateral','landing_unilateral','landing_lateral']) {
+      final fig=catalog.forExercise('Aterrizaje clavado',physicalVariantKey:key)!;
+      final flight=liftSkeleton(fig.skeletonAt(1/fig.motion.length),fig);
+      final landed=liftSkeleton(fig.skeletonAt(2/fig.motion.length),fig);
+      expect(flight.p['nearToe']!.y,lessThan(-5));
+      expect(flight.p['farToe']!.y,lessThan(-5));
+      expect(landed.p['nearAnkle']!.y,closeTo(-1,.05));
+      if(key!='landing_bilateral') expect(landed.p['farToe']!.y,lessThan(-2));
+      for(var i=0;i<=20;i++) {
+        final held=liftSkeleton(fig.skeletonAt((2+i/20)/fig.motion.length),fig);
+        check('$key/landed/$i',(held.p['nearAnkle']!-landed.p['nearAnkle']!).length);
+      }
+    }
+    for(final failure in failures) { print(failure); }
+    expect(failures,isEmpty);
   });
 }
