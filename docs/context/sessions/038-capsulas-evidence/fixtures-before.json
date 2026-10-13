@@ -1,0 +1,122 @@
+[
+  {
+    "sha256": "72AFD85BD6A1070BA588CE995F4BEB980B73885CA9F2E628B2D5966B7599DD76",
+    "path": "test\\fixtures\\illustration_legacy_929.json"
+  },
+  {
+    "sha256": "785727E3222FEA76FC3E41177DAE8E681F891E29AEF0D16415A0E760A3DCA794",
+    "path": "test\\fixtures\\schema17-synthetic.md"
+  },
+  {
+    "sha256": "28A4EC14BDC0AC141ECD302A13BB82DADFF387A44ABEB7B6162CBB473FE25E79",
+    "path": "test\\fixtures\\schema17-synthetic.sqlite"
+  },
+  {
+    "sha256": "EE1D98B506400A31BDAB2376A487B799F3663F1CBE72863970754A95CC5C4B0C",
+    "path": "test\\fixtures\\schema18-synthetic-manifest.json"
+  },
+  {
+    "sha256": "3893B13AB7C625A14519D84C574248C980903C47303823F277C5293866E9F946",
+    "path": "test\\fixtures\\schema18-synthetic.md"
+  },
+  {
+    "sha256": "6BFE3ABCF1295BBC109EE597C61CA39A7262F394163E8347D8CFA4B56279827A",
+    "path": "test\\fixtures\\schema18-synthetic.sqlite"
+  },
+  {
+    "sha256": "2E9075268FDEE940059684B8633BBEF9EE9FB480DD8FFC22A8033296D5EE48FC",
+    "path": "test\\fixtures\\schema19-synthetic-manifest.json"
+  },
+  {
+    "sha256": "0EADFFD4D0B31C4D5BBB281FA7D1C2FB45BDDAC4727B4E42483A33BC40E88A4E",
+    "path": "test\\fixtures\\schema19-synthetic.md"
+  },
+  {
+    "sha256": "45CEA7FCDB225E0D24671335D6932B0DEF99CF80A4E11BF66752E81965830D46",
+    "path": "test\\fixtures\\schema19-synthetic.sqlite"
+  },
+  {
+    "sha256": "85A3C1B3682EC524B6797CD0F6593846C2B8C39526430CEE5881AB0C2D36B739",
+    "path": "test\\fixtures\\fonts\\materialicons_license.txt"
+  },
+  {
+    "sha256": "D9865B671A09D683D13A863089D8825E0F61A37696CE5D7D448BC8023AA62453",
+    "path": "test\\fixtures\\fonts\\materialicons-regular.otf"
+  },
+  {
+    "sha256": "F8DF1B93A9518B52A1A2A96B16C74F09AEA7180FAB67B4F0BCB5A29E5FCAD935",
+    "path": "test\\fixtures\\fonts\\README.md"
+  },
+  {
+    "sha256": "3DDF9BE5C28FE27DAD143A5DC76EEA25222AD1DD68934A047064E56ED2FA40C5",
+    "path": "test\\fixtures\\fonts\\roboto_license.txt"
+  },
+  {
+    "sha256": "7D0B991EE3E0BE7AF01AD7EA8CD2BEEA6C00A25E679A0226B6737F079AAFFF86",
+    "path": "test\\fixtures\\fonts\\roboto-bold.ttf"
+  },
+  {
+    "sha256": "F205CC511821EA56078A105557FCEA6253129404D411C997E1866FBD006ABB68",
+    "path": "test\\fixtures\\fonts\\roboto-medium.ttf"
+  },
+  {
+    "sha256": "79E851404657DAC2106B3D22AD256D47824A9A5765458EDB72C9102A45816D95",
+    "path": "test\\fixtures\\fonts\\roboto-regular.ttf"
+  },
+  {
+    "sha256": "6DDA0179FEEAADBD53A0E6D170A6D7AE9AFF52F126513F706E84D6C6683E9772",
+    "path": "test\\fixtures\\gateway_contract\\manifest.json"
+  },
+  {
+    "sha256": "773C50208BD0474E62B393C5BB09847E4F6F9512D9FD149738D2DA81803597F4",
+    "path": "test\\fixtures\\gateway_contract\\app\\services\\SeguimientoAiService.php"
+  },
+  {
+    "sha256": "8E17D225BD991062149E3E9D67EDFFEE4C171F96403C57E1017EBBDF1C4BF463",
+    "path": "test\\fixtures\\gateway_contract\\app\\services\\SeguimientoAiTransport.php"
+  },
+  {
+    "sha256": "4EFBA18653569CD7336416FF3636B03D9BBE60AF216760C725617ADF4FBAE7D3",
+    "path": "test\\fixtures\\gateway_contract\\app\\services\\SeguimientoAssistantService.php"
+  },
+  {
+    "sha256": "7D32F3CA8542620DDB30DA07ED862B731CDF7E2BD54DDBDE14F06BCFBBF44E95",
+    "path": "test\\fixtures\\gateway_contract\\scripts\\seguimiento_estimate_test.php"
+  },
+  {
+    "sha256": "1DD4E940534AE03C6E5042EC841BC302F40BAF04915CFD729CF64B08F84214CE",
+    "path": "test\\fixtures\\illustration_legacy_929\\.gitattributes"
+  },
+  {
+    "sha256": "F1BFE944999DDBB33BE4B9B17F5465EE409D8E5C48427F52EDC41B92C4E5BF84",
+    "path": "test\\fixtures\\illustration_legacy_929\\exercise_figure_3d_reference.dart"
+  },
+  {
+    "sha256": "A50F9C8DB7EBFF2AD2A2A354341DB9A95EC60FB15330673ED105AF4B8513CBBC",
+    "path": "test\\fixtures\\illustration_legacy_929\\figuras3d.json"
+  },
+  {
+    "sha256": "F8322A880C53227372BF8A17C32A925A34C7B2C1B10EC37C43F61FF27F81E027",
+    "path": "test\\fixtures\\illustration_legacy_929\\manifest.json"
+  },
+  {
+    "sha256": "91A181CB55D9D33A77F15F737D29641D31F45D0203AEC89F037939998AC8F6A6",
+    "path": "test\\fixtures\\public20\\baseline-offline-public20.zip"
+  },
+  {
+    "sha256": "9A48D3F000493EEF795A88884C02DE8716A9494B2D460988756F469A99D1F987",
+    "path": "test\\fixtures\\public20\\README.md"
+  },
+  {
+    "sha256": "00AB5CD15636ED48CF41C3AABAF06F558B1014387B15F6EFE9AC04B81E3C77C2",
+    "path": "test\\fixtures\\schema21_122\\fixture.sqlite"
+  },
+  {
+    "sha256": "C7EAB42D9313940CB937C6D2C0FA8C1909A6E2736EBF7A99228FBD2161F7E6F3",
+    "path": "test\\fixtures\\schema21_122\\manifest.json"
+  },
+  {
+    "sha256": "D90FD49B9174B9EE807643E953FE80031D3E28246BE197303CA22D4362CFEC9C",
+    "path": "test\\fixtures\\schema21_122\\README.md"
+  }
+]

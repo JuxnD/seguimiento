@@ -1,0 +1,19 @@
+{
+  "owner": "038",
+  "token": "139849c3f485403781ba666b2a56809b",
+  "pid": 46280,
+  "tool": "dart",
+  "arguments": [
+    "format",
+    "test/data/schema18_121_migration_test.dart",
+    "test/data/schema19_121_migration_test.dart",
+    "test/data/schema20_public23_migration_test.dart"
+  ],
+  "worktree": "C:\\My Projects\\seguimiento-038-capsulas-vigentes",
+  "startUtc": "2026-10-13T16:43:04.0073958Z",
+  "finishUtc": "2026-10-13T16:43:05.3062884Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

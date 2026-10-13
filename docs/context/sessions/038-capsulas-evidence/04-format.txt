@@ -1,0 +1,5 @@
+Formatted test/data/schema18_121_migration_test.dart
+Formatted test/data/schema19_121_migration_test.dart
+Formatted test/data/schema20_public23_migration_test.dart
+Formatted 3 files (3 changed) in 0.65 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T164305311-46280-0b97395a8d0f416796a051d023723ce4.json

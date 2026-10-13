@@ -1,0 +1,9 @@
+{
+  "generated": [
+    {
+      "sha256": "B81CD2E8EC8A3C28759B7C5AC7A74D2E9D8D21EC17F839237AFB88FA19B2F504",
+      "path": "lib\\data\\database.g.dart"
+    }
+  ],
+  "inputDifference": "Only checkout LF/CRLF; normalized full input text identical, source HEAD stable eb7256f"
+}

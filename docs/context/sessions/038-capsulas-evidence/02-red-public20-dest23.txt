@@ -1,0 +1,14 @@
+00:00 +0: loading C:/My Projects/seguimiento-038-capsulas-vigentes/test/data/schema20_public23_migration_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: genuine public20 capsule →23 preserves all legacy rows/columns, files, ZIP and reopen
+00:00 +0 -1: genuine public20 capsule →23 preserves all legacy rows/columns, files, ZIP and reopen [E]
+  Expected: <23>
+    Actual: <24>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 474:18     expect
+  test\data\schema20_public23_migration_test.dart 104:7  main.<fn>.preserved
+  
+00:00 +0 -1: (tearDownAll)
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T163644894-32032-3b31e264f0c64d599e314e99b58ceb4c.json

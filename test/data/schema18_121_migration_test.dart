@@ -24,6 +24,32 @@ class _LegacyTable {
   final List<Map<String, Object?>> rows;
 }
 
+// Declared destination for this candidate; never read back from the migrated DB.
+const _targetSchema = 24;
+const _restoredReminderDefaults = [
+  {
+    'kind': 'recuperacionManana',
+    'enabled': 1,
+    'hour': 22,
+    'minute': 0,
+    'threshold': null
+  },
+  {
+    'kind': 'rutinaManana',
+    'enabled': 1,
+    'hour': 7,
+    'minute': 15,
+    'threshold': null
+  },
+  {
+    'kind': 'rutinaNoche',
+    'enabled': 1,
+    'hour': 21,
+    'minute': 30,
+    'threshold': null
+  },
+];
+
 void main() {
   setUpAll(() {
     useHostSqlite();
@@ -56,20 +82,28 @@ void main() {
   }
 
   Future<void> verifyPreservation(
-      AppDatabase db, Map<String, _LegacyTable> before) async {
+      AppDatabase db, Map<String, _LegacyTable> before,
+      {bool afterRestore = false}) async {
     for (final entry in before.entries) {
       final columns = entry.value.columns.map((name) => '"$name"').join(',');
       final actual = await db
           .customSelect('SELECT $columns FROM "${entry.key}" ORDER BY rowid')
           .get();
+      final expected = [
+        ...entry.value.rows,
+        if (afterRestore && entry.key == 'reminders')
+          ..._restoredReminderDefaults.map((row) =>
+              {for (final column in entry.value.columns) column: row[column]})
+      ];
       if (jsonEncode(actual.map((row) => row.data).toList()) !=
-          jsonEncode(entry.value.rows)) {
+          jsonEncode(expected)) {
         throw StateError('Preservation mismatch: ${entry.key}');
       }
     }
   }
 
-  Future<void> verifyLiteralOracle(AppDatabase db) async {
+  Future<void> verifyLiteralOracle(AppDatabase db,
+      {bool afterRestore = false}) async {
     final setting = await db
         .customSelect("SELECT * FROM reminders WHERE kind='sesion'")
         .getSingle();
@@ -79,7 +113,7 @@ void main() {
                 .customSelect('SELECT COUNT(*) AS n FROM reminders')
                 .getSingle())
             .data['n'],
-        11);
+        afterRestore ? 14 : 11);
     final expected = manifest['expected'] as Map<String, dynamic>;
     for (final entry in expected.entries) {
       final wanted = (entry.value as List).cast<Map<String, dynamic>>();
@@ -147,7 +181,7 @@ void main() {
   });
 
   test(
-      '18 to current: reopen, ZIP, restore, reopen preserves all old rows and AI',
+      '18 to schema24: reopen, ZIP, restore, reopen preserves all old rows and AI',
       () async {
     final root =
         Directory.systemTemp.createTempSync('seguimiento_121_migration_');
@@ -161,14 +195,14 @@ void main() {
     var a = open(fileA);
     var b = open(fileB);
     try {
-      expect(a.db.schemaVersion, greaterThanOrEqualTo(19));
+      expect(a.db.schemaVersion, _targetSchema);
       await a.db.customStatement('SELECT 1'); // Actual migration, not metadata.
       expect(
           (await a.db.customSelect('PRAGMA user_version').getSingle())
               .data
               .values
               .single,
-          a.db.schemaVersion);
+          _targetSchema);
       await verifyPreservation(a.db, before);
       await verifyLiteralOracle(a.db);
       await a.db.close();
@@ -183,12 +217,31 @@ void main() {
       expect(exported.file.readAsBytesSync().take(4), [80, 75, 3, 4]);
       expect(exported.complete, true);
       await BackupArchive(host: b, documents: dirB).restoreFrom(exported.file);
-      await verifyPreservation(b.db, before);
-      await verifyLiteralOracle(b.db);
+      await verifyPreservation(b.db, before, afterRestore: true);
+      await verifyLiteralOracle(b.db, afterRestore: true);
       await b.db.close();
       b = open(fileB);
-      await verifyPreservation(b.db, before);
-      await verifyLiteralOracle(b.db);
+      await verifyPreservation(b.db, before, afterRestore: true);
+      await verifyLiteralOracle(b.db, afterRestore: true);
+      // Reimporting the same ZIP preserves the 11 settings and adds no duplicates.
+      await BackupArchive(host: b, documents: dirB).restoreFrom(exported.file);
+      await verifyPreservation(b.db, before, afterRestore: true);
+      await verifyLiteralOracle(b.db, afterRestore: true);
+      await b.db.customStatement(
+          "UPDATE reminders SET minute=1 WHERE kind='rutinaManana'");
+      await expectLater(
+          verifyPreservation(b.db, before, afterRestore: true),
+          throwsA(isA<StateError>().having((e) => e.message, 'exact table',
+              'Preservation mismatch: reminders')));
+      await b.db.customStatement(
+          "UPDATE reminders SET minute=15 WHERE kind='rutinaManana'");
+      await verifyPreservation(b.db, before, afterRestore: true);
+      await b.db.customStatement(
+          "INSERT INTO reminders (kind, enabled, hour, minute, threshold) VALUES ('extraNoAutorizada', 1, 7, 0, NULL)");
+      await expectLater(
+          verifyPreservation(b.db, before, afterRestore: true),
+          throwsA(isA<StateError>().having((e) => e.message, 'exact table',
+              'Preservation mismatch: reminders')));
       expect(
           (await BodyRepository(b.db).watchWeights().first)
               .map((row) => row.kg),

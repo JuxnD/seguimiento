@@ -1,0 +1,26 @@
+{
+  "owner": "038",
+  "token": "33c2c7868f4a4252a25abc04f744a40a",
+  "pid": 42432,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--concurrency",
+    "1",
+    "--timeout",
+    "90s",
+    "--reporter",
+    "expanded",
+    "test/data/schema18_121_migration_test.dart",
+    "test/data/schema19_121_migration_test.dart",
+    "test/data/schema20_public23_migration_test.dart"
+  ],
+  "worktree": "C:\\My Projects\\seguimiento-038-capsulas-vigentes",
+  "startUtc": "2026-10-13T16:37:03.5249383Z",
+  "finishUtc": "2026-10-13T16:37:19.3816351Z",
+  "exit": 1,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

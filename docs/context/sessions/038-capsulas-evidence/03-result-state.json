@@ -1,0 +1,9 @@
+{
+  "state": "FAILED",
+  "exit": 1,
+  "total": 7,
+  "raw": "03-green-capsulas18-19-20.txt",
+  "pass": 4,
+  "fail": 3,
+  "reason": "Legacy strict reminders oracle rejects exactly3 authorized defaults after restore; file name preserved historical"
+}

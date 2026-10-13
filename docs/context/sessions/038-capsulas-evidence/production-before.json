@@ -1,0 +1,812 @@
+[
+  {
+    "gitBlob": "8492b18675856f12449fc384cf8822211b6e356c",
+    "path": "lib/app/app.dart",
+    "sha256": "A9E24519FE636A0E3880EB2FB220A97C3DCE0C32B830713A4835A005F9E693EC"
+  },
+  {
+    "gitBlob": "bfda93fe44667e044550aa2d6cb8c7a23452a056",
+    "path": "lib/app/coalesce.dart",
+    "sha256": "D7CA8F9DEEF3DA208F5AF6C249C17CC751C3BD40458A69183B7AF0371964EACF"
+  },
+  {
+    "gitBlob": "5a05e409832c6606df68eac5260961a5d862bc95",
+    "path": "lib/app/providers.dart",
+    "sha256": "9C8BACEF20663B8852014FFC43752916B3A787117369035BDB39DB8637522429"
+  },
+  {
+    "gitBlob": "d802154a2c85663f694c022dfae35665cfd927df",
+    "path": "lib/app/startup_error.dart",
+    "sha256": "8399FAD7404F394BF1B93AB95A84111BC4D6648089D7308472CF857F0E729AF6"
+  },
+  {
+    "gitBlob": "c53548692e6dd858db79070c2fe1151785ee2cde",
+    "path": "lib/config.dart",
+    "sha256": "B9BF4C4172ED3C796B2BD23D4564D4120615F129BA84D15C3866AF51B73C98AB"
+  },
+  {
+    "gitBlob": "75eba74b9efa61eabf8f05cd2e7929d36fc06cab",
+    "path": "lib/data/active_session_store.dart",
+    "sha256": "3F03C164184991CD83ED539B3C4146F9BFDCC1969C6C8AFE8E2C101373D3A1A3"
+  },
+  {
+    "gitBlob": "3969149f3d918adfa6b15d4ad59692d89b2ef38a",
+    "path": "lib/data/ai_gateway.dart",
+    "sha256": "B58697B20EE2049E3B745046660BDEAACC08AFFC6C2AD9B91D87F87548A05A59"
+  },
+  {
+    "gitBlob": "94b83adf5ec8ad1a17585a1c2d7e2d3fd420b26c",
+    "path": "lib/data/auto_backup.dart",
+    "sha256": "07B195AC9A4B38D0865AC3A4EC475B6394715CBFA0246AB7A13482306A477809"
+  },
+  {
+    "gitBlob": "7288c783e44695cb75f8f25366bee48253c0fe8c",
+    "path": "lib/data/backup_archive.dart",
+    "sha256": "49D7AE91E81970EC08AC4BA377730D046A7A0D1ACFDC0AD46523AC71A548D390"
+  },
+  {
+    "gitBlob": "d9cce985ba0ed52fbdf0054a428fe3f95e318937",
+    "path": "lib/data/catalog_candidates.dart",
+    "sha256": "9BA3F1A1F447118CC40DE5175F57EDCBD00CB9AA7797780B91EE95F7BB7D4F6B"
+  },
+  {
+    "gitBlob": "debd916f48b642307b0066d04ad1b6090ccf60db",
+    "path": "lib/data/catalog_patches.dart",
+    "sha256": "4BB39BF9DBDF555219D06601D8AA0689D60FED91B32FAE3BEF4732B061ED6D10"
+  },
+  {
+    "gitBlob": "a04ab35b221f439733b7a6722a0c47aee89b5ccf",
+    "path": "lib/data/catalog_updates.dart",
+    "sha256": "3B134FEA4F6F92F592680510E229B9A7025EE9764B864667E1DFE2CF3CF51BB6"
+  },
+  {
+    "gitBlob": "2d04983a648e1381d50e8149de902804392fb096",
+    "path": "lib/data/corrections_29sep.dart",
+    "sha256": "E5AA04C386E78612EA3F3FB0859523CC7F146547D4CDFF7C4FF64C36928E4036"
+  },
+  {
+    "gitBlob": "0b4543338c89d8f25a13e45f3a970bc4048feb43",
+    "path": "lib/data/database.dart",
+    "sha256": "CCE32A7F32B81874DEEBA330EEF971932B732DA23D8162512FF0B2249B159C10"
+  },
+  {
+    "gitBlob": "983fe60e5c26628f6d3e638b765ebee072b6cd58",
+    "path": "lib/data/database_host.dart",
+    "sha256": "DBF70F8E96CA065E3DE98950D2B6F36DEF5886BDE79798C2F7E07AA892CAC587"
+  },
+  {
+    "gitBlob": "9e3be86bfa3b1dcaaf51000a112f0c8fcd1979ee",
+    "path": "lib/data/exercise_details.dart",
+    "sha256": "9B6C5AB05E474501E6BCF3BDE4AE56712C57A0022D5C522F54997B0DB4609C86"
+  },
+  {
+    "gitBlob": "7a236c62d998ae0de389fb1572c28e2abe2d8bde",
+    "path": "lib/data/guided_plan_snapshot.dart",
+    "sha256": "95DA058192147A942A35752BD669E5D790ABDF64838FB8F5585E7116C8A325A0"
+  },
+  {
+    "gitBlob": "f1eab7f0c628938fd807e72d709a59bbe840faad",
+    "path": "lib/data/health_connect.dart",
+    "sha256": "63FB66C7D7D6331BAC8DF64D0877A7252F24E212D961092A2D3C34B41DD4FE0C"
+  },
+  {
+    "gitBlob": "23cb3a2efbd6f890b00fc0cdcdb8aefdb792d0dc",
+    "path": "lib/data/history_import.dart",
+    "sha256": "98AA126EDFCFF54B6712BC1E8278EBAAFEC65C846E88DE536151771AF0452113"
+  },
+  {
+    "gitBlob": "c29759221b9acfceb1c2106eb600ba444a94de40",
+    "path": "lib/data/local_flags.dart",
+    "sha256": "0D0F7430240AFB4D4587F26310F2BB86929BC61C7BCD4495375F4AC5FC52CAB1"
+  },
+  {
+    "gitBlob": "de6be6034badf87c841bb7fe70618b9f793ce6cf",
+    "path": "lib/data/meal_assistant.dart",
+    "sha256": "3DC18999F44FC2EF8E1F83A2F666C5274B6A99E02FB7E10ABEC62CBE24DA9769"
+  },
+  {
+    "gitBlob": "13483d4f0c6a7348e216cc5caa5f8a18daf66167",
+    "path": "lib/data/meal_photo_ai.dart",
+    "sha256": "8A8D2AA57A4BB32EF4439918961537F708753A64A89C6B97254D37316177DD87"
+  },
+  {
+    "gitBlob": "fdf82c595b9e690c43303e339e24f9ac435057fb",
+    "path": "lib/data/notification_service.dart",
+    "sha256": "A81790674A2788532D5E6EFBAE98C0ACF4895EDCE3051D8C8E714173E6704857"
+  },
+  {
+    "gitBlob": "eec35828c2916bfa33dd239be532b49453c0522f",
+    "path": "lib/data/reminder_scheduler.dart",
+    "sha256": "0C4E4A4D80D5A6C930DB96DBA570F5F48FCB8072904E71AD76629B73B0A22246"
+  },
+  {
+    "gitBlob": "ac504ab83c1f187077056e30428898858fe87116",
+    "path": "lib/data/repositories/ai_conversation_repository.dart",
+    "sha256": "68F3BEE2C982DAFCBC3079560B6BCB28850667FD172CA15031389C8490C38727"
+  },
+  {
+    "gitBlob": "1017c3ce3f65e220be1ce0f69da596fb7583de06",
+    "path": "lib/data/repositories/body_repository.dart",
+    "sha256": "2C1A3C49AA0D82FE38EE0D01D7091FAC5B6FBB1901099D56EDA9EEFE1ACD1BC5"
+  },
+  {
+    "gitBlob": "29021154b9aeb2a31177f224303ab22c21f0abee",
+    "path": "lib/data/repositories/chart_repository.dart",
+    "sha256": "2E36C1F91FFCE185FE7B5911A0291913DB9A02F0941C1620A2238B155C16DB23"
+  },
+  {
+    "gitBlob": "f6fa547ff4ccb921a27e9ebce19b1a838c4a3978",
+    "path": "lib/data/repositories/coach_repository.dart",
+    "sha256": "B0EF25CD0CCB3C0D612A3DAE5B9CB2BAFECECCE6674CDDAA68F767DD9B591661"
+  },
+  {
+    "gitBlob": "73fde573c17245ee28163aebd5e5e4adfd7c90f4",
+    "path": "lib/data/repositories/custom_reminder_repository.dart",
+    "sha256": "2931E755DF4476C684D62D5A43E4F08D37AA54FC54132857BF443A1395AA7D02"
+  },
+  {
+    "gitBlob": "18d5fc5dd7f367e47a1e68e3b449e980788b74b5",
+    "path": "lib/data/repositories/dashboard_repository.dart",
+    "sha256": "9044F65AE4EDAD168251AAB9A1CEBB157990C613BBE7E6E34FF8CAB85D0F32A5"
+  },
+  {
+    "gitBlob": "a0f2ced9c35b4aeeab43d83eafcd14ad35a1ccfd",
+    "path": "lib/data/repositories/exercise_photo_repository.dart",
+    "sha256": "4DBB75C44947D46F935366AA0F81253ECFA2F74D5E29966B401C12C2CE27C6D4"
+  },
+  {
+    "gitBlob": "388d096ba42f57aa32feda0eb3dace7e3a162a2d",
+    "path": "lib/data/repositories/exercise_repository.dart",
+    "sha256": "471C41C27D4569A467AAF0D083F15848C958299B18C3125578689140ABFFDBE6"
+  },
+  {
+    "gitBlob": "3b4df65d79574ac3254a02ae26979b9c8d7bc549",
+    "path": "lib/data/repositories/fitness_test_repository.dart",
+    "sha256": "4425C03B4DF5C0BB9AC7D7E29BA739CCF277B9434F5594A172D42EA69127CC21"
+  },
+  {
+    "gitBlob": "cc60cf96703546faf7c6aa00f49630a2b9d3802f",
+    "path": "lib/data/repositories/goal_repository.dart",
+    "sha256": "BE520C442C12AB6FFCAB4880E5AF4B45820FF91B628B211683C63C94741DBE9C"
+  },
+  {
+    "gitBlob": "4b08f105c48f5b507e76c2e7bdc724e4c1b82579",
+    "path": "lib/data/repositories/ladder_repository.dart",
+    "sha256": "70C3E3FA2CDFEC5771DC08BC559098BED13F72F848CA3B3E73B222ECB449145A"
+  },
+  {
+    "gitBlob": "a8a72171019fcbb412f92cada9badb15ab5d96f5",
+    "path": "lib/data/repositories/nutrition_repository.dart",
+    "sha256": "BAD9EECE15A3408E28CB3ED6945FAA8ADFB05B126EE94B3EFAE77BF53C7BE623"
+  },
+  {
+    "gitBlob": "6f66040491674f62d984a1b9e7b0eb99469c96e7",
+    "path": "lib/data/repositories/personal_radar_repository.dart",
+    "sha256": "169642927BE4F9CEEA35C9D0E869B0A58871142E8F38D1D8BC81914527DB360A"
+  },
+  {
+    "gitBlob": "9498db72c02746757fe7e20d5a6ce8850ac3eda9",
+    "path": "lib/data/repositories/photo_repository.dart",
+    "sha256": "59185879ECD92059CADE7AB7A6EA293A044A65427F24614AF1765FB0B7A4BF53"
+  },
+  {
+    "gitBlob": "ef9a3784809f75544bc0b384030df43b1aed1360",
+    "path": "lib/data/repositories/plan_repository.dart",
+    "sha256": "19D7BBE089413FAB41F04EA5DA93CC1A3B93C7C463E3CD910EB184E4054C0720"
+  },
+  {
+    "gitBlob": "106bcb1a355f01afb2b191ce2b17305634886c5b",
+    "path": "lib/data/repositories/profile_repository.dart",
+    "sha256": "A3B1DD88BB181F1E30288C6DB0D8510D18A7644AF2D415D703FB31535403A56A"
+  },
+  {
+    "gitBlob": "c542ef6c144794eb2000fd1e01d24bfaaa3da547",
+    "path": "lib/data/repositories/readiness_repository.dart",
+    "sha256": "ABE9DA9E4B13CD9E047261D3EBFEA1705C9117C3886AEC57B6D97A942A3E726C"
+  },
+  {
+    "gitBlob": "3f4b9152d53dc42c250b2bc3623d05d01505468d",
+    "path": "lib/data/repositories/recovery_repository.dart",
+    "sha256": "EE982E56A01E51FFF833389C185AB21EF26A459BDB1B5A86FE36066353132022"
+  },
+  {
+    "gitBlob": "da394b9b6fa1ce714362f23c74e32ef3d2e5d329",
+    "path": "lib/data/repositories/reminder_repository.dart",
+    "sha256": "266CB03139AEE3FDAC43557F2C494C6DDE9DCCF5F9048D78C944B0ADCC1DB216"
+  },
+  {
+    "gitBlob": "9c9b7dc61e2bb249fe40c76f28805538917bdecf",
+    "path": "lib/data/repositories/report_repository.dart",
+    "sha256": "938C2C3E3ABAF479009B6929736B081D9064DB39B1E538212D98C0E89E6AE57A"
+  },
+  {
+    "gitBlob": "8ed2bb53e625d4697cad7f8852385acc245ba85d",
+    "path": "lib/data/repositories/sleep_repository.dart",
+    "sha256": "73F7D3774E5F871270BD7DC1033DDE354D58B1FF8328A4F0BD9C1F47341CEE1F"
+  },
+  {
+    "gitBlob": "474e3df4c881f1d98773975ad09ab963372ae4f0",
+    "path": "lib/data/repositories/steps_repository.dart",
+    "sha256": "B80A02258010A2F16C5407CAD46A66126CF7D76D01673626059571D1E151794A"
+  },
+  {
+    "gitBlob": "c73654cc835c7a1b31ebdbdf98b7c263dafbcd37",
+    "path": "lib/data/repositories/training_repository.dart",
+    "sha256": "964F1DDF1DE03294216E822B7CCA8727D39CAAB9B13658F5711BCC87F6A8DFEE"
+  },
+  {
+    "gitBlob": "62181741792cc01ad004ee4b9e1f38f1a69b52f9",
+    "path": "lib/data/seed_foods.dart",
+    "sha256": "5854F821F84091F68361B2A156A6F32CA33BA071B456F6D592659B3B94F9534C"
+  },
+  {
+    "gitBlob": "129b371b1fef22462c9e5365296bcf34daa249f8",
+    "path": "lib/data/seed_plan.dart",
+    "sha256": "E67DA4A0227124CF6A6034F4ADD70B73347EBFA915756EAB5E3D0C8161C52740"
+  },
+  {
+    "gitBlob": "e17433ad82ecd99015f5eb7cbbbf04e1e3ca52be",
+    "path": "lib/data/system_health.dart",
+    "sha256": "88132C82EF3FD2D502AD64771971E47490F83BA99F57792C92E99C5938F1D058"
+  },
+  {
+    "gitBlob": "2425a0bef3a4d991b2a4c380396dbb7f633115b7",
+    "path": "lib/data/tables.dart",
+    "sha256": "E64A66FF1976B474807A27AD64083A9090C8BC37E2BEA19ABCAA6863CA826636"
+  },
+  {
+    "gitBlob": "f919bfcd8aa98dc3d9cb8f26befd3e33f036b191",
+    "path": "lib/data/update_service.dart",
+    "sha256": "E289C523A84DD3277C988854FD741300852B58FE0408E2E0BB6C1C4FC65B2B62"
+  },
+  {
+    "gitBlob": "eac6448cc3d086563cfb1b99e82032eabe3fb6cb",
+    "path": "lib/data/weekly_ai.dart",
+    "sha256": "85CF0411D2A37F38A4F04FFB4D156070FEA33A8CE6B9DC584120DC9E9EFFCBFA"
+  },
+  {
+    "gitBlob": "38b4e50b1738535826e83cf8412633adfd8cc1d0",
+    "path": "lib/domain/active_session.dart",
+    "sha256": "A36AB4AF16FE47CD1584802CBAA0D0AF3FEA71394FF17910710A51A508B401A6"
+  },
+  {
+    "gitBlob": "ce5cb5711f664c763d3e383f723e9675e7e0d810",
+    "path": "lib/domain/adaptive_coach.dart",
+    "sha256": "DD35063876815D9FBB32FF49B9B73969BF46E4345E46A3DF402AAFA8897A028A"
+  },
+  {
+    "gitBlob": "d52a912e494a939b95a4fe098a41f52addc2bd54",
+    "path": "lib/domain/ai_context.dart",
+    "sha256": "3F7129DDCBF66235F4109EFA28CC3B84FF9E9BBA1E5114E8332CD6E1031F5A61"
+  },
+  {
+    "gitBlob": "483a29c2b2f669650725dc4f7e28d9f243c9e080",
+    "path": "lib/domain/ai_report_sources.dart",
+    "sha256": "251D2D30CB4312E8E3B2FCABA1EC182D3FB6E5F95545CC181E372EE07CA825AF"
+  },
+  {
+    "gitBlob": "535457dd92362dd2b5101b0fa355835abc444cc1",
+    "path": "lib/domain/band_guide.dart",
+    "sha256": "47CB60BD35BEF8D4E9B0339E9EF8033F838B2F3EF0361274DF7BF4E12DE483DB"
+  },
+  {
+    "gitBlob": "2ccb444dc5e2324bca2235064267512829956726",
+    "path": "lib/domain/chart_evidence.dart",
+    "sha256": "1C8D9B7CECCCCE98BCFA76595FB8D4F88E41F9856A350E63495B7C0D9BC229E0"
+  },
+  {
+    "gitBlob": "ae7fab0af5b574156fdbdd7d76dc5bb489b28d6e",
+    "path": "lib/domain/cindy_protocol.dart",
+    "sha256": "7304FB8CC906B5BA5F190EE30D6656D091266C8580B8168A85D82D6649DA53A1"
+  },
+  {
+    "gitBlob": "f119541cdacd00708c53dfaf68932eb7af91ef8e",
+    "path": "lib/domain/core_ladders.dart",
+    "sha256": "2547D5E540F530C9DA4D427852D7832A2BF96B5B9B802B921DFA1DBCB4A2A833"
+  },
+  {
+    "gitBlob": "30b3c65dd886aea1b57ec5eb8b612acfa5a7e24b",
+    "path": "lib/domain/daily_routines.dart",
+    "sha256": "B51E3FB7535225BCA5239502ADFA69BA095085F1727D604F07D2495C1E2E0B06"
+  },
+  {
+    "gitBlob": "3d8df4b37e894cacefd486d70d635ef013e97b32",
+    "path": "lib/domain/dates.dart",
+    "sha256": "2631F1703AD07A818E0A2ACBAF3FFBA67CCF59E3765AD1D00DE56FD4543EB994"
+  },
+  {
+    "gitBlob": "b509c42ebe7c964a6bb057623660f245b884792f",
+    "path": "lib/domain/energy.dart",
+    "sha256": "0BB00FDECC903D7B4F1EFF2288873E09D1073A807F2DE3C7FFB57669D420A5AE"
+  },
+  {
+    "gitBlob": "d7e508e75ea6a377d9e74a17f0b13a61910245bc",
+    "path": "lib/domain/enums.dart",
+    "sha256": "AC3DCE722709AD28F0E06E1D9FA28585A14B1F4EA7B5E9E02EC290B630C2ED3C"
+  },
+  {
+    "gitBlob": "69600324ed4944cad240a3ec8ab88917fb858a44",
+    "path": "lib/domain/fitness_test.dart",
+    "sha256": "37AF9A35247B5A4A3CE3787E49D0310F33935D8BA7F4A2D5A2E66F4A6243413F"
+  },
+  {
+    "gitBlob": "3333a08caad8287b6b3c42ce0779a4e27276e4a6",
+    "path": "lib/domain/format.dart",
+    "sha256": "1463A2D2E73F8BD89CE39642FB942D798F4CFA0CD26B226AFE32391F3C9631E1"
+  },
+  {
+    "gitBlob": "65d9fec7612bf63d8ff6ac349249e6638eca710a",
+    "path": "lib/domain/goal_history.dart",
+    "sha256": "91BB47B16ACA9AFD73D23D4CC7476A2A20E3DFC542831F743F6F3CFBDB56E090"
+  },
+  {
+    "gitBlob": "f9ea30c1b9ca34658e60ed6f392c5042b77f8d37",
+    "path": "lib/domain/habits.dart",
+    "sha256": "5C79DBCB0C1CCF222C6DB582793ECE7D86DE31551A40BBC37B94CED0CE998441"
+  },
+  {
+    "gitBlob": "dd9edd79b7cce96464617dd18e7b43bc92ecb0bf",
+    "path": "lib/domain/meal_estimate.dart",
+    "sha256": "B470A9E5E66EAD756DD445542CE35EBB4FD2D7A3E12726E4B4FD1CDBC248255B"
+  },
+  {
+    "gitBlob": "e5f5e02adf1cab5df370f10996683ed7f05fcf0d",
+    "path": "lib/domain/meal_slots.dart",
+    "sha256": "9F272582FEDA5FE5FCDCF460C7D4AEC1B2A0A7A7416A744C7760D7BDD77E6B30"
+  },
+  {
+    "gitBlob": "92c7e81102b4b628d5a8aa7638eb35dc81ba7b61",
+    "path": "lib/domain/mobility.dart",
+    "sha256": "A9B8538549ED2C5D448DAC7A0D989E5BA77BCC2B18E8A83EAB08CD4957608F22"
+  },
+  {
+    "gitBlob": "6b063d3aea94c2976b038061f6a8e6988db9ee51",
+    "path": "lib/domain/nutrition.dart",
+    "sha256": "93CAC210F16C673FDE1E506A6B9F56CC983471248B0442B57FB74D3BBB747430"
+  },
+  {
+    "gitBlob": "504cdd28b0112d6c1281cee7bdf9cb1f96ff6902",
+    "path": "lib/domain/personal_radar.dart",
+    "sha256": "000F47C551EA76578A99AF2D1AF753C052D358BC26AB2F07F196FCCA909D328C"
+  },
+  {
+    "gitBlob": "9942073b5f0d5f6b85dec45aa8044b500ddfdef8",
+    "path": "lib/domain/plan_v3.dart",
+    "sha256": "E4E80FFA1884B8F7BD7A98BC7BF0ECE5D1DE630A4EA3078F73243980FCF748CD"
+  },
+  {
+    "gitBlob": "7ec4f36697109964d795f0a0bac7950197d891a6",
+    "path": "lib/domain/progress.dart",
+    "sha256": "AD439F0047F14BF6CAF6CF4622F3C0B870F5B110408793E477C27A0A43088CD9"
+  },
+  {
+    "gitBlob": "237b5d8a8c2bf4a0949242a0aaddaade80d06437",
+    "path": "lib/domain/progress_evidence.dart",
+    "sha256": "ACEF863AC4A4790F57093F9D5F2C75F704554CEDA6A2009D966CCED301C77FBD"
+  },
+  {
+    "gitBlob": "ee18c79a6dc2fda40b8d2e390e86a05100727314",
+    "path": "lib/domain/progress_metrics.dart",
+    "sha256": "74FBD23B377446CA5111249EEF83BB08912979BD192351869D917D4C15255B85"
+  },
+  {
+    "gitBlob": "f4ae070719bdbfb5eacd1f28e053a5f113d986e3",
+    "path": "lib/domain/readiness.dart",
+    "sha256": "CF9421D975CB27B3DFE91D4B29C8E6215A3094D6E10AD4FD17F26EC7CF1DEF44"
+  },
+  {
+    "gitBlob": "a60a496a2aa5d63aa7fb13772ab861f221fa94bf",
+    "path": "lib/domain/recovery.dart",
+    "sha256": "F004D95C9B2FA96079B615BFE8BB9EBA75FCD9FBA61F97CB21ABB1D6A21A43E5"
+  },
+  {
+    "gitBlob": "6e50faca2813079e91113cdd2a27d51b6ade444f",
+    "path": "lib/domain/reminders.dart",
+    "sha256": "16D31DE3908160D05809C1A3A322E75B3EB342257FC7E58F81182DC4F61A89C1"
+  },
+  {
+    "gitBlob": "d9b5740943a2d518c265631f303dee323a3c1705",
+    "path": "lib/domain/report/alerts.dart",
+    "sha256": "9895266DADFF5FC63D60DAB9335E6E85066B87B39C2C692CB527C3038E571FD2"
+  },
+  {
+    "gitBlob": "d4077221a11ba379a0591f6a98259e9c7cf186cd",
+    "path": "lib/domain/report/missing_data_actions.dart",
+    "sha256": "FE595C5C3C6D9AFDFE5308239848B4A6D65A96A5E5FF66B6793C2FCA67967A0F"
+  },
+  {
+    "gitBlob": "ee89cd567756eade6a06e8c18fec3ea297d4b03d",
+    "path": "lib/domain/report/period_summary.dart",
+    "sha256": "77D902DECE21F1DD7353797F0067F34B78619A48C522183C577F2BF082294E36"
+  },
+  {
+    "gitBlob": "16b803b4d37b33203ddba07a7c68708c74d7844d",
+    "path": "lib/domain/report/report_builder.dart",
+    "sha256": "3D44F8E2BFA58CAB8B81064EBAC099B4A34EF7684203422DD163C83EF1F0F30D"
+  },
+  {
+    "gitBlob": "0500fc04e7e94447568db0e86461ace6ab4d2409",
+    "path": "lib/domain/report/report_input.dart",
+    "sha256": "608543538EE7DEBDE5EA8A9C9120F6A2FFE2016346F0BD92FEBE81FA2BC23851"
+  },
+  {
+    "gitBlob": "5617b46b3a276c3b329a346b30bf6b20ee25800a",
+    "path": "lib/domain/report/report_stats.dart",
+    "sha256": "359D0BC67EDE6C0FCFC3AF74DF7F26153EC039F61C646F2BF0A173A2F6957DB5"
+  },
+  {
+    "gitBlob": "03a2e19b18e50fd5b354512454bea895c6fa7efc",
+    "path": "lib/domain/search.dart",
+    "sha256": "0A5CEF4DED945B765DEC5B8C976BC367F018027F9E4BBA9B9C9FB5CF9134753E"
+  },
+  {
+    "gitBlob": "c77817b5969f17bb20795ad2db7872bded165464",
+    "path": "lib/domain/session_math.dart",
+    "sha256": "8ECC9CCBA5B96EAE3C1C7094DF712003C63E1E12B6426B14F8012081B6D9201C"
+  },
+  {
+    "gitBlob": "8ebb762fed0e7fa8738bc79100e20c30087dbfd0",
+    "path": "lib/domain/session_script.dart",
+    "sha256": "0B65E95C97EA014BB91BF45C8D8626A97A3BEFC3CD978BCEB25A46EE7558C3F6"
+  },
+  {
+    "gitBlob": "3103b4cc3e92d29b6e942dd5fca6f288f2526be9",
+    "path": "lib/domain/sleep_entry.dart",
+    "sha256": "977CC6FBDE87BFEECFFAE71874AB62BD791B6B77E252F722094F53301CCDF4F7"
+  },
+  {
+    "gitBlob": "2f2b956505e7200e6d4b7efa4d27ce0d025f49da",
+    "path": "lib/domain/steps.dart",
+    "sha256": "7A072EC8AA78F89A56AF7F0B13A6D1268DD17CCA66A6B77419E7106A9B3BC6F0"
+  },
+  {
+    "gitBlob": "f8192a0213be40ac2f4703fb35ddf747242433ac",
+    "path": "lib/domain/technique_session.dart",
+    "sha256": "B4E4CABEE06F57F4D4798AD5DA1A031A62FAF0DD55F43AA9F2D98F8F8F80B1F4"
+  },
+  {
+    "gitBlob": "bdfc1973dd20d73a7d9eb9ecf513c31080c4fbe6",
+    "path": "lib/domain/version.dart",
+    "sha256": "7735468D248F60B8BD095206840564CA60FE49F7888A830D42D9955B47C4FE78"
+  },
+  {
+    "gitBlob": "021d6ccdca6872b846ff727d790ddf377b6b66e2",
+    "path": "lib/domain/warmup.dart",
+    "sha256": "E5EE155F4F177D7B248A75564BCF164BFD2D67828BA24AE885B14E792C1B4EC7"
+  },
+  {
+    "gitBlob": "60580e9da4e293ea423841128aded7380b73456c",
+    "path": "lib/features/ai/ai_activation_screen.dart",
+    "sha256": "D624F83F3F010D15CB1E4D1631617AC032AF390FC4C87DAA40F9C59E4165574A"
+  },
+  {
+    "gitBlob": "1ed976ee4be937d3e177efd654562f29a78ed23e",
+    "path": "lib/features/ai/ai_budget.dart",
+    "sha256": "92C53C174284CAC04D6B17DD368520FA9AC8563064F1F09D26EABE9986D703C3"
+  },
+  {
+    "gitBlob": "3d2c1480f13f6fe0549685e2189b5d34f174b2c9",
+    "path": "lib/features/ai/ai_conversation_screen.dart",
+    "sha256": "17118A9E2CA6EDA7FB06109F867757ED6DF0F61B2DF95DD97879341E4E68FEDD"
+  },
+  {
+    "gitBlob": "f8226fc1e2d1493993190b2646dbf7bec58fc189",
+    "path": "lib/features/ai/ai_history_screen.dart",
+    "sha256": "3D1670654F774635C96877C930A55551E7B5D153468065001B646F4E203D87F8"
+  },
+  {
+    "gitBlob": "4333a15f51db0ec64a8aaaf5277ffee85a68486c",
+    "path": "lib/features/body/body_screen.dart",
+    "sha256": "9F23CC66B4C392BDA4A7EE28CAEF69394568F17A666E3A0F11AEEC64CCE39CEF"
+  },
+  {
+    "gitBlob": "a071cb42b83e883bcd2e73c1634874a037b44f2c",
+    "path": "lib/features/body/ladders_screen.dart",
+    "sha256": "BBE957ED1C0E69391F99959237D2EE74203254034F7F841D8C955669A230CBD7"
+  },
+  {
+    "gitBlob": "76778e16d8bf7069b80433bb16599fb711942c76",
+    "path": "lib/features/body/measurement_form_screen.dart",
+    "sha256": "695F6F8EBA374AE22521D32E13CA75EF580481674C74EA944AC265D01DC0DD26"
+  },
+  {
+    "gitBlob": "a7936f45ccef16f316366c294029a5e1d798a55f",
+    "path": "lib/features/body/photos_screen.dart",
+    "sha256": "C871CC97EAE6E57E8455902E388637FB173598F5C3655A7098159D1DD3F5DC74"
+  },
+  {
+    "gitBlob": "d74daa43fbe90d448f941816aa57c6438ec71b73",
+    "path": "lib/features/body/skills_screen.dart",
+    "sha256": "809AE06369235D7A35F1DA32057559C3B83EA2CDFE4EFA727C573AF713DA459F"
+  },
+  {
+    "gitBlob": "26778bf93829babce479f12b84668d6706b9a3bb",
+    "path": "lib/features/body/test_results_screen.dart",
+    "sha256": "DD84834795ECFFEC81A99A2741707C921B19C42169F227990BC7C4E868F3E134"
+  },
+  {
+    "gitBlob": "88075015c7397b72bf78f5d05fb25f613057f26c",
+    "path": "lib/features/home/coach_card.dart",
+    "sha256": "1C7E05359964B9D7C69EDB23345EF144D1A08D5921860A2859A32CFB0467419F"
+  },
+  {
+    "gitBlob": "99f27e9616d8fbf9613956fd88cfc9cc46bb083d",
+    "path": "lib/features/home/home_screen.dart",
+    "sha256": "1E11C2681595CBD702ABF8019B552DA174330CA5DD287E42F2D01C3D7588A22B"
+  },
+  {
+    "gitBlob": "f221d988fdb940957938ac8f7304d263d4443712",
+    "path": "lib/features/home/morning_check_screen.dart",
+    "sha256": "C550D2E0D010D7A5D478372FD249FEF9CCC1C7523F236446CCA24C31BF3F0E9B"
+  },
+  {
+    "gitBlob": "b31d1550eea8a5029bc3f76d2b38dabe20932d07",
+    "path": "lib/features/home/readiness_card.dart",
+    "sha256": "BD90B8FED5633AC64EEE74F75377B8D452FD6383961C09B90D3FE273A71F1A5A"
+  },
+  {
+    "gitBlob": "c69b56eb62975df92d0c0a37c469e1a26f776f03",
+    "path": "lib/features/home/sleep_hours_dialog.dart",
+    "sha256": "1F63341F7B69AAF29F9079FF793C85D750A388C7352ED103EA3AE01455298A24"
+  },
+  {
+    "gitBlob": "3b1f299e9d06ae884734507764d2de82ac3cc798",
+    "path": "lib/features/home/steps_source_line.dart",
+    "sha256": "E10F13DB9B4E0F1F107F37A2BF1AA50C6404EBEF59186EB756B6EAAE8301D60E"
+  },
+  {
+    "gitBlob": "4360ef105c4b72c427385607d976bad0796b8cea",
+    "path": "lib/features/home/walk_screen.dart",
+    "sha256": "5FF5FF7A82B80C0F0531ECC7E2EFC4BED4F29B8CE8743F093F69A92BF53ABF0C"
+  },
+  {
+    "gitBlob": "d657aa490da5571d53217af25e18b485f9bd8ee0",
+    "path": "lib/features/meals/food_label_screen.dart",
+    "sha256": "740BAD202BD1030631669851D63D9A69DAA5106D67E42DAE498179BED2D0C47B"
+  },
+  {
+    "gitBlob": "3522fe1da79b88f459f5749a84201840c48fbfbc",
+    "path": "lib/features/meals/foods_screen.dart",
+    "sha256": "EB3E1C1226256763B356867B050A5914EDE5102DBE53C1D8929D77F4C84B7B8B"
+  },
+  {
+    "gitBlob": "6269a08f0f4b8486273d5f125ecbce02dd6ee71e",
+    "path": "lib/features/meals/meal_form_screen.dart",
+    "sha256": "1138C0CBED7C71BBC310953628F0875A584B572728CC928A48F8547D2E0973B6"
+  },
+  {
+    "gitBlob": "79e1871223ac65ff5521907214875f5b1f8238ce",
+    "path": "lib/features/meals/meal_photo_screen.dart",
+    "sha256": "BD8D656EC223E801481ED5EAEF752F54E9DE5A2E15476884C1313A8239D6EFC1"
+  },
+  {
+    "gitBlob": "6bfac34c0d54b1f8d76e47f7258d85a0ab2a10f3",
+    "path": "lib/features/meals/meal_text_screen.dart",
+    "sha256": "6F13A2AA6400E06C10124EC1D5315CA79E86787F47C2EFE8CAE945BC1AF07E1E"
+  },
+  {
+    "gitBlob": "fa482ed3606db5e3c259c75cb7012116d451e781",
+    "path": "lib/features/meals/meals_screen.dart",
+    "sha256": "6D7F5DAFEB56E042464F2780EF7F72E7A4012AB2DD082A061A6107BCBDB1006D"
+  },
+  {
+    "gitBlob": "7fe37017bfda417f8fa08dabf6f64a60662bfe72",
+    "path": "lib/features/onboarding/app_entry.dart",
+    "sha256": "7697C4F2ED1804EE6CF0BAAE5B57470B1820F7D05D6FB913A208A0385664DB50"
+  },
+  {
+    "gitBlob": "83381199d831000b0b0bbb69f0bdd39a6c6058bf",
+    "path": "lib/features/onboarding/onboarding_screen.dart",
+    "sha256": "37B05524E1D472C7199C5A63615A8B492DE71BB380D00B83D6B79E9F21B8FA69"
+  },
+  {
+    "gitBlob": "d209cff546a9fff48baeb3010d22ff703a9f4105",
+    "path": "lib/features/plan/plan_edit_screen.dart",
+    "sha256": "63C8F755F15A9465E520D4A6A58B7FB8A518A5588B378CF10DFE85E578A0BE3F"
+  },
+  {
+    "gitBlob": "72e95554c4d73430523f998d0d55f022a1cce38a",
+    "path": "lib/features/plan/plan_screen.dart",
+    "sha256": "F5D25322CB0428601E9316E21FE65B23E112EF0ACB95B6434279FF5590EDAF86"
+  },
+  {
+    "gitBlob": "00b665423889bdf0b5341ccaf193d74b4233ba6f",
+    "path": "lib/features/plan/v3_activation.dart",
+    "sha256": "6467D22514CF3CA18CA9415F899A7A948EED5B576371CF561BF8795FDE34CD72"
+  },
+  {
+    "gitBlob": "9d652ab4c714e2c5e2e3c37be9e42f6ca322f548",
+    "path": "lib/features/report/charts.dart",
+    "sha256": "1E769187BCDFAB7097B6A663825E45F3D10A0EE877446E09FEC8D475BDFCE5FE"
+  },
+  {
+    "gitBlob": "02a10c9ac530d11dc1a0665e5ee78861a777681d",
+    "path": "lib/features/report/charts_section.dart",
+    "sha256": "66DB8B752C2363284F6A35BE063CF4F9FBE35695D2AF0DCB211E33D49FA76F01"
+  },
+  {
+    "gitBlob": "ec0751014c1d38c6949013a68b3e8275a6bd0f9b",
+    "path": "lib/features/report/missing_data_actions_card.dart",
+    "sha256": "818AD90FFF2AAA172C810A55C048E30F97F60CD5A4C3E20479FAB5FFD31EF9BE"
+  },
+  {
+    "gitBlob": "96594ea09bd63cb0a320c880534ade545a3c77d6",
+    "path": "lib/features/report/personal_radar_section.dart",
+    "sha256": "E52061DCC45EC71BA40E595266F127D6B26F30B1457CCE933D610E1A6F1FCBB1"
+  },
+  {
+    "gitBlob": "ce6fb82b0f70a2bada88428616d973ff2a075f24",
+    "path": "lib/features/report/personal_radar_widget.dart",
+    "sha256": "2787648F8A748F067F37D3B9D69A9CA703AEA2B9A750C3E8A4E72B11416AF2FE"
+  },
+  {
+    "gitBlob": "7ad7c05e19a5ec3bcd0ab5157b487f26feb1caf3",
+    "path": "lib/features/report/radar_reference_dialog.dart",
+    "sha256": "3AFFAD43393FD9F0F8998B9B1BF706E38DD9069E4161338D5DBB6F3BC6C88A0A"
+  },
+  {
+    "gitBlob": "655184865b9c2f26abe417b8e4656ecba0819b04",
+    "path": "lib/features/report/report_screen.dart",
+    "sha256": "AE8B2581D9C6B7001A4CFA0046F3EFAEEE1D81B8909BEA4D5411D2F260BF6960"
+  },
+  {
+    "gitBlob": "64d22f490835da62360d60f41ec8a566f4653a41",
+    "path": "lib/features/report/summary_screen.dart",
+    "sha256": "75EA43C6E849E476F8D63DF4BD7184F3A4BA13ACA8B8629163D73E555FAB9794"
+  },
+  {
+    "gitBlob": "8f5d11bfe03aaa72e5af092145467b199945e086",
+    "path": "lib/features/report/weekly_ai_screen.dart",
+    "sha256": "80DF30A3A804BF8B6F0D2DA026F4FB633548185535E125633571CB6D2F250C32"
+  },
+  {
+    "gitBlob": "eb2b873704075603739347c820fe4f378ff1d2df",
+    "path": "lib/features/settings/corrections_screen.dart",
+    "sha256": "470B5CCB7A5B6E15C53AA0E843028B9A67228C87195C28FA53877CAF29E7C567"
+  },
+  {
+    "gitBlob": "0639cff143b4871d59d3a488f0b42f0987891ffe",
+    "path": "lib/features/settings/custom_reminders.dart",
+    "sha256": "6BCE315225C7356BB2E1248C957D563B6E2B929108DA6D48A4435848115BEB90"
+  },
+  {
+    "gitBlob": "4b24e2dac195555387a34573bd25b8fa298ca3e5",
+    "path": "lib/features/settings/health_connect_card.dart",
+    "sha256": "3AAFF80BB5050B6B5A3845D8F5A70C762137446BC49B8F0F88517FDDD495DAD6"
+  },
+  {
+    "gitBlob": "cb22a0da5302b3f2c0c8048cb27ded5621b59ee6",
+    "path": "lib/features/settings/reminders_screen.dart",
+    "sha256": "58EB1C41463BA40A42D17F39C69B331E3A50545CCD04E9E4A3D96FAC9DFCDCB6"
+  },
+  {
+    "gitBlob": "3670c936b8d37babe7b22b146e009620c70596c2",
+    "path": "lib/features/settings/restore_access.dart",
+    "sha256": "5E393EBD52F64690C0ACDCA697DACA9B8AF65343E78F1793B4EE5917535F6734"
+  },
+  {
+    "gitBlob": "5fcf6e4859157522dbdb64b2e672fd39e8ba6e12",
+    "path": "lib/features/settings/settings_screen.dart",
+    "sha256": "C1BE620C2D7F206BC62A9C81C3F39674D0D5B953C66FAF6503903DFA52318515"
+  },
+  {
+    "gitBlob": "cbc8ae764024ae0f6c3384fb50d6db354c9c00a1",
+    "path": "lib/features/settings/updates_card.dart",
+    "sha256": "7099E6F75B4A5BBA7FB231278C656E4E605A360298C891C460FD9D131B3E08BE"
+  },
+  {
+    "gitBlob": "5bafa0bbf799a8bbfe9db68dccd405abce8498fb",
+    "path": "lib/features/training/active_session_banner.dart",
+    "sha256": "A5D5135A169C68752704537FDE0E5D5BC514410EA6D727099F55CABE3777FA97"
+  },
+  {
+    "gitBlob": "fa3ce4663087de58aa585ffe2731ae4b921e3156",
+    "path": "lib/features/training/exercise_library_screen.dart",
+    "sha256": "AFF51B6825ACDFE63DE4449885B94128A1B97B7B072BA8F2C0D0D6F866C85D6D"
+  },
+  {
+    "gitBlob": "10ab72f612f9ba1ef4ea3eae0701c7d5af7192e5",
+    "path": "lib/features/training/football_form_screen.dart",
+    "sha256": "59BF0582F055857E126D7703B06DA139AA2C335BC3E9DF6FAC2F464AF33F592D"
+  },
+  {
+    "gitBlob": "064caa51796bb4aeee1c38ff382f60799f8b053f",
+    "path": "lib/features/training/guided_session_screen.dart",
+    "sha256": "DC919CE30E7B7055F0A187B303BB6699DC00AC30C13055F8C7C86EDA69F79AC3"
+  },
+  {
+    "gitBlob": "f680ee9a4f9134a8f5eb6dd3b0b976d7f9179509",
+    "path": "lib/features/training/mobility_screen.dart",
+    "sha256": "1434110F8C88EA671F66D0AD9E1574A9DF0A643447313129A6D82F86D15E822A"
+  },
+  {
+    "gitBlob": "0a03a9a27e754ea4a5158d183f8aabd908499f6d",
+    "path": "lib/features/training/pre_attempt_card.dart",
+    "sha256": "B4A9C27C559805AE6D6EDD66DF03EFF1D28D357C1A7258F1B47ED5A3EBA1C76D"
+  },
+  {
+    "gitBlob": "2966813e548faadd843d2bf86e2ad9cd1f970647",
+    "path": "lib/features/training/round_counter_screen.dart",
+    "sha256": "01FA511498D119E166584CB2B665DBA0EA911102806975782F77C56CC125079B"
+  },
+  {
+    "gitBlob": "bf9638f6466a37ea5ff35c3e5a7b3251d20ba922",
+    "path": "lib/features/training/session_form_screen.dart",
+    "sha256": "2399D035AC795DB34389C4075432C411D4EF80E0ABA74F8E9CAB84A285B9D708"
+  },
+  {
+    "gitBlob": "2028377c38356c8c26a1d2c414cb77111bb3b55d",
+    "path": "lib/features/training/technique_sheet.dart",
+    "sha256": "40D3707CBEB5CD206375ABEEB587276EF620C5776D557C89731ACC441617B882"
+  },
+  {
+    "gitBlob": "44a46fa8817e7c9768ecfb9fe15c523595a12087",
+    "path": "lib/features/training/test_mode_screen.dart",
+    "sha256": "534AA789B103F44402CA2B30DBB92120500AF3063563D4FBCA2FC9FCFBB38943"
+  },
+  {
+    "gitBlob": "3e3b75e21bbbbe3bb37b3476629bf65b5dee8bc5",
+    "path": "lib/features/training/training_screen.dart",
+    "sha256": "688AA137F081DBBA530CABD5618F9CB946BBF9586B3588BDC45A4413FAFB22AA"
+  },
+  {
+    "gitBlob": "dafb45c3cb91e3e2c12131bc33e31c3d283c4aa8",
+    "path": "lib/features/training/v3_timers.dart",
+    "sha256": "6852606CB7FFC2F7C2420B5751A2F75B5D7799EB5A25EB42A6D871782A53F720"
+  },
+  {
+    "gitBlob": "9a08e5faf4b1f837fc0fe8d6e96a6d5b70432df5",
+    "path": "lib/main.dart",
+    "sha256": "C67A2840B822F558DE1C1AC4F619D9223C4EA5A947CC2BDF3DA73CBAFCA8E6D3"
+  },
+  {
+    "gitBlob": "5c2548f636f5fdc2f72795a0e6a24d4621800ed8",
+    "path": "lib/ui/exercise_art.dart",
+    "sha256": "3EA93E8EF71E4A28652C5D2AF435E775C7709AE72489FD87B583C2F0C867BAD8"
+  },
+  {
+    "gitBlob": "8b55343982264a872ea43faaa3e2e395ce5cbc7c",
+    "path": "lib/ui/exercise_figure.dart",
+    "sha256": "35B34B28D864CA05FC247F8BAAEF99D5AA851B9EB3E2446BE2E4090EA580A420"
+  },
+  {
+    "gitBlob": "e513805b1a94b9c1290245f39c9f7aeeb6cb9491",
+    "path": "lib/ui/exercise_figure_3d.dart",
+    "sha256": "329CC468A73B44A5043FB8AFCA9D4D2A05DD8C389BE65799A41FB971C854C43E"
+  },
+  {
+    "gitBlob": "9882203aae74d57516b591218e94262997241d91",
+    "path": "lib/ui/exercise_figure_3d_view.dart",
+    "sha256": "3526B42F22EADD6C4ED164D9D66D9CE96B6497FF57E10749F4EEF16446525C16"
+  },
+  {
+    "gitBlob": "082f77a3ddcefd4d9051b7f9dcf0b67430327489",
+    "path": "lib/ui/hero.dart",
+    "sha256": "C677D1776BAB7F6315F1AB5A7E242E2B112F92CF7916AF498B6B2E3BAA94108B"
+  },
+  {
+    "gitBlob": "a823862e6a0a02c19c6a813f8778b71c7e1e5b13",
+    "path": "lib/ui/progress_ring.dart",
+    "sha256": "1A23B1B33F2395E26F8029F9228A5C0B9E6E89932DF5924E9A35AA164BC1CEFD"
+  },
+  {
+    "gitBlob": "a69b4448708b24ede24ba1173a7cb3aba291158b",
+    "path": "lib/ui/record_celebration.dart",
+    "sha256": "924A91D852999CDE37BC348C8E106225EF4CEC51B99B80CED24C2C96AECF44DF"
+  },
+  {
+    "gitBlob": "ae4abdaecee3fe9373b1018cfd5b3477d14b48c6",
+    "path": "lib/ui/session_style.dart",
+    "sha256": "98481A236E52BDEF7E00B79D2A4A2E44ADB709F8973D31200D14ED3D4C5D7775"
+  },
+  {
+    "gitBlob": "11e4543c9910a9a4e2bc1e76a5d9633f190514bb",
+    "path": "lib/ui/theme.dart",
+    "sha256": "72DF0064697BE56D75DDCFFA824AA3BDF9B7166174B2BB1DB1CAF3D3FA2610FD"
+  },
+  {
+    "gitBlob": "b7d82dbdf50f81edd9446c054fbccfbaf61f6a6e",
+    "path": "lib/ui/widgets.dart",
+    "sha256": "F11CE1B086554B9CF7E6BBC1B5EF0C1BA02CDA5CCAC9D865D6F3C5C3AB7F3F3E"
+  }
+]

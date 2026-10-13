@@ -16,6 +16,32 @@ import '../support/sqlite_host.dart';
 const _fixture19Sha =
     '45cea7fcdb225e0d24671335d6932b0def99cf80a4e11bf66752e81965830d46';
 
+// Declared destination for this candidate; never read back from the migrated DB.
+const _targetSchema = 24;
+const _restoredReminderDefaults = [
+  {
+    'kind': 'recuperacionManana',
+    'enabled': 1,
+    'hour': 22,
+    'minute': 0,
+    'threshold': null
+  },
+  {
+    'kind': 'rutinaManana',
+    'enabled': 1,
+    'hour': 7,
+    'minute': 15,
+    'threshold': null
+  },
+  {
+    'kind': 'rutinaNoche',
+    'enabled': 1,
+    'hour': 21,
+    'minute': 30,
+    'threshold': null
+  },
+];
+
 void main() {
   setUpAll(() {
     useHostSqlite();
@@ -49,7 +75,8 @@ void main() {
   }
 
   Future<void> verify(
-      AppDatabase db, Map<String, List<Map<String, Object?>>> expected) async {
+      AppDatabase db, Map<String, List<Map<String, Object?>>> expected,
+      {bool afterRestore = false}) async {
     for (final entry in expected.entries) {
       // Includes empty tables: get their original columns from frozen SQLite.
       final raw = sqlite3.open(fixture.path, mode: OpenMode.readOnly);
@@ -65,8 +92,15 @@ void main() {
       final actual = await db
           .customSelect('SELECT $columns FROM "${entry.key}" ORDER BY rowid')
           .get();
+      final wanted = [
+        ...entry.value,
+        if (afterRestore && entry.key == 'reminders')
+          ..._restoredReminderDefaults.map((row) => {
+                for (final column in entry.value.first.keys) column: row[column]
+              })
+      ];
       if (jsonEncode(actual.map((row) => row.data).toList()) !=
-          jsonEncode(entry.value)) {
+          jsonEncode(wanted)) {
         throw StateError('Preservation mismatch: ${entry.key}');
       }
     }
@@ -118,7 +152,7 @@ void main() {
   });
 
   test(
-      '19 to current normalizes only test clock and preserves original columns through ZIP',
+      '19 to schema24 normalizes only test clock and preserves original columns through ZIP',
       () async {
     final expected = normalizedLegacyRows();
     final root = Directory.systemTemp.createTempSync('seguimiento_121_from19_');
@@ -137,7 +171,7 @@ void main() {
               .data
               .values
               .single,
-          a.db.schemaVersion);
+          _targetSchema);
       await a.db.close();
       a = open(fileA);
       await verify(a.db, expected);
@@ -145,15 +179,17 @@ void main() {
           .exportTo('${root.path}/from19.zip');
       expect(exported.complete, true);
       await BackupArchive(host: b, documents: dirB).restoreFrom(exported.file);
-      await verify(b.db, expected);
+      await verify(b.db, expected, afterRestore: true);
       await b.db.close();
       b = open(fileB);
-      await verify(b.db, expected);
+      await verify(b.db, expected, afterRestore: true);
+      await BackupArchive(host: b, documents: dirB).restoreFrom(exported.file);
+      await verify(b.db, expected, afterRestore: true);
 
       // A loss in a new legacy table must be caught after successful restore.
       await b.db.customStatement('DELETE FROM fitness_tests WHERE id=3');
       await expectLater(
-          verify(b.db, expected),
+          verify(b.db, expected, afterRestore: true),
           throwsA(isA<StateError>().having((e) => e.message, 'exact table',
               'Preservation mismatch: fitness_tests')));
     } finally {

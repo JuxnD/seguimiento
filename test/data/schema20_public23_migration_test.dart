@@ -29,10 +29,18 @@ Map<String, int> _multiplicity(Iterable<List<Object?>> rows) {
   return result;
 }
 
+// Declared destination for this candidate; never read back from the migrated DB.
+const _targetSchema = 24;
+const _restoredReminderRows = [
+  ['recuperacionManana', 1, 22, 0, null],
+  ['rutinaManana', 1, 7, 15, null],
+  ['rutinaNoche', 1, 21, 30, null],
+];
+
 void main() {
   setUpAll(useHostSqlite);
   test(
-      'genuine public20 capsule →23 preserves all legacy rows/columns, files, ZIP and reopen',
+      'genuine public20 capsule →24 preserves all legacy rows/columns, files, ZIP and reopen',
       () async {
     final capsule = File('test/fixtures/public20/baseline-offline-public20.zip')
         .readAsBytesSync();
@@ -63,7 +71,7 @@ void main() {
           reason: item.key);
     }
     final root =
-        await Directory.systemTemp.createTemp('seguimiento-public20-23-');
+        await Directory.systemTemp.createTemp('seguimiento-public20-24-');
     final documents = Directory('${root.path}/documents')..createSync();
     for (final path in files.keys) {
       final file = File('${documents.path}/$path');
@@ -100,13 +108,13 @@ void main() {
       raw.dispose();
     }
 
-    Future<void> preserved(AppDatabase db) async {
+    Future<void> preserved(AppDatabase db, {bool afterRestore = false}) async {
       expect(
           (await db.customSelect('PRAGMA user_version').getSingle())
               .data
               .values
               .single,
-          23);
+          _targetSchema);
       for (final entry in tables.entries) {
         final table = entry.value! as Map<String, Object?>;
         final columns = (table['columns']! as List<Object?>).cast<String>();
@@ -124,8 +132,11 @@ void main() {
                 .get())
             .map((r) => columns.map((c) => r.data[c]).toList());
         final actual = _multiplicity(rows);
-        final expected = _multiplicity(
-            (table['rows']! as List<Object?>).cast<List<Object?>>());
+        final expected = _multiplicity([
+          ...(table['rows']! as List<Object?>).cast<List<Object?>>(),
+          if (afterRestore && entry.key == 'reminders')
+            ..._restoredReminderRows,
+        ]);
         for (final oldRow in expected.entries) {
           expect(actual[oldRow.key], oldRow.value,
               reason: '${entry.key} legacy row multiplicity');
@@ -207,7 +218,7 @@ void main() {
           sqliteFile, (f) => AppDatabase(NativeDatabase(f)),
           initial: db);
       final exported = await BackupArchive(host: host, documents: documents)
-          .exportTo('${root.path}/current23.zip');
+          .exportTo('${root.path}/current24.zip');
       final zipped = ZipDecoder()
           .decodeBytes(exported.file.readAsBytesSync())
           .files
@@ -224,11 +235,14 @@ void main() {
           (f) => AppDatabase(NativeDatabase(f)));
       await BackupArchive(host: recipient, documents: recipientDir)
           .restoreFrom(exported.file);
-      await preserved(recipient.db);
+      await preserved(recipient.db, afterRestore: true);
       await recipient.db.close();
       recipient =
           DatabaseHost(recipient.file, (f) => AppDatabase(NativeDatabase(f)));
-      await preserved(recipient.db);
+      await preserved(recipient.db, afterRestore: true);
+      await BackupArchive(host: recipient, documents: recipientDir)
+          .restoreFrom(exported.file);
+      await preserved(recipient.db, afterRestore: true);
       for (final path in files.keys.where((p) => p.startsWith('fotos/'))) {
         expect(
             sha256
