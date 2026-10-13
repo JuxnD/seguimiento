@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_render_test.dart
+00:00 +0: guided anatomical detail follows production time at twenty fps
+00:03 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T200635883-16292-d719f27d3da540e491b2b0b89e56b046.json

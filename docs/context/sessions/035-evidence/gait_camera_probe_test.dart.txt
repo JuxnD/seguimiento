@@ -1,0 +1,78 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/ui/exercise_figure_3d.dart' as current;
+import 'package:seguimiento/ui/exercise_figure_3d_view.dart';
+import 'gait_clip_renderer_e46.dart' as previous;
+
+void main() {
+  testWidgets('FIFA part three reuse is decided by real camera and raster inputs', (tester) async {
+    final old =
+        previous.Figure3DCatalog.fromJsonString(File('build/qa/035/gait_clip_catalog_e46.json').readAsStringSync())
+            .forExercise('Calentamiento tipo FIFA 11+')!;
+    final now = current.Figure3DCatalog.fromJsonString(File(current.Figure3DCatalog.asset).readAsStringSync())
+        .forExercise('Calentamiento tipo FIFA 11+')!;
+    final oldCamera = previous.cameraFor(old, const ui.Size(320, 285), yaw: old.initialYaw, pitch: old.initialPitch);
+    final newCamera = current.cameraFor(now, const ui.Size(320, 285), yaw: now.initialYaw, pitch: now.initialPitch);
+    final manifest = jsonDecode(File('build/qa/035/motion-camera-fixed/manifest-7.json').readAsStringSync()) as List;
+    final samples = ((manifest.single as Map<String, Object?>)['samples'] as List).cast<Map<String, Object?>>();
+    final part = figureMotionParts(now)[2];
+    var maxDelta = 0.0, pixelPairs = 0, unequalPairs = 0;
+    for (final sample in samples) {
+      final oldFigure = ((sample['figures'] as List).single as Map<String, Object?>);
+      final oldProgress = (oldFigure['progress'] as num).toDouble();
+      final seconds = (sample['timestampSeconds'] as num).toDouble();
+      final newProgress = part.progressAt(now, part.startTime + seconds);
+      final a = previous.liftSkeleton(old.skeletonAt(oldProgress), old).p;
+      final b = current.liftSkeleton(now.skeletonAt(newProgress), now).p;
+      for (final key in a.keys) {
+        final delta = (current.V3(a[key]!.x, a[key]!.y, a[key]!.z) - b[key]!).length;
+        if (delta > maxDelta) maxDelta = delta;
+      }
+      if ((sample['frame'] as int) % 49 != 0) continue;
+      await tester.runAsync(() async {
+        final buffers = <List<int>>[];
+        for (var version = 0; version < 2; version++) {
+          final recorder = ui.PictureRecorder();
+          final canvas = ui.Canvas(recorder);
+          if (version == 0) {
+            previous.paintFigure3D(canvas, const ui.Size(320, 285), old, oldProgress,
+                yaw: old.initialYaw, pitch: old.initialPitch);
+          } else {
+            current.paintFigure3D(canvas, const ui.Size(320, 285), now, newProgress,
+                yaw: now.initialYaw, pitch: now.initialPitch);
+          }
+          final picture = recorder.endRecording();
+          final image = await picture.toImage(320, 285);
+          buffers.add((await image.toByteData(format: ui.ImageByteFormat.rawRgba))!.buffer.asUint8List());
+          image.dispose();
+          picture.dispose();
+        }
+        pixelPairs++;
+        for (var i = 0; i < buffers[0].length; i++) {
+          if (buffers[0][i] != buffers[1][i]) {
+            unequalPairs++;
+            break;
+          }
+        }
+      });
+    }
+    File('docs/context/sessions/035-evidence/gait-fifa-camera-probe.json').writeAsStringSync(jsonEncode({
+      'oldSource': 'e46bf120a97e5f4ba1597da7f96fc99e932c5bdf',
+      'newSource': Platform.environment['ILLUSTRATION_035_SOURCE_SHA'],
+      'oldCamera': [oldCamera.center.x, oldCamera.center.y, oldCamera.center.z, oldCamera.scale],
+      'newCamera': [newCamera.center.x, newCamera.center.y, newCamera.center.z, newCamera.scale],
+      'probeViewport': [320, 285],
+      'worldSamples': samples.length,
+      'maxWorldJointDelta': maxDelta,
+      'pixelPairs': pixelPairs,
+      'unequalPairs': unequalPairs,
+      'reuseAllowed': maxDelta < 1e-9 && unequalPairs == 0,
+      'meaning': 'Probe completion does not imply reuse; inspect reuseAllowed'
+    }));
+    expect(samples.length, 500);
+    expect(pixelPairs, 11);
+    expect(maxDelta, lessThan(1e-9));
+  });
+}

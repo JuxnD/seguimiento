@@ -265,3 +265,35 @@ de hombros, y el equipo permanece fijo. Barra transversal y paralela tienen
 ejes distintos; asa y sujeción corporal prolongan la muñeca en vez de heredar
 el puño de barra. La suela sigue el plano corporal. Cada pose conserva su
 orientación explícita; no hay normalización universal de tobillos.
+
+
+## Extensiones locales de anatomía y equipo035
+
+`spineBend`, `breath` y `footArch` son campos opcionales de poses; sus valores
+por defecto conservan el renderer anterior. La curvatura mantiene extremos
+del torso, la respiración modifica su sección, y Pie corto muestra talón,
+metatarso, arco y dedos extendidos. `focus: nearFoot` usa la misma primitiva
+del pie con un tobillo corto; no dibuja el cuerpo entero detrás del detalle.
+
+Las bandas con `depthSorted: true` se ordenan en segmentos con el cuerpo;
+las históricas conservan su camino anterior. `guidedHandWeight` y
+`guidedFootPack` se anclan al joint explícito de la variante y reutilizan
+las primitivas de equipo. No se elige una carga visual por la dosis numérica.
+El catálogo guiado permanece en `tool/illustration_guided.py`; el generador
+principal conserva una sola salida y un solo renderer.
+
+La cobertura actual111/18 es técnica; el recibo de fase2 registra qué capturas
+pasaron revisión, cuáles se preservan como fallidas y qué cierre sigue abierto.
+
+### Cierre visual035: equipo apoyado y detalle del arco
+
+`guidedThighPack` usa `guidedThighLoadBounds` con la superficie real de muslos,
+profundidad nativa, bolsillo/correas; no modifica cajas legacy. La variante
+unilateral sigue el muslo activo. `barefoot` por defecto false habilita, junto
+con focusnearFoot, dedos sin contorno grueso; cue `footArch` usa el landmark
+real. Pie corto cambia cámara/cue, nunca amplitud ni apoyos.
+
+La evidencia final está en la sesión2026-10-13-035-fase2 y sus manifiestos:
+43hojas/434muestras,9clips,49pruebas dirigidas y analyze0. Las capturas reusadas
+conservan SHA original y agregan validatedAgainst con prueba512RGBA exacta.
+R1 formal/integración037 quedan separadas de QA visual completa.

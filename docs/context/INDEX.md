@@ -1,5 +1,10 @@
 # Índice de contexto
 
+**035 local en QA:** movimiento solicitado y catálogo111/18 implementados;
+se conservan rojos visuales y se corrigen guiones antes de cierre.
+[Recibo fase2 y pendientes](sessions/2026-10-13-035-fase2.md).
+Sin nueva APK ni aceptación humana inferida.
+
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
 Claude fe0b565/8b1cac5/74c26aa en ramaJuxnD/026-integridad-diaria. Fotos/ZIP y
 protección estricta reutilizados;029 cierra tres carreras nuevas de cola que

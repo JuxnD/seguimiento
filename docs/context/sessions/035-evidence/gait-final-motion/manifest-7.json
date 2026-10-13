@@ -1,0 +1,7523 @@
+[
+  {
+    "names": [
+      "Calentamiento tipo FIFA 11+"
+    ],
+    "clip": 7,
+    "selectedPart": 3,
+    "partBounds": [
+      0.22641509433962265,
+      0.4339622641509434,
+      9.799999999999999,
+      34.79999999999999
+    ],
+    "fps": 20,
+    "frames": 500,
+    "seconds": 24.999999999999993,
+    "path": "docs/context/sessions/035-evidence/gait-final-motion/7",
+    "sourceCommit": "1b9bc194fcbae7978b7c8fb653572fe88ba1610e",
+    "samples": [
+      {
+        "frame": 0,
+        "timestampSeconds": 0.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.0,
+            "timelineSeconds": 9.799999999999999,
+            "progress": 0.22641509433962265,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 1,
+        "timestampSeconds": 0.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.05,
+            "timelineSeconds": 9.85,
+            "progress": 0.2264393207328791,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 2,
+        "timestampSeconds": 0.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.1,
+            "timelineSeconds": 9.899999999999999,
+            "progress": 0.22651063504542276,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 3,
+        "timestampSeconds": 0.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.15,
+            "timelineSeconds": 9.95,
+            "progress": 0.2266269899764151,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 4,
+        "timestampSeconds": 0.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.2,
+            "timelineSeconds": 9.999999999999998,
+            "progress": 0.22678633822501745,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 5,
+        "timestampSeconds": 0.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.25,
+            "timelineSeconds": 10.049999999999999,
+            "progress": 0.22698663249039133,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 6,
+        "timestampSeconds": 0.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.3,
+            "timelineSeconds": 10.1,
+            "progress": 0.22722582547169812,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 7,
+        "timestampSeconds": 0.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.35,
+            "timelineSeconds": 10.149999999999999,
+            "progress": 0.2275018698680992,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 8,
+        "timestampSeconds": 0.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.4,
+            "timelineSeconds": 10.2,
+            "progress": 0.22781271837875608,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 9,
+        "timestampSeconds": 0.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.45,
+            "timelineSeconds": 10.249999999999998,
+            "progress": 0.22815632370283015,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 10,
+        "timestampSeconds": 0.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.5,
+            "timelineSeconds": 10.299999999999999,
+            "progress": 0.22853063853948286,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 11,
+        "timestampSeconds": 0.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.55,
+            "timelineSeconds": 10.35,
+            "progress": 0.2289336155878756,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 12,
+        "timestampSeconds": 0.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.6,
+            "timelineSeconds": 10.399999999999999,
+            "progress": 0.22936320754716977,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 13,
+        "timestampSeconds": 0.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.65,
+            "timelineSeconds": 10.45,
+            "progress": 0.22981736711652687,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 14,
+        "timestampSeconds": 0.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.7,
+            "timelineSeconds": 10.499999999999998,
+            "progress": 0.23029404699510828,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 15,
+        "timestampSeconds": 0.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.75,
+            "timelineSeconds": 10.549999999999999,
+            "progress": 0.23079119988207544,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 16,
+        "timestampSeconds": 0.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.8,
+            "timelineSeconds": 10.6,
+            "progress": 0.23130677847658976,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 17,
+        "timestampSeconds": 0.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.85,
+            "timelineSeconds": 10.649999999999999,
+            "progress": 0.2318387354778127,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 18,
+        "timestampSeconds": 0.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.9,
+            "timelineSeconds": 10.7,
+            "progress": 0.23238502358490562,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 19,
+        "timestampSeconds": 0.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 0.95,
+            "timelineSeconds": 10.749999999999998,
+            "progress": 0.23294359549703,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 20,
+        "timestampSeconds": 1.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.0,
+            "timelineSeconds": 10.799999999999999,
+            "progress": 0.23351240391334727,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 21,
+        "timestampSeconds": 1.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.05,
+            "timelineSeconds": 10.85,
+            "progress": 0.23408940153301883,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 22,
+        "timestampSeconds": 1.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.1,
+            "timelineSeconds": 10.899999999999999,
+            "progress": 0.2346725410552061,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 23,
+        "timestampSeconds": 1.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.15,
+            "timelineSeconds": 10.95,
+            "progress": 0.23525977517907054,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 24,
+        "timestampSeconds": 1.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.2,
+            "timelineSeconds": 10.999999999999998,
+            "progress": 0.23584905660377356,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 25,
+        "timestampSeconds": 1.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.25,
+            "timelineSeconds": 11.049999999999999,
+            "progress": 0.23643833802847652,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 26,
+        "timestampSeconds": 1.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.3,
+            "timelineSeconds": 11.1,
+            "progress": 0.23702557215234096,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 27,
+        "timestampSeconds": 1.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.35,
+            "timelineSeconds": 11.149999999999999,
+            "progress": 0.23760871167452824,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 28,
+        "timestampSeconds": 1.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.4,
+            "timelineSeconds": 11.2,
+            "progress": 0.2381857092941998,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 29,
+        "timestampSeconds": 1.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.45,
+            "timelineSeconds": 11.249999999999998,
+            "progress": 0.23875451771051706,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 30,
+        "timestampSeconds": 1.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.5,
+            "timelineSeconds": 11.299999999999999,
+            "progress": 0.23931308962264145,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 31,
+        "timestampSeconds": 1.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.55,
+            "timelineSeconds": 11.35,
+            "progress": 0.23985937772973442,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 32,
+        "timestampSeconds": 1.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.6,
+            "timelineSeconds": 11.399999999999999,
+            "progress": 0.24039133473095733,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 33,
+        "timestampSeconds": 1.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.65,
+            "timelineSeconds": 11.45,
+            "progress": 0.24090691332547168,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 34,
+        "timestampSeconds": 1.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.7,
+            "timelineSeconds": 11.499999999999998,
+            "progress": 0.2414040662124388,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 35,
+        "timestampSeconds": 1.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.75,
+            "timelineSeconds": 11.549999999999999,
+            "progress": 0.2418807460910202,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 36,
+        "timestampSeconds": 1.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.8,
+            "timelineSeconds": 11.6,
+            "progress": 0.24233490566037733,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 37,
+        "timestampSeconds": 1.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.85,
+            "timelineSeconds": 11.649999999999999,
+            "progress": 0.2427644976196715,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 38,
+        "timestampSeconds": 1.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.9,
+            "timelineSeconds": 11.7,
+            "progress": 0.24316747466806424,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 39,
+        "timestampSeconds": 1.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 1.95,
+            "timelineSeconds": 11.749999999999998,
+            "progress": 0.24354178950471694,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 40,
+        "timestampSeconds": 2.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.0,
+            "timelineSeconds": 11.799999999999999,
+            "progress": 0.243885394828791,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 41,
+        "timestampSeconds": 2.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.05,
+            "timelineSeconds": 11.849999999999998,
+            "progress": 0.2441962433394479,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 42,
+        "timestampSeconds": 2.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.1,
+            "timelineSeconds": 11.899999999999999,
+            "progress": 0.24447228773584903,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 43,
+        "timestampSeconds": 2.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.15,
+            "timelineSeconds": 11.95,
+            "progress": 0.24471148071715582,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 44,
+        "timestampSeconds": 2.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.2,
+            "timelineSeconds": 12.0,
+            "progress": 0.24491177498252967,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 45,
+        "timestampSeconds": 2.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.25,
+            "timelineSeconds": 12.049999999999999,
+            "progress": 0.2450711232311321,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 46,
+        "timestampSeconds": 2.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.3,
+            "timelineSeconds": 12.099999999999998,
+            "progress": 0.24518747816212438,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 47,
+        "timestampSeconds": 2.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.35,
+            "timelineSeconds": 12.149999999999999,
+            "progress": 0.24525879247466806,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 48,
+        "timestampSeconds": 2.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.4,
+            "timelineSeconds": 12.2,
+            "progress": 0.24528301886792453,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 49,
+        "timestampSeconds": 2.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.45,
+            "timelineSeconds": 12.25,
+            "progress": 0.24530724526118097,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 50,
+        "timestampSeconds": 2.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.5,
+            "timelineSeconds": 12.299999999999999,
+            "progress": 0.24537855957372465,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 51,
+        "timestampSeconds": 2.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.55,
+            "timelineSeconds": 12.349999999999998,
+            "progress": 0.24549491450471697,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 52,
+        "timestampSeconds": 2.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.6,
+            "timelineSeconds": 12.399999999999999,
+            "progress": 0.24565426275331936,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 53,
+        "timestampSeconds": 2.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.65,
+            "timelineSeconds": 12.45,
+            "progress": 0.24585455701869321,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 54,
+        "timestampSeconds": 2.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.7,
+            "timelineSeconds": 12.5,
+            "progress": 0.24609374999999997,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 55,
+        "timestampSeconds": 2.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.75,
+            "timelineSeconds": 12.549999999999999,
+            "progress": 0.24636979439640108,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 56,
+        "timestampSeconds": 2.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.8,
+            "timelineSeconds": 12.599999999999998,
+            "progress": 0.24668064290705796,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 57,
+        "timestampSeconds": 2.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.85,
+            "timelineSeconds": 12.649999999999999,
+            "progress": 0.24702424823113203,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 58,
+        "timestampSeconds": 2.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.9,
+            "timelineSeconds": 12.7,
+            "progress": 0.2473985630677847,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 59,
+        "timestampSeconds": 2.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 2.95,
+            "timelineSeconds": 12.75,
+            "progress": 0.24780154011617747,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 60,
+        "timestampSeconds": 3.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.0,
+            "timelineSeconds": 12.799999999999999,
+            "progress": 0.24823113207547168,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 61,
+        "timestampSeconds": 3.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.05,
+            "timelineSeconds": 12.849999999999998,
+            "progress": 0.24868529164482872,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 62,
+        "timestampSeconds": 3.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.1,
+            "timelineSeconds": 12.899999999999999,
+            "progress": 0.24916197152341016,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 63,
+        "timestampSeconds": 3.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.15,
+            "timelineSeconds": 12.95,
+            "progress": 0.24965912441037733,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 64,
+        "timestampSeconds": 3.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.2,
+            "timelineSeconds": 13.0,
+            "progress": 0.25017470300489164,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 65,
+        "timestampSeconds": 3.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.25,
+            "timelineSeconds": 13.049999999999999,
+            "progress": 0.2507066600061145,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 66,
+        "timestampSeconds": 3.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.3,
+            "timelineSeconds": 13.099999999999998,
+            "progress": 0.2512529481132075,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 67,
+        "timestampSeconds": 3.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.35,
+            "timelineSeconds": 13.149999999999999,
+            "progress": 0.25181152002533186,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 68,
+        "timestampSeconds": 3.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.4,
+            "timelineSeconds": 13.2,
+            "progress": 0.25238032844164915,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 69,
+        "timestampSeconds": 3.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.45,
+            "timelineSeconds": 13.25,
+            "progress": 0.2529573260613207,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 70,
+        "timestampSeconds": 3.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.5,
+            "timelineSeconds": 13.299999999999999,
+            "progress": 0.25354046558350796,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 71,
+        "timestampSeconds": 3.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.55,
+            "timelineSeconds": 13.349999999999998,
+            "progress": 0.25412769970737237,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 72,
+        "timestampSeconds": 3.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.6,
+            "timelineSeconds": 13.399999999999999,
+            "progress": 0.2547169811320754,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 73,
+        "timestampSeconds": 3.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.65,
+            "timelineSeconds": 13.45,
+            "progress": 0.2553062625567784,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 74,
+        "timestampSeconds": 3.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.7,
+            "timelineSeconds": 13.5,
+            "progress": 0.2558934966806429,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 75,
+        "timestampSeconds": 3.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.75,
+            "timelineSeconds": 13.549999999999999,
+            "progress": 0.2564766362028301,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 76,
+        "timestampSeconds": 3.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.8,
+            "timelineSeconds": 13.599999999999998,
+            "progress": 0.2570536338225017,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 77,
+        "timestampSeconds": 3.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.85,
+            "timelineSeconds": 13.649999999999999,
+            "progress": 0.25762244223881897,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 78,
+        "timestampSeconds": 3.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.9,
+            "timelineSeconds": 13.7,
+            "progress": 0.25818101415094336,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 79,
+        "timestampSeconds": 3.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 3.95,
+            "timelineSeconds": 13.75,
+            "progress": 0.2587273022580363,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 80,
+        "timestampSeconds": 4.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.0,
+            "timelineSeconds": 13.799999999999999,
+            "progress": 0.25925925925925924,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 81,
+        "timestampSeconds": 4.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.05,
+            "timelineSeconds": 13.849999999999998,
+            "progress": 0.25977483785377353,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 82,
+        "timestampSeconds": 4.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.1,
+            "timelineSeconds": 13.899999999999999,
+            "progress": 0.2602719907407407,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 83,
+        "timestampSeconds": 4.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.15,
+            "timelineSeconds": 13.95,
+            "progress": 0.2607486706193221,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 84,
+        "timestampSeconds": 4.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.2,
+            "timelineSeconds": 14.0,
+            "progress": 0.26120283018867924,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 85,
+        "timestampSeconds": 4.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.25,
+            "timelineSeconds": 14.049999999999999,
+            "progress": 0.2616324221479734,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 86,
+        "timestampSeconds": 4.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.3,
+            "timelineSeconds": 14.099999999999998,
+            "progress": 0.26203539919636615,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 87,
+        "timestampSeconds": 4.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.35,
+            "timelineSeconds": 14.149999999999999,
+            "progress": 0.2624097140330188,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 88,
+        "timestampSeconds": 4.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.4,
+            "timelineSeconds": 14.2,
+            "progress": 0.2627533193570929,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 89,
+        "timestampSeconds": 4.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.45,
+            "timelineSeconds": 14.25,
+            "progress": 0.2630641678677498,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 90,
+        "timestampSeconds": 4.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.5,
+            "timelineSeconds": 14.299999999999999,
+            "progress": 0.2633402122641509,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 91,
+        "timestampSeconds": 4.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.55,
+            "timelineSeconds": 14.349999999999998,
+            "progress": 0.2635794052454577,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 92,
+        "timestampSeconds": 4.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.6,
+            "timelineSeconds": 14.399999999999999,
+            "progress": 0.2637796995108316,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 93,
+        "timestampSeconds": 4.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.65,
+            "timelineSeconds": 14.45,
+            "progress": 0.26393904775943394,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 94,
+        "timestampSeconds": 4.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.7,
+            "timelineSeconds": 14.5,
+            "progress": 0.26405540269042627,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 95,
+        "timestampSeconds": 4.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.75,
+            "timelineSeconds": 14.549999999999999,
+            "progress": 0.2641267170029699,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 96,
+        "timestampSeconds": 4.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.8,
+            "timelineSeconds": 14.599999999999998,
+            "progress": 0.2641509433962264,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 97,
+        "timestampSeconds": 4.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.85,
+            "timelineSeconds": 14.649999999999999,
+            "progress": 0.26417516978948286,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 98,
+        "timestampSeconds": 4.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.9,
+            "timelineSeconds": 14.7,
+            "progress": 0.26424648410202656,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 99,
+        "timestampSeconds": 4.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 4.95,
+            "timelineSeconds": 14.75,
+            "progress": 0.2643628390330189,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 100,
+        "timestampSeconds": 5.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.0,
+            "timelineSeconds": 14.799999999999999,
+            "progress": 0.26452218728162125,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 101,
+        "timestampSeconds": 5.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.05,
+            "timelineSeconds": 14.849999999999998,
+            "progress": 0.26472248154699507,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 102,
+        "timestampSeconds": 5.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.1,
+            "timelineSeconds": 14.899999999999999,
+            "progress": 0.2649616745283018,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 103,
+        "timestampSeconds": 5.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.15,
+            "timelineSeconds": 14.95,
+            "progress": 0.265237718924703,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 104,
+        "timestampSeconds": 5.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.2,
+            "timelineSeconds": 15.0,
+            "progress": 0.2655485674353599,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 105,
+        "timestampSeconds": 5.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.25,
+            "timelineSeconds": 15.049999999999999,
+            "progress": 0.26589217275943394,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 106,
+        "timestampSeconds": 5.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.3,
+            "timelineSeconds": 15.099999999999998,
+            "progress": 0.2662664875960866,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 107,
+        "timestampSeconds": 5.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.35,
+            "timelineSeconds": 15.149999999999999,
+            "progress": 0.2666694646444793,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 108,
+        "timestampSeconds": 5.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.4,
+            "timelineSeconds": 15.2,
+            "progress": 0.26709905660377353,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 109,
+        "timestampSeconds": 5.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.45,
+            "timelineSeconds": 15.25,
+            "progress": 0.26755321617313066,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 110,
+        "timestampSeconds": 5.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.5,
+            "timelineSeconds": 15.299999999999999,
+            "progress": 0.26802989605171207,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 111,
+        "timestampSeconds": 5.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.55,
+            "timelineSeconds": 15.349999999999998,
+            "progress": 0.2685270489386792,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 112,
+        "timestampSeconds": 5.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.6,
+            "timelineSeconds": 15.399999999999999,
+            "progress": 0.2690426275331935,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 113,
+        "timestampSeconds": 5.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.65,
+            "timelineSeconds": 15.45,
+            "progress": 0.2695745845344164,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 114,
+        "timestampSeconds": 5.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.7,
+            "timelineSeconds": 15.5,
+            "progress": 0.2701208726415094,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 115,
+        "timestampSeconds": 5.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.75,
+            "timelineSeconds": 15.549999999999999,
+            "progress": 0.2706794445536338,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 116,
+        "timestampSeconds": 5.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.8,
+            "timelineSeconds": 15.599999999999998,
+            "progress": 0.271248252969951,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 117,
+        "timestampSeconds": 5.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.85,
+            "timelineSeconds": 15.649999999999999,
+            "progress": 0.2718252505896226,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 118,
+        "timestampSeconds": 5.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.9,
+            "timelineSeconds": 15.7,
+            "progress": 0.2724083901118099,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 119,
+        "timestampSeconds": 5.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 5.95,
+            "timelineSeconds": 15.75,
+            "progress": 0.2729956242356743,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 120,
+        "timestampSeconds": 6.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.0,
+            "timelineSeconds": 15.799999999999999,
+            "progress": 0.2735849056603773,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 121,
+        "timestampSeconds": 6.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.05,
+            "timelineSeconds": 15.849999999999998,
+            "progress": 0.2741741870850803,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 122,
+        "timestampSeconds": 6.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.1,
+            "timelineSeconds": 15.899999999999999,
+            "progress": 0.27476142120894476,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 123,
+        "timestampSeconds": 6.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.15,
+            "timelineSeconds": 15.95,
+            "progress": 0.275344560731132,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 124,
+        "timestampSeconds": 6.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.2,
+            "timelineSeconds": 16.0,
+            "progress": 0.27592155835080356,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 125,
+        "timestampSeconds": 6.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.25,
+            "timelineSeconds": 16.049999999999997,
+            "progress": 0.2764903667671208,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 126,
+        "timestampSeconds": 6.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.3,
+            "timelineSeconds": 16.099999999999998,
+            "progress": 0.27704893867924524,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 127,
+        "timestampSeconds": 6.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.35,
+            "timelineSeconds": 16.15,
+            "progress": 0.27759522678633813,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 128,
+        "timestampSeconds": 6.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.4,
+            "timelineSeconds": 16.2,
+            "progress": 0.2781271837875611,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 129,
+        "timestampSeconds": 6.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.45,
+            "timelineSeconds": 16.25,
+            "progress": 0.2786427623820754,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 130,
+        "timestampSeconds": 6.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.5,
+            "timelineSeconds": 16.299999999999997,
+            "progress": 0.2791399152690426,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 131,
+        "timestampSeconds": 6.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.55,
+            "timelineSeconds": 16.349999999999998,
+            "progress": 0.279616595147624,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 132,
+        "timestampSeconds": 6.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.6,
+            "timelineSeconds": 16.4,
+            "progress": 0.28007075471698106,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 133,
+        "timestampSeconds": 6.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.65,
+            "timelineSeconds": 16.45,
+            "progress": 0.28050034667627527,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 134,
+        "timestampSeconds": 6.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.7,
+            "timelineSeconds": 16.5,
+            "progress": 0.28090332372466803,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 135,
+        "timestampSeconds": 6.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.75,
+            "timelineSeconds": 16.549999999999997,
+            "progress": 0.2812776385613207,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 136,
+        "timestampSeconds": 6.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.8,
+            "timelineSeconds": 16.599999999999998,
+            "progress": 0.2816212438853948,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 137,
+        "timestampSeconds": 6.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.85,
+            "timelineSeconds": 16.65,
+            "progress": 0.28193209239605166,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 138,
+        "timestampSeconds": 6.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.9,
+            "timelineSeconds": 16.7,
+            "progress": 0.2822081367924528,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 139,
+        "timestampSeconds": 6.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 6.95,
+            "timelineSeconds": 16.75,
+            "progress": 0.2824473297737596,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 140,
+        "timestampSeconds": 7.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.0,
+            "timelineSeconds": 16.799999999999997,
+            "progress": 0.28264762403913346,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 141,
+        "timestampSeconds": 7.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.05,
+            "timelineSeconds": 16.849999999999998,
+            "progress": 0.2828069722877358,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 142,
+        "timestampSeconds": 7.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.1,
+            "timelineSeconds": 16.9,
+            "progress": 0.28292332721872815,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 143,
+        "timestampSeconds": 7.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.15,
+            "timelineSeconds": 16.95,
+            "progress": 0.2829946415312718,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 144,
+        "timestampSeconds": 7.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.2,
+            "timelineSeconds": 17.0,
+            "progress": 0.2830188679245283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 145,
+        "timestampSeconds": 7.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.25,
+            "timelineSeconds": 17.049999999999997,
+            "progress": 0.28304309431778474,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 146,
+        "timestampSeconds": 7.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.3,
+            "timelineSeconds": 17.099999999999998,
+            "progress": 0.28311440863032844,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 147,
+        "timestampSeconds": 7.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.35,
+            "timelineSeconds": 17.15,
+            "progress": 0.28323076356132076,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 148,
+        "timestampSeconds": 7.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.4,
+            "timelineSeconds": 17.2,
+            "progress": 0.28339011180992313,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 149,
+        "timestampSeconds": 7.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.45,
+            "timelineSeconds": 17.25,
+            "progress": 0.283590406075297,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 150,
+        "timestampSeconds": 7.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.5,
+            "timelineSeconds": 17.299999999999997,
+            "progress": 0.28382959905660377,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 151,
+        "timestampSeconds": 7.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.55,
+            "timelineSeconds": 17.349999999999998,
+            "progress": 0.2841056434530049,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 152,
+        "timestampSeconds": 7.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.6,
+            "timelineSeconds": 17.4,
+            "progress": 0.28441649196366176,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 153,
+        "timestampSeconds": 7.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.65,
+            "timelineSeconds": 17.45,
+            "progress": 0.2847600972877358,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 154,
+        "timestampSeconds": 7.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.7,
+            "timelineSeconds": 17.5,
+            "progress": 0.2851344121243885,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 155,
+        "timestampSeconds": 7.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.75,
+            "timelineSeconds": 17.549999999999997,
+            "progress": 0.2855373891727812,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 156,
+        "timestampSeconds": 7.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.8,
+            "timelineSeconds": 17.599999999999998,
+            "progress": 0.2859669811320754,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 157,
+        "timestampSeconds": 7.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.85,
+            "timelineSeconds": 17.65,
+            "progress": 0.28642114070143254,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 158,
+        "timestampSeconds": 7.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.9,
+            "timelineSeconds": 17.7,
+            "progress": 0.28689782058001395,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 159,
+        "timestampSeconds": 7.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 7.95,
+            "timelineSeconds": 17.75,
+            "progress": 0.2873949734669811,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 160,
+        "timestampSeconds": 8.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.0,
+            "timelineSeconds": 17.799999999999997,
+            "progress": 0.2879105520614954,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 161,
+        "timestampSeconds": 8.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.05,
+            "timelineSeconds": 17.85,
+            "progress": 0.28844250906271834,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 162,
+        "timestampSeconds": 8.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.1,
+            "timelineSeconds": 17.9,
+            "progress": 0.2889887971698113,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 163,
+        "timestampSeconds": 8.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.15,
+            "timelineSeconds": 17.95,
+            "progress": 0.2895473690819357,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 164,
+        "timestampSeconds": 8.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.2,
+            "timelineSeconds": 18.0,
+            "progress": 0.29011617749825297,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 165,
+        "timestampSeconds": 8.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.25,
+            "timelineSeconds": 18.049999999999997,
+            "progress": 0.2906931751179245,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 166,
+        "timestampSeconds": 8.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.3,
+            "timelineSeconds": 18.1,
+            "progress": 0.2912763146401118,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 167,
+        "timestampSeconds": 8.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.35,
+            "timelineSeconds": 18.15,
+            "progress": 0.2918635487639762,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 168,
+        "timestampSeconds": 8.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.4,
+            "timelineSeconds": 18.2,
+            "progress": 0.29245283018867924,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 169,
+        "timestampSeconds": 8.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.45,
+            "timelineSeconds": 18.25,
+            "progress": 0.29304211161338223,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 170,
+        "timestampSeconds": 8.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.5,
+            "timelineSeconds": 18.299999999999997,
+            "progress": 0.29362934573724664,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 171,
+        "timestampSeconds": 8.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.55,
+            "timelineSeconds": 18.35,
+            "progress": 0.29421248525943394,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 172,
+        "timestampSeconds": 8.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.6,
+            "timelineSeconds": 18.4,
+            "progress": 0.29478948287910545,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 173,
+        "timestampSeconds": 8.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.65,
+            "timelineSeconds": 18.45,
+            "progress": 0.2953582912954228,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 174,
+        "timestampSeconds": 8.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.7,
+            "timelineSeconds": 18.5,
+            "progress": 0.2959168632075472,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 175,
+        "timestampSeconds": 8.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.75,
+            "timelineSeconds": 18.549999999999997,
+            "progress": 0.29646315131464007,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 176,
+        "timestampSeconds": 8.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.8,
+            "timelineSeconds": 18.6,
+            "progress": 0.296995108315863,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 177,
+        "timestampSeconds": 8.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.85,
+            "timelineSeconds": 18.65,
+            "progress": 0.2975106869103773,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 178,
+        "timestampSeconds": 8.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.9,
+            "timelineSeconds": 18.7,
+            "progress": 0.29800783979734446,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 179,
+        "timestampSeconds": 8.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 8.95,
+            "timelineSeconds": 18.75,
+            "progress": 0.29848451967592593,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 180,
+        "timestampSeconds": 9.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.0,
+            "timelineSeconds": 18.799999999999997,
+            "progress": 0.298938679245283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 181,
+        "timestampSeconds": 9.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.05,
+            "timelineSeconds": 18.85,
+            "progress": 0.2993682712045772,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 182,
+        "timestampSeconds": 9.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.1,
+            "timelineSeconds": 18.9,
+            "progress": 0.2997712482529699,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 183,
+        "timestampSeconds": 9.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.15,
+            "timelineSeconds": 18.95,
+            "progress": 0.30014556308962265,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 184,
+        "timestampSeconds": 9.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.2,
+            "timelineSeconds": 19.0,
+            "progress": 0.3004891684136967,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 185,
+        "timestampSeconds": 9.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.25,
+            "timelineSeconds": 19.049999999999997,
+            "progress": 0.30080001692435354,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 186,
+        "timestampSeconds": 9.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.3,
+            "timelineSeconds": 19.1,
+            "progress": 0.3010760613207547,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 187,
+        "timestampSeconds": 9.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.35,
+            "timelineSeconds": 19.15,
+            "progress": 0.3013152543020615,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 188,
+        "timestampSeconds": 9.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.4,
+            "timelineSeconds": 19.2,
+            "progress": 0.30151554856743534,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 189,
+        "timestampSeconds": 9.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.45,
+            "timelineSeconds": 19.25,
+            "progress": 0.30167489681603776,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 190,
+        "timestampSeconds": 9.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.5,
+            "timelineSeconds": 19.299999999999997,
+            "progress": 0.30179125174703003,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 191,
+        "timestampSeconds": 9.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.55,
+            "timelineSeconds": 19.35,
+            "progress": 0.30186256605957373,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 192,
+        "timestampSeconds": 9.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.6,
+            "timelineSeconds": 19.4,
+            "progress": 0.3018867924528302,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 193,
+        "timestampSeconds": 9.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.65,
+            "timelineSeconds": 19.45,
+            "progress": 0.3019110188460866,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 194,
+        "timestampSeconds": 9.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.7,
+            "timelineSeconds": 19.5,
+            "progress": 0.3019823331586303,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 195,
+        "timestampSeconds": 9.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.75,
+            "timelineSeconds": 19.549999999999997,
+            "progress": 0.30209868808962265,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 196,
+        "timestampSeconds": 9.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.8,
+            "timelineSeconds": 19.6,
+            "progress": 0.30225803633822507,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 197,
+        "timestampSeconds": 9.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.85,
+            "timelineSeconds": 19.65,
+            "progress": 0.3024583306035989,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 198,
+        "timestampSeconds": 9.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.9,
+            "timelineSeconds": 19.7,
+            "progress": 0.30269752358490565,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 199,
+        "timestampSeconds": 9.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 9.95,
+            "timelineSeconds": 19.75,
+            "progress": 0.30297356798130676,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 200,
+        "timestampSeconds": 10.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.0,
+            "timelineSeconds": 19.799999999999997,
+            "progress": 0.30328441649196364,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 201,
+        "timestampSeconds": 10.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.05,
+            "timelineSeconds": 19.85,
+            "progress": 0.30362802181603776,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 202,
+        "timestampSeconds": 10.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.1,
+            "timelineSeconds": 19.9,
+            "progress": 0.3040023366526904,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 203,
+        "timestampSeconds": 10.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.15,
+            "timelineSeconds": 19.95,
+            "progress": 0.3044053137010831,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 204,
+        "timestampSeconds": 10.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.2,
+            "timelineSeconds": 20.0,
+            "progress": 0.30483490566037735,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 205,
+        "timestampSeconds": 10.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.25,
+            "timelineSeconds": 20.049999999999997,
+            "progress": 0.3052890652297344,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 206,
+        "timestampSeconds": 10.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.3,
+            "timelineSeconds": 20.1,
+            "progress": 0.30576574510831583,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 207,
+        "timestampSeconds": 10.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.35,
+            "timelineSeconds": 20.15,
+            "progress": 0.306262897995283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 208,
+        "timestampSeconds": 10.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.4,
+            "timelineSeconds": 20.2,
+            "progress": 0.30677847658979734,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 209,
+        "timestampSeconds": 10.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.45,
+            "timelineSeconds": 20.25,
+            "progress": 0.3073104335910202,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 210,
+        "timestampSeconds": 10.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.5,
+            "timelineSeconds": 20.299999999999997,
+            "progress": 0.3078567216981131,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 211,
+        "timestampSeconds": 10.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.55,
+            "timelineSeconds": 20.35,
+            "progress": 0.30841529361023756,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 212,
+        "timestampSeconds": 10.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.6,
+            "timelineSeconds": 20.4,
+            "progress": 0.3089841020265548,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 213,
+        "timestampSeconds": 10.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.65,
+            "timelineSeconds": 20.45,
+            "progress": 0.3095610996462264,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 214,
+        "timestampSeconds": 10.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.7,
+            "timelineSeconds": 20.5,
+            "progress": 0.31014423916841366,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 215,
+        "timestampSeconds": 10.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.75,
+            "timelineSeconds": 20.549999999999997,
+            "progress": 0.31073147329227807,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 216,
+        "timestampSeconds": 10.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.8,
+            "timelineSeconds": 20.6,
+            "progress": 0.3113207547169811,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 217,
+        "timestampSeconds": 10.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.85,
+            "timelineSeconds": 20.65,
+            "progress": 0.31191003614168405,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 218,
+        "timestampSeconds": 10.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.9,
+            "timelineSeconds": 20.7,
+            "progress": 0.3124972702655485,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 219,
+        "timestampSeconds": 10.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 10.95,
+            "timelineSeconds": 20.75,
+            "progress": 0.3130804097877358,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 220,
+        "timestampSeconds": 11.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.0,
+            "timelineSeconds": 20.799999999999997,
+            "progress": 0.3136574074074074,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 221,
+        "timestampSeconds": 11.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.05,
+            "timelineSeconds": 20.85,
+            "progress": 0.3142262158237247,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 222,
+        "timestampSeconds": 11.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.1,
+            "timelineSeconds": 20.9,
+            "progress": 0.31478478773584906,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 223,
+        "timestampSeconds": 11.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.15,
+            "timelineSeconds": 20.95,
+            "progress": 0.31533107584294195,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 224,
+        "timestampSeconds": 11.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.2,
+            "timelineSeconds": 21.0,
+            "progress": 0.3158630328441649,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 225,
+        "timestampSeconds": 11.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.25,
+            "timelineSeconds": 21.049999999999997,
+            "progress": 0.3163786114386792,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 226,
+        "timestampSeconds": 11.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.3,
+            "timelineSeconds": 21.1,
+            "progress": 0.3168757643256464,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 227,
+        "timestampSeconds": 11.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.35,
+            "timelineSeconds": 21.15,
+            "progress": 0.3173524442042278,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 228,
+        "timestampSeconds": 11.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.4,
+            "timelineSeconds": 21.2,
+            "progress": 0.3178066037735849,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 229,
+        "timestampSeconds": 11.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.45,
+            "timelineSeconds": 21.25,
+            "progress": 0.3182361957328791,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 230,
+        "timestampSeconds": 11.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.5,
+            "timelineSeconds": 21.299999999999997,
+            "progress": 0.3186391727812718,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 231,
+        "timestampSeconds": 11.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.55,
+            "timelineSeconds": 21.35,
+            "progress": 0.31901348761792453,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 232,
+        "timestampSeconds": 11.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.6,
+            "timelineSeconds": 21.4,
+            "progress": 0.31935709294199854,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 233,
+        "timestampSeconds": 11.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.65,
+            "timelineSeconds": 21.45,
+            "progress": 0.3196679414526555,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 234,
+        "timestampSeconds": 11.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.7,
+            "timelineSeconds": 21.5,
+            "progress": 0.3199439858490566,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 235,
+        "timestampSeconds": 11.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.75,
+            "timelineSeconds": 21.549999999999997,
+            "progress": 0.3201831788303634,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 236,
+        "timestampSeconds": 11.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.8,
+            "timelineSeconds": 21.6,
+            "progress": 0.3203834730957372,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 237,
+        "timestampSeconds": 11.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.85,
+            "timelineSeconds": 21.65,
+            "progress": 0.32054282134433965,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 238,
+        "timestampSeconds": 11.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.9,
+            "timelineSeconds": 21.7,
+            "progress": 0.3206591762753319,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 239,
+        "timestampSeconds": 11.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 11.95,
+            "timelineSeconds": 21.75,
+            "progress": 0.3207304905878756,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 240,
+        "timestampSeconds": 12.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.0,
+            "timelineSeconds": 21.799999999999997,
+            "progress": 0.32075471698113206,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 241,
+        "timestampSeconds": 12.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.05,
+            "timelineSeconds": 21.85,
+            "progress": 0.3216981132075472,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 242,
+        "timestampSeconds": 12.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.1,
+            "timelineSeconds": 21.9,
+            "progress": 0.32264150943396225,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 243,
+        "timestampSeconds": 12.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.15,
+            "timelineSeconds": 21.95,
+            "progress": 0.32358490566037734,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 244,
+        "timestampSeconds": 12.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.2,
+            "timelineSeconds": 22.0,
+            "progress": 0.32452830188679244,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 245,
+        "timestampSeconds": 12.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.25,
+            "timelineSeconds": 22.049999999999997,
+            "progress": 0.3254716981132075,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 246,
+        "timestampSeconds": 12.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.3,
+            "timelineSeconds": 22.1,
+            "progress": 0.3264150943396227,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 247,
+        "timestampSeconds": 12.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.35,
+            "timelineSeconds": 22.15,
+            "progress": 0.3273584905660377,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 248,
+        "timestampSeconds": 12.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.4,
+            "timelineSeconds": 22.2,
+            "progress": 0.3283018867924528,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 249,
+        "timestampSeconds": 12.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.45,
+            "timelineSeconds": 22.25,
+            "progress": 0.3292452830188679,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 250,
+        "timestampSeconds": 12.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.5,
+            "timelineSeconds": 22.299999999999997,
+            "progress": 0.33018867924528295,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 251,
+        "timestampSeconds": 12.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.55,
+            "timelineSeconds": 22.35,
+            "progress": 0.33113207547169815,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 252,
+        "timestampSeconds": 12.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.6,
+            "timelineSeconds": 22.4,
+            "progress": 0.3320754716981132,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 253,
+        "timestampSeconds": 12.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.65,
+            "timelineSeconds": 22.45,
+            "progress": 0.3330188679245283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 254,
+        "timestampSeconds": 12.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.7,
+            "timelineSeconds": 22.5,
+            "progress": 0.3339622641509434,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 255,
+        "timestampSeconds": 12.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.75,
+            "timelineSeconds": 22.549999999999997,
+            "progress": 0.3349056603773584,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 256,
+        "timestampSeconds": 12.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.8,
+            "timelineSeconds": 22.6,
+            "progress": 0.3358490566037736,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 257,
+        "timestampSeconds": 12.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.85,
+            "timelineSeconds": 22.65,
+            "progress": 0.33679245283018866,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 258,
+        "timestampSeconds": 12.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.9,
+            "timelineSeconds": 22.7,
+            "progress": 0.33773584905660375,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 259,
+        "timestampSeconds": 12.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 12.95,
+            "timelineSeconds": 22.75,
+            "progress": 0.33867924528301885,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 260,
+        "timestampSeconds": 13.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.0,
+            "timelineSeconds": 22.799999999999997,
+            "progress": 0.3396226415094339,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 261,
+        "timestampSeconds": 13.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.05,
+            "timelineSeconds": 22.85,
+            "progress": 0.3396468679026904,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 262,
+        "timestampSeconds": 13.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.1,
+            "timelineSeconds": 22.9,
+            "progress": 0.33971818221523414,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 263,
+        "timestampSeconds": 13.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.15,
+            "timelineSeconds": 22.95,
+            "progress": 0.3398345371462264,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 264,
+        "timestampSeconds": 13.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.2,
+            "timelineSeconds": 23.0,
+            "progress": 0.33999388539482883,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 265,
+        "timestampSeconds": 13.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.25,
+            "timelineSeconds": 23.049999999999997,
+            "progress": 0.34019417966020266,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 266,
+        "timestampSeconds": 13.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.3,
+            "timelineSeconds": 23.1,
+            "progress": 0.3404333726415094,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 267,
+        "timestampSeconds": 13.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.35,
+            "timelineSeconds": 23.15,
+            "progress": 0.3407094170379106,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 268,
+        "timestampSeconds": 13.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.4,
+            "timelineSeconds": 23.2,
+            "progress": 0.3410202655485674,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 269,
+        "timestampSeconds": 13.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.45,
+            "timelineSeconds": 23.25,
+            "progress": 0.34136387087264153,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 270,
+        "timestampSeconds": 13.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.5,
+            "timelineSeconds": 23.299999999999997,
+            "progress": 0.3417381857092942,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 271,
+        "timestampSeconds": 13.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.55,
+            "timelineSeconds": 23.35,
+            "progress": 0.34214116275768697,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 272,
+        "timestampSeconds": 13.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.6,
+            "timelineSeconds": 23.4,
+            "progress": 0.3425707547169811,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 273,
+        "timestampSeconds": 13.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.65,
+            "timelineSeconds": 23.45,
+            "progress": 0.3430249142863382,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 274,
+        "timestampSeconds": 13.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.7,
+            "timelineSeconds": 23.5,
+            "progress": 0.34350159416491965,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 275,
+        "timestampSeconds": 13.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.75,
+            "timelineSeconds": 23.549999999999997,
+            "progress": 0.34399874705188677,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 276,
+        "timestampSeconds": 13.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.8,
+            "timelineSeconds": 23.6,
+            "progress": 0.3445143256464011,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 277,
+        "timestampSeconds": 13.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.85,
+            "timelineSeconds": 23.65,
+            "progress": 0.345046282647624,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 278,
+        "timestampSeconds": 13.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.9,
+            "timelineSeconds": 23.7,
+            "progress": 0.345592570754717,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 279,
+        "timestampSeconds": 13.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 13.95,
+            "timelineSeconds": 23.75,
+            "progress": 0.3461511426668413,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 280,
+        "timestampSeconds": 14.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.0,
+            "timelineSeconds": 23.799999999999997,
+            "progress": 0.34671995108315856,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 281,
+        "timestampSeconds": 14.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.05,
+            "timelineSeconds": 23.85,
+            "progress": 0.3472969487028302,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 282,
+        "timestampSeconds": 14.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.1,
+            "timelineSeconds": 23.9,
+            "progress": 0.3478800882250174,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 283,
+        "timestampSeconds": 14.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.15,
+            "timelineSeconds": 23.95,
+            "progress": 0.3484673223488819,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 284,
+        "timestampSeconds": 14.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.2,
+            "timelineSeconds": 24.0,
+            "progress": 0.3490566037735849,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 285,
+        "timestampSeconds": 14.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.25,
+            "timelineSeconds": 24.049999999999997,
+            "progress": 0.3496458851982879,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 286,
+        "timestampSeconds": 14.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.3,
+            "timelineSeconds": 24.1,
+            "progress": 0.3502331193221524,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 287,
+        "timestampSeconds": 14.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.35,
+            "timelineSeconds": 24.15,
+            "progress": 0.35081625884433965,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 288,
+        "timestampSeconds": 14.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.4,
+            "timelineSeconds": 24.2,
+            "progress": 0.35139325646401115,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 289,
+        "timestampSeconds": 14.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.45,
+            "timelineSeconds": 24.25,
+            "progress": 0.35196206488032844,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 290,
+        "timestampSeconds": 14.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.5,
+            "timelineSeconds": 24.299999999999997,
+            "progress": 0.3525206367924528,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 291,
+        "timestampSeconds": 14.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.55,
+            "timelineSeconds": 24.35,
+            "progress": 0.3530669248995458,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 292,
+        "timestampSeconds": 14.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.6,
+            "timelineSeconds": 24.4,
+            "progress": 0.3535988819007687,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 293,
+        "timestampSeconds": 14.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.65,
+            "timelineSeconds": 24.45,
+            "progress": 0.354114460495283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 294,
+        "timestampSeconds": 14.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.7,
+            "timelineSeconds": 24.5,
+            "progress": 0.35461161338225017,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 295,
+        "timestampSeconds": 14.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.75,
+            "timelineSeconds": 24.549999999999997,
+            "progress": 0.3550882932608316,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 296,
+        "timestampSeconds": 14.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.8,
+            "timelineSeconds": 24.6,
+            "progress": 0.3555424528301887,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 297,
+        "timestampSeconds": 14.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.85,
+            "timelineSeconds": 24.65,
+            "progress": 0.35597204478948286,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 298,
+        "timestampSeconds": 14.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.9,
+            "timelineSeconds": 24.7,
+            "progress": 0.3563750218378756,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 299,
+        "timestampSeconds": 14.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 14.95,
+            "timelineSeconds": 24.75,
+            "progress": 0.3567493366745283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 300,
+        "timestampSeconds": 15.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.0,
+            "timelineSeconds": 24.799999999999997,
+            "progress": 0.3570929419986023,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 301,
+        "timestampSeconds": 15.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.05,
+            "timelineSeconds": 24.85,
+            "progress": 0.35740379050925924,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 302,
+        "timestampSeconds": 15.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.1,
+            "timelineSeconds": 24.9,
+            "progress": 0.35767983490566035,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 303,
+        "timestampSeconds": 15.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.15,
+            "timelineSeconds": 24.95,
+            "progress": 0.35791902788696717,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 304,
+        "timestampSeconds": 15.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.2,
+            "timelineSeconds": 25.0,
+            "progress": 0.358119322152341,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 305,
+        "timestampSeconds": 15.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.25,
+            "timelineSeconds": 25.049999999999997,
+            "progress": 0.3582786704009434,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 306,
+        "timestampSeconds": 15.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.3,
+            "timelineSeconds": 25.1,
+            "progress": 0.3583950253319357,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 307,
+        "timestampSeconds": 15.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.35,
+            "timelineSeconds": 25.15,
+            "progress": 0.3584663396444794,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 308,
+        "timestampSeconds": 15.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.4,
+            "timelineSeconds": 25.2,
+            "progress": 0.3584905660377358,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 309,
+        "timestampSeconds": 15.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.45,
+            "timelineSeconds": 25.25,
+            "progress": 0.35851479243099227,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 310,
+        "timestampSeconds": 15.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.5,
+            "timelineSeconds": 25.299999999999997,
+            "progress": 0.358586106743536,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 311,
+        "timestampSeconds": 15.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.55,
+            "timelineSeconds": 25.35,
+            "progress": 0.3587024616745283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 312,
+        "timestampSeconds": 15.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.6,
+            "timelineSeconds": 25.4,
+            "progress": 0.3588618099231307,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 313,
+        "timestampSeconds": 15.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.65,
+            "timelineSeconds": 25.45,
+            "progress": 0.35906210418850454,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 314,
+        "timestampSeconds": 15.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.7,
+            "timelineSeconds": 25.5,
+            "progress": 0.3593012971698113,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 315,
+        "timestampSeconds": 15.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.75,
+            "timelineSeconds": 25.549999999999997,
+            "progress": 0.35957734156621246,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 316,
+        "timestampSeconds": 15.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.8,
+            "timelineSeconds": 25.6,
+            "progress": 0.35988819007686934,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 317,
+        "timestampSeconds": 15.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.85,
+            "timelineSeconds": 25.65,
+            "progress": 0.3602317954009434,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 318,
+        "timestampSeconds": 15.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.9,
+            "timelineSeconds": 25.7,
+            "progress": 0.3606061102375961,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 319,
+        "timestampSeconds": 15.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 15.95,
+            "timelineSeconds": 25.75,
+            "progress": 0.36100908728598885,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 320,
+        "timestampSeconds": 16.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.0,
+            "timelineSeconds": 25.799999999999997,
+            "progress": 0.361438679245283,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 321,
+        "timestampSeconds": 16.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.05,
+            "timelineSeconds": 25.85,
+            "progress": 0.3618928388146401,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 322,
+        "timestampSeconds": 16.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.1,
+            "timelineSeconds": 25.9,
+            "progress": 0.36236951869322154,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 323,
+        "timestampSeconds": 16.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.15,
+            "timelineSeconds": 25.949999999999996,
+            "progress": 0.3628666715801887,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 324,
+        "timestampSeconds": 16.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.2,
+            "timelineSeconds": 26.0,
+            "progress": 0.363382250174703,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 325,
+        "timestampSeconds": 16.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.25,
+            "timelineSeconds": 26.049999999999997,
+            "progress": 0.3639142071759259,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 326,
+        "timestampSeconds": 16.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.3,
+            "timelineSeconds": 26.1,
+            "progress": 0.3644604952830189,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 327,
+        "timestampSeconds": 16.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.35,
+            "timelineSeconds": 26.15,
+            "progress": 0.36501906719514327,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 328,
+        "timestampSeconds": 16.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.4,
+            "timelineSeconds": 26.199999999999996,
+            "progress": 0.36558787561146044,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 329,
+        "timestampSeconds": 16.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.45,
+            "timelineSeconds": 26.25,
+            "progress": 0.36616487323113206,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 330,
+        "timestampSeconds": 16.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.5,
+            "timelineSeconds": 26.299999999999997,
+            "progress": 0.3667480127533193,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 331,
+        "timestampSeconds": 16.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.55,
+            "timelineSeconds": 26.35,
+            "progress": 0.36733524687718383,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 332,
+        "timestampSeconds": 16.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.6,
+            "timelineSeconds": 26.4,
+            "progress": 0.36792452830188677,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 333,
+        "timestampSeconds": 16.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.65,
+            "timelineSeconds": 26.449999999999996,
+            "progress": 0.36851380972658976,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 334,
+        "timestampSeconds": 16.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.7,
+            "timelineSeconds": 26.5,
+            "progress": 0.3691010438504543,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 335,
+        "timestampSeconds": 16.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.75,
+            "timelineSeconds": 26.549999999999997,
+            "progress": 0.36968418337264153,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 336,
+        "timestampSeconds": 16.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.8,
+            "timelineSeconds": 26.6,
+            "progress": 0.37026118099231314,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 337,
+        "timestampSeconds": 16.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.85,
+            "timelineSeconds": 26.65,
+            "progress": 0.3708299894086303,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 338,
+        "timestampSeconds": 16.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.9,
+            "timelineSeconds": 26.699999999999996,
+            "progress": 0.3713885613207547,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 339,
+        "timestampSeconds": 16.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 16.95,
+            "timelineSeconds": 26.75,
+            "progress": 0.3719348494278477,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 340,
+        "timestampSeconds": 17.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.0,
+            "timelineSeconds": 26.799999999999997,
+            "progress": 0.3724668064290706,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 341,
+        "timestampSeconds": 17.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.05,
+            "timelineSeconds": 26.85,
+            "progress": 0.3729823850235849,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 342,
+        "timestampSeconds": 17.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.1,
+            "timelineSeconds": 26.9,
+            "progress": 0.37347953791055205,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 343,
+        "timestampSeconds": 17.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.15,
+            "timelineSeconds": 26.949999999999996,
+            "progress": 0.37395621778913346,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 344,
+        "timestampSeconds": 17.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.2,
+            "timelineSeconds": 27.0,
+            "progress": 0.3744103773584906,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 345,
+        "timestampSeconds": 17.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.25,
+            "timelineSeconds": 27.049999999999997,
+            "progress": 0.37483996931778474,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 346,
+        "timestampSeconds": 17.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.3,
+            "timelineSeconds": 27.1,
+            "progress": 0.3752429463661775,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 347,
+        "timestampSeconds": 17.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.35,
+            "timelineSeconds": 27.15,
+            "progress": 0.3756172612028302,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 348,
+        "timestampSeconds": 17.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.4,
+            "timelineSeconds": 27.199999999999996,
+            "progress": 0.37596086652690425,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 349,
+        "timestampSeconds": 17.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.45,
+            "timelineSeconds": 27.25,
+            "progress": 0.3762717150375611,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 350,
+        "timestampSeconds": 17.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.5,
+            "timelineSeconds": 27.299999999999997,
+            "progress": 0.37654775943396224,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 351,
+        "timestampSeconds": 17.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.55,
+            "timelineSeconds": 27.35,
+            "progress": 0.37678695241526905,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 352,
+        "timestampSeconds": 17.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.6,
+            "timelineSeconds": 27.4,
+            "progress": 0.3769872466806429,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 353,
+        "timestampSeconds": 17.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.65,
+            "timelineSeconds": 27.449999999999996,
+            "progress": 0.3771465949292453,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 354,
+        "timestampSeconds": 17.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.7,
+            "timelineSeconds": 27.5,
+            "progress": 0.37726294986023756,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 355,
+        "timestampSeconds": 17.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.75,
+            "timelineSeconds": 27.549999999999997,
+            "progress": 0.37733426417278126,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 356,
+        "timestampSeconds": 17.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.8,
+            "timelineSeconds": 27.6,
+            "progress": 0.37735849056603776,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 357,
+        "timestampSeconds": 17.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.85,
+            "timelineSeconds": 27.65,
+            "progress": 0.3773827169592942,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 358,
+        "timestampSeconds": 17.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.9,
+            "timelineSeconds": 27.699999999999996,
+            "progress": 0.3774540312718379,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 359,
+        "timestampSeconds": 17.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 17.95,
+            "timelineSeconds": 27.75,
+            "progress": 0.3775703862028302,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 360,
+        "timestampSeconds": 18.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.0,
+            "timelineSeconds": 27.799999999999997,
+            "progress": 0.3777297344514326,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 361,
+        "timestampSeconds": 18.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.05,
+            "timelineSeconds": 27.85,
+            "progress": 0.3779300287168064,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 362,
+        "timestampSeconds": 18.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.1,
+            "timelineSeconds": 27.9,
+            "progress": 0.37816922169811323,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 363,
+        "timestampSeconds": 18.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.15,
+            "timelineSeconds": 27.949999999999996,
+            "progress": 0.37844526609451434,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 364,
+        "timestampSeconds": 18.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.2,
+            "timelineSeconds": 28.0,
+            "progress": 0.3787561146051712,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 365,
+        "timestampSeconds": 18.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.25,
+            "timelineSeconds": 28.049999999999997,
+            "progress": 0.3790997199292453,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 366,
+        "timestampSeconds": 18.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.3,
+            "timelineSeconds": 28.1,
+            "progress": 0.379474034765898,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 367,
+        "timestampSeconds": 18.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.35,
+            "timelineSeconds": 28.15,
+            "progress": 0.37987701181429073,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 368,
+        "timestampSeconds": 18.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.4,
+            "timelineSeconds": 28.199999999999996,
+            "progress": 0.3803066037735849,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 369,
+        "timestampSeconds": 18.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.45,
+            "timelineSeconds": 28.25,
+            "progress": 0.380760763342942,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 370,
+        "timestampSeconds": 18.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.5,
+            "timelineSeconds": 28.299999999999997,
+            "progress": 0.3812374432215234,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 371,
+        "timestampSeconds": 18.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.55,
+            "timelineSeconds": 28.35,
+            "progress": 0.38173459610849064,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 372,
+        "timestampSeconds": 18.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.6,
+            "timelineSeconds": 28.4,
+            "progress": 0.3822501747030049,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 373,
+        "timestampSeconds": 18.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.65,
+            "timelineSeconds": 28.449999999999996,
+            "progress": 0.3827821317042278,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 374,
+        "timestampSeconds": 18.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.7,
+            "timelineSeconds": 28.5,
+            "progress": 0.3833284198113208,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 375,
+        "timestampSeconds": 18.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.75,
+            "timelineSeconds": 28.549999999999997,
+            "progress": 0.38388699172344515,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 376,
+        "timestampSeconds": 18.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.8,
+            "timelineSeconds": 28.6,
+            "progress": 0.3844558001397625,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 377,
+        "timestampSeconds": 18.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.85,
+            "timelineSeconds": 28.65,
+            "progress": 0.38503279775943394,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 378,
+        "timestampSeconds": 18.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.9,
+            "timelineSeconds": 28.699999999999996,
+            "progress": 0.3856159372816212,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 379,
+        "timestampSeconds": 18.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 18.95,
+            "timelineSeconds": 28.75,
+            "progress": 0.3862031714054857,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 380,
+        "timestampSeconds": 19.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.0,
+            "timelineSeconds": 28.799999999999997,
+            "progress": 0.3867924528301887,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 381,
+        "timestampSeconds": 19.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.05,
+            "timelineSeconds": 28.85,
+            "progress": 0.38738173425489175,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 382,
+        "timestampSeconds": 19.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.1,
+            "timelineSeconds": 28.9,
+            "progress": 0.38796896837875616,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 383,
+        "timestampSeconds": 19.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.15,
+            "timelineSeconds": 28.949999999999996,
+            "progress": 0.3885521079009434,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 384,
+        "timestampSeconds": 19.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.2,
+            "timelineSeconds": 29.0,
+            "progress": 0.389129105520615,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 385,
+        "timestampSeconds": 19.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.25,
+            "timelineSeconds": 29.049999999999997,
+            "progress": 0.3896979139369322,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 386,
+        "timestampSeconds": 19.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.3,
+            "timelineSeconds": 29.1,
+            "progress": 0.39025648584905664,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 387,
+        "timestampSeconds": 19.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.35,
+            "timelineSeconds": 29.15,
+            "progress": 0.3908027739561496,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 388,
+        "timestampSeconds": 19.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.4,
+            "timelineSeconds": 29.199999999999996,
+            "progress": 0.3913347309573725,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 389,
+        "timestampSeconds": 19.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.45,
+            "timelineSeconds": 29.25,
+            "progress": 0.39185030955188677,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 390,
+        "timestampSeconds": 19.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.5,
+            "timelineSeconds": 29.299999999999997,
+            "progress": 0.39234746243885393,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 391,
+        "timestampSeconds": 19.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.55,
+            "timelineSeconds": 29.35,
+            "progress": 0.3928241423174354,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 392,
+        "timestampSeconds": 19.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.6,
+            "timelineSeconds": 29.4,
+            "progress": 0.39327830188679247,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 393,
+        "timestampSeconds": 19.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.65,
+            "timelineSeconds": 29.449999999999996,
+            "progress": 0.3937078938460866,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 394,
+        "timestampSeconds": 19.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.7,
+            "timelineSeconds": 29.5,
+            "progress": 0.3941108708944794,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 395,
+        "timestampSeconds": 19.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.75,
+            "timelineSeconds": 29.549999999999997,
+            "progress": 0.39448518573113206,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 396,
+        "timestampSeconds": 19.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.8,
+            "timelineSeconds": 29.6,
+            "progress": 0.3948287910552062,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 397,
+        "timestampSeconds": 19.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.85,
+            "timelineSeconds": 29.65,
+            "progress": 0.395139639565863,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 398,
+        "timestampSeconds": 19.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.9,
+            "timelineSeconds": 29.699999999999996,
+            "progress": 0.3954156839622642,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 399,
+        "timestampSeconds": 19.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 19.95,
+            "timelineSeconds": 29.75,
+            "progress": 0.39565487694357093,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 400,
+        "timestampSeconds": 20.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.0,
+            "timelineSeconds": 29.799999999999997,
+            "progress": 0.39585517120894476,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 401,
+        "timestampSeconds": 20.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.05,
+            "timelineSeconds": 29.85,
+            "progress": 0.3960145194575472,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 402,
+        "timestampSeconds": 20.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.1,
+            "timelineSeconds": 29.9,
+            "progress": 0.39613087438853944,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 403,
+        "timestampSeconds": 20.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.15,
+            "timelineSeconds": 29.949999999999996,
+            "progress": 0.3962021887010832,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 404,
+        "timestampSeconds": 20.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.2,
+            "timelineSeconds": 30.0,
+            "progress": 0.39622641509433965,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 405,
+        "timestampSeconds": 20.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.25,
+            "timelineSeconds": 30.049999999999997,
+            "progress": 0.3962506414875961,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 406,
+        "timestampSeconds": 20.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.3,
+            "timelineSeconds": 30.1,
+            "progress": 0.3963219558001398,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 407,
+        "timestampSeconds": 20.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.35,
+            "timelineSeconds": 30.15,
+            "progress": 0.39643831073113206,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 408,
+        "timestampSeconds": 20.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.4,
+            "timelineSeconds": 30.199999999999996,
+            "progress": 0.3965976589797345,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 409,
+        "timestampSeconds": 20.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.45,
+            "timelineSeconds": 30.25,
+            "progress": 0.3967979532451083,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 410,
+        "timestampSeconds": 20.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.5,
+            "timelineSeconds": 30.299999999999997,
+            "progress": 0.3970371462264151,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 411,
+        "timestampSeconds": 20.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.55,
+            "timelineSeconds": 30.35,
+            "progress": 0.3973131906228162,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 412,
+        "timestampSeconds": 20.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.6,
+            "timelineSeconds": 30.4,
+            "progress": 0.39762403913347316,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 413,
+        "timestampSeconds": 20.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.65,
+            "timelineSeconds": 30.449999999999996,
+            "progress": 0.3979676444575472,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 414,
+        "timestampSeconds": 20.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.7,
+            "timelineSeconds": 30.5,
+            "progress": 0.3983419592941999,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 415,
+        "timestampSeconds": 20.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.75,
+            "timelineSeconds": 30.549999999999997,
+            "progress": 0.3987449363425926,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 416,
+        "timestampSeconds": 20.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.8,
+            "timelineSeconds": 30.6,
+            "progress": 0.3991745283018869,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 417,
+        "timestampSeconds": 20.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.85,
+            "timelineSeconds": 30.65,
+            "progress": 0.3996286878712439,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 418,
+        "timestampSeconds": 20.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.9,
+            "timelineSeconds": 30.699999999999996,
+            "progress": 0.4001053677498253,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 419,
+        "timestampSeconds": 20.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 20.95,
+            "timelineSeconds": 30.75,
+            "progress": 0.4006025206367925,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 420,
+        "timestampSeconds": 21.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.0,
+            "timelineSeconds": 30.799999999999997,
+            "progress": 0.40111809923130676,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 421,
+        "timestampSeconds": 21.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.05,
+            "timelineSeconds": 30.85,
+            "progress": 0.40165005623252975,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 422,
+        "timestampSeconds": 21.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.1,
+            "timelineSeconds": 30.9,
+            "progress": 0.4021963443396227,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 423,
+        "timestampSeconds": 21.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.15,
+            "timelineSeconds": 30.949999999999996,
+            "progress": 0.40275491625174703,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 424,
+        "timestampSeconds": 21.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.2,
+            "timelineSeconds": 31.0,
+            "progress": 0.4033237246680644,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 425,
+        "timestampSeconds": 21.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.25,
+            "timelineSeconds": 31.049999999999997,
+            "progress": 0.4039007222877358,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 426,
+        "timestampSeconds": 21.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.3,
+            "timelineSeconds": 31.1,
+            "progress": 0.40448386180992324,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 427,
+        "timestampSeconds": 21.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.35,
+            "timelineSeconds": 31.15,
+            "progress": 0.40507109593378765,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 428,
+        "timestampSeconds": 21.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.4,
+            "timelineSeconds": 31.199999999999996,
+            "progress": 0.4056603773584906,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 429,
+        "timestampSeconds": 21.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.45,
+            "timelineSeconds": 31.25,
+            "progress": 0.40624965878319363,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 430,
+        "timestampSeconds": 21.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.5,
+            "timelineSeconds": 31.299999999999997,
+            "progress": 0.40683689290705805,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 431,
+        "timestampSeconds": 21.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.55,
+            "timelineSeconds": 31.35,
+            "progress": 0.40742003242924535,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 432,
+        "timestampSeconds": 21.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.6,
+            "timelineSeconds": 31.4,
+            "progress": 0.4079970300489169,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 433,
+        "timestampSeconds": 21.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.65,
+            "timelineSeconds": 31.449999999999996,
+            "progress": 0.40856583846523414,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 434,
+        "timestampSeconds": 21.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.7,
+            "timelineSeconds": 31.5,
+            "progress": 0.4091244103773586,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 435,
+        "timestampSeconds": 21.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.75,
+            "timelineSeconds": 31.549999999999997,
+            "progress": 0.4096706984844515,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 436,
+        "timestampSeconds": 21.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.8,
+            "timelineSeconds": 31.6,
+            "progress": 0.4102026554856744,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 437,
+        "timestampSeconds": 21.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.85,
+            "timelineSeconds": 31.65,
+            "progress": 0.4107182340801887,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 438,
+        "timestampSeconds": 21.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.9,
+            "timelineSeconds": 31.699999999999996,
+            "progress": 0.4112153869671558,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 439,
+        "timestampSeconds": 21.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 21.95,
+            "timelineSeconds": 31.75,
+            "progress": 0.4116920668457373,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 440,
+        "timestampSeconds": 22.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.0,
+            "timelineSeconds": 31.799999999999997,
+            "progress": 0.41214622641509435,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 441,
+        "timestampSeconds": 22.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.05,
+            "timelineSeconds": 31.85,
+            "progress": 0.4125758183743886,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 442,
+        "timestampSeconds": 22.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.1,
+            "timelineSeconds": 31.9,
+            "progress": 0.41297879542278126,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 443,
+        "timestampSeconds": 22.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.15,
+            "timelineSeconds": 31.949999999999996,
+            "progress": 0.41335311025943394,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 444,
+        "timestampSeconds": 22.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.2,
+            "timelineSeconds": 32.0,
+            "progress": 0.41369671558350807,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 445,
+        "timestampSeconds": 22.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.25,
+            "timelineSeconds": 32.05,
+            "progress": 0.4140075640941649,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 446,
+        "timestampSeconds": 22.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.3,
+            "timelineSeconds": 32.1,
+            "progress": 0.41428360849056606,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 447,
+        "timestampSeconds": 22.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.35,
+            "timelineSeconds": 32.15,
+            "progress": 0.4145228014718728,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 448,
+        "timestampSeconds": 22.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.4,
+            "timelineSeconds": 32.199999999999996,
+            "progress": 0.41472309573724664,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 449,
+        "timestampSeconds": 22.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.45,
+            "timelineSeconds": 32.25,
+            "progress": 0.41488244398584906,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 450,
+        "timestampSeconds": 22.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.5,
+            "timelineSeconds": 32.3,
+            "progress": 0.4149987989168413,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 451,
+        "timestampSeconds": 22.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.55,
+            "timelineSeconds": 32.35,
+            "progress": 0.4150701132293851,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 452,
+        "timestampSeconds": 22.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.6,
+            "timelineSeconds": 32.4,
+            "progress": 0.41509433962264153,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 453,
+        "timestampSeconds": 22.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.65,
+            "timelineSeconds": 32.449999999999996,
+            "progress": 0.41511856601589797,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 454,
+        "timestampSeconds": 22.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.7,
+            "timelineSeconds": 32.5,
+            "progress": 0.4151898803284417,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 455,
+        "timestampSeconds": 22.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.75,
+            "timelineSeconds": 32.55,
+            "progress": 0.41530623525943394,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 456,
+        "timestampSeconds": 22.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.8,
+            "timelineSeconds": 32.6,
+            "progress": 0.41546558350803636,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 457,
+        "timestampSeconds": 22.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.85,
+            "timelineSeconds": 32.65,
+            "progress": 0.4156658777734102,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 458,
+        "timestampSeconds": 22.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.9,
+            "timelineSeconds": 32.699999999999996,
+            "progress": 0.415905070754717,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 459,
+        "timestampSeconds": 22.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 22.95,
+            "timelineSeconds": 32.75,
+            "progress": 0.4161811151511181,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 460,
+        "timestampSeconds": 23.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.0,
+            "timelineSeconds": 32.8,
+            "progress": 0.41649196366177504,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 461,
+        "timestampSeconds": 23.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.05,
+            "timelineSeconds": 32.85,
+            "progress": 0.4168355689858491,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 462,
+        "timestampSeconds": 23.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.1,
+            "timelineSeconds": 32.9,
+            "progress": 0.4172098838225018,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 463,
+        "timestampSeconds": 23.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.15,
+            "timelineSeconds": 32.949999999999996,
+            "progress": 0.4176128608708945,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 464,
+        "timestampSeconds": 23.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.2,
+            "timelineSeconds": 33.0,
+            "progress": 0.41804245283018876,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 465,
+        "timestampSeconds": 23.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.25,
+            "timelineSeconds": 33.05,
+            "progress": 0.4184966123995458,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 466,
+        "timestampSeconds": 23.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.3,
+            "timelineSeconds": 33.1,
+            "progress": 0.41897329227812724,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 467,
+        "timestampSeconds": 23.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.35,
+            "timelineSeconds": 33.15,
+            "progress": 0.4194704451650944,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 468,
+        "timestampSeconds": 23.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.4,
+            "timelineSeconds": 33.199999999999996,
+            "progress": 0.4199860237596087,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 469,
+        "timestampSeconds": 23.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.45,
+            "timelineSeconds": 33.25,
+            "progress": 0.4205179807608317,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 470,
+        "timestampSeconds": 23.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.5,
+            "timelineSeconds": 33.3,
+            "progress": 0.4210642688679246,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 471,
+        "timestampSeconds": 23.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.55,
+            "timelineSeconds": 33.35,
+            "progress": 0.421622840780049,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 472,
+        "timestampSeconds": 23.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.6,
+            "timelineSeconds": 33.4,
+            "progress": 0.42219164919636626,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 473,
+        "timestampSeconds": 23.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.65,
+            "timelineSeconds": 33.449999999999996,
+            "progress": 0.4227686468160378,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 474,
+        "timestampSeconds": 23.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.7,
+            "timelineSeconds": 33.5,
+            "progress": 0.4233517863382252,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 475,
+        "timestampSeconds": 23.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.75,
+            "timelineSeconds": 33.55,
+            "progress": 0.4239390204620896,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 476,
+        "timestampSeconds": 23.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.8,
+            "timelineSeconds": 33.6,
+            "progress": 0.42452830188679264,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 477,
+        "timestampSeconds": 23.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.85,
+            "timelineSeconds": 33.65,
+            "progress": 0.4251175833114956,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 478,
+        "timestampSeconds": 23.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.9,
+            "timelineSeconds": 33.699999999999996,
+            "progress": 0.42570481743536,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 479,
+        "timestampSeconds": 23.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 23.95,
+            "timelineSeconds": 33.75,
+            "progress": 0.4262879569575473,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 480,
+        "timestampSeconds": 24.0,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.0,
+            "timelineSeconds": 33.8,
+            "progress": 0.42686495457721885,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 481,
+        "timestampSeconds": 24.05,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.05,
+            "timelineSeconds": 33.85,
+            "progress": 0.42743376299353614,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 482,
+        "timestampSeconds": 24.1,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.1,
+            "timelineSeconds": 33.9,
+            "progress": 0.4279923349056605,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 483,
+        "timestampSeconds": 24.15,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.15,
+            "timelineSeconds": 33.949999999999996,
+            "progress": 0.4285386230127534,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 484,
+        "timestampSeconds": 24.2,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.2,
+            "timelineSeconds": 34.0,
+            "progress": 0.42907058001397635,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 485,
+        "timestampSeconds": 24.25,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.25,
+            "timelineSeconds": 34.05,
+            "progress": 0.4295861586084907,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 486,
+        "timestampSeconds": 24.3,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.3,
+            "timelineSeconds": 34.1,
+            "progress": 0.43008331149545787,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 487,
+        "timestampSeconds": 24.35,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.35,
+            "timelineSeconds": 34.15,
+            "progress": 0.4305599913740392,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 488,
+        "timestampSeconds": 24.4,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.4,
+            "timelineSeconds": 34.199999999999996,
+            "progress": 0.4310141509433963,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 489,
+        "timestampSeconds": 24.45,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.45,
+            "timelineSeconds": 34.25,
+            "progress": 0.43144374290269055,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 490,
+        "timestampSeconds": 24.5,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.5,
+            "timelineSeconds": 34.3,
+            "progress": 0.43184671995108326,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 491,
+        "timestampSeconds": 24.55,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.55,
+            "timelineSeconds": 34.35,
+            "progress": 0.432221034787736,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 492,
+        "timestampSeconds": 24.6,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.6,
+            "timelineSeconds": 34.4,
+            "progress": 0.43256464011181,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 493,
+        "timestampSeconds": 24.65,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.65,
+            "timelineSeconds": 34.449999999999996,
+            "progress": 0.4328754886224669,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 494,
+        "timestampSeconds": 24.7,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.7,
+            "timelineSeconds": 34.5,
+            "progress": 0.433151533018868,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 495,
+        "timestampSeconds": 24.75,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.75,
+            "timelineSeconds": 34.55,
+            "progress": 0.43339072600017475,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 496,
+        "timestampSeconds": 24.8,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.8,
+            "timelineSeconds": 34.6,
+            "progress": 0.43359102026554863,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 497,
+        "timestampSeconds": 24.85,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.85,
+            "timelineSeconds": 34.65,
+            "progress": 0.43375036851415094,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 498,
+        "timestampSeconds": 24.9,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.9,
+            "timelineSeconds": 34.699999999999996,
+            "progress": 0.4338667234451433,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      },
+      {
+        "frame": 499,
+        "timestampSeconds": 24.95,
+        "figures": [
+          {
+            "name": "Calentamiento tipo FIFA 11+",
+            "seconds": 24.95,
+            "timelineSeconds": 34.75,
+            "progress": 0.43393803775768697,
+            "yaw": 30.0,
+            "pitch": 10.0,
+            "pausedAtEnd": false
+          }
+        ]
+      }
+    ],
+    "timeline": "figureMotionProgress production, real seconds; shorter paired cycle explicitly paused at end"
+  }
+]

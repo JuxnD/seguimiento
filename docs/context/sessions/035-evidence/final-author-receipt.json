@@ -1,0 +1,37 @@
+{
+  "productSource": "a886f4fef8c58f2178e352d58a528a566b3f8000",
+  "baseNames": 111,
+  "physicalVariantKeys": 18,
+  "guidedDistinctEntries": 43,
+  "guidedSheetSamples": 434,
+  "finalRegressions": 49,
+  "analyzeExit": 0,
+  "authorVisualQA": "All43 entries reviewed, including clarified foot and both soleus loads. RootR1pending; human comprehension not claimed.",
+  "lastReuse": {
+    "proof": "last-optin-reuse-pixel-result.json",
+    "rgbaPairs": 512,
+    "sheetSamples": 402,
+    "clipFigureSamples": 110
+  },
+  "sourceFiles": {
+    "lib/ui/exercise_figure_3d.dart": "73fd39a2fc9f4c0616948c02be613ae294b73a7f5bab218d95f02f4a3ab4413a",
+    "lib/ui/exercise_figure_3d_view.dart": "401191cef9dd0f4ca893a8fd0de11af4de3b24d9cac4f7c36958e3f9e1c8fe47",
+    "tool/illustration_catalog.py": "9552bf05acf3ed2d5782963db8038d115a06e4d2f88a13d5e6b5ae127ae942ca",
+    "tool/illustration_guided.py": "23c46ade662406593105fa22bcf59eb47bff18c2212c02e98ff63d3b413f7d9d",
+    "assets/tecnica/figuras3d.json": "e80c94e6b0dede9c793d850278a64c3acaa005f8882ed79f3761697c39e11710",
+    "test/ui/illustration_guided_geometry_test.dart": "df6baba5345bc87f362cc0ad373f62e3ebf8c7c1454f3d76e4d7c7cf70cf0c1c"
+  },
+  "helperFiles": {
+    "last_optin_reuse_test.dart.txt": "c47862c2b944cab607601989a6542c819b7dde76458ea1d0697bcc860144a280",
+    "reuse-last-inventory.json": "12bb0dbecdfc6398f4ee63dd3748a9cce23b55169251f7b946099c8f42462e42",
+    "soleus-foot-selection.json": "62b5033e26abcc64f943ef5274bd719bea67fcf5fa60a34bad2bccdc58eb54af"
+  },
+  "preservedFailures": [
+    "soleus-contact-red.txt",
+    "soleus-foot-guided-green.txt",
+    "acceleration-human-feedback.json",
+    "guided-batch1-qa-receipt.json"
+  ],
+  "diagnosticNotRed": "soleus-load-red.txt passed with insufficient100pxROI; not evidence of bug reproduction",
+  "status": "ROOT_VISUAL_QA_COMPLETE_FORMAL_R1_PENDING"
+}

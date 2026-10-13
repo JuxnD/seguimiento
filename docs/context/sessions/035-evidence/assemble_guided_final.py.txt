@@ -1,0 +1,40 @@
+"""Assemble real production captures, retaining original evidence source commits."""
+import hashlib,json
+from pathlib import Path
+from PIL import Image
+root=Path.cwd()
+e=root/'docs/context/sessions/035-evidence'
+old=json.loads((e/'guided-batch1/manifest.json').read_text(encoding='utf-8'))
+new=json.loads((e/'guided-final-new/manifest.json').read_text(encoding='utf-8'))
+reuse=json.loads((root/'build/qa/035/guided-reuse-inventory.json').read_text(encoding='utf-8'))
+proof=json.loads((e/'guided-reuse-pixel-result.json').read_text(encoding='utf-8'))
+assert proof['compared']==458 and not proof['failures']
+assert len(new)==23 and len(reuse)==20
+ids={(x['name'],x.get('physicalVariantKey')) for x in reuse}
+combined=[]
+for item in old:
+ if (item['name'],item.get('physicalVariantKey')) in ids:
+  item=dict(item,reuseProof='guided-reuse-pixel-result.json',validatedAgainst=proof['candidateSource'])
+  combined.append(item)
+combined+=new
+assert len(combined)==43 and len({(x['name'],x.get('physicalVariantKey')) for x in combined})==43
+for item in combined:
+ path=root/item['path'];assert path.exists()
+ item['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+(e/'guided-final-manifest.json').write_text(json.dumps(combined,ensure_ascii=False,indent=2),encoding='utf-8')
+clip=e/'guided-short-foot-final'
+meta=json.loads((clip/'manifest.json').read_text(encoding='utf-8'))
+paths=sorted(clip.glob('*.png'));assert len(paths)==meta['frames']==136 and meta['fps']==20
+palette=Image.open(paths[0]).convert('RGB').quantize(colors=256)
+frames=[Image.open(p).convert('RGB').quantize(palette=palette,dither=Image.Dither.NONE) for p in paths]
+out=e/'guided-short-foot-final.gif'
+frames[0].save(out,save_all=True,append_images=frames[1:],duration=50,loop=0,disposal=2,optimize=False)
+with Image.open(out) as gif:
+ duration=0
+ for i in range(gif.n_frames):gif.seek(i);duration+=gif.info['duration']
+ assert duration==6800
+meta.update(file=str(out.resolve()),sha256=hashlib.sha256(out.read_bytes()).hexdigest(),durationMs=duration,
+ assembly='Actual production PNGs in timestamp order, 50ms each, shared GIF palette, no redraw/time scaling',
+ pngHashes=[hashlib.sha256(p.read_bytes()).hexdigest() for p in paths])
+(e/'guided-short-foot-final.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
+print('43 sheets manifest; current Pie corto136frames6800ms; old source SHAs retained')

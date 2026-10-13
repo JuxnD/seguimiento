@@ -1,0 +1,47 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/ui/exercise_figure_3d.dart' as current;
+import 'guided_baseline_94ff.dart' as baseline;
+
+void main() {
+  testWidgets('unchanged guided sheets and cat cow have identical production pixels', (tester) async {
+    final old=baseline.Figure3DCatalog.fromJsonString(File('build/qa/035/guided_baseline_94ff.json').readAsStringSync());
+    final now=current.Figure3DCatalog.fromJsonString(File(current.Figure3DCatalog.asset).readAsStringSync());
+    final entries=(jsonDecode(File('build/qa/035/guided-reuse-inventory.json').readAsStringSync()) as List).cast<Map<String,Object?>>();
+    final cat=jsonDecode(File('docs/context/sessions/035-evidence/guided-motion-preview/cat-cow.json').readAsStringSync()) as Map<String,Object?>;
+    entries.add({'name':'Gato-camello','physicalVariantKey':null,'samples':cat['samples']});
+    var compared=0;
+    final failures=<String>[];
+    await tester.runAsync(() async {
+      for(final entry in entries) {
+        final name=entry['name'] as String, key=entry['physicalVariantKey'] as String?;
+        final a=old.forExercise(name,physicalVariantKey:key)!, b=now.forExercise(name,physicalVariantKey:key)!;
+        for(final sample in (entry['samples'] as List).cast<Map<String,Object?>>()) {
+          final progress=(sample['progress'] as num).toDouble();
+          final yaw=(sample['yaw'] as num).toDouble(), pitch=(sample['pitch'] as num).toDouble();
+          final buffers=<List<int>>[];
+          for(var version=0;version<2;version++) {
+            final recorder=ui.PictureRecorder();final canvas=ui.Canvas(recorder);
+            if(version==0) { baseline.paintFigure3D(canvas,const ui.Size(360,315),a,progress,yaw:yaw,pitch:pitch); }
+            else { current.paintFigure3D(canvas,const ui.Size(360,315),b,progress,yaw:yaw,pitch:pitch); }
+            final picture=recorder.endRecording();final image=await picture.toImage(360,315);
+            buffers.add((await image.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List());
+            image.dispose();picture.dispose();
+          }
+          var equal=true;
+          for(var i=0;i<buffers[0].length;i++) { if(buffers[0][i]!=buffers[1][i]) {equal=false;break;} }
+          if(!equal) failures.add('$name/$key/$progress/$yaw');
+          compared++;
+        }
+      }
+    });
+    File('docs/context/sessions/035-evidence/guided-reuse-pixel-result.json').writeAsStringSync(jsonEncode({
+      'baselineSource':'94ff48823c5d8a844a8e42c61e98611c7db9b8e9',
+      'candidateSource':Platform.environment['ILLUSTRATION_035_SOURCE_SHA'],
+      'sheetSamples':194,'catCowSamples':264,'compared':compared,'failures':failures,
+      'size':[360,315],'method':'rawRgba exact comparison of real production painters; no tolerance'}));
+    expect(compared,458);expect(failures,isEmpty);
+  });
+}

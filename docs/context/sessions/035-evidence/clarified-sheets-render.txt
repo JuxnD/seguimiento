@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_render_test.dart
+00:00 +0: guided production keyframes from two cameras
+00:00 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T203457866-57524-673edf02c7704dfabfb02f0101eac845.json

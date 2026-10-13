@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/guided_reuse_test.dart
+00:00 +0: unchanged guided sheets and cat cow have identical production pixels
+00:05 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T200656603-2496-af7b20141e1d4866add20237ebf437b1.json

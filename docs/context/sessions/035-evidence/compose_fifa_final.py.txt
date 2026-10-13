@@ -1,0 +1,14 @@
+import json,hashlib
+from pathlib import Path
+from PIL import Image
+p=Path('docs/context/sessions/035-evidence');paths=sorted((p/'gait-final-motion/7').glob('*.png'));assert len(paths)==500
+palette=Image.open(paths[0]).convert('RGB').quantize(colors=256)
+frames=[Image.open(x).convert('RGB').quantize(palette=palette,dither=Image.Dither.NONE) for x in paths]
+out=p/'gait-final-fifa-part3.gif';frames[0].save(out,save_all=True,append_images=frames[1:],duration=50,loop=0,disposal=2,optimize=False)
+with Image.open(out) as gif:
+ count=gif.n_frames;size=gif.size;duration=0
+ for i in range(count):gif.seek(i);duration+=gif.info['duration']
+assert duration==25000 and size==(320,360)
+meta=dict(sourceCommit='1b9bc194fcbae7978b7c8fb653572fe88ba1610e',sourceManifest='gait-final-motion/manifest-7.json',file=str(out.resolve()),gifSha256=hashlib.sha256(out.read_bytes()).hexdigest(),inputFrames=500,encodedFrames=count,fps=20,durationMs=duration,pngSize=list(size),anatomyViewport=[320,285],captionOrigin=[5,290],yaw=30,pitch=10,scope='FIFA Parte 3 solamente; production selected-part timeline',assembly='Actual native PNG timestamp order,50ms each,shared palette,no redraw/rescale',pngHashes=[hashlib.sha256(x.read_bytes()).hexdigest() for x in paths])
+(p/'gait-final-fifa-part3.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
+print(count,duration,size)

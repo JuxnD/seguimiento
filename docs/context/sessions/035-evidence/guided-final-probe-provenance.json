@@ -1,0 +1,39 @@
+[
+  {
+    "original": "build\\qa\\035\\guided_reuse_test.dart",
+    "saved": "docs\\context\\sessions\\035-evidence\\guided_reuse_test.dart.txt",
+    "sha256": "a45c4b9b1738239fdeaee7dac434b7180c5d51d4853d1e7ea22fe26203b6d33d"
+  },
+  {
+    "original": "build\\qa\\035\\gait_camera_probe_test.dart",
+    "saved": "docs\\context\\sessions\\035-evidence\\gait_camera_probe_test.dart.txt",
+    "sha256": "665877a39f960e6d07cbc55c08d2775872c4b0b43da412f494df5f4f90a4d016"
+  },
+  {
+    "original": "build\\qa\\035\\guided-reuse-inventory.json",
+    "saved": "docs\\context\\sessions\\035-evidence\\guided-reuse-inventory.json",
+    "sha256": "3aa7f4cafb93678c838e54d64f16c2cdc33cb58f2f77babd8cbe459149ccae45"
+  },
+  {
+    "original": "build\\qa\\035\\guided-changed-inventory.json",
+    "saved": "docs\\context\\sessions\\035-evidence\\guided-changed-inventory.json",
+    "sha256": "96148c8b4eb3aadcbaf102ceec399a078bd02fc27b38239db5c5eeb363161629"
+  },
+  {
+    "original": "build\\qa\\035\\assemble_guided_final.py",
+    "saved": "docs\\context\\sessions\\035-evidence\\assemble_guided_final.py.txt",
+    "sha256": "72f973dce82a226f04f13803d8e9c1747e4747f8f2f2ce3b6b3b9b4b75ff97ea"
+  },
+  {
+    "source": "94ff48823c5d8a844a8e42c61e98611c7db9b8e9",
+    "path": "lib/ui/exercise_figure_3d.dart",
+    "actual": "build\\qa\\035\\guided_baseline_94ff.dart",
+    "sha256": "5c435e5748b70593e55e1c4a9d27b6f92d150b81e6f7e0c43642fceb6e20627a"
+  },
+  {
+    "source": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+    "path": "lib/ui/exercise_figure_3d.dart",
+    "actual": "build\\qa\\035\\gait_clip_renderer_e46.dart",
+    "sha256": "a454046ee67fe14b5ed21c6c612650e146970e2baf13243725a10fedbd0dc84f"
+  }
+]

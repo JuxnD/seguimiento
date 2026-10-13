@@ -1,0 +1,199 @@
+{
+  "status": "ROOT_VISUAL_QA_COMPLETE_FORMAL_R1_PENDING",
+  "productSource": "a886f4fef8c58f2178e352d58a528a566b3f8000",
+  "clips": [
+    {
+      "name": "90/90 de cadera",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\1.gif",
+      "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+      "fps": 20,
+      "inputFrames": 384,
+      "encodedFrames": 384,
+      "durationMs": 19200,
+      "pngSize": [
+        320,
+        360
+      ],
+      "anatomyViewport": [
+        320,
+        285
+      ],
+      "sha256": "1d4adf7a0d00a44ed2c8cd7d4061f6900e9c2093ee423ab5eaa3c1939257bf51",
+      "originalMetadata": "motion-current/assembly-receipt.json",
+      "originalReuseVerification": null,
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "Burpees",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\2.gif",
+      "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+      "fps": 20,
+      "inputFrames": 336,
+      "encodedFrames": 336,
+      "durationMs": 16800,
+      "pngSize": [
+        320,
+        360
+      ],
+      "anatomyViewport": [
+        320,
+        285
+      ],
+      "sha256": "dc43208b081105458d1b7664060a45f829c6c065f7266cb102cc927bc5d6ced7",
+      "originalMetadata": "motion-current/assembly-receipt.json",
+      "originalReuseVerification": null,
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "Barca / V-sit / V-up",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\3.gif",
+      "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+      "fps": 20,
+      "inputFrames": 252,
+      "encodedFrames": 217,
+      "durationMs": 12600,
+      "pngSize": [
+        640,
+        360
+      ],
+      "anatomyViewport": [
+        320,
+        285
+      ],
+      "sha256": "883e1fd7cac7bcbcf3d3e8c9ec68f3b2b335228dd0fbdcbb5595918e7b2718ab",
+      "originalMetadata": "motion-current/assembly-receipt.json",
+      "originalReuseVerification": null,
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "Dragon flag / Vela",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\4.gif",
+      "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+      "fps": 20,
+      "inputFrames": 192,
+      "encodedFrames": 192,
+      "durationMs": 9600,
+      "pngSize": [
+        640,
+        360
+      ],
+      "anatomyViewport": [
+        320,
+        285
+      ],
+      "sha256": "986f44be1ee70f871bdd3987524652e23d7a681bcd3448c52e5e61c688e6d3d3",
+      "originalMetadata": "motion-current/assembly-receipt.json",
+      "originalReuseVerification": null,
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "Dominadas",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\5.gif",
+      "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+      "fps": 20,
+      "inputFrames": 252,
+      "encodedFrames": 193,
+      "durationMs": 12600,
+      "pngSize": [
+        320,
+        360
+      ],
+      "anatomyViewport": [
+        320,
+        285
+      ],
+      "sha256": "4f34760dd27a3b659c1d1eda303ae39d073d5cd65efbaca382d83be40ab0f82b",
+      "originalMetadata": "motion-current/assembly-receipt.json",
+      "originalReuseVerification": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\camera-comparison.json",
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "Aceleración 10–20 m",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\gait-final-acceleration.gif",
+      "sourceCommit": "1b9bc194fcbae7978b7c8fb653572fe88ba1610e",
+      "fps": 20,
+      "inputFrames": 70,
+      "encodedFrames": 61,
+      "durationMs": 3500,
+      "pngSize": [
+        320,
+        360
+      ],
+      "anatomyViewport": [
+        320,
+        285
+      ],
+      "sha256": "7c1301a624c07a47a29601c738c1e8a835e38dc3c8b2bcc63524262e5d4ca124",
+      "originalMetadata": "gait-final-acceleration.json",
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "FIFA 11+ · Parte 3",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\gait-final-fifa-part3.gif",
+      "sourceCommit": "1b9bc194fcbae7978b7c8fb653572fe88ba1610e",
+      "fps": 20,
+      "inputFrames": 500,
+      "encodedFrames": 481,
+      "durationMs": 25000,
+      "pngSize": [
+        320,
+        360
+      ],
+      "anatomyViewport": [
+        320,
+        285
+      ],
+      "sha256": "649e32a01ecee4ee0c1816a0a1ac4b1db5ad07ddf204f772db64448298b3373f",
+      "originalMetadata": "gait-final-fifa-part3.json",
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "Gato-camello",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\guided-motion-preview\\cat-cow.gif",
+      "sourceCommit": "94ff48823c5d8a844a8e42c61e98611c7db9b8e9",
+      "fps": 20,
+      "inputFrames": 264,
+      "encodedFrames": 146,
+      "durationMs": 13200,
+      "pngSize": [
+        360,
+        400
+      ],
+      "anatomyViewport": [
+        360,
+        315
+      ],
+      "sha256": "fe1d55e1ce8eca81324a5885c8f0e2d7035bc8a1bad522bc179169d3d4a9a0fe",
+      "originalMetadata": "guided-motion-preview/cat-cow.json",
+      "originalReuseVerification": "guided-reuse-pixel-result.json",
+      "lastReuseProof": "last-optin-reuse-pixel-result.json",
+      "validatedAgainst": "a886f4fef8c58f2178e352d58a528a566b3f8000"
+    },
+    {
+      "name": "Pie corto",
+      "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\guided-short-foot-clarified-final.gif",
+      "sourceCommit": "a886f4fef8c58f2178e352d58a528a566b3f8000",
+      "fps": 20,
+      "inputFrames": 136,
+      "encodedFrames": 97,
+      "durationMs": 6800,
+      "pngSize": [
+        360,
+        400
+      ],
+      "anatomyViewport": [
+        360,
+        315
+      ],
+      "sha256": "9856b784e07e206cc0870d9587e4e47f895b0f225990c59a20f6355b4cb22ff2",
+      "originalMetadata": "guided-short-foot-clarified-final.json"
+    }
+  ]
+}

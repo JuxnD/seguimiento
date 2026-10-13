@@ -1,0 +1,27 @@
+{
+  "oldSource": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+  "newSource": "1b9bc194fcbae7978b7c8fb653572fe88ba1610e",
+  "oldCamera": [
+    5.272018034233973,
+    -37.66178733504481,
+    0.4499999999999993,
+    2.518956578651392
+  ],
+  "newCamera": [
+    10.059951425542891,
+    -37.66178733504481,
+    0.4499999999999993,
+    2.5822940790366133
+  ],
+  "worldSamples": 500,
+  "maxWorldJointDelta": 4.0194366942304644e-14,
+  "pixelPairs": 11,
+  "unequalPairs": 11,
+  "reuseAllowed": false,
+  "meaning": "Probe completion does not imply reuse; inspect reuseAllowed",
+  "probeViewport": [
+    360,
+    315
+  ],
+  "limitation": "This first probe used sheet anatomy dimensions, not actual MVP clip320x285; repeat at actual clip dimensions before final recipe claim."
+}

@@ -1,0 +1,42 @@
+import json,hashlib,html,shutil
+from pathlib import Path
+from PIL import Image
+root=Path.cwd();e=root/'docs/context/sessions/035-evidence';source='a886f4fef8c58f2178e352d58a528a566b3f8000'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+paths=sorted((e/'guided-short-foot-clarified-final').glob('*.png'));assert len(paths)==136
+pal=Image.open(paths[0]).convert('RGB').quantize(colors=256);frames=[Image.open(p).convert('RGB').quantize(palette=pal,dither=Image.Dither.NONE) for p in paths]
+out=e/'guided-short-foot-clarified-final.gif';frames[0].save(out,save_all=True,append_images=frames[1:],duration=50,loop=0,disposal=2,optimize=False)
+with Image.open(out) as im:
+ n=im.n_frames;duration=0;size=im.size
+ for i in range(n):im.seek(i);duration+=im.info['duration']
+assert duration==6800 and size==(360,400)
+meta=json.loads((e/'guided-short-foot-clarified-final/manifest.json').read_text(encoding='utf-8'))
+meta.update(file=str(out),sha256=sha(out),encodedFrames=n,durationMs=duration,pngSize=list(size),anatomyViewport=[360,315],captionOrigin=[5,320],assembly='Native production PNG order; 50ms each; shared palette; no redraw/rescale',pngHashes=[sha(p) for p in paths])
+(e/'guided-short-foot-clarified-final.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
+prior=e/'guided-before-clarification-manifest.json'
+if not prior.exists():shutil.copyfile(e/'guided-final-manifest.json',prior)
+items=json.loads(prior.read_text(encoding='utf-8'));new=json.loads((e/'guided-clarified-final/manifest.json').read_text(encoding='utf-8'))
+ids={(x['name'],x.get('physicalVariantKey')) for x in new}
+items=[dict(x,lastReuseProof='last-optin-reuse-pixel-result.json',validatedAgainst=source) for x in items if (x['name'],x.get('physicalVariantKey')) not in ids]+new
+assert len(items)==43 and sum(len(x['samples']) for x in items)==434
+for x in items:x['sha256']=sha(root/x['path']);x['tileSize']=[360,400];x['anatomyViewport']=[360,315]
+(e/'guided-final-manifest.json').write_text(json.dumps(items,ensure_ascii=False,indent=2),encoding='utf-8')
+clips=[]
+old=json.loads((e/'motion-current/assembly-receipt.json').read_text(encoding='utf-8'))
+for x in old[:5]:clips.append(dict(name=' / '.join(x['names']),file=x['file'],sourceCommit=x['sourceCommit'],fps=20,inputFrames=x['pngFrames'],encodedFrames=x['gifFrames'],durationMs=x['durationMs'],pngSize=x['size'],anatomyViewport=[320,285],sha256=x['sha256'],originalMetadata='motion-current/assembly-receipt.json',originalReuseVerification=x['reuseVerification'],lastReuseProof='last-optin-reuse-pixel-result.json',validatedAgainst=source))
+for f,name in [('gait-final-acceleration','Aceleración 10–20 m'),('gait-final-fifa-part3','FIFA 11+ · Parte 3')]:
+ x=json.loads((e/(f+'.json')).read_text(encoding='utf-8'));clips.append(dict(name=name,file=x['file'],sourceCommit=x['sourceCommit'],fps=20,inputFrames=x['inputFrames'],encodedFrames=x['encodedFrames'],durationMs=x['durationMs'],pngSize=x['pngSize'],anatomyViewport=x['anatomyViewport'],sha256=x['gifSha256'],originalMetadata=f+'.json',lastReuseProof='last-optin-reuse-pixel-result.json',validatedAgainst=source))
+x=json.loads((e/'guided-motion-preview/cat-cow.json').read_text(encoding='utf-8'));f=e/'guided-motion-preview/cat-cow.gif'
+with Image.open(f) as im:
+ n=im.n_frames;duration=0;size=im.size
+ for i in range(n):im.seek(i);duration+=im.info['duration']
+clips.append(dict(name='Gato-camello',file=str(f),sourceCommit=x['sourceCommit'],fps=20,inputFrames=264,encodedFrames=n,durationMs=duration,pngSize=list(size),anatomyViewport=[360,315],sha256=sha(f),originalMetadata='guided-motion-preview/cat-cow.json',originalReuseVerification='guided-reuse-pixel-result.json',lastReuseProof='last-optin-reuse-pixel-result.json',validatedAgainst=source))
+clips.append(dict(name='Pie corto',file=str(out),sourceCommit=source,fps=20,inputFrames=136,encodedFrames=meta['encodedFrames'],durationMs=6800,pngSize=[360,400],anatomyViewport=[360,315],sha256=sha(out),originalMetadata='guided-short-foot-clarified-final.json'))
+assert len(clips)==9
+for c in clips:assert sha(Path(c['file']))==c['sha256']
+(e/'final-movement-manifest.json').write_text(json.dumps(dict(status='AUTHOR_QA_COMPLETE_ROOT_R1_PENDING',productSource=source,clips=clips),ensure_ascii=False,indent=2),encoding='utf-8')
+for p in ['last_optin_reuse_test.dart','reuse-last-inventory.json','soleus-foot-selection.json']:
+ shutil.copyfile(root/'build/qa/035'/p,e/(p+'.txt' if p.endswith('.dart') else p))
+manifest=dict(productSource=source,baseNames=111,physicalVariantKeys=18,guidedDistinctEntries=43,guidedSheetSamples=434,finalRegressions=49,analyzeExit=0,authorVisualQA='All43 entries reviewed, including clarified foot and both soleus loads. RootR1pending; human comprehension not claimed.',lastReuse=dict(proof='last-optin-reuse-pixel-result.json',rgbaPairs=512,sheetSamples=402,clipFigureSamples=110),sourceFiles={p:sha(root/p) for p in ['lib/ui/exercise_figure_3d.dart','lib/ui/exercise_figure_3d_view.dart','tool/illustration_catalog.py','tool/illustration_guided.py','assets/tecnica/figuras3d.json','test/ui/illustration_guided_geometry_test.dart']},helperFiles={p:sha(e/p) for p in ['last_optin_reuse_test.dart.txt','reuse-last-inventory.json','soleus-foot-selection.json']},preservedFailures=['soleus-contact-red.txt','soleus-foot-guided-green.txt','acceleration-human-feedback.json','guided-batch1-qa-receipt.json'],diagnosticNotRed='soleus-load-red.txt passed with insufficient100pxROI; not evidence of bug reproduction')
+(e/'final-author-receipt.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+print('Final43/434,9clips,49PASS; foot',meta['encodedFrames'],duration,'metadata source retained')

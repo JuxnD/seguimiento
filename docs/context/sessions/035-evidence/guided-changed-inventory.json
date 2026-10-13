@@ -1,0 +1,94 @@
+[
+  {
+    "name": "Abducción de cadera de lado",
+    "key": "base"
+  },
+  {
+    "name": "Bajada lateral del escalón",
+    "key": "base"
+  },
+  {
+    "name": "Dorsal en la cama",
+    "key": "base"
+  },
+  {
+    "name": "Mesa invertida",
+    "key": "base"
+  },
+  {
+    "name": "Pectoral en el marco de la puerta",
+    "key": "base"
+  },
+  {
+    "name": "Pie corto",
+    "key": "base"
+  },
+  {
+    "name": "Plancha inversa con pies elevados",
+    "key": "base"
+  },
+  {
+    "name": "Rodilla a la pared",
+    "key": "base"
+  },
+  {
+    "name": "Rotación externa con banda",
+    "key": "base"
+  },
+  {
+    "name": "Sentadilla isométrica en la pared",
+    "key": "base"
+  },
+  {
+    "name": "Sentadilla profunda",
+    "key": "base"
+  },
+  {
+    "name": "Sprint lanzado",
+    "key": "base"
+  },
+  {
+    "name": "Sóleo en la pared",
+    "key": "base"
+  },
+  {
+    "name": "Sóleo sentado con mochila",
+    "key": "base"
+  },
+  {
+    "name": "Tibial en la pared",
+    "key": "base"
+  },
+  {
+    "name": "Zancada del mundo",
+    "key": "base"
+  },
+  {
+    "name": "Tibial en la pared",
+    "key": "tibialis_wall_far"
+  },
+  {
+    "name": "Tibial en la pared",
+    "key": "tibialis_wall_loaded"
+  },
+  {
+    "name": "Y-T prono",
+    "key": "prone_y_t_bed_edge"
+  },
+  {
+    "name": "Y-T prono",
+    "key": "prone_y_t_loaded"
+  },
+  {
+    "name": "Sóleo sentado con mochila",
+    "key": "seated_soleus_unilateral"
+  },
+  {
+    "name": "Support hold en paralelas",
+    "key": "support_protraction"
+  },
+  {
+    "name": "Rotación externa con banda",
+    "key": "band_rotation_90_90"
+  }
+]
