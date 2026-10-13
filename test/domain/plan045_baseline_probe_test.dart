@@ -57,25 +57,42 @@ void main() {
     expect(ActiveSession.fromJson({...old.toJson(), 'profile': 'unknown'}), isNull);
     expect(ActiveSession.fromJson({...old.toJson(), 'workSec': 15}), isNull);
     for (final bad in [
-      {'footballFreeConfirmed': false}, {'workSec': 20}, {'restSec': -1},
-      {'includeFinalRest': false}, {'intervals': 8}, {'mode': 'tabata'},
+      {'footballFreeConfirmed': false},
+      {'workSec': 20},
+      {'restSec': -1},
+      {'includeFinalRest': false},
+      {'intervals': 8},
+      {'mode': 'tabata'},
     ]) {
-      final running = TimerSnapshot(date: '2030-02-05', startedAt: DateTime(2030),
-        mode: 'running1515', phase: 'trabajo', exercises: const ['Carrera', 'Carrera'],
-        prescription: const TimerPrescription.running1515());
+      final running = TimerSnapshot(
+          date: '2030-02-05',
+          startedAt: DateTime(2030),
+          mode: 'running1515',
+          phase: 'trabajo',
+          exercises: const ['Carrera', 'Carrera'],
+          prescription: const TimerPrescription.running1515());
       expect(ActiveSession.fromJson({...running.toJson(), ...bad}), isNull, reason: '$bad');
     }
     expect(() => TabataScreen.running1515(date: DateTime(2030), footballFreeConfirmed: false), throwsArgumentError);
   });
   test('custom Tabata prescription survives JSON without inheriting the running profile', () {
-    final custom = TimerSnapshot(date: '2030-02-05', startedAt: DateTime(2030),
-      mode: 'tabata', phase: 'trabajo', exercises: const ['A', 'B', 'C'],
-      prescription: const TimerPrescription(profile: TimerProfile.tabata,
-        workSec: 30, restSec: 20, intervals: 4, betweenBlocksSec: 45, includeFinalRest: true));
+    final custom = TimerSnapshot(
+        date: '2030-02-05',
+        startedAt: DateTime(2030),
+        mode: 'tabata',
+        phase: 'trabajo',
+        exercises: const ['A', 'B', 'C'],
+        prescription: const TimerPrescription(
+            profile: TimerProfile.tabata,
+            workSec: 30,
+            restSec: 20,
+            intervals: 4,
+            betweenBlocksSec: 45,
+            includeFinalRest: true));
     final back = ActiveSession.fromJson(jsonDecode(jsonEncode(custom.toJson())))! as TimerSnapshot;
     expect(back.toJson(), custom.toJson());
     expect((back.workSec, back.restSec, back.intervals, back.betweenBlocksSec, back.includeFinalRest),
-      (30, 20, 4, 45, true));
+        (30, 20, 4, 45, true));
     expect(back.footballFreeConfirmed, isNull);
   });
 }

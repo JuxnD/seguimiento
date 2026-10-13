@@ -33,8 +33,13 @@ class TimerPrescription {
       throw const FormatException('Duración de intervalos inválida');
     }
     if (profile == TimerProfile.running1515 &&
-        (blocks != 2 || workSec != 15 || restSec != 15 || intervals != 16 ||
-            betweenBlocksSec != 0 || !includeFinalRest || footballFreeConfirmed != true)) {
+        (blocks != 2 ||
+            workSec != 15 ||
+            restSec != 15 ||
+            intervals != 16 ||
+            betweenBlocksSec != 0 ||
+            !includeFinalRest ||
+            footballFreeConfirmed != true)) {
       throw const FormatException('Prescripción de carrera 15/15 inválida o sin confirmación');
     }
   }
@@ -50,8 +55,15 @@ class TimerPrescription {
       };
 
   static TimerPrescription? fromJson(Map<String, Object?> json, {required int blocks, required String mode}) {
-    const keys = ['profile', 'workSec', 'restSec', 'intervals', 'betweenBlocksSec',
-      'includeFinalRest', 'footballFreeConfirmed'];
+    const keys = [
+      'profile',
+      'workSec',
+      'restSec',
+      'intervals',
+      'betweenBlocksSec',
+      'includeFinalRest',
+      'footballFreeConfirmed'
+    ];
     if (!keys.any(json.containsKey)) {
       if (mode == 'running1515') throw const FormatException('Falta la prescripción de carrera');
       return null;

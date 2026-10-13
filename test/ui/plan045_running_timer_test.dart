@@ -33,10 +33,14 @@ void main() {
       await t.runAsync(() async {
         dir = await Directory.systemTemp.createTemp('running045-');
         store = ActiveSessionStore(File('${dir.path}/active.json'));
-        await store.save(TimerSnapshot(date: '2030-02-05', startedAt: start.subtract(const Duration(minutes: 8)),
-          mode: 'running1515', phase: 'trabajo', workStartedAt: start,
-          exercises: const ['Carrera 15/15', 'Carrera 15/15'],
-          prescription: const TimerPrescription.running1515()));
+        await store.save(TimerSnapshot(
+            date: '2030-02-05',
+            startedAt: start.subtract(const Duration(minutes: 8)),
+            mode: 'running1515',
+            phase: 'trabajo',
+            workStartedAt: start,
+            exercises: const ['Carrera 15/15', 'Carrera 15/15'],
+            prescription: const TimerPrescription.running1515()));
         restored = (await store.load())! as TimerSnapshot;
       });
       t.view.physicalSize = const Size(1080, 2400);
@@ -46,13 +50,22 @@ void main() {
       SessionDraft? result;
       var returns = 0;
       await withClock(Clock.fixed(start.add(Duration(seconds: elapsed))), () async {
-        await t.pumpWidget(MaterialApp(home: Builder(builder: (context) => Scaffold(body: FilledButton(
-          onPressed: () async {
-            result = await Navigator.push<SessionDraft>(context, MaterialPageRoute(builder: (_) =>
-              TabataScreen.running1515(date: DateTime(2040), footballFreeConfirmed: false,
-                resume: restored, onSnapshot: snapshots.add)));
-            returns++;
-          }, child: const Text('Retomar'))))));
+        await t.pumpWidget(MaterialApp(
+            home: Builder(
+                builder: (context) => Scaffold(
+                    body: FilledButton(
+                        onPressed: () async {
+                          result = await Navigator.push<SessionDraft>(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => TabataScreen.running1515(
+                                      date: DateTime(2040),
+                                      footballFreeConfirmed: false,
+                                      resume: restored,
+                                      onSnapshot: snapshots.add)));
+                          returns++;
+                        },
+                        child: const Text('Retomar'))))));
         await t.tap(find.text('Retomar'));
         await t.pumpAndSettle();
         expect(find.text('Carrera · intervalos 15/15'), findsOneWidget);
@@ -75,8 +88,8 @@ void main() {
         expect(result!.mode, 'running1515');
         expect(result!.date, DateTime(2030, 2, 5));
         expect(result!.incomplete, elapsed < 960);
-        expect(result!.totalSec! - result!.warmupSec! - result!.cooldownSec!, elapsed.clamp(0, 960));
-        final expectedRest = switch (elapsed) {14 => 0, 15 => 0, 479 => 239, 480 => 240, 959 => 479, _ => 480};
+        expect(result!.totalSec - result!.warmupSec - result!.cooldownSec, elapsed.clamp(0, 960));
+        final expectedRest = switch (elapsed) { 14 => 0, 15 => 0, 479 => 239, 480 => 240, 959 => 479, _ => 480 };
         expect(result!.restSec, expectedRest);
         expect(result!.sets, isEmpty);
         expect(snapshots, isNotEmpty);
@@ -98,8 +111,8 @@ void main() {
     var now = DateTime(2030, 2, 5, 8);
     final snapshots = <TimerSnapshot>[];
     await withClock(Clock(() => now), () async {
-      await t.pumpWidget(MaterialApp(home: TabataScreen.running1515(
-        date: now, footballFreeConfirmed: true, onSnapshot: snapshots.add)));
+      await t.pumpWidget(MaterialApp(
+          home: TabataScreen.running1515(date: now, footballFreeConfirmed: true, onSnapshot: snapshots.add)));
       await t.tap(find.text('Empezar intervalos'));
       await t.pump();
       expect(snapshots.last.prescription!.toJson(), const TimerPrescription.running1515().toJson());
