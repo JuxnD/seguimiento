@@ -164,12 +164,12 @@ def generate(name, variant=None):
             upper=math.degrees(math.atan2(elbow[1]-neck[1],elbow[0]-neck[0]))
             f=pose('Cadera atrás; pecho entre brazos, codos apoyados',hip,torso,
                    limb(math.degrees(leg),180,foot=180),limb(math.degrees(leg),180,foot=180),
-                   arm(upper,-90,hand=-90),arm(upper,-90,hand=-90))
+                   arm(upper,-90,hand=-90,planarAngles=True),arm(upper,-90,hand=-90,planarAngles=True))
             sweep.append(f)
         sweep[0]['caption']='Rodillas al suelo; codos en el borde de la cama'
         frames=sweep+[cp(sweep[-1])]+[cp(f) for f in reversed(sweep[:-1])]
         motions=[phase('Cadera atrás',seconds=.15) for _ in sweep[1:]]+[phase('Respira',kind='hold')]+[phase('Regresa',seconds=.15) for _ in sweep[1:]]
-        return result(frames,motions,props=bench(elbow[0]+3,elbow[1]+1.4,width=15,depth=12),yaw=10)
+        return result(frames,motions,props=bench(elbow[0]+3,elbow[1]+1.4,width=15,depth=12),yaw=10,gripZ=4.5)
     if name == 'Pectoral en el marco de la puerta':
         a=pose('Antebrazo al marco; codo a la altura del hombro')
         a['nearArm']=arm(0,-90,hand=-90)

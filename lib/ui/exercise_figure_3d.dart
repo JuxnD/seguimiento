@@ -2318,8 +2318,13 @@ class _Scene {
           for (var i = 0; i < 32; i++) {
             final a = V3.lerp(start, end, i / 32), b = V3.lerp(start, end, (i + 1) / 32);
             parts.add(DepthPart((zc(a) + zc(b)) / 2, () {
-              canvas.drawLine(cam.project(a).offset, cam.project(b).offset,
-                  Paint()..color = _contact..strokeWidth = math.max(2.5, cam.scale * .36)..strokeCap = StrokeCap.round);
+              canvas.drawLine(
+                  cam.project(a).offset,
+                  cam.project(b).offset,
+                  Paint()
+                    ..color = _contact
+                    ..strokeWidth = math.max(2.5, cam.scale * .36)
+                    ..strokeCap = StrokeCap.round);
             }, 'guidedBand'));
           }
         case 'bar':

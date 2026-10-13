@@ -1,0 +1,47 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: guided figures keep bone lengths and finite reachable supports through every stage
+00:00 +1: guided independent world anchors stay fixed during demonstrated support phases
+00:00 +2: cat cow breathing and short foot change the rendered anatomy not only captions
+00:00 +3: local spine and bare foot anatomy preserve support and remain readable at phone size
+00:00 +4: physical variants retain their required world support and equipment contacts
+00:00 +5: guided plantar supports never point toes through the ground
+00:00 +6: seated soleus keeps knees forward above ankles and raised plank straight
+00:00 +7: guided floor hands and bed elbows respect their support surfaces
+00:00 +7 -1: guided floor hands and bed elbows respect their support surfaces [E]
+  Expected: empty
+    Actual: SubListIterable<String>:[
+              'Dorsal/19/near elbow drifts 0.08074947829801112',
+              'Dorsal/19/far elbow drifts 0.08074947829801112',
+              'Dorsal/20/near elbow drifts 0.08568544519827362',
+              'Dorsal/20/far elbow drifts 0.08568544519827362',
+              'Dorsal/21/near elbow drifts 0.09170924753502767',
+              'Dorsal/21/far elbow drifts 0.09170924753502767',
+              'Dorsal/22/near elbow drifts 0.09771079190092546',
+              'Dorsal/22/far elbow drifts 0.09771079190092546',
+              'Dorsal/23/near elbow drifts 0.10317686928458744',
+              'Dorsal/23/far elbow drifts 0.10317686928458744',
+              'Dorsal/24/near elbow drifts 0.10832410123872668',
+              'Dorsal/24/far elbow drifts 0.10832410123872668',
+              'Dorsal/25/near elbow drifts 0.11316897350676',
+              'Dorsal/25/far elbow drifts 0.11316897350676',
+              'Dorsal/26/near elbow drifts 0.11900697311218093',
+              'Dorsal/26/far elbow drifts 0.11900697311218093',
+              'Dorsal/27/near elbow drifts 0.125560193442248',
+              'Dorsal/27/far elbow drifts 0.125560193442248',
+              'Dorsal/28/near elbow drifts 0.13214814062453775',
+              'Dorsal/28/far elbow drifts 0.13214814062453775',
+              'Dorsal/29/near elbow drifts 0.13872824275169576',
+              'Dorsal/29/far elbow drifts 0.13872824275169576',
+              'Dorsal/30/near elbow drifts 0.13932550141638989',
+              'Dorsal/30/far elbow drifts 0.13932550141638989',
+              ...
+            ]
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\ui\illustration_guided_geometry_test.dart 281:5  main.<fn>
+  
+00:00 +7 -1: short foot detail leaves breathing room above the ankle instead of cropped shins
+00:01 +8 -1: external rotation band remains visibly connected between the opened hands
+00:01 +9 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T184447754-59332-e8249e1eb55c4372ad7a3e540748b38a.json
