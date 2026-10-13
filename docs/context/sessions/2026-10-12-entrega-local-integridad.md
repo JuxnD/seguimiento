@@ -70,7 +70,7 @@ debilitaron criterios ni timeouts. [fixture-directed-green.txt](029-evidence/fix
 34pass/0fallos/0skip. [analyze-final.txt](029-evidence/analyze-final.txt):sin incidencias.
 Fuente029+fixtures estable commit a1351d3, antes de revisión y full2.
 
-## Bloqueo terminal de full y diagnóstico del entorno
+## Bloqueo histórico de full2 y diagnóstico del entorno
 
 Full2 sobre a1351d3, [full-final.txt](029-evidence/full-final.txt): exit1,
 contador reportado952 aprobadas/16capturas omitidas; nueve casos updates_card
@@ -92,8 +92,9 @@ tras liberar capacidad); H2 runner/fuentes (persistiría con capacidad suficient
 H3 contención del host (presión/timing persistiría independientemente del disco).
 Errno112 confirma fallo de espacio en el diagnóstico posterior, pero no demuestra
 por sí solo la causa completa de los nueve `did not complete` de full2.
-Hace falta el contraste dirigido posterior; no se atribuye un bug de producto
-ni se declara solucionado el runner por inferencia.
+El contraste dirigido posterior ya se ejecutó9/9, seguido de full3 aprobada
+(véase Recuperación contrastada); no prueba la causa completa de full2 ni
+atribuye un bug de producto por inferencia.
 
 Tres acciones de limpieza autorizadas y acotadas fueron rechazadas por revisión
 automática del tool con razón genérica `blocked by policy`: script recursivo
