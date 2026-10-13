@@ -429,9 +429,14 @@ void main() {
             await tester.pumpWidget(const SizedBox());
             await withClock(Clock.fixed(DateTime(2026, 10, 12, 16)), () async {
               await home();
+              // Ancla permanente de la misma RingsCard: SleepLine puede estar
+              // oculto por la hora real. Prueba la tarjeta montada, no ausencia
+              // por ListView lazy; el control de mañana8h está arriba.
+              final protein = find.text('Proteína');
               await tester.scrollUntilVisible(
-                  find.text('¿Cuántas horas en cama anoche?'), 120,
+                  protein, 120,
                   scrollable: find.byType(Scrollable).first);
+              expect(protein.hitTestable(), findsOneWidget);
               expect(morning, findsNothing,
                   reason:
                       'después de las 14 se conserva la regla de ocultarlo');

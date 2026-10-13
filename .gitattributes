@@ -5,3 +5,4 @@ test/fixtures/gateway_contract/** -text
 
 # Bytes exactos de la evidencia 027 (hashes verificables entre hosts).
 docs/context/sessions/027-evidence/** -text -diff
+docs/context/sessions/029-evidence/** -text -diff

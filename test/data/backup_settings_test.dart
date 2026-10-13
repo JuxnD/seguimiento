@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/app/providers.dart';
 import 'package:seguimiento/data/backup_archive.dart';
+import 'package:seguimiento/data/active_session_store.dart';
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/database_host.dart';
 import 'package:seguimiento/data/health_connect.dart';
@@ -80,6 +81,8 @@ void main() {
       await tester.pumpWidget(ProviderScope(
         overrides: [
           databaseHostProvider.overrideWithValue(b),
+          activeSessionStoreProvider.overrideWithValue(
+              ActiveSessionStore(File('${b.file.parent.path}/sesion.json'))),
           documentsDirProvider.overrideWith((_) => b.file.parent),
           autoBackupsProvider.overrideWith((_) => []),
           healthConnectStateProvider.overrideWith((_) =>

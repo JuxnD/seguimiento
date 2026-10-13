@@ -30,36 +30,33 @@ class ActiveSessionStore {
     }
   }
 
-  ActiveSession? _pending;
   Future<void> _queue = Future.value();
 
-  /// Guarda la foto. Las escrituras van en fila y cada una escribe la foto
-  /// **más reciente**: si llegan muchas seguidas, nunca queda una vieja encima
-  /// de una nueva. Nunca lanza: perder una foto intermedia es mejor que tumbar
-  /// el cronómetro.
-  Future<void> save(ActiveSession session) {
-    _pending = _sanitized(session);
-    return _enqueue();
-  }
+  /// Cada foto se captura y escribe en orden, sin saltar una restauración.
+  /// Nunca lanza: un fallo ordinario no debe tumbar el cronómetro.
+  Future<void> save(ActiveSession session) => _exclusive(() => _flush(session));
 
   /// Identidad (fecha + inicio) de la sesión que una restauración desvinculó:
   /// un guardado tardío de esa misma sesión no puede reponer el id viejo.
-  (String, DateTime)? _unlinked;
+  final _unlinked = <(String, DateTime)>{};
+  final _retired = <(String, DateTime)>{};
+
+  (String, DateTime) _identity(ActiveSession session) => (session.date, session.startedAt);
 
   ActiveSession _sanitized(ActiveSession session) {
-    final u = _unlinked;
-    if (u != null && session is GuidedSnapshot && session.planDayId >= 0) {
-      if (session.date == u.$1 && session.startedAt == u.$2) return session.unlinkedAfterRestore();
+    if (_unlinked.contains(_identity(session)) && session is GuidedSnapshot && session.planDayId >= 0) {
+      return session.unlinkedAfterRestore();
     }
     return session;
   }
 
   /// Borra la sesión en curso (se guardó o se descartó).
-  Future<void> clear() {
-    _unlinked = null;
-    _pending = null;
-    return _enqueue();
-  }
+  Future<void> clear() => _exclusive(() async {
+        // Sólo retiramos sesiones protegidas por restore: clear ordinario no
+        // prohíbe guardar de nuevo un contador/sesión sin esa procedencia.
+        _retired.addAll(_unlinked);
+        await _flush(null);
+      });
 
   /// Operación crítica: corre en la misma fila que los guardados y, a
   /// diferencia de ellos, propaga su fallo.
@@ -103,50 +100,71 @@ class ActiveSessionStore {
   /// 3. Si [restore] falla, devuelve el archivo original byte a byte; si esa
   ///    recuperación también falla, lanza [SessionRecoveryException].
   /// Tras un éxito, los guardados tardíos de esa sesión no reponen el id viejo.
-  Future<T> protectedRestore<T>(Future<T> Function() restore) async {
-    List<int>? original;
-    try {
-      original = await _exclusive<List<int>?>(() async {
-        final current = await load();
-        if (current is! GuidedSnapshot || current.planDayId < 0) return null;
-        final bytes = await file.readAsBytes();
-        _unlinked = (current.date, current.startedAt);
-        await _writeStrict(utf8.encode(jsonEncode(current.unlinkedAfterRestore().toJson())));
-        return bytes;
-      });
-    } on Object catch (e) {
-      _unlinked = null;
-      throw SessionProtectionException('$e');
-    }
-    try {
-      return await restore();
-    } on Object {
-      _unlinked = null;
-      if (original != null) {
+  Future<T> protectedRestore<T>(Future<T> Function() restore) => _exclusive(() async {
+        List<int>? original;
+        final previous = Set<(String, DateTime)>.of(_unlinked);
         try {
-          await _exclusive(() => _writeStrict(original!));
+          final bytes = await _readCritical();
+          if (bytes != null) {
+            final current = ActiveSession.fromJson(jsonDecode(utf8.decode(bytes)));
+            if (current == null) throw const FormatException('Sesión en curso no interpretable');
+            if (current is GuidedSnapshot && current.planDayId >= 0) {
+              original = bytes;
+              await _writeStrict(utf8.encode(jsonEncode(current.unlinkedAfterRestore().toJson())));
+              _unlinked.add(_identity(current));
+            }
+          }
         } on Object catch (e) {
-          throw SessionRecoveryException('$e');
+          throw SessionProtectionException('$e');
         }
-      }
+        try {
+          // No encolar desde este callback: la cola permanece ocupada hasta
+          // confirmar restore o terminar la recuperación byte a byte.
+          return await restore();
+        } on Object {
+          if (original != null) {
+            try {
+              await _writeStrict(original);
+            } on Object catch (e) {
+              // Si no se recupera el archivo, mantener la protección nueva.
+              throw SessionRecoveryException('$e');
+            }
+          }
+          _unlinked
+            ..clear()
+            ..addAll(previous);
+          rethrow;
+        }
+      });
+
+  Future<List<int>?> _readCritical() async {
+    try {
+      return await file.readAsBytes();
+    } on FileSystemException catch (e) {
+      // ENOENT/Windows archivo o directorio ausente son ausencia real. Permiso,
+      // archivo convertido en directorio y demás errores no equivalen a null.
+      if (e.osError?.errorCode == 2 || (Platform.isWindows && e.osError?.errorCode == 3)) return null;
       rethrow;
     }
   }
 
-  Future<void> _enqueue() => _queue = _queue.then((_) => _flush());
-
-  Future<void> _flush() async {
+  Future<void> _flush(ActiveSession? requested) async {
     try {
-      final session = _pending;
+      final session = requested == null ? null : _sanitized(requested);
       if (session == null) {
         if (file.existsSync()) await file.delete();
         return;
       }
+      final identity = _identity(session);
+      if (_retired.contains(identity)) return;
       await file.parent.create(recursive: true);
       // Escribe aparte y renombra: un cierre a mitad no deja el archivo cortado.
       final tmp = File('${file.path}.tmp');
       await tmp.writeAsString(jsonEncode(session.toJson()), flush: true);
       await tmp.rename(file.path);
+      // Una nueva sesión válida no pierde su vínculo, pero las pantallas
+      // antiguas de sesiones protegidas ya no pueden reemplazarla.
+      _retired.addAll(_unlinked.where((old) => old != identity));
     } on Object {
       // Sin espacio o sin permiso: el cronómetro sigue igual.
     }

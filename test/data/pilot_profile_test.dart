@@ -222,8 +222,13 @@ void main() {
       await confirmLater();
       expect((await ProfileRepository(db).get()).proteinMin, 130, reason: 'proyección interna, no elección');
       await ProfileRepository(db).save(const ProfilesCompanion(proteinMin: Value(130)));
+      final acceptedOn = dateOnly(DateTime.now());
       final h = await GoalRepository(db).history();
-      expect(h.current(GoalMetric.proteinaMin, today)!.value, 130);
+      expect(h.current(GoalMetric.proteinaMin, acceptedOn)!.value, 130);
+      if (acceptedOn.isAfter(today)) {
+        expect(h.on(GoalMetric.proteinaMin, today)!.value, isNull,
+            reason: 'la aceptación posterior no reescribe la ausencia en el alta');
+      }
       expect(await versions(db), hasLength(7));
       // Repetir el mismo valor ya aceptado no duplica.
       await ProfileRepository(db).save(const ProfilesCompanion(proteinMin: Value(130)));
