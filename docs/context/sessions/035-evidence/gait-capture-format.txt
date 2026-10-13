@@ -1,0 +1,4 @@
+Formatted test/ui/illustration_035_render_test.dart
+Formatted build/qa/035/gait_camera_probe_test.dart
+Formatted 2 files (2 changed) in 0.22 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T195826579-24260-6e39d60b0d004223a339599b1d902275.json

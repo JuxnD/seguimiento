@@ -42,7 +42,9 @@ void main() {
       final requestedAngles = Platform.environment['ILLUSTRATION_035_ANGLES'];
       final angles = requestedAngles != null
           ? requestedAngles.split(',').map(double.parse).toList()
-          : name == 'Dominadas' ? [0.0, 35.0, 90.0] : [fig!.initialYaw];
+          : name == 'Dominadas'
+              ? [0.0, 35.0, 90.0]
+              : [fig!.initialYaw];
       final samples = name == 'Dominadas'
           ? [for (var i = 0; i < 24; i++) i / 23]
           : fig!.hasMotion
