@@ -1,0 +1,7 @@
+{
+  "docs/context/INDEX.md": "1819e672a92557ae83fb4221ec3dde9ffe69985641460aed595171c06a3ab348",
+  "lib/domain/report/report_input.dart": "27677be2f7cb66d2005a3e435ccd0418c645827ac7c57b99c02e57fa338eb5fb",
+  "lib/features/home/home_screen.dart": "13cce1a00307fe99c7f7633dba8716b4adc417161916eba8ef504a718633088a",
+  "pubspec.yaml": "de5b10cb56f1844d6baaf2848800dabed1ca97c0dcdf295b5870c6317d1449b8",
+  "test/ui/plan037_colliding_agenda_test.dart": "8240e0c4919a7eb25fe13558886638dc9e5ef18c8feee0e72b7d1820b9e9bbe7"
+}

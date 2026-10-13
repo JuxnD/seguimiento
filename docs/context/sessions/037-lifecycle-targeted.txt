@@ -1,0 +1,58 @@
+00:00 +0: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart
+00:00 +0: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: dominio IDs estables por evidencia y visibilidad de la decisión
+00:00 +1: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza mantener oculta la subida para esa evidencia; otra sesión es otra propuesta
+00:01 +2: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza "hoy no" vale sólo hoy: el próximo martes vuelve
+00:01 +3: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 aceptar no prueba subida si la sesión siguiente mantiene carga y variante
+00:02 +4: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 una sola serie de las cuatro previstas no sostiene la dosis subida
+00:03 +5: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 control: carga mayor con cuatro series limpias sí se sostiene
+00:04 +6: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 carga con otra variante y dosis guardada incompleta: no se afirma ni se rompe Hoy
+00:05 +7: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:10 +8: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: rondas "hoy no" deja las rondas de la última vez hoy; el viernes siguiente vuelve
+00:11 +9: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: escaleras "en 7 días" oculta la propuesta de subir en Hoy hasta su fecha; subir sigue en la confirmación existente
+00:11 +10: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) un fallo entre registrar y subir no deja aceptación sin peldaño
+00:11 +11: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) doble toque: sube uno, una sola aceptación
+00:11 +12: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: (tearDownAll)
+00:11 +12: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart
+00:13 +12: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: (setUpAll)
+00:13 +12: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A1: una prueba guardada no equivale a test completo
+00:13 +13: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A2: pruebas de piernas no sustituyen la sesión normal
+00:14 +14: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A3: valores no finitos no llegan a resultados persistidos
+00:14 +15: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A4: un solo lado no determina el lado más débil
+00:14 +16: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja
+00:14 +17: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida
+00:14 +18: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes
+00:14 +19: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: NULL or another block header never completes the typed agenda; zero remains recorded
+00:15 +20: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=true
+00:15 +21: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=false
+00:15 +22: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps NaN conserva resultado anterior
+00:15 +23: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps Infinity conserva resultado anterior
+00:15 +24: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps -Infinity conserva resultado anterior
+00:15 +25: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps -1.0 conserva resultado anterior
+00:15 +26: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps 1.5 conserva resultado anterior
+00:16 +27: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos
+00:16 +28: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+00:16 +29: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: lumbar durable idempotente con mismo evento y separado por sesion
+00:16 +30: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: (tearDownAll)
+00:16 +30: loading C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart
+00:18 +30: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: (setUpAll)
+00:18 +30: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+00:22 +31: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: rojo: solo descanso, sin la activación del amarillo
+00:22 +32: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: día de test amarillo: "Mover test a mañana" lo mueve y queda trazado
+00:23 +33: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: a medias no es hecho: sin ✓ ni "Día completo"; terminada sí
+00:24 +34: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: (tearDownAll)
+00:24 +34: loading C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart
+00:26 +34: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart: (setUpAll)
+00:26 +34: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart: Home collision keeps both identities and opens each actual typed test route
+H1_PHASE_START:setup
+H1_PHASE_END:setup
+H1_PHASE:pumpWidget
+H1_PHASE:positive
+H1_PHASE_START:unknown-stairs
+H1_PHASE_END:unknown-stairs
+H1_PHASE:cleanup
+H1_PHASE_START:cleanup
+H1_PHASE_END:cleanup
+00:30 +35: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart: (tearDownAll)
+00:30 +35: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T230600980-36104-dea3afb226c143ff9925d9bc79652406.json

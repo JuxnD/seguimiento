@@ -1,0 +1,6 @@
+Analyzing seguimiento-037-entrega-funcional...                  
+
+   info - Statements in an if should be enclosed in a block - lib\features\home\home_screen.dart:93:7 - curly_braces_in_flow_control_structures
+
+1 issue found. (ran in 26.6s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T224945691-18084-489f675fba7140e3b6e6ba6b9845df03.json

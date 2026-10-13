@@ -1,0 +1,71 @@
+00:00 +0: loading C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart
+00:00 +0: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart: Home collision keeps both identities and opens each actual typed test route
+H1_PHASE_START:setup
+H1_PHASE_END:setup
+H1_PHASE:pumpWidget
+H1_PHASE:positive
+H1_PHASE_START:unknown-stairs
+H1_PHASE_END:unknown-stairs
+H1_PHASE:cleanup
+H1_PHASE_START:cleanup
+H1_PHASE_END:cleanup
+00:02 +1: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan037_colliding_agenda_test.dart: (tearDownAll)
+00:02 +1: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart
+00:03 +1: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: (setUpAll)
+00:03 +1: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: agenda: identidad tipada un movimiento v3.1 con clave tipada es el mismo que lee la agenda v3.1
+00:04 +2: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: agenda: identidad tipada v3.1 y v3.2 con el mismo inicio no comparten movimientos
+00:04 +3: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: agenda: identidad tipada el tercer movimiento no escribe nada
+00:04 +4: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: recordatorios con la agenda efectiva el test de piernas movido al jueves se anuncia el jueves, con escaleras y benchmarks
+00:05 +5: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: informe agenda movida, escaleras altas y benchmark pendiente en la semana
+00:05 +6: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: informe intentos: mismas condiciones se comparan, distintas abren línea base, lo de antes no se compara
+00:05 +7: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: informe aguantes de las escaleras accesorias van en segundos aunque no estén en el plan
+00:05 +8: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_readers_test.dart: (tearDownAll)
+00:05 +8: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart
+00:06 +8: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: (setUpAll)
+00:06 +8: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día piernas sin escaleras anotadas: se dice, no se supone 0
+00:06 +9: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día escaleras 2 se hace; 3 no
+00:07 +10: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día el descanso de 032 manda también sobre el torso
+00:07 +11: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día la agenda lista los seis tests del bloque con su día previsto
+00:07 +12: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: benchmarks cada 28 días desde el miércoles de la semana 1; siguen al test de piernas movido
+00:07 +13: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: benchmarks estado: parcial con lo que falta, completo con las cinco y los dos lados; pike negativo vale
+00:07 +14: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: benchmarks corte asOf: lo medido después no completa una consulta anterior
+00:07 +15: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: benchmarks mediciones de otro bloque no completan esta toma
+00:07 +16: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_agenda_benchmarks_test.dart: (tearDownAll)
+00:07 +16: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan046_agenda_collision_test.dart
+00:08 +16: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan046_agenda_collision_test.dart: (setUpAll)
+00:08 +16: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan046_agenda_collision_test.dart: moving torso twice preserves both typed identities on the shared Wednesday
+00:08 +17: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan046_agenda_collision_test.dart: collision readers preserve both report entries, leg benchmark and daily priority without writes
+00:09 +18: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan046_agenda_collision_test.dart: (tearDownAll)
+00:09 +18: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_benchmark_cutoff_test.dart
+00:10 +18: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_benchmark_cutoff_test.dart: (setUpAll)
+00:10 +18: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_benchmark_cutoff_test.dart: el informe de la semana de la toma no la da por hecha con mediciones de diez días después
+00:10 +19: C:/My Projects/seguimiento-037-entrega-funcional/test/data/plan043_benchmark_cutoff_test.dart: (tearDownAll)
+00:10 +19: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart
+00:11 +19: C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart: save inmediato al encolar restore no reintroduce ID ni pierde campos
+00:11 +20: C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart: segunda restore fallida conserva protección de restore previa
+00:11 +21: C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart: callback retirado no sobrescribe sesión nueva tras clear
+00:11 +22: C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart: restauración retiene la cola completa hasta terminar callback
+00:11 +23: C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart: lectura crítica I/O fallida no reemplaza DB y la cola se recupera
+00:11 +24: C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart: archivo no interpretable bloquea restore y conserva bytes
+00:11 +25: C:/My Projects/seguimiento-037-entrega-funcional/test/data/active_session_restore_queue_test.dart: clear sin restauración permite guardar la misma sesión ordinaria
+00:11 +26: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/registros_zip_040_test.dart
+00:12 +26: C:/My Projects/seguimiento-037-entrega-funcional/test/data/registros_zip_040_test.dart: (setUpAll)
+00:12 +26: C:/My Projects/seguimiento-037-entrega-funcional/test/data/registros_zip_040_test.dart: ZIP 25: campos de 040, ids, defaults exactos y flag tras restaurar, reabrir y restaurar otra vez
+00:13 +27: C:/My Projects/seguimiento-037-entrega-funcional/test/data/registros_zip_040_test.dart: (tearDownAll)
+00:13 +27: loading C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart
+00:14 +27: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 14 seconds with its frozen prescription
+00:15 +28: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 15 seconds with its frozen prescription
+00:15 +29: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 479 seconds with its frozen prescription
+00:15 +30: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 480 seconds with its frozen prescription
+00:15 +31: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 959 seconds with its frozen prescription
+00:15 +32: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 960 seconds with its frozen prescription
+00:16 +33: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 980 seconds with its frozen prescription
+00:16 +34: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan045_running_timer_test.dart: new running session emits all parameters and includes its last pause before completion
+00:16 +35: loading C:/My Projects/seguimiento-037-entrega-funcional/test/domain/plan045_baseline_probe_test.dart
+00:17 +35: C:/My Projects/seguimiento-037-entrega-funcional/test/domain/plan045_baseline_probe_test.dart: running 15/15 needs both final pauses to reach two complete eight minute blocks
+00:17 +36: C:/My Projects/seguimiento-037-entrega-funcional/test/domain/plan045_baseline_probe_test.dart: timer JSON preserves a frozen running prescription instead of silently restoring defaults
+00:17 +37: C:/My Projects/seguimiento-037-entrega-funcional/test/domain/plan045_baseline_probe_test.dart: legacy timeline remains unchanged and unknown or partial profiles are rejected
+00:17 +38: C:/My Projects/seguimiento-037-entrega-funcional/test/domain/plan045_baseline_probe_test.dart: custom Tabata prescription survives JSON without inheriting the running profile
+00:17 +39: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T225405734-40664-97d3d9d9d7074d6eabdcb370f7ac6a25.json

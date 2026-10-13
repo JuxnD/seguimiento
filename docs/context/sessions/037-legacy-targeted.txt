@@ -1,0 +1,85 @@
+00:00 +0: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart
+00:00 +0: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: dominio IDs estables por evidencia y visibilidad de la decisión
+00:00 +1: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza mantener oculta la subida para esa evidencia; otra sesión es otra propuesta
+00:00 +2: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza "hoy no" vale sólo hoy: el próximo martes vuelve
+00:01 +3: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 aceptar no prueba subida si la sesión siguiente mantiene carga y variante
+00:01 +4: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 una sola serie de las cuatro previstas no sostiene la dosis subida
+00:01 +5: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 control: carga mayor con cuatro series limpias sí se sostiene
+00:02 +6: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza R2 carga con otra variante y dosis guardada incompleta: no se afirma ni se rompe Hoy
+00:02 +7: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:06 +8: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: rondas "hoy no" deja las rondas de la última vez hoy; el viernes siguiente vuelve
+00:06 +9: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: escaleras "en 7 días" oculta la propuesta de subir en Hoy hasta su fecha; subir sigue en la confirmación existente
+00:06 +10: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) un fallo entre registrar y subir no deja aceptación sin peldaño
+00:06 +11: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) doble toque: sube uno, una sola aceptación
+00:07 +12: C:/My Projects/seguimiento-037-entrega-funcional/test/data/proposal_tracking_test.dart: (tearDownAll)
+00:07 +12: loading C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart
+00:07 +12: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: (setUpAll)
+00:07 +12: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A1: una prueba guardada no equivale a test completo
+00:08 +13: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A2: pruebas de piernas no sustituyen la sesión normal
+00:08 +14: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A3: valores no finitos no llegan a resultados persistidos
+00:08 +15: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A4: un solo lado no determina el lado más débil
+00:08 +16: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja
+00:08 +17: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida
+00:08 +18: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes
+00:09 +19: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: NULL or another block header never completes the typed agenda; zero remains recorded
+00:09 +20: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=true
+00:09 +21: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=false
+00:09 +22: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps NaN conserva resultado anterior
+00:09 +23: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps Infinity conserva resultado anterior
+00:09 +24: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps -Infinity conserva resultado anterior
+00:10 +25: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps -1.0 conserva resultado anterior
+00:10 +26: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo atomico reps 1.5 conserva resultado anterior
+00:10 +27: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos
+00:10 +28: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+00:10 +29: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: lumbar durable idempotente con mismo evento y separado por sesion
+00:10 +30: C:/My Projects/seguimiento-037-entrega-funcional/test/data/release121_contracts_test.dart: (tearDownAll)
+00:10 +30: loading C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart
+00:11 +30: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: (setUpAll)
+00:11 +30: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: Tried to read a provider from a ProviderContainer that was already disposed
+
+When the exception was thrown, this was the stack:
+#0      ProviderContainer.readProviderElement (package:riverpod/src/framework/container.dart:423:7)
+#1      ProviderBase.read (package:riverpod/src/framework/provider_base.dart:105:26)
+#2      ProviderContainer.read (package:riverpod/src/framework/container.dart:241:21)
+#3      ProviderElementBase.read (package:riverpod/src/framework/element.dart:692:23)
+#4      _todayTestAgendaProvider.<anonymous closure>.read (package:seguimiento/features/home/home_screen.dart:91:28)
+#5      _todayTestAgendaProvider.<anonymous closure> (package:seguimiento/features/home/home_screen.dart:118:17)
+<asynchronous suspension>
+
+The test description was:
+  amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:12 +30 -1: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí [E]
+  Test failed. See exception logs above.
+  The test description was: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+  
+00:13 +30 -1: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: rojo: solo descanso, sin la activación del amarillo
+00:13 +31 -1: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: día de test amarillo: "Mover test a mañana" lo mueve y queda trazado
+00:14 +32 -1: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: a medias no es hecho: sin ✓ ni "Día completo"; terminada sí
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: Tried to read a provider from a ProviderContainer that was already disposed
+
+When the exception was thrown, this was the stack:
+#0      ProviderContainer.readProviderElement (package:riverpod/src/framework/container.dart:423:7)
+#1      ProviderBase.read (package:riverpod/src/framework/provider_base.dart:105:26)
+#2      ProviderContainer.read (package:riverpod/src/framework/container.dart:241:21)
+#3      ProviderElementBase.read (package:riverpod/src/framework/element.dart:692:23)
+#4      _todayTestAgendaProvider.<anonymous closure>.read (package:seguimiento/features/home/home_screen.dart:91:28)
+#5      _todayTestAgendaProvider.<anonymous closure> (package:seguimiento/features/home/home_screen.dart:118:17)
+<asynchronous suspension>
+
+The test description was:
+  a medias no es hecho: sin ✓ ni "Día completo"; terminada sí
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:14 +32 -2: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: a medias no es hecho: sin ✓ ni "Día completo"; terminada sí [E]
+  Test failed. See exception logs above.
+  The test description was: a medias no es hecho: sin ✓ ni "Día completo"; terminada sí
+  
+00:15 +32 -2: C:/My Projects/seguimiento-037-entrega-funcional/test/ui/readiness_home_test.dart: (tearDownAll)
+00:15 +32 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T230055774-46340-ae20a8fb08e841c78fd75372effbf80c.json

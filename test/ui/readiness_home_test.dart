@@ -48,7 +48,8 @@ void main() {
   final mon = DateTime(2030, 3, 4);
 
   late Directory dir;
-  setUp(() => dir = Directory.systemTemp.createTempSync('seguimiento_032_home'));
+  setUp(
+      () => dir = Directory.systemTemp.createTempSync('seguimiento_032_home'));
 
   /// Una operación con la base, iniciada en la zona de la pantalla y
   /// avanzada hasta que termina. Con un tope: si no termina, la prueba falla
@@ -69,7 +70,8 @@ void main() {
     // Timer.run de la zona falsa, así que se avanzan las dos zonas por turnos.
     for (var i = 0; i < 200 && !done; i++) {
       await tester.pump(const Duration(milliseconds: 20));
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
     }
     if (!done) fail('operación con la base sin terminar tras 200 turnos');
     if (error != null) throw error!;
@@ -82,19 +84,27 @@ void main() {
     }
   }
 
-  Future<AppDatabase> open(WidgetTester tester, {bool weekend = true}) => drive(tester, () async {
+  Future<AppDatabase> open(WidgetTester tester, {bool weekend = true}) =>
+      drive(tester, () async {
         final db = openInMemoryDatabase();
         if (weekend) {
-          for (final (d, min, effort) in [(sat, 60, 5), (sun, 90, 7), (sun, 60, 8)]) {
+          for (final (d, min, effort) in [
+            (sat, 60, 5),
+            (sun, 90, 7),
+            (sun, 60, 8)
+          ]) {
             await db.into(db.footballGames).insert(
-                FootballGamesCompanion.insert(date: dayKey(d), minutes: min, intensity: Value(effort)));
+                FootballGamesCompanion.insert(
+                    date: dayKey(d), minutes: min, intensity: Value(effort)));
           }
         }
         return db;
       });
 
   /// Lo mismo que `readinessViewProvider`, leído fuera de la pantalla.
-  Future<ReadinessView> view(WidgetTester tester, AppDatabase db, {bool test = false}) => drive(tester, () async {
+  Future<ReadinessView> view(WidgetTester tester, AppDatabase db,
+          {bool test = false}) =>
+      drive(tester, () async {
         final repo = ReadinessRepository(db);
         return ReadinessView(
           advice: await repo.readinessOn(mon, testOrAttemptToday: test),
@@ -105,7 +115,8 @@ void main() {
         );
       });
 
-  TodayDashboard dashboard({({int round, TestPart part, bool done})? test}) => TodayDashboard(
+  TodayDashboard dashboard({({int round, TestPart part, bool done})? test}) =>
+      TodayDashboard(
         date: mon,
         weekIndex: 1,
         dayType: DayType.trenSuperior,
@@ -135,12 +146,14 @@ void main() {
     await tester.pumpWidget(ProviderScope(
       overrides: [
         databaseProvider.overrideWithValue(db),
-        localFlagsProvider.overrideWithValue(LocalFlags(File('${dir.path}/flags.json'))),
+        localFlagsProvider
+            .overrideWithValue(LocalFlags(File('${dir.path}/flags.json'))),
         todayProvider.overrideWith(_FixedToday.new),
         dashboardProvider.overrideWith((ref) => dashboard(test: test)),
         readinessViewProvider.overrideWith((ref, _) => v),
         activeSessionProvider.overrideWith((ref) => null),
-        updateCheckProvider.overrideWith((ref) => const UpdateCheck(currentVersion: '1.23.0')),
+        updateCheckProvider
+            .overrideWith((ref) => const UpdateCheck(currentVersion: '1.23.0')),
         morningDoneProvider.overrideWith((ref, _) => false),
       ],
       child: MaterialApp(theme: buildGymTheme(), home: const HomeScreen()),
@@ -158,16 +171,23 @@ void main() {
     await drive(tester, db.close);
   }
 
-  Finder inDialog(String text) => find.descendant(of: find.byType(AlertDialog), matching: find.text(text));
+  Finder inDialog(String text) =>
+      find.descendant(of: find.byType(AlertDialog), matching: find.text(text));
 
-  testWidgets('amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí', (tester) async {
+  testWidgets(
+      'amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí',
+      (tester) async {
     final db = await open(tester);
     await mount(tester, db, await view(tester, db));
     expect(find.text('Hoy: recuperación activa'), findsOneWidget);
-    expect(find.text('• Carga de los últimos 3 días: 1.410 (sáb 300 · dom 630 · dom 480)'), findsOneWidget);
+    expect(
+        find.text(
+            '• Carga de los últimos 3 días: 1.410 (sáb 300 · dom 630 · dom 480)'),
+        findsOneWidget);
     expect(find.text('Empezar recuperación (30 min)'), findsOneWidget);
     expect(find.text('Empezar tren superior'), findsNothing);
-    expect(find.text('Mover test a mañana'), findsNothing, reason: 'hoy no hay test');
+    expect(find.text('Mover test a mañana'), findsNothing,
+        reason: 'hoy no hay test');
 
     await tester.tap(find.text('Entrenar igual'));
     await settle(tester);
@@ -176,7 +196,9 @@ void main() {
     await settle(tester);
     expect(find.text('Hoy: recuperación activa'), findsOneWidget);
     await unmount(tester);
-    expect(await drive(tester, () => db.select(db.coachProposals).get()), isEmpty, reason: 'cancelar no guarda nada');
+    expect(
+        await drive(tester, () => db.select(db.coachProposals).get()), isEmpty,
+        reason: 'cancelar no guarda nada');
 
     await mount(tester, db, await view(tester, db));
     await tester.tap(find.text('Entrenar igual'));
@@ -184,8 +206,10 @@ void main() {
     await tester.tap(inDialog('Entrenar igual'));
     await settle(tester);
     await unmount(tester);
-    final row = await drive(tester, () => db.select(db.coachProposals).getSingle());
-    expect((row.kind, row.status, row.createdOn), (readinessProposalKind, 'rechazada', '2030-03-04'));
+    final row =
+        await drive(tester, () => db.select(db.coachProposals).getSingle());
+    expect((row.kind, row.status, row.createdOn),
+        (readinessProposalKind, 'rechazada', '2030-03-04'));
 
     // Con la decisión guardada, Hoy vuelve a la sesión del día.
     await mount(tester, db, await view(tester, db));
@@ -195,19 +219,26 @@ void main() {
     await close(tester, db);
   });
 
-  testWidgets('rojo: solo descanso, sin la activación del amarillo', (tester) async {
+  testWidgets('rojo: solo descanso, sin la activación del amarillo',
+      (tester) async {
     final db = await open(tester, weekend: false);
-    await drive(tester, () => RecoveryRepository(db).setSoreness(mon, {'Rodilla': 6}));
+    await drive(
+        tester, () => RecoveryRepository(db).setSoreness(mon, {'Rodilla': 6}));
     await mount(tester, db, await view(tester, db));
     expect(find.text('Hoy: solo descanso'), findsOneWidget);
-    expect(find.text('• Rodilla en escaleras 6/10'), findsOneWidget);
+    expect(find.text('• Dolor anotado en Rodilla 6/10'), findsOneWidget);
+    expect(find.textContaining('Rodilla en escaleras'), findsNothing,
+        reason: 'Generic soreness never invents an unrecorded stairs value');
     expect(find.text('Movilidad suave (Suelta)'), findsOneWidget);
     expect(find.text('Empezar recuperación (30 min)'), findsNothing);
-    expect(find.text('Entrenar igual'), findsOneWidget, reason: 'la decisión sigue siendo de la persona');
+    expect(find.text('Entrenar igual'), findsOneWidget,
+        reason: 'la decisión sigue siendo de la persona');
     await close(tester, db);
   });
 
-  testWidgets('día de test amarillo: "Mover test a mañana" lo mueve y queda trazado', (tester) async {
+  testWidgets(
+      'día de test amarillo: "Mover test a mañana" lo mueve y queda trazado',
+      (tester) async {
     final db = await open(tester);
     const test = (round: 1, part: TestPart.torso, done: false);
     await mount(tester, db, await view(tester, db, test: true), test: test);
@@ -216,22 +247,30 @@ void main() {
     await settle(tester);
     expect(find.text('Test movido al martes 5 mar'), findsOneWidget);
     await unmount(tester);
-    final moves = await drive(tester, () => ReadinessRepository(db).moves(mon, 1, TestPart.torso));
-    expect([for (final m in moves) (dayKey(m.from), dayKey(m.to))], [('2030-03-04', '2030-03-05')]);
+    final moves = await drive(
+        tester, () => ReadinessRepository(db).moves(mon, 1, TestPart.torso));
+    expect([for (final m in moves) (dayKey(m.from), dayKey(m.to))],
+        [('2030-03-04', '2030-03-05')]);
     await close(tester, db);
   });
 
-  testWidgets('a medias no es hecho: sin ✓ ni "Día completo"; terminada sí', (tester) async {
+  testWidgets('a medias no es hecho: sin ✓ ni "Día completo"; terminada sí',
+      (tester) async {
     final db = await open(tester);
     final training = TrainingRepository(db, ExerciseRepository(db));
     Future<void> save(String mode, {required bool complete}) => drive(
         tester,
         () => training.save(SessionDraft(
-            date: mon, type: SessionType.movilidad, mode: mode, totalSec: complete ? 1800 : 30, incomplete: !complete)));
+            date: mon,
+            type: SessionType.movilidad,
+            mode: mode,
+            totalSec: complete ? 1800 : 30,
+            incomplete: !complete)));
     await save(recoveryActiveId, complete: false);
     await save(morningActivaId, complete: false);
     await mount(tester, db, await view(tester, db));
-    expect(find.text('Hoy: recuperación activa'), findsOneWidget, reason: 'la parcial no acepta la recuperación');
+    expect(find.text('Hoy: recuperación activa'), findsOneWidget,
+        reason: 'la parcial no acepta la recuperación');
     expect(find.text('Día completo'), findsNothing);
     expect(find.text('Mañana'), findsOneWidget);
     expect(find.text('Mañana ✓'), findsNothing);

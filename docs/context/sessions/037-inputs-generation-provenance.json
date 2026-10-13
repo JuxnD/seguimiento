@@ -1,0 +1,10 @@
+{
+  "base034": "f401948e5cb1e7bff6a7daf90e53ae409f5a3ac1",
+  "inputs": {
+    "lib/data/database.dart": "b3bf0840f82a916ed53d0b2c686c695b58ab100caf30efc1a0b412dfb97f04ac",
+    "lib/data/tables.dart": "57d6c310559c320b19384e9a2da61db7345c90063a72664076290eff5190b189",
+    "pubspec.lock": "6d625acce6c72b2485197988d02d0ef85ad1fdc4ac6169b6381f422811d69c05"
+  },
+  "generated": "59980c598e2d37c6e4b43eff3ffc5df70f545d0fa52170a9b4e014dd60ce2ecb",
+  "operation": "copyignored only identical source inputs; no generated manual changes"
+}

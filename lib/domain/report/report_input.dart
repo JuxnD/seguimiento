@@ -244,6 +244,7 @@ class SessionEntry {
 
   /// "Resistencia (Cindy)" en vez de solo "Resistencia".
   String get typeLabel => switch (mode) {
+        'running1515' => '${type.label} (intervalos 15/15)',
         'cindy' => '${type.label} (Cindy)',
         'tabata' => '${type.label} (Tabata)',
         'porTiempo' => '${type.label} (10 rondas por tiempo)',

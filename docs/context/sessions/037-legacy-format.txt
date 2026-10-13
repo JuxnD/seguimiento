@@ -1,0 +1,5 @@
+Formatted test/data/proposal_tracking_test.dart
+Formatted test/data/release121_contracts_test.dart
+Formatted test/ui/readiness_home_test.dart
+Formatted 3 files (3 changed) in 0.50 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T225908991-64448-1558f38ed05b497e9ac3a3db75654e9d.json

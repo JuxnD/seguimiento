@@ -9,6 +9,7 @@ import '../../data/repositories/dashboard_repository.dart';
 import '../../data/repositories/nutrition_repository.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../data/repositories/training_repository.dart';
+import '../../data/repositories/readiness_repository.dart';
 import '../../data/repositories/sleep_repository.dart' show SleepDetail;
 import '../../domain/dates.dart';
 import '../../domain/core_ladders.dart';
@@ -83,6 +84,87 @@ class KneeStairsAlert extends ConsumerWidget {
   }
 }
 
+final _todayTestAgendaProvider =
+    StreamProvider.family<List<EffectiveTest>, DateTime>((ref, date) async* {
+  final db = ref.watch(databaseProvider);
+  final plan = ref.watch(planRepositoryProvider);
+  var disposed = false;
+  ref.onDispose(() {
+    disposed = true;
+  });
+  Future<List<EffectiveTest>> read() async {
+    final view = await plan.dayFor(date);
+    if (disposed) return [];
+    if (view == null || view.validFrom == null || !isBlockScheme(view.scheme)) {
+      return [];
+    }
+    final protocol = view.scheme == v32Scheme
+        ? TestProtocolId.v32_13
+        : TestProtocolId.v31_12;
+    return (await ReadinessRepository(db).testAgenda(
+            scheme: view.scheme!,
+            blockStart: view.validFrom!,
+            protocol: protocol))
+        .where((test) => test.date == dateOnly(date))
+        .toList();
+  }
+
+  final initial = await read();
+  if (disposed) return;
+  yield initial;
+  await for (final _ in db.tableUpdates(TableUpdateQuery.onAllTables([
+    db.planVersions,
+    db.sessions,
+    db.footballGames,
+    db.morningChecks,
+    db.sorenessLogs,
+    db.sleepLogs,
+    db.coachProposals,
+    db.fitnessTestAttempts,
+    db.fitnessTests
+  ]))) {
+    if (disposed) break;
+    final next = await read();
+    if (disposed) break;
+    yield next;
+  }
+});
+
+/// Date collisions retain every identity, separate from the prioritized hero.
+class CollidingTestAgenda extends ConsumerWidget {
+  const CollidingTestAgenda({super.key, required this.date});
+  final DateTime date;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final agenda = ref.watch(_todayTestAgendaProvider(date)).valueOrNull ?? [];
+    if (agenda.length < 2) return const SizedBox.shrink();
+    return AppCard(title: 'Tests que coinciden hoy', children: [
+      const Text(
+          'Son pruebas independientes; ninguna desaparece por compartir fecha.'),
+      for (final test in agenda) ...[
+        Text(
+            'Test ${test.round} · ${test.part == TestPart.torso ? 'Torso' : 'Piernas'}'),
+        if (test.gate?.label != null) Text(test.gate!.label!),
+        OutlinedButton(
+            key: ValueKey(
+                'agenda:${test.key.scheme}:${dayKey(test.key.blockStart)}:${test.key.protocolId.name}:${test.round}:${test.part.name}'),
+            onPressed: test.gate?.status != TestDayStatus.ready
+                ? null
+                : () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => TestModeScreen(
+                            date: date,
+                            round: test.round,
+                            part: test.part,
+                            scheduleKey: test.key))),
+            child: Text(
+                'Abrir test ${test.round} de ${test.part == TestPart.torso ? 'torso' : 'piernas'}')),
+      ],
+    ]);
+  }
+}
+
 /// Pantalla de entrada: qué toca hoy, cómo voy y cómo registrarlo rápido.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -127,6 +209,7 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 const ActiveSessionBanner(),
                 KneeStairsAlert(date: today),
+                CollidingTestAgenda(date: today),
                 UpdateBanner(
                   onOpenSettings: () => Navigator.push(
                       context,
@@ -533,7 +616,8 @@ class _StartButtons extends ConsumerWidget {
         ] else if (d.planBAdvice.chainSuppressedByGreenMorning) ...[
           // §16.24: con la mañana bien (escaleras y pulso anotados), la cadena
           // sola no saca el Plan B; queda una nota.
-          Text('Piernas con varios días intensos, pero la mañana salió bien: hoy sin Plan B.',
+          Text(
+              'Piernas con varios días intensos, pero la mañana salió bien: hoy sin Plan B.',
               style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 8),
         ],
@@ -664,7 +748,9 @@ class _PlanBCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Plan B: solo torso', style: text.titleSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
+          Text('Plan B: solo torso',
+              style: text.titleSmall
+                  ?.copyWith(color: color, fontWeight: FontWeight.w800)),
           for (final why in reasons) Text('• $why', style: text.bodySmall),
           if (dashboard.planBAdvice.unknownDays.isNotEmpty)
             Text(
@@ -1216,12 +1302,14 @@ class _SleepLine extends ConsumerWidget {
 
   /// Tocar la noche anotada la edita (plan 040): antes la borraba sin
   /// preguntar. Eliminar sigue disponible, con confirmación.
-  Future<void> _edit(BuildContext context, WidgetRef ref, SleepDetail detail) async {
+  Future<void> _edit(
+      BuildContext context, WidgetRef ref, SleepDetail detail) async {
     final edit = await editSleep(context, day: date, initial: detail);
     if (edit == null || !context.mounted) return;
     final repo = ref.read(sleepRepositoryProvider);
     if (edit.delete) {
-      await guarded(context, () => repo.remove(date), ok: 'Sueño de anoche eliminado');
+      await guarded(context, () => repo.remove(date),
+          ok: 'Sueño de anoche eliminado');
       return;
     }
     await guarded(
@@ -1230,7 +1318,8 @@ class _SleepLine extends ConsumerWidget {
           hours: edit.hours,
           start: edit.start,
           wake: edit.wake,
-          source: sleepSourceAfterEdit(detail.source, fromClock: edit.fromClock),
+          source:
+              sleepSourceAfterEdit(detail.source, fromClock: edit.fromClock),
           note: edit.note),
       ok: 'Sueño de anoche actualizado',
     );

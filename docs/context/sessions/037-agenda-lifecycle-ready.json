@@ -1,0 +1,7 @@
+{
+  "lib/features/home/home_screen.dart": "2a7510f2c397ce3da43116691cf2bfb86898b3b50a7ca710abd4eef5c5a74de4",
+  "test/data/proposal_tracking_test.dart": "0a632aa1c18c162399d48d26529137eccf2f9078a313d6171fe5de235bebfc39",
+  "test/data/release121_contracts_test.dart": "288ec923e1ddd351ee3a0d009bc4f2e597a0fa5973cc35bea2104962abbcc49a",
+  "test/ui/readiness_home_test.dart": "6a45ea796caa1c3404e89f3329807546d5973e267224072776dc46bc0d87cde0",
+  "test/ui/plan037_colliding_agenda_test.dart": "8240e0c4919a7eb25fe13558886638dc9e5ef18c8feee0e72b7d1820b9e9bbe7"
+}

@@ -1,0 +1,4 @@
+Formatted lib/features/home/home_screen.dart
+Formatted test/ui/plan037_colliding_agenda_test.dart
+Formatted 3 files (2 changed) in 0.60 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T224916113-18084-4f88f0cc88f3480c98e4679594fcc5a0.json

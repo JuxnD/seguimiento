@@ -1,3 +1,5 @@
+**037 DRAFT funcional048:** integración local de commits aprobados en sesión037, source034 en R1root; nuevas guías035 diferidas. [Contrato, conflictos y gates](sessions/2026-10-13-037-functional-integration.md). Sin entregaAPK todavía.
+
 # Índice de contexto
 
 **044 test-only, pendiente revisión root:** harness UI de equipo con IO real y

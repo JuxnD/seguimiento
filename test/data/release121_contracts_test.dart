@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:seguimiento/data/local_flags.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:seguimiento/data/active_session_store.dart';
@@ -35,8 +36,12 @@ void main() {
   late TrainingRepository training;
   late LadderRepository ladders;
   late FitnessTestRepository tests;
+  late Directory flagsDir;
+  late LocalFlags flags;
   DateTime day(int n) => DateTime(2026, 10, n);
   setUp(() async {
+    flagsDir = Directory.systemTemp.createTempSync('release121-flags');
+    flags = LocalFlags(File('${flagsDir.path}/flags.json'));
     db = openInMemoryDatabase();
     final exercises = ExerciseRepository(db);
     plan = PlanRepository(db, exercises);
@@ -46,7 +51,11 @@ void main() {
     await seedIfEmpty(db, plan);
     await activatePlanV31(db, plan, day(12));
   });
-  tearDown(() => db.close());
+  tearDown(() async {
+    await db.close();
+    if (flags.file.existsSync()) flags.file.deleteSync();
+    flagsDir.deleteSync();
+  });
 
   test('A1: una prueba guardada no equivale a test completo', () async {
     await tests.save(
@@ -55,7 +64,8 @@ void main() {
         part: TestPart.torso,
         totalSec: 60,
         results: const [TestResult(round: 1, item: 'pullup', value: 12)]);
-    expect(await tests.done(1, TestPart.torso), isFalse, reason: 'Faltan once pruebas: debe poder continuarse el test');
+    expect(await tests.done(1, TestPart.torso), isFalse,
+        reason: 'Faltan once pruebas: debe poder continuarse el test');
   });
 
   test('A2: pruebas de piernas no sustituyen la sesión normal', () async {
@@ -64,10 +74,17 @@ void main() {
         for (final side in item.perSide ? ['I', 'D'] : <String?>[null])
           TestResult(round: 1, item: item.id, side: side, value: 10),
     ];
-    await tests.save(date: day(14), round: 1, part: TestPart.piernas, totalSec: 600, results: results);
-    final dashboard = DashboardRepository(db, plan, NutritionRepository(db), ProfileRepository(db));
+    await tests.save(
+        date: day(14),
+        round: 1,
+        part: TestPart.piernas,
+        totalSec: 600,
+        results: results);
+    final dashboard = DashboardRepository(
+        db, plan, NutritionRepository(db), ProfileRepository(db));
     expect((await dashboard.today(now: day(14))).trained, isFalse,
-        reason: 'El traspaso exige la sesión de piernas después de sus pruebas');
+        reason:
+            'El traspaso exige la sesión de piernas después de sus pruebas');
   });
 
   test('A3: valores no finitos no llegan a resultados persistidos', () async {
@@ -83,20 +100,27 @@ void main() {
       // Rechazar antes de escribir satisface este contrato.
     }
     expect((await tests.all()).every((r) => r.value.isFinite), isTrue,
-        reason: 'La tabla/dosis convierte valores a entero y no puede mostrar infinito');
+        reason:
+            'La tabla/dosis convierte valores a entero y no puede mostrar infinito');
   });
 
   test('A4: un solo lado no determina el lado más débil', () {
-    expect(testValue(const [TestResult(round: 1, item: 'one_arm_pushup', side: 'I', value: 10)], 1, 'one_arm_pushup'),
+    expect(
+        testValue(const [
+          TestResult(round: 1, item: 'one_arm_pushup', side: 'I', value: 10)
+        ], 1, 'one_arm_pushup'),
         isNull,
         reason: 'El lado D sigue sin medir');
   });
 
-  test('A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja', () async {
+  test(
+      'A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja',
+      () async {
     await ladders.setStep(dragonFlagLadder, 2, day(12));
     final view = (await plan.dayFor(day(19)))!;
     final v3 = await training.blockDay(view, day(19));
-    final original = await training.withV31Blocks(view.day, day(19), v3, planche: false);
+    final original =
+        await training.withV31Blocks(view.day, day(19), v3, planche: false);
     final dir = Directory.systemTemp.createTempSync('guided-121');
     try {
       final store = ActiveSessionStore(File('${dir.path}/session.json'));
@@ -109,16 +133,26 @@ void main() {
           index: 5,
           effectiveDay: freezeGuidedDay(original),
           lumbar: [dragonFlagLadder.id]));
-      await ladders.lumbar(dragonFlagLadder, day(19), eventKey: started.toIso8601String());
-      final reopened = await ActiveSessionStore(store.file).load() as GuidedSnapshot;
+      await ladders.lumbar(dragonFlagLadder, day(19),
+          eventKey: started.toIso8601String());
+      final reopened =
+          await ActiveSessionStore(store.file).load() as GuidedSnapshot;
       expect(reopened.index, 5);
       expect(reopened.lumbar, [dragonFlagLadder.id]);
       final resumed = thawGuidedDay(reopened.effectiveDay!);
-      expect(resumed.exercises.where((e) => e.block == ladderBlock).map((e) => e.name), ['Vela']);
-      expect(freezeGuidedDay(resumed), freezeGuidedDay(original));
-      final next = await training.withV31Blocks(view.day, day(19), v3, planche: false);
       expect(
-          next.exercises.where((e) => e.block == ladderBlock).map((e) => e.name), ['Encogimiento inverso', hollowHold]);
+          resumed.exercises
+              .where((e) => e.block == ladderBlock)
+              .map((e) => e.name),
+          ['Vela']);
+      expect(freezeGuidedDay(resumed), freezeGuidedDay(original));
+      final next =
+          await training.withV31Blocks(view.day, day(19), v3, planche: false);
+      expect(
+          next.exercises
+              .where((e) => e.block == ladderBlock)
+              .map((e) => e.name),
+          ['Encogimiento inverso', hollowHold]);
     } finally {
       dir.deleteSync(recursive: true);
     }
@@ -128,29 +162,45 @@ void main() {
     Future<void> saveCore(int date) => training.save(SessionDraft(
           date: day(date),
           type: SessionType.trenSuperior,
+          techniqueOk: true,
+          fullRange: true,
+          recoveryOk: true,
           sets: [
-            for (var i = 0; i < 3; i++) SetDraft(exercise: 'Encogimiento inverso', reps: 12),
-            for (var i = 0; i < 3; i++) SetDraft(exercise: hollowHold, reps: 40),
+            for (var i = 0; i < 3; i++)
+              SetDraft(exercise: 'Encogimiento inverso', reps: 12),
+            for (var i = 0; i < 3; i++)
+              SetDraft(exercise: hollowHold, reps: 40),
           ],
         ));
     await saveCore(19);
     final container = ProviderContainer(overrides: [
       databaseProvider.overrideWithValue(db),
+      localFlagsProvider.overrideWithValue(flags),
       todayProvider.overrideWith(_FixedToday.new),
     ]);
     final subscription = container.listen(ladderAdviceProvider, (_, __) {});
     try {
-      expect((await container.read(ladderAdviceProvider.future))[dragonFlagLadder.id]!.canStepUp, isFalse);
+      expect(
+          (await container
+                  .read(ladderAdviceProvider.future))[dragonFlagLadder.id]!
+              .canStepUp,
+          isFalse);
       final refreshed = Completer<void>();
       final sub2 = container.listen(ladderAdviceProvider, (_, next) {
-        if (next.valueOrNull?[dragonFlagLadder.id]?.canStepUp == true && !refreshed.isCompleted) refreshed.complete();
+        if (next.valueOrNull?[dragonFlagLadder.id]?.canStepUp == true &&
+            !refreshed.isCompleted) refreshed.complete();
       });
       await saveCore(26);
       await refreshed.future.timeout(const Duration(seconds: 3));
       sub2.close();
-      expect((await ladders.advice(dragonFlagLadder, day(26))).canStepUp, isTrue,
+      expect(
+          (await ladders.advice(dragonFlagLadder, day(26))).canStepUp, isTrue,
           reason: 'Control positivo de datos: ya cumple las dos sesiones');
-      expect((await container.read(ladderAdviceProvider.future))[dragonFlagLadder.id]!.canStepUp, isTrue,
+      expect(
+          (await container
+                  .read(ladderAdviceProvider.future))[dragonFlagLadder.id]!
+              .canStepUp,
+          isTrue,
           reason: 'Hoy/Cuerpo deben mostrar el nuevo consejo sin reiniciar');
     } finally {
       subscription.close();
@@ -164,29 +214,66 @@ void main() {
             TestResult(round: round, item: t.id, value: 0, side: side),
       ];
 
-  test('Test completo cero sustituye tiron lunes, nunca Cindy viernes', () async {
+  test('Test completo cero sustituye tiron lunes, nunca Cindy viernes',
+      () async {
     await tests.save(
-        date: day(12), round: 1, part: TestPart.torso, totalSec: 3600, results: complete(1, TestPart.torso));
-    final dashboard = DashboardRepository(db, plan, NutritionRepository(db), ProfileRepository(db));
+        date: day(12),
+        round: 1,
+        part: TestPart.torso,
+        blockStart: day(12),
+        totalSec: 3600,
+        results: complete(1, TestPart.torso));
+    final dashboard = DashboardRepository(
+        db, plan, NutritionRepository(db), ProfileRepository(db));
     expect(await tests.status(1, TestPart.torso), TestStatus.complete);
     expect((await dashboard.today(now: day(12))).trained, isTrue);
     await tests.save(
         date: DateTime(2026, 12, 11),
+        blockStart: day(12),
         round: 3,
         part: TestPart.torso,
         totalSec: 3600,
         results: complete(3, TestPart.torso));
-    expect((await dashboard.today(now: DateTime(2026, 12, 11))).trained, isFalse);
+    expect(
+        (await dashboard.today(now: DateTime(2026, 12, 11))).trained, isFalse);
     final sessions = await db.select(db.sessions).get();
-    expect(sessions.every((s) => s.totalSec == 0), isTrue, reason: 'introducir datos no mide esfuerzo');
+    expect(sessions.every((s) => s.totalSec == 0), isTrue,
+        reason: 'introducir datos no mide esfuerzo');
+  });
+
+  test(
+      'NULL or another block header never completes the typed agenda; zero remains recorded',
+      () async {
+    final dashboard = DashboardRepository(
+        db, plan, NutritionRepository(db), ProfileRepository(db));
+    for (final start in [null, DateTime(2026, 9, 28)]) {
+      await tests.save(
+          date: day(12),
+          round: 1,
+          part: TestPart.torso,
+          blockStart: start,
+          totalSec: 0,
+          results: complete(1, TestPart.torso));
+      expect(await tests.status(1, TestPart.torso), TestStatus.complete,
+          reason: 'zero measurements remain visible');
+      expect((await dashboard.today(now: day(12))).trained, isFalse,
+          reason: 'identity is not inferred from a date or round');
+    }
   });
 
   for (final testFirst in [true, false]) {
-    test('piernas test y entrenamiento en ambos ordenes: testFirst=$testFirst', () async {
-      final dashboard = DashboardRepository(db, plan, NutritionRepository(db), ProfileRepository(db));
+    test('piernas test y entrenamiento en ambos ordenes: testFirst=$testFirst',
+        () async {
+      final dashboard = DashboardRepository(
+          db, plan, NutritionRepository(db), ProfileRepository(db));
       Future<void> saveTest() => tests.save(
-          date: day(14), round: 1, part: TestPart.piernas, totalSec: 0, results: complete(1, TestPart.piernas));
-      Future<void> saveTraining() => training.save(SessionDraft(date: day(14), type: SessionType.piernas));
+          date: day(14),
+          round: 1,
+          part: TestPart.piernas,
+          totalSec: 0,
+          results: complete(1, TestPart.piernas));
+      Future<void> saveTraining() =>
+          training.save(SessionDraft(date: day(14), type: SessionType.piernas));
       if (testFirst) {
         await saveTest();
         expect((await dashboard.today(now: day(14))).trained, isFalse);
@@ -203,7 +290,13 @@ void main() {
     });
   }
 
-  for (final value in [double.nan, double.infinity, double.negativeInfinity, -1.0, 1.5]) {
+  for (final value in [
+    double.nan,
+    double.infinity,
+    double.negativeInfinity,
+    -1.0,
+    1.5
+  ]) {
     test('rechazo atomico reps $value conserva resultado anterior', () async {
       await tests.save(
           date: day(12),
@@ -212,26 +305,41 @@ void main() {
           totalSec: 0,
           results: const [TestResult(round: 1, item: 'pullup', value: 12)]);
       expect(
-          () => tests.save(date: day(12), round: 1, part: TestPart.torso, totalSec: 0, results: [
-                const TestResult(round: 1, item: 'dips', value: 5),
-                TestResult(round: 1, item: 'pullup', value: value)
-              ]),
+          () => tests.save(
+                  date: day(12),
+                  round: 1,
+                  part: TestPart.torso,
+                  totalSec: 0,
+                  results: [
+                    const TestResult(round: 1, item: 'dips', value: 5),
+                    TestResult(round: 1, item: 'pullup', value: value)
+                  ]),
           throwsFormatException);
       expect((await tests.all()).single.value, 12);
       expect(await db.select(db.sessions).get(), hasLength(1));
     });
   }
-  test('rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos', () async {
+  test('rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos',
+      () async {
     for (final rows in [
       <TestResult>[],
       [const TestResult(round: 1, item: 'unknown', value: 2)],
       [const TestResult(round: 1, item: 'pullup', side: 'I', value: 2)],
       [const TestResult(round: 1, item: 'one_arm_pushup', value: 2)],
       [const TestResult(round: 2, item: 'pullup', value: 2)],
-      [const TestResult(round: 1, item: 'pullup', value: 2), const TestResult(round: 1, item: 'pullup', value: 3)],
+      [
+        const TestResult(round: 1, item: 'pullup', value: 2),
+        const TestResult(round: 1, item: 'pullup', value: 3)
+      ],
       [const TestResult(round: 1, item: 'broad_jump', value: 200)],
     ]) {
-      expect(() => tests.save(date: day(12), round: 1, part: TestPart.torso, totalSec: 0, results: rows),
+      expect(
+          () => tests.save(
+              date: day(12),
+              round: 1,
+              part: TestPart.torso,
+              totalSec: 0,
+              results: rows),
           throwsFormatException);
     }
     expect(await db.select(db.sessions).get(), isEmpty);
@@ -240,37 +348,80 @@ void main() {
         round: 1,
         part: TestPart.torso,
         totalSec: 0,
-        results: const [TestResult(round: 1, item: 'hollow_hold', value: 12.5)]);
+        results: const [
+          TestResult(round: 1, item: 'hollow_hold', value: 12.5)
+        ]);
     expect(testValue(await tests.all(), 1, 'hollow_hold'), 12.5);
     expect(formatTestValue(torsoTests.first, double.infinity), 'Inválido');
   });
 
-  test('reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio', () async {
+  test(
+      'reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio',
+      () async {
     final view = (await plan.dayFor(day(19)))!;
-    final old = await training.withV31Blocks(view.day, day(19), await training.blockDay(view, day(19)), planche: false);
+    final old = await training.withV31Blocks(
+        view.day, day(19), await training.blockDay(view, day(19)),
+        planche: false);
     final sets = [
-      for (var i = 0; i < 3; i++) SetDraft(exercise: 'Encogimiento inverso', reps: 12),
+      for (var i = 0; i < 3; i++)
+        SetDraft(exercise: 'Encogimiento inverso', reps: 12),
       for (var i = 0; i < 3; i++) SetDraft(exercise: hollowHold, reps: 40)
     ];
-    await training.save(SessionDraft(date: day(19), type: SessionType.trenSuperior, sets: sets));
+    await training.save(SessionDraft(
+        date: day(19),
+        type: SessionType.trenSuperior,
+        techniqueOk: true,
+        fullRange: true,
+        recoveryOk: true,
+        sets: sets));
     await ladders.setStep(dragonFlagLadder, 1, day(19));
     await training.save(SessionDraft(
-        date: day(19), type: SessionType.trenSuperior, sets: sets, coreEpochs: jsonEncode(old.coreEpochs)));
-    expect(await ladders.sessions(await ladders.state(dragonFlagLadder)), isEmpty);
-    final current =
-        await training.withV31Blocks(view.day, day(19), await training.blockDay(view, day(19)), planche: false);
+        date: day(19),
+        type: SessionType.trenSuperior,
+        techniqueOk: true,
+        fullRange: true,
+        recoveryOk: true,
+        sets: sets,
+        coreEpochs: jsonEncode(old.coreEpochs)));
+    expect(
+        await ladders.sessions(
+            await ladders.state(dragonFlagLadder, today: day(19)),
+            asOf: day(19)),
+        isEmpty);
+    final current = await training.withV31Blocks(
+        view.day, day(19), await training.blockDay(view, day(19)),
+        planche: false);
     await training.save(SessionDraft(
-        date: day(19), type: SessionType.trenSuperior, sets: sets, coreEpochs: jsonEncode(current.coreEpochs)));
-    expect(await ladders.sessions(await ladders.state(dragonFlagLadder)), hasLength(1));
-    expect((await ladders.advice(dragonFlagLadder, day(19))).canStepUp, isFalse);
+        date: day(19),
+        type: SessionType.trenSuperior,
+        techniqueOk: true,
+        fullRange: true,
+        recoveryOk: true,
+        sets: sets,
+        coreEpochs: jsonEncode(current.coreEpochs)));
+    expect(
+        await ladders.sessions(
+            await ladders.state(dragonFlagLadder, today: day(19)),
+            asOf: day(19)),
+        hasLength(1));
+    expect(
+        (await ladders.advice(dragonFlagLadder, day(19))).canStepUp, isFalse);
   });
 
-  test('lumbar durable idempotente con mismo evento y separado por sesion', () async {
+  test('lumbar durable idempotente con mismo evento y separado por sesion',
+      () async {
     await ladders.setStep(dragonFlagLadder, 3, day(12));
-    expect(await ladders.lumbar(dragonFlagLadder, day(19), eventKey: 'session-a'), 2);
-    expect(await LadderRepository(db).lumbar(dragonFlagLadder, day(19), eventKey: 'session-a'), 2);
+    expect(
+        await ladders.lumbar(dragonFlagLadder, day(19), eventKey: 'session-a'),
+        2);
+    expect(
+        await LadderRepository(db)
+            .lumbar(dragonFlagLadder, day(19), eventKey: 'session-a'),
+        2);
     expect((await ladders.state(dragonFlagLadder)).step, 2);
     expect(await ladders.lumbarFor('session-a'), [dragonFlagLadder.id]);
-    expect(await ladders.lumbar(dragonFlagLadder, day(19), eventKey: 'session-b'), 1);
+    expect(
+        await ladders.lumbar(dragonFlagLadder, day(19), eventKey: 'session-b'),
+        1);
   });
 }
