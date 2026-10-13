@@ -228,3 +228,7 @@ DOM vista real previa14°, no0 (consulta inicial root equivocada, corregida ante
 
 Tipado API terminal17:56UTC:2API PASS y analyze0. Junto controles9+legacy1 del bloque anterior acredita interfaz compatible, no cobertura de nuevas figuras. FIN/liberación publicado. Se conserva analyze16 anterior; ninguna aserción relajada.
 
+
+## Fase2 geométrica, 13oct18:24UTC
+111bases y11keys exportadas;32bases nuevas,79MVP hashes exactos. Rojo previo demuestra ausencia32/11. Rojo3D detectó deriva de rodillaNordic (resuelta con pivote existente) y renderer ignorando columna/respiración/pie. Nuevos campos opt-in, pie de detalle con talón/metatarso/dedos estables; Copenhague cadena cerrada y apoyos cama/codo, anillas con primitivas tube, rotación codo estable, sóleo antepié fijo y landingapoyo/vuelo.5guided PASS +30regresionesMVP/API/legacyPASS,analyze0 sobre064706a+formato. Parse65 y rojos funcionales preservados. Aún falta QA visual real de todas las figuras yvariantes; no implementacióncompleta ni cierre formal.
+

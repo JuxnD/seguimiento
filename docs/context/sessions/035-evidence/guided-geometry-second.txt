@@ -1,0 +1,8 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: guided figures keep bone lengths and finite reachable supports through every stage
+00:00 +1: guided independent world anchors stay fixed during demonstrated support phases
+00:00 +2: cat cow breathing and short foot change the rendered anatomy not only captions
+00:00 +3: local spine and bare foot anatomy preserve support and remain readable at phone size
+00:00 +4: physical variants retain their required world support and equipment contacts
+00:00 +5: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T182323465-28964-f6eb8bea098c496881d4dab7fc704d11.json

@@ -651,9 +651,9 @@ class Figure3DCatalog {
           hip: frame.hip,
           torso: frame.torso,
           gaze: frame.gaze,
-        spineBend: frame.spineBend,
-        breath: frame.breath,
-        footArch: frame.footArch,
+          spineBend: frame.spineBend,
+          breath: frame.breath,
+          footArch: frame.footArch,
           bodyZ: frame.bodyZ,
           bodyRoll: frame.bodyRoll,
           shoulderOffset: frame.shoulderOffset,
@@ -872,9 +872,9 @@ Skeleton2D solveKeyPose(KeyPose p, BodyDims d, {bool exactExtension = false}) {
       joints: j,
       torso: p.torso,
       gaze: p.gaze,
-        spineBend: p.spineBend,
-        breath: p.breath,
-        footArch: p.footArch,
+      spineBend: p.spineBend,
+      breath: p.breath,
+      footArch: p.footArch,
       ends: ends,
       grips: grips,
       limbPoses: p.limbs,
@@ -1463,7 +1463,8 @@ Map<String, V3> shortFootLandmarks(Body3D body, double activation, {String side 
 }
 
 V3 spineCenterline(Body3D body, BodyDims dims, double bend, double fraction) =>
-    body.p['hip']! + body.up * (dims.torso * fraction) +
+    body.p['hip']! +
+    body.up * (dims.torso * fraction) +
     body.front * (bend * math.sin(math.pi * fraction.clamp(0.0, 1.0)));
 
 /// Cámara con la que se pinta una figura en un lienzo de ese tamaño.
@@ -1480,7 +1481,9 @@ Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defa
       for (final point in foot.values) {
         for (final x in [-1.5, 1.5]) {
           for (final y in [-2.5, 1.0]) {
-            for (final z in [-2.0, 2.0]) { world.add(point + V3(x,y,z)); }
+            for (final z in [-2.0, 2.0]) {
+              world.add(point + V3(x, y, z));
+            }
           }
         }
       }
@@ -1891,7 +1894,7 @@ class _Scene {
       final s = _torsoAt(t);
       if (skel.spineBend != 0 || skel.breath != 0) {
         final expansion = skel.breath * math.pow(math.sin(math.pi * t.clamp(0.0, 1.0)), 2);
-        return spineCenterline(body,d,skel.spineBend,t) +
+        return spineCenterline(body, d, skel.spineBend, t) +
             fr * (s.o + (s.d + expansion) * math.cos(th)) +
             body.up.cross(body.front).unit * ((s.w + expansion) * math.sin(th));
       }
@@ -2040,17 +2043,17 @@ class _Scene {
     if (a == null || toe == null) return;
     if (side == 'near' && skel.footArch >= 0) {
       final landmarks = shortFootLandmarks(body, skel.footArch, side: side);
-      final forward = (toe-a).unit;
+      final forward = (toe - a).unit;
       final lateral = V3.zAxis * (fig.mirrored ? -1 : 1);
       final near = nearOf(a);
-      _capsule(landmarks['heel']!,landmarks['arch']!,.75,.85,_skin,near);
-      _capsule(landmarks['arch']!,landmarks['metatarsal']!,.85,.8,_skin,near);
-      _capsule(a - const V3(0,.4,0),landmarks['arch']!,.7,.65,_skin,near);
-      for(var digit=0;digit<5;digit++) {
-        final spread=lateral*((digit-2)*.38);
-        final start=landmarks['metatarsal']!+spread;
-        final end=landmarks['toe']!+spread-forward*(digit*.12);
-        _capsule(start,end,digit == 0 ? .28 : .22,digit == 0 ? .24 : .18,_skin,near);
+      _capsule(landmarks['heel']!, landmarks['arch']!, .75, .85, _skin, near);
+      _capsule(landmarks['arch']!, landmarks['metatarsal']!, .85, .8, _skin, near);
+      _capsule(a - const V3(0, .4, 0), landmarks['arch']!, .7, .65, _skin, near);
+      for (var digit = 0; digit < 5; digit++) {
+        final spread = lateral * ((digit - 2) * .38);
+        final start = landmarks['metatarsal']! + spread;
+        final end = landmarks['toe']! + spread - forward * (digit * .12);
+        _capsule(start, end, digit == 0 ? .28 : .22, digit == 0 ? .24 : .18, _skin, near);
       }
       return;
     }
