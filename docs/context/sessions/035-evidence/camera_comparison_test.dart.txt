@@ -26,6 +26,20 @@ void main() {
     }
     final a = now.forExercise('Dominadas')!;
     final b = old.forExercise('Dominadas')!;
+    final elbowProjection = <Map<String, Object?>>[];
+    for (final yaw in [0.0, a.initialYaw, 35.0, 90.0]) {
+      final camera = current.cameraFor(a, const ui.Size(320, 285), yaw: yaw, pitch: a.initialPitch);
+      for (final progress in [.35, .45, .5, .55, .65, .75]) {
+        final body = current.liftSkeleton(a.skeletonAt(progress), a);
+        final near = camera.project(body.p['nearElbow']!);
+        final far = camera.project(body.p['farElbow']!);
+        final diameter = 1.15 * (near.k + far.k); // Actual elbow capsule radii.
+        elbowProjection.add({'yaw': yaw, 'progress': progress,
+          'separationPx': (near.offset - far.offset).distance,
+          'combinedRadiusPx': diameter,
+          'separationRatio': (near.offset - far.offset).distance / diameter});
+      }
+    }
     final manifest = jsonDecode(File('build/qa/035/motion-batch2/manifest-5.json').readAsStringSync()) as List;
     final samples = manifest.single['samples'] as List;
     for (final sample in samples) {
@@ -62,6 +76,7 @@ void main() {
     File('docs/context/sessions/035-evidence/camera-comparison.json').writeAsStringSync(
       const JsonEncoder.withIndent('  ').convert({'oldSource': 'eef6e067b4a3487247be3d5523acb15bb4af930a',
         'currentProduct': '8a8c94fc496a498f393e0ddeae8cfe756923c085',
-        'cameraRows': rows, 'pullupWorldSamples': samples.length, 'pullupPixelPairs': pixelPairs}));
+        'cameraRows': rows, 'pullupWorldSamples': samples.length, 'pullupPixelPairs': pixelPairs,
+        'pullupInitialYaw': a.initialYaw, 'elbowProjection': elbowProjection}));
   });
 }
