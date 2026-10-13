@@ -1,0 +1,19 @@
+{
+  "sourceCommit": "8ef2df493ddbc12450618983894a24ec4bcb35f9",
+  "sourceFiles": {
+    "lib/ui/exercise_figure_3d.dart": {
+      "probePath": "build/qa/035/exercise_figure_3d_baseline.dart",
+      "normalizedSha256": "8c1eb84b13ecd543c9dec438765eb3e2732ef225f22ae52b39d753def01dc563"
+    },
+    "lib/domain/search.dart": {
+      "probePath": "build/qa/domain/search.dart",
+      "normalizedSha256": "73bdd7c91cf07e22d5145c882c4606ccbb77ec07a3a0bc08b4f75ea39301236b"
+    },
+    "assets/tecnica/figuras3d.json": {
+      "probePath": "build/qa/035/baseline-8ef2df4.json",
+      "normalizedSha256": "1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a"
+    }
+  },
+  "result": "1PASS_5FUNCTIONAL_FAILURES",
+  "log": "dart-baseline-8ef.txt"
+}

@@ -119,7 +119,8 @@ class LimbPose {
       this.pole,
       this.end3,
       this.reach3,
-      this.keepReachRadius = false});
+      this.keepReachRadius = false,
+      this.planarAngles = false});
 
   factory LimbPose.fromJson(Map<String, Object?> j) {
     final a = j['angles'] as List;
@@ -135,6 +136,7 @@ class LimbPose {
       end3: j['end3'] == null ? null : _vector(j['end3'] as List).unit,
       reach3: j['reach3'] == null ? null : _vector(j['reach3'] as List),
       keepReachRadius: j['keepReachRadius'] as bool? ?? false,
+      planarAngles: j['planarAngles'] as bool? ?? false,
     );
   }
 
@@ -156,6 +158,10 @@ class LimbPose {
 
   /// Reach is relative to the limb root, in body units. Opt-in spherical arc.
   final bool keepReachRadius;
+
+  /// Preserve authored sagittal angles instead of solving a free 3D grip.
+  /// Requires an unpinned arm and a hand in its shoulder's depth plane.
+  final bool planarAngles;
 }
 
 V3 _vector(List<Object?> values) => V3(_num(values[0]), _num(values[1]), _num(values[2]));
@@ -231,6 +237,38 @@ class FigureRegion {
   final double width;
 }
 
+/// An authored transition between adjacent poses. Legacy figures omit this.
+class FigureMotionStage {
+  FigureMotionStage(
+      {required this.label,
+      this.kind = 'interpolate',
+      this.ground = 'preserve',
+      this.contacts = const [],
+      this.part = '',
+      this.seconds = 2.4,
+      this.pivot}) {
+    if (!{'interpolate', 'hold', 'cut'}.contains(kind) ||
+        !{'preserve', 'flight'}.contains(ground) ||
+        !seconds.isFinite ||
+        seconds <= 0 ||
+        (ground == 'flight' && contacts.isNotEmpty)) {
+      throw const FormatException('Etapa de ilustración inválida');
+    }
+  }
+  factory FigureMotionStage.fromJson(Map<String, Object?> j) => FigureMotionStage(
+      label: j['label'] as String,
+      kind: j['kind'] as String? ?? 'interpolate',
+      ground: j['ground'] as String? ?? 'preserve',
+      contacts: (j['contacts'] as List? ?? const []).cast<String>(),
+      part: j['part'] as String? ?? '',
+      seconds: _num(j['seconds'], 2.4),
+      pivot: j['pivot'] == null ? null : _pt(j['pivot']));
+  final String label, kind, ground, part;
+  final List<String> contacts;
+  final double seconds;
+  final Offset? pivot;
+}
+
 class Figure3D {
   Figure3D({
     required this.name,
@@ -253,6 +291,7 @@ class Figure3D {
     this.continuous = true,
     this.mirrored = false,
     this.perSide = false,
+    this.motion = const [],
   });
 
   factory Figure3D.fromJson(Map<String, Object?> j, BodyDims dims) => Figure3D(
@@ -279,6 +318,9 @@ class Figure3D {
         focus: j['focus'] as String?,
         continuous: j['continuous'] as bool? ?? true,
         perSide: j['perSide'] as bool? ?? false,
+        motion: [
+          for (final m in j['motion'] as List? ?? const []) FigureMotionStage.fromJson(m as Map<String, Object?>)
+        ],
       );
 
   final String name;
@@ -308,6 +350,10 @@ class Figure3D {
   /// Variante que dibuja la figura: agarre ('prona') y si lleva lastre
   /// (mochila). null = vale para cualquiera.
   final bool continuous, mirrored, perSide;
+  final List<FigureMotionStage> motion;
+  bool get hasMotion => motion.isNotEmpty;
+  FigureMotionStage? stageAt(double progress) =>
+      !hasMotion ? null : motion[math.min((progress.clamp(0, 1) * (frames.length - 1)).floor(), motion.length - 1)];
   final String group;
   final String? focus;
   final String? variantGrip;
@@ -317,7 +363,9 @@ class Figure3D {
   /// sí: desde el catálogo se muestra la figura tal cual.
   bool matches({String? grip, bool? loaded}) {
     if (variantGrip case final g? when grip != null && gripKey(grip) != gripKey(g)) return false;
-    if (variantLoaded case final l? when loaded != null && loaded != l) return false;
+    if (variantLoaded case final l? when loaded != null && loaded != l) {
+      return false;
+    }
     return true;
   }
 
@@ -336,6 +384,9 @@ class Figure3D {
 
   /// Esqueleto en un punto del recorrido: 0 = primer momento, 1 = último.
   Skeleton2D skeletonAt(double progress) {
+    if (hasMotion && motion.length != frames.length - 1) {
+      throw const FormatException('Falta una etapa entre momentos');
+    }
     if (!continuous || frames.length == 1) {
       final key = _keys[(progress.clamp(0.0, 1.0) * (frames.length - 1)).round()];
       return key.bodyRoll.abs() > .001 ? key : _clearOfWall(key.grounded());
@@ -343,14 +394,32 @@ class Figure3D {
     final x = progress.clamp(0.0, 1.0) * (frames.length - 1);
     final i = math.min(x.floor(), frames.length - 2);
     final u = x - i;
-    final pose = lerpPose(this, frames[i], frames[i + 1], u);
+    final stage = hasMotion ? motion[i] : null;
+    if (stage?.kind == 'hold' || stage?.kind == 'cut') {
+      return _keys[u >= 1 ? i + 1 : i];
+    }
+    final pose = lerpPose(this, frames[i], frames[i + 1], u, pivot: stage?.pivot);
+    // Authored poses retain their world contacts and flight height. The
+    // legacy global grounding shortcut would erase take-off or slide hands.
+    if (stage != null) {
+      final solved = solveKeyPose(pose, dims);
+      for (final contact in stage.contacts) {
+        final start = _keys[i].joints[contact], current = solved.joints[contact];
+        if (start == null || current == null || (start - current).distance > .05) {
+          throw FormatException('Apoyo de etapa no conservado: $name/$i/$contact');
+        }
+      }
+      return solved;
+    }
     if (pose.bodyRoll.abs() > .001) return solveKeyPose(pose, dims);
     var s = _keepWallContact(solveKeyPose(pose, dims), i, u);
     // Si los dos momentos apoyan en el suelo, el intermedio también: la
     // interpolación no lo despega ni lo hunde. Con pivote (rodillas fijas)
     // el apoyo ya está resuelto.
     final la = _keys[i].lowest, lb = _keys[i + 1].lowest;
-    if (pivot == null && la > -3 && lb > -3) s = s.shiftedY(_lerp(la, lb, u) - s.lowest);
+    if (pivot == null && la > -3 && lb > -3) {
+      s = s.shiftedY(_lerp(la, lb, u) - s.lowest);
+    }
     return _clearOfWall(s.grounded());
   }
 
@@ -531,6 +600,7 @@ class Figure3DCatalog {
                       end3: entry.value.end3,
                       reach3: entry.value.reach3,
                       keepReachRadius: entry.value.keepReachRadius,
+                      planarAngles: entry.value.planarAngles,
                     )
           },
         )
@@ -555,6 +625,7 @@ class Figure3DCatalog {
         group: base.group,
         focus: base.focus,
         continuous: base.continuous,
+        motion: base.motion,
         mirrored: reflected,
         perSide: base.perSide);
   }
@@ -728,11 +799,11 @@ Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
 /// Momento intermedio entre dos clave. Se interpolan ángulos (los segmentos
 /// conservan su largo) y los apoyos comunes se sujetan con IK: las manos no
 /// se despegan de la barra.
-KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t) {
+KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t, {Offset? pivot}) {
   if (t <= 0) return a;
   if (t >= 1) return b;
   final Offset hip;
-  if (fig.pivot case final pv?) {
+  if ((pivot ?? fig.pivot) case final pv?) {
     final da = a.hip - pv, db = b.hip - pv;
     final ang = lerpAngle(_deg(da.direction), _deg(db.direction), t);
     hip = pv + _dir(ang) * _lerp(da.distance, db.distance, t);
@@ -781,6 +852,7 @@ KeyPose lerpPose(Figure3D fig, KeyPose a, KeyPose b, double t) {
               : V3.lerp(la.end3!, lb.end3!, t).unit,
       reach3: _interpolateReach(la, lb, t),
       keepReachRadius: la.keepReachRadius || lb.keepReachRadius,
+      planarAngles: la.planarAngles && lb.planarAngles,
     );
   }
   return KeyPose(
@@ -950,7 +1022,13 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
       final flex2 = _sagittalFlex((elbow2 - j['neck']!) / d.upperArm, fig.flex[arm] ?? 1);
       if (out2.distance < 0.6) out2 = -flex2;
       final pole = spec?.pole ?? (V3(out2.dx, out2.dy, 0).unit + V3(0, 0, sz * fig.elbowOut));
-      final e = ikJoint(sh, hand, d.upperArm, d.forearm, pole);
+      if (spec?.planarAngles == true &&
+          (spec!.reach3 != null || spec.pin != null || (hand.z-sh.z).abs()>1e-6)) {
+        throw const FormatException('planarAngles requires an unpinned shoulder-depth arm');
+      }
+      final e = spec?.planarAngles == true
+          ? V3.lift(elbow2, sh.z)
+          : ikJoint(sh, hand, d.upperArm, d.forearm, pole);
       p['${side}Elbow'] = e;
       p['${side}Hand'] = hand;
       // Cara flexora (bíceps): la del pliegue del codo en el plano de perfil.
@@ -1016,8 +1094,12 @@ Body3D _rollBody(Body3D original, Skeleton2D skeleton, Figure3D figure) {
         leg ? figure.dims.shin : figure.dims.forearm, spec.pole ?? direction(original.front));
     points['$side${leg ? 'Knee' : 'Elbow'}'] = mid;
     points['$side${leg ? 'Ankle' : 'Hand'}'] = end;
-    if (spec.end3 != null) endDir['$side${leg ? 'Foot' : 'Hand'}'] = spec.end3!.unit;
-    if (leg) points['${side}Toe'] = end + endDir['${side}Foot']! * figure.dims.foot;
+    if (spec.end3 != null) {
+      endDir['$side${leg ? 'Foot' : 'Hand'}'] = spec.end3!.unit;
+    }
+    if (leg) {
+      points['${side}Toe'] = end + endDir['${side}Foot']! * figure.dims.foot;
+    }
   }
   return Body3D(
       p: points,
@@ -1282,7 +1364,9 @@ Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defa
     world.addAll([h + V3(0, fig.dims.headRadius, 0), h - V3(0, fig.dims.headRadius, 0)]);
   }
   for (final prop in [...fig.props, for (final frame in fig.frames) ...?frame.props]) {
-    if (prop['type'] == 'bar') world.add(V3(_num(prop['x']), _num(prop['y']), 0));
+    if (prop['type'] == 'bar') {
+      world.add(V3(_num(prop['x']), _num(prop['y']), 0));
+    }
     if (prop['type'] == 'box') {
       final c = _vector(prop['center'] as List), extent = _vector(prop['size'] as List) * .5;
       for (final sign in [-1.0, 1.0]) {
@@ -1321,8 +1405,11 @@ class _Scene {
   final Camera3D cam;
   final Body3D body;
   final double progress;
-  List<Map<String, Object?>> get props =>
-      fig.frames[(progress.clamp(0, 1) * (fig.frames.length - 1)).round()].props ?? fig.props;
+  List<Map<String, Object?>> get props {
+    final key = progress.clamp(0, 1) * (fig.frames.length - 1);
+    final index = fig.stageAt(progress)?.kind == 'cut' ? key.floor() : key.round();
+    return fig.frames[index].props ?? fig.props;
+  }
 
   late final double _zHip = cam.depth(body.p['hip']!);
 
@@ -1596,7 +1683,9 @@ class _Scene {
   Path _anatomicLimb(V3 a, V3 b, double ra, double rb, String part, double near) {
     final pa = cam.project(a), pb = cam.project(b);
     final delta = pb.offset - pa.offset;
-    if (delta.distance < 1) return _capsule(a, b, ra, rb, _skin, near, outline: false);
+    if (delta.distance < 1) {
+      return _capsule(a, b, ra, rb, _skin, near, outline: false);
+    }
     final normal = Offset(-delta.dy, delta.dx) / delta.distance;
     final samples = <(double, double)>[
       (0, ra),
@@ -1909,7 +1998,9 @@ class _Scene {
     final r = 1.0 * cam.project(w).k;
     canvas.drawPath(hull, _shadePaint((h + t) / 2 + lit * r, (h + t) / 2 - lit * r, _skin, near));
     canvas.drawPath(hull, _outline(cam, near));
-    if (thumbFront) _capsule(thumbA, thumbB, 0.5, 0.42, _skin, near, outline: false);
+    if (thumbFront) {
+      _capsule(thumbA, thumbB, 0.5, 0.42, _skin, near, outline: false);
+    }
     // Cuatro dedos y pulgar diferenciados: el apoyo no parece un tubo.
     for (var i = 0; i < 4; i++) {
       final lateral = (i - 1.5) * .62;

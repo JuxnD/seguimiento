@@ -1,0 +1,40 @@
+test_active_and_passive_hang_are_different_postures (illustration_035_geometry_test.Geometry035.test_active_and_passive_hang_are_different_postures) ... ok
+test_burpee_separates_flight_and_landing (illustration_035_geometry_test.Geometry035.test_burpee_separates_flight_and_landing) ... FAIL
+test_carry_knees_share_forward_flexion (illustration_035_geometry_test.Geometry035.test_carry_knees_share_forward_flexion) ... ok
+test_curl_forearm_moves_in_front_of_elbow (illustration_035_geometry_test.Geometry035.test_curl_forearm_moves_in_front_of_elbow) ... ok
+test_fifa_cuts_between_parts_not_between_poses (illustration_035_geometry_test.Geometry035.test_fifa_cuts_between_parts_not_between_poses) ... FAIL
+test_requested_sequences_have_authored_phases (illustration_035_geometry_test.Geometry035.test_requested_sequences_have_authored_phases) ... FAIL
+test_straddle_reach_keeps_knees_straight (illustration_035_geometry_test.Geometry035.test_straddle_reach_keeps_knees_straight) ... ok
+test_vsit_has_entry_hold_and_exit_without_false_hand_support (illustration_035_geometry_test.Geometry035.test_vsit_has_entry_hold_and_exit_without_false_hand_support) ... ok
+
+======================================================================
+FAIL: test_burpee_separates_flight_and_landing (illustration_035_geometry_test.Geometry035.test_burpee_separates_flight_and_landing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 58, in test_burpee_separates_flight_and_landing
+    self.assertTrue(any(p.get('ground') == 'flight' for p in e.get('motion', [])))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_fifa_cuts_between_parts_not_between_poses (illustration_035_geometry_test.Geometry035.test_fifa_cuts_between_parts_not_between_poses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 64, in test_fifa_cuts_between_parts_not_between_poses
+    self.assertEqual(len(parts), 10)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 0 != 10
+
+======================================================================
+FAIL: test_requested_sequences_have_authored_phases (illustration_035_geometry_test.Geometry035.test_requested_sequences_have_authored_phases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 53, in test_requested_sequences_have_authored_phases
+    self.assertEqual(len(e.get('motion', [])), len(e['frames']) - 1, name)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : 90/90 de cadera
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.012s
+
+FAILED (failures=3)

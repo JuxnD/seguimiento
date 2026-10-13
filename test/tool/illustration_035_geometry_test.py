@@ -1,5 +1,7 @@
 """Independent geometry contracts for the owner's reported illustrations."""
 import math
+import json
+import hashlib
 from pathlib import Path
 import sys
 import unittest
@@ -45,6 +47,47 @@ class Geometry035(unittest.TestCase):
         poses = [{k:v for k,v in f.items() if k != 'caption'} for f in frames]
         self.assertNotEqual(poses[0], poses[1])
         self.assertNotIn('manos permanecen firmes', frames[-1]['caption'])
+
+    def test_requested_sequences_have_authored_phases(self):
+        for name in ('90/90 de cadera', 'Aceleración 10–20 m', 'Burpees',
+                     'Calentamiento tipo FIFA 11+', 'Barca / V-sit'):
+            e = catalog.generate(name)
+            self.assertEqual(len(e.get('motion', [])), len(e['frames']) - 1, name)
+            self.assertTrue(any(p['kind'] == 'interpolate' for p in e['motion']), name)
+
+    def test_burpee_separates_flight_and_landing(self):
+        e = catalog.generate('Burpees')
+        self.assertTrue(any(p.get('ground') == 'flight' for p in e.get('motion', [])))
+        self.assertTrue(any('Aterriz' in f['caption'] for f in e['frames']))
+
+    def test_fifa_cuts_between_parts_not_between_poses(self):
+        e = catalog.generate('Calentamiento tipo FIFA 11+')
+        parts = {p['part'] for p in e.get('motion', [])}
+        self.assertEqual(len(parts), 10)
+        self.assertEqual(sum(p['kind'] == 'cut' for p in e['motion']), 10)  # nine changes + explicit restart
+
+    def test_fifa_lateral_hop_authors_actual_travel_and_airborne_pose(self):
+        e = catalog.generate('Calentamiento tipo FIFA 11+')
+        indices = [i for i, stage in enumerate(e['motion'])
+                   if stage['part'] == '9' and stage['kind'] != 'cut']
+        frames = [e['frames'][i] for i in indices] + [e['frames'][indices[-1]+1]]
+        self.assertGreater(max(f.get('bodyZ', 0) for f in frames)-min(f.get('bodyZ', 0) for f in frames), 8)
+        self.assertLess(min(f['hip'][1] for f in frames), frames[0]['hip'][1]-5)
+
+    def test_unselected_asset_entries_are_unchanged(self):
+        root = Path(__file__).resolve().parents[2]
+        baseline = json.loads((root/'test/fixtures/illustration_035_baseline.json').read_text(encoding='utf-8'))['figures']
+        selected = {'90/90 de cadera','Aceleración 10–20 m','Barca / V-sit','Burpees',
+                    'Calentamiento tipo FIFA 11+','Carga abrazada al pecho','Carga de maleta con mochila',
+                    'Colgarse de la barra','Colgado pasivo','Curl con banda','Dragon flag','Dominadas',
+                    'Elevaciones en straddle','Negativo de dragon flag','Negativo de dragon flag a una pierna',
+                    'Negativo de dragon flag recogido','Vela'}
+        current = json.loads((root/'assets/tecnica/figuras3d.json').read_text(encoding='utf-8'))['figures']
+        self.assertEqual({f['name'] for f in current}, set(baseline))
+        for f in current:
+            if f['name'] in selected: continue
+            digest = hashlib.sha256(json.dumps(f,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+            self.assertEqual(digest,baseline[f['name']],f['name'])
 
 
 if __name__ == '__main__':

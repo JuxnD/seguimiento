@@ -1,0 +1,5 @@
+Analyzing seguimiento-035-ilustraciones...                      
+
+   info - Statements in a for should be enclosed in a block - test\ui\illustration_035_geometry_test.dart:63:41 - curly_braces_in_flow_control_structures
+
+1 issue found. (ran in 30.6s)

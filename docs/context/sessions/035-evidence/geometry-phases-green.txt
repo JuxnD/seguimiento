@@ -1,0 +1,14 @@
+test_active_and_passive_hang_are_different_postures (illustration_035_geometry_test.Geometry035.test_active_and_passive_hang_are_different_postures) ... ok
+test_burpee_separates_flight_and_landing (illustration_035_geometry_test.Geometry035.test_burpee_separates_flight_and_landing) ... ok
+test_carry_knees_share_forward_flexion (illustration_035_geometry_test.Geometry035.test_carry_knees_share_forward_flexion) ... ok
+test_curl_forearm_moves_in_front_of_elbow (illustration_035_geometry_test.Geometry035.test_curl_forearm_moves_in_front_of_elbow) ... ok
+test_fifa_cuts_between_parts_not_between_poses (illustration_035_geometry_test.Geometry035.test_fifa_cuts_between_parts_not_between_poses) ... ok
+test_requested_sequences_have_authored_phases (illustration_035_geometry_test.Geometry035.test_requested_sequences_have_authored_phases) ... ok
+test_straddle_reach_keeps_knees_straight (illustration_035_geometry_test.Geometry035.test_straddle_reach_keeps_knees_straight) ... ok
+test_unselected_asset_entries_are_unchanged (illustration_035_geometry_test.Geometry035.test_unselected_asset_entries_are_unchanged) ... ok
+test_vsit_has_entry_hold_and_exit_without_false_hand_support (illustration_035_geometry_test.Geometry035.test_vsit_has_entry_hold_and_exit_without_false_hand_support) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.168s
+
+OK

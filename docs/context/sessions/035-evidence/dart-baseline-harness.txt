@@ -1,0 +1,49 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/geometry_baseline_test.dart
+build/qa/035/exercise_figure_3d_baseline.dart:17:8: Error: Error when reading 'build/qa/domain/search.dart': El sistema no puede encontrar la ruta especificada.
+
+import '../domain/search.dart';
+       ^
+build/qa/035/exercise_figure_3d_baseline.dart:480:80: Error: Method not found: 'nameKey'.
+  Figure3DCatalog(List<Figure3D> figures) : _byKey = {for (final f in figures) nameKey(f.name): f};
+                                                                               ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:495:25: Error: The method 'nameKey' isn't defined for the class 'Figure3DCatalog'.
+ - 'Figure3DCatalog' is from 'build/qa/035/exercise_figure_3d_baseline.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'nameKey'.
+    final base = _byKey[nameKey(name)];
+                        ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:497:20: Error: The method 'nameKey' isn't defined for the class 'Figure3DCatalog'.
+ - 'Figure3DCatalog' is from 'build/qa/035/exercise_figure_3d_baseline.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'nameKey'.
+    final isPull = nameKey(name) == nameKey('Dominadas');
+                   ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:497:37: Error: The method 'nameKey' isn't defined for the class 'Figure3DCatalog'.
+ - 'Figure3DCatalog' is from 'build/qa/035/exercise_figure_3d_baseline.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'nameKey'.
+    final isPull = nameKey(name) == nameKey('Dominadas');
+                                    ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:501:11: Error: The method 'nameKey' isn't defined for the class 'Figure3DCatalog'.
+ - 'Figure3DCatalog' is from 'build/qa/035/exercise_figure_3d_baseline.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'nameKey'.
+          nameKey('Dominadas'),
+          ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:502:11: Error: The method 'nameKey' isn't defined for the class 'Figure3DCatalog'.
+ - 'Figure3DCatalog' is from 'build/qa/035/exercise_figure_3d_baseline.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'nameKey'.
+          nameKey('Fondos en barra'),
+          ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:503:11: Error: The method 'nameKey' isn't defined for the class 'Figure3DCatalog'.
+ - 'Figure3DCatalog' is from 'build/qa/035/exercise_figure_3d_baseline.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'nameKey'.
+          nameKey('Flexiones diamante'),
+          ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:504:20: Error: The method 'nameKey' isn't defined for the class 'Figure3DCatalog'.
+ - 'Figure3DCatalog' is from 'build/qa/035/exercise_figure_3d_baseline.dart'.
+Try correcting the name to the name of an existing method, or defining a method named 'nameKey'.
+        }.contains(nameKey(name));
+                   ^^^^^^^
+build/qa/035/exercise_figure_3d_baseline.dart:598:13: Error: Method not found: 'nameKey'.
+  final k = nameKey(grip);
+            ^^^^^^^
+00:00 +0 -1: loading C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/geometry_baseline_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/geometry_baseline_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/geometry_baseline_test.dart
+00:00 +0 -1: Some tests failed.

@@ -1,0 +1,15 @@
+Analyzing seguimiento-035-ilustraciones...                      
+
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d.dart:401:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d.dart:462:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d.dart:1202:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d.dart:1204:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d.dart:1496:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d.dart:1859:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d.dart:2236:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d_view.dart:130:5 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d_view.dart:290:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d_view.dart:305:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\ui\exercise_figure_3d_view.dart:560:7 - curly_braces_in_flow_control_structures
+
+11 issues found. (ran in 62.9s)

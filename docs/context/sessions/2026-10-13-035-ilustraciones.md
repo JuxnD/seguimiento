@@ -1,0 +1,83 @@
+# 035 · ilustraciones y movimiento · ejecución local en curso
+
+Autoridad: plan aprobado en `seguimiento-122-integracion/plans/035-ilustraciones-movimiento.md`.
+Worktree exclusivo `seguimiento-035-ilustraciones`, rama
+`JuxnD/035-ilustraciones-movimiento`, base `8ef2df4`. Sin APK, push, marca,
+esquema, datos personales ni cambios de dosis.
+
+## Evidencia disponible
+
+- `035-evidence/geometry-red.txt`: cinco defectos reproducidos contra el generador original.
+- `035-evidence/phases-red.txt`: falta de etapas explícitas; separado de los defectos geométricos.
+- `035-evidence/geometry-phases-green.txt`: nueve pruebas Python; caracterización del generador, no aceptación visual.
+- `035-evidence/dart-first.txt`: primera ronda real bajo lease035, nueve pasan y tres fallan.
+  Straddle falló realmente: palmas a −2.52 en lugar del contacto −0.75.
+  Los otros dos fallos fueron del arnés: MediaQuery sin tamaño posicionó los
+  controles fuera del viewport. No se cuentan como rojos del producto.
+- `035-evidence/analyze-first.txt`: un lint de llaves, corregido; pendiente repetir.
+- `035-evidence/dart-baseline-8ef.txt`: contra código y catálogo originales
+  8ef2df4, mismas seis pruebas geométricas: cinco fallos funcionales y una
+  prueba de continuidad de dominada aprobada. `baseline-manifest.json` vincula
+  fuentes, fixture y salida. El primer intento `dart-baseline-harness.txt`
+  falló por import relativo del arnés y no cuenta como rojo funcional.
+- `035-evidence/dart-round2.txt` y `dart-round3.txt`: 19 aprobadas y un fallo
+  de curl. La segunda detectó desplazamiento del codo (0.213); la tercera,
+  flexión artificial inicial (0.097) introducida por clamp de IK aun con los
+  ángulos rectos. No se relajó el oráculo. Corrección posterior opt-in
+  `planarAngles` conserva los segmentos angulares sin IK de agarre libre.
+- `035-evidence/analyze-round3.txt`: cero incidencias, exit0, antes de los
+  cambios posteriores de curl planar y selector FIFA (deben repetirse).
+- `035-evidence/generator-determinism.txt`: regeneración de79 figuras con
+  exit0 y SHA256 idéntico antes/después, anterior al ajuste posterior de
+  FIFA9. La determinación final debe repetirse con ese ajuste. El asset sólo
+  procede del generador.
+- `035-evidence/fifa-hop-red.txt` y su manifest: el candidato previo a
+  completar FIFA9 tenía desplazamiento lateral0, aunque decía salto. Rojo
+  funcional Python conservado (no se atribuye a un commit original).
+  Se autoró apoyo derecho, vuelo, apoyo izquierdo, vuelo y regreso, con
+  traslación lateral y alcances3D explícitos en ambas piernas/todas claves.
+  Diez verificaciones Python pasan después; falta mundo3D y revisión visual.
+
+## Selector FIFA pendiente de verificar
+
+Un control compartido entre inline y fullscreen selecciona las diez partes,
+muestra «Parte X de 10» y ofrece «Siguiente parte». Reproducir se limita a la
+parte seleccionada y se detiene al final; pausa/reanuda conserva fase.
+La navegación cambia directamente a la postura/equipo de la siguiente parte,
+sin interpolar el corte. Movimiento reducido permite selección manual.
+Las pruebas contrastan parte declarada con progreso real del painter, no sólo
+el texto. El rig, JSON y vista originales8ef y probe mínimo están aislados
+en `build/qa/035/` para reproducir la ausencia del selector y el estado que
+no se reinicia al cambiar figura. `fifa-baseline-manifest.json` conserva
+SHA de la vista, transformación única del import y fuente del probe.
+Ningún error de compilación o montaje se contará como rojo de producto.
+
+## Causas y decisiones locales
+
+- Cargas: flexión de rodilla lejana invertida en especificación angular.
+- Curl con banda: interpolación angular corta 90→−100 tomaba el recorrido
+  posterior. Se mantiene el codo estable y flexión por delante; no existe una
+  entrada separada «curl con barra» en el catálogo.
+- Straddle: alcance 3D de pierna menor que 28 producía flexión; ahora radio28.
+  Además, torso−65 y palma al suelo exigían más de19 de brazo. La postura de
+  straddle inclina el torso hacia delante (−50) sin alargar miembros ni cambiar
+  el suelo. Falta verificar corrección Dart y renderer real.
+- Colgado activo: elevación localizada del tronco, manos fijas y offset
+  escapular. Oráculo adicional conserva torso18; no alarga brazos.
+- Dominadas: muestreo1200 por agarre no reproduce salto geométrico del codo.
+  Esto NO refuta la superposición visible denunciada; queda revisión real
+  perfil/frente/35° con baseline y candidato antes de decidir corrección.
+- Etapas opt-in (`interpolate`, `hold`, `cut`) conservan poses de mundo,
+  contactos y vuelo. Cortes sólo entre partes y reinicio anunciado; negativos
+  no suben como repetición automática. El catálogo preserva79identidades.
+- Controles conservan offset/pose al pausar, reduced motion, ciclo de vida,
+  salida de pantalla por scroll y ruta desactivada mediante TickerMode.
+
+## Gates abiertos
+
+Verificar dirigidas corregidas, rojo Dart causal con fixture8ef, análisis,
+regresiones de soporte/geometría/legado; capturas reales en dos tandas acotadas,
+incluidos pares confundidos, continuidad visible de dominadas y etapas FIFA.
+Secuencia animada con renderer real si viable. Revisión root máximo dos ciclos.
+Fullsuite corresponde a integración final y aceptación visual corresponde al
+owner. Este recibo no declara implementación completa ni aceptación.

@@ -1,0 +1,55 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/geometry_baseline_test.dart
+00:00 +0: carry knees flex forward on both sides throughout the stride
+00:00 +0 -1: carry knees flex forward on both sides throughout the stride [E]
+  Expected: a value less than or equal to <0.01>
+    Actual: <1.7104009576813153>
+     Which: is not a value less than or equal to <0.01>
+  Carga abrazada al pecho/far/1
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  build\qa\035\geometry_baseline_test.dart 16:11      main.<fn>
+  
+00:00 +0 -1: band curl lifts hands in front of stable elbows
+00:00 +0 -2: band curl lifts hands in front of stable elbows [E]
+  Expected: a value greater than or equal to <0.08442740278286164>
+    Actual: <2.2655965784226034e-15>
+     Which: is not a value greater than or equal to <0.08442740278286164>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  build\qa\035\geometry_baseline_test.dart 28:9       main.<fn>
+  
+00:00 +0 -2: pull-up elbow path has no sudden IK-plane flip, in either grip
+00:00 +1 -2: straddle knees remain straight and palms remain on the floor during lift
+00:00 +1 -3: straddle knees remain straight and palms remain on the floor during lift [E]
+  Expected: a value greater than <0.999>
+    Actual: <0.6760204081632657>
+     Which: is not a value greater than <0.999>
+  sample0/near
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  build\qa\035\geometry_baseline_test.dart 58:9       main.<fn>
+  
+00:00 +1 -3: active hang changes the trunk locally, not hands or straight arm lengths
+00:00 +1 -4: active hang changes the trunk locally, not hands or straight arm lengths [E]
+  Expected: a value less than <-31.7>
+    Actual: <-31.2>
+     Which: is not a value less than <-31.7>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  build\qa\035\geometry_baseline_test.dart 71:7       main.<fn>
+  
+00:00 +1 -4: V-sit entry lifts feet, hold fixes gluteal support and leaves hands free
+00:00 +1 -5: V-sit entry lifts feet, hold fixes gluteal support and leaves hands free [E]
+  Expected: a value less than <-31.06014021782929>
+    Actual: <-21.06014021782929>
+     Which: is not a value less than <-31.06014021782929>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  build\qa\035\geometry_baseline_test.dart 86:5       main.<fn>
+  
+00:00 +1 -5: Some tests failed.

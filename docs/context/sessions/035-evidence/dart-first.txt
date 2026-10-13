@@ -1,0 +1,138 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart
+00:00 +0: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: pull-up elbow path has no sudden IK-plane flip, in either grip
+00:00 +1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: straddle knees remain straight and palms remain on the floor during lift
+00:00 +1 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: straddle knees remain straight and palms remain on the floor during lift [E]
+  Expected: a numeric value within <0.01> of <-0.75>
+    Actual: <-2.5199999999999996>
+     Which:  differs by <1.7699999999999996>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_035_geometry_test.dart 33:9    main.<fn>
+  
+00:00 +1 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: active hang changes the trunk locally, not hands or straight arm lengths
+00:00 +2 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: V-sit entry lifts feet, hold fixes gluteal support and leaves hands free
+00:01 +3 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: owner sequences are authored, with finite anatomy throughout every transition
+00:01 +4 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: declared fixed contacts stay fixed in world space, not just pixels
+00:01 +5 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: burpee flight stays above the floor; it is not grounded back to a jump pose
+00:01 +6 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: FIFA exposes ten parts and cuts only between the parts
+00:01 +7 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: authored playback is forward-only within a stride and a hold is still
+00:01 +8 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: timeline inverse preserves any selected intermediate pose
+00:01 +9 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: play starts at selected frame and pause resumes without restarting
+
+Warning: A call to tap() with finder "Found 1 widget with text "Movimiento": [
+  Text("Movimiento", dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+]" derived an Offset (Offset(680.2, 684.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(680.2, 684.0) is outside the bounds of the root of the render tree, Size(800.0, 600.0).
+The finder corresponds to this RenderBox: RenderParagraph#27673 relayoutBoundary=up28
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#3eb59(_ReusableRenderView#636fd), HitTestEntry<HitTestTarget>#97499(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:1933:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1784:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1032:18)
+#3      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart:26:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with text "Pausa": []" (used in a call to "tap()") could not find any
+matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:1884:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1784:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1032:18)
+#3      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart:30:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  play starts at selected frame and pause resumes without restarting
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +9 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: play starts at selected frame and pause resumes without restarting [E]
+  Test failed. See exception logs above.
+  The test description was: play starts at selected frame and pause resumes without restarting
+  
+00:03 +9 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: reduced motion stops playback and keeps manual frames available
+
+Warning: A call to tap() with finder "Found 1 widget with text "Movimiento": [
+  Text("Movimiento", dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+]" derived an Offset (Offset(680.2, 684.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(680.2, 684.0) is outside the bounds of the root of the render tree, Size(800.0, 600.0).
+The finder corresponds to this RenderBox: RenderParagraph#700b1 relayoutBoundary=up28
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#5d5ed(_ReusableRenderView#636fd), HitTestEntry<HitTestTarget>#51005(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:1933:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1784:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1032:18)
+#3      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart:37:37)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+
+Warning: A call to tap() with finder "Found 1 widget with type "ChoiceChip" that are ancestors of widget with text "Sostén" (ignoring all but first): [
+  ChoiceChip(dependencies: [MediaQuery, _InheritedTheme, _LocalizationsScope-[GlobalKey#eb343]]),
+]" derived an Offset (Offset(242.3, 684.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(242.3, 684.0) is outside the bounds of the root of the render tree, Size(800.0, 600.0).
+The finder corresponds to this RenderBox: RenderSemanticsAnnotations#e74ef relayoutBoundary=up16
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#7befd(_ReusableRenderView#636fd), HitTestEntry<HitTestTarget>#43f4c(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:1933:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1784:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1032:18)
+#3      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart:44:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: not <0.17>
+  Actual: <0.17>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart:45:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart line 45
+The test description was:
+  reduced motion stops playback and keeps manual frames available
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +9 -3: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: reduced motion stops playback and keeps manual frames available [E]
+  Test failed. See exception logs above.
+  The test description was: reduced motion stops playback and keeps manual frames available
+  
+00:03 +9 -3: Some tests failed.

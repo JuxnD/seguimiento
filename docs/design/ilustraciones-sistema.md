@@ -201,9 +201,22 @@ para crear una pose independiente del generador. `Figure3DPainter` dibuja el
 mismo rig en miniaturas, guía, movilidad, pantalla ampliada y capturas.
 
 La animación inicia sólo por acción del usuario: pausa de 0.6 s en momentos
-y transición de 2.4 s con suavizado cúbico, ida y vuelta. Cambiar la figura o
+y transición de 2.4 s con suavizado cúbico, ida y vuelta en figuras legadas.
+Las figuras con etapas035 declaran su propio recorrido hacia delante:
+`interpolate` para transiciones, `hold` para sostener, `cut` para cambios
+anunciados de ejercicio o reinicio. Los contactos conservan coordenadas de
+mundo; vuelo no se normaliza al suelo. No activar continuidad sin una
+secuencia y apoyos explícitos. El curl conserva ángulos sagitales mediante
+`planarAngles`, opt-in sólo para brazos sin pin y mano al plano del hombro;
+las demás figuras conservan la resolución histórica.
+
+Pausa/reanudar conserva pose y offset; salir del viewport o desactivar la
+ruta detiene la reproducción. FIFA ofrece diez partes en selector compartido
+entre visores: reproducir anima únicamente la seleccionada, detiene al final
+y «Siguiente parte» cambia directamente a la siguiente postura/equipo.
+Cambiar la figura o
 activar movimiento reducido detiene la reproducción. Recorrer momentos sigue
-disponible. Arrastrar gira la cámara; `Vista inicial`, `De perfil` y `Ver apoyos`
+disponible, así como la selección manual de partes. Arrastrar gira la cámara; `Vista inicial`, `De perfil` y `Ver apoyos`
 dan alternativas explícitas. El giro horizontal está limitado a ±180° y la
 inclinación a 0–85°. Las etiquetas semánticas incluyen ejercicio y momento.
 

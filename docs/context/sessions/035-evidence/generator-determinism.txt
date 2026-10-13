@@ -1,0 +1,6 @@
+command: python tool/figuras3d.py
+exit: 0
+before sha256: e4f2e40a7ba6a2d23f3fc0b3af9bf54c0431c94b41338d49529d8e55f682d480
+after sha256: e4f2e40a7ba6a2d23f3fc0b3af9bf54c0431c94b41338d49529d8e55f682d480
+identical: True
+79 figuras con especificación propia → C:\My Projects\seguimiento-035-ilustraciones\assets\tecnica\figuras3d.json

@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_fifa_lateral_hop_authors_actual_travel_and_airborne_pose (__main__.Geometry035.test_fifa_lateral_hop_authors_actual_travel_and_airborne_pose)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 74, in test_fifa_lateral_hop_authors_actual_travel_and_airborne_pose
+    self.assertGreater(max(f.get('bodyZ', 0) for f in frames)-min(f.get('bodyZ', 0) for f in frames), 8)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 not greater than 8
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+FAILED (failures=1)

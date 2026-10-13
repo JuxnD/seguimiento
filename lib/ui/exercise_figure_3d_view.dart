@@ -70,6 +70,133 @@ double loopProgress(double t, int keys, {double hold = 0.6, double move = 2.4}) 
   return 0;
 }
 
+/// Forward-only authored stages; legacy figures keep their existing loop.
+double figureMotionProgress(Figure3D figure, double seconds) {
+  if (!figure.hasMotion) return loopProgress(seconds, figure.frames.length);
+  final total = figure.motion.fold<double>(0, (sum, stage) => sum + stage.seconds);
+  var remaining = seconds % total;
+  for (var i = 0; i < figure.motion.length; i++) {
+    final stage = figure.motion[i];
+    if (remaining < stage.seconds) {
+      final t = remaining / stage.seconds;
+      // Progress still advances through holds/cuts so stage selection and
+      // the timeline stay consistent; skeletonAt owns their interpolation.
+      final eased = stage.kind == 'interpolate' ? t * t * (3 - 2 * t) : t;
+      return (i + eased) / figure.motion.length;
+    }
+    remaining -= stage.seconds;
+  }
+  return 0;
+}
+
+double figureMotionTime(Figure3D figure, double progress) {
+  if (figure.frames.length < 2) return 0;
+  if (!figure.hasMotion) {
+    final x = progress.clamp(0, 1) * (figure.frames.length - 1);
+    final index = math.min(x.floor(), figure.frames.length - 2);
+    final fraction = x - index;
+    final u =
+        fraction < .5 ? math.pow(fraction / 4, 1 / 3).toDouble() : 1 - math.pow((1 - fraction) / 4, 1 / 3).toDouble();
+    return .6 + index * 3 + u * 2.4;
+  }
+  final x = progress.clamp(0, 1) * figure.motion.length;
+  final index = math.min(x.floor(), figure.motion.length - 1);
+  var fraction = x - index;
+  if (figure.motion[index].kind == 'interpolate') {
+    var lo = 0.0, hi = 1.0;
+    for (var i = 0; i < 40; i++) {
+      final mid = (lo + hi) / 2;
+      if (mid * mid * (3 - 2 * mid) < fraction) {
+        lo = mid;
+      } else {
+        hi = mid;
+      }
+    }
+    fraction = (lo + hi) / 2;
+  }
+  return figure.motion.take(index).fold<double>(0, (sum, stage) => sum + stage.seconds) +
+      fraction * figure.motion[index].seconds;
+}
+
+String figureMotionCaption(Figure3D figure, double progress) {
+  final stage = figure.stageAt(progress);
+  if (stage != null) {
+    return '${stage.part.isEmpty ? '' : 'Parte ${stage.part} · '}${stage.label}';
+  }
+  return figure.frames[(progress * (figure.frames.length - 1)).round()].caption;
+}
+
+/// A part is bounded by its own authored stages. The intervening cut belongs
+/// to navigation, never to playback of the selected exercise.
+class FigureMotionPart {
+  const FigureMotionPart(this.label, this.start, this.end, this.startTime, this.endTime);
+  final String label;
+  final double start, end, startTime, endTime;
+
+  double progressAt(Figure3D figure, double time) => time <= startTime
+      ? start
+      : figureMotionProgress(figure, time.clamp(startTime, endTime - 1e-7));
+}
+
+List<FigureMotionPart> figureMotionParts(Figure3D figure) {
+  final parts = <FigureMotionPart>[];
+  var time = 0.0;
+  for (var i = 0; i < figure.motion.length;) {
+    final stage = figure.motion[i];
+    if (stage.part.isEmpty || stage.kind == 'cut') {
+      time += stage.seconds;
+      i++;
+      continue;
+    }
+    final first = i;
+    final startTime = time;
+    while (i < figure.motion.length && figure.motion[i].part == stage.part && figure.motion[i].kind != 'cut') {
+      time += figure.motion[i].seconds;
+      i++;
+    }
+    final label = figure.frames[first].caption.split(' · ').first;
+    parts.add(FigureMotionPart(label, first / figure.motion.length, i / figure.motion.length, startTime, time));
+  }
+  return parts;
+}
+
+class _FigurePartControls extends StatelessWidget {
+  const _FigurePartControls({required this.parts, required this.selected, required this.onSelected});
+  final List<FigureMotionPart> parts;
+  final int selected;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Semantics(liveRegion: true,
+            child: Text('Parte ${selected + 1} de ${parts.length}', textAlign: TextAlign.center)),
+          Semantics(
+            label: 'Seleccionar parte del calentamiento',
+            child: DropdownButton<int>(
+              isExpanded: true,
+              itemHeight: null,
+              value: selected,
+              items: [
+                for (var i = 0; i < parts.length; i++)
+                  DropdownMenuItem(value: i, child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8), child: Text(parts[i].label))),
+              ],
+              onChanged: (index) {
+                if (index != null) { onSelected(index); }
+              },
+            ),
+          ),
+          TextButton.icon(
+            onPressed: selected + 1 < parts.length ? () => onSelected(selected + 1) : null,
+            icon: const Icon(Icons.skip_next),
+            label: const Text('Siguiente parte'),
+          ),
+        ]),
+      );
+}
+
 /// Figura de técnica: el maniquí 3D si el ejercicio lo tiene y enseña la
 /// variante que pide la sesión; si no, las figuras planas de siempre.
 class ExerciseFigureView extends ConsumerWidget {
@@ -115,27 +242,65 @@ class Figure3DMoments extends StatefulWidget {
   State<Figure3DMoments> createState() => _Figure3DMomentsState();
 }
 
-class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProviderStateMixin {
+class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final _pages = PageController(viewportFraction: 0.94);
 
   /// Reloj de la animación: solo se usa el tiempo transcurrido.
   late final AnimationController _ticker;
   var _page = 0;
   var _playing = false;
+  var _showingMotion = false;
+  double _time = 0;
+  int _partIndex = 0;
+  ScrollPosition? _scrollPosition;
+
+  void _checkVisibility() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_playing || !mounted) return;
+      final box = context.findRenderObject();
+      if (box is! RenderBox || !box.hasSize) return;
+      final bounds = box.localToGlobal(Offset.zero) & box.size;
+      if (!bounds.overlaps(Offset.zero & MediaQuery.sizeOf(context))) _toggle();
+    });
+  }
 
   Figure3D get fig => widget.figure;
   int get _n => fig.frames.length;
   double _keyProgress(int i) => _n < 2 ? 0 : i / (_n - 1);
 
   /// Punto del recorrido que se ve ahora en la animación.
-  double get _loopProgress => loopProgress((_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6, _n);
+  double get _clock => _time + (_playing ? (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6 : 0);
+  double get _loopProgress {
+    final parts = figureMotionParts(fig);
+    return parts.isEmpty ? figureMotionProgress(fig, _clock) : parts[_partIndex].progressAt(fig, _clock);
+  }
+
+  void _stopAtPartEnd() {
+    final parts = figureMotionParts(fig);
+    if (_playing && parts.isNotEmpty && _clock >= parts[_partIndex].endTime) {
+      _ticker.stop();
+      setState(() { _time = parts[_partIndex].endTime; _playing = false; });
+    }
+  }
+
+  void _selectPart(int index) {
+    _ticker.stop();
+    setState(() {
+      _playing = false;
+      _showingMotion = true;
+      _partIndex = index;
+      _time = figureMotionParts(fig)[index].startTime;
+    });
+  }
 
   String _pageCaption(int i) => '${i + 1}/$_n · ${fig.frames[i].caption}';
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _ticker = AnimationController(vsync: this, duration: const Duration(hours: 1));
+    _ticker.addListener(_stopAtPartEnd);
   }
 
   @override
@@ -144,7 +309,10 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
     if (oldWidget.figure != fig) {
       _ticker.stop();
       _playing = false;
+      _showingMotion = false;
       _page = 0;
+      _time = 0;
+      _partIndex = 0;
       if (_pages.hasClients) _pages.jumpToPage(0);
     }
   }
@@ -152,7 +320,14 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (MediaQuery.disableAnimationsOf(context) && _playing) {
+    final position = Scrollable.maybeOf(context)?.position;
+    if (position != _scrollPosition) {
+      _scrollPosition?.removeListener(_checkVisibility);
+      _scrollPosition = position;
+      position?.addListener(_checkVisibility);
+    }
+    if ((MediaQuery.disableAnimationsOf(context) || !TickerMode.of(context)) && _playing) {
+      _time += (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6;
       _ticker.stop();
       _playing = false;
     }
@@ -180,6 +355,8 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scrollPosition?.removeListener(_checkVisibility);
     _pages.dispose();
     _ticker.dispose();
     super.dispose();
@@ -187,23 +364,59 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
 
   void _toggle() {
     if (!fig.continuous || MediaQuery.disableAnimationsOf(context)) return;
-    setState(() => _playing = !_playing);
     if (_playing) {
-      _ticker.repeat();
+      _time += (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6;
+    } else {
+      final parts = figureMotionParts(fig);
+      if (parts.isNotEmpty && _time >= parts[_partIndex].endTime) {
+        _time = parts[_partIndex].startTime;
+      }
+    }
+    setState(() {
+      _playing = !_playing;
+      _showingMotion = true;
+    });
+    if (_playing) {
+      _ticker.forward(from: 0);
     } else {
       _ticker.stop();
     }
   }
 
-  void _open(double progress) => Navigator.of(context).push(MaterialPageRoute<void>(
-        fullscreenDialog: true,
-        builder: (_) => Figure3DFullScreen(figure: fig, initialProgress: progress),
-      ));
+  void _showMoments() {
+    final progress = _loopProgress;
+    if (_playing) {
+      _time += (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6;
+    }
+    _ticker.stop();
+    setState(() {
+      _playing = false;
+      _showingMotion = false;
+      _page = (progress * (_n - 1)).round();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _pages.hasClients) _pages.jumpToPage(_page);
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed && _playing) _toggle();
+  }
+
+  void _open(double progress) {
+    if (_playing) _toggle();
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      fullscreenDialog: true,
+      builder: (_) => Figure3DFullScreen(figure: fig, initialProgress: progress),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
+    final parts = figureMotionParts(fig);
     final captionStyle = text.labelLarge?.copyWith(color: scheme.onSurfaceVariant, fontWeight: FontWeight.w600);
     Widget frame(double progress, String caption, Key key) => Semantics(
           image: true,
@@ -218,22 +431,21 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
         );
 
     final Widget stage;
-    if (_playing) {
+    if (_showingMotion || parts.isNotEmpty) {
       stage = AnimatedBuilder(
         animation: _ticker,
         builder: (context, _) {
           final p = _loopProgress;
-          final key = (p * (_n - 1)).round();
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Column(
               children: [
                 GestureDetector(
                   onTap: () => _open(p),
-                  child: frame(p, fig.frames[key].caption, const ValueKey('figura3d-animada')),
+                  child: frame(p, figureMotionCaption(fig, p), const ValueKey('figura3d-animada')),
                 ),
                 const SizedBox(height: 8),
-                Text(fig.frames[key].caption, textAlign: TextAlign.center, style: captionStyle),
+                Text(figureMotionCaption(fig, p), textAlign: TextAlign.center, style: captionStyle),
               ],
             ),
           );
@@ -244,7 +456,10 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
         key: const ValueKey('figura3d-momentos'),
         controller: _pages,
         itemCount: _n,
-        onPageChanged: (i) => setState(() => _page = i),
+        onPageChanged: (i) => setState(() {
+          _page = i;
+          _time = figureMotionTime(fig, _keyProgress(i));
+        }),
         itemBuilder: (context, i) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Column(
@@ -270,15 +485,17 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
             child: stage,
           ),
         ),
+        if (parts.isNotEmpty) _FigurePartControls(parts: parts, selected: _partIndex, onSelected: _selectPart),
         Wrap(
           alignment: WrapAlignment.spaceBetween,
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: 8,
           runSpacing: 4,
           children: [
-            if (!_playing)
+            if (!_showingMotion && parts.isEmpty)
               Row(mainAxisSize: MainAxisSize.min, children: [
-                for (var i = 0; i < _n; i++)
+                if (_n > 7) Text('${_page + 1}/$_n'),
+                for (var i = 0; i < (_n > 7 ? 0 : _n); i++)
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(right: 6),
@@ -291,17 +508,27 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
                   )
               ]),
             // Reflow preserves the full action label with large text.
-            if (fig.continuous)
+            if (fig.continuous && parts.isEmpty)
               TextButton.icon(
-                onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
-                icon: Icon(_playing ? Icons.pause_circle_outline : Icons.play_circle_outline),
-                label: Text(_playing ? 'Ver momentos' : 'Ver movimiento', maxLines: 2, textAlign: TextAlign.center),
+                onPressed: _showingMotion
+                    ? _showMoments
+                    : MediaQuery.disableAnimationsOf(context)
+                        ? null
+                        : _toggle,
+                icon: Icon(_showingMotion ? Icons.view_carousel_outlined : Icons.play_circle_outline),
+                label:
+                    Text(_showingMotion ? 'Ver momentos' : 'Ver movimiento', maxLines: 2, textAlign: TextAlign.center),
               ),
+            if (_showingMotion || parts.isNotEmpty)
+              TextButton.icon(
+                  onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
+                  icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
+                  label: Text(_playing ? 'Pausa' : parts.isNotEmpty ? 'Movimiento' : 'Continuar')),
             IconButton(
               tooltip: 'Ampliar y girar',
               icon: const Icon(Icons.open_in_full),
               // Animando, se amplía la pose que se ve, no el inicio.
-              onPressed: () => _open(_playing ? _loopProgress : _keyProgress(_page)),
+              onPressed: () => _open(_showingMotion || parts.isNotEmpty ? _loopProgress : _keyProgress(_page)),
             ),
           ],
         ),
@@ -321,6 +548,10 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
               ),
             ],
           ),
+        if (fig.annotations.isNotEmpty)
+          Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(fig.annotations.map((a) => a['text'] as String).join(' · '))),
       ],
     );
   }
@@ -338,27 +569,76 @@ class Figure3DFullScreen extends StatefulWidget {
   State<Figure3DFullScreen> createState() => _Figure3DFullScreenState();
 }
 
-class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTickerProviderStateMixin {
+class _Figure3DFullScreenState extends State<Figure3DFullScreen>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _ticker;
   late double _yaw = widget.figure.initialYaw;
   late double _pitch = widget.figure.initialPitch;
   late double _progress = widget.initialProgress;
   var _playing = false;
+  late double _time = figureMotionTime(widget.figure, widget.initialProgress);
+  int _partIndex = 0;
 
   Figure3D get fig => widget.figure;
   int get _n => fig.frames.length;
   bool get _rotated => _yaw != fig.initialYaw || _pitch != fig.initialPitch;
+  double get _clock => _time + (_playing ? (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6 : 0);
+
+  void _stopAtPartEnd() {
+    final parts = figureMotionParts(fig);
+    if (_playing && parts.isNotEmpty && _clock >= parts[_partIndex].endTime) {
+      _ticker.stop();
+      setState(() {
+        _time = parts[_partIndex].endTime;
+        _progress = parts[_partIndex].progressAt(fig, _time);
+        _playing = false;
+      });
+    }
+  }
+
+  void _selectPart(int index) {
+    _ticker.stop();
+    setState(() {
+      _playing = false;
+      _partIndex = index;
+      final part = figureMotionParts(fig)[index];
+      _progress = part.start;
+      _time = part.startTime;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _ticker = AnimationController(vsync: this, duration: const Duration(hours: 1));
+    _ticker.addListener(_stopAtPartEnd);
+    final parts = figureMotionParts(fig);
+    if (parts.isNotEmpty) {
+      _partIndex = math.max(0, parts.indexWhere((part) => _progress >= part.start && _progress < part.end));
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant Figure3DFullScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.figure != fig) {
+      _ticker.stop();
+      _playing = false;
+      _yaw = fig.initialYaw;
+      _pitch = fig.initialPitch;
+      _progress = widget.initialProgress;
+      _time = figureMotionTime(fig, _progress);
+      final parts = figureMotionParts(fig);
+      _partIndex = parts.isEmpty ? 0 : math.max(0, parts.indexWhere((part) => _progress >= part.start && _progress < part.end));
+    }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (MediaQuery.disableAnimationsOf(context) && _playing) {
+    if ((MediaQuery.disableAnimationsOf(context) || !TickerMode.of(context)) && _playing) {
+      _time += (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6;
       _ticker.stop();
       _playing = false;
     }
@@ -366,6 +646,7 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _ticker.dispose();
     super.dispose();
   }
@@ -375,11 +656,25 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
         _pitch = fig.initialPitch;
       });
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed && _playing) _toggle();
+  }
+
   void _toggle() {
     if (!fig.continuous || MediaQuery.disableAnimationsOf(context)) return;
+    if (_playing) {
+      _time += (_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6;
+    } else {
+      final parts = figureMotionParts(fig);
+      if (parts.isNotEmpty && _time >= parts[_partIndex].endTime) {
+        _time = parts[_partIndex].startTime;
+        _progress = parts[_partIndex].start;
+      }
+    }
     setState(() => _playing = !_playing);
     if (_playing) {
-      _ticker.repeat();
+      _ticker.forward(from: 0);
     } else {
       _ticker.stop();
     }
@@ -389,6 +684,7 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
+    final parts = figureMotionParts(fig);
     final key = (_progress * (_n - 1)).round();
     return Scaffold(
       backgroundColor: _bg,
@@ -419,11 +715,13 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                   animation: _ticker,
                   builder: (context, _) {
                     if (_playing) {
-                      _progress = loopProgress((_ticker.lastElapsedDuration?.inMicroseconds ?? 0) / 1e6, _n);
+                      _progress = parts.isEmpty
+                          ? figureMotionProgress(fig, _clock)
+                          : parts[_partIndex].progressAt(fig, _clock);
                     }
                     return Semantics(
                       image: true,
-                      label: '${fig.name}: ${fig.frames[(_progress * (_n - 1)).round()].caption}',
+                      label: '${fig.name}: ${figureMotionCaption(fig, _progress)}',
                       child: CustomPaint(
                         painter: Figure3DPainter(fig, _progress, yaw: _yaw, pitch: _pitch),
                         size: Size.infinite,
@@ -439,12 +737,16 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                   child: Column(children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                  child: Text(
-                    _playing ? 'En movimiento' : fig.frames[key].caption,
-                    textAlign: TextAlign.center,
-                    style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-                  ),
+                  child: AnimatedBuilder(
+                      animation: _ticker,
+                      builder: (context, _) => Text(
+                            _playing || fig.hasMotion ? figureMotionCaption(fig, _progress) : fig.frames[key].caption,
+                            textAlign: TextAlign.center,
+                            style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                          )),
                 ),
+                if (parts.isNotEmpty)
+                  _FigurePartControls(parts: parts, selected: _partIndex, onSelected: _selectPart),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Wrap(
@@ -452,13 +754,14 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                     spacing: 8,
                     runSpacing: 4,
                     children: [
-                      for (var i = 0; i < _n; i++)
+                      for (var i = 0; i < (parts.isEmpty ? _n : 0); i++)
                         ChoiceChip(
                           label: Text(momentLabel(fig, i)),
                           selected: !_playing && key == i,
                           onSelected: (_) => setState(() {
                             if (_playing) _toggle();
                             _progress = _n < 2 ? 0 : i / (_n - 1);
+                            _time = figureMotionTime(fig, _progress);
                           }),
                         ),
                       if (fig.continuous)
@@ -495,10 +798,14 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen> with SingleTick
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                   child: Text(
-                    'Arrastra para girar · doble toque para volver de perfil',
+                    'Arrastra para girar · doble toque para volver a la vista inicial',
                     style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
                   ),
                 ),
+                if (fig.annotations.isNotEmpty)
+                  Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(fig.annotations.map((a) => a['text'] as String).join(' · '))),
               ])),
             ),
           ],
