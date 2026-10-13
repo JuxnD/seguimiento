@@ -1,0 +1,7 @@
+Analyzing seguimiento-035-ilustraciones...                      
+
+   info - Statements in an if should be enclosed in a block - build\qa\035\gait_camera_probe_test.dart:35:25 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - build\qa\035\gait_camera_probe_test.dart:36:16 - curly_braces_in_flow_control_structures
+
+2 issues found. (ran in 4.7s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T195441244-55368-d322c439f1f14668ba5c510abcb6913b.json
