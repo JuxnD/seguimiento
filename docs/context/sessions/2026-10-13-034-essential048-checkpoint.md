@@ -25,3 +25,7 @@ Timer1515 consume exactamente fuente aprobada045168e7c4: confirmación sin fútb
 Preparar037aislado con0391c0b366,04044b832e,03658ba358,045168e7c4 y043+0469474ad9 aprobados; no035. Resolver cada conflicto conservando contratos y autoría, no ours/theirsglobal. R1root proporcional y validación global final siguen abiertos. Verificar snapshots25/029 y calendario dual de tests en integración. Candidato1.24.0+32 con mismo package/cert histórico local; fuente/hash/firma y actualización sobre datos deben acreditarse antes entregarAPK. No se afirma instalado en teléfono.
 
 Contextos anteriores documentan baselines/31causales+2UI previos y aprobaciones de schema25. Las fases avanzadas de Activa/Suelta, semana10 contradictoria fuera del bloque9 y mejoras visuales permanecen diferidas; no se inventan fechas o movimientos.
+
+## Suplemento H1 terminal
+
+MiniUIH1 con barreras nativas/fake y markers completó setup, positivo, updateNULL, update0 y cierreSQLite:1PASS/0skip recibo223614064; analyzeUI1zero223600602. Assertions, filas y appsource se conservaron; primera cancelación raw retenida. Validación esencial ahora47 controles terminales en sus alcances; no equivalen a R1root o aceptación APK.
