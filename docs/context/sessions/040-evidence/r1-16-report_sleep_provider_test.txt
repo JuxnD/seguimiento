@@ -1,0 +1,7 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/data/report_sleep_provider_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: el informe se refresca al anotar o quitar sueño actual y previo
+00:00 +1: (tearDownAll)
+00:00 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174734510-69552-65895a748dc44f3c9b57a27eed32d337.json
+exit=0

@@ -29,7 +29,7 @@ class CustomRemindersCard extends ConsumerWidget {
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.event_repeat),
             title: Text(r.title),
-            subtitle: Text('${_capitalize(r.frequencyLabel)} · ${r.timeLabel} · ${_nextLabel(r, today)}'),
+            subtitle: Text('${_capitalize(r.frequencyLabel)} · ${r.timeLabel} · ${_nextLabel(r, today)} · ${r.originLabel}'),
             trailing: Switch(
               value: r.enabled,
               onChanged: (v) => guarded(context, () => ref.read(customReminderRepositoryProvider).setEnabled(r.id, v)),
@@ -270,6 +270,7 @@ class TodayCustomRemindersCard extends ConsumerWidget {
                         [
                           if (r.note != null) r.note!,
                           _nextLabel(r, today) == 'toca hoy' ? _capitalize(r.frequencyLabel) : _capitalize(_nextLabel(r, today)),
+                          r.originLabel,
                         ].join(' · '),
                         style: text.bodySmall,
                         maxLines: 3,
@@ -292,10 +293,36 @@ class TodayCustomRemindersCard extends ConsumerWidget {
                   },
                   child: const Text('Hecho'),
                 ),
+                TextButton(onPressed: () => _remove(context, ref, r), child: const Text('Quitar')),
               ],
             ),
           ),
       ],
+    );
+  }
+
+  /// "No es mío / quitar" (§16.26): confirma sobre ESTE recordatorio. Se
+  /// puede desactivar (queda en Ajustes) o borrar; los demás no se tocan.
+  Future<void> _remove(BuildContext context, WidgetRef ref, CustomReminder r) async {
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('¿Quitar "${r.title}"?'),
+        content: Text('${r.originLabel}. Si no es tuyo o ya no lo quieres, puedes desactivarlo '
+            '(queda en Ajustes, sin avisar) o quitarlo del todo. Los demás recordatorios no cambian.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
+          TextButton(onPressed: () => Navigator.pop(c, 'off'), child: const Text('Desactivar')),
+          FilledButton(onPressed: () => Navigator.pop(c, 'delete'), child: const Text('Quitar')),
+        ],
+      ),
+    );
+    if (choice == null || !context.mounted) return;
+    final repo = ref.read(customReminderRepositoryProvider);
+    await guarded(
+      context,
+      () => choice == 'delete' ? repo.delete(r.id) : repo.setEnabled(r.id, false),
+      ok: choice == 'delete' ? 'Quitado: "${r.title}"' : 'Desactivado: "${r.title}"',
     );
   }
 }

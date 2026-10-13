@@ -1,0 +1,7 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/ui/sleep_other_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: registro de la mañana: 9,5, 10 y "Otro" con 10:11
+00:02 +1: (tearDownAll)
+00:02 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174746832-55016-2d0fc57921a44b8bb39373ecc253bacb.json
+exit=0

@@ -1,0 +1,9 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/domain/custom_reminders_test.dart
+00:00 +0: se cuenta desde la última vez hecho, o desde el inicio
+00:00 +1: avisa el día que toca y cada día después hasta marcarlo
+00:00 +2: repositorio (setUpAll)
+00:00 +2: repositorio crear, marcar hecho, deshacer, apagar y borrar
+00:00 +3: repositorio (tearDownAll)
+00:00 +3: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174727707-71388-f6b6145fb20a4c7dafea51fb7aa9ede6.json
+exit=0

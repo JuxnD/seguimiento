@@ -1,0 +1,13 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/domain/sweat_known_water_test.dart
+00:00 +0: sin agua anotada no hay lectura; con 0 explícito sí
+00:00 +0 -1: sin agua anotada no hay lectura; con 0 explícito sí [E]
+  Expected: not null
+    Actual: <null>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\sweat_known_water_test.dart 11:5        main.<fn>
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174633610-49076-d37fe349f00c4e978fb916d784eba33e.json
+exit=1

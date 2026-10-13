@@ -1,0 +1,9 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/ui/registros_040_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: sueño anotado en Hoy: tocarlo abre la edición y no lo borra
+00:02 +1: partido nuevo: no toma los pesajes del día sin confirmar
+00:03 +2: pendiente de antes: dice "origen sin registrar" y quitar afecta sólo a ese
+00:04 +3: (tearDownAll)
+00:04 +3: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T175035884-65320-d077902161f042a7afff7da4a07db065.json
+exit=0

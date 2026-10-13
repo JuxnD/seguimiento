@@ -8,6 +8,7 @@ import '../../data/repositories/dashboard_repository.dart';
 import '../../data/repositories/nutrition_repository.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../data/repositories/training_repository.dart';
+import '../../data/repositories/sleep_repository.dart' show SleepDetail;
 import '../../domain/dates.dart';
 import '../../domain/core_ladders.dart';
 import '../../domain/enums.dart';
@@ -465,7 +466,11 @@ class _DayComplete extends ConsumerWidget {
     final sweat = game == null
         ? null
         : sweatReading(
-            beforeKg: game.weightBeforeKg, afterKg: game.weightAfterKg, fluidMl: game.fluidMl, minutes: game.minutes);
+            beforeKg: game.weightBeforeKg,
+            afterKg: game.weightAfterKg,
+            fluidMl: game.fluidMl,
+            minutes: game.minutes,
+            weightsComparable: game.weightsComparable);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1000,24 +1005,55 @@ class _SleepLine extends ConsumerWidget {
 
   Future<void> _set(WidgetRef ref, double hours) => ref.read(sleepRepositoryProvider).set(date, hours);
 
+  /// Tocar la noche anotada la edita (plan 040): antes la borraba sin
+  /// preguntar. Eliminar sigue disponible, con confirmación.
+  Future<void> _edit(BuildContext context, WidgetRef ref, SleepDetail detail) async {
+    final edit = await editSleep(context, day: date, initial: detail);
+    if (edit == null || !context.mounted) return;
+    final repo = ref.read(sleepRepositoryProvider);
+    if (edit.delete) {
+      await guarded(context, () => repo.remove(date), ok: 'Sueño de anoche eliminado');
+      return;
+    }
+    await guarded(
+      context,
+      () => repo.save(date,
+          hours: edit.hours,
+          start: edit.start,
+          wake: edit.wake,
+          source: sleepSourceAfterEdit(detail.source, fromClock: edit.fromClock),
+          note: edit.note),
+      ok: 'Sueño de anoche actualizado',
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hours = ref.watch(sleepDayProvider(dayKey(date))).valueOrNull;
+    final detail = ref.watch(sleepDetailProvider(dayKey(date))).valueOrNull;
     final text = Theme.of(context).textTheme;
-    if (hours != null) {
+    if (detail != null) {
+      final hours = detail.hours;
+      final source = sleepSourceLabel(detail.source);
       return Padding(
         padding: const EdgeInsets.only(top: 8),
         child: InkWell(
-          onTap: () => ref.read(sleepRepositoryProvider).remove(date),
+          onTap: () => _edit(context, ref, detail),
           child: Row(
             children: [
               Icon(Icons.bedtime_outlined, size: 18, color: hours >= sleepGoalHours ? AppColors.protein : null),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                    'Anoche: ${isSleepOption(hours) ? '${fmtDec(hours)} h' : formatSleepHours(hours)} en cama${hours >= sleepGoalHours ? '' : ' · meta ${fmtInt(sleepGoalHours)} h'}',
+                    [
+                      'Anoche: ${isSleepOption(hours) ? '${fmtDec(hours)} h' : formatSleepHours(hours)} en cama'
+                          '${hours >= sleepGoalHours ? '' : ' · meta ${fmtInt(sleepGoalHours)} h'}',
+                      if (detail.start != null && detail.wake != null)
+                        '${timeKey(detail.start!.hour, detail.start!.minute)}–${timeKey(detail.wake!.hour, detail.wake!.minute)}',
+                      if (source != null) source,
+                    ].join(' · '),
                     style: text.bodyMedium),
               ),
+              const Icon(Icons.edit_outlined, size: 16),
             ],
           ),
         ),

@@ -18,8 +18,11 @@ class CustomReminderRepository {
   Future<List<CustomReminder>> all() async =>
       [for (final r in await (db.select(db.customReminders)..orderBy([(t) => OrderingTerm(expression: t.id)])).get()) r.toDomain()];
 
-  /// Crea (sin `id`) o reemplaza (con `id`). Devuelve el id.
+  /// Crea (sin `id`) o reemplaza (con `id`). Devuelve el id. Al crear se
+  /// guarda `origin` (por defecto, el usuario desde Ajustes); al editar no se
+  /// toca: cambiar título u horario no reescribe de dónde salió.
   Future<int> save({
+    String origin = customReminderByUser,
     int? id,
     required String title,
     String? note,
@@ -38,7 +41,7 @@ class CustomReminderRepository {
       startDate: Value(dayKey(startDate)),
       enabled: Value(enabled),
     );
-    if (id == null) return db.into(db.customReminders).insert(data);
+    if (id == null) return db.into(db.customReminders).insert(data.copyWith(origin: Value(origin)));
     await (db.update(db.customReminders)..where((t) => t.id.equals(id))).write(data);
     return id;
   }
@@ -68,5 +71,6 @@ extension CustomReminderRowX on CustomReminderRow {
         startDate: parseDay(startDate),
         lastDone: lastDone == null ? null : parseDay(lastDone!),
         enabled: enabled,
+        origin: origin,
       );
 }

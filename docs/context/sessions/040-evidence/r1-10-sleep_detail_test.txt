@@ -1,0 +1,15 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/data/sleep_detail_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: noche completa: se relee igual y las horas siguen para los demás
+00:00 +1: una noche de antes sólo tiene horas: lo demás queda sin dato
+00:00 +2: los botones de horas: mismas horas no tocan nada; otras borran los tiempos y conservan la nota
+00:00 +3: datos imposibles se rechazan sin escribir
+00:00 +3 -1: datos imposibles se rechazan sin escribir [E]
+  Invalid argument (hours): entre 0 y 16.0: NaN
+  package:seguimiento/data/repositories/sleep_repository.dart 58:7  SleepRepository.save
+  test\data\sleep_detail_test.dart 53:28                            main.<fn>
+  
+00:00 +3 -1: (tearDownAll)
+00:00 +3 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174647443-60160-9bde6064b7734a90a716356dcbcbac3d.json
+exit=1

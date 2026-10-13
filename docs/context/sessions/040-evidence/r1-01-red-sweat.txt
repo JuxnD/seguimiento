@@ -1,0 +1,14 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-diag/test/domain/sweat_known_water_test.dart
+00:00 +0: sin agua anotada no hay lectura; con 0 explícito sí
+00:00 +0 -1: sin agua anotada no hay lectura; con 0 explícito sí [E]
+  Expected: null
+    Actual: <Instance of 'SweatReading'>
+  fluidMl ?? 0 inventaba una tasa de sudor
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\sweat_known_water_test.dart 8:5         main.<fn>
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174511433-58520-d623237f64af41d3908fda3213701914.json
+exit=1

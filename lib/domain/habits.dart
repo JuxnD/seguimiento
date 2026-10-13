@@ -25,11 +25,23 @@ class SweatReading {
   final double replaceL;
 }
 
-/// null si falta algún peso o los minutos.
-SweatReading? sweatReading({double? beforeKg, double? afterKg, int? fluidMl, required int? minutes}) {
-  if (beforeKg == null || afterKg == null || minutes == null || minutes <= 0) return null;
+/// null si falta algún peso, los minutos o lo bebido, o si no se confirmó que
+/// los dos pesajes son comparables (plan 040). Lo bebido desconocido no es 0:
+/// un 0 anotado sí vale. `weightsComparable`: true sólo con confirmación
+/// explícita; false (después de comer, medición alterada) y null (sin
+/// confirmar o de antes) no dan lectura.
+SweatReading? sweatReading({
+  double? beforeKg,
+  double? afterKg,
+  int? fluidMl,
+  required int? minutes,
+  bool? weightsComparable,
+}) {
+  if (beforeKg == null || afterKg == null || fluidMl == null || minutes == null || minutes <= 0) return null;
+  if (weightsComparable != true) return null;
+  if (!beforeKg.isFinite || !afterKg.isFinite || beforeKg <= 0 || afterKg <= 0 || fluidMl < 0) return null;
   final loss = beforeKg - afterKg;
-  final sweat = loss + (fluidMl ?? 0) / 1000;
+  final sweat = loss + fluidMl / 1000;
   return SweatReading(
     lossKg: loss,
     ratePerHourL: sweat < 0 ? 0 : sweat / (minutes / 60),

@@ -31,12 +31,16 @@ void main() {
   });
 
   test('hidratación: tasa de sudor y cuánto reponer', () {
-    final s = sweatReading(beforeKg: 80.4, afterKg: 79.4, fluidMl: 500, minutes: 90)!;
+    // Plan 040: la lectura exige lo bebido conocido y pesajes confirmados
+    // comparables (rojo con la expectativa vieja: 040-evidence/r1-05).
+    final s = sweatReading(beforeKg: 80.4, afterKg: 79.4, fluidMl: 500, minutes: 90, weightsComparable: true)!;
     expect(s.lossKg, closeTo(1.0, 1e-9));
     expect(s.ratePerHourL, closeTo(1.0, 1e-9), reason: '(1 kg + 0,5 L) en 1,5 h');
     expect(s.replaceL, closeTo(1.5, 1e-9));
     expect(sweatReading(beforeKg: 80, afterKg: null, minutes: 60), isNull);
-    expect(sweatReading(beforeKg: 80, afterKg: 80.2, minutes: 60)!.replaceL, 0);
+    expect(sweatReading(beforeKg: 80, afterKg: 80.2, fluidMl: 0, minutes: 60, weightsComparable: true)!.replaceL, 0);
+    expect(sweatReading(beforeKg: 80, afterKg: 80.2, minutes: 60, weightsComparable: true), isNull,
+        reason: 'sin lo bebido no se inventa 0');
   });
 
   test('sueño: promedio y noches en la meta', () {

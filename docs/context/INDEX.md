@@ -1,5 +1,7 @@
 # Índice de contexto
 
+**040 local, dirigido y pendiente R1:** tocar el sueño en Hoy edita (horas o acostarse/despertar con cruce de medianoche, procedencia manual/clock/edit_manual, nota) en vez de borrar; sudor sólo con agua conocida y pesajes confirmados comparables; el partido nuevo pregunta antes de usar los pesajes del día; recordatorios con origen (usuario / sin registrar) y «Quitar» por id en Hoy. [Recibo, rojos y límites](sessions/2026-10-13-040-registros.md). Sin esquema propio (25 de 034), sin Health Connect ni APK.
+
 **033 local, dirigido y pendiente R1:** coherencia core Hoy/informe, fútbol diario acumulado/detalle/edición porID, guard de guardado y confirmación duplicadas, hito10 traspersistencia sinactivar plan. Fallo/retry no pierde procedencia guiada. [Recibo, negativos y gates](sessions/2026-10-13-033-coherencia.md). Full sólo integración032/034/035; sin esquema/assets/APK/publicación ni aceptación humana nueva.
 
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más

@@ -1,0 +1,10 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/domain/sleep_window_test.dart
+00:00 +0: noche acostarse antes de medianoche cruza al día anterior
+00:00 +1: noche acostarse de madrugada queda el mismo día
+00:00 +2: noche igual hora de acostarse y despertar es una noche de 24 h: se rechaza
+00:00 +3: noche despertar antes de acostarse no da horas
+00:00 +4: noche procedencia tras editar a mano
+00:00 +5: sudor sólo con agua conocida y pesajes confirmados comparables
+00:00 +6: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174642648-51788-7eab1eeaa16b4a209ff1af880c06e834.json
+exit=0
