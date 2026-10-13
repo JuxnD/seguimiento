@@ -1,0 +1,4 @@
+Formatted test/data/plan034_football_precedence_test.dart
+Formatted test/data/plan034_jump_gate_test.dart
+Formatted 2 files (2 changed) in 0.16 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T210442463-56304-671aaca3f8da4f108e8ff21f90c43b85.json

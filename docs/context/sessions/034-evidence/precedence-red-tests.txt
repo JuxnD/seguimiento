@@ -1,0 +1,129 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: true, imported: false, minutes: 60, rpe: 7, stairs: 0)
+00:00 +0 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: true, imported: false, minutes: 60, rpe: 7, stairs: 0) [E]
+  Expected: <true>
+    Actual: <false>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\data\plan034_football_precedence_test.dart 44:7  main.<fn>
+  
+00:00 +0 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: true, imported: false, minutes: 45, rpe: 6, stairs: 2)
+00:00 +0 -2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: true, imported: false, minutes: 45, rpe: 6, stairs: 2) [E]
+  Expected: <true>
+    Actual: <false>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\data\plan034_football_precedence_test.dart 44:7  main.<fn>
+  
+00:00 +0 -2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 20, rpe: 9, stairs: 0)
+00:00 +0 -3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 20, rpe: 9, stairs: 0) [E]
+  Expected: <false>
+    Actual: <true>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\data\plan034_football_precedence_test.dart 44:7  main.<fn>
+  
+00:00 +0 -3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 60, rpe: 5, stairs: 0)
+00:00 +1 -3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: true, minutes: 60, rpe: 9, stairs: 0)
+00:00 +1 -4: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: true, minutes: 60, rpe: 9, stairs: 0) [E]
+  Expected: <false>
+    Actual: <true>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\data\plan034_football_precedence_test.dart 44:7  main.<fn>
+  
+00:00 +1 -4: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 60, rpe: 9, stairs: null)
+00:00 +1 -5: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 60, rpe: 9, stairs: null) [E]
+  Expected: <false>
+    Actual: <true>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\data\plan034_football_precedence_test.dart 44:7  main.<fn>
+  
+00:00 +1 -5: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: stairs 3 suppress acceleration and explains postponement
+00:00 +1 -6: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: stairs 3 suppress acceleration and explains postponement [E]
+  Expected: contains 'aplazados'
+    Actual: 'Piernas + potencia, a ~72 h de los partidos. Calentamiento tipo FIFA 11+.'
+     Which: does not contain 'aplazados'
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\data\plan034_football_precedence_test.dart 74:7  main.<fn>
+  
+00:00 +1 -6: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: stairs 4 suppress acceleration and explains postponement
+00:00 +1 -7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: stairs 4 suppress acceleration and explains postponement [E]
+  Expected: contains 'aplazados'
+    Actual: 'Piernas + potencia, a ~72 h de los partidos. Calentamiento tipo FIFA 11+.'
+     Which: does not contain 'aplazados'
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\data\plan034_football_precedence_test.dart 74:7  main.<fn>
+  
+00:00 +1 -7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: (tearDownAll)
+00:00 +1 -7: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart
+00:01 +1 -7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: (setUpAll)
+00:01 +1 -7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: false, ill: false, stairs: 0)
+00:01 +2 -7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: false, ill: false, stairs: 2)
+00:01 +3 -7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: false, ill: false, stairs: null)
+00:01 +4 -7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 3)
+00:01 +4 -8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 3) [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<int>'>
+     Which: emitted <1>
+  
+  package:matcher                                     expectLater
+  package:flutter_test/src/widget_tester.dart 511:25  expectLater
+  test\data\plan034_jump_gate_test.dart 38:15         main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                          _CustomZone.registerUnaryCallback
+  test\data\plan034_jump_gate_test.dart 25:7          main.<fn>
+  
+00:01 +4 -8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 4)
+00:01 +4 -9: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 4) [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<int>'>
+     Which: emitted <1>
+  
+  package:matcher                                     expectLater
+  package:flutter_test/src/widget_tester.dart 511:25  expectLater
+  test\data\plan034_jump_gate_test.dart 38:15         main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                          _CustomZone.registerUnaryCallback
+  test\data\plan034_jump_gate_test.dart 25:7          main.<fn>
+  
+00:01 +4 -9: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 5)
+00:01 +4 -10: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 5) [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<int>'>
+     Which: emitted <1>
+  
+  package:matcher                                     expectLater
+  package:flutter_test/src/widget_tester.dart 511:25  expectLater
+  test\data\plan034_jump_gate_test.dart 38:15         main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                          _CustomZone.registerUnaryCallback
+  test\data\plan034_jump_gate_test.dart 25:7          main.<fn>
+  
+00:01 +4 -10: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: true, stairs: 0)
+00:01 +4 -11: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: true, stairs: 0) [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<int>'>
+     Which: emitted <1>
+  
+  package:matcher                                     expectLater
+  package:flutter_test/src/widget_tester.dart 511:25  expectLater
+  test\data\plan034_jump_gate_test.dart 38:15         main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                          _CustomZone.registerUnaryCallback
+  test\data\plan034_jump_gate_test.dart 25:7          main.<fn>
+  
+00:01 +4 -11: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: (tearDownAll)
+00:01 +4 -11: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T210511656-37676-9709f711dda846d48abecf774d47069f.json

@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/readiness.dart';
+import 'readiness_repository.dart';
 import '../../domain/fitness_test.dart';
 import '../../domain/test_protocol.dart';
 import '../../domain/plan_v3.dart' show v31Scheme;
@@ -114,6 +116,22 @@ class FitnessTestRepository {
             ..orderBy([(t) => OrderingTerm.desc(t.id)]))
           .get();
 
+  /// La ausencia de escaleras no se convierte en cero. El aviso de
+  /// descanso mantiene su fuente propia y domina cualquier entrada de test.
+  Future<String?> jumpRestriction(DateTime date) async {
+    final readiness = await ReadinessRepository(db).readinessOn(date);
+    if (readiness.action == SuggestedAction.restOnly) {
+      return 'Salto aplazado: descanso indicado (${readiness.reasons.join(' · ')}).';
+    }
+    final morning = await (db.select(db.morningChecks)
+          ..where((t) => t.date.equals(dayKey(date))))
+        .getSingleOrNull();
+    if (morning?.kneeStairs != null && morning!.kneeStairs! >= 3) {
+      return 'Salto aplazado: escaleras ${morning.kneeStairs}/10. Queda pendiente, sin inventar resultado.';
+    }
+    return null;
+  }
+
   Future<int> save({
     required DateTime date,
     required int round,
@@ -176,6 +194,12 @@ class FitnessTestRepository {
           editId = null;
           previous = null;
         }
+      }
+      // Editar un intento ya medido conserva el historial; crear un
+      // intento nuevo (también al cambiar condiciones) respeta el día real.
+      if (editId == null && results.any((r) => r.item == 'broad_jump')) {
+        final reason = await jumpRestriction(date);
+        if (reason != null) throw FormatException(reason);
       }
       final title =
           'Test $round · ${part == TestPart.torso ? 'torso, core y habilidades' : 'piernas'}';

@@ -1,0 +1,18 @@
+[
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\data\\repositories\\training_repository.dart",
+    "Hash": "8381707ADDE483EDCA365DCCE55C5EB62C52A67B5422EE054D7A6947E8CD0C47"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\data\\repositories\\fitness_test_repository.dart",
+    "Hash": "2EB5F20FF9D17CC5ED0844468581851BFCCA28F8CD8ED9491147E6B1EC52EBFF"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\data\\plan034_football_precedence_test.dart",
+    "Hash": "C32172FD8A54AA7F883AD8F341D69757E4A4EC02AA62A112B9D95C6A74DEDDA1"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\data\\plan034_jump_gate_test.dart",
+    "Hash": "6503C726F538D66D06BA71D4038B5246CBC8C87C7E084D518CF43049266BE2AC"
+  }
+]

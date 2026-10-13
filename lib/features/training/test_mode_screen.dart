@@ -44,6 +44,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   int? _attemptId;
   final _conditions = <String, Map<String, Object?>>{};
   bool _loaded = false;
+  String? _jumpRestriction;
   bool _changed = false;
   final _errors = <String, String>{};
 
@@ -142,6 +143,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
         }
       }
     }
+    _jumpRestriction = await repo.jumpRestriction(_executionDate);
+    if (!mounted) return;
     setState(() {
       _loaded = true;
       _changed = false;
@@ -196,6 +199,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     final results = <TestResult>[
       for (final t in _items)
         for (final side in _sides(t))
+          if (!(t.id == 'broad_jump' && !_editing && _jumpRestriction != null))
           if (_value(t, side) case final v?)
             TestResult(
               round: widget.round,
@@ -379,6 +383,8 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     return AppCard(
       title: '$n. ${t.name}',
       children: [
+        if (t.id == 'broad_jump' && !_editing && _jumpRestriction != null)
+          Text(_jumpRestriction!, key: const ValueKey('jump-deferred')),
         TextButton(
             onPressed: () async {
               final previous = _conditions[t.id];
@@ -531,6 +537,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
               Expanded(
                 child: TextField(
                   key: ValueKey('test-value-${t.id}-$side'),
+                  enabled: !(t.id == 'broad_jump' && !_editing && _jumpRestriction != null),
                   controller: _field(t, side),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),

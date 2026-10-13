@@ -7,6 +7,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/plan_v3.dart';
 import '../../domain/plan_v32.dart';
+import '../../domain/leg_chain.dart';
 import '../../domain/progress.dart';
 import '../../domain/progress_evidence.dart';
 import '../../domain/session_math.dart';
@@ -1071,30 +1072,25 @@ class TrainingRepository {
                 purpose: v32Purposes['Sentadilla isométrica en la pared'])
           ]);
     }
-    final hardMidweek = date.weekday == DateTime.wednesday &&
-        (await (db.select(db.footballGames)
-                  ..where((t) => t.date.isBetweenValues(
-                      dayKey(addDays(date, -2)), dayKey(addDays(date, -1)))))
-                .get())
-            .any((g) => g.intensity != null && g.intensity! >= 8);
+    final recentGames = date.weekday == DateTime.wednesday
+        ? await (db.select(db.footballGames)
+              ..where((t) => t.date.isBetweenValues(
+                  dayKey(addDays(date, -2)), dayKey(addDays(date, -1)))))
+            .get()
+        : <FootballGameRow>[];
+    final intenseGames = recentGames.where((g) => classifySession(ChainSession(
+        date: parseDay(g.date), isFootball: true, imported: g.imported,
+        rpe: g.intensity, workMinutes: g.minutes))?.intensity == DayIntensity.intense).toList();
     if (mode == KneeTrainingMode.noImpact) {
       result.exercises.removeWhere((e) => [
-            'Sprint lanzado',
-            'Salto vertical',
-            'Salto largo',
-            'Salto de patinador',
-            'Aterrizaje clavado'
+            'Sprint lanzado', 'Aceleración 10–20 m', 'Salto vertical',
+            'Salto largo', 'Salto de patinador', 'Aterrizaje clavado'
           ].contains(e.name));
-      for (final e
-          in result.exercises.where((e) => e.name == 'Aceleración 10–20 m')) {
-        e.notes = 'Sólo 80% por rodilla/fútbol reciente.';
-      }
-      result.exercises.removeWhere((e) => e.name == 'Aceleración 10–20 m');
-    } else if (hardMidweek) {
+      result.notes = '${result.notes ?? ''} · Escaleras ${morning!.kneeStairs}/10: saltos y sprints aplazados; la excepción de fútbol no aplica.';
+    } else if (intenseGames.isNotEmpty && morning?.kneeStairs != null && morning!.kneeStairs! <= 2) {
       result.exercises.removeWhere((e) => e.name == 'Sprint lanzado');
-      for (final e
-          in result.exercises.where((e) => e.name == 'Aceleración 10–20 m')) {
-        e.notes = 'Sólo 80% por fútbol duro el lunes o martes.';
+      for (final e in result.exercises.where((e) => e.name == 'Aceleración 10–20 m')) {
+        e.notes = 'Sólo 80% por fútbol intenso del ${intenseGames.map((g) => g.date).join(', ')} (minutos/RPE registrados; criterio compartido). Escaleras ${morning.kneeStairs}/10.';
       }
     }
     orderV32Exercises(result);
