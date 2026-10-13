@@ -128,6 +128,7 @@ def generate(name, variant=None):
     if name == 'Sentadilla profunda':
         a=squat('Pies abiertos, talones apoyados')
         b=squat('Baja profundo; pecho alto y codos entre rodillas',True)
+        b['hip']=(-8,-10)
         for f in (a,b):
             for sd,sign in [('near',1),('far',-1)]:
                 f[sd+'Leg'].update(depth=sign*7,pole=[1,0,sign])

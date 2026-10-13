@@ -393,16 +393,16 @@ void main() {
   });
 
   test('deep squat hold goes below the knees with elbows between them and heels planted', () {
-    final fig=catalog.forExercise('Sentadilla profunda')!;
-    final start=liftSkeleton(fig.skeletonAt(0),fig);
-    final held=liftSkeleton(fig.skeletonAt(1/fig.motion.length),fig);
-    for(final side in ['near','far']) {
-      final hip=held.p['${side}Hip']!, knee=held.p['${side}Knee']!, elbow=held.p['${side}Elbow']!;
-      expect(hip.y-knee.y,greaterThan(1),reason:'Deep squat requires hips below the knees.');
-      expect((elbow.y-knee.y).abs(),lessThan(5),reason:'Elbows shown between the knees must be close to knee height.');
-      expect(elbow.z.abs(),lessThan(knee.z.abs()));
-      expect((held.p['${side}Ankle']!-start.p['${side}Ankle']!).length,lessThan(.001));
+    final fig = catalog.forExercise('Sentadilla profunda')!;
+    final start = liftSkeleton(fig.skeletonAt(0), fig);
+    final held = liftSkeleton(fig.skeletonAt(1 / fig.motion.length), fig);
+    for (final side in ['near', 'far']) {
+      final hip = held.p['${side}Hip']!, knee = held.p['${side}Knee']!, elbow = held.p['${side}Elbow']!;
+      expect(hip.y - knee.y, greaterThan(1), reason: 'Deep squat requires hips below the knees.');
+      expect((elbow.y - knee.y).abs(), lessThan(5),
+          reason: 'Elbows shown between the knees must be close to knee height.');
+      expect(elbow.z.abs(), lessThan(knee.z.abs()));
+      expect((held.p['${side}Ankle']! - start.p['${side}Ankle']!).length, lessThan(.001));
     }
   });
-
 }
