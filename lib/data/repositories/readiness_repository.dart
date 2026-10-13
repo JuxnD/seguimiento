@@ -106,33 +106,40 @@ class ReadinessRepository {
       (await (db.select(db.coachProposals)..where((t) => t.id.equals(_decisionId(date)))).getSingleOrNull())?.status ==
       'rechazada';
 
-  /// Se guardó la recuperación activa ese día (la aceptación es la sesión
-  /// guardada, no abrir la rutina).
+  /// Se guardó la recuperación activa **completa** ese día. La aceptación es
+  /// la sesión terminada, no abrir la rutina ni guardarla a medias: una
+  /// parcial queda registrada pero Hoy sigue proponiendo recuperar.
   Future<bool> recoveryDone(DateTime date) async =>
       (await (db.select(db.sessions)
                 ..where((t) =>
                     t.date.equals(dayKey(dateOnly(date))) &
                     t.type.equalsValue(SessionType.movilidad) &
-                    t.mode.equals(recoveryActiveId)))
+                    t.mode.equals(recoveryActiveId) &
+                    t.incomplete.equals(false)))
               .get())
           .isNotEmpty;
 
-  /// Rutinas diarias guardadas ese día (ids de `daily_routines.dart`).
+  /// Rutinas diarias terminadas ese día (ids de `daily_routines.dart`). Las
+  /// guardadas a medias no cuentan: ni ✓ ni silencian el aviso.
   Future<Set<String>> routinesOn(DateTime date) async {
     final rows = await (db.select(db.sessions)
           ..where((t) =>
               t.date.equals(dayKey(dateOnly(date))) &
               t.type.equalsValue(SessionType.movilidad) &
-              t.mode.isIn(dailyRoutineIds.toList())))
+              t.mode.isIn(dailyRoutineIds.toList()) &
+              t.incomplete.equals(false)))
         .get();
     return {for (final r in rows) r.mode!};
   }
 
-  /// Días seguidos con alguna rutina diaria (Activa, Suelta o recuperación),
-  /// hasta hoy; hoy sin rutina todavía no rompe.
+  /// Días seguidos con alguna rutina diaria terminada (Activa, Suelta o
+  /// recuperación), hasta hoy; hoy sin rutina todavía no rompe.
   Future<int> mobilityStreak(DateTime today) async {
     final rows = await (db.select(db.sessions)
-          ..where((t) => t.type.equalsValue(SessionType.movilidad) & t.mode.isIn(dailyRoutineIds.toList())))
+          ..where((t) =>
+              t.type.equalsValue(SessionType.movilidad) &
+              t.mode.isIn(dailyRoutineIds.toList()) &
+              t.incomplete.equals(false)))
         .get();
     final days = {for (final r in rows) r.date};
     var streak = 0;

@@ -1,0 +1,11 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/data/readiness_partial_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: a medias: queda guardada pero no es recuperación hecha, ni ✓, ni racha
+00:00 +1: RPE > 5: "Sesión normal" suma carga; "Recuperación" no
+00:00 +2: el provider real de Hoy se recalcula solo: "Entrenar igual" y la recuperación terminada
+00:00 +3: racha de constancia la recuperación a medias no mantiene la racha; terminada sí
+00:00 +4: racha de constancia una molestia anotada después llega a Hoy sin otra acción
+00:00 +5: (tearDownAll)
+00:00 +5: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T152134173-15092-72553e28607b407bb1d7e3a343d93d91.json
+exit=0

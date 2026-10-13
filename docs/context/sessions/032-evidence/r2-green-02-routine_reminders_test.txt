@@ -1,0 +1,7 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/domain/routine_reminders_test.dart
+00:00 +0: cada día, mañana y noche a su hora
+00:00 +1: lo terminado hoy no suena; la recuperación cubre las dos
+00:00 +2: la noche anterior: sólo con la carga alta, a las 22:00
+00:00 +3: los tipos nuevos van al final: los ids de los avisos de antes no cambian
+00:00 +4: All tests passed!
+exit=0

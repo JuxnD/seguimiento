@@ -1,0 +1,25 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/domain/reminders_test.dart
+00:00 +0: sesión avisa 15 minutos antes y dice qué toca
+00:00 +1: sesión un día de bloques nombra el trabajo del día
+00:00 +2: sesión no avisa en día de fútbol ni de descanso
+00:00 +3: sesión si la sesión ya está registrada, callado
+00:00 +4: sesión el aviso de sesión sin registrar va a su hora
+00:00 +5: proteína avisa con lo que llevas y lo que falta
+00:00 +6: proteína por encima del umbral no molesta
+00:00 +7: comidas programa las franjas activadas
+00:00 +8: comidas lo apagado no se programa
+00:00 +9: medición usa la fecha acordada si existe
+00:00 +10: medición si no, cuenta el intervalo desde la última toma
+00:00 +11: medición una medición vencida se recuerda a la mañana siguiente
+00:00 +12: medición sin línea base no inventa un aviso
+00:00 +13: reglas generales nada se programa en el pasado
+00:00 +14: reglas generales los avisos salen ordenados por hora
+00:00 +15: reglas generales cada aviso tiene un id estable por tipo y día
+00:00 +16: reglas generales programa varios días por adelantado
+00:00 +17: meta cumplida bajo el umbral (plan 009, R2) meta 1.000, 1.500 pasos, umbral 4.000: no avisa "Faltan -500"
+00:00 +18: meta cumplida bajo el umbral (plan 009, R2) contraprueba: meta 5.000, 1.500 pasos, umbral 4.000: avisa lo que falta
+00:00 +19: meta cumplida bajo el umbral (plan 009, R2) el umbral configurado se respeta: meta 5.000, 4.200 pasos, umbral 4.000: no avisa
+00:00 +20: meta cumplida bajo el umbral (plan 009, R2) sin anotar sigue avisando aunque la meta sea baja
+00:00 +21: meta cumplida bajo el umbral (plan 009, R2) proteína y kcal: meta baja ya cumplida bajo el umbral no avisa; si falta, sí
+00:00 +22: All tests passed!
+exit=0

@@ -58,9 +58,11 @@ Future<void> startMobility(BuildContext context, WidgetRef ref, {MobilityRoutine
         context: context,
         builder: (c) => AlertDialog(
           title: const Text('Esto ya no fue recuperación'),
-          content: Text('Con RPE $rpe cuenta como carga. ¿La guardo como sesión normal?'),
+          content: Text('Con RPE $rpe se pasó de suave. ¿Cómo la guardo?\n\n'
+              '• Sesión normal: suma carga (RPE × minutos) y cuenta para los días intensos.\n'
+              '• Recuperación: no suma carga y mantiene la racha, aunque haya salido más dura.'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Dejar como recuperación')),
+            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Recuperación')),
             FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Sesión normal')),
           ],
         ),

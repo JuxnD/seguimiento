@@ -1,0 +1,11 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/data/ladders_and_tests_data_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: el lunes trae el peldaño del dragon flag y el jueves el del V-up, antes de lo opcional
+00:01 +1: peldaño 1 desde el lunes del v3.1; sube tras 2 sesiones limpias y 2 semanas
+00:02 +2: molestia lumbar: baja un peldaño y esa sesión no cuenta como limpia
+00:02 +3: día de test: el lunes de la semana 1 en Hoy, y al guardarlo cuenta como entrenado
+00:03 +4: el informe no toma el Tabata por aguantes; sí la vela y el hollow
+00:04 +5: martes del 6 oct: el v3.1 nuevo ya lo trae; uno activado antes se corrige
+00:04 +6: (tearDownAll)
+00:04 +6: All tests passed!
+exit=0

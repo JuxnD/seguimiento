@@ -426,9 +426,14 @@ class DashboardRepository {
   /// Días seguidos entrenando, sin que el descanso planificado los rompa. Un
   /// partido de fútbol cuenta como día entrenado.
   Future<int> _streak(DateTime today) async {
-    // La recuperación activa (§19.17) mantiene la racha aunque no sume carga.
+    // La recuperación activa terminada (§19.17) mantiene la racha aunque no
+    // sume carga; guardada a medias, no.
     final rows = await (db.select(db.sessions)
-          ..where((t) => db.trainingSessions | (t.type.equalsValue(SessionType.movilidad) & t.mode.equals(recoveryActiveId))))
+          ..where((t) =>
+              db.trainingSessions |
+              (t.type.equalsValue(SessionType.movilidad) &
+                  t.mode.equals(recoveryActiveId) &
+                  t.incomplete.equals(false))))
         .get();
     final games = await db.select(db.footballGames).get();
     final dates = {...rows.map((s) => s.date), ...games.map((g) => g.date)};

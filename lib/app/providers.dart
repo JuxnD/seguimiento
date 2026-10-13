@@ -302,8 +302,17 @@ class TodayNotifier extends Notifier<DateTime> {
 }
 
 /// Resumen de Hoy. Se recalcula cuando cambia cualquier dato que muestre.
+/// Molestias, registro de la mañana y sueño cambian Hoy (plan B, molestias
+/// que no bajan, recuperación activa) sin pasar por otro provider: una
+/// molestia anotada al terminar una rutina se ve sin otra acción (plan 032).
+final recoverySignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables([db.sorenessLogs, db.morningChecks, db.sleepLogs]));
+});
+
 final dashboardProvider = FutureProvider((ref) {
   final today = ref.watch(todayProvider);
+  ref.watch(recoverySignalsProvider);
   ref.watch(goalHistoryProvider);
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);

@@ -137,3 +137,49 @@ aceptación del owner. Sin push, APK ni teléfono.
   Van en la suite completa de la integración.
 - Todo corrió con el SDK 3.22 (`C:/seguimiento-sdk-3.22.0`), `--concurrency 1`
   y `--timeout 90s`.
+
+## R2: correcciones a la revisión R1 de Codex (13 oct)
+
+- **P1, a medias no es hecho.** `recoveryDone`, `routinesOn` y
+  `mobilityStreak` exigen `incomplete = false`. La racha 🔥 cuenta sólo la
+  `recovery_active` terminada. Lo parcial queda registrado, pero no da ✓, no
+  da «Día completo» y no silencia los avisos.
+- **P2, refresco.** `dashboardProvider` observa `recoverySignalsProvider`
+  (`soreness_logs`, `morning_checks`, `sleep_logs`). Una molestia anotada al
+  cerrar la rutina llega a Hoy, al plan B y a las molestias persistentes sin
+  otra acción.
+- **P2, texto.** El diálogo de RPE > 5 explica qué guarda cada opción:
+  «Sesión normal» suma carga y días intensos; «Recuperación» no suma carga y
+  mantiene la racha.
+- **Vista compartida.** `loadReadinessView()` es el cuerpo común de
+  `readinessViewProvider`.
+
+### Evidencia R2
+
+| Log | Qué | Resultado |
+|---|---|---|
+| r2-red-01 / r2b-1 (diag75 = 75eeedb) | `readiness_partial_test` | 1/5. Rojos funcionales: a medias = hecha; provider real (la parcial se aceptaba); racha parcial 1; molestia sin llegar a Hoy. RPE > 5 pasa. |
+| r2-red-03 / r2-red-04 (75) | `routine_reminders_test`, `restore_032_test` | 4/4 y 3/3: caracterización (respaldo 23 → 24 real; aviso desconocido da `RestoreException` y conserva la base). |
+| r2-green-00, r2b-5 | `analyze` | sin incidencias |
+| r2b-3 | `readiness_partial_test` | 5/5 |
+| r2-green-02…08 | avisos, restauración, repositorio, `reminders_test`, `restore_test`, `ladders_and_tests_data_test`, `experience_test` | 4/4, 3/3, 15/15, 22/22, 8/8, 6/6, 5/5 |
+| r2b-2 (75) | `readiness_home_test` | 1/4. «a medias» es rojo funcional. «mover test» pasa. «amarillo» y «rojo» dan timeout del arnés. |
+| r2b-4 (WT032) | `readiness_home_test` | 1/4. «mover test» pasa. Las otras 3 dan timeout del arnés tras montar y desmontar, con las aserciones previas cumplidas. |
+
+- Dos arnés anteriores de Hoy no cuentan como rojo ni como verde:
+  - pintaba antes de que drift respondiera (r2-red-02, r2-probe);
+  - `runAsync` se colgó y corté sólo mis procesos (r2-red-05, r2-green-09).
+- El flutter_tester 61260 quedó huérfano porque no repasé el árbol completo.
+  Lo cerró Codex con verificación. Ahora reconsulto todo el árbol antes de
+  liberar.
+- **Límite de la prueba de Hoy:** inyecta una vista precalculada y desmonta y
+  vuelve a montar la pantalla. Prueba toques, decisiones y lo guardado, no la
+  actualización reactiva de la misma pantalla.
+- **Esa reactividad la prueba `readiness_partial_test`** con los providers
+  reales:
+  - `readinessViewProvider` se recalcula con un partido, con la recuperación a
+    medias, con «Entrenar igual» y con la Activa terminada;
+  - `dashboardProvider` se recalcula con una molestia.
+- **Pendiente:** el arnés de Hoy rehecho con `drive()`, que avanza cuadros en
+  la misma zona y falla tras un tope en vez de colgarse. Falta una ventana
+  breve para correrlo.

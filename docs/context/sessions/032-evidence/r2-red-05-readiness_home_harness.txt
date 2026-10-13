@@ -1,0 +1,17 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-diag75/test/ui/readiness_home_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+08:27 +0: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí - did not complete [E]
+08:27 +0: rojo: solo descanso, sin la activación del amarillo - did not complete [E]
+08:27 +0: día de test amarillo: "Mover test a mañana" lo mueve y queda trazado - did not complete [E]
+08:27 +0: a medias no es hecho: sin ✓ ni "Día completo"; terminada sí - did not complete [E]
+08:27 +0: (tearDownAll) - did not complete [E]
+08:27 +0: Some tests failed.
+flutter.bat : No tests were found.
+En línea: 1 Carácter: 602
++ ... n $pair[0]; & C:\seguimiento-sdk-3.22.0\flutter\bin\flutter.bat test  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (No tests were found.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+exit=-1

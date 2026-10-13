@@ -42,18 +42,19 @@ final _readinessSignalsProvider = StreamProvider<void>((ref) {
 
 final readinessRepositoryProvider = Provider((ref) => ReadinessRepository(ref.watch(databaseProvider)));
 
-/// `test`: hoy toca test o intento.
-final readinessViewProvider = FutureProvider.family<ReadinessView, ({String day, bool test})>((ref, args) async {
+/// Lo que Hoy lee de la base para la recuperación de `day`. `test`: hoy toca
+/// test o intento.
+Future<ReadinessView> loadReadinessView(ReadinessRepository repo, DateTime day, {bool test = false}) async => ReadinessView(
+      advice: await repo.readinessOn(day, testOrAttemptToday: test),
+      trainedAnyway: await repo.trainedAnyway(day),
+      recoveryDone: await repo.recoveryDone(day),
+      routines: await repo.routinesOn(day),
+      mobilityStreak: await repo.mobilityStreak(day),
+    );
+
+final readinessViewProvider = FutureProvider.family<ReadinessView, ({String day, bool test})>((ref, args) {
   ref.watch(_readinessSignalsProvider);
-  final repo = ref.watch(readinessRepositoryProvider);
-  final day = parseDay(args.day);
-  return ReadinessView(
-    advice: await repo.readinessOn(day, testOrAttemptToday: args.test),
-    trainedAnyway: await repo.trainedAnyway(day),
-    recoveryDone: await repo.recoveryDone(day),
-    routines: await repo.routinesOn(day),
-    mobilityStreak: await repo.mobilityStreak(day),
-  );
+  return loadReadinessView(ref.watch(readinessRepositoryProvider), parseDay(args.day), test: args.test);
 });
 
 Color readinessColor(ReadinessLevel level) => switch (level) {

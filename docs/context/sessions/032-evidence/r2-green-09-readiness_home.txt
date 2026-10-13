@@ -1,0 +1,22 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/ui/readiness_home_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+00:02 +0 -1: loading C:/My Projects/seguimiento-032-recuperacion/test/ui/readiness_home_test.dart [E]
+  Error: the Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 10:3  throwToolExit
+  package:flutter_tools/src/compile.dart 898:9     DefaultResidentCompiler._compile.<fn>
+  dart:async/zone.dart 1407:47                     _rootRunUnary
+  dart:async/zone.dart 1308:19                     _CustomZone.runUnary
+  dart:async/future_impl.dart 847:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 876:13               Future._propagateToListeners
+  dart:async/future_impl.dart 652:5                Future._completeWithValue
+  dart:async/future_impl.dart 722:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone.dart 1399:13                     _rootRun
+  dart:async/zone.dart 1301:19                     _CustomZone.run
+  dart:async/zone.dart 1209:7                      _CustomZone.runGuarded
+  dart:async/zone.dart 1249:23                     _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:21         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 118:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 185:5      _RawReceivePort._handleMessage
+  
