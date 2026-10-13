@@ -337,7 +337,9 @@ class ReadinessRepository {
     return t == null ? null : (round: t.round, part: t.part, moves: t.moves);
   }
 
-  /// El test efectivo de `date`, o null. Con `gate`, si se puede hacer ese día.
+  /// El test prioritario de `date`, o null: más movimientos primero.
+  /// La agenda conserva las otras identidades del mismo día; no las aplaza.
+  /// Con `gate`, si el test seleccionado se puede hacer ese día.
   Future<EffectiveTest?> effectiveTestOn(DateTime date,
       {required String scheme,
       required DateTime blockStart,
@@ -388,17 +390,13 @@ class ReadinessRepository {
         ));
       }
     }
-    // Un día, un test: si un movimiento cae sobre el previsto de otro test,
-    // manda el que se movió a ese día.
+    // Orden compartido: el selector diario prioriza el test más movido.
+    // Una fecha compartida no elimina ninguna identidad de la agenda.
     out.sort((a, b) {
       final d = a.date.compareTo(b.date);
       return d != 0 ? d : b.moves.compareTo(a.moves);
     });
-    final seen = <DateTime>{};
-    return [
-      for (final t in out)
-        if (seen.add(t.date)) t
-    ];
+    return out;
   }
 
   Future<TestDayGate> _gate(TestPart part, DateTime date) async {

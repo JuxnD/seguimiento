@@ -1,0 +1,24 @@
+{
+  "owner": "review043collision",
+  "token": "2c9d2db0269146bfb6e5242fc10d03f9",
+  "pid": 64676,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--concurrency",
+    "1",
+    "--timeout",
+    "90s",
+    "--reporter",
+    "expanded",
+    "C:/My Projects/seguimiento-122-integracion/plans/review043-root-collision-test.dart"
+  ],
+  "worktree": "C:\\My Projects\\seguimiento-043-lectores-plan-v32",
+  "startUtc": "2026-10-13T21:42:35.9728758Z",
+  "finishUtc": "2026-10-13T21:42:41.3314264Z",
+  "exit": 1,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

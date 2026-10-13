@@ -1,0 +1,22 @@
+00:00 +0: loading C:/My Projects/seguimiento-122-integracion/plans/review043-root-collision-test.dart
+00:00 +0: (setUpAll)
+00:00 +0: moving torso twice preserves both typed identities on the shared Wednesday
+00:00 +0 -1: moving torso twice preserves both typed identities on the shared Wednesday [E]
+  Expected: an object with length of <6>
+    Actual: [
+              Instance of 'EffectiveTest',
+              Instance of 'EffectiveTest',
+              Instance of 'EffectiveTest',
+              Instance of 'EffectiveTest',
+              Instance of 'EffectiveTest'
+            ]
+     Which: has length of <5>
+  rescheduling never deletes a scheduled identity
+  
+  package:matcher                                                               expect
+  package:flutter_test/src/widget_tester.dart 474:18                            expect
+  ..\seguimiento-122-integracion\plans\review043-root-collision-test.dart 32:7  main.<fn>
+  
+00:00 +0 -1: (tearDownAll)
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T214241336-64676-64848c23761c4f019e3ae4b1f6975c1e.json

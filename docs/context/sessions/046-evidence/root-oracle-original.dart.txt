@@ -1,0 +1,42 @@
+import 'dart:ffi';
+import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sqlite3/open.dart';
+import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/data/repositories/readiness_repository.dart';
+import 'package:seguimiento/domain/test_protocol.dart';
+import 'package:seguimiento/domain/fitness_test.dart';
+
+// Independent synthetic collision oracle. Product source remains frozen.
+void main() {
+  setUpAll(() {
+    if (Platform.isWindows) {
+      open.overrideFor(OperatingSystem.windows, () => DynamicLibrary.open('winsqlite3.dll'));
+    }
+  });
+  test('moving torso twice preserves both typed identities on the shared Wednesday', () async {
+    final db = openInMemoryDatabase();
+    try {
+      final start = DateTime(2030, 3, 4);
+      final readiness = ReadinessRepository(db);
+      final key = TestScheduleKey(scheme: 'v3.2', blockStart: start,
+        protocolId: TestProtocolId.v32_13, round: 1, part: TestPart.torso);
+      var from = start;
+      for (var i = 0; i < 2; i++) {
+        from = (await readiness.moveTest(start: start, round: 1,
+          part: TestPart.torso, from: from, reasons: const ['synthetic'],
+          key: key, now: from))!;
+      }
+      final agenda = await readiness.testAgenda(scheme: 'v3.2',
+        blockStart: start, protocol: TestProtocolId.v32_13, gates: false);
+      expect(agenda, hasLength(6), reason: 'rescheduling never deletes a scheduled identity');
+      final sameDay = agenda.where((t) => t.date == DateTime(2030, 3, 6)).toList();
+      expect(sameDay.map((t) => t.part).toSet(),
+        {TestPart.torso, TestPart.piernas});
+      expect(sameDay.singleWhere((t) => t.part == TestPart.torso).moves, 2);
+      expect(sameDay.singleWhere((t) => t.part == TestPart.piernas).moves, 0);
+    } finally {
+      await db.close();
+    }
+  });
+}
