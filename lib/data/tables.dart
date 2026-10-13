@@ -505,6 +505,12 @@ class MorningChecks extends Table {
   /// respondió; no se toma como recuperado ni como fatiga.
   IntColumn get feeling => integer().nullable().check(feeling.isBetweenValues(1, 3))();
 
+  /// Dolor muscular general, 0–10 (§19.17, esquema 24). null = no respondió.
+  IntColumn get muscleSoreness => integer().nullable().check(muscleSoreness.isBetweenValues(0, 10))();
+
+  /// Enfermo, fiebre o dolor agudo (§19.17, esquema 24). null = no respondió.
+  BoolColumn get ill => boolean().nullable()();
+
   @override
   Set<Column> get primaryKey => {date};
 }

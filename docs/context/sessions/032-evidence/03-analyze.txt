@@ -1,0 +1,3 @@
+﻿Analyzing seguimiento-032-recuperacion...                       
+No issues found! (ran in 32.5s)
+exit=0

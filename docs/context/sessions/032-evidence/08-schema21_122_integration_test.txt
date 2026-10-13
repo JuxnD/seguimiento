@@ -1,0 +1,6 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/data/schema21_122_integration_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: frozen actual schema21 →22 →reopen preserves every old column and row
+00:00 +1: (tearDownAll)
+00:00 +1: All tests passed!
+exit=0

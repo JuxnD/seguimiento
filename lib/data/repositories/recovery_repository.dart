@@ -21,6 +21,14 @@ class RecoveryRepository {
   Future<void> setFeeling(DateTime day, int? feeling) =>
       _setMorning(day, MorningChecksCompanion(feeling: Value(feeling)));
 
+  /// Dolor muscular general 0–10 y "enfermo, fiebre o dolor agudo"
+  /// (§19.17); null borra la respuesta.
+  Future<void> setReadinessAnswers(DateTime day, {required int? muscleSoreness, required bool? ill}) =>
+      _setMorning(day, MorningChecksCompanion(muscleSoreness: Value(muscleSoreness), ill: Value(ill)));
+
+  Future<MorningCheckRow?> morningOn(DateTime day) =>
+      (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull();
+
   Future<int?> feelingOn(DateTime day) async =>
       (await (db.select(db.morningChecks)..where((t) => t.date.equals(dayKey(day)))).getSingleOrNull())?.feeling;
 
@@ -31,7 +39,7 @@ class RecoveryRepository {
             .insert(MorningChecksCompanion.insert(date: key), mode: InsertMode.insertOrIgnore);
         await (db.update(db.morningChecks)..where((t) => t.date.equals(key))).write(change);
         final row = await (db.select(db.morningChecks)..where((t) => t.date.equals(key))).getSingle();
-        if (row.restingHr == null && row.feeling == null) {
+        if (row.restingHr == null && row.feeling == null && row.muscleSoreness == null && row.ill == null) {
           await (db.delete(db.morningChecks)..where((t) => t.date.equals(key))).go();
         }
       });
@@ -55,6 +63,18 @@ class RecoveryRepository {
         for (final e in levels.entries.where((e) => e.value > 0)) {
           await db.into(db.sorenessLogs).insert(SorenessLogsCompanion.insert(date: dayKey(day), zone: e.key, level: e.value));
         }
+      });
+
+  /// Una molestia suelta (al terminar una rutina): queda la más alta del día
+  /// para esa zona; no borra las demás.
+  Future<void> addSoreness(DateTime day, String zone, int level) => db.transaction(() async {
+        final key = dayKey(day);
+        final prev = await (db.select(db.sorenessLogs)..where((t) => t.date.equals(key) & t.zone.equals(zone)))
+            .getSingleOrNull();
+        if (prev != null && prev.level >= level) return;
+        await db
+            .into(db.sorenessLogs)
+            .insertOnConflictUpdate(SorenessLogsCompanion.insert(date: key, zone: zone, level: level));
       });
 
   /// Día → zona → nivel, de los últimos `days` días hasta `today`.

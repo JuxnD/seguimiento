@@ -32,6 +32,7 @@ import '../body/measurement_form_screen.dart';
 import '../meals/meal_form_screen.dart';
 import 'coach_card.dart';
 import 'morning_check_screen.dart';
+import 'readiness_card.dart';
 import 'sleep_hours_dialog.dart';
 import 'steps_source_line.dart';
 import 'walk_screen.dart';
@@ -96,6 +97,17 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 if (noRoutine) _NoRoutineCard(today: today) else _PlanHero(dashboard: d),
                 _RingsCard(dashboard: d),
+                if (!noRoutine)
+                  AppCard(
+                    title: 'Rutinas del día',
+                    children: [
+                      DailyRoutinesRow(
+                        date: today,
+                        legs: d.footballToday != null || d.dayType == DayType.piernas,
+                        matchNight: d.footballToday != null,
+                      ),
+                    ],
+                  ),
                 if (d.coach case final coach?) CoachCard(reading: coach, strength: d.strength),
                 const _PendingReviewCard(),
                 const _LadderStepUpCard(),
@@ -345,6 +357,16 @@ class _StartButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final d = dashboard;
     final test = d.fitnessTest;
+    // Recuperación activa propuesta por la carga (§19.17): reemplaza la
+    // sesión del día hasta hacerla o elegir "Entrenar igual".
+    final start = d.fitnessTestStart;
+    final pendingTest =
+        test == null || test.done || start == null ? null : (start: start, round: test.round, part: test.part);
+    final view = ref.watch(readinessViewProvider((day: dayKey(d.date), test: pendingTest != null))).valueOrNull;
+    if (view != null && !d.trained) {
+      if (view.recoveryDone) return _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref));
+      if (view.proposesRecovery) return RecoveryProposalCard(date: d.date, view: view, test: pendingTest);
+    }
     if (d.trained && test == null) {
       return _DayComplete(dashboard: d, color: color, onAnother: () => _another(context, ref));
     }

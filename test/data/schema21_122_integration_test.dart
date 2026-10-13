@@ -97,13 +97,13 @@ void main() {
       List<Map<String, dynamic>>? firstGoals;
       for (var opening = 0; opening < 2; opening++) {
         db = AppDatabase(NativeDatabase(file));
-        expect(db.schemaVersion, 23);
+        expect(db.schemaVersion, 24);
         expect(
             (await db.customSelect('PRAGMA user_version').getSingle())
                 .data
                 .values
                 .single,
-            23);
+            24);
         final names = (await db
                 .customSelect(
                     "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
@@ -132,7 +132,8 @@ void main() {
                   .map((c) => c['name'])
                   .toList(),
               switch (entry.key) {
-                'morning_checks' => ['feeling'],
+                // Plan 032 (esquema 24): dolor muscular y enfermo.
+                'morning_checks' => ['feeling', 'muscle_soreness', 'ill'],
                 // Plan 022 (esquema 23): origen y estado del alta.
                 'profiles' => [
                     'profile_origin',
@@ -142,7 +143,7 @@ void main() {
                   ],
                 _ => <String>[],
               },
-              reason: '${entry.key} only schema22/23 columns');
+              reason: '${entry.key} only schema22/23/24 columns');
           final fields = columns.map(_quoted).join(',');
           expect(
               (await db

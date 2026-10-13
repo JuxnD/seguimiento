@@ -6,6 +6,8 @@ library;
 class MobilityExercise {
   const MobilityExercise({
     required this.name,
+    this.id,
+    this.purpose,
     this.durationSec,
     this.reps,
     this.perSide = false,
@@ -14,6 +16,12 @@ class MobilityExercise {
   }) : assert((durationSec == null) != (reps == null), 'o por tiempo o por repeticiones');
 
   final String name;
+
+  /// Id del traspaso (`cat_cow`); null en las rutinas anteriores.
+  final String? id;
+
+  /// Para qué sirve, en una línea (§19.14).
+  final String? purpose;
 
   /// Por tiempo (cuenta regresiva que avanza sola)…
   final int? durationSec;
@@ -31,11 +39,23 @@ class MobilityExercise {
 }
 
 class MobilityRoutine {
-  const MobilityRoutine({required this.id, required this.name, required this.exercises});
+  const MobilityRoutine({
+    required this.id,
+    required this.name,
+    required this.exercises,
+    this.intensity,
+    this.closingNote,
+  });
 
   final String id;
   final String name;
   final List<MobilityExercise> exercises;
+
+  /// "3/10, dinámico"; null en las rutinas anteriores.
+  final String? intensity;
+
+  /// Lo que va después, fuera del cronómetro (la caminata opcional).
+  final String? closingNote;
 }
 
 const mobilityNight = MobilityRoutine(

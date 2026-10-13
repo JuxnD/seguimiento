@@ -63,7 +63,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 23;
+  int get schemaVersion => 24;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -266,6 +266,14 @@ class AppDatabase extends _$AppDatabase {
             // v23: el piso de kcal entra a la misma historia. Sólo la métrica
             // que falte, como legado; lo de 009 no se duplica.
             await seedGoalVersions(this, effectiveFrom: null, origin: GoalOrigin.legado);
+          }
+          if (from >= 17 && from < 24) {
+            // v24 (plan 032): dolor muscular y "enfermo" en el registro de la
+            // mañana, para la recuperación activa. Aditivo y nullable: lo
+            // anterior queda sin responder. Antes del 17 la tabla nace ya con
+            // la definición actual.
+            await m.addColumn(morningChecks, morningChecks.muscleSoreness);
+            await m.addColumn(morningChecks, morningChecks.ill);
           }
           if (from < 16) {
             // Guías del catálogo con todas las columnas ya creadas: las de

@@ -8,9 +8,11 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../app/providers.dart';
 import '../../data/repositories/training_repository.dart';
+import '../../domain/daily_routines.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/mobility.dart';
+import '../../domain/recovery.dart' show sorenessZones;
 import '../../ui/exercise_figure_3d_view.dart';
 import '../../ui/progress_ring.dart';
 import '../../ui/session_style.dart';
@@ -34,8 +36,10 @@ class MobilityResult {
   bool get complete => stepsDone >= stepsTotal;
 }
 
-/// Abre la rutina y, si se guarda, la registra como sesión de movilidad: sin
-/// RPE, fuera del plan, sin contar para adherencia, récords ni racha.
+/// Abre la rutina y, si se guarda, la registra como sesión de movilidad con
+/// su id en `mode`: sin carga ni cadena intensa, fuera de adherencia y
+/// récords. La recuperación activa (§19.17) pide el RPE y mantiene la racha;
+/// con RPE > 5 ofrece guardarla como sesión normal.
 Future<void> startMobility(BuildContext context, WidgetRef ref, {MobilityRoutine routine = mobilityNight}) async {
   final result = await Navigator.push<MobilityResult>(
     context,
@@ -43,17 +47,102 @@ Future<void> startMobility(BuildContext context, WidgetRef ref, {MobilityRoutine
   );
   if (result == null || !context.mounted) return;
   final start = result.startedAt;
-  await guarded(
+  final recovery = routine.id == recoveryActiveId;
+  int? rpe;
+  var type = SessionType.movilidad;
+  if (recovery) {
+    rpe = await askRecoveryRpe(context);
+    if (!context.mounted) return;
+    if (rpe != null && rpe > recoveryMaxRpe) {
+      final normal = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('Esto ya no fue recuperación'),
+          content: Text('Con RPE $rpe cuenta como carga. ¿La guardo como sesión normal?'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Dejar como recuperación')),
+            FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Sesión normal')),
+          ],
+        ),
+      );
+      if (normal == null || !context.mounted) return;
+      if (normal) type = SessionType.otro;
+    }
+  }
+  final saved = await guarded(
     context,
     () => ref.read(trainingRepositoryProvider).save(SessionDraft(
           date: dateOnly(start),
           startTime: timeKey(start.hour, start.minute),
-          type: SessionType.movilidad,
+          type: type,
           totalSec: result.totalSec,
           incomplete: !result.complete,
+          rpe: rpe,
+          mode: type == SessionType.movilidad ? routine.id : null,
           notes: routine.name,
         )),
-    ok: 'Movilidad guardada · ${formatDuration(result.totalSec)}',
+    ok: type == SessionType.movilidad
+        ? 'Movilidad guardada · ${formatDuration(result.totalSec)}'
+        : 'Sesión guardada · ${formatDuration(result.totalSec)}',
+  );
+  if (!saved || !context.mounted) return;
+  // "¿Algo tirante o con molestia?" (§19.15): alimenta el aviso de molestias.
+  final sore = await askTightness(context);
+  if (sore == null || !context.mounted) return;
+  await guarded(context, () => ref.read(recoveryRepositoryProvider).addSoreness(dateOnly(start), sore.$1, sore.$2),
+      ok: 'Molestia anotada');
+}
+
+/// RPE al cerrar la recuperación activa. null = no lo puso.
+Future<int?> askRecoveryRpe(BuildContext context) {
+  var value = 3;
+  return showDialog<int>(
+    context: context,
+    builder: (c) => StatefulBuilder(
+      builder: (c, set) => AlertDialog(
+        title: const Text('¿Qué tan dura se sintió?'),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('RPE $value', style: Theme.of(c).textTheme.headlineSmall),
+          Slider(value: value.toDouble(), min: 1, max: 10, divisions: 9, onChanged: (v) => set(() => value = v.round())),
+          const Text('Recuperación es 3–4: cómodo, sin cansarte para mañana.'),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Omitir')),
+          FilledButton(onPressed: () => Navigator.pop(c, value), child: const Text('Listo')),
+        ],
+      ),
+    ),
+  );
+}
+
+/// "¿Algo tirante o con molestia?": zona y 1–10. null = nada.
+Future<(String, int)?> askTightness(BuildContext context) {
+  String? zone;
+  var level = 3;
+  return showDialog<(String, int)>(
+    context: context,
+    builder: (c) => StatefulBuilder(
+      builder: (c, set) => AlertDialog(
+        title: const Text('¿Algo tirante o con molestia?'),
+        content: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Wrap(spacing: 6, runSpacing: 4, children: [
+              for (final z in sorenessZones)
+                ChoiceChip(label: Text(z), selected: zone == z, onSelected: (_) => set(() => zone = zone == z ? null : z)),
+            ]),
+            if (zone != null) ...[
+              const SizedBox(height: 8),
+              Text('$zone: $level/10'),
+              Slider(value: level.toDouble(), min: 1, max: 10, divisions: 9, onChanged: (v) => set(() => level = v.round())),
+            ],
+          ]),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Nada')),
+          FilledButton(onPressed: zone == null ? null : () => Navigator.pop(c, (zone!, level)), child: const Text('Anotar')),
+        ],
+      ),
+    ),
   );
 }
 
@@ -184,8 +273,18 @@ class _MobilityScreenState extends State<MobilityScreen> {
         ),
         const SizedBox(height: 6),
         LinearProgressIndicator(value: _index / _steps.length, color: style.color),
+        if (widget.routine.intensity != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text('Intensidad ${widget.routine.intensity}', style: text.bodySmall),
+          ),
         const SizedBox(height: 20),
         Text(step.exercise.name, style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+        if (step.exercise.purpose != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(step.exercise.purpose!, style: text.bodyMedium),
+          ),
         if (step.detail.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 4),
@@ -261,8 +360,16 @@ class _MobilityScreenState extends State<MobilityScreen> {
         Text('${formatDuration(_elapsedSec)} · $done de ${_steps.length} pasos',
             textAlign: TextAlign.center, style: text.titleMedium),
         const SizedBox(height: 8),
-        Text('Es opcional: no cuenta para adherencia, récords ni racha.',
-            textAlign: TextAlign.center, style: text.bodySmall),
+        Text(
+            widget.routine.id == recoveryActiveId
+                ? 'Cuenta como recuperación: mantiene la racha y no suma carga.'
+                : 'Es opcional: no cuenta para adherencia, récords ni racha.',
+            textAlign: TextAlign.center,
+            style: text.bodySmall),
+        if (widget.routine.closingNote != null) ...[
+          const SizedBox(height: 12),
+          Text(widget.routine.closingNote!, textAlign: TextAlign.center, style: text.bodyMedium),
+        ],
         const SizedBox(height: 24),
         FilledButton.icon(
           style: FilledButton.styleFrom(backgroundColor: style.color),

@@ -23,7 +23,12 @@ class CoachRepository {
 
   /// Carga y racha real hasta `date` (sin truncar a 7 días). Lo importado no
   /// cuenta; el test de condición tampoco.
-  Future<LoadReading> load(DateTime date) async {
+  Future<LoadReading> load(DateTime date) async => loadReading(await loadItems(date), date);
+
+  /// Lo que cuenta como carga hasta `date`: sesiones de entreno (sin
+  /// movilidad, importado ni test de condición) y todos los partidos. La misma
+  /// lista alimenta la racha intensa y la recuperación activa (§19.17).
+  Future<List<LoadItem>> loadItems(DateTime date) async {
     final throughToday = dayKey(date);
     final sessions = await (db.select(db.sessions)
           ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & db.trainingSessions & t.imported.equals(false)))
@@ -31,11 +36,11 @@ class CoachRepository {
     final games = await (db.select(db.footballGames)
           ..where((t) => t.date.isSmallerOrEqualValue(throughToday) & t.imported.equals(false)))
         .get();
-    return loadReading([
+    return [
       for (final s in sessions.where((s) => s.mode != 'test'))
         LoadItem(date: parseDay(s.date), minutes: (s.totalSec - s.warmupSec - s.cooldownSec) ~/ 60, effort: s.rpe),
       for (final g in games) LoadItem(date: parseDay(g.date), minutes: g.minutes, effort: g.intensity, isFootball: true),
-    ], date);
+    ];
   }
 
   /// Cansancio declarado hoy o ayer: RPE ≥ 9 o "cansado" al despertar.

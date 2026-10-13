@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../domain/daily_routines.dart' show recoveryActiveId;
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/fitness_test.dart';
@@ -16,6 +17,7 @@ import 'coach_repository.dart';
 import 'goal_repository.dart';
 import 'exercise_repository.dart';
 import 'fitness_test_repository.dart';
+import 'readiness_repository.dart';
 import 'nutrition_repository.dart';
 import 'plan_repository.dart';
 import 'profile_repository.dart';
@@ -61,6 +63,7 @@ class TodayDashboard {
     this.soreZones = const [],
     this.planB = false,
     this.fitnessTest,
+    this.fitnessTestStart,
     this.techniqueSuggested = false,
     this.coach,
     this.strength = const [],
@@ -80,6 +83,9 @@ class TodayDashboard {
   /// Test de condición de hoy (§19.11): el lunes sustituye el tirón; el
   /// miércoles va antes de la sesión de piernas. null si hoy no toca.
   final ({int round, TestPart part, bool done})? fitnessTest;
+
+  /// Lunes de inicio del v3.1 del test de hoy: su identidad para moverlo.
+  final DateTime? fitnessTestStart;
 
   final DateTime date;
   final int weekIndex;
@@ -297,6 +303,7 @@ class DashboardRepository {
       v3: v3,
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
       fitnessTest: test,
+      fitnessTestStart: test == null ? null : _v31StartFor(date, v3),
       coach: coach,
       strength: view == null || type == DayType.resistencia
           ? const []
@@ -324,13 +331,18 @@ class DashboardRepository {
     final v3 = await training.blockDay(await plan.dayFor(tomorrow), tomorrow);
     if (v3 == null || !v3.isV31) return false;
     final start = addDays(tomorrow, -(tomorrow.weekday - 1) - (v3.week - 1) * 7);
-    return scheduledTest(start, tomorrow) != null || dateOnly(v3.testDate) == tomorrow;
+    return await ReadinessRepository(db).effectiveScheduledTest(start, tomorrow) != null ||
+        dateOnly(v3.testDate) == tomorrow;
   }
 
+  static DateTime? _v31StartFor(DateTime date, V3Day? v3) =>
+      v3 == null || !v3.isV31 ? null : addDays(date, -(date.weekday - 1) - (v3.week - 1) * 7);
+
   Future<({int round, TestPart part, bool done})?> _fitnessTest(DateTime date, V3Day? v3) async {
-    if (v3 == null || !v3.isV31) return null;
-    final start = addDays(date, -(date.weekday - 1) - (v3.week - 1) * 7);
-    final t = scheduledTest(start, date);
+    final start = _v31StartFor(date, v3);
+    if (start == null) return null;
+    // Con los tests movidos por la recuperación activa (§19.17).
+    final t = await ReadinessRepository(db).effectiveScheduledTest(start, date);
     if (t == null) return null;
     return (round: t.round, part: t.part, done: await FitnessTestRepository(db).done(t.round, t.part));
   }
@@ -414,7 +426,10 @@ class DashboardRepository {
   /// Días seguidos entrenando, sin que el descanso planificado los rompa. Un
   /// partido de fútbol cuenta como día entrenado.
   Future<int> _streak(DateTime today) async {
-    final rows = await (db.select(db.sessions)..where((_) => db.trainingSessions)).get();
+    // La recuperación activa (§19.17) mantiene la racha aunque no sume carga.
+    final rows = await (db.select(db.sessions)
+          ..where((t) => db.trainingSessions | (t.type.equalsValue(SessionType.movilidad) & t.mode.equals(recoveryActiveId))))
+        .get();
     final games = await db.select(db.footballGames).get();
     final dates = {...rows.map((s) => s.date), ...games.map((g) => g.date)};
     final versions = await plan.versions();

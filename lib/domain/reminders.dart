@@ -2,6 +2,7 @@
 /// cada aviso y con qué texto, sin saber nada del sistema de notificaciones.
 library;
 
+import 'daily_routines.dart' show morningActivaId, nightSueltaId, recoveryActiveId;
 import 'dates.dart';
 import 'enums.dart';
 import 'format.dart';
@@ -24,6 +25,16 @@ enum ReminderKind {
   /// Recordatorios que crea el usuario (cuello, estiramientos…). No tienen
   /// fila en `reminders`: cada uno vive en `custom_reminders`.
   personalizado,
+
+  // Plan 032, al final para no mover los índices (ids de notificación).
+  /// La noche anterior, si la carga ya pide recuperación activa (§19.17).
+  recuperacionManana,
+
+  /// Rutina de la mañana "Activa" (§19.14).
+  rutinaManana,
+
+  /// Rutina de la noche "Suelta" (§19.15).
+  rutinaNoche,
 }
 
 extension ReminderKindLabel on ReminderKind {
@@ -40,6 +51,9 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.comidasSinRegistrar => 'Comidas sin registrar',
         ReminderKind.pasos => 'Pasos del día',
         ReminderKind.personalizado => 'Recordatorio propio',
+        ReminderKind.recuperacionManana => 'Recuperación de mañana',
+        ReminderKind.rutinaManana => 'Rutina de la mañana',
+        ReminderKind.rutinaNoche => 'Rutina de la noche',
       };
 
   String get description => switch (this) {
@@ -56,6 +70,10 @@ extension ReminderKindLabel on ReminderKind {
           'Si a esa hora falta desayuno, almuerzo o cena, dice cuál (no suena si cerraste el día)',
         ReminderKind.pasos => 'Entre semana, si a esa hora vas por debajo del umbral de pasos',
         ReminderKind.personalizado => 'Cada N días desde la última vez que lo marcaste como hecho',
+        ReminderKind.recuperacionManana =>
+          'Si la carga de ayer y hoy ya es alta, avisa que mañana probablemente toca recuperación activa',
+        ReminderKind.rutinaManana => 'Activa, 10 min después de despertar. No suena si ya la hiciste',
+        ReminderKind.rutinaNoche => 'Suelta, antes de dormir. No suena si ya la hiciste',
       };
 
   /// Los que no se programan por hora del día.
@@ -137,6 +155,8 @@ class ReminderContext {
     this.lastMeasurement,
     this.measureIntervalDays = 21,
     this.nextMeasurementDate,
+    this.recoveryNoticeTonight,
+    this.routinesDoneToday = const {},
   });
 
   final DateTime now;
@@ -165,6 +185,12 @@ class ReminderContext {
   final int measureIntervalDays;
   final DateTime? nextMeasurementDate;
 
+  /// Texto del aviso de la noche si la carga ya pide recuperación (§19.17).
+  final String? recoveryNoticeTonight;
+
+  /// Rutinas diarias ya guardadas hoy (ids de `daily_routines.dart`).
+  final Set<String> routinesDoneToday;
+
   ReminderSetting? setting(ReminderKind kind) => settings[kind];
 }
 
@@ -177,7 +203,9 @@ List<PlannedNotification> planReminders(ReminderContext ctx) {
     out.addAll(_unloggedSession(ctx, day));
     out.addAll(_mealReminders(ctx, day));
     out.addAll(_customReminders(ctx, day));
+    out.addAll(_dailyRoutines(ctx, day));
   }
+  out.addAll(_recoveryEve(ctx));
   out.addAll(_protein(ctx));
   out.addAll(_calories(ctx));
   out.addAll(_missingMeals(ctx));
@@ -263,6 +291,31 @@ Iterable<PlannedNotification> _calories(ReminderContext ctx) sync* {
     title: 'Calorías: ${ctx.kcalToday.round()} kcal',
     body: 'Faltan $missing kcal para la meta de ${ctx.kcalTarget}. El déficit es lo que frena la recomposición.',
   );
+}
+
+Iterable<PlannedNotification> _recoveryEve(ReminderContext ctx) sync* {
+  final s = ctx.setting(ReminderKind.recuperacionManana);
+  final notice = ctx.recoveryNoticeTonight;
+  if (s == null || !s.enabled || notice == null) return;
+  yield PlannedNotification(
+    kind: ReminderKind.recuperacionManana,
+    when: _at(ctx.now, s),
+    title: 'Mañana probablemente toca recuperación activa',
+    body: notice,
+  );
+}
+
+Iterable<PlannedNotification> _dailyRoutines(ReminderContext ctx, ReminderDay day) sync* {
+  final today = dateOnly(ctx.now) == dateOnly(day.date);
+  for (final (kind, id, title, body) in const [
+    (ReminderKind.rutinaManana, morningActivaId, 'Mañana · Activa', '10 min dinámicos y suaves. Sin tiempo: la de 4 min.'),
+    (ReminderKind.rutinaNoche, nightSueltaId, 'Noche · Suelta', '10 min de estiramiento suave para soltar y dormir mejor.'),
+  ]) {
+    final s = ctx.setting(kind);
+    if (s == null || !s.enabled) continue;
+    if (today && (ctx.routinesDoneToday.contains(id) || ctx.routinesDoneToday.contains(recoveryActiveId))) continue;
+    yield PlannedNotification(kind: kind, when: _at(day.date, s), title: title, body: body);
+  }
 }
 
 Iterable<PlannedNotification> _missingMeals(ReminderContext ctx) sync* {

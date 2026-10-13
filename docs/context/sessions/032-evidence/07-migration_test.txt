@@ -1,0 +1,25 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/data/migration_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: fixture sintética congelada 17 migra a 18 sin reconstruir el esquema
+00:00 +1: una base del esquema 1 llega al 24 sin perder datos
+00:01 +2: una base del esquema 2 llega al 24 conservando el catálogo
+00:02 +3: una base del esquema 7 llega al 24 con guías, catálogo nuevo y rondas sin separar
+00:03 +4: del esquema 8 al 9 los recordatorios vuelven a los valores acordados
+00:04 +5: una base del esquema 6 llega al 24: las sesiones viejas quedan con descanso 0
+00:04 +6: una base del esquema 9 llega al 24: pasos, golpe en el fútbol y alimentos marcados
+00:05 +7: una base del esquema 10 llega al 24 con la tabla de fotos de referencia
+00:06 +8: una base del esquema 11 llega al 24 con la tabla de recordatorios propios
+00:06 +9: una base del esquema 12 llega al 24: pan y salchichón por gramos
+00:07 +10: una base del esquema 13 llega al 24: las sesiones quedan revisadas
+00:07 +11: una base del esquema 14 llega al 24: plan y sesiones listos para el v3
+00:08 +12: una base del esquema 15 llega al 24: RIR, fútbol, sueño y meta de fútbol
+00:08 +13: una base del esquema 16 llega al 24: momento del pesaje, mañana y huevos por porción
+00:09 +14: una base del esquema 18 llega al 24: historial importado, tests y escaleras
+00:09 +15: una base del esquema 20 llega al 24: metas legadas sin fecha, sin propuestas
+00:09 +16: una base del esquema 23 llega al 24: el registro de la mañana gana dolor y enfermo sin respuesta
+00:09 +17: una base del esquema 20 llega al 24 conservando cada tabla, columna y fila
+00:10 +18: una base del esquema 21 llega al 24 conservando cada tabla, columna y fila
+00:10 +19: una base del esquema 22 llega al 24 conservando cada tabla, columna y fila
+00:10 +20: (tearDownAll)
+00:10 +20: All tests passed!
+exit=0

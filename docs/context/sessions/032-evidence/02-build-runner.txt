@@ -1,0 +1,78 @@
+﻿[INFO] Generating build script...
+[INFO] Generating build script completed, took 476ms
+
+[INFO] Precompiling build script......
+[INFO] Precompiling build script... completed, took 6.8s
+
+[INFO] Initializing inputs
+[INFO] Building new asset graph...
+[INFO] Building new asset graph completed, took 2.3s
+
+[INFO] Checking for unexpected pre-existing outputs....
+[INFO] Checking for unexpected pre-existing outputs. completed, took 1ms
+
+[INFO] Running build...
+[INFO] Generating SDK summary...
+[INFO] 3.0s elapsed, 0/16 actions completed.
+[INFO] 5.3s elapsed, 0/16 actions completed.
+[INFO] 6.7s elapsed, 0/16 actions completed.
+[INFO] Generating SDK summary completed, took 6.7s
+
+[INFO] 7.8s elapsed, 1/54 actions completed.
+[INFO] 8.8s elapsed, 21/66 actions completed.
+[INFO] 9.8s elapsed, 42/75 actions completed.
+[INFO] 10.9s elapsed, 45/79 actions completed.
+[INFO] 12.0s elapsed, 54/82 actions completed.
+[INFO] 13.0s elapsed, 82/106 actions completed.
+[INFO] 29.7s elapsed, 102/118 actions completed.
+[WARNING] No actions completed for 16.2s, waiting on:
+  - drift_dev on test/app/android_manifest_test.dart
+  - drift_dev on test/app/coalesce_test.dart
+  - drift_dev on test/data/active_session_critical_write_test.dart
+  - drift_dev on test/data/active_session_restore_queue_test.dart
+  - drift_dev on test/data/active_session_store_test.dart
+  .. and 11 more
+
+[INFO] 30.8s elapsed, 102/118 actions completed.
+[INFO] 37.2s elapsed, 102/118 actions completed.
+[INFO] 39.7s elapsed, 102/118 actions completed.
+[INFO] 40.7s elapsed, 103/119 actions completed.
+[INFO] 41.8s elapsed, 119/135 actions completed.
+[INFO] 42.8s elapsed, 152/170 actions completed.
+[INFO] 43.9s elapsed, 185/201 actions completed.
+[INFO] 45.3s elapsed, 230/245 actions completed.
+[INFO] 46.4s elapsed, 263/279 actions completed.
+[INFO] 47.5s elapsed, 314/330 actions completed.
+[INFO] 48.6s elapsed, 347/363 actions completed.
+[INFO] 49.7s elapsed, 380/396 actions completed.
+[INFO] 50.7s elapsed, 407/415 actions completed.
+[INFO] 51.8s elapsed, 414/430 actions completed.
+[INFO] 52.8s elapsed, 529/536 actions completed.
+[INFO] 53.9s elapsed, 545/561 actions completed.
+[INFO] 55.0s elapsed, 561/577 actions completed.
+[INFO] 56.0s elapsed, 575/591 actions completed.
+[INFO] 57.0s elapsed, 587/603 actions completed.
+[INFO] 58.1s elapsed, 601/617 actions completed.
+[INFO] 59.1s elapsed, 615/631 actions completed.
+[INFO] 1m 0s elapsed, 629/645 actions completed.
+[INFO] 1m 1s elapsed, 643/659 actions completed.
+[INFO] 1m 2s elapsed, 657/673 actions completed.
+[INFO] 1m 3s elapsed, 671/687 actions completed.
+[INFO] 1m 4s elapsed, 685/701 actions completed.
+[INFO] 1m 5s elapsed, 692/708 actions completed.
+[INFO] 1m 6s elapsed, 699/715 actions completed.
+[INFO] 1m 7s elapsed, 713/729 actions completed.
+[INFO] 1m 8s elapsed, 727/743 actions completed.
+[INFO] 1m 9s elapsed, 738/750 actions completed.
+[INFO] 1m 10s elapsed, 753/765 actions completed.
+[INFO] 1m 12s elapsed, 1105/1106 actions completed.
+[INFO] 1m 13s elapsed, 1247/1248 actions completed.
+[INFO] 1m 15s elapsed, 1373/1373 actions completed.
+[INFO] Running build completed, took 1m 15s
+
+[INFO] Caching finalized dependency graph...
+[INFO] Caching finalized dependency graph completed, took 188ms
+
+[INFO] Succeeded after 1m 15s with 446 outputs (1552 actions)
+
+exit=0

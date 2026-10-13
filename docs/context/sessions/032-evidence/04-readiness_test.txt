@@ -1,0 +1,18 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/domain/readiness_test.dart
+00:00 +0: fin de semana de tres partidos: el lunes de test sale amarillo y el test se mueve
+00:00 +1: sin test hoy no se propone mover nada
+00:00 +2: carga de 3 días: 899 es verde, 900 es amarillo
+00:00 +3: dos partidos entre ayer y hoy, aunque la carga sea baja
+00:00 +4: pulso contra la base +4 verde, +5 amarillo, +10 rojo
+00:00 +5: pulso contra la base con menos de 7 lecturas no hay base: no decide y lo dice
+00:00 +6: escaleras: 2 verde, 3–4 amarillo, 5 rojo
+00:00 +7: dolor muscular: 5 verde, 6 amarillo
+00:00 +8: sueño menos de 6 h es amarillo; 6 h no
+00:00 +9: sueño esfuerzo 8 ayer pide al menos 7 h
+00:00 +10: enfermo o fiebre: rojo, y el rojo manda sobre el amarillo
+00:00 +11: sin registro de la mañana: no se declara un verde confiado
+00:00 +12: aguda:crónica con 20 días de historial no se usa
+00:00 +13: aguda:crónica con 21 días y una semana muy por encima, amarillo
+00:00 +14: aviso de la noche: con la carga de ayer y hoy sobre el umbral
+00:00 +15: All tests passed!
+exit=0

@@ -3,6 +3,7 @@
 library;
 
 import '../enums.dart';
+import '../readiness.dart' show ReadinessWeek;
 import '../nutrition.dart';
 import '../goal_history.dart';
 
@@ -295,9 +296,13 @@ class ReportInput {
     this.goals,
     this.previous,
     this.notes,
+    this.recovery,
   });
 
   final DateTime programStart;
+
+  /// Recuperación activa de la semana (§19.17); null = no se calculó.
+  final ReadinessWeek? recovery;
   final DateTime rangeStart;
 
   /// Inclusivo.

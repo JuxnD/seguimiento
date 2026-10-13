@@ -11,6 +11,7 @@ import '../history_import.dart' show firstDataDay;
 import 'exercise_repository.dart';
 import 'nutrition_repository.dart';
 import 'profile_repository.dart';
+import 'readiness_repository.dart';
 import 'training_repository.dart';
 import 'goal_repository.dart';
 
@@ -182,7 +183,12 @@ class ReportRepository {
         ? await load(addDays(from, -span), addDays(from, -1), today: today, withPrevious: false)
         : null;
 
+    // Recuperación activa (§19.17): solo en el informe de la semana; cada día
+    // relee la carga, así que no se calcula para rangos largos.
+    final recovery = withPrevious && span <= 14 ? await ReadinessRepository(db).week(from, to) : null;
+
     return ReportInput(
+      recovery: recovery,
       programStart: start,
       rangeStart: from,
       rangeEnd: to,

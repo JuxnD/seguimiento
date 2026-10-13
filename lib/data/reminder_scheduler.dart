@@ -15,6 +15,7 @@ import 'repositories/profile_repository.dart';
 import 'repositories/reminder_repository.dart';
 import 'repositories/coach_repository.dart';
 import 'repositories/goal_repository.dart';
+import 'repositories/readiness_repository.dart';
 import '../domain/goal_history.dart';
 
 /// Junta lo que hay en la base con las reglas de `domain/reminders.dart` y
@@ -100,6 +101,8 @@ class ReminderScheduler {
         agreed: p.nextMeasurementDate == null ? null : parseDay(p.nextMeasurementDate!),
         lastMeasurement: lastMeasurement,
       ),
+      recoveryNoticeTonight: await ReadinessRepository(db).eveningNotice(today),
+      routinesDoneToday: await ReadinessRepository(db).routinesOn(today),
     ));
 
     await service.applySchedule(planned);

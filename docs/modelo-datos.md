@@ -56,7 +56,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **23** en el candidato local del plan 022 (ver al final). Al cambiar una tabla:
+`schemaVersion` vale **24** en el candidato local del plan 032 (ver al final). Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -228,3 +228,26 @@ rechaza: es de una versión más nueva y restaurarlo rompería los datos.
   tocar base y fotos. Oráculos: `pilot_profile_test`, `migration_test`
   (20/21/22 → 23 por tabla/columna/fila), `schema21_122_integration_test`.
   [ADR 0020](adr/0020-alta-neutral-y-arranque-protegido.md).
+
+## Esquema 24 (plan 032, candidato local sin publicar)
+
+- `morning_checks.muscle_soreness` (0–10, `CHECK`) y `morning_checks.ill`
+  (bool): dolor muscular general y "enfermo, fiebre o dolor agudo" para la
+  recuperación activa (§19.17). Nullable: null es "sin responder", nunca "sin
+  dolor" ni "sano". El registro de la mañana los guarda siempre (0 y no si no
+  se tocan). Las escaleras salen de la molestia `Rodilla` del día; un 0 no se
+  guarda, así que sin fila es "sin dato", nunca 0 (el campo propio llega con
+  034).
+- Migración 17–23 → 24: dos `addColumn`, sin backfill. Antes del 17 la tabla
+  nace con la definición actual. La fila del día se borra sólo si pulso,
+  "cómo amaneciste", dolor y enfermo quedan todos en null.
+- Sin columnas nuevas para el resto de 032: las rutinas diarias se guardan como
+  `sessions.type = movilidad` con su id en `sessions.mode`
+  (`morning_activa`, `night_suelta`, `recovery_active`); "Entrenar igual" y
+  los tests movidos van en `coach_proposals` (`kind = recuperacion` /
+  `mover_test`; id `mover_test:<inicio v3.1>:<ronda>:<parte>:<n>`, identidad y
+  origen en `evidence`, fecha nueva en `review_after`, máximo 2 por test y
+  plan; sólo se mueve desde el día que le toca). Tres `ReminderKind` nuevos van al final del enum
+  para no mover los ids de notificación.
+- Oráculos: `migration_test` (23 → 24 y las bases viejas → 24),
+  `schema21_122_integration_test`, `readiness_repository_test`.

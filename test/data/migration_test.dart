@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:drift/drift.dart' show Value;
+import 'package:drift/drift.dart' show OrderingTerm, Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
@@ -91,8 +91,18 @@ void main() {
   Future<void> buildOldSchema(int version, {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    if (version >= 24) {
+      await rows?.call(db);
+      await db.close();
+      return;
+    }
+    // Antes del 24 el registro de la mañana no tiene dolor muscular ni
+    // "enfermo" (plan 032).
+    await db.customStatement('alter table morning_checks drop column muscle_soreness');
+    await db.customStatement('alter table morning_checks drop column ill');
     if (version >= 23) {
       await rows?.call(db);
+      await db.customStatement('pragma user_version = $version');
       await db.close();
       return;
     }
@@ -307,7 +317,7 @@ void main() {
     raw.dispose();
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     expect((await BodyRepository(migrated).watchWeights().first).map((row) => row.kg), [70]);
     final meal = await migrated
         .customSelect('select m.date, i.label, i.kcal from meals m join meal_items i on i.meal_id = m.id')
@@ -317,7 +327,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 1 llega al 23 sin perder datos', () async {
+  test('una base del esquema 1 llega al 24 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -347,7 +357,7 @@ void main() {
     expect(food.source, MacroSource.referencia, reason: 'lo que ya existía queda como referencia');
     expect(food.servingGrams, isNull);
 
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
 
     // El esquema nuevo ya acepta lo que el plan y los combos necesitan.
     await migrated.into(migrated.planVersions).insert(
@@ -367,7 +377,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 23 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 24 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -379,11 +389,11 @@ void main() {
     final food = (await migrated.select(migrated.foods).get()).firstWhere((f) => f.name == 'Atún');
     expect(food.kcal, 120);
     expect(food.source, MacroSource.referencia);
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 7 llega al 23 con guías, catálogo nuevo y rondas sin separar', () async {
+  test('una base del esquema 7 llega al 24 con guías, catálogo nuevo y rondas sin separar', () async {
     await buildOldSchema(7, rows: (old) async {
       // 'Separaciones con banda' lleva anclaje: antes la guía se escribía en
       // el paso 8, cuando `exercises.anchor` (paso 15) aún no existía.
@@ -397,7 +407,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
 
     final pike = await (migrated.select(migrated.exercises)..where((t) => t.name.equals('Pike push-up'))).getSingle();
     expect(pike.formCues, startsWith('Posición de V invertida'));
@@ -431,7 +441,7 @@ void main() {
     });
 
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     final repo = ReminderRepository(migrated);
     await repo.ensureDefaults(); // lo que hace el arranque
     final settings = await repo.settings();
@@ -447,7 +457,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 6 llega al 23: las sesiones viejas quedan con descanso 0', () async {
+  test('una base del esquema 6 llega al 24: las sesiones viejas quedan con descanso 0', () async {
     await buildOldSchema(6);
     final old = AppDatabase(NativeDatabase(file));
     await old.customStatement(
@@ -458,11 +468,11 @@ void main() {
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.totalSec, 1200);
     expect(session.restSec, 0);
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 9 llega al 23: pasos, golpe en el fútbol y alimentos marcados', () async {
+  test('una base del esquema 9 llega al 24: pasos, golpe en el fútbol y alimentos marcados', () async {
     await buildOldSchema(9, rows: (db) async {
       await db.customStatement(
           "insert into foods (name, basis, unit_label, kcal, protein) values ('Pan (unidad)', 'unit', 'unidad', 140, 4.5)");
@@ -487,27 +497,27 @@ void main() {
     final profile = await migrated.select(migrated.profiles).getSingle();
     expect(profile.stepsTarget, 5000);
     expect(await migrated.select(migrated.dailySteps).get(), isEmpty);
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 10 llega al 23 con la tabla de fotos de referencia', () async {
+  test('una base del esquema 10 llega al 24 con la tabla de fotos de referencia', () async {
     await buildOldSchema(10);
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await migrated.select(migrated.exercisePhotos).get(), isEmpty);
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 11 llega al 23 con la tabla de recordatorios propios', () async {
+  test('una base del esquema 11 llega al 24 con la tabla de recordatorios propios', () async {
     await buildOldSchema(11);
     final migrated = AppDatabase(NativeDatabase(file));
     expect(await migrated.select(migrated.customReminders).get(), isEmpty);
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 12 llega al 23: pan y salchichón por gramos', () async {
+  test('una base del esquema 12 llega al 24: pan y salchichón por gramos', () async {
     late int panId;
     await buildOldSchema(12, rows: (db) async {
       panId = await db.into(db.foods).insert(FoodsCompanion.insert(
@@ -554,22 +564,22 @@ void main() {
     final logged = await migrated.select(migrated.mealItems).getSingle();
     expect((logged.label, logged.kcal), ('Pan (unidad)', 140), reason: 'lo ya comido no cambia');
     expect(logged.foodId, isNull, reason: 'solo pierde el vínculo con el alimento borrado');
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 13 llega al 23: las sesiones quedan revisadas', () async {
+  test('una base del esquema 13 llega al 24: las sesiones quedan revisadas', () async {
     await buildOldSchema(13, rows: (db) async {
       await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-01', 'circuito', 1200)");
     });
     final migrated = AppDatabase(NativeDatabase(file));
     final session = await migrated.select(migrated.sessions).getSingle();
     expect(session.pendingReview, isFalse, reason: 'lo ya guardado no queda como pendiente');
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 14 llega al 23: plan y sesiones listos para el v3', () async {
+  test('una base del esquema 14 llega al 24: plan y sesiones listos para el v3', () async {
     await buildOldSchema(14, rows: (db) async {
       await db.customStatement("insert into plan_versions (valid_from) values ('2026-09-28')");
       await db
@@ -580,11 +590,11 @@ void main() {
     expect(version.scheme, isNull, reason: 'el v2 sigue siendo un plan plano');
     final session = await migrated.select(migrated.sessions).getSingle();
     expect((session.mode, session.extraReps), (null, null));
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 15 llega al 23: RIR, fútbol, sueño y meta de fútbol', () async {
+  test('una base del esquema 15 llega al 24: RIR, fútbol, sueño y meta de fútbol', () async {
     await buildOldSchema(15, rows: (db) async {
       await db.customStatement("insert into exercises (name) values ('Dominadas')");
       await db.customStatement("insert into sessions (date, type, total_sec) values ('2026-10-05', 'bloques', 1800)");
@@ -601,11 +611,11 @@ void main() {
     expect(profile.kcalTargetFootball, isNull, reason: 'sin meta propia, el fútbol usa la de entre semana');
     await migrated.into(migrated.sleepLogs).insert(SleepLogsCompanion.insert(date: '2026-10-06', hours: 7.5));
     expect((await migrated.select(migrated.sleepLogs).getSingle()).hours, 7.5);
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 16 llega al 23: momento del pesaje, mañana y huevos por porción', () async {
+  test('una base del esquema 16 llega al 24: momento del pesaje, mañana y huevos por porción', () async {
     await buildOldSchema(16, rows: (db) async {
       await db.customStatement("insert into body_weights (date, kg, fasted) values ('2026-10-05', 80.5, 0)");
       await db.customStatement(
@@ -625,11 +635,11 @@ void main() {
     await migrated
         .into(migrated.skillAchievements)
         .insert(SkillAchievementsCompanion.insert(skill: 'l_sit', date: '2026-12-11'));
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 18 llega al 23: historial importado, tests y escaleras', () async {
+  test('una base del esquema 18 llega al 24: historial importado, tests y escaleras', () async {
     await buildOldSchema(18, rows: (db) async {
       await db.customStatement(
           "insert into sessions (date, type, total_sec) values ('2026-10-05', 'circuitoLigero', 1500)");
@@ -645,18 +655,18 @@ void main() {
     await migrated
         .into(migrated.ladderStates)
         .insert(LadderStatesCompanion.insert(ladder: 'dragon_flag', step: 1, since: '2026-10-12'));
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     await migrated.close();
   });
 
-  test('una base del esquema 20 llega al 23: metas legadas sin fecha, sin propuestas', () async {
+  test('una base del esquema 20 llega al 24: metas legadas sin fecha, sin propuestas', () async {
     await buildOldSchema(20, rows: (db) async {
       await (db.update(db.profiles)..where((t) => t.id.equals(1)))
           .write(const ProfilesCompanion(stepsTarget: Value(7500), proteinMin: Value(130)));
       await db.customStatement("insert into morning_checks (date, resting_hr) values ('2026-10-09', 58)");
     });
     final migrated = AppDatabase(NativeDatabase(file));
-    expect(await userVersion(migrated), 23);
+    expect(await userVersion(migrated), 24);
     final goals = await migrated.select(migrated.goalVersions).get();
     final steps = goals.where((g) => g.metric == 'pasos').toList();
     expect(steps.map((g) => (g.value, g.effectiveFrom == null, g.origin)), [
@@ -670,10 +680,50 @@ void main() {
     await migrated.close();
   });
 
+  test('una base del esquema 23 llega al 24: el registro de la mañana gana dolor y enfermo sin respuesta', () async {
+    await buildOldSchema(23, rows: (db) async {
+      await db.customStatement(
+          "insert into morning_checks (date, resting_hr, feeling) values ('2030-03-04', 58, 2), ('2030-03-05', null, 3)");
+      await db.customStatement("insert into soreness_logs (date, zone, level) values ('2030-03-04', 'Rodilla', 2)");
+      await db.customStatement(
+          "insert into coach_proposals (id, kind, status, evidence, created_on, policy) values ('p1', 'pasos', 'aceptada', 'e', '2030-03-04', 1)");
+    });
+    final raw = sqlite.sqlite3.open(file.path, mode: sqlite.OpenMode.readOnly);
+    expect([for (final c in raw.select('pragma table_info(morning_checks)')) c['name']], ['date', 'resting_hr', 'feeling']);
+    raw.dispose();
+
+    final migrated = AppDatabase(NativeDatabase(file));
+    expect(await userVersion(migrated), 24);
+    final checks = await (migrated.select(migrated.morningChecks)..orderBy([(t) => OrderingTerm.asc(t.date)])).get();
+    expect([for (final c in checks) (c.date, c.restingHr, c.feeling, c.muscleSoreness, c.ill)], [
+      ('2030-03-04', 58, 2, null, null),
+      ('2030-03-05', null, 3, null, null),
+    ], reason: 'sin respuesta no es "sin dolor" ni "sano"');
+    expect((await migrated.select(migrated.sorenessLogs).getSingle()).level, 2);
+    expect((await migrated.select(migrated.coachProposals).getSingle()).status, 'aceptada');
+    expect(await migrated.customSelect('pragma foreign_key_check').get(), isEmpty);
+
+    await (migrated.update(migrated.morningChecks)..where((t) => t.date.equals('2030-03-04')))
+        .write(const MorningChecksCompanion(muscleSoreness: Value(7), ill: Value(false)));
+    final updated = await (migrated.select(migrated.morningChecks)..where((t) => t.date.equals('2030-03-04'))).getSingle();
+    expect((updated.muscleSoreness, updated.ill), (7, false));
+    await expectLater(
+        migrated.customStatement("update morning_checks set muscle_soreness = 11 where date = '2030-03-04'"),
+        throwsA(anything),
+        reason: 'el dolor va de 0 a 10');
+    await migrated.close();
+
+    // Reabrir no vuelve a migrar ni pierde lo escrito.
+    final again = AppDatabase(NativeDatabase(file));
+    expect(await userVersion(again), 24);
+    expect((await (again.select(again.morningChecks)..where((t) => t.date.equals('2030-03-04'))).getSingle()).muscleSoreness, 7);
+    await again.close();
+  });
+
   // Plan 022: tabla → columnas → todas las filas; metas/pisos sin duplicar y
   // sin propuestas nuevas. Lo existente queda legacyUnknown/ready.
   for (final version in [20, 21, 22]) {
-    test('una base del esquema $version llega al 23 conservando cada tabla, columna y fila', () async {
+    test('una base del esquema $version llega al 24 conservando cada tabla, columna y fila', () async {
       await buildOldSchema(version, rows: (db) async {
         await db.customStatement(
             "update profiles set start_date = '2026-08-26', steps_target = 7500, kcal_floor = 1900, kcal_target = 2100");
@@ -720,7 +770,7 @@ void main() {
 
       final before = snapshot();
       final migrated = AppDatabase(NativeDatabase(file));
-      expect(await userVersion(migrated), 23);
+      expect(await userVersion(migrated), 24);
       final status = await ProfileRepository(migrated).setupStatus();
       expect((status.origin, status.state, status.confirmedAt, status.handoffConsentAt),
           (ProfileOrigin.legacyUnknown, SetupState.ready, null, null),

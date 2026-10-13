@@ -31,6 +31,12 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   /// responder.
   int? _feeling;
   final _sore = <String, int>{};
+
+  /// Dolor muscular general 0–10 y "enfermo, fiebre o dolor agudo" (§19.17).
+  /// Al guardar se responden siempre: 0 y no, si no se tocan, igual que las
+  /// molestias por zona.
+  int _muscle = 0;
+  bool _ill = false;
   bool _loading = true;
 
 
@@ -53,7 +59,8 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
     final weights = await ref.read(bodyRepositoryProvider).weightsOn(_date);
     final fasted = weights.where((w) => weighMomentOf(w.moment, fasted: w.fasted) == WeighMoment.ayunas).firstOrNull;
     final hr = await ref.read(recoveryRepositoryProvider).restingHrOn(_date);
-    final feeling = await ref.read(recoveryRepositoryProvider).feelingOn(_date);
+    final morning = await ref.read(recoveryRepositoryProvider).morningOn(_date);
+    final feeling = morning?.feeling;
     final sleep = (await ref.read(sleepRepositoryProvider).range(_date, _date))[dayKey(_date)];
     final sore = (await ref.read(recoveryRepositoryProvider).sorenessRange(_date, days: 1))[_date] ?? const {};
     if (!mounted) return;
@@ -62,6 +69,8 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
       _hr.text = hr?.toString() ?? '';
       _sleep = sleep;
       _feeling = feeling;
+      _muscle = morning?.muscleSoreness ?? 0;
+      _ill = morning?.ill ?? false;
       _sore
         ..clear()
         ..addAll(sore);
@@ -85,6 +94,7 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
       }
       await ref.read(recoveryRepositoryProvider).setRestingHr(_date, hr);
       await ref.read(recoveryRepositoryProvider).setFeeling(_date, _feeling);
+      await ref.read(recoveryRepositoryProvider).setReadinessAnswers(_date, muscleSoreness: _muscle, ill: _ill);
       if (_sleep != null) await ref.read(sleepRepositoryProvider).set(_date, _sleep!);
       await ref.read(recoveryRepositoryProvider).setSoreness(_date, _sore);
     }, ok: 'Registro de la mañana guardado');
@@ -166,6 +176,34 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                           },
                         ),
                       ],
+                    ),
+                  ],
+                ),
+                AppCard(
+                  title: 'Dolor muscular general',
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Slider(
+                            value: _muscle.toDouble(),
+                            max: 10,
+                            divisions: 10,
+                            label: '$_muscle',
+                            onChanged: (v) => setState(() => _muscle = v.round()),
+                          ),
+                        ),
+                        SizedBox(width: 24, child: Text('$_muscle', textAlign: TextAlign.end)),
+                      ],
+                    ),
+                    Text('Agujetas o cansancio en los músculos, de 0 a 10. Con 6 o más, Hoy propone recuperación activa.',
+                        style: text.bodySmall),
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Enfermo, con fiebre o con dolor agudo'),
+                      subtitle: const Text('Hoy queda en solo descanso.'),
+                      value: _ill,
+                      onChanged: (v) => setState(() => _ill = v),
                     ),
                   ],
                 ),

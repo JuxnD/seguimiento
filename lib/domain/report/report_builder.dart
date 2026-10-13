@@ -4,6 +4,7 @@ import '../format.dart';
 import '../goal_history.dart';
 import '../habits.dart';
 import '../nutrition.dart';
+import '../readiness.dart' show readinessReportLines;
 import '../session_math.dart';
 import '../steps.dart';
 import 'alerts.dart';
@@ -20,6 +21,7 @@ String buildReport(ReportInput input) {
   _sessions(b, s);
   _volume(b, s);
   _football(b, s);
+  _recovery(b, s);
   _nutrition(b, s);
   _body(b, s);
   _alerts(b, s);
@@ -330,6 +332,18 @@ void _football(StringBuffer b, ReportStats s) {
     b.writeln('| ${_dayLabel(f.date, null)} | ${f.format} | ${f.minutes} | '
         '${f.steps == null ? '—' : fmtInt(f.steps!)} | ${f.intensity ?? '—'} | ${f.fatigueAfter ?? '—'} | '
         '$knock | ${mdCell(f.notes)} |');
+  }
+  b.writeln();
+}
+
+void _recovery(StringBuffer b, ReportStats s) {
+  final w = s.input.recovery;
+  if (w == null) return;
+  final lines = readinessReportLines(w);
+  if (lines.isEmpty) return;
+  b.writeln('## Recuperación');
+  for (final l in lines) {
+    b.writeln('- ${mdCell(l)}');
   }
   b.writeln();
 }

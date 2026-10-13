@@ -1,0 +1,9 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/domain/daily_routines_test.dart
+00:00 +0: Activa: los 10 del traspaso, en orden, y la versión de 4 min
+00:00 +1: Suelta: 8 ejercicios; el módulo de piernas va antes de piernas en la pared
+00:00 +2: noche de partido: pike y pancake suaves y sin pulsos
+00:00 +3: recuperación activa: Activa + 2 vueltas de activación con descanso + Suelta con piernas
+00:00 +4: cada ejercicio dice para qué sirve y cómo se hace
+00:00 +5: solo la recuperación activa mantiene la racha de constancia
+00:00 +6: All tests passed!
+exit=0

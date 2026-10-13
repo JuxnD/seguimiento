@@ -17,6 +17,11 @@ const defaultReminders = <ReminderKind, (bool, int?, int, int?)>{
   ReminderKind.calorias: (true, 20, 0, 1800),
   ReminderKind.comidasSinRegistrar: (true, 22, 0, null),
   ReminderKind.pasos: (true, 18, 0, 4000),
+  // Plan 032. Horas fijas editables: la hora de despertar y de dormir del
+  // reloj todavía no se leen.
+  ReminderKind.recuperacionManana: (true, 22, 0, null),
+  ReminderKind.rutinaManana: (true, 7, 15, null),
+  ReminderKind.rutinaNoche: (true, 21, 30, null),
 };
 
 class ReminderRepository {

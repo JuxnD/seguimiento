@@ -1,0 +1,42 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/data/migration_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: una base del esquema 23 llega al 24: el registro de la mañana gana dolor y enfermo sin respuesta
+00:00 +0 -1: una base del esquema 23 llega al 24: el registro de la mañana gana dolor y enfermo sin respuesta [E]
+  SqliteException(1): while preparing statement, no such column: muscle_soreness, SQL logic error (code 1)
+    Causing statement: UPDATE "morning_checks" SET "muscle_soreness" = ?, "ill" = ? WHERE "date" = ?;
+  package:sqlite3/src/implementation/exception.dart 75:3                throwException
+  package:sqlite3/src/implementation/database.dart 311:9                DatabaseImplementation._prepareInternal
+  package:sqlite3/src/implementation/database.dart 370:19               DatabaseImplementation.prepare
+  package:sqlite3/src/ffi/implementation.dart 111:18                    FfiDatabaseImplementation.prepare
+  package:drift/src/sqlite3/database.dart 184:29                        Sqlite3Delegate._getPreparedStatement
+  package:drift/src/sqlite3/database.dart 147:30                        Sqlite3Delegate.runWithArgsSync
+  package:drift/native.dart 392:7                                       _NativeDelegate.runUpdate.<fn>
+  dart:async                                                            new Future.sync
+  package:drift/native.dart 391:19                                      _NativeDelegate.runUpdate
+  package:drift/src/runtime/executor/helpers/engines.dart 87:19         _BaseExecutor.runUpdate.<fn>
+  package:drift/src/runtime/executor/helpers/engines.dart 61:20         _BaseExecutor._synchronized
+  package:drift/src/runtime/executor/helpers/engines.dart 84:12         _BaseExecutor.runUpdate
+  package:drift/src/runtime/query_builder/statements/update.dart 36:22  UpdateStatement._performQuery.<fn>
+  package:drift/src/runtime/api/connection_user.dart 171:16             DatabaseConnectionUser.doWhenOpened.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                                            new Future.sync
+  package:drift/native.dart 391:19                                      _NativeDelegate.runUpdate
+  package:drift/src/runtime/executor/helpers/engines.dart 87:19         _BaseExecutor.runUpdate.<fn>
+  package:drift/src/runtime/executor/helpers/engines.dart 61:20         _BaseExecutor._synchronized
+  package:drift/src/runtime/executor/helpers/engines.dart 84:12         _BaseExecutor.runUpdate
+  package:drift/src/runtime/query_builder/statements/update.dart 36:22  UpdateStatement._performQuery.<fn>
+  package:drift/src/runtime/api/connection_user.dart 171:16             DatabaseConnectionUser.doWhenOpened.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                                            Future.then
+  package:drift/src/runtime/api/connection_user.dart 169:50             DatabaseConnectionUser.doWhenOpened
+  package:drift/src/runtime/api/connection_user.dart 709:19             InternalConnectionUserApi.withCurrentExecutor
+  package:drift/src/runtime/query_builder/statements/update.dart 35:33  UpdateStatement._performQuery
+  package:drift/src/runtime/query_builder/statements/update.dart 74:18  UpdateStatement.write
+  test\data\migration_test.dart 707:10                                  main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                                            _CustomZone.registerUnaryCallback
+  test\data\migration_test.dart 684:5                                   main.<fn>
+  
+00:00 +0 -1: (tearDownAll)
+00:00 +0 -1: Some tests failed.
+exit=1
