@@ -1,0 +1,137 @@
+[
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\1.gif",
+    "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+    "reuseVerification": null,
+    "verifiedAgainstProduct": null,
+    "names": [
+      "90/90 de cadera"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 384,
+    "gifFrames": 384,
+    "durationMs": 19200,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "1d4adf7a0d00a44ed2c8cd7d4061f6900e9c2093ee423ab5eaa3c1939257bf51",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\2.gif",
+    "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+    "reuseVerification": null,
+    "verifiedAgainstProduct": null,
+    "names": [
+      "Burpees"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 336,
+    "gifFrames": 336,
+    "durationMs": 16800,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "dc43208b081105458d1b7664060a45f829c6c065f7266cb102cc927bc5d6ced7",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\3.gif",
+    "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+    "reuseVerification": null,
+    "verifiedAgainstProduct": null,
+    "names": [
+      "Barca / V-sit",
+      "V-up"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 252,
+    "gifFrames": 217,
+    "durationMs": 12600,
+    "size": [
+      640,
+      360
+    ],
+    "sha256": "883e1fd7cac7bcbcf3d3e8c9ec68f3b2b335228dd0fbdcbb5595918e7b2718ab",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\4.gif",
+    "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+    "reuseVerification": null,
+    "verifiedAgainstProduct": null,
+    "names": [
+      "Dragon flag",
+      "Vela"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 192,
+    "gifFrames": 192,
+    "durationMs": 9600,
+    "size": [
+      640,
+      360
+    ],
+    "sha256": "986f44be1ee70f871bdd3987524652e23d7a681bcd3448c52e5e61c688e6d3d3",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\5.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "reuseVerification": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\camera-comparison.json",
+    "verifiedAgainstProduct": "8a8c94fc496a498f393e0ddeae8cfe756923c085",
+    "names": [
+      "Dominadas"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 252,
+    "gifFrames": 193,
+    "durationMs": 12600,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "4f34760dd27a3b659c1d1eda303ae39d073d5cd65efbaca382d83be40ab0f82b",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\6.gif",
+    "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+    "reuseVerification": null,
+    "verifiedAgainstProduct": null,
+    "names": [
+      "Aceleración 10–20 m"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 160,
+    "gifFrames": 145,
+    "durationMs": 8000,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "a100677c1dad6b59385408e00abdd634000cc03ad8f5f7a56fbb2a06d9225c7d",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-current\\7.gif",
+    "sourceCommit": "e46bf120a97e5f4ba1597da7f96fc99e932c5bdf",
+    "reuseVerification": null,
+    "verifiedAgainstProduct": null,
+    "names": [
+      "Calentamiento tipo FIFA 11+"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 500,
+    "gifFrames": 481,
+    "durationMs": 25000,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "e52d38f51774a7b66cd788c8e213ec0901b389f0414a3b15c2cb5ac7a1b622cb",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  }
+]

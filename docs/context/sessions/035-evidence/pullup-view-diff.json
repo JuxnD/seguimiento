@@ -1,0 +1,18 @@
+{
+  "changes": [
+    {
+      "name": "Dominadas",
+      "before": {
+        "yaw": 14,
+        "pitch": 12
+      },
+      "after": {
+        "yaw": 35,
+        "pitch": 12
+      },
+      "geometryUnchanged": true
+    }
+  ],
+  "unchangedFigures": 78,
+  "assetSha256": "2c1fffc23bcb66372d54a5e9a3e5be8f9b5007e05a2165a00f75e590a741cf80"
+}

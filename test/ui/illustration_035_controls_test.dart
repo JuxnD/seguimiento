@@ -128,6 +128,16 @@ void main() {
     expect(progress(tester), closeTo(.35, 1e-8));
     await tester.pump(const Duration(seconds: 1));
     expect(progress(tester), closeTo(.35, 1e-8));
+    Figure3DPainter painter() => tester.widgetList<CustomPaint>(find.byType(CustomPaint))
+        .map((widget) => widget.painter).whereType<Figure3DPainter>().single;
+    final pullup = catalog.forExercise('Dominadas')!;
+    expect(painter().yaw, pullup.initialYaw);
+    await tapVisible(tester, find.text('De perfil'));
+    expect(painter().yaw, 0);
+    await tapVisible(tester, find.text('Vista inicial'));
+    expect(painter().yaw, pullup.initialYaw);
+    expect(painter().pitch, pullup.initialPitch);
+    expect(progress(tester), closeTo(.35, 1e-8));
   });
   testWidgets('FIFA parts and playback remain reachable at phone width and large text', (tester) async {
     tester.view.physicalSize = const Size(360, 900);

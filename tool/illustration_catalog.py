@@ -320,6 +320,8 @@ def _generate_base(name):
         if name == 'Dominadas':
             e.pop('variant', None)
             e['props'] = [p for p in e['props'] if p['type'] != 'backpack']
+            # Oblique view separates both elbows; geometry/grips stay intact.
+            e.setdefault('view', {})['yaw'] = 35
         return e
     if name == 'Colgarse de la barra':
         e = cp(existing['Dominadas']); e.pop('variant', None)
