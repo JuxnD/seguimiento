@@ -1,0 +1,7 @@
+{
+  "sourceCommit": "530eedc72ebda7ffe7167acfe338582ac0480cbe",
+  "generatorSha256": "4485064295C8B2BFA6EEDDB2CDFAADCD0CF46BD0E7A01DEAD8FB177A4560B966",
+  "assetSha256": "955DE4FDDF3D3E709D205A06CC49416962385CBA2038E24501A6D926465469DC",
+  "oracle": "FIFA part3 lateral locomotion requires pelvis and each foot lateral travel >6 world units; previous sway has bodyZ0 and stationary feet",
+  "classification": "reference mismatch verified in batch1 and source"
+}

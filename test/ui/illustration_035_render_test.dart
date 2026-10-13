@@ -38,18 +38,13 @@ void main() {
     for (final (index, name) in names.indexed) {
       final fig = catalog.forExercise(name);
       expect(fig, isNotNull, reason: name);
-      const tile = Size(360, 360);
+      const tile = Size(360, 400);
       final angles = name == 'Dominadas' ? [0.0, 35.0, 90.0] : [fig!.initialYaw];
-      final samples = name == 'Dominadas' ? [0.0, .2, .35, .42, .46, .5, .65, .8] : [0.0, .2, .4, .6, .8, 1.0];
-      if (name == 'Calentamiento tipo FIFA 11+' && fig!.hasMotion) {
-        samples.clear();
-        for (var part = 1; part <= 10; part++) {
-          final first = fig.motion.indexWhere((s) => s.part == '$part' && s.kind != 'cut');
-          expect(first, greaterThanOrEqualTo(0));
-          samples.add(first / fig.motion.length);
-          samples.add((first + (part == 8 || part == 9 ? 1 : .5)) / fig.motion.length);
-        }
-      }
+      final samples = name == 'Dominadas'
+          ? [for (var i = 0; i < 24; i++) i / 23]
+          : fig!.hasMotion
+              ? [for (var i = 0; i < fig.frames.length; i++) i / (fig.frames.length - 1)]
+              : [0.0, .2, .4, .6, .8, 1.0];
       final columns = name == 'Dominadas' ? 8 : 6;
       final rows = (samples.length * angles.length / columns).ceil();
       final recorder = ui.PictureRecorder();
@@ -78,13 +73,17 @@ void main() {
           canvas.save();
           final cell = row * samples.length + column;
           canvas.translate((cell % columns) * tile.width, (cell ~/ columns) * tile.height);
+          canvas.save();
           Figure3DPainter(fig!, p, yaw: angles[row], pitch: name == 'Dominadas' ? 10 : fig.initialPitch)
               .paint(canvas, const Size(360, 315));
+          canvas.restore(); // The production painter clips its figure rectangle.
           final label = TextPainter(
             text: TextSpan(
-                text: '$name · ${fig.stageAt(p)?.part ?? ''}\np=${p.toStringAsFixed(2)} · yaw=${angles[row]}',
-                style: const TextStyle(color: Colors.white, fontSize: 14)),
+                text: '$name · p=${p.toStringAsFixed(2)} · yaw=${angles[row]}\n'
+                    '${fig.hasMotion ? figureMotionCaption(fig, p) : fig.frames[(p * (fig.frames.length - 1)).round()].caption}',
+                style: const TextStyle(color: Colors.white, fontFamily: 'Roboto', fontSize: 12)),
             textDirection: TextDirection.ltr,
+            maxLines: 4,
           )..layout(maxWidth: 350);
           label.paint(canvas, const Offset(5, 316));
           label.dispose();
@@ -93,7 +92,7 @@ void main() {
       }
       final picture = recorder.endRecording();
       await tester.runAsync(() async {
-        final image = await picture.toImage(360 * columns, 360 * rows);
+        final image = await picture.toImage(360 * columns, 400 * rows);
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         File('${directory.path}/${index + 1}.png').writeAsBytesSync(bytes!.buffer.asUint8List());
         image.dispose();
@@ -105,4 +104,65 @@ void main() {
     }
     File('${directory.path}/catalog.txt').writeAsStringSync(names.join('\n'));
   }, skip: output == null);
+
+  final animationOutput = Platform.environment['ILLUSTRATION_035_ANIMATION_OUT'];
+  testWidgets('035 actual production timelines at twenty frames per second', (tester) async {
+    await loadTestFonts(tester);
+    final catalog = Figure3DCatalog.fromJsonString(File(Figure3DCatalog.asset).readAsStringSync());
+    const groups = [
+      ['90/90 de cadera'],
+      ['Burpees'],
+      ['Barca / V-sit', 'V-up'],
+      ['Dragon flag', 'Vela'],
+      ['Dominadas'],
+    ];
+    const fps = 20;
+    final manifest = <Map<String, Object?>>[];
+    for (var group = 0; group < groups.length; group++) {
+      final figures = [for (final name in groups[group]) catalog.forExercise(name)!];
+      final durations = [for (final fig in figures) fig.hasMotion
+          ? fig.motion.fold<double>(0, (sum, stage) => sum + stage.seconds)
+          : .6 + 2 * (fig.frames.length - 1) * 3];
+      final duration = durations.reduce((a, b) => a > b ? a : b);
+      final count = (duration * fps).round();
+      final directory = Directory('$animationOutput/${group + 1}')..createSync(recursive: true);
+      for (var frame = 0; frame < count; frame++) {
+        final recorder = ui.PictureRecorder();
+        final canvas = Canvas(recorder)..drawColor(const Color(0xff0b0806), BlendMode.src);
+        for (var column = 0; column < figures.length; column++) {
+          final fig = figures[column];
+          final seconds = (frame / fps).clamp(0.0, durations[column] - 1e-6).toDouble();
+          // Shorter paired demonstrations stop at the end of one actual cycle.
+          // No time scaling or copied easing curve is used for the comparison.
+          final progress = figureMotionProgress(fig, seconds);
+          canvas.save();
+          canvas.translate(column * 320.0, 0);
+          canvas.save();
+          Figure3DPainter(fig, progress, yaw: fig.name == 'Dominadas' ? 35 : fig.initialYaw)
+              .paint(canvas, const Size(320, 285));
+          canvas.restore();
+          final label = TextPainter(
+            text: TextSpan(text: '${fig.name}\n${fig.hasMotion ? figureMotionCaption(fig, progress) : fig.frames[(progress * (fig.frames.length - 1)).round()].caption}',
+                style: const TextStyle(color: Colors.white, fontFamily: 'Roboto', fontSize: 12)),
+            textDirection: TextDirection.ltr, maxLines: 4,
+          )..layout(maxWidth: 310);
+          label.paint(canvas, const Offset(5, 290));
+          label.dispose();
+          canvas.restore();
+        }
+        final picture = recorder.endRecording();
+        await tester.runAsync(() async {
+          final image = await picture.toImage(320 * figures.length, 360);
+          final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+          File('${directory.path}/${frame.toString().padLeft(4, '0')}.png')
+              .writeAsBytesSync(bytes!.buffer.asUint8List());
+          image.dispose();
+        });
+        picture.dispose();
+      }
+      manifest.add({'names': groups[group], 'fps': fps, 'frames': count, 'seconds': duration,
+        'path': directory.path, 'timeline': 'figureMotionProgress production, real seconds; shorter paired cycle held at end'});
+    }
+    File('$animationOutput/manifest.json').writeAsStringSync(const JsonEncoder.withIndent('  ').convert(manifest));
+  }, skip: animationOutput == null);
 }

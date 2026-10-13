@@ -1,0 +1,112 @@
+{
+  "sourceCommit": "530eedc72ebda7ffe7167acfe338582ac0480cbe",
+  "productCommit": "9fd39701d24db029611ec3f4d43a45f7d2776cbd",
+  "baselineCatalog": "8ef2df493ddbc12450618983894a24ec4bcb35f9",
+  "renderer": "Production Figure3DPainter current source, legacy parity separately PASS; baseline uses frozen catalog",
+  "candidateSamples": 122,
+  "baselineSamples": 24,
+  "candidateSheets": 15,
+  "baselineSheets": 1,
+  "files": [
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\1-geometry.json",
+      "sha256": "9552420AD170F7B429C953641FC12D87BEE6624A7A688C81F8C324F360B1890D",
+      "bytes": 41837
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\1.png",
+      "sha256": "9A9692B3CA045AC9C4159DC7B1922E7158F6E58C87C92E5C092D0DB6D247CD63",
+      "bytes": 364280
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\10.png",
+      "sha256": "319BF74970BB3B0DDF64D0BE84BEF5F371E9B71AF0598E3AF121F99932A84593",
+      "bytes": 61898
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\11.png",
+      "sha256": "8DAD55DADCA7BC45FE11F6617ED552196296A9F31A919BE74F121C9BFA12B6CA",
+      "bytes": 58993
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\12.png",
+      "sha256": "2E135EC0CCD9F44811DED6036589FBD437A5B3B1AD5CA234268765DA4EF79186",
+      "bytes": 104515
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\13.png",
+      "sha256": "6037B40EE290538E658CDF0403F74640BEE63205AAAC4BE60CC48CEF12C0B58A",
+      "bytes": 143919
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\14.png",
+      "sha256": "7BEB44A8B09D6B07F6B9F532E67DE7F5352FAA3772D6849A258B4A7BDD31012D",
+      "bytes": 79534
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\15.png",
+      "sha256": "1C5720ACDC16DA21E3224538929B62EA5845F9431F4FC2D061818E8AF93E5581",
+      "bytes": 395685
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\2.png",
+      "sha256": "8937B7DC9B2B348FA48A485328FC596DFD4EB3C39B298ECC0CB699F2C531C583",
+      "bytes": 67277
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\3.png",
+      "sha256": "7F160F09D518078941451BC980DBC2311287F82AAE72DB253A245BE17914E760",
+      "bytes": 35032
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\4.png",
+      "sha256": "0A1BB45D68B704FC70F27D867C6EEEE001B12FA5E767625415DD4C0CA28B3277",
+      "bytes": 29061
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\5.png",
+      "sha256": "9AE41EEFC2ACBB4DED79820C71511ED9993A94D5B9CA4771C861FBAF6077DF01",
+      "bytes": 106704
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\6.png",
+      "sha256": "A33B8C8427ED9A97BDCCC8C624EEDD48E5F41E5FB1BF8F6E6F3490EB295A7B3A",
+      "bytes": 70530
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\7.png",
+      "sha256": "9FCDE1386B7F3E680A3CAE41CAE51F26038D661ACBB9108FB58DAB3C7E9C30CB",
+      "bytes": 86341
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\8.png",
+      "sha256": "11EE176E36486CD59CB955ADBEB65A3E8D9A9F25CD778DFDA5A0C405ED7BDCD0",
+      "bytes": 81355
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\9.png",
+      "sha256": "7286F373702092474E1626F78D2F9C9230E502001C4898346929E6E25D7F5933",
+      "bytes": 50179
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-candidate-batch1\\catalog.txt",
+      "sha256": "30C13CFB23E5E0EF115DFE6EECA13AC7D4DD1C3C48FBA4C0265F93F19CE56759",
+      "bytes": 247
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-baseline-batch1\\1-geometry.json",
+      "sha256": "9552420AD170F7B429C953641FC12D87BEE6624A7A688C81F8C324F360B1890D",
+      "bytes": 41837
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-baseline-batch1\\1.png",
+      "sha256": "9A9692B3CA045AC9C4159DC7B1922E7158F6E58C87C92E5C092D0DB6D247CD63",
+      "bytes": 364280
+    },
+    {
+      "path": "C:\\My Projects\\seguimiento-035-ilustraciones\\build\\qa\\035\\render-baseline-batch1\\catalog.txt",
+      "sha256": "533C9D18156C24C0EC2F7CAA2B2A8BA683939329DD5B936834CEA0FB37A9B6FB",
+      "bytes": 9
+    }
+  ]
+}

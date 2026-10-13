@@ -138,3 +138,46 @@ Oráculo definitivo mantiene umbral .01: exige convergencia geométrica multiε
 delta de playback REAL alrededor del key conepsilon1e-4s<.01. Un control
 pre-fix debe fallar por delta finito en ambos criterios. No se cambió fuente,
 no se oculta salto con cut ni se deforma anatomía. Nueva ejecución pendiente.
+
+## Primera revisión real del renderer y defecto FIFA3 (16:03 UTC)
+
+530eedc:24/24 dirigidas PASS, control pre-fix causal FAIL [.118321595,.118321574]
+con umbral.01; analyze0 tras retirar print del probe temporal (primer lint y
+fuente original del diagnóstico conservados); paridad legacy PASS. Hashes en
+source-final-directed.json. Ninguna prueba se contó antes de FIN terminal.
+
+Batch1 produjo122 muestras candidato/15hojas y24 muestras baseline/1hoja usando
+Figure3DPainter real. PNG y coordenadas se conservan en real-batch1; manifiesto
+registra rutas originales y hashes. Dominadas baseline/candidato son iguales:
+no se implementó una corrección de renderer por inferencia. Inspección de15hojas:
+
+- Cargas/curl/straddle muestran posturas acordes con geometría ya verificada.
+- V-sit sostiene equilibrio; V-up entra/sale desde supino. Vela sostiene vertical
+  con agarre detrás como exige guía local501–509; Dragon desciende en bloque.
+  No cambiar Vela a otra referencia de manos bajo pelvis ajena a esa guía.
+- Colgado activo/pasivo mantienen diferencia pequeña anatómica, más anotación;
+  no exagerar movilidad para aumentar contraste.
+- Dominadas presenta oclusión de antebrazo/cabeza en vistas intermedias; estas
+  imágenes no prueban dislocación ni causa de orden de profundidad. Requiere
+  secuencia real densa antes de tocar renderer.
+- Las etiquetas de la hoja están cortadas porque el painter deja clip315 y
+  el harness escribe a316 sin restaurar. Defecto de captura, no UI de producto.
+  Harness corregido con save/restore; no edición de píxeles.
+- Uniformes Burpees omiten la plancha y FIFA no muestra todos los extremos.
+  Segunda tanda usa todos los keys authored y captions reales.
+- FIFA3 sólo balanceaba pelvis4X con pies fijos ybodyZ0. No representaba los
+  pasos laterales de la guía: defecto concreto de referencia/movimiento.
+  Rojo Python independiente0travel preservado. Corrección local de esa parte:
+  paso de ida/vuelta con pie que abre/pie que sigue, levantamiento del pie libre,
+  transferencia con apoyo estable y pausa para cambiar dirección. Sin nuevas
+  dosis ni deformación del rig. Python11/11PASS; nuevo oráculo Dart de mundo
+  comprueba pelvis+ambos pies viajan y apoyo real fijo, pendiente de ejecución.
+
+Batch2 propuesto:193candidate+72baseline=265 muestras estáticas (más que la
+estimación inicial~200 por incluir44keys FIFA y24muestras por3vistasDominadas).
+Inventario exacto se aprueba por supervisor antes de lease. Animación propuesta:
+5clips a20fps/1416frames reales:90/90(384),Burpees(336),Barca/V-up(252),
+Dragon/Vela(192),Dominadas(252). Función figureMotionProgress de producción,
+sin acelerar reloj; en comparación se pausa al terminar el ciclo más corto.
+Sin loop artificial entre cuadros separados; composición GIF conserva20fps.
+Fuente/renderers congelados antes de cada corrida. Capturas no son aceptación.

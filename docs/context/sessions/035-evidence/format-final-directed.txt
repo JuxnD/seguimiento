@@ -1,0 +1,2 @@
+Formatted 1 file (0 changed) in 0.20 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155838758-56512-ce2816fd64794103aabbb4983e27047b.json

@@ -102,6 +102,35 @@ void main() {
     expect(start['nearAnkle']!.y, closeTo(-1, .05));
     expect(landing['farAnkle']!.y, closeTo(-1, .05));
   });
+  test('FIFA lateral steps travel with planted support and a lifted following foot', () {
+    final fixture = Platform.environment['ILLUSTRATION_035_STEP_FIXTURE'];
+    final figures = fixture == null ? catalog : Figure3DCatalog.fromJsonString(File(fixture).readAsStringSync());
+    final fig = figures.forExercise('Calentamiento tipo FIFA 11+')!;
+    final indices = [for (var i = 0; i < fig.motion.length; i++) if (fig.motion[i].part == '3' && fig.motion[i].kind != 'cut') i];
+    final poses = [for (final i in [...indices, indices.last + 1]) liftSkeleton(fig.skeletonAt(i / fig.motion.length), fig).p];
+    double range(String joint) {
+      final positions = poses.map((p) => p[joint]!.z).toList()..sort();
+      return positions.last - positions.first;
+    }
+    expect(range('hip'), greaterThan(6));
+    expect(range('nearAnkle'), greaterThan(6));
+    expect(range('farAnkle'), greaterThan(6));
+    for (final joint in ['nearAnkle', 'farAnkle']) {
+      expect(poses.any((p) => p[joint]!.y < -4), isTrue, reason: '$joint must lift instead of dragging');
+    }
+    for (final i in indices) {
+      final a = liftSkeleton(fig.skeletonAt(i / fig.motion.length), fig).p;
+      final b = liftSkeleton(fig.skeletonAt((i + 1) / fig.motion.length), fig).p;
+      final fixed = ['nearAnkle', 'farAnkle'].where((joint) => (a[joint]! - b[joint]!).length < .01 && (a[joint]!.y + 1).abs() < .01).toList();
+      expect(fixed, isNotEmpty, reason: 'A lateral step keeps at least one planted support');
+      for (var s = 0; s <= 20; s++) {
+        final p = liftSkeleton(fig.skeletonAt((i + s / 20) / fig.motion.length), fig).p;
+        for (final joint in fixed) {
+          expect((p[joint]! - a[joint]!).length, lessThan(.01), reason: 'world support $i/$joint/$s');
+        }
+      }
+    }
+  });
   test('required supports remain anchored even if stage metadata is removed', () {
     for (final spec in [
       ('Burpees', 1, 'nearHand'),

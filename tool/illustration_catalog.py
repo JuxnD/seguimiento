@@ -698,6 +698,25 @@ def generate(name):
         side_part=generate('Plancha lateral')
         side_part['motion']=[phase('Sostén lateral',kind='hold',seconds=3)
                              for _ in side_part['frames'][1:]]
+        def lateral_step(z, near_z, near_y, far_z, far_y, caption):
+            f=pose(caption,(0,-24),-80,na=arm(-20,-20),fa=arm(-20,-20))
+            f['bodyZ']=z
+            for sd,sign,foot_z,foot_y in [('near',1,near_z,near_y),('far',-1,far_z,far_y)]:
+                f[sd+'Leg'].update(reach3=[0,foot_y+24,foot_z-z-sign*3.3],pole=[1,0,0],end3=[1,0,0])
+            return f
+        outward=[
+            lateral_step(0,3.3,-1,-3.3,-1,'Prepara el paso lateral'),
+            lateral_step(1,7.3,-5,-3.3,-1,'Despega el pie que abre el paso'),
+            lateral_step(3,11.3,-1,-3.3,-1,'Apoya más al lado sin cruzar los pies'),
+            lateral_step(6,11.3,-1,-3.3,-1,'Transfiere el peso con ambos pies apoyados'),
+            lateral_step(7,11.3,-1,.7,-5,'Despega el pie que sigue'),
+            lateral_step(8,11.3,-1,4.7,-1,'Junta la base sin cruzar los pies'),
+        ]
+        supports=[['farAnkle'],['farAnkle'],['nearAnkle','farAnkle'],['nearAnkle'],['nearAnkle']]
+        step_part=basic('Paso lateral',[*outward,cp(outward[-1]),*[cp(f) for f in reversed(outward[:-1])]],group='Condición')
+        step_part['motion']=([phase('Paso lateral: '+outward[i+1]['caption'],contacts=s) for i,s in enumerate(supports)]
+                             +[phase('Cambia de dirección con control',kind='hold',seconds=1)]
+                             +[phase('Regresa de lado',contacts=s) for s in reversed(supports)])
         def lateral_landing(side, z, caption):
             f=pose(caption,(0,-17),-75,nl=limb(90,90,foot=0),fl=limb(90,90,foot=0),
                    na=arm(40,-20),fa=arm(135,40))
@@ -720,7 +739,7 @@ def generate(name):
         skate_part['motion']=[phase(label,ground='flight') for label in
                               ['Impulsa hacia el otro lado','Aterriza con control',
                                'Impulsa de regreso','Estabiliza el apoyo']]
-        part_specs=[generate('Aceleración 10–20 m'), None, None,
+        part_specs=[generate('Aceleración 10–20 m'), None, step_part,
                     plank_part, side_part,
                     generate('Nórdico (isquios)'), generate('Progresión de pistol'),
                     generate('Sentadilla con salto'), skate_part,
@@ -733,8 +752,6 @@ def generate(name):
                 if i==1:
                     start['nearLeg'].update(reach3=[14,0,0],pole=[1,-1,0])
                     end['nearLeg'].update(reach3=[8,0,12],pole=[1,-1,1])
-                else:
-                    end['hip']=(end['hip'][0]+4,end['hip'][1])
                 spec=basic(title,[start,end,cp(start)],group='Condición')
             fs=cp(spec['frames'])
             # Skip a running demonstration's reset; next part owns its cut.

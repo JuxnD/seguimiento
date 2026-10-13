@@ -74,6 +74,16 @@ class Geometry035(unittest.TestCase):
         self.assertGreater(max(f.get('bodyZ', 0) for f in frames)-min(f.get('bodyZ', 0) for f in frames), 8)
         self.assertLess(min(f['hip'][1] for f in frames), frames[0]['hip'][1]-5)
 
+    def test_fifa_lateral_steps_move_pelvis_and_feet_across_the_floor(self):
+        e = catalog.generate('Calentamiento tipo FIFA 11+')
+        indices = [i for i, stage in enumerate(e['motion'])
+                   if stage['part'] == '3' and stage['kind'] != 'cut']
+        frames = [e['frames'][i] for i in indices] + [e['frames'][indices[-1]+1]]
+        self.assertGreater(max(f.get('bodyZ', 0) for f in frames)-min(f.get('bodyZ', 0) for f in frames), 6)
+        for side, sign in [('near', 1), ('far', -1)]:
+            feet = [(f.get('bodyZ', 0)+sign*3.3+f[side+'Leg'].get('reach3', [0, 0, 0])[2]) for f in frames]
+            self.assertGreater(max(feet)-min(feet), 6, side)
+
     def test_unselected_asset_entries_are_unchanged(self):
         root = Path(__file__).resolve().parents[2]
         baseline = json.loads((root/'test/fixtures/illustration_035_baseline.json').read_text(encoding='utf-8'))['figures']

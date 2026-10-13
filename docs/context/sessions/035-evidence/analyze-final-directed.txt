@@ -1,0 +1,6 @@
+Analyzing seguimiento-035-ilustraciones...                      
+
+   info - Don't invoke 'print' in production code - build\qa\035\continuity_diagnostic_test.dart:36:31 - avoid_print
+
+1 issue found. (ran in 6.5s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155939532-70124-3a340424e30c4fbaaf4ab883d50e0b26.json

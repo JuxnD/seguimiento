@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_fifa_lateral_steps_move_pelvis_and_feet_across_the_floor (__main__.Geometry035.test_fifa_lateral_steps_move_pelvis_and_feet_across_the_floor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 82, in test_fifa_lateral_steps_move_pelvis_and_feet_across_the_floor
+    self.assertGreater(max(f.get('bodyZ', 0) for f in frames)-min(f.get('bodyZ', 0) for f in frames), 6)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 not greater than 6
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=1)

@@ -1,0 +1,13 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/continuity_prefix_control_test.dart
+00:00 +0: pre-fix clamp fails both geometric limit and real playback continuity
+00:00 +0 -1: pre-fix clamp fails both geometric limit and real playback continuity [E]
+  Expected: every element(a value less than <0.01>)
+    Actual: [0.118321595249021, 0.11832157414738964]
+     Which: has value <0.118321595249021> which is not a value less than <0.01> at index 0
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 474:18     expect
+  build\qa\035\continuity_prefix_control_test.dart 21:5  main.<fn>
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155858437-6940-35ec937aef424b51845fa0a0e4d2e202.json
