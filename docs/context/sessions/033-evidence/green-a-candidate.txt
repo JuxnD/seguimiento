@@ -1,0 +1,49 @@
+00:00 +0: loading C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: Hoy autoriza desde anterior limpia; fallo actual no inventa infracción
+00:00 +1: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: anterior fallida bloquea Hoy y reporte aunque actual salga limpia
+00:00 +2: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: calidad anterior null no desaparece fuera del rango
+00:00 +3: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: calidad anterior false no desaparece fuera del rango
+00:00 +4: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: incompleta anterior y meta pendiente no autorizan aumento
+00:00 +5: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: sin rondas en última anterior se explicita evidencia no evaluable
+00:00 +6: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: salto mayor al incremento permitido no se justifica por calidad
+00:00 +7: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: sin precedente y registro futuro no inventan permiso
+00:01 +8: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: precedente dentro de rango y dos filas del mismo día usan último ID como Hoy
+00:01 +9: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: no usar sesión del mismo día ni otro tipo para autorizar el intento
+00:01 +10: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: ausencia individual de técnica anterior sigue siendo bloqueo explícito
+00:01 +11: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: ausencia individual de rango completo anterior sigue siendo bloqueo explícito
+00:01 +12: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: ausencia individual de recuperación anterior sigue siendo bloqueo explícito
+00:01 +13: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: precedente importado no acredita permiso
+00:01 +14: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: precedente estimado no acredita permiso
+00:01 +15: C:/My Projects/seguimiento-033-coherencia/test/data/coherence_progression_report_test.dart: (tearDownAll)
+00:01 +15: loading C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart
+00:03 +15: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: estadísticas sesiones esperadas usan la versión vigente de cada día
+00:03 +16: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: estadísticas promedios solo sobre días registrados
+00:03 +17: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: alertas detecta las reglas del plan
+00:03 +18: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: alertas medición antes de tiempo
+00:03 +19: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: alertas sin alerta de intervalo cuando se respeta el mínimo
+00:03 +20: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del tipo fuera de plan y de la sesión incompleta
+00:03 +21: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del enfriamiento corto
+00:03 +22: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas la tabla muestra rondas hechas sobre planificadas
+00:03 +23: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas una sesión fuera de plan se marca en la tabla
+00:03 +24: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: regla de progresión subir después de anterior con series partidas genera alerta
+00:03 +25: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: regla de progresión anterior limpia autoriza subir de ronda
+00:03 +26: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: regla de progresión técnica o recuperación anteriores marcadas en no también bloquean
+00:03 +27: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: semana en curso a mitad de semana, los días que no han llegado no son faltas
+00:03 +28: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: semana en curso un día de entrenamiento ya cerrado sin sesión sí es falta
+00:03 +29: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: semana en curso una ronda estimada no es récord
+00:03 +30: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown una semana del programa va de lunes a domingo y se titula como semana (§16.8)
+00:03 +31: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown con 1 de 5 hecha hoy quedan 4, no 5 (§16.8)
+00:03 +32: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown encabezado, resumen y secciones
+00:03 +33: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown medidas en la unidad elegida con Δ vs línea base
+00:03 +34: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown el descanso va en su columna y no cuenta como trabajo neto
+00:03 +35: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown dice de dónde salen las kcal
+00:03 +36: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown trabajo por ronda sin descanso, R1→Rn y descansos aparte
+00:03 +37: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown sin descansos medidos las vueltas dicen que los llevan dentro
+00:03 +38: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown un día sin desayuno, almuerzo y cena no entra al promedio ni a las alertas
+00:03 +39: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown cerrar el día a mano lo cuenta aunque falte una comida
+00:03 +40: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown volumen por ejercicio contra la semana anterior
+00:03 +41: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown flexiones peores el viernes tras una semana con pike push-ups sugiere bajar a 2 series
+00:03 +42: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown RPE 9 o 10 en circuito ligero se señala
+00:03 +43: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown rango vacío no revienta
+00:03 +44: All tests passed!

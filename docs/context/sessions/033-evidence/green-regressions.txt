@@ -1,0 +1,70 @@
+00:00 +0: loading C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart: Hoy propone el v3.1 desde el próximo lunes, sin esperar a las 10 limpias (§19)
+00:00 +1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart: activarlo: el v2 sigue hasta el domingo, el lunes 12 es tren superior A en semana 1
+00:00 +2: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart: editar el v3 a mitad de bloque no reinicia las semanas
+00:00 +3: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart: semana 4: Hoy avisa la descarga y el miércoles toca Cindy
+00:00 +4: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart: una sesión de Cindy guarda formato y reps sueltas
+00:00 +5: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v3_data_test.dart: (tearDownAll)
+00:00 +5: loading C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart
+00:01 +5: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: (setUpAll)
+00:01 +5: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: activarlo: semana 1, metas de §19.3 y abdomen el sábado 17
+00:02 +5 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: activarlo: semana 1, metas de §19.3 y abdomen el sábado 17 [E]
+  Expected: <2100>
+    Actual: <null>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan_v31_data_test.dart 52:5              main.<fn>
+  
+00:02 +5 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: un v3 activado para el mismo lunes queda reemplazado por el v3.1
+00:02 +6 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: el viernes es circuito hasta las 10 limpias; después Cindy de prueba
+00:02 +7 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: 10 rondas sin los criterios no cuentan como limpias
+00:02 +8 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: partido entre semana: el viernes metabólico lo avisa
+00:03 +9 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: RIR por serie y últimas series de fuerza del mismo día de la semana
+00:03 +10 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: medir en una fecha del v3.1 corre la próxima a la siguiente
+00:03 +11 -1: C:/My Projects/seguimiento-033-coherencia/test/data/plan_v31_data_test.dart: (tearDownAll)
+00:03 +11 -1: loading C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart
+00:04 +11 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: (setUpAll)
+00:04 +11 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: el id del día no existe en la copia restaurada: se retoma con el guion congelado
+00:06 +12 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: tras restaurar, el mismo id es de otro día: no se asigna a ese plan
+00:07 +13 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: el id coincide con el mismo día: se conserva el vínculo normal
+00:08 +14 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: tras restaurar, mismo martes y tipo con otros ejercicios: el guion se retoma sin vincular
+00:09 +15 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: el guion trae un bloque añadido (escalera): sigue siendo el mismo día y se vincula
+00:10 +16 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo
+00:13 +17 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: snapshot legado sin guion y sin día: se conserva y se pide decisión
+00:15 +18 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+00:16 +19 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: guion congelado inválido: el archivo se conserva y se pide decisión
+00:17 +20 -1: C:/My Projects/seguimiento-033-coherencia/test/ui/restored_session_resume_test.dart: (tearDownAll)
+00:17 +20 -1: loading C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart
+00:18 +20 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: estadísticas sesiones esperadas usan la versión vigente de cada día
+00:18 +21 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: estadísticas promedios solo sobre días registrados
+00:18 +22 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: alertas detecta las reglas del plan
+00:18 +23 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: alertas medición antes de tiempo
+00:18 +24 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: alertas sin alerta de intervalo cuando se respeta el mínimo
+00:18 +25 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del tipo fuera de plan y de la sesión incompleta
+00:18 +26 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas avisa del enfriamiento corto
+00:18 +27 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas la tabla muestra rondas hechas sobre planificadas
+00:18 +28 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: sesiones fuera de plan e incompletas una sesión fuera de plan se marca en la tabla
+00:18 +29 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: regla de progresión subir después de anterior con series partidas genera alerta
+00:18 +30 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: regla de progresión anterior limpia autoriza subir de ronda
+00:18 +31 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: regla de progresión técnica o recuperación anteriores marcadas en no también bloquean
+00:18 +32 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: semana en curso a mitad de semana, los días que no han llegado no son faltas
+00:18 +33 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: semana en curso un día de entrenamiento ya cerrado sin sesión sí es falta
+00:18 +34 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: semana en curso una ronda estimada no es récord
+00:18 +35 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown una semana del programa va de lunes a domingo y se titula como semana (§16.8)
+00:18 +36 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown con 1 de 5 hecha hoy quedan 4, no 5 (§16.8)
+00:18 +37 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown encabezado, resumen y secciones
+00:18 +38 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown medidas en la unidad elegida con Δ vs línea base
+00:18 +39 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown el descanso va en su columna y no cuenta como trabajo neto
+00:18 +40 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown dice de dónde salen las kcal
+00:18 +41 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown trabajo por ronda sin descanso, R1→Rn y descansos aparte
+00:18 +42 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown sin descansos medidos las vueltas dicen que los llevan dentro
+00:18 +43 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown un día sin desayuno, almuerzo y cena no entra al promedio ni a las alertas
+00:18 +44 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown cerrar el día a mano lo cuenta aunque falte una comida
+00:18 +45 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown volumen por ejercicio contra la semana anterior
+00:18 +46 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown flexiones peores el viernes tras una semana con pike push-ups sugiere bajar a 2 series
+00:18 +47 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown RPE 9 o 10 en circuito ligero se señala
+00:18 +48 -1: C:/My Projects/seguimiento-033-coherencia/test/domain/report_test.dart: informe markdown rango vacío no revienta
+00:18 +49 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T152741861-35252-7ea7d97495384c09a77288dedfc771d7.json

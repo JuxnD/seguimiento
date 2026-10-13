@@ -1,0 +1,26 @@
+{
+  "owner": "033",
+  "token": "8f007cdcee3143cb8ba05a5635749e2a",
+  "pid": 53584,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--timeout",
+    "90s",
+    "--concurrency",
+    "1",
+    "test/data/coherence_progression_report_test.dart",
+    "test/data/football_today_summary_test.dart",
+    "test/data/session_confirmation_repository_test.dart",
+    "test/ui/session_confirmation_test.dart",
+    "test/ui/coherence_today_test.dart"
+  ],
+  "worktree": "C:\\My Projects\\seguimiento-033-coherencia",
+  "startUtc": "2026-10-13T05:24:40.7762953Z",
+  "finishUtc": "2026-10-13T05:25:55.5936913Z",
+  "exit": 1,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

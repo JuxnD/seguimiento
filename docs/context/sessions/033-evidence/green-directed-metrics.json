@@ -1,0 +1,7 @@
+{
+  "Timeout": 90,
+  "Exit": 1,
+  "Phase": "new A/B/C guarded",
+  "Concurrency": 1,
+  "FreeAfter": 37564043264
+}

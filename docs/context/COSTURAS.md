@@ -446,3 +446,7 @@ Diagnóstico posterior errno112/C libre0; contraste sin cambio de fuente apoya
 recuperación del entorno, sin probar causa completa de full2. Tres limpiezas
 rechazadas, nada eliminado. Contextvalidator18errores heredados y gates nativos/
 publicación/aceptación humana siguen pendientes. Véase recibo/evidencia029.
+
+## Coherencia033 local — R1 pendiente
+
+Sesión anteriorporfecha/ID→core proposeProgression→Hoy/informe/Markdown: misma autorización, calidadmissing/importado/estimado no permiso implícito; fechasfuera rango no entran al resumen. FútbolDBtodosHoy→LoadItem/carga/RPEponderado→anillo/detalle→editorporID; missing parcial explícito/sinhora inventada. Formulariodobletap→checkasync→confirmaciónseriescompletas→transacción1fila; fallo/retry conserva procedenciareview y linkperdido no acredita hito. GuiadoawaitDB→pendingReview/header/celebración yclearfoto; DBerror nocelebra. [Recibo033](sessions/2026-10-13-033-coherencia.md). Dirigidos host no sustituyen fullintegración/APK/aceptación humana.

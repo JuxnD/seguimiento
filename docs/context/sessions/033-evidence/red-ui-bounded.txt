@@ -1,0 +1,3 @@
+00:00 +0: loading C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/ui/coherence_today_test.dart: Hoy suma dos partidos y abre detalle real, texto 1.0

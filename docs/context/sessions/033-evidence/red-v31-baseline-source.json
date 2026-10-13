@@ -1,0 +1,30 @@
+{
+  "hashes": [
+    {
+      "sha256": "E67DA4A0227124CF6A6034F4ADD70B73347EBFA915756EAB5E3D0C8161C52740",
+      "path": "lib/data/seed_plan.dart"
+    },
+    {
+      "sha256": "BE520C442C12AB6FFCAB4880E5AF4B45820FF91B628B211683C63C94741DBE9C",
+      "path": "lib/data/repositories/goal_repository.dart"
+    },
+    {
+      "sha256": "A3B1DD88BB181F1E30288C6DB0D8510D18A7644AF2D415D703FB31535403A56A",
+      "path": "lib/data/repositories/profile_repository.dart"
+    },
+    {
+      "sha256": "90DCCF2E035E753B475C07C4CFFFAADBEC85331E74EDA8575B008FD4CC9E0575",
+      "path": "test/data/plan_v31_data_test.dart"
+    }
+  ],
+  "ramBefore": 7151472640,
+  "freeBefore": 38099398656,
+  "baseline": "8ef2df493ddbc12450618983894a24ec4bcb35f9",
+  "baselineStatus": [
+    "?? plans/026-integridad-y-backlog.md",
+    "?? plans/028-contrato-php-repetible.md",
+    "?? plans/029-review-independent.txt",
+    "?? plans/035-ilustraciones-movimiento.md"
+  ],
+  "utc": "2026-10-13T15:29:07.6359154Z"
+}

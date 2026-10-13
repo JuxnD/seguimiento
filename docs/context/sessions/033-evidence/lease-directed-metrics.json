@@ -1,0 +1,11 @@
+{
+  "Concurrency": 1,
+  "PassedA": 44,
+  "Phase": "A green + baseline C/B zone cleanup",
+  "FreeAfter": 38104817664,
+  "Timeout": 90,
+  "ExitA": 0,
+  "ExitB": 1,
+  "ExitC": 1,
+  "SDK": "C:/seguimiento-sdk-3.22.0/flutter"
+}

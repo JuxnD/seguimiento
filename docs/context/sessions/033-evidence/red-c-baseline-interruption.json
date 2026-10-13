@@ -1,0 +1,10 @@
+{
+  "Observed": "Expected plan.calls1 actual2: guard defect observed",
+  "PassedA": 44,
+  "B": "Not started",
+  "Phase": "C first baseline",
+  "ExitA": 0,
+  "Harness": "Global db.close teardown awaited fake-zone pending timers; moved explicit close/pumps inside widget callback",
+  "Status": "INTERRUPTED_TEARDOWN",
+  "Method": "Ctrl-C own session70223"
+}

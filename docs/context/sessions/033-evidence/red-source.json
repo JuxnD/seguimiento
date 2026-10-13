@@ -1,0 +1,8 @@
+{
+  "Timeout": 90,
+  "Concurrency": 1,
+  "Phase": "baseline red",
+  "FreeBefore": 32888315904,
+  "Source": "8ef2df493ddbc12450618983894a24ec4bcb35f9",
+  "SDK": "C:/seguimiento-sdk-3.22.0/flutter"
+}

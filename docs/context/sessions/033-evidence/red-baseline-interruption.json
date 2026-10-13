@@ -1,0 +1,9 @@
+{
+  "LastObserved": "00:09 +1 -9 UI Hoy texto1.0",
+  "Status": "INTERRUPTED_HARNESS",
+  "Method": "write_stdin Ctrl-C own session43793",
+  "OriginalSource": "8ef2df4",
+  "BugEvidence": "Only data nine assertions were observed; UI pending not counted",
+  "Reason": "No terminal; Home unbounded pumpAndSettle replaced by bounded pumps and preloaded real repository result",
+  "Phase": "baseline first UI"
+}

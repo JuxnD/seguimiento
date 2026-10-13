@@ -1,5 +1,7 @@
 # Índice de contexto
 
+**033 local, dirigido y pendiente R1:** coherencia core Hoy/informe, fútbol diario acumulado/detalle/edición porID, guard de guardado y confirmación duplicadas, hito10 traspersistencia sinactivar plan. Fallo/retry no pierde procedencia guiada. [Recibo, negativos y gates](sessions/2026-10-13-033-coherencia.md). Full sólo integración032/034/035; sin esquema/assets/APK/publicación ni aceptación humana nueva.
+
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
 Claude fe0b565/8b1cac5/74c26aa en ramaJuxnD/026-integridad-diaria. Fotos/ZIP y
 protección estricta reutilizados;029 cierra tres carreras nuevas de cola que

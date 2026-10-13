@@ -1,0 +1,7 @@
+Analyzing seguimiento-033-coherencia...                         
+
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\training\session_form_screen.dart:277:26 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\features\training\session_form_screen.dart:280:37 - use_build_context_synchronously
+
+2 issues found. (ran in 6.1s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T153440286-51724-a06572a1185e47d89c38e5425c1a8a97.json

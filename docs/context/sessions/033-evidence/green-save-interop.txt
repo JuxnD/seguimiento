@@ -1,0 +1,41 @@
+00:00 +0: loading C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: guard inicia antes de consultar plan: dos taps sólo una consulta y una fila
+00:03 +1: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: duplicado completo pide confirmación; corregir no escribe y aceptar una fila
+
+Warning: A call to tap() with finder "Found 1 widget with widget matching predicate: [
+  Tooltip("Back", dependencies: [_InheritedTheme, _LocalizationsScope-[GlobalKey#f3c71]], state: TooltipState#614ae(ticker inactive)),
+]" derived an Offset (Offset(28.0, 28.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: _RenderLayoutSurrogateProxyBox#81fc9 relayoutBoundary=up2
+The hit test result at that offset is: HitTestResult(_RenderColoredBox#c94a5@Offset(28.0, 28.0), RenderConstrainedBox#bebab@Offset(28.0, 28.0), RenderMouseRegion#574e1@Offset(28.0, 28.0), RenderSemanticsAnnotations#3ce8e@Offset(28.0, 28.0), RenderPointerListener#d868d@Offset(28.0, 28.0), RenderSemanticsGestureHandler#ababd@Offset(28.0, 28.0), RenderExcludeSemantics#61b4e@Offset(28.0, 28.0), RenderBlockSemantics#d608a@Offset(28.0, 28.0), RenderIgnorePointer#3327b@Offset(28.0, 28.0), RenderSemanticsAnnotations#52fb2@Offset(28.0, 28.0), _RenderTheater#9ef2c@Offset(28.0, 28.0), RenderAbsorbPointer#906e6@Offset(28.0, 28.0), RenderPointerListener#f4738@Offset(28.0, 28.0), RenderSemanticsAnnotations#09134@Offset(28.0, 28.0), RenderCustomPaint#2011d@Offset(28.0, 28.0), RenderSemanticsAnnotations#881a5@Offset(28.0, 28.0), RenderSemanticsAnnotations#b1177@Offset(28.0, 28.0), RenderTapRegionSurface#26b40@Offset(28.0, 28.0), RenderSemanticsAnnotations#a1761@Offset(28.0, 28.0), RenderSemanticsAnnotations#cbf6d@Offset(28.0, 28.0), RenderSemanticsAnnotations#47185@Offset(28.0, 28.0), HitTestEntry<HitTestTarget>#5c634(_ReusableRenderView#4614c), HitTestEntry<HitTestTarget>#96d83(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:1933:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1784:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1032:18)
+#3      WidgetTester.pageBack.<anonymous closure> (package:flutter_test/src/widget_tester.dart:1175:13)
+#4      _rootRun (dart:async/zone.dart:1399:13)
+#5      _CustomZone.run (dart:async/zone.dart:1301:19)
+#6      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:71:41)
+#7      WidgetTester.pageBack (package:flutter_test/src/widget_tester.dart:1167:27)
+#8      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart:155:13)
+<asynchronous suspension>
+#9      main.inWidgetZone (file:///C:/My%20Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart:78:7)
+<asynchronous suspension>
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+00:05 +2: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: primera progresión limpia de diez acredita hito tras guardar sin activar plan
+00:07 +3: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: una sola serie distinta no confirma y editar propio id no duplica
+00:08 +4: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: busy quita foco; fallo conserva formulario y retry guarda exactamente una fila
+00:09 +5: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: borrado existente elimina registro y carga/informe se recalculan
+00:10 +6: C:/My Projects/seguimiento-033-coherencia/test/ui/session_confirmation_test.dart: (tearDownAll)
+00:10 +6: loading C:/My Projects/seguimiento-033-coherencia/test/data/gateway_estimate_interop_test.dart
+00:11 +6: C:/My Projects/seguimiento-033-coherencia/test/data/gateway_estimate_interop_test.dart: Dart actual→PHP actual→Dart validado (transporte proveedor ficticio)
+00:12 +7: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T153312644-70568-24f7508dae2844e7a134b2c5749c4b8e.json

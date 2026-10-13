@@ -1,0 +1,13 @@
+{
+  "SDK": "C:/seguimiento-sdk-3.22.0/flutter",
+  "Test": "test/ui/readiness_home_test.dart",
+  "ObservedRunner": 46692,
+  "Action": "Guard threw before our test command; no foreign process touched",
+  "Compiler": 32320,
+  "Status": "PREFLIGHT_BLOCKED",
+  "OurFlutterStarted": false,
+  "Project": "C:/My Projects/seguimiento-032-diag75",
+  "LeaseGranted": "033 at05:00:52UTC",
+  "RunnerCreationUTC": "2026-10-13 05:01:21 UTC",
+  "RecordedUTC": "2026-10-13 05:12:13 UTC"
+}
