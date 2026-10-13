@@ -1,0 +1,66 @@
+[
+  {
+    "key": 4,
+    "epsilon": 0.0001,
+    "currentGeometricDelta": 0.16694168768787188,
+    "oldGeometricDelta": 0.16694168768787188,
+    "currentPlaybackDelta": 0.0012075771635012063,
+    "oldPlaybackDelta": 0.11832157414738964
+  },
+  {
+    "key": 4,
+    "epsilon": 0.000001,
+    "currentGeometricDelta": 0.01672921024329265,
+    "oldGeometricDelta": 0.11831746874953698,
+    "currentPlaybackDelta": 0.00001207453673046989,
+    "oldPlaybackDelta": 0.11832159565996543
+  },
+  {
+    "key": 4,
+    "epsilon": 1e-8,
+    "currentGeometricDelta": 0.0016732800563158117,
+    "oldGeometricDelta": 0.11832155435289304,
+    "currentPlaybackDelta": 0.0,
+    "oldPlaybackDelta": 0.0
+  },
+  {
+    "key": 4,
+    "epsilon": 1e-10,
+    "currentGeometricDelta": 0.00016733155650592362,
+    "oldGeometricDelta": 0.118321595249021,
+    "currentPlaybackDelta": 0.0,
+    "oldPlaybackDelta": 0.0
+  },
+  {
+    "key": 5,
+    "epsilon": 0.0001,
+    "currentGeometricDelta": 0.12921418385555827,
+    "oldGeometricDelta": 0.12921418385555827,
+    "currentPlaybackDelta": 0.0009353805220473462,
+    "oldPlaybackDelta": 0.11832157456546344
+  },
+  {
+    "key": 5,
+    "epsilon": 0.000001,
+    "currentGeometricDelta": 0.012957480779335824,
+    "oldGeometricDelta": 0.11831754559367648,
+    "currentPlaybackDelta": 0.00000935056858564192,
+    "oldPlaybackDelta": 0.1183215956600108
+  },
+  {
+    "key": 5,
+    "epsilon": 1e-8,
+    "currentGeometricDelta": 0.0012961081477324858,
+    "oldGeometricDelta": 0.11832155515544204,
+    "currentPlaybackDelta": 0.0,
+    "oldPlaybackDelta": 0.0
+  },
+  {
+    "key": 5,
+    "epsilon": 1e-10,
+    "currentGeometricDelta": 0.0001296142754294383,
+    "oldGeometricDelta": 0.11832159525704992,
+    "currentPlaybackDelta": 0.0,
+    "oldPlaybackDelta": 0.0
+  }
+]

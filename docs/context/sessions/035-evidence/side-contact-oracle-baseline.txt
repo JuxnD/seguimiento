@@ -1,0 +1,13 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/side_contact_oracle_baseline_test.dart
+00:00 +0: incorrect ankle-radius expectation also rejects the unchanged baseline toe
+00:00 +0 -1: incorrect ankle-radius expectation also rejects the unchanged baseline toe [E]
+  Expected: a numeric value within <0.05> of <-0.9>
+    Actual: <-0.6140283811144531>
+     Which:  differs by <0.2859716188855469>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 474:18        expect
+  build\qa\035\side_contact_oracle_baseline_test.dart 10:5  main.<fn>
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T154258006-70308-c482c0d88f2543b29b1beabac1afa3b6.json

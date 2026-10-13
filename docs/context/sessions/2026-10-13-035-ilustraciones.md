@@ -117,3 +117,24 @@ Diagnóstico posterior (todavía sin nueva ejecución Dart):
 
 Falta nueva dirigida+analyze+paridad tras estas correcciones. No hay aceptación
 visual ni integración/R1 de035 por estos resultados.
+
+## Diagnóstico del límite IK y cierre del oráculo (15:52 UTC)
+
+Ronda guardada2:23/24PASS (todos los controles9 y geometría6), analyze0 y
+paridad legacy PASS. Raw negativo preservado. El residual .01673/.01296 era
+un supuesto de velocidad lineal respecto al progreso geométrico, no salto
+restante. Mini diagnóstico compara modelo b655213 contra9fd397 con el mismo
+asset y el controlador REAL (`figureMotionProgress`), sin doble easing.
+
+`continuity-diagnostic.json` muestra key4 geométrica para epsilon1e-4/6/8/10:
+actual .16694,.016729,.001673,.0001673; el modelo anterior converge a .1183216.
+Es el límite sqrt(epsilon) de IK al extender una cadena de dos segmentos.
+En tiempo real, epsilon1e-4 da .0012076 actual contra .1183216 previo;
+1e-6 da .00001207 contra .1183216. Key5 confirma el patrón. Epsilon temporal
+1e-8/10 redondea al mismo key: esos ceros NO sirven como evidencia de continuidad.
+
+Oráculo definitivo mantiene umbral .01: exige convergencia geométrica multiε
+(1e-6,1e-8,1e-10; razón≤.2 al reducirε100x, salvo ruido≤1e-6), límite<.01 y
+delta de playback REAL alrededor del key conepsilon1e-4s<.01. Un control
+pre-fix debe fallar por delta finito en ambos criterios. No se cambió fuente,
+no se oculta salto con cut ni se deforma anatomía. Nueva ejecución pendiente.

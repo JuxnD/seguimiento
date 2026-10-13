@@ -59,11 +59,32 @@ void main() {
       final fig = catalog.forExercise(name)!;
       for (var i = 1; i < fig.motion.length; i++) {
         if (fig.motion[i - 1].kind == 'cut' || fig.motion[i].kind == 'cut') continue;
-        final before = liftSkeleton(fig.skeletonAt((i - 1e-6) / fig.motion.length), fig).p;
-        final after = liftSkeleton(fig.skeletonAt((i + 1e-6) / fig.motion.length), fig).p;
+        // A straight two-link chain approaches its key as sqrt(epsilon), not
+        // linearly in geometric progress. Check the limit and the actual
+        // playback clock independently; neither allows a finite IK jump.
+        Map<String, double>? previous;
+        for (final epsilon in [1e-6, 1e-8, 1e-10]) {
+          final before = liftSkeleton(fig.skeletonAt((i - epsilon) / fig.motion.length), fig).p;
+          final after = liftSkeleton(fig.skeletonAt((i + epsilon) / fig.motion.length), fig).p;
+          final distances = <String, double>{};
+          for (final joint in before.keys) {
+            final distance = (after[joint]! - before[joint]!).length;
+            distances[joint] = distance;
+            final prior = previous?[joint];
+            if (!distance.isFinite ||
+                (epsilon == 1e-10 && distance >= .01) ||
+                (prior != null && prior > 1e-6 && distance > prior * .2)) {
+              discontinuities.add('$name/$i/$joint epsilon=$epsilon: $distance (prior=$prior)');
+            }
+          }
+          previous = distances;
+        }
+        final time = fig.motion.take(i).fold<double>(0, (sum, stage) => sum + stage.seconds);
+        final before = liftSkeleton(fig.skeletonAt(figureMotionProgress(fig, time - 1e-4)), fig).p;
+        final after = liftSkeleton(fig.skeletonAt(figureMotionProgress(fig, time + 1e-4)), fig).p;
         for (final joint in before.keys) {
           final distance = (after[joint]! - before[joint]!).length;
-          if (!distance.isFinite || distance >= .01) discontinuities.add('$name/$i/$joint: $distance');
+          if (!distance.isFinite || distance >= .01) discontinuities.add('$name/$i/$joint playback: $distance');
         }
       }
     }
