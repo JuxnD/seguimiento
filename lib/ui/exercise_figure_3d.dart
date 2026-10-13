@@ -2050,7 +2050,7 @@ class _Scene {
         final spread=lateral*((digit-2)*.38);
         final start=landmarks['metatarsal']!+spread;
         final end=landmarks['toe']!+spread-forward*(digit*.12);
-        _capsule(start,end,digit==0?.28:.22,digit==0?.24:.18,_skin,near);
+        _capsule(start,end,digit == 0 ? .28 : .22,digit == 0 ? .24 : .18,_skin,near);
       }
       return;
     }
