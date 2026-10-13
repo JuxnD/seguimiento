@@ -1,0 +1,11 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/data/coach_load_1000_days_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: dominio: idéntico a la lectura previa en 1.000 días y en bordes
+previa: 9403929 µs por lectura (1143 registros, windows 16 núcleos)
+actual: 90207 µs por lectura (1143 registros, windows 16 núcleos)
+00:11 +1: repositorio: 1.000 días en SQLite, dos consultas y la misma lectura
+repositorio: 2 consultas, 153 ms (1.000 sesiones)
+00:12 +2: (tearDownAll)
+00:12 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191653503-22292-505169d702c143cb997b25e462bb4865.json
+exit=0

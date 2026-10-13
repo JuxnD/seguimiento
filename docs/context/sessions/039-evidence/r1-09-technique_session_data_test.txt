@@ -1,0 +1,9 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/data/technique_session_data_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: plantilla del handoff: 8 ejercicios, lo de reps a RIR 4
+00:00 +1: se ofrece la víspera de cada test y de las pruebas, y en la descarga
+00:01 +2: una sesión técnica a RPE 4 no cuenta como intensa para la racha
+00:03 +3: (tearDownAll)
+00:03 +3: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191634222-69620-2a584c9a5ec64077b083e8d391090907.json
+exit=0

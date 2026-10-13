@@ -3,6 +3,7 @@
 library;
 
 import '../enums.dart';
+import '../leg_chain.dart' show GroupChain;
 import '../readiness.dart' show ReadinessWeek;
 import '../progress.dart';
 import '../nutrition.dart';
@@ -308,12 +309,17 @@ class ReportInput {
     this.previous,
     this.notes,
     this.recovery,
+    this.legChains,
   });
 
   final DateTime programStart;
 
   /// Recuperación activa de la semana (§19.17); null = no se calculó.
   final ReadinessWeek? recovery;
+
+  /// Cadenas de días intensos al cierre del periodo (§16.24, plan 039), con
+  /// la misma clasificación que el Plan B de Hoy. null = no se calculó.
+  final ({GroupChain legs, GroupChain torso})? legChains;
   final DateTime rangeStart;
 
   /// Inclusivo.

@@ -1,0 +1,9 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/data/report_baseline_cutoff_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: añadir primera medida en ayunas futura no cambia el informe histórico
+00:00 +1: sin registros o sólo registros futuros no hay líneas base
+00:00 +2: conserva ayunas anterior y admite tomas en el último día
+00:00 +3: (tearDownAll)
+00:00 +3: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191716091-69876-a99d49ca2e814f2199dd564bf04ef438.json
+exit=0

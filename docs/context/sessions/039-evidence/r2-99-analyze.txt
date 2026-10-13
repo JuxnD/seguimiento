@@ -1,0 +1,4 @@
+﻿Analyzing seguimiento-039-plan-b...                             
+No issues found! (ran in 23.7s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T192639249-46124-991d8357369c4053a8ebfcc868f875a2.json
+exit=0

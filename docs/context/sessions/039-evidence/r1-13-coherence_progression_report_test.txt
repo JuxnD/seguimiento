@@ -1,0 +1,21 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/data/coherence_progression_report_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Hoy autoriza desde anterior limpia; fallo actual no inventa infracción
+00:00 +1: anterior fallida bloquea Hoy y reporte aunque actual salga limpia
+00:00 +2: calidad anterior null no desaparece fuera del rango
+00:00 +3: calidad anterior false no desaparece fuera del rango
+00:01 +4: incompleta anterior y meta pendiente no autorizan aumento
+00:01 +5: sin rondas en última anterior se explicita evidencia no evaluable
+00:01 +6: salto mayor al incremento permitido no se justifica por calidad
+00:01 +7: sin precedente y registro futuro no inventan permiso
+00:01 +8: precedente dentro de rango y dos filas del mismo día usan último ID como Hoy
+00:01 +9: no usar sesión del mismo día ni otro tipo para autorizar el intento
+00:01 +10: ausencia individual de técnica anterior sigue siendo bloqueo explícito
+00:01 +11: ausencia individual de rango completo anterior sigue siendo bloqueo explícito
+00:01 +12: ausencia individual de recuperación anterior sigue siendo bloqueo explícito
+00:01 +13: precedente importado no acredita permiso
+00:01 +14: precedente estimado no acredita permiso
+00:02 +15: (tearDownAll)
+00:02 +15: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191723860-64780-15db87b8a7834621acfd3a38b17936b3.json
+exit=0

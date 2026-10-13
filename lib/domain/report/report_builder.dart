@@ -4,6 +4,7 @@ import '../format.dart';
 import '../goal_history.dart';
 import '../habits.dart';
 import '../nutrition.dart';
+import '../leg_chain.dart' show legChainReportLines;
 import '../readiness.dart' show readinessReportLines;
 import '../session_math.dart';
 import '../steps.dart';
@@ -22,6 +23,7 @@ String buildReport(ReportInput input) {
   _volume(b, s);
   _football(b, s);
   _recovery(b, s);
+  _legChains(b, s);
   _nutrition(b, s);
   _body(b, s);
   _alerts(b, s);
@@ -332,6 +334,18 @@ void _football(StringBuffer b, ReportStats s) {
     b.writeln('| ${_dayLabel(f.date, null)} | ${f.format} | ${f.minutes} | '
         '${f.steps == null ? '—' : fmtInt(f.steps!)} | ${f.intensity ?? '—'} | ${f.fatigueAfter ?? '—'} | '
         '$knock | ${mdCell(f.notes)} |');
+  }
+  b.writeln();
+}
+
+void _legChains(StringBuffer b, ReportStats s) {
+  final c = s.input.legChains;
+  if (c == null) return;
+  final lines = legChainReportLines(c.legs, c.torso);
+  if (lines.isEmpty) return;
+  b.writeln('## Días intensos seguidos');
+  for (final l in lines) {
+    b.writeln('- ${mdCell(l)}');
   }
   b.writeln();
 }

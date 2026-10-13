@@ -1,0 +1,21 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/data/repositories_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: perfil por defecto: el programa arranca el día de la instalación
+00:00 +1: ejercicios: mismo nombre sin importar mayúsculas ni espacios
+00:00 +2: plan versionado: editar crea versión nueva y la vigente depende de la fecha
+00:00 +3: sesión: guardar, recargar con series partidas y vueltas, editar
+00:00 +4: comidas: macros congelados aunque cambie el catálogo; copiar comida
+00:00 +5: medidas: una toma por día, reemplazable
+00:00 +6: informe de extremo a extremo desde la base
+00:00 +7: editar una toma y cambiarle la fecha no la duplica
+00:00 +8: guardar la misma fecha al editar reemplaza, no suma
+00:01 +9: récord: las rondas estimadas no cuentan, las de una sesión incompleta sí
+00:01 +10: el plan no se guarda con rangos al revés ni ceros
+00:01 +11: un día del plan se relee por id aunque después haya versiones nuevas
+00:01 +12: borrar un alimento: se sabe qué combos lo usan
+00:01 +13: pesaje: uno por día y condición
+00:01 +14: el descanso de la sesión se guarda y se relee
+00:01 +15: (tearDownAll)
+00:01 +15: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191733136-50804-a04870cb0739422fa03f9b97619a8edc.json
+exit=0

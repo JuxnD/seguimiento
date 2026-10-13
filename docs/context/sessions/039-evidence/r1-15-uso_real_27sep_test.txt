@@ -1,0 +1,25 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/data/uso_real_27sep_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: §16.1 el fútbol cuenta en Hoy un partido registrado hoy marca el día como hecho
+00:00 +1: §16.1 el fútbol cuenta en Hoy en un día de circuito el partido no da por hecha la sesión, pero suma racha
+00:00 +2: §16.1 el fútbol cuenta en Hoy la racha incluye los días de fútbol
+00:00 +3: §16.1 el fútbol cuenta en Hoy el informe de la semana 23–29 sep cuenta el partido del domingo
+00:00 +4: §16.1 el fútbol cuenta en Hoy el partido guarda el día elegido, no el de hoy
+00:00 +5: §16.1 el fútbol cuenta en Hoy tras un domingo intenso o con golpe, el lunes avisa que baje
+00:00 +6: §16.2 récord de 11 un circuito guardado en día de bloques se señala y al corregirlo sale del récord
+00:00 +7: §16.2 récord de 11 un récord en día de circuito no se señala
+00:00 +8: §16.3–16.4 catálogo que crece solo el pan Mipan y los platos que se repiten vienen sembrados
+00:01 +9: §16.3–16.4 catálogo que crece solo el nombre se compara sin mayúsculas, tildes ni espacios de sobra
+00:01 +10: §16.3–16.4 catálogo que crece solo una entrada libre queda como alimento estimado de una porción
+00:01 +11: §16.3–16.4 catálogo que crece solo actualizar valores reescribe el alimento; guardar como nuevo busca otro nombre
+00:01 +12: §16.3–16.4 catálogo que crece solo sugerencias: favoritos, luego personalizados, luego lo sembrado
+00:01 +13: §16.3–16.4 catálogo que crece solo un alimento se convierte en combo de un toque
+00:01 +14: §16.3–16.4 catálogo que crece solo dos cifras escritas a mano del mismo plato son la misma
+00:01 +15: §14 pasos diarios anotar otra vez el mismo día reemplaza; Hoy muestra la cifra y la meta
+00:01 +16: §14 pasos diarios el informe trae el promedio semanal y lo compara con la semana anterior
+00:01 +17: §13 movilidad es opcional: no marca Hoy, no sostiene la racha y va aparte en el informe
+00:01 +18: aguantes en segundos (28 sep) el informe muestra la plancha en segundos, no en repeticiones
+00:01 +19: (tearDownAll)
+00:01 +19: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191741589-28188-4d65270ade664c5988f97670c35d8029.json
+exit=0

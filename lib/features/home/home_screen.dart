@@ -418,6 +418,12 @@ class _StartButtons extends ConsumerWidget {
         if (d.planB) ...[
           _PlanBCard(dashboard: d, color: color),
           const SizedBox(height: 8),
+        ] else if (d.planBAdvice.chainSuppressedByGreenMorning) ...[
+          // §16.24: con la mañana bien (escaleras y pulso anotados), la cadena
+          // sola no saca el Plan B; queda una nota.
+          Text('Piernas con varios días intensos, pero la mañana salió bien: hoy sin Plan B.',
+              style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: 8),
         ],
         FilledButton.icon(
           onPressed: () => d.load.warnAnotherSession ? _another(context, ref) : startGuidedSession(context, ref),
@@ -521,10 +527,8 @@ class _PlanBCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
-    final why = dashboard.load.threeIntense
-        ? '${dashboard.load.intenseStreak} días intensos seguidos'
-            '${dashboard.load.streakThrough == null ? '' : ' hasta el ${formatShort(dashboard.load.streakThrough!)}'}'
-        : 'molestia en la pierna';
+    // Motivos con sus datos (§16.24): días de la cadena, o valor y fecha.
+    final reasons = [for (final (_, why) in dashboard.planBAdvice.reasons) why];
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -535,9 +539,14 @@ class _PlanBCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text('Plan B: solo torso', style: text.titleSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
+          for (final why in reasons) Text('• $why', style: text.bodySmall),
+          if (dashboard.planBAdvice.unknownDays.isNotEmpty)
+            Text(
+                '${dashboard.planBAdvice.unknownDays.length} día(s) de la cadena sin datos para clasificar: no suman ni la cortan.',
+                style: text.bodySmall),
           Text(
-              'Por $why, considera hoy el plan de torso. Revisa mañana el esfuerzo y las molestias antes de volver a piernas. Supinas, flexiones, pike, remo, plancha lateral y '
-              'hollow, todo a RIR 2.',
+              'Considera hoy el plan de torso. Revisa mañana el esfuerzo y las molestias antes de volver a piernas. '
+              'Supinas, flexiones, pike, remo, plancha lateral y hollow, todo a RIR 2.',
               style: text.bodySmall),
           const SizedBox(height: 6),
           FilledButton.tonalIcon(

@@ -1,0 +1,13 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-039-plan-b/test/domain/recovery_test.dart
+00:00 +0: pesaje los pesajes viejos toman el momento de "en ayunas"
+00:00 +1: molestias no baja en 3 días o sube: avisa
+00:00 +2: pulso en reposo 3 días seguidos 5 lpm por encima de la media: recuperación baja
+00:00 +3: carga circuito y fútbol intenso el mismo día: dos sesiones, otra sesión pide confirmar
+00:00 +4: carga sin nada hoy, la racha cuenta desde ayer
+00:00 +5: carga plan B: día con pierna y 3 días intensos o molestia en la pierna
+00:00 +6: planche (§19.7) martes con pseudo-planche; jueves sin; lunes nada
+00:00 +7: planche (§19.7) en descarga, solo inclinaciones
+00:00 +8: hoja de habilidades: ventanas desde oct 2026
+00:00 +9: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T191622131-52516-a1871bf1e2f741c2a183ad6dd8da6569.json
+exit=0

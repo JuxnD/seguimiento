@@ -1,5 +1,7 @@
 # Índice de contexto
 
+**039 local, dirigido y pendiente R1:** Plan B por cadena de piernas (separada de torso), con exclusiones primero, moderado neutral y desconocido visible; motivos con datos (días, kneeStairs, otra zona), la mañana verde sólo suprime la cadena, el rojo de 032 manda y el pulso nocturno no es evaluable. Un resolver para Hoy y el informe. [Recibo, rojos y límites](sessions/2026-10-13-039-plan-b.md). Sin esquema; la racha 🔥 y 009 quedan intactas.
+
 **033 local, dirigido y pendiente R1:** coherencia core Hoy/informe, fútbol diario acumulado/detalle/edición porID, guard de guardado y confirmación duplicadas, hito10 traspersistencia sinactivar plan. Fallo/retry no pierde procedencia guiada. [Recibo, negativos y gates](sessions/2026-10-13-033-coherencia.md). Full sólo integración032/034/035; sin esquema/assets/APK/publicación ni aceptación humana nueva.
 
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
