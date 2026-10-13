@@ -1,0 +1,7 @@
+00:00 +0: loading C:/My Projects/seguimiento-046-agenda-colision/test/data/plan046_agenda_collision_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: moving torso twice preserves both typed identities on the shared Wednesday
+00:00 +1: collision readers preserve both report entries, leg benchmark and daily priority without writes
+00:02 +2: (tearDownAll)
+00:02 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T220541925-66292-85956d38eba7499c810cab1ef22ba5bb.json

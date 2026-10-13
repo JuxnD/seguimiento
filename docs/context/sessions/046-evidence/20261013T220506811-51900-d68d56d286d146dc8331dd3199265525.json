@@ -1,0 +1,19 @@
+{
+  "owner": "046",
+  "token": "628104c736e649de880e4fd031f6f583",
+  "pid": 51900,
+  "tool": "dart",
+  "arguments": [
+    "format",
+    "--line-length=120",
+    "lib/data/repositories/readiness_repository.dart",
+    "test/data/plan046_agenda_collision_test.dart"
+  ],
+  "worktree": "C:/My Projects/seguimiento-046-agenda-colision",
+  "startUtc": "2026-10-13T22:05:05.6658022Z",
+  "finishUtc": "2026-10-13T22:05:06.8077622Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

@@ -1,5 +1,7 @@
 # Índice de contexto
 
+**046 colisión de agenda local:** seis identidades conservadas aunque fecha compartida; prioridad diaria separada.2 nuevas+49 regresiones/analyze0; formato fuente restaurado después y R1 exacta pendiente. [Recibo y contratos](sessions/2026-10-13-046-agenda-colision.md).
+
 **033 local, dirigido y pendiente R1:** coherencia core Hoy/informe, fútbol diario acumulado/detalle/edición porID, guard de guardado y confirmación duplicadas, hito10 traspersistencia sinactivar plan. Fallo/retry no pierde procedencia guiada. [Recibo, negativos y gates](sessions/2026-10-13-033-coherencia.md). Full sólo integración032/034/035; sin esquema/assets/APK/publicación ni aceptación humana nueva.
 
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
