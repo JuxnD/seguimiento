@@ -295,6 +295,7 @@ class Figure3D {
     this.variantLoaded,
     this.group = 'Otros',
     this.focus,
+    this.barefoot = false,
     this.continuous = true,
     this.mirrored = false,
     this.perSide = false,
@@ -323,6 +324,7 @@ class Figure3D {
         variantLoaded: (j['variant'] as Map<String, Object?>?)?['loaded'] as bool?,
         group: j['group'] as String? ?? 'Otros',
         focus: j['focus'] as String?,
+        barefoot: j['barefoot'] as bool? ?? false,
         continuous: j['continuous'] as bool? ?? true,
         perSide: j['perSide'] as bool? ?? false,
         motion: [
@@ -356,7 +358,7 @@ class Figure3D {
 
   /// Variante que dibuja la figura: agarre ('prona') y si lleva lastre
   /// (mochila). null = vale para cualquiera.
-  final bool continuous, mirrored, perSide;
+  final bool continuous, mirrored, perSide, barefoot;
   final List<FigureMotionStage> motion;
   bool get hasMotion => motion.isNotEmpty;
 
@@ -712,6 +714,7 @@ class Figure3DCatalog {
         initialPitch: base.initialPitch,
         group: base.group,
         focus: base.focus,
+        barefoot: base.barefoot,
         continuous: base.continuous,
         motion: base.motion,
         mirrored: reflected,
@@ -1476,6 +1479,16 @@ Map<String, V3> shortFootLandmarks(Body3D body, double activation, {String side 
   };
 }
 
+/// Physical load resting on the working thigh, shared by rendering and inspection.
+({V3 center, V3 size}) guidedThighLoadBounds(Body3D body, {bool unilateral = false}) {
+  final near = V3.lerp(body.p['nearHip']!, body.p['nearKnee']!, .65);
+  final far = V3.lerp(body.p['farHip']!, body.p['farKnee']!, .65);
+  final support = unilateral ? near : V3.lerp(near, far, .5);
+  const surfaceRadius = 2.4 * .35 + 1.65 * .65;
+  return (center: support + const V3(0, -surfaceRadius - 2.5, 0),
+    size: V3(9, 5, unilateral ? 4.6 : 11.2));
+}
+
 V3 spineCenterline(Body3D body, BodyDims dims, double bend, double fraction) =>
     body.p['hip']! +
     body.up * (dims.torso * fraction) +
@@ -1600,7 +1613,9 @@ class _Scene {
   void _annotations() {
     if (size.width < 200) return;
     for (final annotation in fig.annotations) {
-      final joint = body.p[annotation['joint']];
+      final joint = fig.focus == 'nearFoot' && annotation['joint'] == 'footArch'
+          ? shortFootLandmarks(body, skel.footArch)['arch']
+          : body.p[annotation['joint']];
       if (joint == null) continue;
       final text = TextPainter(
         text: TextSpan(
@@ -2076,7 +2091,8 @@ class _Scene {
         final spread = lateral * ((digit - 2) * .38);
         final start = landmarks['metatarsal']! + spread;
         final end = landmarks['toe']! + spread - forward * (digit * .12);
-        _capsule(start, end, digit == 0 ? .28 : .22, digit == 0 ? .24 : .18, _skin, near);
+        _capsule(start, end, digit == 0 ? .28 : .22, digit == 0 ? .24 : .18, _skin, near,
+            outline: !(fig.barefoot && fig.focus == 'nearFoot'));
       }
       return;
     }
@@ -2323,6 +2339,20 @@ class _Scene {
     double zc(V3 v) => cam.view(v).z;
     for (final pr in props) {
       switch (pr['type']) {
+        case 'guidedThighPack':
+          if (_num(pr['alpha'], 1) == 0) break;
+          final bounds = guidedThighLoadBounds(body, unilateral: pr['unilateral'] == true);
+          final c = bounds.center, half = bounds.size * .5;
+          parts.add(DepthPart(zc(c), () {
+            _box(c, [V3(half.x, 0, 0), V3(0, half.y, 0), V3(0, 0, half.z)], _pack.mid);
+            // Small front pocket and straps make the load identifiable as a bag.
+            _box(c + V3(half.x + .35, .4, 0),
+                [const V3(.35, 0, 0), const V3(0, 1.4, 0), V3(0, 0, half.z * .7)], _pack.lo);
+            for (final sign in [-1.0, 1.0]) {
+              _capsule(c + V3(-half.x, -half.y - .12, sign * half.z * .65),
+                  c + V3(half.x, -half.y - .12, sign * half.z * .65), .15, .15, _strap, nearOf(c));
+            }
+          }, 'guidedThighPack'));
         case 'guidedHandWeight':
           final joint = body.p[pr['joint'] as String]!;
           parts.add(DepthPart(zc(joint), () {

@@ -1,0 +1,14 @@
+{
+  "baseline": "1b9bc194fcbae7978b7c8fb653572fe88ba1610e",
+  "changedBase": [
+    "Pie corto",
+    "Sóleo sentado con mochila"
+  ],
+  "changedVariants": [
+    "seated_soleus_unilateral"
+  ],
+  "unchangedBase": 109,
+  "unchangedVariants": 17,
+  "allAffectedFramesAndMotionUnchanged": true,
+  "assetSha256": "bc15139edf24200677afc64c3cc19a386902cbb4725776eb1fee0c2dadbee9da"
+}

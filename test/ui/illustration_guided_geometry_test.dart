@@ -524,15 +524,16 @@ void main() {
       final prop = fig.props.last;
       for (var i = 0; i <= 40; i++) {
         final body = liftSkeleton(fig.skeletonAt(i / 40), fig);
-        final center = (prop['center'] as List).cast<num>();
-        final size = (prop['size'] as List).cast<num>();
-        final bottom = center[1] + size[1] / 2;
+        final bounds = prop['type'] == 'guidedThighPack'
+            ? guidedThighLoadBounds(body, unilateral: prop['unilateral'] == true)
+            : (center: V3(((prop['center'] as List)[0] as num).toDouble(), ((prop['center'] as List)[1] as num).toDouble(), ((prop['center'] as List)[2] as num).toDouble()), size: V3(((prop['size'] as List)[0] as num).toDouble(), ((prop['size'] as List)[1] as num).toDouble(), ((prop['size'] as List)[2] as num).toDouble()));
+        final bottom = bounds.center.y + bounds.size.y / 2;
         final thigh = V3.lerp(body.p['nearHip']!, body.p['nearKnee']!, .65);
         // Renderer thigh radii taper from 2.4 to 1.65; use its physical envelope.
         final top = thigh.y - (2.4 * .35 + 1.65 * .65);
-        expect(bottom, closeTo(top, .15), reason: '$key/$i load bottom$bottom vs thigh top$top; equipment must not intersect the thigh.');
+        expect(bottom, closeTo(top, .15),
+            reason: '$key/$i load bottom$bottom vs thigh top$top; equipment must not intersect the thigh.');
       }
     }
   });
-
 }

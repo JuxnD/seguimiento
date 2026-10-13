@@ -138,7 +138,8 @@ def generate(name, variant=None):
         a=pose('Pie descalzo apoyado; dedos largos')
         a['footArch']=0
         b=cp(a); b.update(caption='Eleva suavemente el arco sin encoger los dedos',footArch=.6)
-        return cycle(a,b,contacts=['nearAnkle','farAnkle'],barefoot=True,focus='nearFoot',per_side=True,yaw=20)
+        return cycle(a,b,contacts=['nearAnkle','farAnkle'],barefoot=True,focus='nearFoot',per_side=True,yaw=0,pitch=0,
+                     annotations=[dict(joint='footArch',text='Arco',corner='tl')])
     if name in ('Pike sentado','Pancake'):
         a=pose('Siéntate con piernas rectas y espalda larga',(0,-5),-90,
                limb(0,0,foot=-60),limb(0,0,foot=-60),arm(45,45),arm(45,45))
@@ -295,7 +296,7 @@ def _plan034(name, variant, result, cycle):
             f['caption']=a['caption'] if i==0 else b['caption']; sweep.append(f)
         frames=sweep+[cp(sweep[-1])]+[cp(f) for f in reversed(sweep[:-1])]
         motions=[phase('Eleva el talón',seconds=.3) for _ in sweep[1:]]+[phase('Pausa arriba',kind='hold',seconds=1)]+[phase('Baja',seconds=.3) for _ in sweep[1:]]
-        return result(frames,motions,props=bench(-4,-13.5,width=17,depth=10)+[box([10,-18,0],[9,5,12])],per_side=variant=='seated_soleus_unilateral',yaw=25)
+        return result(frames,motions,props=bench(-4,-13.5,width=17,depth=10)+[dict(type='guidedThighPack',unilateral=variant=='seated_soleus_unilateral')],per_side=variant=='seated_soleus_unilateral',yaw=25)
     if name == 'Tibial en la pared':
         distance=7 if variant in (None,'tibialis_wall_close') else 14
         hip_y=-1-math.sqrt(28**2-distance**2)

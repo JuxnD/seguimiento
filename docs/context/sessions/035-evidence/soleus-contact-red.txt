@@ -1,0 +1,14 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: seated soleus load lower face rests above thigh surface instead of intersecting it
+00:00 +0 -1: seated soleus load lower face rests above thigh surface instead of intersecting it [E]
+  Expected: a numeric value within <0.15> of <-16.9125>
+    Actual: <-15.5>
+     Which:  differs by <1.4125000000000014>
+  seated_soleus_bilateral/0 load bottom-15.5 vs thigh top-16.9125; equipment must not intersect the thigh.
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 474:18    expect
+  test\ui\illustration_guided_geometry_test.dart 533:9  main.<fn>
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T202113242-13040-79c893888777427ab7a80544920c81e3.json
