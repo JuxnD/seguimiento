@@ -225,3 +225,6 @@ DOM vista real previa14°, no0 (consulta inicial root equivocada, corregida ante
 ## Costura física y copy, 13oct17:54 UTC
 598d7d + formato: 11 controles/API y legacy1 pasan; analyze1 conserva16 avoid_dynamic_calls en fixtures (api-analyze.txt). Se tipan únicamente mapas/listas, sin cambiar assertions ni producto; capturador original/evidencia de imágenes no se reescribe. Copia tipada separada camera_comparison_typed_test.dart.txt. Nuevo analyze y2API pendientes. DOM35 ycopyFIFA7 son diferencias de metadata documentadas; los seis clips recapturados y DOM35 reutilizado conservan sus SHA de captura.
 
+
+Tipado API terminal17:56UTC:2API PASS y analyze0. Junto controles9+legacy1 del bloque anterior acredita interfaz compatible, no cobertura de nuevas figuras. FIN/liberación publicado. Se conserva analyze16 anterior; ninguna aserción relajada.
+

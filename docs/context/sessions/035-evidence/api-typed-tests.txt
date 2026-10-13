@@ -1,0 +1,5 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_physical_variant_test.dart
+00:00 +0: physical variants resolve by exercise and explicit key without substituting a base pose
+00:00 +1: the shared view shows the selected physical pose or explicit absence
+00:01 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T175627515-33400-a49742be079f4a12a2d76ceb24b40af8.json

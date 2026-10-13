@@ -36,10 +36,13 @@ void main() {
         final near = camera.project(body.p['nearElbow']!);
         final far = camera.project(body.p['farElbow']!);
         final diameter = 1.15 * (near.k + far.k); // Actual elbow capsule radii.
-        elbowProjection.add({'yaw': yaw, 'progress': progress,
+        elbowProjection.add({
+          'yaw': yaw,
+          'progress': progress,
           'separationPx': (near.offset - far.offset).distance,
           'combinedRadiusPx': diameter,
-          'separationRatio': (near.offset - far.offset).distance / diameter});
+          'separationRatio': (near.offset - far.offset).distance / diameter
+        });
       }
     }
     final manifest = jsonDecode(File('build/qa/035/motion-batch2/manifest-5.json').readAsStringSync()) as List;
@@ -77,10 +80,15 @@ void main() {
         pixelPairs++;
       }
     });
-    File('docs/context/sessions/035-evidence/camera-comparison.json').writeAsStringSync(
-      const JsonEncoder.withIndent('  ').convert({'oldSource': 'eef6e067b4a3487247be3d5523acb15bb4af930a',
-        'currentProduct': '8a8c94fc496a498f393e0ddeae8cfe756923c085',
-        'cameraRows': rows, 'pullupWorldSamples': samples.length, 'pullupPixelPairs': pixelPairs,
-        'pullupInitialYaw': a.initialYaw, 'elbowProjection': elbowProjection}));
+    File('docs/context/sessions/035-evidence/camera-comparison.json')
+        .writeAsStringSync(const JsonEncoder.withIndent('  ').convert({
+      'oldSource': 'eef6e067b4a3487247be3d5523acb15bb4af930a',
+      'currentProduct': '8a8c94fc496a498f393e0ddeae8cfe756923c085',
+      'cameraRows': rows,
+      'pullupWorldSamples': samples.length,
+      'pullupPixelPairs': pixelPairs,
+      'pullupInitialYaw': a.initialYaw,
+      'elbowProjection': elbowProjection
+    }));
   });
 }
