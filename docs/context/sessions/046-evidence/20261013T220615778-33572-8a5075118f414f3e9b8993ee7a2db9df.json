@@ -1,0 +1,27 @@
+{
+  "owner": "046",
+  "token": "628104c736e649de880e4fd031f6f583",
+  "pid": 33572,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--concurrency=1",
+    "--timeout=90s",
+    "--reporter=expanded",
+    "test/data/plan043_readers_test.dart",
+    "test/data/plan043_agenda_benchmarks_test.dart",
+    "test/data/plan043_benchmark_cutoff_test.dart",
+    "test/data/readiness_repository_test.dart",
+    "test/data/readiness_partial_test.dart",
+    "test/data/reminder_scheduler_test.dart",
+    "test/data/report_baseline_cutoff_test.dart"
+  ],
+  "worktree": "C:/My Projects/seguimiento-046-agenda-colision",
+  "startUtc": "2026-10-13T22:05:54.8165387Z",
+  "finishUtc": "2026-10-13T22:06:15.7737799Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

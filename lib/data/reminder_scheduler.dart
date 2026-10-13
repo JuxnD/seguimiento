@@ -2,6 +2,12 @@ import 'package:drift/drift.dart' show BooleanExpressionOperators;
 
 import '../domain/dates.dart';
 import '../domain/enums.dart';
+import '../domain/fitness_test.dart' show TestPart;
+import '../domain/plan_v3.dart' show V3Day;
+import '../domain/test_protocol.dart';
+import 'repositories/exercise_repository.dart';
+import 'repositories/mobility_benchmark_repository.dart';
+import 'repositories/training_repository.dart';
 import '../domain/nutrition.dart';
 import '../domain/progress.dart';
 import '../domain/reminders.dart';
@@ -54,11 +60,16 @@ class ReminderScheduler {
     final stepsGoal = goalReferenceOn(history, GoalMetric.pasos, today);
 
     final days = <ReminderDay>[];
+    final training = TrainingRepository(db, ExerciseRepository(db));
     for (var i = 0; i < horizonDays; i++) {
       final date = addDays(today, i);
       final view = await plan.dayFor(date);
       final type = view?.day.type ?? DayType.descanso;
+      final block =
+          await _testDay(date, await training.blockDay(view, date), today);
       days.add(ReminderDay(
+        test: block.test,
+        benchmarks: block.benchmarks,
         date: date,
         type: type,
         planSummary: view == null
@@ -107,6 +118,38 @@ class ReminderScheduler {
 
     await service.applySchedule(planned);
     return planned;
+  }
+
+  /// El test y los benchmarks de ese día según la agenda efectiva del bloque
+  /// (§19.17: un test movido se anuncia el día nuevo, no el previsto).
+  Future<({ReminderTest? test, bool benchmarks})> _testDay(
+      DateTime date, V3Day? v3, DateTime today) async {
+    if (v3 == null || !v3.isV31) return (test: null, benchmarks: false);
+    final start = addDays(date, -(date.weekday - 1) - (v3.week - 1) * 7);
+    final protocol = v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12;
+    final t = await ReadinessRepository(db).effectiveTestOn(date,
+        scheme: v3.scheme, blockStart: start, protocol: protocol);
+    final benchmarks = v3.isV32 &&
+        await MobilityBenchmarkRepository(db).dueOn(date,
+                scheme: v3.scheme,
+                blockStart: start,
+                protocol: protocol,
+                asOf: today) !=
+            null;
+    if (t == null) return (test: null, benchmarks: benchmarks);
+    final gate = t.gate!;
+    return (
+      test: ReminderTest(
+        title:
+            'Test ${t.round} de ${t.part == TestPart.torso ? 'torso' : 'piernas'}',
+        movedFrom: t.moved ? t.planned : null,
+        condition: switch (gate.label) {
+          final label? => 'Ojo: $label.',
+          null => null,
+        },
+      ),
+      benchmarks: benchmarks,
+    );
   }
 
   Future<bool> _hasSession(DateTime date) async {

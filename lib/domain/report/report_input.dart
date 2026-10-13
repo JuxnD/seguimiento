@@ -4,10 +4,76 @@ library;
 
 import '../enums.dart';
 import '../leg_chain.dart' show GroupChain;
+import '../fitness_test.dart' show TestPart, TestResult;
 import '../readiness.dart' show ReadinessWeek;
 import '../progress.dart';
 import '../nutrition.dart';
 import '../goal_history.dart';
+
+/// Un test de la agenda efectiva del bloque.
+class TestAgendaEntry {
+  const TestAgendaEntry({
+    required this.round,
+    required this.part,
+    required this.planned,
+    required this.date,
+    required this.moves,
+    required this.maxMoves,
+    this.condition,
+  });
+
+  final int round;
+  final TestPart part;
+  final DateTime planned;
+  final DateTime date;
+  final int moves;
+  final int maxMoves;
+
+  /// Por qué ese día no se hace o de qué depende; null = se hace.
+  final String? condition;
+}
+
+/// Un intento de test guardado (cabecera del esquema 25).
+class TestAttemptEntry {
+  const TestAttemptEntry({
+    required this.id,
+    required this.date,
+    required this.round,
+    required this.part,
+    required this.protocolId,
+    required this.sessionLinked,
+  });
+
+  final int id;
+  final DateTime date;
+  final int round;
+  final TestPart part;
+  final String protocolId;
+
+  /// Tiene su sesión de test; false si se borró o nunca la tuvo.
+  final bool sessionLinked;
+}
+
+/// Una toma de benchmarks de movilidad.
+class BenchmarkScheduleEntry {
+  const BenchmarkScheduleEntry({
+    required this.planned,
+    required this.date,
+    required this.withMovedLegTest,
+    required this.missing,
+    required this.total,
+  });
+
+  final DateTime planned;
+  final DateTime date;
+  final bool withMovedLegTest;
+
+  /// Mediciones que faltan (`knee_to_wall` cuenta por lado).
+  final List<String> missing;
+
+  /// Mediciones de una toma completa.
+  final int total;
+}
 
 class Targets {
   const Targets({
@@ -326,7 +392,24 @@ class ReportInput {
     this.kneeStairs = const {},
     this.mobilityBenchmarks = const [],
     this.legChains,
+    this.testAgenda = const [],
+    this.testAttempts = const [],
+    this.testResults = const [],
+    this.benchmarkSchedule = const [],
   });
+
+  /// Tests del bloque previstos o efectivos en el rango (agenda efectiva).
+  final List<TestAgendaEntry> testAgenda;
+
+  /// Intentos de test registrados en el rango.
+  final List<TestAttemptEntry> testAttempts;
+
+  /// Todos los resultados hasta el final del rango (con y sin intento), para
+  /// comparar cada intento sólo con su misma línea base.
+  final List<TestResult> testResults;
+
+  /// Tomas de benchmarks de movilidad que caen en el rango.
+  final List<BenchmarkScheduleEntry> benchmarkSchedule;
 
   final DateTime programStart;
 

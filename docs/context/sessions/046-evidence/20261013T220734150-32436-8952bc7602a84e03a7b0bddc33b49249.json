@@ -1,0 +1,17 @@
+{
+  "owner": "046",
+  "token": "628104c736e649de880e4fd031f6f583",
+  "pid": 32436,
+  "tool": "flutter",
+  "arguments": [
+    "analyze",
+    "--no-pub"
+  ],
+  "worktree": "C:/My Projects/seguimiento-046-agenda-colision",
+  "startUtc": "2026-10-13T22:06:39.1517896Z",
+  "finishUtc": "2026-10-13T22:07:34.1414204Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

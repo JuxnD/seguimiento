@@ -1,0 +1,209 @@
+00:00 +0: loading C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart
+00:00 +0: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: dominio IDs estables por evidencia y visibilidad de la decisión
+00:00 +1: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: fuerza mantener oculta la subida para esa evidencia; otra sesión es otra propuesta
+00:00 +2: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: fuerza "hoy no" vale sólo hoy: el próximo martes vuelve
+00:00 +3: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: fuerza R2 aceptar no prueba subida si la sesión siguiente mantiene carga y variante
+00:01 +4: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: fuerza R2 una sola serie de las cuatro previstas no sostiene la dosis subida
+00:01 +5: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: fuerza R2 control: carga mayor con cuatro series limpias sí se sostiene
+00:01 +6: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: fuerza R2 carga con otra variante y dosis guardada incompleta: no se afirma ni se rompe Hoy
+00:01 +7: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:02 +8: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: rondas "hoy no" deja las rondas de la última vez hoy; el viernes siguiente vuelve
+00:02 +9: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: escaleras "en 7 días" oculta la propuesta de subir en Hoy hasta su fecha; subir sigue en la confirmación existente
+00:02 +9 -1: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: escaleras "en 7 días" oculta la propuesta de subir en Hoy hasta su fecha; subir sigue en la confirmación existente [E]
+  UnimplementedError
+  package:riverpod/src/framework/element.dart 692:23                    ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15                         ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 241:21                  ProviderContainer.read
+  test\data\proposal_tracking_test.dart 255:38                          main.<fn>.<fn>
+  package:test_api                                                      Invoker._waitForOutstandingCallbacks.<fn>
+  package:seguimiento/app/providers.dart 58:35                          localFlagsProvider.<fn>
+  package:riverpod/src/framework/element.dart 691:12                    ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15                         ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 241:21                  ProviderContainer.read
+  test\data\proposal_tracking_test.dart 255:38                          main.<fn>.<fn>
+  dart:async                                                            _CustomZone.registerUnaryCallback
+  test\data\proposal_tracking_test.dart 245:9                           main.<fn>.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                                            _BroadcastStreamController.addError
+  package:riverpod/src/stream_provider/base.dart 212:25                 StreamProviderElement.onError
+  package:riverpod/src/async_notifier/base.dart 416:7                   FutureHandlerProviderElementMixin._handleAsync
+  package:riverpod/src/async_notifier/base.dart 303:5                   FutureHandlerProviderElementMixin.handleStream
+  package:riverpod/src/stream_provider/base.dart 169:5                  StreamProviderElement.create
+  package:riverpod/src/framework/element.dart 426:7                     ProviderElementBase.buildState
+  package:riverpod/src/framework/element.dart 228:5                     ProviderElementBase.mount
+  package:riverpod/src/framework/container.dart 47:11                   _StateReader._create
+  package:riverpod/src/framework/container.dart 35:52                   _StateReader.getElement
+  package:riverpod/src/framework/container.dart 440:40                  ProviderContainer.readProviderElement.<fn>
+  package:riverpod/src/framework/container.dart 475:8                   ProviderContainer.readProviderElement
+  package:riverpod/src/framework/proxy_provider_listenable.dart 134:26  ProviderElementProxy.read
+  package:riverpod/src/framework/container.dart 241:21                  ProviderContainer.read
+  test\data\proposal_tracking_test.dart 255:38                          main.<fn>.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                                            _CustomZone.registerUnaryCallback
+  test\data\proposal_tracking_test.dart 245:9                           main.<fn>.<fn>
+  
+00:02 +9 -1: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) un fallo entre registrar y subir no deja aceptación sin peldaño
+00:02 +9 -2: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) un fallo entre registrar y subir no deja aceptación sin peldaño [E]
+  Expected: (bool, int):<(true, 1)>
+    Actual: (bool, int):<(false, 1)>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\proposal_tracking_test.dart 281:9         main.<fn>.<fn>.<fn>
+  
+00:02 +9 -2: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) doble toque: sube uno, una sola aceptación
+00:03 +9 -3: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) doble toque: sube uno, una sola aceptación [E]
+  Expected: (bool, int):<(true, 1)>
+    Actual: (bool, int):<(false, 1)>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\proposal_tracking_test.dart 281:9         main.<fn>.<fn>.<fn>
+  
+00:03 +9 -3: C:/My Projects/seguimiento-043-diag/test/data/proposal_tracking_test.dart: (tearDownAll)
+00:03 +9 -3: loading C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart
+00:04 +9 -3: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: (setUpAll)
+00:04 +9 -3: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: A1: una prueba guardada no equivale a test completo
+00:04 +10 -3: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: A2: pruebas de piernas no sustituyen la sesión normal
+00:04 +11 -3: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: A3: valores no finitos no llegan a resultados persistidos
+00:05 +12 -3: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: A4: un solo lado no determina el lado más débil
+00:05 +13 -3: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja
+00:05 +14 -3: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida
+00:05 +14 -4: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida [E]
+  UnimplementedError
+  package:riverpod/src/framework/element.dart 692:23       ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15            ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 280:21     ProviderContainer.listen
+  test\data\release121_contracts_test.dart 141:36          main.<fn>
+  package:test_api                                         Invoker._waitForOutstandingCallbacks.<fn>
+  package:seguimiento/app/providers.dart 58:35             localFlagsProvider.<fn>
+  package:riverpod/src/framework/element.dart 691:12       ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15            ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 280:21     ProviderContainer.listen
+  test\data\release121_contracts_test.dart 141:36          main.<fn>
+  dart:async                                               _CustomZone.registerUnaryCallback
+  test\data\release121_contracts_test.dart 136:5           main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                               _BroadcastStreamController.addError
+  package:riverpod/src/stream_provider/base.dart 212:25    StreamProviderElement.onError
+  package:riverpod/src/async_notifier/base.dart 416:7      FutureHandlerProviderElementMixin._handleAsync
+  package:riverpod/src/async_notifier/base.dart 303:5      FutureHandlerProviderElementMixin.handleStream
+  package:riverpod/src/stream_provider/base.dart 169:5     StreamProviderElement.create
+  package:riverpod/src/framework/element.dart 426:7        ProviderElementBase.buildState
+  package:riverpod/src/framework/element.dart 228:5        ProviderElementBase.mount
+  package:riverpod/src/framework/container.dart 47:11      _StateReader._create
+  package:riverpod/src/framework/container.dart 35:52      _StateReader.getElement
+  package:riverpod/src/framework/container.dart 440:40     ProviderContainer.readProviderElement.<fn>
+  package:riverpod/src/framework/container.dart 475:8      ProviderContainer.readProviderElement
+  package:riverpod/src/framework/provider_base.dart 79:26  ProviderBase.addListener
+  package:riverpod/src/framework/container.dart 280:21     ProviderContainer.listen
+  test\data\release121_contracts_test.dart 141:36          main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                               _CustomZone.registerUnaryCallback
+  test\data\release121_contracts_test.dart 136:5           main.<fn>
+  
+00:05 +14 -4: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes
+00:05 +14 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes [E]
+  Expected: true
+    Actual: <false>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\release121_contracts_test.dart 172:5      main.<fn>
+  
+00:05 +14 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=true
+00:05 +15 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=false
+00:05 +16 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: rechazo atomico reps NaN conserva resultado anterior
+00:06 +17 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: rechazo atomico reps Infinity conserva resultado anterior
+00:06 +18 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: rechazo atomico reps -Infinity conserva resultado anterior
+00:06 +19 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: rechazo atomico reps -1.0 conserva resultado anterior
+00:06 +20 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: rechazo atomico reps 1.5 conserva resultado anterior
+00:06 +21 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos
+00:06 +22 -5: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+00:06 +22 -6: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio [E]
+  Expected: an object with length of <1>
+    Actual: []
+     Which: has length of <0>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\release121_contracts_test.dart 264:5      main.<fn>
+  
+00:06 +22 -6: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: lumbar durable idempotente con mismo evento y separado por sesion
+00:06 +23 -6: C:/My Projects/seguimiento-043-diag/test/data/release121_contracts_test.dart: (tearDownAll)
+00:06 +23 -6: loading C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart
+00:09 +23 -6: C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart: (setUpAll)
+00:09 +23 -6: C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+00:12 +24 -6: C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart: rojo: solo descanso, sin la activación del amarillo
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "• Rodilla en escaleras 6/10": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:203:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart line 203
+The test description was:
+  rojo: solo descanso, sin la activación del amarillo
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:13 +24 -7: C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart: rojo: solo descanso, sin la activación del amarillo [E]
+  Test failed. See exception logs above.
+  The test description was: rojo: solo descanso, sin la activación del amarillo
+  
+00:13 +24 -7: C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart: día de test amarillo: "Mover test a mañana" lo mueve y queda trazado
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:349:39)
+#6      main.open.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:86:20)
+#7      main.drive (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:61:17)
+#8      main.open (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:85:75)
+#9      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:211:22)
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:13 +25 -7: C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart: a medias no es hecho: sin ✓ ni "Día completo"; terminada sí
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:349:39)
+#6      main.open.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:86:20)
+#7      main.drive (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:61:17)
+#8      main.open (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:85:75)
+#9      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart:225:22)
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:14 +26 -7: C:/My Projects/seguimiento-043-diag/test/ui/readiness_home_test.dart: (tearDownAll)
+00:14 +26 -7: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T211346640-37900-3e4e600fa0604731900d4b66b0b0f8f1.json
+exit=1

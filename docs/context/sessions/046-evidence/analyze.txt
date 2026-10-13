@@ -1,0 +1,3 @@
+Analyzing seguimiento-046-agenda-colision...                    
+No issues found! (ran in 50.9s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T220734150-32436-8952bc7602a84e03a7b0bddc33b49249.json

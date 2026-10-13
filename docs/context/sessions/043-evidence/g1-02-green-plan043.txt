@@ -1,0 +1,48 @@
+00:00 +0: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_readers_test.dart
+powershell.exe : lib/data/repositories/report_repository.dart:3:1: Error: Can't import 
+'lib/domain/accessory_ladders.dart', because it has a 'part of' declaration.
+En C:\Users\Acer\AppData\Local\Temp\claude\C--My-Projects-kata\6db9cb30-df08-43e9-87db-e1d7b6a75d84\scratchpad\lease043
+.ps1: 8 Carácter: 1
++ & powershell -NoProfile -ExecutionPolicy Bypass -Command $inner *> "$ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (lib/data/reposi...f' declaration.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Try removing the 'part of' declaration, or using 'lib/domain/accessory_ladders.dart' as a part.
+import '../../domain/accessory_ladders.dart' show allLadders;
+^
+00:00 +0 -1: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_readers_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_readers_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_readers_test.dart
+00:00 +0 -1: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart
+00:00 +0 -1: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_readers_test.dart [E]
+  Error: the Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 10:3  throwToolExit
+  package:flutter_tools/src/compile.dart 898:9     DefaultResidentCompiler._compile.<fn>
+  dart:async/zone.dart 1407:47                     _rootRunUnary
+  dart:async/zone.dart 1308:19                     _CustomZone.runUnary
+  dart:async/future_impl.dart 847:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 876:13               Future._propagateToListeners
+  dart:async/future_impl.dart 772:9                Future._propagateToListeners
+  dart:async/future_impl.dart 652:5                Future._completeWithValue
+  dart:async/future_impl.dart 722:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone.dart 1399:13                     _rootRun
+  dart:async/zone.dart 1301:19                     _CustomZone.run
+  dart:async/zone.dart 1209:7                      _CustomZone.runGuarded
+  dart:async/zone.dart 1249:23                     _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:21         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 118:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 185:5      _RawReceivePort._handleMessage
+  
+00:00 +0 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: (setUpAll)
+00:00 +0 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día piernas sin escaleras anotadas: se dice, no se supone 0
+00:00 +1 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día escaleras 2 se hace; 3 no
+00:00 +2 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día el descanso de 032 manda también sobre el torso
+00:00 +3 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: agenda: si el test se hace ese día la agenda lista los seis tests del bloque con su día previsto
+00:00 +4 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: benchmarks cada 28 días desde el miércoles de la semana 1; siguen al test de piernas movido
+00:00 +5 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: benchmarks estado: parcial con lo que falta, completo con las cinco y los dos lados; pike negativo vale
+00:00 +6 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: benchmarks mediciones de otro bloque no completan esta toma
+00:00 +7 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan043_agenda_benchmarks_test.dart: (tearDownAll)
+00:00 +7 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T205737632-38672-4e948b37fa36477c8702bbe3f11fbf05.json
+exit=1

@@ -1,0 +1,12 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "941F9051F08DFF149BEC7269F18F8F41429D22D8F36618FFB4D3F928948DE2FD",
+    "Path": "C:\\My Projects\\seguimiento-046-agenda-colision\\lib\\data\\repositories\\readiness_repository.dart"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "F9A8E93BFD69345A910C46CFA25451D9977866554F3364D61C093D42EED00210",
+    "Path": "C:\\My Projects\\seguimiento-046-agenda-colision\\test\\data\\plan046_agenda_collision_test.dart"
+  }
+]

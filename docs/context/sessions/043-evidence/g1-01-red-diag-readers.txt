@@ -1,0 +1,146 @@
+00:00 +0: loading C:/My Projects/seguimiento-043-diag/test/data/plan043_readers_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: agenda: identidad tipada un movimiento v3.1 con clave tipada es el mismo que lee la agenda v3.1
+00:00 +0 -1: agenda: identidad tipada un movimiento v3.1 con clave tipada es el mismo que lee la agenda v3.1 [E]
+  Expected: ({int moves, TestPart part, int round}):<(moves: 1, part: TestPart.torso, round: 1)>
+    Actual: <null>
+  la agenda v3.1 ve el movimiento hecho con su clave tipada
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan043_readers_test.dart 68:7            main.<fn>.<fn>
+  
+00:00 +0 -1: agenda: identidad tipada v3.1 y v3.2 con el mismo inicio no comparten movimientos
+00:00 +1 -1: agenda: identidad tipada el tercer movimiento no escribe nada
+00:00 +2 -1: recordatorios con la agenda efectiva el test de piernas movido al jueves se anuncia el jueves, con escaleras y benchmarks
+00:00 +2 -2: recordatorios con la agenda efectiva el test de piernas movido al jueves se anuncia el jueves, con escaleras y benchmarks [E]
+  Expected: contains 'Test 1 de piernas'
+    Actual: 'En 15 min: Tren superior'
+     Which: does not contain 'Test 1 de piernas'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan043_readers_test.dart 131:7           main.<fn>.<fn>
+  
+00:00 +2 -2: informe agenda movida, escaleras altas y benchmark pendiente en la semana
+00:01 +2 -3: informe agenda movida, escaleras altas y benchmark pendiente en la semana [E]
+  Expected: contains 'Test 1 de piernas: previsto mié 6 mar → jue 7 mar (1 de 2 movimientos)'
+    Actual: '# Informe semanal — 4 mar a 10 mar 2030\n'
+              'Semana 185 desde inicio (26 ago) · Plan v3\n'
+              '\n'
+              '## Resumen\n'
+              '- Sesiones: 0/5 · Fútbol: 0/2\n'
+              '- Nutrición: sin registros\n'
+              '\n'
+              '## Sesiones\n'
+              'Sin sesiones registradas.\n'
+              '\n'
+              '## Recuperación\n'
+              '- Días de recuperación propuestos: 1 · aceptados: 0 · entrenó igual: 0\n'
+              '- Carga máxima de 3 días: 0 · aguda:crónica sin historial suficiente\n'
+              '- jue 7 mar · amarillo: Rodilla en escaleras 3/10\n'
+              '\n'
+              '## Nutrición\n'
+              'Sin comidas registradas.\n'
+              '\n'
+              '## Rodilla en escaleras (0–10)\n'
+              '- 2030-03-07: 3/10\n'
+              '\n'
+              '## Alertas automáticas\n'
+              '- Sin registro de comidas: lun 4, mar 5, mié 6, jue 7, vie 8, sáb 9, dom 10 — excluidos de los promedios\n'
+              '- Sesiones por debajo del plan: 0 de 5 en los días ya cerrados\n'
+              '\n'
+              '## Notas de la semana\n'
+              '—'
+     Which: does not contain 'Test 1 de piernas: previsto mié 6 mar → jue 7 mar (1 de 2 movimientos)'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan043_readers_test.dart 156:7           main.<fn>.<fn>
+  
+00:01 +2 -3: informe intentos: mismas condiciones se comparan, distintas abren línea base, lo de antes no se compara
+00:01 +2 -4: informe intentos: mismas condiciones se comparan, distintas abren línea base, lo de antes no se compara [E]
+  Expected: contains 'Intento #2'
+    Actual: '# Informe semanal — 8 abr a 14 abr 2030\n'
+              'Semana 190 desde inicio (26 ago) · Plan v3\n'
+              '\n'
+              '## Resumen\n'
+              '- Sesiones: 2/5 · Fútbol: 0/2\n'
+              '- Nutrición: sin registros\n'
+              '\n'
+              '## Sesiones\n'
+              '| Día | Tipo | Total | Cal/Enf | Descanso | Neto | Rondas | RPE | Series partidas | Contexto |\n'
+              '|---|---|---|---|---|---|---|---|---|---|\n'
+              '| lun 8 abr | Otro | 0:00 | 0:00 / 0:00 | — | 0:00 | — | — | — | Test 2 · torso, core y habilidades · v32_13 · duración sin medir / Dominadas pronas estrictas: 10 reps · condiciones: {"grip":"prona"} |\n'
+              '| lun 8 abr | Otro | 0:00 | 0:00 / 0:00 | — | 0:00 | — | — | — | Test 2 · torso, core y habilidades · v32_13 · duración sin medir / Dominadas pronas estrictas: 9 reps · condiciones: {"grip":"neutro"} |\n'
+              '\n'
+              '### Detalle por sesión\n'
+              '**lun 8 abr · Otro**\n'
+              '\n'
+              '**lun 8 abr · Otro**\n'
+              '\n'
+              '## Nutrición\n'
+              'Sin comidas registradas.\n'
+              '\n'
+              '## Alertas automáticas\n'
+              '- Sin registro de comidas: lun 8, mar 9, mié 10, jue 11, vie 12, sáb 13, dom 14 — excluidos de los promedios\n'
+              '- Sesiones por debajo del plan: 2 de 5 en los días ya cerrados\n'
+              '- Calentamiento < 6 min en 2 sesiones\n'
+              '- Enfriamiento < 1 min en 2 sesiones\n'
+              '\n'
+              '## Notas de la semana\n'
+              '—'
+     Which: does not contain 'Intento #2'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan043_readers_test.dart 182:7           main.<fn>.<fn>
+  
+00:01 +2 -4: informe aguantes de las escaleras accesorias van en segundos aunque no estén en el plan
+00:01 +2 -5: informe aguantes de las escaleras accesorias van en segundos aunque no estén en el plan [E]
+  Expected: contains '- Support hold en paralelas: 25 s · 30 s'
+    Actual: '# Informe semanal — 4 mar a 10 mar 2030\n'
+              'Semana 185 desde inicio (26 ago) · Plan v2\n'
+              '\n'
+              '## Resumen\n'
+              '- Sesiones: 1/5 · Fútbol: 0/2\n'
+              '- Nutrición: sin registros\n'
+              '- Movimiento: 20:00 activo · 0 pasos (≈ 0 km)\n'
+              '\n'
+              '## Sesiones\n'
+              '| Día | Tipo | Total | Cal/Enf | Descanso | Neto | Rondas | RPE | Series partidas | Contexto |\n'
+              '|---|---|---|---|---|---|---|---|---|---|\n'
+              '| mar 5 mar | Bloques | 20:00 | 0:00 / 0:00 | — | 20:00 | — | — | — | — |\n'
+              '\n'
+              '### Detalle por sesión\n'
+              '**mar 5 mar · Bloques**\n'
+              '- Support hold en paralelas: 25 · 30\n'
+              '\n'
+              '## Volumen por ejercicio\n'
+              'Semana en curso (7 de 7 días): se compara con los mismos 7 primeros días de la anterior.\n'
+              '\n'
+              '| Ejercicio | Reps o s | Anterior, mismo punto | Δ |\n'
+              '|---|---|---|---|\n'
+              '| Support hold en paralelas | 55 | — | nuevo |\n'
+              '\n'
+              '## Nutrición\n'
+              'Sin comidas registradas.\n'
+              '\n'
+              '## Alertas automáticas\n'
+              '- Sin registro de comidas: lun 4, mar 5, mié 6, jue 7, vie 8, sáb 9, dom 10 — excluidos de los promedios\n'
+              '- Sesiones por debajo del plan: 1 de 5 en los días ya cerrados\n'
+              '- Calentamiento < 6 min en 1 sesión\n'
+              '- Enfriamiento < 1 min en 1 sesión\n'
+              '\n'
+              '## Notas de la semana\n'
+              '—'
+     Which: does not contain '- Support hold en paralelas: 25 s · 30 s'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\plan043_readers_test.dart 200:7           main.<fn>.<fn>
+  
+00:01 +2 -5: (tearDownAll)
+00:01 +2 -5: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T205712134-14364-f84bbb04ede54f6f883a64eb1798234c.json
+exit=1
