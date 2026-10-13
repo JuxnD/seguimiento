@@ -1,0 +1,165 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: save inmediato al encolar restore no reintroduce ID ni pierde campos
+00:00 +1: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: segunda restore fallida conserva protección de restore previa
+00:00 +2: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: callback retirado no sobrescribe sesión nueva tras clear
+00:00 +3: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: restauración retiene la cola completa hasta terminar callback
+00:00 +4: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: lectura crítica I/O fallida no reemplaza DB y la cola se recupera
+00:00 +5: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: archivo no interpretable bloquea restore y conserva bytes
+00:00 +6: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: clear sin restauración permite guardar la misma sesión ordinaria
+00:00 +7: loading C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart
+00:01 +7: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: tmp bloqueado: lanza, la restauración NO corre y el archivo queda byte a byte
+00:01 +8: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: éxito: desvincula antes de restaurar y conserva los demás campos
+00:01 +9: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: restauración fallida: devuelve el archivo original byte a byte y propaga el error
+00:01 +10: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: restauración fallida y recuperación imposible: error claro
+00:01 +11: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: guardado pendiente antes de proteger: se toma lo más reciente
+00:01 +12: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: callback viejo tras el éxito no repone el id; una sesión nueva conserva su vínculo
+00:01 +13: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: guardado ordinario sigue siendo tolerante
+00:01 +14: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: sin sesión guiada vinculada no hay nada que escribir y la restauración corre
+00:01 +15: loading C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart
+00:02 +15: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: sin archivo no hay sesión
+00:02 +16: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+00:02 +17: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: clear después de save no deja nada
+00:02 +18: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: un archivo dañado se ignora
+00:02 +19: loading C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart
+00:11 +19: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart: (setUpAll)
+00:11 +19: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart: restauración exitosa: el snapshot en disco suelta el id, conserva todo lo demás y se retoma con su dosis
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart:112:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:117:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart:112:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     ActiveSessionStore.protectedRestore.<anonymous closure> (package:seguimiento/data/active_session_store.dart:123:18)
+<asynchronous suspension>
+#12     ActiveSessionStore._exclusive.<anonymous closure> (package:seguimiento/data/active_session_store.dart:67:23)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:15 +20: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart: restauración cancelada: el snapshot en disco queda byte a byte igual y sigue vinculado
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart:112:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:117:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:17 +21: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart: restauración fallida con rollback: el snapshot queda byte a byte igual y sigue vinculado
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart:112:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      _progress (package:seguimiento/features/settings/restore_access.dart:117:12)
+<asynchronous suspension>
+#10     restoreBackupFile (package:seguimiento/features/settings/restore_access.dart:44:19)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart:112:18)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     ActiveSessionStore.protectedRestore.<anonymous closure> (package:seguimiento/data/active_session_store.dart:123:18)
+<asynchronous suspension>
+#12     ActiveSessionStore._exclusive.<anonymous closure> (package:seguimiento/data/active_session_store.dart:67:23)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:19 +22: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart: sin restauración: el guion normal se retoma vinculado a su plan
+00:20 +23: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart: no se puede escribir el cronómetro: error informado, la base y el snapshot quedan intactos y no hay generación nueva
+00:22 +24: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_unlink_test.dart: (tearDownAll)
+00:22 +24: loading C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart
+00:23 +24: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: (setUpAll)
+00:23 +24: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: el id del día no existe en la copia restaurada: se retoma con el guion congelado
+00:25 +25: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: tras restaurar, el mismo id es de otro día: no se asigna a ese plan
+00:25 +26: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: el id coincide con el mismo día: se conserva el vínculo normal
+00:26 +27: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: tras restaurar, mismo martes y tipo con otros ejercicios: el guion se retoma sin vincular
+00:27 +28: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: el guion trae un bloque añadido (escalera): sigue siendo el mismo día y se vincula
+00:28 +29: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo
+00:31 +30: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: snapshot legado sin guion y sin día: se conserva y se pide decisión
+00:33 +31: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+00:34 +32: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: guion congelado inválido: el archivo se conserva y se pide decisión
+00:36 +33: C:/My Projects/seguimiento-026-integridad/test/ui/restored_session_resume_test.dart: (tearDownAll)
+00:36 +33: loading C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart
+00:39 +33: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: (setUpAll)
+00:39 +33: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: add éxito sin ocupante: copia el archivo y registra la fila
+00:40 +34: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: add éxito con ocupante: reemplaza fila y archivo, sin huérfano
+00:40 +35: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: add INSERT fallido: conserva fila y bytes previos y no deja el archivo nuevo
+00:40 +36: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: add origen inexistente: falla la copia y no cambia nada
+00:40 +37: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: add dos altas del mismo día y ángulo no pisan el archivo de la otra
+00:40 +38: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: reclassify éxito: la ocupante se reemplaza y su archivo se purga tras el commit
+00:40 +39: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: reclassify UPDATE fallido: la ocupante conserva fila y bytes
+00:40 +40: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: reclassify sin ocupante: solo mueve
+00:41 +41: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: quitar, deshacer y purga quitar conserva el archivo; restore devuelve la foto; purga lo borra
+00:41 +42: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete confinado: una ruta con .. no borra fuera de fotos
+00:41 +43: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: quitar, deshacer y purga delete con fallo SQL conserva el archivo
+00:41 +44: C:/My Projects/seguimiento-026-integridad/test/data/photo_atomicity_test.dart: (tearDownAll)
+00:41 +44: All tests passed!

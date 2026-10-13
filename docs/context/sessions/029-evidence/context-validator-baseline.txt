@@ -1,0 +1,22 @@
+BASELINE=433f64f
+ERROR missing heading '# Project context' in C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\INDEX.md
+ERROR missing heading '## Read this first' in C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\INDEX.md
+ERROR missing heading '## Context map' in C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\INDEX.md
+ERROR missing heading '## Freshness' in C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\INDEX.md
+ERROR missing context file: C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\PRODUCT.md
+ERROR missing context file: C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\REFERENCES.md
+ERROR missing context file: C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\DOMAIN.md
+ERROR missing context file: C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\ARCHITECTURE.md
+ERROR missing context file: C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\OPERATIONS.md
+ERROR missing context file: C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\DELIVERY.md
+ERROR missing context file: C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\EVIDENCE.md
+ERROR unresolved placeholder in C:\Users\Acer\AppData\Local\Temp\seguimiento-context-baseline-lkrwo3o4\docs\context\COSTURAS.md
+ERROR INDEX.md does not route to PRODUCT.md
+ERROR INDEX.md does not route to REFERENCES.md
+ERROR INDEX.md does not route to DOMAIN.md
+ERROR INDEX.md does not route to ARCHITECTURE.md
+ERROR INDEX.md does not route to OPERATIONS.md
+ERROR INDEX.md does not route to DELIVERY.md
+CONTEXT_LIBRARY_SUMMARY files=9 errors=18
+
+EXIT=1

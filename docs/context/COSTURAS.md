@@ -422,3 +422,24 @@ PHP ausente/bundle cambiado/ausente/extra rechazan, no omiten. Git attributes
 conserva bytes entre hosts. CI/Release preparar PHP y comprobar bundle antes
 empaquetar; remoto/Linux/despliegue/IA real siguen sin comprobar.
 [Recibo y negativos](sessions/2026-10-12-028-interop.md).
+
+## Cola crítica029 — entrega local combinada
+
+Callbacks → snapshotsFIFO → filesystem: ninguna escritura salta la barrera
+preparestrict→restoreDB→rollbackbytes. Tresprobes independientesID7/callback/
+segunda restore son rojos reales contraClaudeR2 y verdes tras029. LecturaI/O/
+archivo no interpretable bloquean DB; load/save ordinarios toleran errores.
+Identidades protegidas/retiradas preservan sesión nueva y guion3x6 frente a3x12.
+ZIPUI/fotos/controlclear sin restore verificados en44dirigidos.
+[Recibo combinado y full](sessions/2026-10-12-entrega-local-integridad.md).
+Raw027/029 -text/-diff y hashes,026/028 conservan whitespace raw separado de
+checkfuente. No APK/Android/teléfono ni aceptación humana deducidos de host.
+RevisiónClaude009 estática sobrea1351d3 sin bloqueantes nuevos: doblefalloDB+
+rollback y caché activeSessionProvider con SessionRecoveryException quedan
+no evaluados/mejora menor, sin vínculo ajeno demostrado. Véase recibo029;
+desvinculación conservadora describe archivo, no certifica caché en ese extremo.
+Full/formal029 BLOCKED entorno: full1 rojo957/16/4fixtures después34dirigidos
+verdes; full2 exit1/contador952/16/nueveupdatesno completar. Diagnóstico posterior
+errno112/C libre0; atribución causal completa pendiente. Tres limpiezas rechazadas,
+nada eliminado. Próximo ≥1GiB → mismo dirigido9updates → fullterminal sin relajar
+timeout90,oráculos o skips. Fuente a1351d3 intacta; véase recibo/evidencia029.

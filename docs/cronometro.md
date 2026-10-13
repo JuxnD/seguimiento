@@ -266,8 +266,8 @@ sesión ya empezada. Snapshots anteriores sin día efectivo siguen usando el
 plan inmutable por id y el bloque planche original de1.20, sin agregar
 escaleras nuevas ni mover índices. En una candidata19 sin día efectivo no
 se puede recuperar una selección de escalera que nunca se guardó; los
-DoneSteps y tiempos se conservan. Un mapa efectivo malformado se descarta
-con mensaje para permitir empezar una sesión nueva. El incidente lumbar también
+DoneSteps y tiempos se conservan. Un mapa efectivo malformado queda pendiente:
+se explica y se pide decisión explícita antes de descartarlo. El incidente lumbar también
 se relee de SQLite si Android cerró entre el commit del evento y el snapshot.
 
 ### Ventana medida de Cindy (plan 019)
@@ -290,3 +290,21 @@ no cambia el cálculo de Tabata. Una observación antigua de 1.201 segundos no
 demuestra por sí sola que proceda de este fallo.
 
 Ver [recibo local y límites](context/sessions/2026-10-10-019-cindy-window.md).
+
+### Integridad al restaurar (029, mantenimiento local)
+
+La cola guarda cada snapshot capturado en orden. Restaurar ocupa la cola completa:
+espera guardados anteriores, lee estado crítico estrictamente, persiste la
+desvinculación antes de reemplazar DB y recupera bytes originales si falla la
+restauración. Archivo ilegible/no interpretable bloquea la operación antes de DB;
+`load` ordinario sigue tolerante. Escritura crítica y recuperación informan fallo.
+
+Callback de la misma sesión protegida (fecha+startedAt) conserva campos nuevos
+pero nunca repone el plan anterior. Al descartar o reemplazar esa sesión, sus
+callbacks se retiran y no pueden pisar la nueva. Sesión nueva conserva vínculo;
+clear/save ordinario sin restore sigue admitido. Marcadores viven en el store
+del proceso, no migran SQLite ni cambian guion/dosis. Tras reinicio no quedan
+callbacks viejos y el snapshot desvinculado sigue persistido.
+El callback interno de protectedRestore sólo restaura el archivo/base: no debe
+esperar otra operación de la misma cola, pues esa operación espera al callback.
+[Evidencia integrada](context/sessions/2026-10-12-entrega-local-integridad.md).

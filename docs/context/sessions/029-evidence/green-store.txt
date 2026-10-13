@@ -1,0 +1,19 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: save inmediato al encolar restore no reintroduce ID ni pierde campos
+00:00 +1: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: segunda restore fallida conserva protección de restore previa
+00:00 +2: C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart: callback retirado no sobrescribe sesión nueva tras clear
+00:00 +3: loading C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart
+00:01 +3: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: tmp bloqueado: lanza, la restauración NO corre y el archivo queda byte a byte
+00:01 +4: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: éxito: desvincula antes de restaurar y conserva los demás campos
+00:01 +5: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: restauración fallida: devuelve el archivo original byte a byte y propaga el error
+00:01 +6: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: restauración fallida y recuperación imposible: error claro
+00:01 +7: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: guardado pendiente antes de proteger: se toma lo más reciente
+00:01 +8: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: callback viejo tras el éxito no repone el id; una sesión nueva conserva su vínculo
+00:01 +9: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: guardado ordinario sigue siendo tolerante
+00:01 +10: C:/My Projects/seguimiento-026-integridad/test/data/active_session_critical_write_test.dart: sin sesión guiada vinculada no hay nada que escribir y la restauración corre
+00:01 +11: loading C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart
+00:02 +11: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: sin archivo no hay sesión
+00:02 +12: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: muchas escrituras seguidas: queda la última
+00:02 +13: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: clear después de save no deja nada
+00:02 +14: C:/My Projects/seguimiento-026-integridad/test/data/active_session_store_test.dart: un archivo dañado se ignora
+00:02 +15: All tests passed!

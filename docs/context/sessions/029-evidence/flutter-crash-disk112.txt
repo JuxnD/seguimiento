@@ -1,0 +1,96 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter test --no-pub --timeout 90s --concurrency 1 test/ui/updates_card_test.dart
+
+## exception
+
+FileSystemException: FileSystemException: writeFrom failed, path = 'C:\Users\Acer\AppData\Roaming\.dart-tool\dart-flutter-telemetry.log' (OS Error: Espacio en disco insuficiente.
+, errno = 112)
+
+```
+#0      _RandomAccessFile.writeFromSync (dart:io/file_impl.dart:905:7)
+#1      _File.writeAsBytesSync (dart:io/file_impl.dart:646:14)
+#2      _File.writeAsStringSync (dart:io/file_impl.dart:668:5)
+#3      ForwardingFile.writeAsStringSync (package:file/src/forwarding/forwarding_file.dart:150:16)
+#4      LogHandler.save (package:unified_analytics/src/log_handler.dart:296:15)
+#5      AnalyticsImpl.send (package:unified_analytics/src/analytics.dart:622:17)
+#6      FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:1755:17)
+<asynchronous suspension>
+#7      FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1394:27)
+<asynchronous suspension>
+#8      AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:153:19)
+<asynchronous suspension>
+#9      CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#10     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:372:9)
+<asynchronous suspension>
+#11     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:153:19)
+<asynchronous suspension>
+#12     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:308:5)
+<asynchronous suspension>
+#13     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:130:9)
+<asynchronous suspension>
+#14     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:153:19)
+<asynchronous suspension>
+#15     main (package:flutter_tools/executable.dart:93:3)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[!] Flutter (Channel stable, 3.22.0, on Microsoft Windows [Versión 10.0.26300.9550], locale es-CO)
+    • Flutter version 3.22.0 on channel stable at C:\seguimiento-sdk-3.22.0\flutter
+    ! Warning: `flutter` on your path resolves to C:\flutter\bin\flutter, which is not inside your current Flutter SDK checkout at C:\seguimiento-sdk-3.22.0\flutter. Consider adding C:\seguimiento-sdk-3.22.0\flutter\bin to the front of your path.
+    ! Warning: `dart` on your path resolves to C:\flutter\bin\dart, which is not inside your current Flutter SDK checkout at C:\seguimiento-sdk-3.22.0\flutter. Consider adding C:\seguimiento-sdk-3.22.0\flutter\bin to the front of your path.
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision 5dcb86f68f (2 years, 5 months ago), 2024-05-09 07:39:20 -0500
+    • Engine revision f6344b75dc
+    • Dart version 3.4.0
+    • DevTools version 2.34.3
+    • If those were intentional, you can disregard the above warnings; however it is recommended to use "git" directly to perform update checks and upgrades.
+
+[✓] Windows Version (Installed version of Windows is version 10 or higher)
+
+[!] Android toolchain - develop for Android devices (Android SDK version 36.1.0)
+    • Android SDK at C:\Users\Acer\AppData\Local\Android\sdk
+    • Platform android-36.1, build-tools 36.1.0
+    • Java binary at: C:\Program Files\Android\Android Studio\jbr\bin\java
+    • Java version OpenJDK Runtime Environment (build 21.0.10+-14961533-b1163.108)
+    ! Some Android licenses not accepted. To resolve this, run: flutter doctor --android-licenses
+
+[✓] Chrome - develop for the web
+    • Chrome at C:\Program Files\Google\Chrome\Application\chrome.exe
+
+[✓] Visual Studio - develop Windows apps (Visual Studio Build Tools 2022 17.14.32)
+    • Visual Studio at C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools
+    • Visual Studio Build Tools 2022 version 17.14.37301.10
+    • Windows 10 SDK version 10.0.26100.0
+
+[✓] Android Studio (version 2025.3.4)
+    • Android Studio at C:\Program Files\Android\Android Studio
+    • Flutter plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/9212-flutter
+    • Dart plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/6351-dart
+    • Java version OpenJDK Runtime Environment (build 21.0.10+-14961533-b1163.108)
+
+[✓] VS Code (version unknown)
+    • VS Code at C:\Users\Acer\AppData\Local\Programs\Microsoft VS Code
+    • Flutter extension version 3.144.0
+    ✗ Unable to determine VS Code version.
+
+[✓] Connected device (4 available)
+    • sdk gphone64 x86 64 (mobile) • emulator-5554 • android-x64    • Android 15 (API 35) (emulator)
+    • Windows (desktop)            • windows       • windows-x64    • Microsoft Windows [Versión 10.0.26300.9550]
+    • Chrome (web)                 • chrome        • web-javascript • Google Chrome 154.0.8037.97
+    • Edge (web)                   • edge          • web-javascript • Microsoft Edge 155.0.4283.45
+
+[✓] Network resources
+    • All expected network resources are available.
+
+! Doctor found issues in 2 categories.
+```

@@ -1,0 +1,38 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/build/029-baseline-433f64f/test/ui/experience_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: Hoy muestra CTA antes de la rutina larga y conserva expansión y día completo
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:674:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:861:30)
+#2      WidgetController.dragUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2220:38)
+<asynchronous suspension>
+#3      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:117:7)
+<asynchronous suspension>
+#4      WidgetController.scrollUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2186:7)
+<asynchronous suspension>
+#5      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:117:7)
+<asynchronous suspension>
+#6      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/build/029-baseline-433f64f/test/ui/experience_test.dart:432:15)
+<asynchronous suspension>
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/build/029-baseline-433f64f/test/ui/experience_test.dart:430:13)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Hoy muestra CTA antes de la rutina larga y conserva expansión y día completo
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -1: Hoy muestra CTA antes de la rutina larga y conserva expansión y día completo [E]
+  Test failed. See exception logs above.
+  The test description was: Hoy muestra CTA antes de la rutina larga y conserva expansión y día completo
+  
+00:03 +0 -1: (tearDownAll)
+00:03 +0 -1: Some tests failed.

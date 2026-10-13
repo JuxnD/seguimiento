@@ -1,0 +1,788 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/backup_settings_test.dart
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/backup_settings_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-026-integridad/test/data/backup_settings_test.dart: Ajustes recorre ZIP y cancela sin tocar datos
+00:02 +1: C:/My Projects/seguimiento-026-integridad/test/data/backup_settings_test.dart: Ajustes recorre ZIP y confirma restauración
+00:04 +2: C:/My Projects/seguimiento-026-integridad/test/data/backup_settings_test.dart: (tearDownAll)
+00:04 +2: loading C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart
+00:06 +2: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: (setUpAll)
+00:06 +2: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: instalación nueva una instalación nueva no tiene vigencias aceptadas antes del alta
+00:06 +3: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: instalación nueva arranca new/pending, con referencias compartidas y sin nada personal ni del dueño
+00:06 +4: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta confirmar escribe perfil, seis aceptaciones desde la confirmación real y ready
+00:06 +5: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta confirmar dos veces no duplica
+00:06 +6: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta un fallo dentro de la transacción revierte todo y deja pending
+00:06 +7: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta datos inválidos no escriben nada
+00:06 +8: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta cancelar o reiniciar la app deja pending (base en archivo, reabierta)
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:155:15)
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:159:11)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:07 +9: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta «Más adelante»: decisión sin meta conocida, sin imponer 130/160/2400/2000
+00:07 +10: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta un número igual al valor de ejemplo también queda aceptado
+00:07 +11: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: alta un alta pendiente con registros personales no se confirma
+00:07 +12: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: metas después del alta editar la estatura no acepta metas
+00:07 +13: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: metas después del alta null → 130 escribe la aceptación aunque la proyección del perfil ya diga 130
+00:07 +14: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: metas después del alta kcal de fútbol null hereda la semanal conocida; semanal null no inventa objetivo
+00:07 +15: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: metas después del alta el piso de kcal es una meta del mismo core: editarlo deja vigencia
+00:07 +16: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: estado inválido profile_origin = owner es un error visible, no se corrige
+00:07 +17: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: estado inválido setup_state = listo es un error visible, no se corrige
+00:07 +18: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: estado inválido setup_confirmed_at = ayer es un error visible, no se corrige
+00:07 +19: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: estado inválido legacyUnknown pendiente y new listo sin confirmación no son válidos
+00:07 +20: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: correcciones del traspaso aplicar correcciones del traspaso sin consentimiento no escribe nada
+00:07 +21: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: correcciones del traspaso ni legado, ni nuevo listo, ni flags de descartado autorizan; con respaldo tampoco
+00:07 +22: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: correcciones del traspaso con consentimiento pero sin respaldo previo válido: cero escrituras
+00:07 +23: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: correcciones del traspaso el consentimiento se revalida dentro de la transacción
+00:07 +24: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: correcciones del traspaso el dueño conserva la recuperación: consentimiento fechado + respaldo aplica
+00:07 +25: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: respaldo con alta dos personas ficticias quedan aisladas y un ZIP pending/ready conserva estado, origen y nulos
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:357:72)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:357:11)
+#8      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:353:61)
+#9      Future.forEach.<anonymous closure> (dart:async/future.dart:653:26)
+#10     Future.doWhile.<anonymous closure> (dart:async/future.dart:710:26)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#12     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#14     _rootRunUnary (dart:async/zone.dart:1407:47)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1308:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1217:7)
+#17     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1254:26)
+#18     Future.doWhile (dart:async/future.dart:725:18)
+#19     Future.forEach (dart:async/future.dart:651:12)
+#20     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:353:18)
+<asynchronous suspension>
+#21     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+<asynchronous suspension>
+#22     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#23     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:11)
+#8      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:353:61)
+#9      Future.forEach.<anonymous closure> (dart:async/future.dart:653:26)
+#10     Future.doWhile.<anonymous closure> (dart:async/future.dart:710:26)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#12     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#14     _rootRunUnary (dart:async/zone.dart:1407:47)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1308:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1217:7)
+#17     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1254:26)
+#18     Future.doWhile (dart:async/future.dart:725:18)
+#19     Future.forEach (dart:async/future.dart:651:12)
+#20     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:353:18)
+<asynchronous suspension>
+#21     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+<asynchronous suspension>
+#22     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#23     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:383:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:383:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:107:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:383:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:393:82)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:392:21)
+<asynchronous suspension>
+#8      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#9      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#10     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:398:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:398:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:107:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:398:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:08 +26: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: respaldo con alta un ZIP23 con origen/estado inválido se rechaza antes de tocar base, fotos y flags
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:357:72)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:357:11)
+#8      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:353:61)
+#9      Future.forEach.<anonymous closure> (dart:async/future.dart:653:26)
+#10     Future.doWhile.<anonymous closure> (dart:async/future.dart:710:26)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#12     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#14     _rootRunUnary (dart:async/zone.dart:1407:47)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1308:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1217:7)
+#17     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1254:26)
+#18     Future.doWhile (dart:async/future.dart:725:18)
+#19     Future.forEach (dart:async/future.dart:651:12)
+#20     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:353:18)
+<asynchronous suspension>
+#21     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+<asynchronous suspension>
+#22     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#23     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:11)
+#8      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:353:61)
+#9      Future.forEach.<anonymous closure> (dart:async/future.dart:653:26)
+#10     Future.doWhile.<anonymous closure> (dart:async/future.dart:710:26)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#12     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#14     _rootRunUnary (dart:async/zone.dart:1407:47)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1308:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1217:7)
+#17     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1254:26)
+#18     Future.doWhile (dart:async/future.dart:725:18)
+#19     Future.forEach (dart:async/future.dart:651:12)
+#20     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:353:18)
+<asynchronous suspension>
+#21     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+<asynchronous suspension>
+#22     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#23     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#10     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#12     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#13     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:415:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#15     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#16     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#10     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#11     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#12     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#13     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:415:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#15     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#16     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#11     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#13     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#14     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:422:7)
+<asynchronous suspension>
+#15     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#16     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#17     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:09 +27: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: respaldo con alta un fallo tardío revierte al alta anterior con sus fotos
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:357:72)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:357:11)
+#8      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:353:61)
+#9      Future.forEach.<anonymous closure> (dart:async/future.dart:653:26)
+#10     Future.doWhile.<anonymous closure> (dart:async/future.dart:710:26)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#12     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#14     _rootRunUnary (dart:async/zone.dart:1407:47)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1308:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1217:7)
+#17     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1254:26)
+#18     Future.doWhile (dart:async/future.dart:725:18)
+#19     Future.forEach (dart:async/future.dart:651:12)
+#20     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:353:18)
+<asynchronous suspension>
+#21     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+<asynchronous suspension>
+#22     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#23     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:11)
+#8      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:353:61)
+#9      Future.forEach.<anonymous closure> (dart:async/future.dart:653:26)
+#10     Future.doWhile.<anonymous closure> (dart:async/future.dart:710:26)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#12     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#14     _rootRunUnary (dart:async/zone.dart:1407:47)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1308:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1217:7)
+#17     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1254:26)
+#18     Future.doWhile (dart:async/future.dart:725:18)
+#19     Future.forEach (dart:async/future.dart:651:12)
+#20     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:353:18)
+<asynchronous suspension>
+#21     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+<asynchronous suspension>
+#22     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#23     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:446:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#11     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#13     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#14     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:448:7)
+<asynchronous suspension>
+#15     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#16     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#17     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:446:16)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#13     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#14     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#15     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#16     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:448:7)
+<asynchronous suspension>
+#17     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#18     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#19     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:446:16)
+#6      DatabaseHost._rollback (package:seguimiento/data/database_host.dart:269:17)
+<asynchronous suspension>
+#7      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:118:9)
+<asynchronous suspension>
+#8      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#9      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#10     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#11     Throws._matchFuture (package:matcher/src/expect/throws_matcher.dart:102:19)
+<asynchronous suspension>
+#12     _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:123:26)
+<asynchronous suspension>
+#13     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+#14     expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:512:24)
+<asynchronous suspension>
+#15     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:448:7)
+<asynchronous suspension>
+#16     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#17     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#18     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:09 +28: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: respaldo con alta un SQLite 22 restaurado migra a legacyUnknown/ready sin pedir configurar
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      new DatabaseHost (package:seguimiento/data/database_host.dart:27:89)
+#7      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:11)
+#8      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:353:61)
+#9      Future.forEach.<anonymous closure> (dart:async/future.dart:653:26)
+#10     Future.doWhile.<anonymous closure> (dart:async/future.dart:710:26)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#12     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#14     _rootRunUnary (dart:async/zone.dart:1407:47)
+#15     _CustomZone.runUnary (dart:async/zone.dart:1308:19)
+#16     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1217:7)
+#17     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:1254:26)
+#18     Future.doWhile (dart:async/future.dart:725:18)
+#19     Future.forEach (dart:async/future.dart:651:12)
+#20     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:353:18)
+<asynchronous suspension>
+#21     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:214:9)
+<asynchronous suspension>
+#22     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#23     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:458:19)
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:19)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:470:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:67:5)
+<asynchronous suspension>
+#9      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#10     BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#11     BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#12     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:470:7)
+<asynchronous suspension>
+#13     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#14     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#15     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:14513:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:358:72)
+#6      DatabaseHost._restoreFrom (package:seguimiento/data/database_host.dart:107:19)
+<asynchronous suspension>
+#7      DatabaseHost.restoreFrom (package:seguimiento/data/database_host.dart:55:7)
+<asynchronous suspension>
+#8      BackupArchive.restore (package:seguimiento/data/backup_archive.dart:123:5)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:129:7)
+<asynchronous suspension>
+#10     main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart:470:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:10 +29: C:/My Projects/seguimiento-026-integridad/test/data/pilot_profile_test.dart: (tearDownAll)
+00:10 +29: loading C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart
+00:12 +29: C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart: (setUpAll)
+00:12 +29: C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart: editor guarda y reabre sostén, RIR, lado y notas sin cambiar la versión anterior
+00:14 +30: C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart: editor rechaza rangos de sostén y RIR inválidos antes de escribir
+00:16 +31: C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart: guía conserva pasos y claves personales, deduplica y distingue búsqueda de video
+00:16 +32: C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart: sin guía fija muestra claves únicas y conserva el video exacto
+00:16 +33: C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart: Hoy muestra CTA antes de la rutina larga y conserva expansión y día completo
+00:18 +34: C:/My Projects/seguimiento-026-integridad/test/ui/experience_test.dart: (tearDownAll)
+00:18 +34: All tests passed!

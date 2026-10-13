@@ -1,0 +1,54 @@
+00:00 +0: loading C:/My Projects/seguimiento-026-integridad/test/data/active_session_restore_queue_test.dart
+00:00 +0: save inmediato al encolar restore no reintroduce ID ni pierde campos
+00:00 +0 -1: save inmediato al encolar restore no reintroduce ID ni pierde campos [E]
+  Expected: <-1>
+    Actual: <7>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 474:18     expect
+  test\data\active_session_restore_queue_test.dart 39:5  main.<fn>
+  
+00:00 +0 -1: segunda restore fallida conserva protección de restore previa
+00:00 +0 -2: segunda restore fallida conserva protección de restore previa [E]
+  Expected: <-1>
+    Actual: <7>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 474:18     expect
+  test\data\active_session_restore_queue_test.dart 50:5  main.<fn>
+  
+00:00 +0 -2: callback retirado no sobrescribe sesión nueva tras clear
+00:00 +0 -3: callback retirado no sobrescribe sesión nueva tras clear [E]
+  Expected: DateTime:<2026-10-12 12:01:00.000>
+    Actual: DateTime:<2026-10-12 12:00:00.000>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 474:18     expect
+  test\data\active_session_restore_queue_test.dart 60:5  main.<fn>
+  
+00:00 +0 -3: restauración retiene la cola completa hasta terminar callback
+00:00 +1 -3: lectura crítica I/O fallida no reemplaza DB y la cola se recupera
+00:00 +1 -4: lectura crítica I/O fallida no reemplaza DB y la cola se recupera [E]
+  Expected: throws <Instance of 'SessionProtectionException'>
+    Actual: <Instance of 'Future<bool>'>
+     Which: emitted <true>
+  
+  package:matcher                                         expectLater
+  package:flutter_test/src/widget_tester.dart 511:25      expectLater
+  test\data\active_session_restore_queue_test.dart 88:11  main.<fn>
+  
+00:00 +1 -4: archivo no interpretable bloquea restore y conserva bytes
+00:00 +1 -5: archivo no interpretable bloquea restore y conserva bytes [E]
+  Expected: throws <Instance of 'SessionProtectionException'>
+    Actual: <Instance of 'Future<bool>'>
+     Which: emitted <true>
+  
+  package:matcher                                          expectLater
+  package:flutter_test/src/widget_tester.dart 511:25       expectLater
+  test\data\active_session_restore_queue_test.dart 103:11  main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                               _CustomZone.registerUnaryCallback
+  test\data\active_session_restore_queue_test.dart 101:12  main.<fn>
+  
+00:00 +1 -5: clear sin restauración permite guardar la misma sesión ordinaria
+00:00 +2 -5: Some tests failed.

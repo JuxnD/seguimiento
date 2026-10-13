@@ -1,5 +1,18 @@
 # Índice de contexto
 
+**Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
+Claude fe0b565/8b1cac5/74c26aa en ramaJuxnD/026-integridad-diaria. Fotos/ZIP y
+protección estricta reutilizados;029 cierra tres carreras nuevas de cola que
+el asesor rechazó en74c26aa. Snapshot crítico se lee sin ocultar error;
+prep/restore/rollback completos en cola, callbacks retirados no pisan sesión
+nueva. [Recibo y gates](sessions/2026-10-12-entrega-local-integridad.md).
+Validación host se registra en recibo; sin nueva publicación/APK/Android/teléfono.
+**Gate full/formal BLOCKED por entorno:** full2 exit1, contador952/16 y nueve
+updates_card sin completar. Diagnóstico posterior de Flutter errno112 y C libre0;
+ninguna limpieza se ejecutó (tres rechazos automáticos). Fuente a1351d3 estable,
+dirigidos44/34 y revisión independiente20 aprobados. Reanudar requiere al menos
+1GiB libre → mismo dirigido9updates → suite completa terminal; no afirmar verde.
+
 **Mantenimiento026 local (12oct):** preferencias serializadas por ruta,
 líneas base limitadas al fin del informe y guardado único mientras el editor
 escribe. [Recibo, rojos y gates](sessions/2026-10-12-026-integridad.md).

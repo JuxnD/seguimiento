@@ -1,0 +1,30 @@
+{
+  "source_commit": "a1351d3eb860a38b08a64586d3486c5095a00909",
+  "full_gate": "BLOCKED",
+  "full1_exit": 1,
+  "full2_exit": 1,
+  "full2_reported_passed": 952,
+  "full2_skipped": 16,
+  "full2_not_completed": 9,
+  "files_sha256": {
+    "analyze-final.txt": "02c13368947137871b7f6e96db7d42862d64e140259eb599a38bcf1872d25982",
+    "analyze.txt": "b36a7e1da4c5803e2f2b8c5041ac81ff99c187de56805b21c1bcfa5e1aeb0126",
+    "cleanup-review-rejections.json": "145f87b3df695c70631f6bd5be5a3c79eacc3d8db97ec3dd0d7baa6e6f8625a6",
+    "context-validator-baseline.txt": "7b29c466212f8b1552d2c7fd71f8e3c8e0e2d09d2c69c63deef4c6066e957fa6",
+    "context-validator.txt": "deb9bed0657c12bcc141b038b05ff5ff19d8835f59bdf512d4a910603b83391a",
+    "experience-baseline-red.txt": "2295283f080e45f8cb8bcf318477e6e24cbb50e4ecafc6eaaf6628681b7b1ac9",
+    "fixture-directed-green.txt": "189b7c872b3ec030bac1e4f239cb84e57b0f269599402a460353f901b44b2a44",
+    "flutter-crash-disk112.txt": "6399f750ce8d60ee7ec491c0728bdcd9cad95418088139a5cfdaf845274c7898",
+    "full-final.txt": "7361b50ac9121b7ca7b1fc52d98ddab302e85b79face6a4735fb169f4840e3cf",
+    "full.txt": "6ee86e604bba7a5e1922b920490b7898bf6629f45203612d9a1fa96feca2c713",
+    "full1-source.json": "7737fa6916fcc59bbd5987df9a9998a7931febd2b4704847aa4510a69301c655",
+    "full1-summary.json": "4a50c09d621f2769e71a02d760c6c4f128e20501e7887e35adbd72668726f363",
+    "green-directed.txt": "bcb7e8fca086b37ec45d45db60bcf2e79ea70dfc6ec1b35872759f986bef0050",
+    "green-store.txt": "89ba02aec74776729828cfce416747314c4fdfaeee7e28bb4753d1fc7fb82531",
+    "pilot-baseline-red.txt": "ded0eb99d32e22f80a7532c816ee9aac17ac3fa0790b8ad6d3f6269a82f6470d",
+    "red-queue-expanded.txt": "5139aadaab494f7994d6bf7a6cff1b520d33da83b725fe1c7090ba125bd3a76a",
+    "red-queue.txt": "a4fc4ffc652b9c850d306b29a8a10e4dea6990cd8c9ae90090cec064b27f102a",
+    "review-independent.txt": "e57231afb3ce508c6d13ce50b50d5a99e00c9e81f929b9a72e83ca4daa1ba450",
+    "updates-diagnosis.txt": "ebbd06c91c62f91cebfd6b3740e915db248b529f86baf00aa7e4d0abe30f0579"
+  }
+}

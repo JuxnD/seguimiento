@@ -1,0 +1,25 @@
+{
+  "result": "FAIL",
+  "passed": 957,
+  "skipped": 16,
+  "failed": 4,
+  "php_interop_skipped": false,
+  "skip_inventory": [
+    "C:/My Projects/seguimiento-026-integridad/test/ui/ai_actions_render_test.dart: captura IA comida 1.0",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/ai_actions_render_test.dart: captura IA respuesta 1.6",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/ai_actions_render_test.dart: captura IA comida 1.6",
+    "loading C:/My Projects/seguimiento-026-integridad/test/ui/ai_activation_screen_test.dart",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/ai_history_render_test.dart: captura IA historial 1.0",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/ai_history_render_test.dart: captura IA pregunta 1.6",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/ai_history_render_test.dart: captura IA historial 1.6",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/ai_history_render_test.dart: (tearDownAll)",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/exercise_figure_3d_render_test.dart: hoja de técnica en un teléfono",
+    "loading C:/My Projects/seguimiento-026-integridad/test/ui/exercise_figure_3d_test.dart",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/illustration_mockup_render_test.dart: hoja legible en teléfono con texto grande",
+    "loading C:/My Projects/seguimiento-026-integridad/test/ui/illustration_supports_test.dart",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/meal_assistant_render_test.dart: captura IA etiqueta 1.0",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/meal_assistant_render_test.dart: captura IA frase 1.6",
+    "C:/My Projects/seguimiento-026-integridad/test/ui/meal_assistant_render_test.dart: captura IA etiqueta 1.6",
+    "loading C:/My Projects/seguimiento-026-integridad/test/ui/meal_estimate_flow_test.dart"
+  ]
+}

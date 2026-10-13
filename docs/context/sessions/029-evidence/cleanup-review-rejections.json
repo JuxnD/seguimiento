@@ -1,0 +1,23 @@
+{
+  "record_type": "tool_outcome_summary_not_raw_stdout",
+  "reason": "blocked by policy",
+  "deleted_files": 0,
+  "attempts": [
+    {
+      "scope": "four validated ignored output directories inside WT026",
+      "operation": "Remove-Item recursive",
+      "result": "REJECTED"
+    },
+    {
+      "scope": "literal WT026/build/029-baseline-433f64f with resolved prefix and git ignored check",
+      "operation": "Remove-Item recursive",
+      "result": "REJECTED"
+    },
+    {
+      "scope": "literal WT026/.dart_tool/pub/bin/build_runner/build_runner.dart-3.4.0.snapshot",
+      "bytes": 25532656,
+      "operation": "Remove-Item single file, without Recurse",
+      "result": "REJECTED"
+    }
+  ]
+}

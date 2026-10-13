@@ -71,6 +71,10 @@ reaparición de conversaciones borradas después de esa copia. Flags/permisos,
 flags/permisos y licencia quedan fuera del respaldo/restauración. El cronómetro en curso también
 queda fuera, salvo que tras una restauración exitosa suelta su vínculo con el plan (ver
 [cronómetro](cronometro.md)).
+La protección029 se persiste antes de sustituir DB y serializa toda la operación;
+si restore revierte, recupera el snapshot byte a byte. Lectura/escritura crítica
+fallida bloquea restore; callback antiguo no vuelve a vincular ni pisa sesión nueva.
+Esta entrega sigue local, con APK/teléfono/publicación como gates separados.
 
 Fotos de progreso (plan 027): el archivo nuevo se prepara antes, la fila se
 reemplaza en una transacción y el archivo anterior se borra solo después del
