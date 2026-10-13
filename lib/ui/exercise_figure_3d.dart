@@ -592,17 +592,39 @@ class Figure3DCatalog {
   factory Figure3DCatalog.fromJsonString(String source) {
     final data = jsonDecode(source) as Map<String, Object?>;
     final dims = BodyDims.fromJson(data['consts'] as Map<String, Object?>);
-    return Figure3DCatalog([
+    final catalog = Figure3DCatalog([
       for (final f in (data['figures'] as List).cast<Map<String, Object?>>()) Figure3D.fromJson(f, dims),
     ]);
+    for (final raw in (data['physicalVariants'] as List? ?? const [])) {
+      final variant = raw as Map<String, Object?>;
+      final exercise = variant['exercise'] as String;
+      final key = variant['key'] as String;
+      final base = catalog._byKey[nameKey(exercise)];
+      if (base == null || key.isEmpty) throw const FormatException('Unknown physical variant exercise or key');
+      final figure = variant['useBase'] == true
+          ? base
+          : Figure3D.fromJson(variant['figure'] as Map<String, Object?>, dims);
+      if (nameKey(figure.name) != nameKey(exercise)) {
+        throw const FormatException('Physical variant belongs to a different exercise');
+      }
+      final identity = (nameKey(exercise), key);
+      if (catalog._physicalVariants.containsKey(identity)) {
+        throw const FormatException('Duplicate physical variant');
+      }
+      catalog._physicalVariants[identity] = figure;
+    }
+    return catalog;
   }
 
   static const asset = 'assets/tecnica/figuras3d.json';
 
   final Map<String, Figure3D> _byKey;
+  final Map<(String, String), Figure3D> _physicalVariants = {};
 
-  Figure3D? forExercise(String name, {String? grip, bool? loaded, String? side}) {
-    final base = _byKey[nameKey(name)];
+  Figure3D? forExercise(String name, {String? grip, bool? loaded, String? side, String? physicalVariantKey}) {
+    final base = physicalVariantKey == null
+        ? _byKey[nameKey(name)]
+        : _physicalVariants[(nameKey(name), physicalVariantKey)];
     if (base == null) return null;
     final isPull = nameKey(name) == nameKey('Dominadas');
     final supinated = isPull && grip != null && gripKey(grip) == 'supina';

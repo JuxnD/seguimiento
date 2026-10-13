@@ -463,7 +463,7 @@ def _generate_base(name):
         core=plank(24,'4: Plancha frontal')
         side=cp(generate('Plancha lateral')['frames'][0]);side['caption']='5: Plancha lateral, por ambos lados'
         nordic=cp(existing['Nórdico (isquios)']['frames'][1]);nordic['caption']='6: Nórdico suave';nordic['props']=cp(existing['Nórdico (isquios)']['props'])
-        single=cp(generate('Progresión de pistol')['frames'][1]);single['caption']='7: Sentadilla a una pierna con apoyo'
+        single=cp(generate('Progresión de pistol')['frames'][1]);single['caption']='7: Sentadilla a una pierna'
         jump=squat('8: Saltos verticales cortos',jump=True)
         skate=cp(generate('Salto de patinador')['frames'][1]);skate['caption']='9: Saltos laterales cortos'
         run=cp(generate('Aceleración 10–20 m')['frames'][1]);run['caption']='10: Aceleraciones progresivas; luego cambia de dirección'

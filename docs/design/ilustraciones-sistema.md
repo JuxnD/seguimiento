@@ -229,6 +229,16 @@ fallida permite reintentar; no se sustituye silenciosamente la variante por
 otra figura. Las pruebas de cobertura, geometría, navegación y render cruzan
 costuras concretas, pero no certifican enseñanza segura ni comprensión humana.
 
+Las variantes físicas se piden mediante `physicalVariantKey` opcional en
+`ExerciseFigureView` y `Figure3DCatalog.forExercise`. Null conserva la figura
+base. Una clave explícita se resuelve por ejercicio y clave, nunca por dosis;
+si no existe, se informa que esa variante carece de ilustración. El asset admite
+`physicalVariants` con `exercise`, `key` y `figure` (mismo rig), o `useBase: true`
+para una identidad que coincide exactamente con la base. No se reutiliza la
+alternancia semanal A/B. Duplicados y variantes asignadas a otro ejercicio
+fallan al cargar el catálogo. Esta interfaz no equivale a cobertura de las
+figuras032/034: sus poses y variantes se incorporan y verifican en la fase2.
+
 ## Do's and Don'ts
 
 ### Do:
