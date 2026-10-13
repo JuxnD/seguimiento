@@ -130,6 +130,7 @@ def supine(caption, legs, *, torso=180, hip=(0, -5), arms=None):
 
 
 def reference_names():
+    from illustration_guided import NAMES
     names = set()
     for path, pattern in [
         ('lib/data/catalog_updates.dart', r"name: '([^']+)'"),
@@ -139,6 +140,7 @@ def reference_names():
         names.update(re.findall(pattern, (ROOT / path).read_text(encoding='utf-8'), re.M))
     names -= {'Movilidad nocturna', 'Recuperación de piernas'}
     names.update(e['name'] for e in flat.EXERCISES)
+    names.update(NAMES)
     return sorted(names)
 
 
@@ -635,6 +637,9 @@ def phase(label, *, kind='interpolate', ground='preserve', contacts=(), part='',
 
 def generate(name):
     """Opt-in authored timelines; unselected legacy specifications stay intact."""
+    from illustration_guided import NAMES, generate as guided
+    if name in NAMES:
+        return guided(name)
     e = _generate_base(name)
     if name == 'Barca / V-sit':
         a,b,c = e['frames']
@@ -795,14 +800,15 @@ def export(ex):
     # El chequeo legado sólo ve XY: los alcances/frontales/roll se validan
     # contra el cuerpo real 3D en illustration_geometry_test y audit_test.
     per_side = ex['name'] == 'Balanceos de pierna' or any(word in ex['name'].lower() for word in ['una pierna','una mano','búlgara','pistol','plancha lateral','maleta','pallof','caballero','90/90','rotación torácica','tobillo','cuádriceps','gemelo contra','isquios con','figura 4','flexor de cadera de'])
-    out['perSide'] = per_side
+    out['perSide'] = ex.get('perSide', per_side)
+    if ex.get('barefoot'): out['barefoot'] = True
     out['annotations'] = ex.get('annotations',[])
     if 'motion' in ex:
         out['motion'] = ex['motion']
     out.update(continuous=ex['name'] not in {'90/90 de cadera','Hollow body hold','Calentamiento tipo FIFA 11+','Salto vertical','Salto largo','Salto de patinador','Aceleración 10–20 m','Rodillas arriba','Burpees','Sentadilla con salto'},group=ex.get('group','Otros'),focus=ex.get('focus'),source=ex.get('source','guía local; revisión candidata'))
     if 'motion' in ex: out['continuous'] = True
     for raw, target in zip(ex['frames'],out['frames']):
-        for key in ['bodyZ','bodyRoll','props']:
+        for key in ['bodyZ','bodyRoll','props','spineBend','breath','footArch']:
             if key in raw: target[key] = raw[key]
         for name in ('nearArm','farArm','nearLeg','farLeg'):
             spec=raw.get(name)
@@ -816,6 +822,7 @@ def export(ex):
 
 
 def main():
+    from illustration_guided import VARIANTS, generate as guided
     names=reference_names()
     specs=[generate(name) for name in names]
     details=(ROOT/'lib/data/exercise_details.dart').read_text(encoding='utf-8')
@@ -823,9 +830,14 @@ def main():
     for e in specs:
         e['muscles']=muscles.get(e['name'],e.get('muscles',''))
     figures=[export(e) for e in specs]
+    variants=[]
+    for name, keys in VARIANTS.items():
+        for i,key in enumerate(keys):
+            variants.append(dict(exercise=name,key=key,**(
+                dict(useBase=True) if i==0 else dict(figure=export(guided(name,key))))))
     consts={'T':flat.T,'UA':flat.UA,'FA':flat.FA,'TH':flat.TH,'SH':flat.SH,'FT':flat.FT,'HEAD_OFF':flat.HEAD_OFF,'HEAD_R':flat.HEAD_R}
     target=ROOT/'assets/tecnica/figuras3d.json'
-    target.write_text(json.dumps(dict(version=2,consts=consts,figures=flat._round(figures)),ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+    target.write_text(json.dumps(dict(version=2,consts=consts,figures=flat._round(figures),physicalVariants=flat._round(variants)),ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     print(f'{len(figures)} figuras con especificación propia → {target}')
 
 

@@ -1,0 +1,68 @@
+F.F
+======================================================================
+FAIL: test_every_requested_identity_has_an_authored_specific_figure (__main__.GuidedContract.test_every_requested_identity_has_an_authored_specific_figure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_guided_contract_test.py", line 28, in test_every_requested_identity_has_an_authored_specific_figure
+    self.assertEqual(set(NAMES) - self.figures.keys(), set())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the first set but not the second:
+'Pancake'
+'Mesa invertida'
+'Y-T prono'
+'Libro abierto'
+'Sentadilla profunda'
+'Rodilla a la pared'
+'Muñecas a cuatro patas'
+'Sentadilla isométrica en la pared'
+'Copenhague'
+'Pike sentado'
+'Tibial en la pared'
+'Dorsal en la cama'
+'Nórdico inverso'
+'Pectoral en el marco de la puerta'
+'Bajada lateral del escalón'
+'Sóleo sentado con mochila'
+'Deslizamientos en la pared'
+'Abducción de cadera de lado'
+'Rotación externa con banda'
+'Plancha inversa con pies elevados'
+'Sprint lanzado'
+'Support hold en paralelas'
+'Plancha inversa a una pierna'
+'Sóleo en la pared'
+'Zancada del mundo'
+'Pie corto'
+'Aterrizaje clavado'
+'Respiración 90/90'
+'Gato-camello'
+'Plancha inversa sobre antebrazos'
+'Plancha inversa sobre las manos'
+'Scap pull-up'
+
+======================================================================
+FAIL: test_physical_variants_are_complete_and_not_silent_base_substitutions (__main__.GuidedContract.test_physical_variants_are_complete_and_not_silent_base_substitutions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_guided_contract_test.py", line 41, in test_physical_variants_are_complete_and_not_silent_base_substitutions
+    self.assertEqual({(v['exercise'], v['key']) for v in variants},
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     {(name, key) for name, keys in VARIANTS.items() for key in keys})
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the second set but not the first:
+('Copenhague', 'copenhagen_long')
+('Aterrizaje clavado', 'landing_unilateral')
+('Sóleo sentado con mochila', 'seated_soleus_unilateral')
+('Sóleo sentado con mochila', 'seated_soleus_bilateral')
+('Copenhague', 'copenhagen_short')
+('Rotación externa con banda', 'band_rotation_90_90')
+('Support hold en paralelas', 'support_rings')
+('Aterrizaje clavado', 'landing_lateral')
+('Rotación externa con banda', 'band_rotation_side')
+('Support hold en paralelas', 'support_parallels')
+('Aterrizaje clavado', 'landing_bilateral')
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.020s
+
+FAILED (failures=2)
