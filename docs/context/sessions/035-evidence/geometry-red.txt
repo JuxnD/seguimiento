@@ -1,0 +1,55 @@
+test_active_and_passive_hang_are_different_postures (illustration_035_geometry_test.Geometry035.test_active_and_passive_hang_are_different_postures) ... FAIL
+test_carry_knees_share_forward_flexion (illustration_035_geometry_test.Geometry035.test_carry_knees_share_forward_flexion) ... FAIL
+test_curl_forearm_moves_in_front_of_elbow (illustration_035_geometry_test.Geometry035.test_curl_forearm_moves_in_front_of_elbow) ... FAIL
+test_straddle_reach_keeps_knees_straight (illustration_035_geometry_test.Geometry035.test_straddle_reach_keeps_knees_straight) ... FAIL
+test_vsit_has_entry_hold_and_exit_without_false_hand_support (illustration_035_geometry_test.Geometry035.test_vsit_has_entry_hold_and_exit_without_false_hand_support) ... FAIL
+
+======================================================================
+FAIL: test_active_and_passive_hang_are_different_postures (illustration_035_geometry_test.Geometry035.test_active_and_passive_hang_are_different_postures)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 41, in test_active_and_passive_hang_are_different_postures
+    self.assertNotEqual(active, passive)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: {'hip': (4, -31.2), 'torso': -90, 'gaze': -5, 'nearLeg': {'angles': (88, 180), 'foot': 145}, 'farLeg': {'angles': (92, 178), 'foot': 145}, 'nearArm': {'reach': (4, -68), 'bend': 1, 'grip': 'bar'}, 'farArm': {'reach': (4, -68), 'bend': 1, 'grip': 'bar'}} == {'hip': (4, -31.2), 'torso': -90, 'gaze': -5, 'nearLeg': {'angles': (88, 180), 'foot': 145}, 'farLeg': {'angles': (92, 178), 'foot': 145}, 'nearArm': {'reach': (4, -68), 'bend': 1, 'grip': 'bar'}, 'farArm': {'reach': (4, -68), 'bend': 1, 'grip': 'bar'}}
+
+======================================================================
+FAIL: test_carry_knees_share_forward_flexion (illustration_035_geometry_test.Geometry035.test_carry_knees_share_forward_flexion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 21, in test_carry_knees_share_forward_flexion
+    self.assertGreaterEqual(signed, -1e-6, (name, side, signed))
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: -0.49999999999999994 not greater than or equal to -1e-06 : ('Carga abrazada al pecho', 'far', -0.49999999999999994)
+
+======================================================================
+FAIL: test_curl_forearm_moves_in_front_of_elbow (illustration_035_geometry_test.Geometry035.test_curl_forearm_moves_in_front_of_elbow)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 29, in test_curl_forearm_moves_in_front_of_elbow
+    self.assertGreaterEqual(math.cos(math.radians(angle)), -1e-6, (i, angle))
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: -0.049430843352085925 not greater than or equal to -1e-06 : (1, 92.83333333333333)
+
+======================================================================
+FAIL: test_straddle_reach_keeps_knees_straight (illustration_035_geometry_test.Geometry035.test_straddle_reach_keeps_knees_straight)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 35, in test_straddle_reach_keeps_knees_straight
+    self.assertAlmostEqual(math.sqrt(sum(v*v for v in reach)), 28, delta=.02)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 25.632011235952593 != 28 within 0.02 delta (2.367988764047407 difference)
+
+======================================================================
+FAIL: test_vsit_has_entry_hold_and_exit_without_false_hand_support (illustration_035_geometry_test.Geometry035.test_vsit_has_entry_hold_and_exit_without_false_hand_support)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-035-ilustraciones\test\tool\illustration_035_geometry_test.py", line 46, in test_vsit_has_entry_hold_and_exit_without_false_hand_support
+    self.assertNotEqual(poses[0], poses[1])
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'hip': (0, -5), 'torso': -120, 'nearLeg': {'angles': [-35, -35], 'foot': 0, 'bend': -1}, 'farLeg': {'angles': [-35, -35], 'foot': 0, 'bend': -1}, 'nearArm': {'angles': [-20, -20], 'hand': -20}, 'farArm': {'angles': [-20, -20], 'hand': -20}} == {'hip': (0, -5), 'torso': -120, 'nearLeg': {'angles': [-35, -35], 'foot': 0, 'bend': -1}, 'farLeg': {'angles': [-35, -35], 'foot': 0, 'bend': -1}, 'nearArm': {'angles': [-20, -20], 'hand': -20}, 'farArm': {'angles': [-20, -20], 'hand': -20}}
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.010s
+
+FAILED (failures=5)
