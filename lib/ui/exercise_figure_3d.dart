@@ -402,7 +402,7 @@ class Figure3D {
     // Authored poses retain their world contacts and flight height. The
     // legacy global grounding shortcut would erase take-off or slide hands.
     if (stage != null) {
-      final solved = solveKeyPose(pose, dims);
+      final solved = solveKeyPose(pose, dims, exactExtension: true);
       for (final contact in stage.contacts) {
         final start = _keys[i].joints[contact], current = solved.joints[contact];
         if (start == null || current == null || (start - current).distance > .05) {
@@ -638,9 +638,12 @@ class Figure3DCatalog {
 // ---------------------------------------------------------------------------
 
 /// IK de dos segmentos: (articulación media, extremo).
-(Offset, Offset) twoLink(Offset root, Offset target, double a, double b, int bend) {
+(Offset, Offset) twoLink(Offset root, Offset target, double a, double b, int bend, {bool exactExtension = false}) {
   final dx = target.dx - root.dx, dy = target.dy - root.dy;
-  final d = math.sqrt(dx * dx + dy * dy).clamp((a - b).abs() + 0.01, a + b - 0.001);
+  // Authored sequences cross pinned/FK keys at full extension. A forced bend
+  // would leave a finite joint jump even as interpolation approaches the key.
+  // Preserve the historical clamp for figures without an authored sequence.
+  final d = math.sqrt(dx * dx + dy * dy).clamp((a - b).abs() + 0.01, a + b - (exactExtension ? 0 : 0.001));
   final base = math.atan2(dy, dx);
   final alpha = math.acos(((a * a + d * d - b * b) / (2 * a * d)).clamp(-1.0, 1.0));
   final ang = base + bend * alpha;
@@ -738,7 +741,7 @@ class Skeleton2D {
   }
 }
 
-Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
+Skeleton2D solveKeyPose(KeyPose p, BodyDims d, {bool exactExtension = false}) {
   final neck = p.hip + _dir(p.torso) * d.torso;
   final shoulder = neck + _dir(p.torso + 90) * p.shoulderOffset.dx + _dir(p.torso) * p.shoulderOffset.dy;
   final j = <String, Offset>{'hip': p.hip, 'neck': neck, 'head': neck + _dir(p.torso + p.gaze) * d.headOffset};
@@ -761,7 +764,7 @@ Skeleton2D solveKeyPose(KeyPose p, BodyDims d) {
       end = Offset(target.x, target.y);
     } else if (l.pin case final pin?) {
       if (l.pole == null) {
-        (mid, end) = twoLink(root, pin, a, b, l.bend);
+        (mid, end) = twoLink(root, pin, a, b, l.bend, exactExtension: exactExtension);
       } else {
         final origin = V3(root.dx, root.dy, 0);
         final point = V3(pin.dx, pin.dy, 0);
@@ -1022,13 +1025,10 @@ Body3D liftSkeleton(Skeleton2D s, Figure3D fig) {
       final flex2 = _sagittalFlex((elbow2 - j['neck']!) / d.upperArm, fig.flex[arm] ?? 1);
       if (out2.distance < 0.6) out2 = -flex2;
       final pole = spec?.pole ?? (V3(out2.dx, out2.dy, 0).unit + V3(0, 0, sz * fig.elbowOut));
-      if (spec?.planarAngles == true &&
-          (spec!.reach3 != null || spec.pin != null || (hand.z-sh.z).abs()>1e-6)) {
+      if (spec?.planarAngles == true && (spec!.reach3 != null || spec.pin != null || (hand.z - sh.z).abs() > 1e-6)) {
         throw const FormatException('planarAngles requires an unpinned shoulder-depth arm');
       }
-      final e = spec?.planarAngles == true
-          ? V3.lift(elbow2, sh.z)
-          : ikJoint(sh, hand, d.upperArm, d.forearm, pole);
+      final e = spec?.planarAngles == true ? V3.lift(elbow2, sh.z) : ikJoint(sh, hand, d.upperArm, d.forearm, pole);
       p['${side}Elbow'] = e;
       p['${side}Hand'] = hand;
       // Cara flexora (bíceps): la del pliegue del codo en el plano de perfil.

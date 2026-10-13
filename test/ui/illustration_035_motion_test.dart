@@ -54,25 +54,28 @@ void main() {
     }
   });
   test('authored non-cut boundaries have continuous world joints on both sides of each key', () {
+    final discontinuities = <String>[];
     for (final name in selected) {
       final fig = catalog.forExercise(name)!;
       for (var i = 1; i < fig.motion.length; i++) {
-        if (fig.motion[i-1].kind == 'cut' || fig.motion[i].kind == 'cut') continue;
-        final before = liftSkeleton(fig.skeletonAt((i-1e-6)/fig.motion.length), fig).p;
-        final after = liftSkeleton(fig.skeletonAt((i+1e-6)/fig.motion.length), fig).p;
+        if (fig.motion[i - 1].kind == 'cut' || fig.motion[i].kind == 'cut') continue;
+        final before = liftSkeleton(fig.skeletonAt((i - 1e-6) / fig.motion.length), fig).p;
+        final after = liftSkeleton(fig.skeletonAt((i + 1e-6) / fig.motion.length), fig).p;
         for (final joint in before.keys) {
-          expect((after[joint]!-before[joint]!).length, lessThan(.01), reason: '$name/$i/$joint');
+          final distance = (after[joint]! - before[joint]!).length;
+          if (!distance.isFinite || distance >= .01) discontinuities.add('$name/$i/$joint: $distance');
         }
       }
     }
+    expect(discontinuities, isEmpty);
   });
   test('FIFA lateral hops translate the pelvis and lift both feet between grounded landings', () {
     final fig = catalog.forExercise('Calentamiento tipo FIFA 11+')!;
     final first = fig.motion.indexWhere((stage) => stage.part == '9' && stage.kind != 'cut');
-    final start = liftSkeleton(fig.skeletonAt(first/fig.motion.length), fig).p;
-    final airborne = liftSkeleton(fig.skeletonAt((first+1)/fig.motion.length), fig).p;
-    final landing = liftSkeleton(fig.skeletonAt((first+2)/fig.motion.length), fig).p;
-    expect((landing['hip']!.z-start['hip']!.z).abs(), greaterThan(8));
+    final start = liftSkeleton(fig.skeletonAt(first / fig.motion.length), fig).p;
+    final airborne = liftSkeleton(fig.skeletonAt((first + 1) / fig.motion.length), fig).p;
+    final landing = liftSkeleton(fig.skeletonAt((first + 2) / fig.motion.length), fig).p;
+    expect((landing['hip']!.z - start['hip']!.z).abs(), greaterThan(8));
     expect(airborne['nearAnkle']!.y, lessThan(-4));
     expect(airborne['farAnkle']!.y, lessThan(-4));
     expect(start['nearAnkle']!.y, closeTo(-1, .05));
@@ -123,13 +126,17 @@ void main() {
       expect(b, a, reason: 'No morph between FIFA parts');
     }
     final plank = fig.motion.indexWhere((stage) => stage.part == '4' && stage.kind == 'hold');
-    final frontSupport = liftSkeleton(fig.skeletonAt((plank+.5)/fig.motion.length), fig).p;
+    final frontSupport = liftSkeleton(fig.skeletonAt((plank + .5) / fig.motion.length), fig).p;
     expect(frontSupport['nearHand']!.y, closeTo(-.75, .05));
     expect(frontSupport['farHand']!.y, closeTo(-.75, .05));
     final side = fig.motion.indexWhere((stage) => stage.part == '5' && stage.kind == 'hold');
-    final sideSupport = liftSkeleton(fig.skeletonAt((side+.5)/fig.motion.length), fig).p;
+    final sideSupport = liftSkeleton(fig.skeletonAt((side + .5) / fig.motion.length), fig).p;
     expect(sideSupport['nearElbow']!.y, inInclusiveRange(-2, -.5));
-    expect(sideSupport['nearToe']!.y, closeTo(-.9, .05));
+    // Toe support uses the existing .6 toe envelope; .9 belongs to ankles.
+    expect(sideSupport['nearToe']!.y + jointPad('nearToe', fig.dims), closeTo(0, .05));
+    final reference = catalog.forExercise('Plancha lateral')!;
+    final referenceSupport = liftSkeleton(reference.skeletonAt(0), reference).p;
+    expect((sideSupport['nearToe']! - referenceSupport['nearToe']!).length, lessThan(.01));
   });
   test('authored playback is forward-only within a stride and a hold is still', () {
     final fig = catalog.forExercise('Barca / V-sit')!;

@@ -32,11 +32,23 @@ void main() {
     final catalog = Figure3DCatalog.fromJsonString(utf8.decode(assetBytes));
     final current = Figure3DCatalog.fromJsonString(File(Figure3DCatalog.asset).readAsStringSync());
     const selected035 = {
-      '90/90 de cadera', 'Aceleración 10–20 m', 'Barca / V-sit', 'Burpees',
-      'Calentamiento tipo FIFA 11+', 'Carga abrazada al pecho', 'Carga de maleta con mochila',
-      'Colgarse de la barra', 'Colgado pasivo', 'Curl con banda', 'Dragon flag', 'Dominadas',
-      'Elevaciones en straddle', 'Negativo de dragon flag', 'Negativo de dragon flag a una pierna',
-      'Negativo de dragon flag recogido', 'Vela',
+      '90/90 de cadera',
+      'Aceleración 10–20 m',
+      'Barca / V-sit',
+      'Burpees',
+      'Calentamiento tipo FIFA 11+',
+      'Carga abrazada al pecho',
+      'Carga de maleta con mochila',
+      'Colgarse de la barra',
+      'Colgado pasivo',
+      'Curl con banda',
+      'Dragon flag',
+      'Dominadas',
+      'Elevaciones en straddle',
+      'Negativo de dragon flag',
+      'Negativo de dragon flag a una pierna',
+      'Negativo de dragon flag recogido',
+      'Vela',
     };
     final referenceCatalog = legacy.Figure3DCatalog.fromJsonString(utf8.decode(assetBytes));
     expect(referenceCatalog.all.map((f) => f.name).toSet(), hashes.keys.toSet());
@@ -47,14 +59,16 @@ void main() {
         if (!selected035.contains(entry.key)) current.forExercise(entry.key as String)!,
       ];
       for (final fig in candidates) {
-      for (var i = 0; i <= 60; i++) {
-        final oldSkeleton = previous.skeletonAt(i / 60), oldBody = legacy.liftSkeleton(oldSkeleton, previous);
-        final skeleton = fig.skeletonAt(i / 60), body = liftSkeleton(skeleton, fig);
-        expect(skeleton.joints, oldSkeleton.joints, reason: '${fig.name}: muestra $i/60, coordenadas 2D exactas');
-        expect({for (final e in body.p.entries) e.key: [e.value.x, e.value.y, e.value.z]},
-            {for (final e in oldBody.p.entries) e.key: [e.value.x, e.value.y, e.value.z]},
-            reason: '${fig.name}: muestra $i/60, coordenadas 3D exactas');
-      }
+        for (var i = 0; i <= 60; i++) {
+          final oldSkeleton = previous.skeletonAt(i / 60), oldBody = legacy.liftSkeleton(oldSkeleton, previous);
+          final skeleton = fig.skeletonAt(i / 60), body = liftSkeleton(skeleton, fig);
+          expect(skeleton.joints, oldSkeleton.joints, reason: '${fig.name}: muestra $i/60, coordenadas 2D exactas');
+          expect({
+            for (final e in body.p.entries) e.key: [e.value.x, e.value.y, e.value.z]
+          }, {
+            for (final e in oldBody.p.entries) e.key: [e.value.x, e.value.y, e.value.z]
+          }, reason: '${fig.name}: muestra $i/60, coordenadas 3D exactas');
+        }
       }
     }
   });

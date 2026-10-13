@@ -1,0 +1,7 @@
+{
+  "baseline": "8ef2df493ddbc12450618983894a24ec4bcb35f9",
+  "classification": "oracle error, NOT a product red",
+  "expected": "Failure: unchanged baseline toe also differs from ankle-radius expectation -.9",
+  "basis": "jointPad: Toe=.6; Ankle=.9. Existing renderer support envelope. Candidate oracle separately checks actual toe envelope and baseline figure parity.",
+  "probeSource": "import 'dart:io';\nimport 'package:flutter_test/flutter_test.dart';\nimport 'exercise_figure_3d_baseline.dart';\n\nvoid main() {\n  test('incorrect ankle-radius expectation also rejects the unchanged baseline toe', () {\n    final catalog = Figure3DCatalog.fromJsonString(File('build/qa/035/baseline-8ef2df4.json').readAsStringSync());\n    final reference = catalog.forExercise('Plancha lateral')!;\n    final support = liftSkeleton(reference.skeletonAt(0), reference).p;\n    expect(support['nearToe']!.y, closeTo(-.9, .05));\n  });\n}\n"
+}

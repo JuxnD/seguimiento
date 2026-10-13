@@ -1,0 +1,23 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart
+00:00 +0: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: vela y dragon mantienen cabeza horizontal junto a los hombros
+00:00 +1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: cuadriceps y piernas en pared mantienen el pie transversal a la tibia
+00:00 +2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: manos conservan contacto con barra y borde de mesa durante el recorrido
+00:00 +3: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: flexion unilateral mantiene solamente la mano de trabajo apoyada
+00:00 +4: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: plancha inversa y pike mantienen palmas apoyadas al cambiar de momento
+00:00 +5: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: calentamiento conserva apoyos y brazos rectos en 61 muestras
+00:00 +6: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: balanceos distingue pierna móvil, pie fijo y mano en pared lateral
+00:00 +7: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: puente conserva hombros, cabeza horizontal, palmas y ambos pies
+00:00 +8: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_supports_test.dart: retracciones deja volumen de zapatos claramente libre del suelo en61muestras
+00:00 +9: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_geometry_test.dart
+00:01 +9: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_geometry_test.dart: alcances 3D conservan largos de brazos y piernas en los momentos clave
+00:01 +10: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_geometry_test.dart: elevaciones laterales usan el plano frontal y 90/90 conserva pelvis sentada
+00:01 +11: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_geometry_test.dart: figura4 apoya el tobillo en la rodilla opuesta; carrera no alcanza sobre la cabeza
+00:01 +12: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_geometry_test.dart: la plancha lateral apila hombros; el pike no apoya los codos
+00:01 +13: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_geometry_test.dart: las seis guías nuevas conservan largos anatómicos en 61 muestras
+00:01 +14: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_legacy_parity_test.dart
+00:02 +14: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_legacy_parity_test.dart: rig conserva73 figuras históricas y catálogo no seleccionado035 en61 muestras
+00:03 +15: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_controls_readability_test.dart
+00:04 +15: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto1.6
+00:05 +16: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_controls_readability_test.dart: CTA completa y accesible en360px texto2.0
+00:06 +17: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T151718775-63412-fdfc5a346e3a46ef96d5fd3a22169f56.json

@@ -81,3 +81,39 @@ incluidos pares confundidos, continuidad visible de dominadas y etapas FIFA.
 Secuencia animada con renderer real si viable. Revisión root máximo dos ciclos.
 Fullsuite corresponde a integración final y aceptación visual corresponde al
 owner. Este recibo no declara implementación completa ni aceptación.
+
+## Ventana guardada 2026-10-13 15:15–15:17 UTC
+
+Fuente b655213 con formato120 y hashes postformato en `035-evidence/source-guarded.json`.
+Cada comando pasó por el wrapper con token035 y recibo terminal; lease liberado,
+reconsulta sin runners propios. Sin full ni capturas.
+
+- Baseline8ef: dos rojos funcionales esperados, exit1: no existe selector FIFA;
+  cambiar la figura fullscreen conserva progreso anterior en lugar de .35 y no
+  detiene la reproducción. `fifa-baseline-guarded.txt`; no fallo de montaje.
+- Candidato:21PASS/3FAIL, exit1 en `dart-guarded.txt`. Los seis oráculos de
+  geometría PASS: incluye straddle, curl y colgado con longitudes conservadas.
+  Dominadas geométrico PASS continúa sin cerrar la queja visual.
+- `analyze-guarded.txt`: sin issues, exit0.
+- `regressions-guarded.txt`:17PASS, exit0; soporte, geometría, legibilidad y
+  paridad de73 figuras históricas más catálogo actual no seleccionado035.
+- Python10/10 y determinismo final:79 figuras idénticas en dos regeneraciones;
+  SHA955DE4FDDF3D3E709D205A06CC49416962385CBA2038E24501A6D926465469DC.
+
+Diagnóstico posterior (todavía sin nueva ejecución Dart):
+
+1. Burpees/key4/nearKnee: discontinuidad .1183 al cambiar pin→FK recto. El
+   solver2D limitaba alcance a a+b−.001 y conservaba una flexión artificial
+   incluso al límite de interpolación. Corrección opt-in `exactExtension`
+   exclusivamente en resolución authored; ruta histórica conserva su clamp.
+2. FIFA lateral: expectativa de punta−.9 confundía radio de tobillo .9 con
+   envolvente de punta .6 definida en `jointPad`. Valor real−.614 está junto
+   al suelo. Oráculo corregido comprueba punta+envolvente≈0 y coincidencia
+   con Plancha lateral de referencia. No se alteró esa figura para satisfacer
+   una coordenada incorrecta. Raw negativo se conserva como error de oráculo.
+3. Inline: `widgetWithText(TextButton)` no encuentra el subtipo concreto de
+   `TextButton.icon`. Finder usa `is TextButton` y texto; navegación mantiene
+   `ensureVisible`/`hitTestable`. Error de harness, no rojo funcional.
+
+Falta nueva dirigida+analyze+paridad tras estas correcciones. No hay aceptación
+visual ni integración/R1 de035 por estos resultados.

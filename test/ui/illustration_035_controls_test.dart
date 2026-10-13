@@ -120,8 +120,8 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: MediaQuery(
         data: const MediaQueryData(size: Size(800, 600)),
-        child: TickerMode(enabled: true, child: Figure3DFullScreen(
-          figure: catalog.forExercise('Dominadas')!, initialProgress: .35)),
+        child: TickerMode(
+            enabled: true, child: Figure3DFullScreen(figure: catalog.forExercise('Dominadas')!, initialProgress: .35)),
       ),
     ));
     expect(find.text('Pausa'), findsNothing);
@@ -191,7 +191,7 @@ void main() {
     ));
     expect(find.byType(PageView), findsNothing);
     expect(find.text('Parte 1 de 10'), findsOneWidget);
-    final play = find.widgetWithText(TextButton, 'Movimiento');
+    final play = find.ancestor(of: find.text('Movimiento'), matching: find.byWidgetPredicate((w) => w is TextButton));
     expect(tester.widget<TextButton>(play).onPressed, isNull);
     await tapVisible(tester, find.byType(DropdownButton<int>));
     await tester.pumpAndSettle();

@@ -62,10 +62,17 @@ void main() {
           if (name == 'Dominadas') {
             final body = liftSkeleton(fig!.skeletonAt(p), fig);
             geometry.add({
-              'progress': p, 'yaw': angles[row],
-              'joints': {for (final entry in body.p.entries) entry.key: [entry.value.x, entry.value.y, entry.value.z]},
-              'flexors': {for (final entry in body.flexor.entries) entry.key: [entry.value.x, entry.value.y, entry.value.z]},
-              'endDirections': {for (final entry in body.endDir.entries) entry.key: [entry.value.x, entry.value.y, entry.value.z]},
+              'progress': p,
+              'yaw': angles[row],
+              'joints': {
+                for (final entry in body.p.entries) entry.key: [entry.value.x, entry.value.y, entry.value.z]
+              },
+              'flexors': {
+                for (final entry in body.flexor.entries) entry.key: [entry.value.x, entry.value.y, entry.value.z]
+              },
+              'endDirections': {
+                for (final entry in body.endDir.entries) entry.key: [entry.value.x, entry.value.y, entry.value.z]
+              },
             });
           }
           canvas.save();

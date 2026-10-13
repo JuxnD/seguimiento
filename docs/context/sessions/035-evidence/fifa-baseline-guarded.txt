@@ -1,0 +1,55 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/build/qa/035/fifa_selector_baseline_test.dart
+00:00 +0: FIFA exposes ten selectable parts instead of a moments carousel
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TypeWidgetFinder:<Found 0 widgets with type "DropdownButton<int>": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/build/qa/035/fifa_selector_baseline_test.dart:10:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-035-ilustraciones/build/qa/035/fifa_selector_baseline_test.dart line 10
+The test description was:
+  FIFA exposes ten selectable parts instead of a moments carousel
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: FIFA exposes ten selectable parts instead of a moments carousel [E]
+  Test failed. See exception logs above.
+  The test description was: FIFA exposes ten selectable parts instead of a moments carousel
+  
+00:01 +0 -1: changing fullscreen figure resets the requested initial pose and stops playback
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: a numeric value within <1e-8> of <0.35>
+  Actual: <0.00014467592592592584>
+   Which:  differs by <0.34985532407407405>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/build/qa/035/fifa_selector_baseline_test.dart:26:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-035-ilustraciones/build/qa/035/fifa_selector_baseline_test.dart line 26
+The test description was:
+  changing fullscreen figure resets the requested initial pose and stops playback
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -2: changing fullscreen figure resets the requested initial pose and stops playback [E]
+  Test failed. See exception logs above.
+  The test description was: changing fullscreen figure resets the requested initial pose and stops playback
+  
+00:01 +0 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T151539782-65232-9881d7ec796549a5bac19da36b2e8109.json

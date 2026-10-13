@@ -133,9 +133,8 @@ class FigureMotionPart {
   final String label;
   final double start, end, startTime, endTime;
 
-  double progressAt(Figure3D figure, double time) => time <= startTime
-      ? start
-      : figureMotionProgress(figure, time.clamp(startTime, endTime - 1e-7));
+  double progressAt(Figure3D figure, double time) =>
+      time <= startTime ? start : figureMotionProgress(figure, time.clamp(startTime, endTime - 1e-7));
 }
 
 List<FigureMotionPart> figureMotionParts(Figure3D figure) {
@@ -170,8 +169,8 @@ class _FigurePartControls extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Semantics(liveRegion: true,
-            child: Text('Parte ${selected + 1} de ${parts.length}', textAlign: TextAlign.center)),
+          Semantics(
+              liveRegion: true, child: Text('Parte ${selected + 1} de ${parts.length}', textAlign: TextAlign.center)),
           Semantics(
             label: 'Seleccionar parte del calentamiento',
             child: DropdownButton<int>(
@@ -180,11 +179,14 @@ class _FigurePartControls extends StatelessWidget {
               value: selected,
               items: [
                 for (var i = 0; i < parts.length; i++)
-                  DropdownMenuItem(value: i, child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8), child: Text(parts[i].label))),
+                  DropdownMenuItem(
+                      value: i,
+                      child: Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Text(parts[i].label))),
               ],
               onChanged: (index) {
-                if (index != null) { onSelected(index); }
+                if (index != null) {
+                  onSelected(index);
+                }
               },
             ),
           ),
@@ -279,7 +281,10 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
     final parts = figureMotionParts(fig);
     if (_playing && parts.isNotEmpty && _clock >= parts[_partIndex].endTime) {
       _ticker.stop();
-      setState(() { _time = parts[_partIndex].endTime; _playing = false; });
+      setState(() {
+        _time = parts[_partIndex].endTime;
+        _playing = false;
+      });
     }
   }
 
@@ -523,7 +528,11 @@ class _Figure3DMomentsState extends State<Figure3DMoments> with SingleTickerProv
               TextButton.icon(
                   onPressed: MediaQuery.disableAnimationsOf(context) ? null : _toggle,
                   icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
-                  label: Text(_playing ? 'Pausa' : parts.isNotEmpty ? 'Movimiento' : 'Continuar')),
+                  label: Text(_playing
+                      ? 'Pausa'
+                      : parts.isNotEmpty
+                          ? 'Movimiento'
+                          : 'Continuar')),
             IconButton(
               tooltip: 'Ampliar y girar',
               icon: const Icon(Icons.open_in_full),
@@ -630,7 +639,8 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen>
       _progress = widget.initialProgress;
       _time = figureMotionTime(fig, _progress);
       final parts = figureMotionParts(fig);
-      _partIndex = parts.isEmpty ? 0 : math.max(0, parts.indexWhere((part) => _progress >= part.start && _progress < part.end));
+      _partIndex =
+          parts.isEmpty ? 0 : math.max(0, parts.indexWhere((part) => _progress >= part.start && _progress < part.end));
     }
   }
 
@@ -715,9 +725,8 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen>
                   animation: _ticker,
                   builder: (context, _) {
                     if (_playing) {
-                      _progress = parts.isEmpty
-                          ? figureMotionProgress(fig, _clock)
-                          : parts[_partIndex].progressAt(fig, _clock);
+                      _progress =
+                          parts.isEmpty ? figureMotionProgress(fig, _clock) : parts[_partIndex].progressAt(fig, _clock);
                     }
                     return Semantics(
                       image: true,
@@ -745,8 +754,7 @@ class _Figure3DFullScreenState extends State<Figure3DFullScreen>
                             style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                           )),
                 ),
-                if (parts.isNotEmpty)
-                  _FigurePartControls(parts: parts, selected: _partIndex, onSelected: _selectPart),
+                if (parts.isNotEmpty) _FigurePartControls(parts: parts, selected: _partIndex, onSelected: _selectPart),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Wrap(

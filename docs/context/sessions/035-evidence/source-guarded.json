@@ -1,0 +1,30 @@
+[
+  {
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\lib\\ui\\exercise_figure_3d.dart",
+    "Hash": "E86FA33701534D88D2E825BB8991ECC77A1E48DD4FBEBD021D03738C2CD89342"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\lib\\ui\\exercise_figure_3d_view.dart",
+    "Hash": "5B9C8A71DA50EBD568BEA5DCF54E891F8584F8FAF79345D8530E05D094410DC8"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\assets\\tecnica\\figuras3d.json",
+    "Hash": "955DE4FDDF3D3E709D205A06CC49416962385CBA2038E24501A6D926465469DC"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\test\\ui\\illustration_035_geometry_test.dart",
+    "Hash": "B54DA073DD950CC75B9269DA7A621E2B795F628E6F0B4AF1C2A9E284F17BB92A"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\test\\ui\\illustration_035_motion_test.dart",
+    "Hash": "59355EAB2A93C1B6EE4671C22D77B9E67D72FE51B92BABA9753FD6C38AAA2D2C"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\test\\ui\\illustration_035_controls_test.dart",
+    "Hash": "04550D8E1CA0015641B79DFF35B3F0C8A8B49FCE528E3B486010C8DC4858A1E9"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\test\\ui\\illustration_legacy_parity_test.dart",
+    "Hash": "15A2F8947C41FA4E47ABB73FCA32EF5B27D9BBF3C627AF2E3FC0EFB7EA96972F"
+  }
+]

@@ -1,0 +1,71 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart
+00:00 +0: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: carry knees flex forward on both sides throughout the stride
+00:00 +1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: band curl lifts hands in front of stable elbows
+00:00 +2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: pull-up elbow path has no sudden IK-plane flip, in either grip
+00:00 +3: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: straddle knees remain straight and palms remain on the floor during lift
+00:00 +4: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: active hang changes the trunk locally, not hands or straight arm lengths
+00:00 +5: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: V-sit entry lifts feet, hold fixes gluteal support and leaves hands free
+00:00 +6: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart
+00:03 +6: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: owner sequences are authored, with finite anatomy throughout every transition
+00:04 +7: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: declared fixed contacts stay fixed in world space, not just pixels
+00:04 +8: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: authored non-cut boundaries have continuous world joints on both sides of each key
+00:05 +8 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: authored non-cut boundaries have continuous world joints on both sides of each key [E]
+  Expected: a value less than <0.01>
+    Actual: <0.11831746874953698>
+     Which: is not a value less than <0.01>
+  Burpees/4/nearKnee
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_035_motion_test.dart 64:11     main.<fn>
+  
+00:05 +8 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: FIFA lateral hops translate the pelvis and lift both feet between grounded landings
+00:05 +9 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: required supports remain anchored even if stage metadata is removed
+00:05 +10 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: burpee flight stays above the floor; it is not grounded back to a jump pose
+00:05 +11 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: running swing foot clears the floor while opposite foot supports
+00:05 +12 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: FIFA exposes ten parts and cuts only between the parts
+00:05 +12 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: FIFA exposes ten parts and cuts only between the parts [E]
+  Expected: a numeric value within <0.05> of <-0.9>
+    Actual: <-0.6140283811144531>
+     Which:  differs by <0.2859716188855469>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_035_motion_test.dart 132:5     main.<fn>
+  
+00:05 +12 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: authored playback is forward-only within a stride and a hold is still
+00:05 +13 -2: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart
+00:06 +13 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: timeline inverse preserves any selected intermediate pose
+00:06 +14 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: inline pause retains the visible intermediate pose
+00:07 +15 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: play starts at selected frame and pause resumes without restarting
+00:07 +16 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: scrolling the inline figure away pauses without losing its pose
+00:07 +17 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: reduced motion stops playback and keeps manual frames available
+00:07 +18 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: covered route ticker mode pauses and requires explicit resume
+00:07 +19 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: changing fullscreen exercise resets playback and retains the requested initial pose
+00:08 +20 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: FIFA parts and playback remain reachable at phone width and large text
+00:08 +21 -2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: inline FIFA reduced motion preserves direct part navigation and painter identity
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:674:25)
+#1      WidgetController.widget (package:flutter_test/src/controller.dart:801:30)
+#2      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart:195:19)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  inline FIFA reduced motion preserves direct part navigation and painter identity
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +21 -3: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: inline FIFA reduced motion preserves direct part navigation and painter identity [E]
+  Test failed. See exception logs above.
+  The test description was: inline FIFA reduced motion preserves direct part navigation and painter identity
+  
+00:08 +21 -3: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T151617267-55520-c5998532f30c4166b33480a87a3828cc.json
