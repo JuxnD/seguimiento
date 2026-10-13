@@ -50,10 +50,10 @@ void main() {
   late Directory dir;
   setUp(() => dir = Directory.systemTemp.createTempSync('seguimiento_032_home'));
 
-  /// Una operación con la base en la misma zona que la pantalla: se avanzan
-  /// cuadros hasta que termina. Con un tope: si no termina, la prueba falla en
-  /// vez de colgarse (antes, `runAsync` tras desmontar quedaba esperando el
-  /// candado de drift que retenía una consulta de la zona falsa).
+  /// Una operación con la base, iniciada en la zona de la pantalla y
+  /// avanzada hasta que termina. Con un tope: si no termina, la prueba falla
+  /// en vez de colgarse (antes, `await runAsync(op)` tras desmontar dejaba
+  /// inmóviles los timers de drift en la zona falsa).
   Future<T> drive<T>(WidgetTester tester, Future<T> Function() op) async {
     T? value;
     Object? error;
@@ -65,10 +65,13 @@ void main() {
       error = e;
       done = true;
     }));
-    for (var i = 0; i < 300 && !done; i++) {
-      await tester.pump(const Duration(milliseconds: 10));
+    // Como el cierre de 033 (coherence_today_test): drift 2.21 espera
+    // Timer.run de la zona falsa, así que se avanzan las dos zonas por turnos.
+    for (var i = 0; i < 200 && !done; i++) {
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
     }
-    if (!done) fail('operación con la base sin terminar tras 300 cuadros');
+    if (!done) fail('operación con la base sin terminar tras 200 turnos');
     if (error != null) throw error!;
     return value as T;
   }

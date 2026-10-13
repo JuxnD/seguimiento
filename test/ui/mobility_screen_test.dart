@@ -91,11 +91,16 @@ void main() {
 
     await tester.tap(find.text('Hecho'));
     await tester.pump();
-    expect(find.text('Rutina completa'), findsOneWidget);
+    // Plan 032 (R2): saltar avanza pero no cuenta como hecho. Antes este caso
+    // daba "Rutina completa" con un paso saltado (rojo conservado en
+    // docs/context/sessions/032-evidence/r2c-1-red-legacy-mobility.txt).
+    expect(find.text('Rutina a medias'), findsOneWidget);
+    expect(find.text('1 paso saltado'), findsOneWidget);
 
     await tester.tap(find.text('Guardar'));
     await tester.pumpAndSettle();
-    expect(result!.complete, isTrue);
+    expect(result!.complete, isFalse);
+    expect(result!.stepsDone, 2);
     expect(result!.stepsTotal, 3);
     expect(result!.totalSec, greaterThanOrEqualTo(15));
   });

@@ -1,0 +1,65 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart
+00:00 +0: saltar todo lo que se puede y terminar: a medias, 0 hechos
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "2 pasos saltados": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart:79:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart line 79
+The test description was:
+  saltar todo lo que se puede y terminar: a medias, 0 hechos
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: saltar todo lo que se puede y terminar: a medias, 0 hechos [E]
+  Test failed. See exception logs above.
+  The test description was: saltar todo lo que se puede y terminar: a medias, 0 hechos
+  
+00:01 +0 -1: hecha paso a paso (tiempo que se agota y "Hecho"): completa
+00:04 +1 -1: recuperación a medias: el resumen no promete la racha
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TextContainingWidgetFinder:<Found 1 widget with text containing mantiene la racha y no
+suma carga: [
+            Text("Cuenta como recuperación: mantiene la racha y no suma carga.", debugLabel:
+(englishLike bodySmall 2021).merge((blackMountainView bodySmall).apply), inherit: false, color:
+Color(0xff1d1b20), family: Roboto, size: 12.0, weight: 400, letterSpacing: 0.4, baseline:
+alphabetic, height: 1.3x, leadingDistribution: even, decoration: Color(0xff1d1b20)
+TextDecoration.none, textAlign: center, dependencies: [DefaultSelectionStyle, DefaultTextStyle,
+MediaQuery]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart:105:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart line 105
+The test description was:
+  recuperación a medias: el resumen no promete la racha
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +1 -2: recuperación a medias: el resumen no promete la racha [E]
+  Test failed. See exception logs above.
+  The test description was: recuperación a medias: el resumen no promete la racha
+  
+00:06 +1 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155426929-68808-a32e9d9f06fe41ab9e50673385611831.json
+exit=1

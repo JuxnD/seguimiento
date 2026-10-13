@@ -1,0 +1,4 @@
+﻿Analyzing seguimiento-032-recuperacion...                       
+No issues found! (ran in 16.0s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155554922-71208-e2764a1922f943fd94ee9b9bac5cb179.json
+exit=0

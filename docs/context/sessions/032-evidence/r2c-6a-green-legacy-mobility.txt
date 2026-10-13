@@ -1,0 +1,6 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/ui/mobility_screen_test.dart
+00:00 +0: el guion recorre cada lado y cada serie en orden
+00:00 +1: lo que va por tiempo avanza solo y lo de repeticiones con "Hecho"
+00:02 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155536651-50156-8bac9a916b754e7f895f5b26b8f20839.json
+exit=0

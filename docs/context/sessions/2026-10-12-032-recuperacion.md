@@ -183,3 +183,35 @@ aceptación del owner. Sin push, APK ni teléfono.
 - **Pendiente:** el arnés de Hoy rehecho con `drive()`, que avanza cuadros en
   la misma zona y falla tras un tope en vez de colgarse. Falta una ventana
   breve para correrlo.
+
+### R2c: omitir no es hacer, copia condicional y arnés de Hoy (13 oct)
+
+Hallazgos WIP de la auditoría 038 y del advisor (15:18–15:19):
+
+- **Omisión.** «Saltar» ahora cuenta `_skipped` y no `_done`; «Hecho» y el
+  fin del tiempo sí cuentan como hecho. Una rutina queda `complete` sólo con
+  todos los pasos hechos. El resumen dice «N pasos saltados». Avance, salida
+  y registro parcial no cambian, y no hay segundos mínimos.
+- **Copia condicional.** El resumen de la recuperación y el diálogo de RPE > 5
+  sólo prometen la racha si la rutina quedó completa; a medias dicen que no
+  cuenta.
+- **Expectativa heredada.** `mobility_screen_test` esperaba «Rutina completa»
+  tras saltar 1 de 3. Ahora espera a medias, «1 paso saltado» y 2 hechos. El
+  rojo con la expectativa vieja está en r2c-1.
+- **Arnés de Hoy.** `drive()` inicia cada operación en la zona de la pantalla
+  y alterna `pump` de 20 ms con `runAsync` de 10 ms, hasta 200 turnos; si no
+  termina, la prueba falla. Es el patrón de cierre de 033. Sin timeouts
+  mayores ni aserciones relajadas.
+
+| Log | Qué | Resultado |
+|---|---|---|
+| r2c-1 (WT032) | `mobility_screen_test` con la expectativa vieja | 1/2: rojo esperado, ya no hay «Rutina completa» con un paso saltado |
+| r2c-2 (75) | `mobility_skip_test` | no compiló por un import faltante en la prueba; no es rojo |
+| r2c-2b (75) | ídem, corregido | 1/3: falta «2 pasos saltados» (la primera aserción es de UI nueva) y la copia a medias promete racha (funcional); «completa» pasa |
+| r2c-3 (75) | `readiness_home_test` con drenaje | 3/4 en 3 s: sólo «a medias» falla (funcional); amarillo, rojo y mover test pasan |
+| r2c-4a / r2c-4b | `mobility_skip_test`, `readiness_home_test` | 3/3, 4/4 |
+| r2c-6a / r2c-6b | `mobility_screen_test` actualizado, `analyze` | 2/2, sin incidencias |
+
+Todas las corridas de R2c pasaron por el wrapper de lease (token propio,
+`-Command` con `@(...)`), en serie, `--concurrency 1`, `--timeout 90s`, sin
+la suite completa. El árbol quedó reconsultado y sin procesos propios.

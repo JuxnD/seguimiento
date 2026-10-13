@@ -1,0 +1,7 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-recuperacion/test/ui/mobility_skip_test.dart
+00:00 +0: saltar todo lo que se puede y terminar: a medias, 0 hechos
+00:03 +1: hecha paso a paso (tiempo que se agota y "Hecho"): completa
+00:06 +2: recuperación a medias: el resumen no promete la racha
+00:07 +3: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155502614-35476-dbf1420a670144eeadab3e184dac07a6.json
+exit=0

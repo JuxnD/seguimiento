@@ -1,0 +1,16 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart
+powershell.exe : test/ui/mobility_skip_test.dart:45:11: Error: Undefined name 'exerciseArtProvider'.
+En C:\Users\Acer\AppData\Local\Temp\claude\C--My-Projects-kata\6db9cb30-df08-43e9-87db-e1d7b6a75d84\scratchpad\lease032
+.ps1: 7 Carácter: 1
++ & powershell -NoProfile -ExecutionPolicy Bypass -Command $inner *> "$ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test/ui/mobilit...seArtProvider'.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+          exerciseArtProvider.overrideWith((ref) => art),
+          ^^^^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading C:/My Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart [E]
+  Failed to load "C:/My Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart": Compilation failed for testPath=C:/My Projects/seguimiento-032-diag75/test/ui/mobility_skip_test.dart
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T155358717-3208-9a8de5ed1d8e4991bdf4baa15f75fc28.json
+exit=1

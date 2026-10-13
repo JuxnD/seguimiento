@@ -60,7 +60,7 @@ Future<void> startMobility(BuildContext context, WidgetRef ref, {MobilityRoutine
           title: const Text('Esto ya no fue recuperación'),
           content: Text('Con RPE $rpe se pasó de suave. ¿Cómo la guardo?\n\n'
               '• Sesión normal: suma carga (RPE × minutos) y cuenta para los días intensos.\n'
-              '• Recuperación: no suma carga y mantiene la racha, aunque haya salido más dura.'),
+              '${result.complete ? '• Recuperación: no suma carga y mantiene la racha, aunque haya salido más dura.' : '• Recuperación a medias: no suma carga, pero tampoco mantiene la racha ni cuenta como hecha.'}'),
           actions: [
             TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Recuperación')),
             FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Sesión normal')),
@@ -164,9 +164,11 @@ class _MobilityScreenState extends State<MobilityScreen> {
   DateTime? _endedAt;
   int _index = 0;
 
-  /// Pasos terminados (con "Hecho" o al acabar su tiempo), no los saltados a
-  /// medias con "Terminar".
+  /// Pasos hechos: con "Hecho" o al acabar su tiempo. "Saltar" avanza sin
+  /// contarlo, igual que "Terminar" deja fuera lo que falta: omitir no es
+  /// hacer (plan 032, R2). Una rutina sólo queda completa con todo hecho.
   int _done = 0;
+  int _skipped = 0;
   Timer? _ticker;
 
   MobilityStep get _step => _steps[_index];
@@ -205,9 +207,15 @@ class _MobilityScreenState extends State<MobilityScreen> {
     setState(() {});
   }
 
-  void _next() {
+  void _skip() => _next(skipped: true);
+
+  void _next({bool skipped = false}) {
     setState(() {
-      _done++;
+      if (skipped) {
+        _skipped++;
+      } else {
+        _done++;
+      }
       if (_index + 1 >= _steps.length) {
         _endedAt = clock.now();
         unawaited(HapticFeedback.heavyImpact());
@@ -319,7 +327,7 @@ class _MobilityScreenState extends State<MobilityScreen> {
         ),
         if (step.timed)
           Center(
-            child: TextButton(onPressed: _next, child: const Text('Saltar')),
+            child: TextButton(onPressed: _skip, child: const Text('Saltar')),
           ),
         const SizedBox(height: 12),
         AppCard(
@@ -358,14 +366,19 @@ class _MobilityScreenState extends State<MobilityScreen> {
         Icon(Icons.self_improvement, size: 64, color: style.color),
         const SizedBox(height: 12),
         Text(complete ? 'Rutina completa' : 'Rutina a medias', textAlign: TextAlign.center, style: text.headlineSmall),
+        if (_skipped > 0)
+          Text('$_skipped ${_skipped == 1 ? 'paso saltado' : 'pasos saltados'}',
+              textAlign: TextAlign.center, style: text.bodyMedium),
         const SizedBox(height: 8),
         Text('${formatDuration(_elapsedSec)} · $done de ${_steps.length} pasos',
             textAlign: TextAlign.center, style: text.titleMedium),
         const SizedBox(height: 8),
         Text(
-            widget.routine.id == recoveryActiveId
-                ? 'Cuenta como recuperación: mantiene la racha y no suma carga.'
-                : 'Es opcional: no cuenta para adherencia, récords ni racha.',
+            widget.routine.id != recoveryActiveId
+                ? 'Es opcional: no cuenta para adherencia, récords ni racha.'
+                : complete
+                    ? 'Cuenta como recuperación: mantiene la racha y no suma carga.'
+                    : 'A medias: queda guardada, pero no cuenta como recuperación hecha ni mantiene la racha.',
             textAlign: TextAlign.center,
             style: text.bodySmall),
         if (widget.routine.closingNote != null) ...[
