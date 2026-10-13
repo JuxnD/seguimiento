@@ -1,0 +1,12 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "946CA9CFD1C3109ADB66A304A11A88EDF0F98AB8234035ED749ECA6ECA686A1B",
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\lib\\ui\\exercise_figure_3d.dart"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "8C4CFFC42816EDF8E420B8421A211210D8A343B02005DF274FFF6B30C62C4FF0",
+    "Path": "C:\\My Projects\\seguimiento-035-ilustraciones\\test\\ui\\illustration_guided_geometry_test.dart"
+  }
+]

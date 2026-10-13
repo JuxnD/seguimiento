@@ -408,7 +408,8 @@ void main() {
 
   test('rolled support guard rejects world sliding even when planar joints stay fixed', () {
     final mutant = jsonDecode(jsonEncode(data)) as Map<String, Object?>;
-    final raw = (mutant['figures'] as List).cast<Map<String, Object?>>()
+    final raw = (mutant['figures'] as List)
+        .cast<Map<String, Object?>>()
         .firstWhere((f) => f['name'] == 'Pectoral en el marco de la puerta');
     final a = jsonDecode(jsonEncode((raw['frames'] as List).first)) as Map<String, Object?>;
     a['bodyRoll'] = 10.0;
@@ -416,8 +417,13 @@ void main() {
     b['bodyZ'] = 1.0;
     raw['frames'] = [a, b];
     raw['motion'] = [
-      {'kind': 'interpolate', 'seconds': 1.0, 'label': 'Invalid sliding support',
-       'ground': 'preserve', 'contacts': ['nearHand']}
+      {
+        'kind': 'interpolate',
+        'seconds': 1.0,
+        'label': 'Invalid sliding support',
+        'ground': 'preserve',
+        'contacts': ['nearHand']
+      }
     ];
     final fig = Figure3DCatalog.fromJsonString(jsonEncode(mutant)).forExercise(raw['name'] as String)!;
     final planarA = solveKeyPose(fig.frames[0], fig.dims);

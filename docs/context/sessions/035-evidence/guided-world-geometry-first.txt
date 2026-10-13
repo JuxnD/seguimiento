@@ -1,0 +1,9 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart
+00:00 +0: carry knees flex forward on both sides throughout the stride
+00:00 +1: band curl lifts hands in front of stable elbows
+00:00 +2: pull-up elbow path has no sudden IK-plane flip, in either grip
+00:00 +3: straddle knees remain straight and palms remain on the floor during lift
+00:00 +4: active hang changes the trunk locally, not hands or straight arm lengths
+00:00 +5: V-sit entry lifts feet, hold fixes gluteal support and leaves hands free
+00:00 +6: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T193852566-55604-859f29b64c5448f89137b1caaefd4718.json

@@ -1,0 +1,18 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: guided figures keep bone lengths and finite reachable supports through every stage
+00:00 +1: guided independent world anchors stay fixed during demonstrated support phases
+00:00 +2: cat cow breathing and short foot change the rendered anatomy not only captions
+00:00 +3: local spine and bare foot anatomy preserve support and remain readable at phone size
+00:00 +4: physical variants retain their required world support and equipment contacts
+00:00 +5: guided plantar supports never point toes through the ground
+00:00 +6: seated soleus keeps knees forward above ankles and raised plank straight
+00:00 +7: guided floor hands and bed elbows respect their support surfaces
+00:00 +8: short foot detail leaves breathing room above the ankle instead of cropped shins
+00:00 +9: external rotation band remains visibly connected between the opened hands
+00:00 +10: accessory physical levels preserve straight tibial knees bed support and support hands
+00:00 +11: accessory loads are really painted at the selected limb rather than metadata only
+00:00 +12: deep squat hold goes below the knees with elbows between them and heels planted
+00:00 +13: rolled support guard rejects world sliding even when planar joints stay fixed
+00:00 +14: doorway stretch turns the chest axially while keeping the supported forearm and feet fixed
+00:00 +15: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T193812191-62412-3af1e8538e3e4a0887638a29fb49e8bb.json

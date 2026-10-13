@@ -432,8 +432,8 @@ class Figure3D {
       final solved = solveKeyPose(pose, dims, exactExtension: true);
       // A rolled pose closes reach3 chains after the planar solve. Compare
       // those actual world supports rather than their pre-roll XY proxies.
-      final worldContacts = frames[i].bodyRoll.abs() > .001 ||
-          frames[i + 1].bodyRoll.abs() > .001 || solved.bodyRoll.abs() > .001;
+      final worldContacts =
+          frames[i].bodyRoll.abs() > .001 || frames[i + 1].bodyRoll.abs() > .001 || solved.bodyRoll.abs() > .001;
       final startBody = worldContacts && stage.contacts.isNotEmpty ? liftSkeleton(_keys[i], this) : null;
       final currentBody = worldContacts && stage.contacts.isNotEmpty ? liftSkeleton(solved, this) : null;
       for (final contact in stage.contacts) {
