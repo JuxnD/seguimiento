@@ -524,6 +524,21 @@ class Figure3D {
   /// cámara no salta al animar ni al cambiar de página.
   late final Rect frameBox = _computeBox();
 
+  Iterable<double> get _framingProgress sync* {
+    // Keep the historical nine probes exactly for unauthored figures.
+    for (var step = 0; step <= 8; step++) {
+      yield step / 8;
+    }
+    if (hasMotion) {
+      // A short stage can contain the highest hand or the widest foot stance.
+      // Include every authored key and intermediate poses in the fixed camera.
+      final count = motion.length * 8;
+      for (var step = 0; step <= count; step++) {
+        yield step / count;
+      }
+    }
+  }
+
   Rect _computeBox() {
     var box = Rect.zero;
     var first = true;
@@ -536,10 +551,16 @@ class Figure3D {
       }
     }
 
-    for (var k = 0; k <= 8; k++) {
-      final s = skeletonAt(k / 8);
-      for (final p in s.joints.values) {
-        grow(p);
+    for (final progress in _framingProgress) {
+      final s = skeletonAt(progress);
+      for (final entry in s.joints.entries) {
+        if (hasMotion) {
+          final radius = _framingRadius(entry.key, dims);
+          grow(entry.value - Offset(radius, radius));
+          grow(entry.value + Offset(radius, radius));
+        } else {
+          grow(entry.value);
+        }
       }
       final h = s.joints['head']!;
       grow(h - Offset(dims.headRadius, dims.headRadius));
@@ -1371,15 +1392,40 @@ void paintFigure3D(Canvas canvas, Size size, Figure3D fig, double progress, {dou
 
 final _cameraCache = Expando<Map<(Size, double, double), Camera3D>>();
 
+double _framingRadius(String joint, BodyDims dims) => joint.endsWith('Hand')
+    ? 4.5 // Fingers extend 4 units from the wrist, plus their capsule/outline.
+    : joint == 'head'
+        ? dims.headRadius + .7
+        : joint.endsWith('Toe') || joint.endsWith('Ankle')
+            ? 1.3
+            : joint == 'hip' || joint == 'neck'
+                ? 5.5
+                : 3.5;
+
 /// Cámara con la que se pinta una figura en un lienzo de ese tamaño.
 Camera3D cameraFor(Figure3D fig, Size size, {double yaw = 0, double pitch = defaultPitch}) {
   final cache = _cameraCache[fig] ??= {};
   final key = (size, yaw, pitch);
   if (cache[key] case final previous?) return previous;
   final world = <V3>[];
-  for (var step = 0; step <= 8; step++) {
-    final body = liftSkeleton(fig.skeletonAt(step / 8), fig);
-    world.addAll(body.p.values);
+  for (final progress in fig._framingProgress) {
+    final body = liftSkeleton(fig.skeletonAt(progress), fig);
+    if (fig.hasMotion) {
+      // Project the enclosing volume, so a wrist center inside the canvas
+      // cannot conceal clipped fingers. The eight corners cover any camera.
+      for (final entry in body.p.entries) {
+        final radius = _framingRadius(entry.key, fig.dims);
+        for (final x in [-radius, radius]) {
+          for (final y in [-radius, radius]) {
+            for (final z in [-radius, radius]) {
+              world.add(entry.value + V3(x, y, z));
+            }
+          }
+        }
+      }
+    } else {
+      world.addAll(body.p.values);
+    }
     final h = body.p['head']!;
     world.addAll([h + V3(0, fig.dims.headRadius, 0), h - V3(0, fig.dims.headRadius, 0)]);
   }

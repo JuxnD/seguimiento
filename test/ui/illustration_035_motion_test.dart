@@ -61,8 +61,10 @@ void main() {
                           : 2.5;
               final point = camera.project(entry.value);
               final pad = radius * point.k;
-              if (point.offset.dx - pad < 0 || point.offset.dy - pad < 0 ||
-                  point.offset.dx + pad > size.width || point.offset.dy + pad > size.height) {
+              if (point.offset.dx - pad < 0 ||
+                  point.offset.dy - pad < 0 ||
+                  point.offset.dx + pad > size.width ||
+                  point.offset.dy + pad > size.height) {
                 if (clipped.length < 20) {
                   clipped.add('$name $size yaw=$yaw p=$progress ${entry.key}: ${point.offset} pad=$pad');
                 }

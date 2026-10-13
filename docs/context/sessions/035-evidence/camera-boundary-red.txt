@@ -1,0 +1,33 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart
+00:00 +0: authored camera contains every key and intervening anatomical envelope
+00:00 +0 -1: authored camera contains every key and intervening anatomical envelope [E]
+  Expected: empty
+    Actual: [
+              'Burpees Size(320.0, 285.0) yaw=0.0 p=0.7142857142857143 nearHand: Offset(144.1, 12.3) pad=14.17878066666933',
+              'Burpees Size(320.0, 285.0) yaw=0.0 p=0.719047619047619 nearHand: Offset(147.4, 14.0) pad=14.16957847397989',
+              'Burpees Size(360.0, 315.0) yaw=0.0 p=0.7142857142857143 nearHand: Offset(162.4, 13.6) pad=15.671283894739785',
+              'Burpees Size(360.0, 315.0) yaw=0.0 p=0.719047619047619 nearHand: Offset(166.1, 15.5) pad=15.661113050188296',
+              'Burpees Size(420.0, 600.0) yaw=0.0 p=0.7142857142857143 nearHand: Offset(176.5, 25.8) pad=29.850064561409116',
+              'Burpees Size(420.0, 600.0) yaw=0.0 p=0.719047619047619 nearHand: Offset(183.5, 29.5) pad=29.830691524168184',
+              'Calentamiento tipo FIFA 11+ Size(320.0, 285.0) yaw=0.0 p=0.7441860465116279 nearHand: Offset(118.8, 12.7) pad=13.69509129321729',
+              'Calentamiento tipo FIFA 11+ Size(360.0, 315.0) yaw=0.0 p=0.7441860465116279 nearHand: Offset(134.5, 14.0) pad=15.136679850398059',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.46511627906976744 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.465891472868217 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.4666666666666667 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.46744186046511627 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.4682170542635659 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.4689922480620155 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.4697674418604651 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.47054263565891474 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.47131782945736433 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.4720930232558139 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.4728682170542636 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337',
+              'Calentamiento tipo FIFA 11+ Size(420.0, 600.0) yaw=0.0 p=0.47364341085271316 nearAnkle: Offset(2.9, 470.0) pad=7.089973198220337'
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\ui\illustration_035_motion_test.dart 77:5      main.<fn>
+  
+00:00 +0 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T171104378-69472-826a488f043b4d4b8403121428b4b726.json
