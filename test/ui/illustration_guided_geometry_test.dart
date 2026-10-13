@@ -41,7 +41,7 @@ void main() {
         }
       }
     }
-    for(final failure in failures) { print(failure); }
+    for(final failure in failures) { printOnFailure(failure); }
     expect(failures, isEmpty);
   });
 
@@ -197,7 +197,7 @@ void main() {
         check('$key/landed/$i',(held.p['nearAnkle']!-landed.p['nearAnkle']!).length);
       }
     }
-    for(final failure in failures) { print(failure); }
+    for(final failure in failures) { printOnFailure(failure); }
     expect(failures,isEmpty);
   });
 }

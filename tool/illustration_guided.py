@@ -6,7 +6,7 @@ from load/repetitions. Geometry units are illustrative, not user measurements.
 from copy import deepcopy as cp
 import math
 
-NAMES = '''Respiración 90/90|Gato-camello|Libro abierto|Muñecas a cuatro patas|Deslizamientos en la pared|Zancada del mundo|Rodilla a la pared|Sentadilla profunda|Pie corto|Pike sentado|Pancake|Dorsal en la cama|Pectoral en el marco de la puerta|Sóleo en la pared|Scap pull-up|Y-T prono|Abducción de cadera de lado|Copenhague|Sóleo sentado con mochila|Tibial en la pared|Rotación externa con banda|Support hold en paralelas|Sprint lanzado|Sentadilla isométrica en la pared|Nórdico inverso|Bajada lateral del escalón|Aterrizaje clavado|Mesa invertida|Plancha inversa sobre antebrazzos|Plancha inversa sobre las manos|Plancha inversa a una pierna|Plancha inversa con pies elevados'''.replace('antebrazzos', 'antebrazos').split('|')
+NAMES = '''Respiración 90/90|Gato-camello|Libro abierto|Muñecas a cuatro patas|Deslizamientos en la pared|Zancada del mundo|Rodilla a la pared|Sentadilla profunda|Pie corto|Pike sentado|Pancake|Dorsal en la cama|Pectoral en el marco de la puerta|Sóleo en la pared|Scap pull-up|Y-T prono|Abducción de cadera de lado|Copenhague|Sóleo sentado con mochila|Tibial en la pared|Rotación externa con banda|Support hold en paralelas|Sprint lanzado|Sentadilla isométrica en la pared|Nórdico inverso|Bajada lateral del escalón|Aterrizaje clavado|Mesa invertida|Plancha inversa sobre antebrazos|Plancha inversa sobre las manos|Plancha inversa a una pierna|Plancha inversa con pies elevados'''.split('|')
 VARIANTS = {
     'Copenhague': ('copenhagen_short', 'copenhagen_long'),
     'Sóleo sentado con mochila': ('seated_soleus_bilateral', 'seated_soleus_unilateral'),
@@ -320,7 +320,7 @@ def _plan034(name, variant, result, cycle):
         b=squat('Vuelo: pies libres',jump=True)
         c=squat('Aterriza flexionando; después mantente estable',True)
         if variant in ('landing_unilateral','landing_lateral'):
-            for f in (a,b,c): f['farLeg']=limb(20,100,foot=0)
+            for f in (a,b,c): f['farLeg']=limb(-20,90,foot=0)
             a['caption']='Prepara el impulso sobre una pierna'
             c['caption']='Aterriza sobre la misma pierna y estabiliza'
         if variant=='landing_lateral':
