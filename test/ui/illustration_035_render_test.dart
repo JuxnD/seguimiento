@@ -133,8 +133,8 @@ void main() {
           part != null
               ? part.endTime - part.startTime
               : fig.hasMotion
-              ? fig.motion.fold<double>(0, (sum, stage) => sum + stage.seconds)
-              : .6 + 2 * (fig.frames.length - 1) * 3
+                  ? fig.motion.fold<double>(0, (sum, stage) => sum + stage.seconds)
+                  : .6 + 2 * (fig.frames.length - 1) * 3
       ];
       final duration = durations.reduce((a, b) => a > b ? a : b);
       final count = (duration * fps).round();
@@ -149,9 +149,8 @@ void main() {
           final seconds = (frame / fps).clamp(0.0, durations[column] - 1e-6).toDouble();
           // Shorter paired demonstrations stop at the end of one actual cycle.
           // No time scaling or copied easing curve is used for the comparison.
-          final progress = part == null
-              ? figureMotionProgress(fig, seconds)
-              : part.progressAt(fig, part.startTime + seconds);
+          final progress =
+              part == null ? figureMotionProgress(fig, seconds) : part.progressAt(fig, part.startTime + seconds);
           final stopped = frame / fps >= durations[column];
           final yaw = fig.name == 'Dominadas' ? 35.0 : fig.initialYaw;
           frameFigures.add({
