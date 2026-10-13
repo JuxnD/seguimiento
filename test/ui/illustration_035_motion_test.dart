@@ -106,12 +106,18 @@ void main() {
     final fixture = Platform.environment['ILLUSTRATION_035_STEP_FIXTURE'];
     final figures = fixture == null ? catalog : Figure3DCatalog.fromJsonString(File(fixture).readAsStringSync());
     final fig = figures.forExercise('Calentamiento tipo FIFA 11+')!;
-    final indices = [for (var i = 0; i < fig.motion.length; i++) if (fig.motion[i].part == '3' && fig.motion[i].kind != 'cut') i];
-    final poses = [for (final i in [...indices, indices.last + 1]) liftSkeleton(fig.skeletonAt(i / fig.motion.length), fig).p];
+    final indices = [
+      for (var i = 0; i < fig.motion.length; i++)
+        if (fig.motion[i].part == '3' && fig.motion[i].kind != 'cut') i
+    ];
+    final poses = [
+      for (final i in [...indices, indices.last + 1]) liftSkeleton(fig.skeletonAt(i / fig.motion.length), fig).p
+    ];
     double range(String joint) {
       final positions = poses.map((p) => p[joint]!.z).toList()..sort();
       return positions.last - positions.first;
     }
+
     expect(range('hip'), greaterThan(6));
     expect(range('nearAnkle'), greaterThan(6));
     expect(range('farAnkle'), greaterThan(6));
@@ -121,7 +127,9 @@ void main() {
     for (final i in indices) {
       final a = liftSkeleton(fig.skeletonAt(i / fig.motion.length), fig).p;
       final b = liftSkeleton(fig.skeletonAt((i + 1) / fig.motion.length), fig).p;
-      final fixed = ['nearAnkle', 'farAnkle'].where((joint) => (a[joint]! - b[joint]!).length < .01 && (a[joint]!.y + 1).abs() < .01).toList();
+      final fixed = ['nearAnkle', 'farAnkle']
+          .where((joint) => (a[joint]! - b[joint]!).length < .01 && (a[joint]!.y + 1).abs() < .01)
+          .toList();
       expect(fixed, isNotEmpty, reason: 'A lateral step keeps at least one planted support');
       for (var s = 0; s <= 20; s++) {
         final p = liftSkeleton(fig.skeletonAt((i + s / 20) / fig.motion.length), fig).p;
@@ -187,6 +195,45 @@ void main() {
     final reference = catalog.forExercise('Plancha lateral')!;
     final referenceSupport = liftSkeleton(reference.skeletonAt(0), reference).p;
     expect((sideSupport['nearToe']! - referenceSupport['nearToe']!).length, lessThan(.01));
+  });
+  test('authored key boundaries preserve stage pose equipment and inverse time', () {
+    final fig = catalog.forExercise('Calentamiento tipo FIFA 11+')!;
+    final n = fig.motion.length;
+    var time = 0.0;
+    for (var i = 0; i < n; i++) {
+      final exact = i / n;
+      final before = (i - 1e-8) / n;
+      final after = (i + 1e-8) / n;
+      expect(fig.frameCoordinate(exact), i.toDouble(), reason: 'key $i/$n');
+      expect(fig.stageAt(exact), same(fig.motion[i]));
+      expect(fig.stageAt(after), same(fig.motion[i]));
+      expect(fig.propsAt(exact), fig.frames[i].props ?? fig.props);
+      expect(figureMotionTime(fig, exact), closeTo(time, 1e-8));
+      if (i > 0) {
+        expect(fig.frameCoordinate(before), lessThan(i));
+        expect(fig.stageAt(before), same(fig.motion[i - 1]));
+        expect(figureMotionTime(fig, before), lessThan(time));
+        final priorProps = fig.motion[i - 1].kind == 'cut' ? i - 1 : i;
+        expect(fig.propsAt(before), fig.frames[priorProps].props ?? fig.props);
+      }
+      expect(fig.frameCoordinate(after), greaterThan(i));
+      expect(figureMotionTime(fig, after), greaterThan(time));
+      final atKey = liftSkeleton(fig.skeletonAt(exact), fig).p;
+      final next = liftSkeleton(fig.skeletonAt(after), fig).p;
+      for (final joint in atKey.keys) {
+        expect((next[joint]! - atKey[joint]!).length, lessThan(.01), reason: '$i/$joint');
+      }
+      if (fig.motion[i].kind == 'hold' || fig.motion[i].kind == 'cut') {
+        expect(fig.skeletonAt((i + .5) / n).joints, fig.skeletonAt(exact).joints);
+        expect(fig.propsAt((i + .25) / n), fig.frames[i].props ?? fig.props);
+      }
+      time += fig.motion[i].seconds;
+    }
+    expect(fig.frameCoordinate(1), n.toDouble());
+    expect(figureMotionTime(fig, 1), closeTo(time, 1e-8));
+    final legacy = catalog.forExercise('Dominadas')!;
+    expect(legacy.stageAt(.43), isNull);
+    expect(legacy.frameCoordinate(.43), .43 * (legacy.frames.length - 1));
   });
   test('authored playback is forward-only within a stride and a hold is still', () {
     final fig = catalog.forExercise('Barca / V-sit')!;

@@ -99,7 +99,7 @@ double figureMotionTime(Figure3D figure, double progress) {
         fraction < .5 ? math.pow(fraction / 4, 1 / 3).toDouble() : 1 - math.pow((1 - fraction) / 4, 1 / 3).toDouble();
     return .6 + index * 3 + u * 2.4;
   }
-  final x = progress.clamp(0, 1) * figure.motion.length;
+  final x = figure.frameCoordinate(progress);
   final index = math.min(x.floor(), figure.motion.length - 1);
   var fraction = x - index;
   if (figure.motion[index].kind == 'interpolate') {

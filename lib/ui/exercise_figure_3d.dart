@@ -352,8 +352,27 @@ class Figure3D {
   final bool continuous, mirrored, perSide;
   final List<FigureMotionStage> motion;
   bool get hasMotion => motion.isNotEmpty;
+
+  /// Authored selectors encode a key as i/N. Multiplying back can produce
+  /// i minus one ULP (for example 23/43), selecting the preceding cut. Recover
+  /// only round-off-sized integer boundaries; legacy interpolation is exact
+  /// historical behavior and ordinary before/after samples remain untouched.
+  double frameCoordinate(double progress) {
+    final raw = progress.clamp(0.0, 1.0) * (frames.length - 1);
+    if (!hasMotion) return raw;
+    final key = raw.roundToDouble();
+    final tolerance = 2 * 2.220446049250313e-16 * math.max(1.0, raw.abs());
+    return (raw - key).abs() <= tolerance ? key : raw;
+  }
+
   FigureMotionStage? stageAt(double progress) =>
-      !hasMotion ? null : motion[math.min((progress.clamp(0, 1) * (frames.length - 1)).floor(), motion.length - 1)];
+      !hasMotion ? null : motion[math.min(frameCoordinate(progress).floor(), motion.length - 1)];
+
+  List<Map<String, Object?>> propsAt(double progress) {
+    final key = frameCoordinate(progress);
+    final index = stageAt(progress)?.kind == 'cut' ? key.floor() : key.round();
+    return frames[index].props ?? props;
+  }
   final String group;
   final String? focus;
   final String? variantGrip;
@@ -391,7 +410,7 @@ class Figure3D {
       final key = _keys[(progress.clamp(0.0, 1.0) * (frames.length - 1)).round()];
       return key.bodyRoll.abs() > .001 ? key : _clearOfWall(key.grounded());
     }
-    final x = progress.clamp(0.0, 1.0) * (frames.length - 1);
+    final x = frameCoordinate(progress);
     final i = math.min(x.floor(), frames.length - 2);
     final u = x - i;
     final stage = hasMotion ? motion[i] : null;
@@ -1405,11 +1424,7 @@ class _Scene {
   final Camera3D cam;
   final Body3D body;
   final double progress;
-  List<Map<String, Object?>> get props {
-    final key = progress.clamp(0, 1) * (fig.frames.length - 1);
-    final index = fig.stageAt(progress)?.kind == 'cut' ? key.floor() : key.round();
-    return fig.frames[index].props ?? fig.props;
-  }
+  List<Map<String, Object?>> get props => fig.propsAt(progress);
 
   late final double _zHip = cam.depth(body.p['hip']!);
 

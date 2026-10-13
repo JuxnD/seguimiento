@@ -181,3 +181,24 @@ Dragon/Vela(192),Dominadas(252). Función figureMotionProgress de producción,
 sin acelerar reloj; en comparación se pausa al terminar el ciclo más corto.
 Sin loop artificial entre cuadros separados; composición GIF conserva20fps.
 Fuente/renderers congelados antes de cada corrida. Capturas no son aceptación.
+
+## Frontera normalizada de selector FIFA (16:31 UTC)
+
+Ventana c8dc tras recursos recuperados: nuevo rojoDart fixture530 por viaje0
+contra>6; candidato95bd con formato:24/25PASS, 1FAIL REAL en UI Parte5.
+`dart-fifa-step-green.txt` es un nombre histórico incorrecto: contiene FAILURE,
+exit1 y NO cuenta como verde; `fifa-step-result.json` lo clasifica explícitamente.
+Analyze0 y paridad PASS; todos comandos FIN antes de cambiar fuente.
+
+Causa medida:43stages, primer key departe5=23; 23/43*43 produce
+22.999999999999996. Tres floor separados seleccionaban cut22 en vez de hold23.
+Root verificó también key31 y aprobó reparación sólo authored. Nuevo resolver
+`Figure3D.frameCoordinate` recupera enteros únicamente dentro de
+2*machineEpsilon*max(1,abs(raw)). stageAt/skeletonAt/propsAt/inverseTime comparten
+esa coordenada. Legado retorna raw sin tocarloopProgress. PropsAt es la misma
+función usada por el renderer; no una copia para tests.
+
+Nuevo oráculo26 recorre todas43fronteras exactas i/n, antes/después1e-8,
+interiorescut/hold, pose de mundo/equipo/tiempo inverso y último endpoint.
+UIrealParte5 preservada como rojo causal. No se relaja un umbral visual ni
+se adelanta una fase con epsilon amplio. Nueva corrida pendiente.

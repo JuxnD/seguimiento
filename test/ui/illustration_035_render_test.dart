@@ -122,9 +122,12 @@ void main() {
     final manifest = <Map<String, Object?>>[];
     for (var group = 0; group < groups.length; group++) {
       final figures = [for (final name in groups[group]) catalog.forExercise(name)!];
-      final durations = [for (final fig in figures) fig.hasMotion
-          ? fig.motion.fold<double>(0, (sum, stage) => sum + stage.seconds)
-          : .6 + 2 * (fig.frames.length - 1) * 3];
+      final durations = [
+        for (final fig in figures)
+          fig.hasMotion
+              ? fig.motion.fold<double>(0, (sum, stage) => sum + stage.seconds)
+              : .6 + 2 * (fig.frames.length - 1) * 3
+      ];
       final duration = durations.reduce((a, b) => a > b ? a : b);
       final count = (duration * fps).round();
       final directory = Directory('$animationOutput/${group + 1}')..createSync(recursive: true);
@@ -141,18 +144,26 @@ void main() {
           final progress = figureMotionProgress(fig, seconds);
           final stopped = frame / fps >= durations[column];
           final yaw = fig.name == 'Dominadas' ? 35.0 : fig.initialYaw;
-          frameFigures.add({'name': fig.name, 'seconds': seconds, 'progress': progress,
-            'yaw': yaw, 'pitch': fig.initialPitch, 'pausedAtEnd': stopped});
+          frameFigures.add({
+            'name': fig.name,
+            'seconds': seconds,
+            'progress': progress,
+            'yaw': yaw,
+            'pitch': fig.initialPitch,
+            'pausedAtEnd': stopped
+          });
           canvas.save();
           canvas.translate(column * 320.0, 0);
           canvas.save();
-          Figure3DPainter(fig, progress, yaw: yaw, pitch: fig.initialPitch)
-              .paint(canvas, const Size(320, 285));
+          Figure3DPainter(fig, progress, yaw: yaw, pitch: fig.initialPitch).paint(canvas, const Size(320, 285));
           canvas.restore();
           final label = TextPainter(
-            text: TextSpan(text: '${fig.name}${stopped ? ' · Pausa al terminar su ciclo' : ''}\n${fig.hasMotion ? figureMotionCaption(fig, progress) : fig.frames[(progress * (fig.frames.length - 1)).round()].caption}',
+            text: TextSpan(
+                text:
+                    '${fig.name}${stopped ? ' · Pausa al terminar su ciclo' : ''}\n${fig.hasMotion ? figureMotionCaption(fig, progress) : fig.frames[(progress * (fig.frames.length - 1)).round()].caption}',
                 style: const TextStyle(color: Colors.white, fontFamily: 'Roboto', fontSize: 12)),
-            textDirection: TextDirection.ltr, maxLines: 4,
+            textDirection: TextDirection.ltr,
+            maxLines: 4,
           )..layout(maxWidth: 310);
           label.paint(canvas, const Offset(5, 290));
           label.dispose();
@@ -169,9 +180,16 @@ void main() {
         picture.dispose();
         samples.add({'frame': frame, 'timestampSeconds': frame / fps, 'figures': frameFigures});
       }
-      manifest.add({'names': groups[group], 'fps': fps, 'frames': count, 'seconds': duration,
-        'path': directory.path, 'sourceCommit': sourceCommit, 'samples': samples,
-        'timeline': 'figureMotionProgress production, real seconds; shorter paired cycle explicitly paused at end'});
+      manifest.add({
+        'names': groups[group],
+        'fps': fps,
+        'frames': count,
+        'seconds': duration,
+        'path': directory.path,
+        'sourceCommit': sourceCommit,
+        'samples': samples,
+        'timeline': 'figureMotionProgress production, real seconds; shorter paired cycle explicitly paused at end'
+      });
     }
     File('$animationOutput/manifest.json').writeAsStringSync(const JsonEncoder.withIndent('  ').convert(manifest));
   }, skip: animationOutput == null);

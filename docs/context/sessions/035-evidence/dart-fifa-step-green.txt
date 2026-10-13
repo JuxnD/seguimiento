@@ -1,0 +1,54 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart
+00:00 +0: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: carry knees flex forward on both sides throughout the stride
+00:00 +1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: band curl lifts hands in front of stable elbows
+00:00 +2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: pull-up elbow path has no sudden IK-plane flip, in either grip
+00:00 +3: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: straddle knees remain straight and palms remain on the floor during lift
+00:00 +4: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: active hang changes the trunk locally, not hands or straight arm lengths
+00:00 +5: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_geometry_test.dart: V-sit entry lifts feet, hold fixes gluteal support and leaves hands free
+00:00 +6: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart
+00:01 +6: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: owner sequences are authored, with finite anatomy throughout every transition
+00:02 +7: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: declared fixed contacts stay fixed in world space, not just pixels
+00:02 +8: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: authored non-cut boundaries have continuous world joints on both sides of each key
+00:02 +9: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: FIFA lateral hops translate the pelvis and lift both feet between grounded landings
+00:02 +10: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: FIFA lateral steps travel with planted support and a lifted following foot
+00:02 +11: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: required supports remain anchored even if stage metadata is removed
+00:02 +12: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: burpee flight stays above the floor; it is not grounded back to a jump pose
+00:02 +13: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: running swing foot clears the floor while opposite foot supports
+00:02 +14: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: FIFA exposes ten parts and cuts only between the parts
+00:02 +15: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_motion_test.dart: authored playback is forward-only within a stride and a hold is still
+00:02 +16: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart
+00:04 +16: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: timeline inverse preserves any selected intermediate pose
+00:04 +17: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: inline pause retains the visible intermediate pose
+00:05 +18: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: play starts at selected frame and pause resumes without restarting
+00:05 +19: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: scrolling the inline figure away pauses without losing its pose
+00:06 +20: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: reduced motion stops playback and keeps manual frames available
+00:06 +21: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: covered route ticker mode pauses and requires explicit resume
+00:06 +22: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: changing fullscreen exercise resets playback and retains the requested initial pose
+00:06 +23: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: FIFA parts and playback remain reachable at phone width and large text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: not 'cut'
+  Actual: 'cut'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart:156:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart line 156
+The test description was:
+  FIFA parts and playback remain reachable at phone width and large text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:07 +23 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: FIFA parts and playback remain reachable at phone width and large text [E]
+  Test failed. See exception logs above.
+  The test description was: FIFA parts and playback remain reachable at phone width and large text
+  
+00:07 +23 -1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: inline FIFA reduced motion preserves direct part navigation and painter identity
+00:07 +24 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T163145732-60500-4297fd509ef047c1870fc1b239198ed4.json

@@ -1,0 +1,11 @@
+{
+  "source": "95bdcb622eb1a36a1497f50177303f7a7abb8670 plus recorded format",
+  "result": "FAILURE",
+  "exit": 1,
+  "passed": 24,
+  "failed": 1,
+  "log": "dart-fifa-step-green.txt",
+  "note": "Historical filename is misleading; terminal result is FAILURE, not acceptance. Kept unchanged as raw evidence.",
+  "cause": "23/43*43=22.999999999999996 -> floor22 selects cut instead of hold23",
+  "receipt": "20261013T163145732-60500-4297fd509ef047c1870fc1b239198ed4.json"
+}
