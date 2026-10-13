@@ -1,0 +1,8 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/data/custom_reminder_origin_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: crear desde Ajustes guarda origen usuario; editar no lo cambia
+00:00 +1: un recordatorio viejo sin origen sigue sin origen al editarlo
+00:00 +2: (tearDownAll)
+00:00 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174638758-63544-35d85b5ad9f64234865725567b7bd311.json
+exit=0

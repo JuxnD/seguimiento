@@ -1,0 +1,14 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/domain/habits_test.dart
+00:00 +0: huevos enteros: por unidad, por gramos y sin contar las claras
+00:00 +1: huevos dentro de platos: el número del nombre o los huevos por porción (§16.15)
+00:00 +2: hidratación: tasa de sudor y cuánto reponer
+00:00 +3: sueño: promedio y noches en la meta
+00:00 +4: regla de las 2 semanas (§19.3) baja más de 0,7 kg/sem: subir
+00:00 +5: regla de las 2 semanas (§19.3) baja 0,5 kg/sem: no cambiar
+00:00 +6: regla de las 2 semanas (§19.3) casi no baja y la cintura quieta 3 semanas: −150 kcal o +2.000 pasos
+00:00 +7: regla de las 2 semanas (§19.3) casi no baja pero la cintura sí: no cambiar
+00:00 +8: regla de las 2 semanas (§19.3) pesajes viejos: pide pesarse de nuevo
+00:00 +9: regla de las 2 semanas (§19.3) la semana en curso no cuenta y sin la de 2 semanas antes faltan datos
+00:00 +10: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174628932-57832-1351c14a557c496c8d276059ad036a2d.json
+exit=0

@@ -1,0 +1,17 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-diag/test/data/custom_reminder_origin_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: crear desde Ajustes guarda origen usuario; editar no lo cambia
+00:00 +0 -1: crear desde Ajustes guarda origen usuario; editar no lo cambia [E]
+  Expected: 'usuario'
+    Actual: <null>
+     Which: not an <Instance of 'String'>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\custom_reminder_origin_test.dart 19:5     main.<fn>
+  
+00:00 +0 -1: un recordatorio viejo sin origen sigue sin origen al editarlo
+00:00 +1 -1: (tearDownAll)
+00:00 +1 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174516235-53656-a7a12dba8d28418faf33426d43525794.json
+exit=1

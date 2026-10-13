@@ -186,8 +186,12 @@ final personalRadarProvider =
 });
 
 /// Horas en cama anotadas la mañana de ese día (`YYYY-MM-DD`).
-final sleepDayProvider = StreamProvider.family((ref, String day) =>
-    ref.watch(sleepRepositoryProvider).watchDay(parseDay(day)));
+final sleepDayProvider =
+    StreamProvider.family((ref, String day) => ref.watch(sleepRepositoryProvider).watchDay(parseDay(day)));
+
+/// La noche con inicio, despertar, procedencia y nota (plan 040).
+final sleepDetailProvider =
+    StreamProvider.family((ref, String day) => ref.watch(sleepRepositoryProvider).watchDetail(parseDay(day)));
 final healthConnectProvider = Provider((ref) => const HealthConnect());
 final stepsSyncProvider = Provider((ref) => StepsSync(
       health: ref.watch(healthConnectProvider),

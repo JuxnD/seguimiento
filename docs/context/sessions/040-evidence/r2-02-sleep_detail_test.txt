@@ -1,0 +1,10 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/data/sleep_detail_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: noche completa: se relee igual y las horas siguen para los demás
+00:00 +1: una noche de antes sólo tiene horas: lo demás queda sin dato
+00:00 +2: los botones de horas: mismas horas no tocan nada; otras borran los tiempos y conservan la nota
+00:00 +3: datos imposibles se rechazan sin escribir
+00:00 +4: (tearDownAll)
+00:00 +4: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T175018633-53840-a9a532bdbcbe4207b208115ab4d11fda.json
+exit=0

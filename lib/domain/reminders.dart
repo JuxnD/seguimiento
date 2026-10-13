@@ -420,11 +420,16 @@ class CustomReminder {
     required this.startDate,
     this.lastDone,
     this.enabled = true,
+    this.origin,
   });
 
   final int id;
   final String title;
   final String? note;
+
+  /// De dónde salió (plan 040): `usuario`, `plan` o `ia`. null = de antes
+  /// de registrarlo: no se sabe y no se atribuye a nadie.
+  final String? origin;
   final int intervalDays;
   final int hour;
   final int minute;
@@ -451,4 +456,16 @@ class CustomReminder {
       };
 
   String get timeLabel => timeKey(hour, minute);
+
+  /// "Creado por ti", "Del plan", "Sugerido por la IA" u "Origen sin
+  /// registrar" (los de antes, o un valor que esta versión no conoce).
+  String get originLabel => switch (origin) {
+        customReminderByUser => 'Creado por ti',
+        'plan' => 'Del plan',
+        'ia' => 'Sugerido por la IA',
+        _ => 'Origen sin registrar',
+      };
 }
+
+/// Origen de lo que se crea desde el formulario de Ajustes.
+const customReminderByUser = 'usuario';

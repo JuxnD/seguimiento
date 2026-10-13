@@ -1,0 +1,21 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/data/readiness_repository_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: el fin de semana de tres partidos da amarillo; lo importado, la movilidad y el test no suman
+00:00 +1: rodilla en escaleras sin registro de la mañana: sin dato
+00:00 +2: rodilla en escaleras responder dolor y enfermo no vale como 0 en escaleras
+00:00 +3: rodilla en escaleras rodilla 3 anotada: amarillo y sin hueco de escaleras
+00:00 +4: rodilla en escaleras rodilla 5 es rojo; enfermo también
+00:00 +5: base del pulso: solo lecturas anteriores a hoy, las 14 más recientes
+00:00 +6: responder dolor y enfermo no borra el pulso; borrar todo quita la fila
+00:00 +7: "Entrenar igual" guarda fecha y razones; la aceptación es la sesión guardada
+00:00 +8: tests movidos se mueve conservando plan, ronda y parte; máximo 2 veces
+00:00 +9: tests movidos no se mueve desde una fecha que no le toca ni se repite el mismo movimiento
+00:00 +10: tests movidos los movimientos de un plan no tocan otro plan con la misma ronda y parte
+00:00 +11: rutinas del día y racha de movilidad
+00:00 +12: aviso de la noche con la carga de ayer y hoy
+00:00 +13: semana del informe: propuestos, aceptados y entrenó igual
+00:00 +14: racha de constancia la recuperación activa mantiene la racha; Activa y Suelta no
+00:00 +15: (tearDownAll)
+00:00 +15: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T174739623-19380-abb8d277f57e4886b9ded00f572cd617.json
+exit=0

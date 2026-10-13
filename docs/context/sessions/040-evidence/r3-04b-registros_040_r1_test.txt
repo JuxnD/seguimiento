@@ -1,0 +1,11 @@
+﻿00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/ui/registros_040_r1_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: cambiar la fecha rápido: la respuesta vieja no se ofrece como del día nuevo
+00:04 +1: confirmar comparables y luego cambiar un peso: la cifra se va hasta confirmar otra vez
+00:07 +2: editar un partido confirmado conserva su confirmación mientras no cambien los pesajes
+00:08 +3: el texto de comparables no prohíbe el agua que la fórmula descuenta
+00:09 +4: noche de 0 h de antes: editar sólo la nota la conserva
+00:11 +5: (tearDownAll)
+00:11 +5: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T180158542-4608-984db324d3a0498c894b2a9a0e33fc1c.json
+exit=0
