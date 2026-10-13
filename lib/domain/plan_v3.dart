@@ -188,6 +188,7 @@ DateTime? v31NextMeasurement(DateTime start, DateTime today) {
 class V3Day {
   const V3Day({
     this.scheme = v3Scheme,
+    this.blockStart,
     required this.week,
     required this.phase,
     required this.reducedVolume,
@@ -198,6 +199,7 @@ class V3Day {
   });
 
   final String scheme;
+  final DateTime? blockStart;
   final int week;
   final V3Phase phase;
   final bool reducedVolume;
@@ -237,7 +239,7 @@ class V3Day {
 
   /// Nota que va a la sesión cuando el volumen baja.
   String get deloadNote => isV31
-      ? 'Semana $week del v3.1: descarga (mitad de series, sin lastre extra)'
+      ? 'Semana $week del $scheme: descarga (mitad de series, sin lastre extra)'
       : phase == V3Phase.descarga
           ? 'Semana $week del v3: descarga (una serie menos, sin lastre)'
           : 'Semana $week del v3: volumen −30 % antes del test';
@@ -258,6 +260,7 @@ V3Day? v3Day(DateTime start, DateTime date,
             : null;
     return V3Day(
       scheme: scheme,
+      blockStart: dateOnly(start),
       week: week,
       phase: v31Phase(week),
       reducedVolume: v31ReducedVolume(week),
@@ -267,6 +270,7 @@ V3Day? v3Day(DateTime start, DateTime date,
     );
   }
   return V3Day(
+    blockStart: dateOnly(start),
     week: week,
     phase: v3Phase(week),
     reducedVolume: v3ReducedVolume(week, date.weekday),

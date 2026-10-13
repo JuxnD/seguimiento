@@ -200,14 +200,14 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
       for (final t in _items)
         for (final side in _sides(t))
           if (!(t.id == 'broad_jump' && !_editing && _jumpRestriction != null))
-          if (_value(t, side) case final v?)
-            TestResult(
-              round: widget.round,
-              item: t.id,
-              side: side.isEmpty ? null : side,
-              value: v,
-              clean: !_doubtful.contains(_key(t, side)),
-            ),
+            if (_value(t, side) case final v?)
+              TestResult(
+                round: widget.round,
+                item: t.id,
+                side: side.isEmpty ? null : side,
+                value: v,
+                clean: !_doubtful.contains(_key(t, side)),
+              ),
     ];
     if (results.isEmpty) return;
     setState(() => _saving = true);
@@ -294,7 +294,12 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: dateOnly(clock.now()));
                               if (picked != null && mounted) {
+                                final restriction = await ref
+                                    .read(fitnessTestRepositoryProvider)
+                                    .jumpRestriction(picked);
+                                if (!mounted) return;
                                 setState(() {
+                                  _jumpRestriction = restriction;
                                   _executionDate = picked;
                                   _dateNeedsConfirmation = false;
                                   _dateWasConfirmed = true;
@@ -537,7 +542,9 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
               Expanded(
                 child: TextField(
                   key: ValueKey('test-value-${t.id}-$side'),
-                  enabled: !(t.id == 'broad_jump' && !_editing && _jumpRestriction != null),
+                  enabled: !(t.id == 'broad_jump' &&
+                      !_editing &&
+                      _jumpRestriction != null),
                   controller: _field(t, side),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),

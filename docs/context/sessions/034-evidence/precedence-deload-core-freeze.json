@@ -1,0 +1,66 @@
+[
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\data\\repositories\\fitness_test_repository.dart",
+    "Hash": "C0BF348EC694B03269823F82837FF89D804078BE032DE953FBE1049310EA23FE"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\data\\repositories\\training_repository.dart",
+    "Hash": "CBF44E5824984A1A006A7D747ACC456F265B4F313E8C99E303CCA1892C608465"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\data\\repositories\\ladder_repository.dart",
+    "Hash": "2CF2276D25178726122CA316199F8BFA8B3B1EF1A69951E14F103EA6810146D7"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\data\\repositories\\plan_repository.dart",
+    "Hash": "95C07ECF6EBD564ABF5CD5F40CD67729356A40C9A345FDB560E762E773A0D152"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\features\\training\\test_mode_screen.dart",
+    "Hash": "BDB9FD0159892B1FB63C11C6D8E9FCD801FC5B3987EA28BDDDBC8BCC8097BA9D"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\features\\training\\training_screen.dart",
+    "Hash": "BFD4D84B27F9EB732F4CA111FAA7888FFB91A0083BF7C9D759C1D6AA292DBB5C"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\features\\body\\test_results_screen.dart",
+    "Hash": "421A89DB4DFCE5AA651C39F425305A6A4FD5F0701DF4130AAB99D37589BD1ECB"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\domain\\plan_v3.dart",
+    "Hash": "C4099C882EDAED2DBB948E0E576E2B45C8488EEBAB423E51C6520F5FFE7A9EC8"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\domain\\ladder_prescription_proof.dart",
+    "Hash": "422A9B70C9F706357DEE791DE4A137956142CE4C760ECF0E18668D4AE31D09B3"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\lib\\domain\\leg_chain.dart",
+    "Hash": "911E2702FC35C098F40F4A216ECD920C2B7BECCC80D7CA81428ED5728045EB2D"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\data\\plan034_football_precedence_test.dart",
+    "Hash": "6FEB957DB18B1129DB8141CC53B6B6E176FD93C60328E303D793B4E17CE35C5B"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\data\\plan034_jump_gate_test.dart",
+    "Hash": "D63288FA52EE84A2029271BD49E4C782828348EE3164C2773852F4BA4511497D"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\data\\plan034_deload_surface_test.dart",
+    "Hash": "4807225451F2F8E027007EF454123DA8290CB23E1F8FA47FB198795802D0BC14"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\data\\plan034_reverse_initial_test.dart",
+    "Hash": "18C0962AEF0FA3A55A36556DCCC4501CA5750633EC6ACD190B6D458062733CA7"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\data\\plan034_deload_neutral_test.dart",
+    "Hash": "664E1DF74C9FACE191EB7489362DDC2E7D807C22393B97C80FAEE73E866DC1F3"
+  },
+  {
+    "Path": "C:\\My Projects\\seguimiento-034-plan-v32-tests\\test\\ui\\plan034_test_doses_test.dart",
+    "Hash": "75C1728C3D3E0600F9ED80BF2BB068DE62FED8EBC67B0B514924434A1CA089A5"
+  }
+]

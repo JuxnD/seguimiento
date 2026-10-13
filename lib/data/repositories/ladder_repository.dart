@@ -6,11 +6,14 @@ import '../../domain/dates.dart';
 import '../../domain/plan_v3.dart' show v31Scheme;
 import '../../domain/plan_v32.dart';
 import 'fitness_test_repository.dart';
+import 'plan_repository.dart';
+import 'exercise_repository.dart';
 import '../../domain/series_side_proof.dart';
 import '../../domain/ladder_prescription_proof.dart';
 import '../../domain/accessory_quality_proof.dart';
 import '../../domain/daily_routines.dart' show dailyRoutineIds;
 import '../../domain/fitness_test.dart' show recordedTestDate;
+import '../../domain/test_protocol.dart';
 import '../database.dart';
 import '../../domain/adaptive_coach.dart' show ProposalStatus, ladderProposalId;
 import 'goal_repository.dart';
@@ -99,26 +102,14 @@ class LadderRepository {
           ..limit(1))
         .getSingleOrNull();
     var initial = 1;
-    if (ladder.id == 'reverse_plank') {
-      final repo = FitnessTestRepository(db);
-      final attempts = (await repo.attempts())
-          .where(
-              (a) => a.scheme == v32Scheme && a.blockStart == first?.validFrom)
-          .map((a) => a.id)
-          .toSet();
-      final observed = (await repo.all())
-          .where((r) =>
-              attempts.contains(r.attemptId) &&
-              r.item == 'reverse_plank_forearm' &&
-              r.protocolId == 'v32_13' &&
-              r.clean &&
-              r.value.isFinite &&
-              r.value > 0 &&
-              r.date != null &&
-              !r.date!.isAfter(dateOnly(today ?? DateTime.now())))
-          .toList()
-        ..sort((a, b) => b.date!.compareTo(a.date!));
-      if (observed.isNotEmpty && observed.first.value > 90) initial = 2;
+    if (ladder.id == 'reverse_plank' && first != null) {
+      final observed = await FitnessTestRepository(db).latestMeasurement(
+          item: 'reverse_plank_forearm',
+          scheme: v32Scheme,
+          blockStart: parseDay(first.validFrom),
+          protocol: TestProtocolId.v32_13,
+          asOf: dateOnly(today ?? DateTime.now()));
+      if (observed != null && observed.value > 90) initial = 2;
     }
     return LadderState(
       ladder: ladder,
@@ -263,6 +254,7 @@ class LadderRepository {
     final invalidSessions = <int>{};
     final targetSessions = <int>{};
     final prescriptions = <int, ({int sets, int minimum, bool perSide})>{};
+    final deloadCompanions = <int, Map<String, Object?>>{};
     for (final r in rows) {
       final session = r.readTable(db.sessions);
       if (s.ladder.accessory && dailyRoutineIds.contains(session.mode)) {
@@ -307,8 +299,37 @@ class LadderRepository {
           (!step.relaxed || quality?.relaxed == true)) {
         accessoryQualified.add(session.id);
       }
-      final prescription = LadderPrescriptionProof.decode(
-          epochs?[LadderPrescriptionProof.key(s.ladder.id)], s.identity);
+      final rawPrescription = epochs?[LadderPrescriptionProof.key(s.ladder.id)];
+      var prescription =
+          LadderPrescriptionProof.decode(rawPrescription, s.identity);
+      if (prescription == null && date != null && rawPrescription != null) {
+        final plan = await (db.select(db.planVersions)
+              ..where((t) => t.validFrom.isSmallerOrEqualValue(dayKey(date)))
+              ..orderBy([
+                (t) => OrderingTerm.desc(t.validFrom),
+                (t) => OrderingTerm.desc(t.id)
+              ])
+              ..limit(1))
+            .getSingleOrNull();
+        if (plan?.scheme == v32Scheme) {
+          final expected = await _expectedDeload(s, date);
+          if (expected != null) {
+            prescription = LadderPrescriptionProof.decodeDeload(
+                rawPrescription, s.identity,
+                sessionDate: date,
+                blockStart: plan!.validFrom,
+                physicalVariant:
+                    step.physicalVariantKey ?? 'base:${step.exercise}',
+                perSide: step.perSide,
+                expectedSets: expected.sets,
+                expectedMinimum: expected.minimum,
+                expectedCompanions: expected.companions);
+            if (prescription != null) {
+              deloadCompanions[session.id] = expected.companions;
+            }
+          }
+        }
+      }
       if (prescription != null) prescriptions[session.id] = prescription;
       if (epochs?[s.ladder.id] == s.identity ||
           r.readTable(db.exercises).name == step.exercise) {
@@ -360,11 +381,91 @@ class LadderRepository {
               maintenance: !invalidSessions.contains(entry.key) &&
                   (!s.ladder.accessory ||
                       accessoryQualified.contains(entry.key)) &&
+                  _completedDeloadCompanions(deloadCompanions[entry.key],
+                      entry.value.$2, sideBySession[entry.key]) &&
+                  (step.rir == null ||
+                      !deloadCompanions.containsKey(entry.key) ||
+                      (rirBySession[entry.key]?[step.exercise]
+                              ?.every((r) => r != null && r <= step.rir!) ==
+                          true)) &&
                   _completedMaintenance(
                       prescriptions[entry.key],
                       entry.value.$2[step.exercise],
                       sideBySession[entry.key]?[step.exercise])),
     ];
+  }
+
+  /// Deriva la dosis esperada del plan persistido + peldaño compartido;
+  /// un tag con una dosis arbitrariamente menor no neutraliza un fallo.
+  Future<({int sets, int minimum, Map<String, Object?> companions})?>
+      _expectedDeload(LadderState s, DateTime date) async {
+    final view = await PlanRepository(db, ExerciseRepository(db)).dayFor(date);
+    if (view == null || view.scheme != v32Scheme) return null;
+    final step = s.current, id = s.ladder.id;
+    int? sets, minimum;
+    if (s.ladder.accessory) {
+      final base =
+          view.day.exercises.where((e) => e.name == step.exercise).firstOrNull;
+      if (id == 'support_hold') {
+        if (![DateTime.tuesday, DateTime.thursday].contains(date.weekday)) {
+          return null;
+        }
+        sets = date.weekday == DateTime.thursday ? 2 : 3;
+        minimum = date.weekday == DateTime.thursday ? 30 : 20;
+      } else {
+        if (base == null) return null;
+        sets = id == 'flying_sprint' ? step.sets : base.sets;
+        minimum = base.holdSecMin ?? base.repsMin;
+        if (id == 'copenhagen') minimum = step.step == 1 ? 12 : 5;
+      }
+    } else {
+      if (date.weekday != s.ladder.weekday &&
+          !(id == 'reverse_plank' && date.weekday == DateTime.friday)) {
+        return null;
+      }
+      sets = id == 'reverse_plank' && date.weekday == DateTime.friday
+          ? 2
+          : step.sets;
+      minimum = step.holdMin ?? step.repsMin;
+      if (id == 'reverse_plank' && step.step == 1 && view.validFrom != null) {
+        final observed = await FitnessTestRepository(db).latestMeasurement(
+            item: 'reverse_plank_forearm',
+            scheme: v32Scheme,
+            blockStart: view.validFrom!,
+            protocol: TestProtocolId.v32_13,
+            asOf: date);
+        if (observed != null && observed.value > 0 && observed.value <= 90) {
+          minimum = (observed.value * .5).round();
+        }
+      }
+    }
+    if (sets == null || minimum == null || minimum < 1) return null;
+    return (
+      sets: (sets + 1) ~/ 2,
+      minimum: minimum,
+      companions: {
+        for (final goal in step.goals.where((g) => g.exercise != step.exercise))
+          goal.exercise: {
+            'sets': (goal.sets + 1) ~/ 2,
+            'minimum': goal.value,
+            'perSide': goal.perSide
+          }
+      }
+    );
+  }
+
+  bool _completedDeloadCompanions(Map<String, Object?>? companions,
+      Map<String, List<int>> values, Map<String, List<String?>>? sides) {
+    if (companions == null) return true; // maintenance/v1 stays unchanged.
+    for (final entry in companions.entries) {
+      final dose = (entry.value! as Map).cast<String, Object?>();
+      if (!_completedMaintenance((
+        sets: dose['sets']! as int,
+        minimum: dose['minimum']! as int,
+        perSide: dose['perSide']! as bool
+      ), values[entry.key], sides?[entry.key])) return false;
+    }
+    return true;
   }
 
   bool _completedMaintenance(({int sets, int minimum, bool perSide})? p,

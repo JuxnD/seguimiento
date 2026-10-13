@@ -218,6 +218,7 @@ PlanDayDraft deloadVersion(PlanDayDraft day, {bool half = false}) =>
       targetRounds: day.targetRounds,
       restBetweenRoundsSec: day.restBetweenRoundsSec,
       notes: day.notes,
+      coreEpochs: day.coreEpochs,
       exercises: [
         for (final e in day.exercises)
           if (e.sets == null || (day.type.isCircuit && e.block == null))

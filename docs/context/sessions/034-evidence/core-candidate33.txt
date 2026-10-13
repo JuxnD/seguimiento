@@ -1,0 +1,79 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: true, imported: false, minutes: 60, rpe: 7, stairs: 0)
+00:00 +1: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: true, imported: false, minutes: 45, rpe: 6, stairs: 2)
+00:00 +2: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 20, rpe: 9, stairs: 0)
+00:00 +3: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 60, rpe: 5, stairs: 0)
+00:00 +4: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: true, minutes: 60, rpe: 9, stairs: 0)
+00:00 +5: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: Wednesday exception uses shared intensity and known stairs (eighty: false, imported: false, minutes: 60, rpe: 9, stairs: null)
+00:00 +6: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: stairs 3 suppress acceleration and explains postponement
+00:00 +7: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: stairs 4 suppress acceleration and explains postponement
+00:00 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_football_precedence_test.dart: (tearDownAll)
+00:00 +8: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart
+00:01 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: (setUpAll)
+00:01 +8: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: false, ill: false, stairs: 0)
+00:01 +9: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: false, ill: false, stairs: 2)
+00:01 +10: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: false, ill: false, stairs: null)
+00:01 +11: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 3)
+00:01 +12: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 4)
+00:01 +13: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: false, stairs: 5)
+00:01 +14: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: real new jump respects stairs/rest and never manufactures result (blocked: true, ill: true, stairs: 0)
+00:01 +15: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_jump_gate_test.dart: (tearDownAll)
+00:01 +15: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart
+00:02 +15: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: (setUpAll)
+00:02 +15: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: v32 week5 weekday4 composes then reduces exactly once across Home and frozen timer
+00:03 +16: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: v32 week5 weekday5 composes then reduces exactly once across Home and frozen timer
+00:03 +17: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: v32 week6 weekday4 composes then reduces exactly once across Home and frozen timer
+00:03 +18: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: v32 week6 weekday5 composes then reduces exactly once across Home and frozen timer
+00:03 +19: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: v32 week7 weekday4 composes then reduces exactly once across Home and frozen timer
+00:03 +20: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: v32 week7 weekday5 composes then reduces exactly once across Home and frozen timer
+00:03 +21: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_surface_test.dart: (tearDownAll)
+00:03 +21: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_reverse_initial_test.dart
+00:04 +21: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_reverse_initial_test.dart: (setUpAll)
+00:04 +21: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_reverse_initial_test.dart: reverse initialization requires known attempt conditions (expected: 1, known: false, value: 100.0)
+00:04 +22: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_reverse_initial_test.dart: reverse initialization requires known attempt conditions (expected: 2, known: true, value: 100.0)
+00:04 +23: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_reverse_initial_test.dart: reverse initialization requires known attempt conditions (expected: 1, known: true, value: 80.0)
+00:05 +24: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_reverse_initial_test.dart: reverse initialization requires known attempt conditions (expected: 1, known: true, value: 0.0)
+00:05 +25: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_reverse_initial_test.dart: (tearDownAll)
+00:05 +25: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart
+00:05 +25: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: (setUpAll)
+00:05 +25: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; complete cannot hide failure
+00:06 +26: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; partial cannot hide failure
+00:06 +27: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; unknown cannot hide failure
+00:06 +28: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; wrongEpoch cannot hide failure
+00:06 +29: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; forgedDose cannot hide failure
+00:06 +30: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: declared complete deload neutral; bad cannot hide failure
+00:06 +31: C:/My Projects/seguimiento-034-plan-v32-tests/test/data/plan034_deload_neutral_test.dart: (tearDownAll)
+00:06 +31: loading C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_test_doses_test.dart
+00:11 +31: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_test_doses_test.dart: public dose never uses unknown legacy conditions
+00:11 +32: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_test_doses_test.dart: public dose labels the single known attempt and reverse maximum
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing Dominadas: Tope del
+rango: 3–4 reps: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_test_doses_test.dart:43:7)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_test_doses_test.dart:22:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_test_doses_test.dart line 43
+The test description was:
+  public dose labels the single known attempt and reverse maximum
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:11 +32 -1: C:/My Projects/seguimiento-034-plan-v32-tests/test/ui/plan034_test_doses_test.dart: public dose labels the single known attempt and reverse maximum [E]
+  Test failed. See exception logs above.
+  The test description was: public dose labels the single known attempt and reverse maximum
+  
+00:11 +32 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T213951845-28700-7f888d68c0c54cc9a52b39a632d7aeed.json

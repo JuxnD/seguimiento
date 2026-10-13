@@ -5,6 +5,7 @@ import '../../domain/enums.dart';
 import '../../domain/readiness.dart';
 import 'readiness_repository.dart';
 import '../../domain/fitness_test.dart';
+import '../../domain/test_attempt_evidence.dart';
 import '../../domain/test_protocol.dart';
 import '../../domain/plan_v3.dart' show v31Scheme;
 import '../database.dart';
@@ -115,6 +116,33 @@ class FitnessTestRepository {
       (db.select(db.fitnessTestAttempts)
             ..orderBy([(t) => OrderingTerm.desc(t.id)]))
           .get();
+
+  /// El último intento del ítem en este bloque/protocolo, incluso si su
+  /// evidencia es desconocida. No se salta un último dato malo para subir.
+  Future<TestAttemptEvidence?> latestMeasurement(
+      {required String item,
+      required String scheme,
+      required DateTime blockStart,
+      required TestProtocolId protocol,
+      required DateTime asOf}) async {
+    final results = await all();
+    final headers = (await attempts())
+        .where((a) =>
+            a.scheme == scheme &&
+            a.blockStart == dayKey(blockStart) &&
+            a.protocolId == protocol.name &&
+            recordedTestDate(a.date) != null &&
+            !recordedTestDate(a.date)!.isAfter(dateOnly(asOf)) &&
+            results.any((r) => r.attemptId == a.id && r.item == item))
+        .toList()
+      ..sort((a, b) {
+        final date = a.date.compareTo(b.date);
+        return date == 0 ? a.id.compareTo(b.id) : date;
+      });
+    return headers.isEmpty
+        ? null
+        : observedAttemptValue(results, headers.last.id, item, asOf: asOf);
+  }
 
   /// La ausencia de escaleras no se convierte en cero. El aviso de
   /// descanso mantiene su fuente propia y domina cualquier entrada de test.

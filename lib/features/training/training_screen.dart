@@ -100,7 +100,9 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref,
   // §19.4). El viernes del v3.1 pasa a Cindy o Tabata tras 10 limpias.
   final v3 = await ref.read(trainingRepositoryProvider).blockDay(view, day);
   if (!context.mounted) return;
-  final (deloaded, note) = _v3Adjust(planDay, v3);
+  final (deloaded, note) = v3?.isV32 == true
+      ? (planDay, v3!.reducedVolume ? v3.deloadNote : null)
+      : _v3Adjust(planDay, v3);
   final adjusted = await ref.read(trainingRepositoryProvider).withV31Blocks(
       deloaded, day, v3,
       planche:

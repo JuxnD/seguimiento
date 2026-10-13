@@ -1,0 +1,11 @@
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\lib\data\repositories\fitness_test_repository.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\lib\data\repositories\training_repository.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\lib\data\repositories\ladder_repository.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\lib\features\training\test_mode_screen.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\lib\domain\ladder_prescription_proof.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\test\data\plan034_deload_surface_test.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\test\data\plan034_reverse_initial_test.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\test\data\plan034_deload_neutral_test.dart
+Formatted C:\My Projects\seguimiento-034-plan-v32-tests\test\ui\plan034_test_doses_test.dart
+Formatted 15 files (9 changed) in 0.80 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T212934664-50224-b62ebae86e964080a1dd5a1e2e0a3e0e.json

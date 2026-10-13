@@ -1,0 +1,3 @@
+Analyzing plan034_test_doses_test.dart...                       
+No issues found! (ran in 4.4s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T214611842-69648-018310e333cb42dabca4221a7f88599f.json

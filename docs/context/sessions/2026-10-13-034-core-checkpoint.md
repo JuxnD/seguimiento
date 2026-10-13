@@ -1,0 +1,12 @@
+# 034 núcleo — checkpoint probado, NO cierre de034
+
+Baseb2d4 conserva dosisSIN FIX para reproducción. Nuevo núcleo de H2/H3, inicializaciónreverse, descarga de todaslas seriesdespuésdecomponer y dosis públicasporintento conocido:31SQLterminalPASS receipt213951845, másUI2terminalPASS214557493 y analyzelib+6sinincidencias213925855/analyzeUI214611842. UI2 nombreincorrecto inicialautorefutado: rawseconserva; baselinecanónico corregido0PASS/2FAIL214540944 con controlpositivo previo del finder (unknownemitedose eID/protocoloausentes), mismo fixturepostformat enambosWT. BaselineSQL causal4reds212917151; H2/H3causal11reds210511656. No skip ni full.
+
+Schema25/inputs/generated/lock se conservaron. leg_chainexact039blob0ea90218efc165fa293240fd76048c72ffc4fa4d. Test/docs044 aprobado8a1d importado despuésliberarSDK, b15c26e71ab32ed43dad867fccd85204d8a743d8 idéntico, sin fuente app. Su3UI todavía debe pasar en fuente034 final.
+
+Pendientes detectadosantesR1: companionHollow30–40prescrito no igualcriterio40 (validar neutralcontra dosis, no criterio), tagdeloadcorrupto con3seriesbuenas no debe dar falsoéxito, clamp de dosis máxima subsegundo/último dato desconocido, colgadoTuesdaymáx−10concondiciones, todos propósitosdinámicos, alertarodilla3días enHoy, activación3.2conpreviewsemana/inicialvacía, semanadosis literal19.13+19.16. Migracioneshelperactual25requierestrip25completo y destinosdeclarados25 para cápsulas18/19/20, genuine24/ZIP/029linkedunlinked. No hacerPRAGMA24sobretabla25 para llamarla genuina.
+
+045actorproducto implementa sólo v3_timers.dart/active_session.dart/profile/tests enWTaislado b2d4: TimerProfile.running1515,2×16×15work/15rest finales incluidos=960s, between0, sinpeor-reps Tabata. Camposoptional snapshotprofile/workSec/restSec/intervals/betweenBlocksSec/includeFinalRest/footballFreeConfirmed. CallerTrainingScreen034exclusivo opt-infútbol/semana>=5Tuesday/rodilla/restOnly yrestoreparamsexactos. Sólo integrarSHAFINAL45aprobado. 043lectoresreservados aClaude; rootreprodujo collision6identidades→5, correcciónpendiente; noWIPcopiado.
+
+Contexto de autorización: mantener los bloques de cuádriceps correcto§19.16: paredlun4/jue3, abducciónlun/jue,nórdicoinversolun,stepdownjue. La hipótesis dequitarlospornofigurar19.13fueautorrefutada leyendoadición19.16. Rutinasfijas18IDs acordadas032sepreservan; faseCARs/mes2 noactivada automáticamente (ownerensegundoplano/111figuras035aprobadas).
+

@@ -328,15 +328,16 @@ class TestDoses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final lines = [
-      for (final t in allTests)
-        if (latestEligibleTestRound(results, t.id, asOf: clock.now())
-            case final round?)
-          if (eligibleTestValue(results, round, t.id, asOf: clock.now())
-              case final v?)
-            if (initialDose(t, v) case final dose?)
-              '${t.name}: $dose${t.perSide ? ' por lado' : ''} (T$round)',
-    ];
+    final lines = <String>[];
+    for (final t in [...allTests, reversePlankTest]) {
+      final measurements = eligibleAttempts(results, t.id, asOf: clock.now());
+      if (measurements.isEmpty) continue;
+      final latest = measurements.last;
+      final dose = initialDose(t, latest.value);
+      if (dose == null) continue;
+      lines.add('${t.name}: $dose${t.perSide ? ' por lado' : ''} '
+          '(intento${latest.attemptId}, ${dayKey(latest.date)}, ${latest.protocol}; condiciones conocidas)');
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -345,7 +346,7 @@ class TestDoses extends StatelessWidget {
             style: text.bodySmall),
         const SizedBox(height: 6),
         const Text(
-            'Sólo resultados completos y limpios con fecha registrada. Los parciales o con dudas siguen visibles; no aumentan la dosis.'),
+            'Sólo intentos completos y limpios con fecha y condiciones conocidas. Cada dosis identifica su intento y protocolo; desconocidos y parciales siguen visibles sin aumentar la dosis.'),
         for (final l in lines) Text('• $l', style: text.bodyMedium),
       ],
     );

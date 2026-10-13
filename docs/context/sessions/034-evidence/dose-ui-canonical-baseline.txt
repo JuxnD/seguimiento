@@ -1,0 +1,67 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-core-baseline/test/ui/plan034_test_doses_test.dart
+00:00 +0: public dose never uses unknown legacy conditions
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TextContainingWidgetFinder:<Found 1 widget with text containing Dominadas pronas
+estrictas:: [
+            Text("• Dominadas pronas estrictas: Tope del rango: 3–4 reps (T1)", debugLabel:
+(englishLike bodyMedium 2021).merge((blackMountainView bodyMedium).apply), inherit: false, color:
+Color(0xff1d1b20), family: Roboto, size: 14.0, weight: 400, letterSpacing: 0.3, baseline:
+alphabetic, height: 1.4x, leadingDistribution: even, decoration: Color(0xff1d1b20)
+TextDecoration.none, dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-core-baseline/test/ui/plan034_test_doses_test.dart:31:7)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-core-baseline/test/ui/plan034_test_doses_test.dart:10:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-034-core-baseline/test/ui/plan034_test_doses_test.dart line 31
+The test description was:
+  public dose never uses unknown legacy conditions
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: public dose never uses unknown legacy conditions [E]
+  Test failed. See exception logs above.
+  The test description was: public dose never uses unknown legacy conditions
+  
+00:00 +0 -1: public dose labels the single known attempt and reverse maximum
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly 2 matching candidates
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing intento17, 2030-02-04,
+v32_13: []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-core-baseline/test/ui/plan034_test_doses_test.dart:61:7)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-core-baseline/test/ui/plan034_test_doses_test.dart:36:5)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-034-core-baseline/test/ui/plan034_test_doses_test.dart line 61
+The test description was:
+  public dose labels the single known attempt and reverse maximum
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: public dose labels the single known attempt and reverse maximum [E]
+  Test failed. See exception logs above.
+  The test description was: public dose labels the single known attempt and reverse maximum
+  
+00:00 +0 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T214540944-31716-1716b052e9f94da488aa3eee694066d1.json

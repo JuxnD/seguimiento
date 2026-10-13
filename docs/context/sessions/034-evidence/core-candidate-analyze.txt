@@ -1,0 +1,9 @@
+Analyzing 7 items...                                            
+
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\ladder_repository.dart:328:15 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\ladder_repository.dart:410:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\ladder_repository.dart:422:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\data\repositories\ladder_repository.dart:435:11 - curly_braces_in_flow_control_structures
+
+4 issues found. (ran in 13.6s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T213002343-47912-13bed1d4907944ed841580d7a0a1cfea.json

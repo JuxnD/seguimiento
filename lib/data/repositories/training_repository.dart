@@ -19,6 +19,8 @@ import 'exercise_repository.dart';
 import 'ladder_repository.dart';
 import 'plan_repository.dart';
 import 'readiness_repository.dart';
+import 'fitness_test_repository.dart';
+import '../../domain/test_protocol.dart';
 import '../../domain/readiness.dart';
 import '../../domain/series_side_proof.dart';
 import '../../domain/ladder_prescription_proof.dart';
@@ -868,7 +870,7 @@ class TrainingRepository {
           ]
         : plancheBlock(
             weekday: date.weekday,
-            deload: v3.reducedVolume,
+            deload: v3.reducedVolume && !v3.isV32,
             tuckReady: await plancheTuckReady(date),
           );
     if (block.isEmpty) return day;
@@ -889,6 +891,7 @@ class TrainingRepository {
       restBetweenRoundsSec: day.restBetweenRoundsSec,
       notes: day.notes,
       exercises: [...block, ...day.exercises],
+      coreEpochs: day.coreEpochs,
     );
   }
 
@@ -904,7 +907,7 @@ class TrainingRepository {
     if (ladder == null) return day;
     final state = await LadderRepository(db).state(ladder, today: date);
     final step = state.current;
-    final sets = v3.reducedVolume ? 2 : step.sets;
+    final sets = v3.reducedVolume && !v3.isV32 ? 2 : step.sets;
     final block = [
       PlanExerciseDraft(
         name: step.exercise,
@@ -1002,6 +1005,22 @@ class TrainingRepository {
       final state =
           await LadderRepository(db).state(reversePlankLadder, today: date);
       final step = state.current;
+      final maximum = v3.blockStart == null
+          ? null
+          : await FitnessTestRepository(db).latestMeasurement(
+              item: 'reverse_plank_forearm',
+              scheme: v32Scheme,
+              blockStart: v3.blockStart!,
+              protocol: TestProtocolId.v32_13,
+              asOf: date);
+      final measuredDose = state.step == 1 &&
+          maximum != null &&
+          maximum.value > 0 &&
+          maximum.value <= 90;
+      final holdMin =
+          measuredDose ? (maximum.value * .5).round() : step.holdMin;
+      final holdMax =
+          measuredDose ? (maximum.value * .6).round() : step.holdMax;
       result = PlanDayDraft(
           weekday: result.weekday,
           type: result.type,
@@ -1015,13 +1034,15 @@ class TrainingRepository {
                 sets: date.weekday == DateTime.friday ? 2 : step.sets,
                 repsMin: step.repsMin,
                 repsMax: step.repsMax,
-                holdSecMin: step.holdMin,
-                holdSecMax: step.holdMax,
+                holdSecMin: holdMin,
+                holdSecMax: holdMax,
                 perSide: step.perSide,
                 restSec: step.rest,
                 block: ladderBlock,
                 purpose: 'Cadena posterior y control de cadera.',
-                notes: step.notes)
+                notes: measuredDose
+                    ? '50–60% del máximo registrado: intento${maximum.attemptId}, ${dayKey(maximum.date)}; condiciones conocidas.'
+                    : step.notes)
           ],
           coreEpochs: {
             ...result.coreEpochs,
@@ -1031,7 +1052,7 @@ class TrainingRepository {
                   LadderPrescriptionProof.maintenance(
                       identity: state.identity,
                       sets: 2,
-                      minimum: step.holdMin ?? step.repsMin ?? 1,
+                      minimum: holdMin ?? step.repsMin ?? 1,
                       perSide: step.perSide)
           });
     }
@@ -1078,23 +1099,84 @@ class TrainingRepository {
                   dayKey(addDays(date, -2)), dayKey(addDays(date, -1)))))
             .get()
         : <FootballGameRow>[];
-    final intenseGames = recentGames.where((g) => classifySession(ChainSession(
-        date: parseDay(g.date), isFootball: true, imported: g.imported,
-        rpe: g.intensity, workMinutes: g.minutes))?.intensity == DayIntensity.intense).toList();
+    final intenseGames = recentGames
+        .where((g) =>
+            classifySession(ChainSession(
+                    date: parseDay(g.date),
+                    isFootball: true,
+                    imported: g.imported,
+                    rpe: g.intensity,
+                    workMinutes: g.minutes))
+                ?.intensity ==
+            DayIntensity.intense)
+        .toList();
     if (mode == KneeTrainingMode.noImpact) {
       result.exercises.removeWhere((e) => [
-            'Sprint lanzado', 'Aceleración 10–20 m', 'Salto vertical',
-            'Salto largo', 'Salto de patinador', 'Aterrizaje clavado'
+            'Sprint lanzado',
+            'Aceleración 10–20 m',
+            'Salto vertical',
+            'Salto largo',
+            'Salto de patinador',
+            'Aterrizaje clavado'
           ].contains(e.name));
-      result.notes = '${result.notes ?? ''} · Escaleras ${morning!.kneeStairs}/10: saltos y sprints aplazados; la excepción de fútbol no aplica.';
-    } else if (intenseGames.isNotEmpty && morning?.kneeStairs != null && morning!.kneeStairs! <= 2) {
+      result.notes =
+          '${result.notes ?? ''} · Escaleras ${morning!.kneeStairs}/10: saltos y sprints aplazados; la excepción de fútbol no aplica.';
+    } else if (intenseGames.isNotEmpty &&
+        morning?.kneeStairs != null &&
+        morning!.kneeStairs! <= 2) {
       result.exercises.removeWhere((e) => e.name == 'Sprint lanzado');
-      for (final e in result.exercises.where((e) => e.name == 'Aceleración 10–20 m')) {
-        e.notes = 'Sólo 80% por fútbol intenso del ${intenseGames.map((g) => g.date).join(', ')} (minutos/RPE registrados; criterio compartido). Escaleras ${morning.kneeStairs}/10.';
+      for (final e
+          in result.exercises.where((e) => e.name == 'Aceleración 10–20 m')) {
+        e.notes =
+            'Sólo 80% por fútbol intenso del ${intenseGames.map((g) => g.date).join(', ')} (minutos/RPE registrados; criterio compartido). Escaleras ${morning.kneeStairs}/10.';
       }
     }
     orderV32Exercises(result);
-    return result;
+    if (!v3.reducedVolume) return result;
+    // v3.2 compone primero TODO el día: una única reducción compartida.
+    final reduced = deloadVersion(result, half: true);
+    final metadata = {...reduced.coreEpochs};
+    if (v3.blockStart != null) {
+      for (final ladder in allLadders) {
+        final identity = metadata[ladder.id];
+        final state = await LadderRepository(db).state(ladder, today: date);
+        final exercise = reduced.exercises
+            .where((e) => e.name == state.current.exercise)
+            .firstOrNull;
+        if (identity == null || exercise?.sets == null) continue;
+        metadata[LadderPrescriptionProof.key(ladder.id)] =
+            LadderPrescriptionProof.deload(
+                identity: identity,
+                blockStart: v3.blockStart!,
+                week: v3.week,
+                sets: exercise!.sets!,
+                minimum: exercise.holdSecMin ?? exercise.repsMin ?? 1,
+                perSide: exercise.perSide,
+                physicalVariant:
+                    exercise.physicalVariantKey ?? 'base:${exercise.name}',
+                companionGoals: {
+              for (final goal in state.current.goals
+                  .where((g) => g.exercise != state.current.exercise))
+                if (reduced.exercises
+                        .where((e) => e.name == goal.exercise)
+                        .firstOrNull
+                    case final companion?)
+                  goal.exercise: {
+                    'sets': companion.sets,
+                    'minimum': companion.holdSecMin ?? companion.repsMin,
+                    'perSide': companion.perSide
+                  }
+            });
+      }
+    }
+    return PlanDayDraft(
+        weekday: reduced.weekday,
+        type: reduced.type,
+        targetRounds: reduced.targetRounds,
+        restBetweenRoundsSec: reduced.restBetweenRoundsSec,
+        notes: reduced.notes,
+        exercises: reduced.exercises,
+        coreEpochs: metadata);
   }
 
   /// Sesiones que se guardaron solas al terminar el cronómetro y aún no se
