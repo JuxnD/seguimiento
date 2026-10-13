@@ -1,0 +1,112 @@
+{
+  "status": "QA_FAILED_NOT_FINAL",
+  "source": "94ff48823c5d8a844a8e42c61e98611c7db9b8e9",
+  "reviewed_utc": "2026-10-13T18:39:56.014807+00:00",
+  "sheets": 38,
+  "samples": 364,
+  "clips": {
+    "cat-cow": 264,
+    "short-foot": 136
+  },
+  "fps": 20,
+  "findings": [
+    {
+      "sheets": [
+        3,
+        9,
+        21,
+        24,
+        28,
+        30,
+        32
+      ],
+      "finding": "Foot angle inherited from shin with world pin causes toes below floor."
+    },
+    {
+      "sheets": [
+        29,
+        34
+      ],
+      "finding": "Post-pose reach uses bend+1: seated soleus knees branch backward, appears kneeling."
+    },
+    {
+      "sheets": [
+        14
+      ],
+      "finding": "Near-foot camera still renders full shins and far shoe; cropped anatomy and occluded foot detail."
+    },
+    {
+      "sheets": [
+        17
+      ],
+      "finding": "Elevated ankle supports use floor-plank body line: knees bend during requested straight hold."
+    },
+    {
+      "sheets": [
+        1,
+        32
+      ],
+      "finding": "Some hands pass below ground."
+    },
+    {
+      "sheets": [
+        6
+      ],
+      "finding": "Dorsal bed fixed-hand reach does not ensure fixed elbows; independent oracle pending."
+    },
+    {
+      "sheets": [
+        22
+      ],
+      "finding": "Band drawn in backProps before body is occluded in default view."
+    }
+  ],
+  "files": {
+    "guided-batch1\\01.png": "f63a4e5b069b00028ffc2810ef67692f1bd193addb3454afe696ec9d8fa16888",
+    "guided-batch1\\02.png": "b5c9a4ee32ec439df04fa7f704c042c7c9777d23a5b72d532f1012a2c659fd04",
+    "guided-batch1\\03.png": "948ae9f289f7e5c8f44820846c8cdf3d73d6f5a63ba2fafd13b66a90b02a2a5a",
+    "guided-batch1\\04.png": "2c2330f326b0a2e3d0771bbc1676a6d90ee0f78904a953a95f010a50ee2dc8bb",
+    "guided-batch1\\05.png": "a2fd9298f2713bdbeafb8d52f9275f76302159aff91ac83aea496526efda549b",
+    "guided-batch1\\06.png": "5492f73c4061788951d1633558c15b2a8429d93f116c81a2474065a446331747",
+    "guided-batch1\\07.png": "7e6ad77e00948c61ae54be06b482d37308fe652f473f9f5848240da23bdae42f",
+    "guided-batch1\\08.png": "45b5bbb8ddfd82e99d165a94875f005649935ad4331e937772c7d20d9b417417",
+    "guided-batch1\\09.png": "bf8b81e0cf859677ce7a33ce1864458b6541ab3cde91111ae0593481b1c962ce",
+    "guided-batch1\\10.png": "d1419166e39c5947bd9bd23e874654baf240bf0a4b54ad43d2ea1cbac1dd98eb",
+    "guided-batch1\\11.png": "410da3960750df4324967e8a9763fa8e223bfa1abc6eea615e77666ae2b5e5fd",
+    "guided-batch1\\12.png": "d11770a00d3a93ad8012f1b5fc451c84b03bef8f1c2b8a42a24b867f2efe0f7e",
+    "guided-batch1\\13.png": "0d8ee7d921a5a1b930bb2651e7bd5aab91e1dedc330915feb582f12942f696ac",
+    "guided-batch1\\14.png": "2da7c14873fa92da7b8266712281541b21f22cf487d8a85d79e5996bb351ea7d",
+    "guided-batch1\\15.png": "ed32948a247af4cb30cc9a5a21725ef77f3af9a60ce257eedd6931d2e0651c08",
+    "guided-batch1\\16.png": "14340b49c561989ec49a2b8fa5257db2ef62e993936ae2dc37e0c1bd75bafc27",
+    "guided-batch1\\17.png": "7d845daec3cc13381d8d66e0d99d92160180cc3ce23fce90117204d9ce239be1",
+    "guided-batch1\\18.png": "0101e68976c9b41d010c2bf0058e67c8664d6c15c6a86637441ddb70ac26b0b1",
+    "guided-batch1\\19.png": "7676d54cf09aae96e096d8e7b7333cfe1b784438551a8bbafa16f44ed43a1cd8",
+    "guided-batch1\\20.png": "999034ac648a3d474a20feae7ec09bff2e9d38b2863a133be09ebe1928bce0e1",
+    "guided-batch1\\21.png": "8b41f935d3603ed99367ffb3a7fd244a60dd7cb56c7174dc8c2ad152e2537d70",
+    "guided-batch1\\22.png": "3c082af2d9e9a5b7c8b532e4af6ac0419e00cbf8ba5e26a37cfdeca088ff744d",
+    "guided-batch1\\23.png": "fc4d90eacbfccb372244a5b54d02069ff92b49f87f9f57d357afe7a1b4ad6dca",
+    "guided-batch1\\24.png": "2d4a144aee532245424a8ec6f8c0b8dd0043085a1d4f642f614fcd08a3902ba3",
+    "guided-batch1\\25.png": "7fafc7f693c0ae0ef3d4d6faa6fe5e6e648562c5867bd37c16f3081d6ebe9c52",
+    "guided-batch1\\26.png": "47446133abf7b49c8afc43dbc1bf090ba2a603e50abde89b8418f0ad811dcf66",
+    "guided-batch1\\27.png": "4fb018570f07a7015f6fcd87ab36c4e65d6dedfd8ac8939f1c504dda2b1945a4",
+    "guided-batch1\\28.png": "9e08a88fcaf176c90e9460a58a0bce9dee2e3129113e8bf978b308b1b6a1c5c4",
+    "guided-batch1\\29.png": "9e0eba61747c2d5ef94fcdbceb5e86192031090091bea22a28881fdfae3092a0",
+    "guided-batch1\\30.png": "5abba1d0b64ae6bd4e87f3b7e6ad49a0dcb1bdb1ffc34bea9710967911c343ad",
+    "guided-batch1\\31.png": "de8bc75a027262b5cfaa1699e0f21af4a595bbc1493ebca3c6f0ec09f8bf9621",
+    "guided-batch1\\32.png": "d51f5404909d3b6b73cfcb06f161fba9f6c330575ae6a997d04c370203f2a2d5",
+    "guided-batch1\\33.png": "4492192e73a7b20afe505bb849244284a7cd7bb22bdc48a4b244024ebbd0ada0",
+    "guided-batch1\\34.png": "9c9e1c8d097a9182c6d88930d4afc2f9edb7dff316f49e82f6b5b365d23c555c",
+    "guided-batch1\\35.png": "ce7fb30083de3c19e5277f663f933d49b3a2127220e2aaf719b14296209a474f",
+    "guided-batch1\\36.png": "263f9dddbafe6b70530186fa7cda94f919f93010ce8dd9d9878bf4351171d4f6",
+    "guided-batch1\\37.png": "ad14affb33cb73f8f394aab51b9b6d62d4ef68e8167b11cf9cd9dec0d2edd040",
+    "guided-batch1\\38.png": "313c557638b144a15b45018715e772d0a2a4a8f3025f924ae29fbd939ef26a5f",
+    "guided-batch1\\manifest.json": "33f644249a75f272c6d50cd506f5fc23f2ae4158a6043909b4213bcb5aeef2cc",
+    "guided-batch1\\overview.png": "8d4ffb57b1fc498d11eca586b1d4bb4833ef3a47e1b5c29ad14edf052c09b792",
+    "guided-motion-preview\\cat-cow.gif": "fe1d55e1ce8eca81324a5885c8f0e2d7035bc8a1bad522bc179169d3d4a9a0fe",
+    "guided-motion-preview\\cat-cow.json": "88924ec2eb8731c3b60c8cb69088d59eedc042350b073324ee2ccc3568d0cb5e",
+    "guided-motion-preview\\short-foot.gif": "18a23bfc237cc1bbadd3e5d8506b44b7abc4ca903f3bec76978ed7a5430d65aa",
+    "guided-motion-preview\\short-foot.json": "9f5392e88168e6fb465e27c39b6182d939952846dbfa7578e2536f144bb750b6",
+    "fifa-caption-final\\1.png": "eee29e4243ae5c1da07babcbab1ca4f735b26462b35a43abb20a758bfd68dce8",
+    "fifa-caption-final\\catalog.txt": "aa9425986eee706abedbda382d996c5ea2249d02943672f1e3dc6ee2e64d795b"
+  }
+}
