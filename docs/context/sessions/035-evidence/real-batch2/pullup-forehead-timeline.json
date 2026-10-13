@@ -1,0 +1,182 @@
+[
+  {
+    "frame": 34,
+    "timestampSeconds": 1.7,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 1.7,
+        "timelineSeconds": 1.7,
+        "progress": 0.19256365740740744,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 36,
+    "timestampSeconds": 1.8,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 1.8,
+        "timelineSeconds": 1.8,
+        "progress": 0.25000000000000017,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 38,
+    "timestampSeconds": 1.9,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 1.9,
+        "timelineSeconds": 1.9,
+        "progress": 0.30743634259259256,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 40,
+    "timestampSeconds": 2.0,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 2.0,
+        "timelineSeconds": 2.0,
+        "progress": 0.3553240740740741,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 42,
+    "timestampSeconds": 2.1,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 2.1,
+        "timelineSeconds": 2.1,
+        "progress": 0.39453125,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 46,
+    "timestampSeconds": 2.3,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 2.3,
+        "timelineSeconds": 2.3,
+        "progress": 0.4503761574074074,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 60,
+    "timestampSeconds": 3.0,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 3.0,
+        "timelineSeconds": 3.0,
+        "progress": 0.5,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 86,
+    "timestampSeconds": 4.3,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 4.3,
+        "timelineSeconds": 4.3,
+        "progress": 0.5496238425925926,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 90,
+    "timestampSeconds": 4.5,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 4.5,
+        "timelineSeconds": 4.5,
+        "progress": 0.60546875,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 92,
+    "timestampSeconds": 4.6,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 4.6,
+        "timelineSeconds": 4.6,
+        "progress": 0.6446759259259258,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 94,
+    "timestampSeconds": 4.7,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 4.7,
+        "timelineSeconds": 4.7,
+        "progress": 0.6925636574074077,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  },
+  {
+    "frame": 96,
+    "timestampSeconds": 4.8,
+    "figures": [
+      {
+        "name": "Dominadas",
+        "seconds": 4.8,
+        "timelineSeconds": 4.8,
+        "progress": 0.7500000000000002,
+        "yaw": 35.0,
+        "pitch": 12.0,
+        "pausedAtEnd": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_render_test.dart
+00:00 +0: 035 bounded production renderer contact sheets
+00:02 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T165652456-3904-6e76a31bd1fd4bc585de9d86a649db2e.json

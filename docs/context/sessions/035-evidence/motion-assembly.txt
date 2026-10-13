@@ -1,0 +1,123 @@
+[
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-preview\\1.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "names": [
+      "90/90 de cadera"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 384,
+    "gifFrames": 384,
+    "durationMs": 19200,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "fa43e2a99a6f77e9eb43ebce73af557fd790c4f8998144383784675f4214cd04",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-preview\\2.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "names": [
+      "Burpees"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 336,
+    "gifFrames": 336,
+    "durationMs": 16800,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "801301e467ba8476ec00e0685b9ccc7b203bda8e13a65b77a27edb9a75a572d4",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-preview\\3.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "names": [
+      "Barca / V-sit",
+      "V-up"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 252,
+    "gifFrames": 217,
+    "durationMs": 12600,
+    "size": [
+      640,
+      360
+    ],
+    "sha256": "2f52cdea0630a63b993fcd5dc6d3b0921900f286a679b7c4263ddd653288e03e",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-preview\\4.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "names": [
+      "Dragon flag",
+      "Vela"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 192,
+    "gifFrames": 192,
+    "durationMs": 9600,
+    "size": [
+      640,
+      360
+    ],
+    "sha256": "b00cf0eff3d6486f47bb110c982cc47e5e6d9dd263e9546ed46202656cc48966",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-preview\\5.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "names": [
+      "Dominadas"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 252,
+    "gifFrames": 193,
+    "durationMs": 12600,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "4f34760dd27a3b659c1d1eda303ae39d073d5cd65efbaca382d83be40ab0f82b",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-preview\\6.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "names": [
+      "Aceleración 10–20 m"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 160,
+    "gifFrames": 145,
+    "durationMs": 8000,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "1e6bd553659a7de02ab4597f5d343b0877e901b2fae21a6379eefd3ca8922321",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  },
+  {
+    "file": "C:\\My Projects\\seguimiento-035-ilustraciones\\docs\\context\\sessions\\035-evidence\\motion-preview\\7.gif",
+    "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+    "names": [
+      "Calentamiento tipo FIFA 11+"
+    ],
+    "fpsInput": 20,
+    "pngFrames": 500,
+    "gifFrames": 481,
+    "durationMs": 25000,
+    "size": [
+      320,
+      360
+    ],
+    "sha256": "a6dde8176deeaec720aec4f5a0a975bd9789da942027d95de462adbb54e58905",
+    "assembly": "PNG order unchanged; shared256-color GIF palette/no dither;50ms per input; no redraw/time scaling"
+  }
+]

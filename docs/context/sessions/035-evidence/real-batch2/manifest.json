@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "eef6e067b4a3487247be3d5523acb15bb4af930a",
+  "stills": 265,
+  "clipFrames": 2076,
+  "fps": 20,
+  "pullup72SamplePixelParity": true,
+  "files": {
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\pullup-forehead-timeline.json": "b3678b57017d0a06c2a040bb1746bf926a176ab9eb7195123bf178bcbec58611",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\pullup-forehead-timeline.png": "7669742ac7951b2d0ce8f75c6f7b5e992101ed284abcb114b07458679008e044",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\baseline\\1-geometry.json": "dc6d72ca3743537259a69593af709b2b5f70946a67488def2a721fa5af16decf",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\baseline\\1.png": "8929d28069c5146b66fd3628182002d75dfae9c945555c572a90923514f49d40",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\baseline\\catalog.txt": "533c9d18156c24c0ec2f7caa2b2a8ba683939329dd5b936834cea0fb37a9b6fb",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\1-geometry.json": "dc6d72ca3743537259a69593af709b2b5f70946a67488def2a721fa5af16decf",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\1.png": "8929d28069c5146b66fd3628182002d75dfae9c945555c572a90923514f49d40",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\10.png": "dfdad52afcfe2ab872c967a63dc29894ca5ea49766456c6ff53f5e0d4714906b",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\11.png": "51c7e40194def5d48382d66e41835ac65e0a364a5f9920f91b586043aa1ab65d",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\12.png": "f4f363cf43d64114afed6c34d02baabd72cf19352d5c251312fdac3f6b8448b2",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\13.png": "9f2c9684c1ee7919b0bd224f6a0c399c7248dd2fa6deebe8af4f9e7a4b397204",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\14.png": "53ffaaee874ed4ac0aff57e6e270a6ecb2038054d7d3a6c3bc7749f7855ed698",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\15.png": "819897464cfc0fb26595345fbaec438c0a770ea0d1296a7ee81bc421bbf88218",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\2.png": "516a5d81e38a9d19559d6c56f7eefaa5d709ad9d159e9740c9315f223480f78d",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\3.png": "e18de21023f0beb5e0b3222968b9ce247218fd563d856f49ae6f50e6e61b9399",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\4.png": "28d620b7f9d42e55ff6570a3f924eac0d4588c91043020ca7337239609da1dcc",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\5.png": "af087165dfeb306e7ca58d702e7c2debfb47713a8b0fac6832201b2d0633c0d6",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\6.png": "b10281f6a1b69d15e21a5df14d34b59151de3888e1ab8e768514ea40c2b89734",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\7.png": "4763c7dbdb6421706f26f6dd4a9289e0f8d40819dc09fce76b725f06d8f5790b",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\8.png": "c1ceae2764e00ae8f4f0937135ecd65b370185c803004a94e275ead3c2be7e43",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\9.png": "b40521c3684fb693fddb1ae62c3ce52ff0ba76ddef83fb2a6c86d256327cca87",
+    "docs\\context\\sessions\\035-evidence\\real-batch2\\candidate\\catalog.txt": "30c13cfb23e5e0ef115dfe6eeca13ac7d4dd1c3c48fba4c0265f93f19ce56759"
+  }
+}
