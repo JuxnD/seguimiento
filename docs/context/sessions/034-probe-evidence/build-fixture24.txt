@@ -1,0 +1,6 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-fixture24/test/data/plan034_build_schema24_fixture_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: produce genuine schema24 capsule with synthetic rows using source c47
+00:00 +1: (tearDownAll)
+00:00 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T171902130-53028-27f1b1ab78ee4c5bbaf194a545aa423f.json

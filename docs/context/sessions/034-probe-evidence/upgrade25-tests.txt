@@ -1,0 +1,41 @@
+00:00 +0: loading C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_schema25_test.dart
+00:00 +0: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_schema25_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_schema25_test.dart: schema25 declared target and nullable unknowns, zero remains distinct
+00:00 +1: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_schema25_test.dart: (tearDownAll)
+00:00 +1: loading C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart
+00:01 +1: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart: (setUpAll)
+00:01 +1: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart: genuine24→25 upgrade preserves every original column and row; negative mutation is detected
+00:01 +2: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart: genuineZIP24→25→reopen→second restore preserves original data and local device flags
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      main.<anonymous closure>.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart:65:42)
+#6      DatabaseHost._trialOpen (package:seguimiento/data/database_host.dart:212:18)
+<asynchronous suspension>
+#7      DatabaseHost.validateBackup (package:seguimiento/data/database_host.dart:63:5)
+<asynchronous suspension>
+#8      BackupArchive.prepare (package:seguimiento/data/backup_archive.dart:88:7)
+<asynchronous suspension>
+#9      BackupArchive.restoreFrom (package:seguimiento/data/backup_archive.dart:127:22)
+<asynchronous suspension>
+#10     main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart:67:7)
+<asynchronous suspension>
+#11     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:215:9)
+<asynchronous suspension>
+#12     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:213:7)
+<asynchronous suspension>
+#13     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:258:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:01 +2 -1: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart: genuineZIP24→25→reopen→second restore preserves original data and local device flags [E]
+  El respaldo tiene un alta inválida: Un alta pendiente no puede traer registros personales (plan_versions, plan_days, plan_exercises, sessions, football_games, custom_reminders, sleep_logs, morning_checks, fitness_tests).
+  package:seguimiento/data/database_host.dart 255:7  DatabaseHost.checkComplete
+  
+00:01 +2 -1: C:/My Projects/seguimiento-034-schema25-probe/test/data/plan034_upgrade24_test.dart: (tearDownAll)
+00:01 +2 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T172049849-48936-3a3cccf6795c4dd08ec2def51a78a500.json

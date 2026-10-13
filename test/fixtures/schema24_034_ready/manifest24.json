@@ -1,0 +1,763 @@
+{
+  "source": "c47a94af149dd8b6fcaf6860ccd73c6e6b0233ec",
+  "schema": 24,
+  "tables": {
+    "ai_conversations": {
+      "columns": [
+        "id",
+        "kind",
+        "title",
+        "range_start",
+        "range_end",
+        "model",
+        "contract_version",
+        "sources_json",
+        "sources_hash",
+        "guide_context_json",
+        "guide_context_hash",
+        "created_at"
+      ],
+      "rows": []
+    },
+    "ai_messages": {
+      "columns": [
+        "id",
+        "conversation_id",
+        "role",
+        "message_text",
+        "citations_json",
+        "model",
+        "contract_version",
+        "created_at"
+      ],
+      "rows": []
+    },
+    "body_weights": {
+      "columns": [
+        "id",
+        "date",
+        "kg",
+        "fasted",
+        "moment",
+        "time"
+      ],
+      "rows": []
+    },
+    "catalog_patches": {
+      "columns": [
+        "source_id",
+        "patch_version",
+        "food_id"
+      ],
+      "rows": []
+    },
+    "closed_days": {
+      "columns": [
+        "date"
+      ],
+      "rows": []
+    },
+    "coach_proposals": {
+      "columns": [
+        "id",
+        "kind",
+        "status",
+        "evidence",
+        "created_on",
+        "decided_on",
+        "review_after",
+        "accepted_value",
+        "policy"
+      ],
+      "rows": []
+    },
+    "custom_reminders": {
+      "columns": [
+        "id",
+        "title",
+        "note",
+        "interval_days",
+        "hour",
+        "minute",
+        "start_date",
+        "last_done",
+        "enabled"
+      ],
+      "rows": [
+        [
+          801,
+          "Aviso sintético",
+          "Origen desconocido",
+          7,
+          16,
+          12,
+          "2030-02-04",
+          null,
+          1
+        ]
+      ]
+    },
+    "daily_steps": {
+      "columns": [
+        "date",
+        "steps",
+        "source"
+      ],
+      "rows": []
+    },
+    "exercise_photos": {
+      "columns": [
+        "name_key",
+        "relative_path"
+      ],
+      "rows": []
+    },
+    "exercises": {
+      "columns": [
+        "id",
+        "name",
+        "media_url",
+        "form_cues",
+        "progression_note",
+        "tracks_load",
+        "anchor"
+      ],
+      "rows": [
+        [
+          501,
+          "Ejercicio sintético",
+          null,
+          null,
+          null,
+          0,
+          null
+        ]
+      ]
+    },
+    "fitness_tests": {
+      "columns": [
+        "id",
+        "date",
+        "round",
+        "item",
+        "side",
+        "value",
+        "clean"
+      ],
+      "rows": [
+        [
+          601,
+          "2030-02-04",
+          1,
+          "pullup",
+          null,
+          4.0,
+          1
+        ]
+      ]
+    },
+    "foods": {
+      "columns": [
+        "id",
+        "name",
+        "basis",
+        "unit_label",
+        "kcal",
+        "protein",
+        "carbs",
+        "fat",
+        "default_quantity",
+        "serving_grams",
+        "source",
+        "origin",
+        "favorite",
+        "eggs_per_unit"
+      ],
+      "rows": []
+    },
+    "football_games": {
+      "columns": [
+        "id",
+        "date",
+        "format",
+        "minutes",
+        "steps",
+        "intensity",
+        "fatigue_after",
+        "knock",
+        "notes",
+        "weight_before_kg",
+        "weight_after_kg",
+        "fluid_ml",
+        "imported"
+      ],
+      "rows": [
+        [
+          901,
+          "2030-02-04",
+          5,
+          42,
+          null,
+          6,
+          null,
+          null,
+          null,
+          72.4,
+          72.0,
+          null,
+          0
+        ],
+        [
+          902,
+          "2030-02-04",
+          5,
+          18,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          0,
+          0
+        ]
+      ]
+    },
+    "goal_versions": {
+      "columns": [
+        "id",
+        "metric",
+        "value",
+        "effective_from",
+        "accepted_at",
+        "origin",
+        "reason",
+        "policy"
+      ],
+      "rows": []
+    },
+    "ladder_events": {
+      "columns": [
+        "event_key",
+        "ladder",
+        "date",
+        "step"
+      ],
+      "rows": []
+    },
+    "ladder_states": {
+      "columns": [
+        "ladder",
+        "step",
+        "since",
+        "lumbar_on",
+        "sessions_after",
+        "epoch"
+      ],
+      "rows": []
+    },
+    "meal_items": {
+      "columns": [
+        "id",
+        "meal_id",
+        "food_id",
+        "label",
+        "quantity",
+        "quantity_unit",
+        "kcal",
+        "protein",
+        "carbs",
+        "fat",
+        "source_verified"
+      ],
+      "rows": []
+    },
+    "meal_template_items": {
+      "columns": [
+        "id",
+        "template_id",
+        "food_id",
+        "quantity",
+        "position"
+      ],
+      "rows": []
+    },
+    "meal_templates": {
+      "columns": [
+        "id",
+        "name",
+        "slot",
+        "position"
+      ],
+      "rows": []
+    },
+    "meals": {
+      "columns": [
+        "id",
+        "date",
+        "time",
+        "slot",
+        "notes"
+      ],
+      "rows": []
+    },
+    "measurements": {
+      "columns": [
+        "id",
+        "date",
+        "fasted",
+        "site",
+        "value_cm",
+        "time"
+      ],
+      "rows": []
+    },
+    "morning_checks": {
+      "columns": [
+        "date",
+        "resting_hr",
+        "feeling",
+        "muscle_soreness",
+        "ill"
+      ],
+      "rows": [
+        [
+          "2030-02-04",
+          61,
+          2,
+          0,
+          0
+        ],
+        [
+          "2030-02-05",
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "plan_days": {
+      "columns": [
+        "id",
+        "plan_version_id",
+        "weekday",
+        "type",
+        "target_rounds",
+        "rest_between_rounds_sec",
+        "notes"
+      ],
+      "rows": [
+        [
+          301,
+          401,
+          1,
+          "trenSuperior",
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "plan_exercises": {
+      "columns": [
+        "id",
+        "plan_day_id",
+        "position",
+        "exercise_id",
+        "sets",
+        "reps_min",
+        "reps_max",
+        "rest_sec",
+        "rest_sec_max",
+        "grip",
+        "block",
+        "variant",
+        "hold_sec_min",
+        "hold_sec_max",
+        "per_side",
+        "rir_min",
+        "rir_max",
+        "notes",
+        "superset_group"
+      ],
+      "rows": [
+        [
+          201,
+          301,
+          0,
+          501,
+          3,
+          6,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "A",
+          null,
+          null,
+          0,
+          null,
+          null,
+          "Nota original",
+          null
+        ]
+      ]
+    },
+    "plan_versions": {
+      "columns": [
+        "id",
+        "valid_from",
+        "notes",
+        "scheme"
+      ],
+      "rows": [
+        [
+          401,
+          "2030-02-04",
+          "Versión original",
+          "v3.1"
+        ]
+      ]
+    },
+    "profiles": {
+      "columns": [
+        "id",
+        "birth_date",
+        "height_cm",
+        "start_date",
+        "protein_min",
+        "protein_max",
+        "kcal_target",
+        "kcal_floor",
+        "min_warmup_sec",
+        "measure_interval_days",
+        "measure_interval_max_days",
+        "next_measurement_date",
+        "cooldown_target_sec",
+        "never_to_failure",
+        "length_unit",
+        "steps_target",
+        "kcal_target_football",
+        "profile_origin",
+        "setup_state",
+        "setup_confirmed_at",
+        "handoff_consent_at"
+      ],
+      "rows": [
+        [
+          1,
+          null,
+          null,
+          "2026-10-13",
+          130,
+          160,
+          2400,
+          2000,
+          360,
+          21,
+          28,
+          null,
+          180,
+          1,
+          "cm",
+          5000,
+          null,
+          "legacyUnknown",
+          "ready",
+          null,
+          null
+        ]
+      ]
+    },
+    "progress_photos": {
+      "columns": [
+        "id",
+        "date",
+        "angle",
+        "relative_path",
+        "fasted",
+        "notes"
+      ],
+      "rows": []
+    },
+    "reminders": {
+      "columns": [
+        "kind",
+        "enabled",
+        "hour",
+        "minute",
+        "threshold"
+      ],
+      "rows": [
+        [
+          "sesion",
+          1,
+          15,
+          0,
+          null
+        ],
+        [
+          "sesionSinRegistrar",
+          1,
+          21,
+          0,
+          null
+        ],
+        [
+          "comidaDesayuno",
+          0,
+          8,
+          0,
+          null
+        ],
+        [
+          "comidaMerienda",
+          1,
+          16,
+          30,
+          null
+        ],
+        [
+          "comidaCena",
+          1,
+          20,
+          0,
+          null
+        ],
+        [
+          "proteina",
+          1,
+          20,
+          0,
+          100
+        ],
+        [
+          "medicion",
+          1,
+          7,
+          0,
+          null
+        ],
+        [
+          "descanso",
+          1,
+          null,
+          0,
+          null
+        ],
+        [
+          "calorias",
+          1,
+          20,
+          0,
+          1800
+        ],
+        [
+          "comidasSinRegistrar",
+          1,
+          22,
+          0,
+          null
+        ],
+        [
+          "pasos",
+          1,
+          18,
+          0,
+          4000
+        ],
+        [
+          "recuperacionManana",
+          1,
+          22,
+          0,
+          null
+        ],
+        [
+          "rutinaManana",
+          1,
+          7,
+          15,
+          null
+        ],
+        [
+          "rutinaNoche",
+          1,
+          21,
+          30,
+          null
+        ]
+      ]
+    },
+    "session_rounds": {
+      "columns": [
+        "id",
+        "session_id",
+        "round_index",
+        "elapsed_sec",
+        "work_sec",
+        "rest_sec"
+      ],
+      "rows": []
+    },
+    "session_sets": {
+      "columns": [
+        "id",
+        "session_id",
+        "exercise_id",
+        "set_index",
+        "reps",
+        "split",
+        "split_detail",
+        "to_failure",
+        "load_kg",
+        "variant",
+        "rir"
+      ],
+      "rows": []
+    },
+    "sessions": {
+      "columns": [
+        "id",
+        "date",
+        "start_time",
+        "type",
+        "plan_day_id",
+        "total_sec",
+        "warmup_sec",
+        "cooldown_sec",
+        "rest_sec",
+        "rounds_done",
+        "rounds_estimated",
+        "rpe",
+        "limiting_exercise_id",
+        "context",
+        "notes",
+        "out_of_plan",
+        "incomplete",
+        "planned_rounds",
+        "technique_ok",
+        "full_range",
+        "recovery_ok",
+        "pending_review",
+        "mode",
+        "extra_reps",
+        "imported",
+        "core_epochs"
+      ],
+      "rows": [
+        [
+          701,
+          "2030-02-04",
+          null,
+          "otro",
+          null,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          null,
+          "Test legado · detalle original",
+          null,
+          0,
+          0,
+          null,
+          null,
+          null,
+          null,
+          0,
+          "test",
+          null,
+          0,
+          null
+        ]
+      ]
+    },
+    "skill_achievements": {
+      "columns": [
+        "skill",
+        "date"
+      ],
+      "rows": []
+    },
+    "sleep_logs": {
+      "columns": [
+        "date",
+        "hours"
+      ],
+      "rows": [
+        [
+          "2030-02-04",
+          7.25
+        ],
+        [
+          "2030-02-05",
+          0.0
+        ]
+      ]
+    },
+    "soreness_logs": {
+      "columns": [
+        "date",
+        "zone",
+        "level"
+      ],
+      "rows": []
+    },
+    "sqlite_sequence": {
+      "columns": [
+        "name",
+        "seq"
+      ],
+      "rows": [
+        [
+          "football_games",
+          902
+        ],
+        [
+          "custom_reminders",
+          801
+        ],
+        [
+          "sessions",
+          701
+        ],
+        [
+          "fitness_tests",
+          601
+        ],
+        [
+          "exercises",
+          501
+        ],
+        [
+          "plan_versions",
+          401
+        ],
+        [
+          "plan_days",
+          301
+        ],
+        [
+          "plan_exercises",
+          201
+        ]
+      ]
+    },
+    "week_notes": {
+      "columns": [
+        "week_index",
+        "body"
+      ],
+      "rows": []
+    }
+  },
+  "databaseSha256": "be64f54618c36c22df40fe43910ed3919670849eb15374a6b205d2ecd6ee948c",
+  "zipSha256": "13e644637d6df8242bab03c796e2d7e7240298bc11b630da9c985dad0a14b849"
+}

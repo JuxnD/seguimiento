@@ -1,0 +1,50 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:crypto/crypto.dart';
+import 'package:drift/native.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/data/backup_archive.dart';
+import 'package:seguimiento/data/database.dart';
+import 'package:seguimiento/data/database_host.dart';
+import 'package:seguimiento/data/repositories/reminder_repository.dart';
+import '../support/sqlite_host.dart';
+import '../support/ready_profile.dart';
+
+void main() {
+  setUpAll(useHostSqlite);
+  test('produce genuine schema24 capsule with synthetic rows using source c47', () async {
+    final output = Directory(Platform.environment['PLAN034_FIXTURE_OUT']!);
+    expect(output.existsSync(), false, reason: 'Fresh fixture destination; never overwrite');
+    output.createSync(recursive: true);
+    final docs = Directory('${output.path}/documents')..createSync();
+    final host = DatabaseHost(File('${docs.path}/seguimiento.sqlite'), (f) => AppDatabase(NativeDatabase(f)));
+    final db = host.db;
+    expect(db.schemaVersion, 24);
+    await asExistingUser(db, goals: false);
+    await ReminderRepository(db).ensureDefaults();
+    await db.customStatement("INSERT INTO morning_checks(date,resting_hr,feeling,muscle_soreness,ill) VALUES('2030-02-04',61,2,0,0),('2030-02-05',NULL,NULL,NULL,NULL)");
+    await db.customStatement("INSERT INTO sleep_logs(date,hours) VALUES('2030-02-04',7.25),('2030-02-05',0)");
+    await db.customStatement("INSERT INTO football_games(id,date,minutes,intensity,weight_before_kg,weight_after_kg,fluid_ml) VALUES(901,'2030-02-04',42,6,72.4,72.0,NULL),(902,'2030-02-04',18,NULL,NULL,NULL,0)");
+    await db.customStatement("INSERT INTO custom_reminders(id,title,note,interval_days,hour,minute,start_date) VALUES(801,'Aviso sintético','Origen desconocido',7,16,12,'2030-02-04')");
+    await db.customStatement("INSERT INTO sessions(id,date,type,total_sec,mode,context) VALUES(701,'2030-02-04','otro',0,'test','Test legado · detalle original')");
+    await db.customStatement("INSERT INTO fitness_tests(id,date,round,item,value,clean) VALUES(601,'2030-02-04',1,'pullup',4,1)");
+    await db.customStatement("INSERT INTO exercises(id,name) VALUES(501,'Ejercicio sintético')");
+    await db.customStatement("INSERT INTO plan_versions(id,valid_from,notes,scheme) VALUES(401,'2030-02-04','Versión original','v3.1')");
+    await db.customStatement("INSERT INTO plan_days(id,plan_version_id,weekday,type) VALUES(301,401,1,'trenSuperior')");
+    await db.customStatement("INSERT INTO plan_exercises(id,plan_day_id,position,exercise_id,sets,reps_min,variant,notes) VALUES(201,301,0,501,3,6,'A','Nota original')");
+    final tables = await db.customSelect("SELECT name FROM sqlite_master WHERE type='table' AND (name NOT LIKE 'sqlite_%' OR name='sqlite_sequence') ORDER BY name").get();
+    final manifest = <String, Object?>{'source': 'c47a94af149dd8b6fcaf6860ccd73c6e6b0233ec', 'schema': 24, 'tables': <String, Object?>{}};
+    for (final table in tables) {
+      final name = table.read<String>('name');
+      final columns = (await db.customSelect('PRAGMA table_info("$name")').get()).map((r) => r.read<String>('name')).toList();
+      final rows = (await db.customSelect('SELECT * FROM "$name" ORDER BY rowid').get()).map((r) => [for (final c in columns) r.data[c]]).toList();
+      (manifest['tables'] as Map<String, Object?>)[name] = {'columns': columns, 'rows': rows};
+    }
+    final exported = await BackupArchive(host: host, documents: docs).exportTo('${output.path}/capsule24.zip');
+    await host.db.close();
+    manifest['databaseSha256'] = sha256.convert(File('${docs.path}/seguimiento.sqlite').readAsBytesSync()).toString();
+    manifest['zipSha256'] = sha256.convert(exported.file.readAsBytesSync()).toString();
+    File('${output.path}/manifest24.json').writeAsStringSync(const JsonEncoder.withIndent('  ').convert(manifest));
+    expect(manifest['schema'], 24);
+  });
+}

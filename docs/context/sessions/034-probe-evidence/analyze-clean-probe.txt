@@ -1,0 +1,7 @@
+Analyzing seguimiento-034-schema25-probe...                     
+
+   info - Method invocation or property access on a 'dynamic' target - test\data\plan034_upgrade24_test.dart:20:24 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\data\plan034_upgrade24_test.dart:24:44 - avoid_dynamic_calls
+
+2 issues found. (ran in 18.1s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T172306102-15300-88dd01ad14a0420d925cad7049e7774b.json
