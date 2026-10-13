@@ -526,7 +526,12 @@ void main() {
         final body = liftSkeleton(fig.skeletonAt(i / 40), fig);
         final bounds = prop['type'] == 'guidedThighPack'
             ? guidedThighLoadBounds(body, unilateral: prop['unilateral'] == true)
-            : (center: V3(((prop['center'] as List)[0] as num).toDouble(), ((prop['center'] as List)[1] as num).toDouble(), ((prop['center'] as List)[2] as num).toDouble()), size: V3(((prop['size'] as List)[0] as num).toDouble(), ((prop['size'] as List)[1] as num).toDouble(), ((prop['size'] as List)[2] as num).toDouble()));
+            : (
+                center: V3(((prop['center'] as List)[0] as num).toDouble(),
+                    ((prop['center'] as List)[1] as num).toDouble(), ((prop['center'] as List)[2] as num).toDouble()),
+                size: V3(((prop['size'] as List)[0] as num).toDouble(), ((prop['size'] as List)[1] as num).toDouble(),
+                    ((prop['size'] as List)[2] as num).toDouble())
+              );
         final bottom = bounds.center.y + bounds.size.y / 2;
         final thigh = V3.lerp(body.p['nearHip']!, body.p['nearKnee']!, .65);
         // Renderer thigh radii taper from 2.4 to 1.65; use its physical envelope.

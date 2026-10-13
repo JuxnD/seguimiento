@@ -139,7 +139,7 @@ def generate(name, variant=None):
         a['footArch']=0
         b=cp(a); b.update(caption='Eleva suavemente el arco sin encoger los dedos',footArch=.6)
         return cycle(a,b,contacts=['nearAnkle','farAnkle'],barefoot=True,focus='nearFoot',per_side=True,yaw=0,pitch=0,
-                     annotations=[dict(joint='footArch',text='Arco',corner='tl')])
+                     annotations=[dict(joint='footArch',text='Arco',corner='bl')])
     if name in ('Pike sentado','Pancake'):
         a=pose('Siéntate con piernas rectas y espalda larga',(0,-5),-90,
                limb(0,0,foot=-60),limb(0,0,foot=-60),arm(45,45),arm(45,45))

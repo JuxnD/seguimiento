@@ -1485,8 +1485,7 @@ Map<String, V3> shortFootLandmarks(Body3D body, double activation, {String side 
   final far = V3.lerp(body.p['farHip']!, body.p['farKnee']!, .65);
   final support = unilateral ? near : V3.lerp(near, far, .5);
   const surfaceRadius = 2.4 * .35 + 1.65 * .65;
-  return (center: support + const V3(0, -surfaceRadius - 2.5, 0),
-    size: V3(9, 5, unilateral ? 4.6 : 11.2));
+  return (center: support + const V3(0, -surfaceRadius - 2.5, 0), size: V3(9, 5, unilateral ? 4.6 : 11.2));
 }
 
 V3 spineCenterline(Body3D body, BodyDims dims, double bend, double fraction) =>
@@ -2346,8 +2345,8 @@ class _Scene {
           parts.add(DepthPart(zc(c), () {
             _box(c, [V3(half.x, 0, 0), V3(0, half.y, 0), V3(0, 0, half.z)], _pack.mid);
             // Small front pocket and straps make the load identifiable as a bag.
-            _box(c + V3(half.x + .35, .4, 0),
-                [const V3(.35, 0, 0), const V3(0, 1.4, 0), V3(0, 0, half.z * .7)], _pack.lo);
+            _box(c + V3(half.x + .35, .4, 0), [const V3(.35, 0, 0), const V3(0, 1.4, 0), V3(0, 0, half.z * .7)],
+                _pack.lo);
             for (final sign in [-1.0, 1.0]) {
               _capsule(c + V3(-half.x, -half.y - .12, sign * half.z * .65),
                   c + V3(half.x, -half.y - .12, sign * half.z * .65), .15, .15, _strap, nearOf(c));
