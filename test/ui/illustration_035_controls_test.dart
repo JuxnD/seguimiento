@@ -128,8 +128,11 @@ void main() {
     expect(progress(tester), closeTo(.35, 1e-8));
     await tester.pump(const Duration(seconds: 1));
     expect(progress(tester), closeTo(.35, 1e-8));
-    Figure3DPainter painter() => tester.widgetList<CustomPaint>(find.byType(CustomPaint))
-        .map((widget) => widget.painter).whereType<Figure3DPainter>().single;
+    Figure3DPainter painter() => tester
+        .widgetList<CustomPaint>(find.byType(CustomPaint))
+        .map((widget) => widget.painter)
+        .whereType<Figure3DPainter>()
+        .single;
     final pullup = catalog.forExercise('Dominadas')!;
     expect(painter().yaw, pullup.initialYaw);
     await tapVisible(tester, find.text('De perfil'));

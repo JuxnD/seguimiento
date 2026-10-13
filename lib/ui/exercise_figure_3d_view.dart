@@ -202,7 +202,8 @@ class _FigurePartControls extends StatelessWidget {
 /// Figura de técnica: el maniquí 3D si el ejercicio lo tiene y enseña la
 /// variante que pide la sesión; si no, las figuras planas de siempre.
 class ExerciseFigureView extends ConsumerWidget {
-  const ExerciseFigureView({super.key, required this.exercise, this.grip, this.loaded, this.side, this.physicalVariantKey});
+  const ExerciseFigureView(
+      {super.key, required this.exercise, this.grip, this.loaded, this.side, this.physicalVariantKey});
 
   final String exercise;
 
@@ -225,8 +226,8 @@ class ExerciseFigureView extends ConsumerWidget {
         TextButton(onPressed: () => ref.invalidate(figure3dProvider), child: const Text('Reintentar')),
       ]);
     }
-    final fig = catalog.valueOrNull?.forExercise(exercise,
-        grip: grip, loaded: loaded, side: side, physicalVariantKey: physicalVariantKey);
+    final fig = catalog.valueOrNull
+        ?.forExercise(exercise, grip: grip, loaded: loaded, side: side, physicalVariantKey: physicalVariantKey);
     if (fig == null) {
       return Text(physicalVariantKey == null
           ? 'Este ejercicio todavía no tiene una ilustración. Puedes añadir una foto de referencia.'

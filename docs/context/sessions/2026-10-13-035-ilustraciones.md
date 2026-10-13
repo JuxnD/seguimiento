@@ -221,3 +221,7 @@ Recaptura proporcional pendiente:10hojas authored91keys,6clips1824frames. ClipDo
 ### Recaptura verificada y vista oblicua de Dominadas
 Fuentee46:91keys en10hojas+1824frames de6clips PASS; probe79cámaras conserva69legacy exactas y confirmaDOM252muestras mundo+11pares pixels idénticos. Ensamblaje20fps exit0 en motion-current; clip5 conservaSHAeef6 con recibo de reutilización. Hojas real-camera-fixed; Burpee manos completas inspeccionadas.
 DOM vista real previa14°, no0 (consulta inicial root equivocada, corregida antes actuar). Radios sumados de codos: separación14°=1.76–1.98,35°=4.81–5.22: refuta colisión geométrica y respalda mayor separación visual, no reparaciónIK. Root aprobó sólo cámara inicial14→35, pitch12. Generadorcatalog actualizado y asset regenerado; comparación estructural demuestra78figuras exactas y DOM cambia únicamente view.yaw, sin geometría/grips/timeline. Python11PASS. Control existente ampliado para cambiar perfil y restaurar vista sin perderpose; Dart dirigido aún pendiente nueva ventana. Baseline73/929 intacto.
+
+## Costura física y copy, 13oct17:54 UTC
+598d7d + formato: 11 controles/API y legacy1 pasan; analyze1 conserva16 avoid_dynamic_calls en fixtures (api-analyze.txt). Se tipan únicamente mapas/listas, sin cambiar assertions ni producto; capturador original/evidencia de imágenes no se reescribe. Copia tipada separada camera_comparison_typed_test.dart.txt. Nuevo analyze y2API pendientes. DOM35 ycopyFIFA7 son diferencias de metadata documentadas; los seis clips recapturados y DOM35 reutilizado conservan sus SHA de captura.
+

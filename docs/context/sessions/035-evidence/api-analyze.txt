@@ -1,0 +1,21 @@
+Analyzing seguimiento-035-ilustraciones...                      
+
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:15:79 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:44:21 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:46:25 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:46:25 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:46:25 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:56:27 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:56:27 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - build\qa\035\camera_comparison_test.dart:56:27 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:11:60 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:13:3 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:13:3 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:32:5 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:32:5 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:32:5 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:35:5 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_physical_variant_test.dart:35:39 - avoid_dynamic_calls
+
+16 issues found. (ran in 14.1s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T175336145-27132-647f221154484905be3aa50c326c58e3.json

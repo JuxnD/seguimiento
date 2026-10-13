@@ -601,9 +601,8 @@ class Figure3DCatalog {
       final key = variant['key'] as String;
       final base = catalog._byKey[nameKey(exercise)];
       if (base == null || key.isEmpty) throw const FormatException('Unknown physical variant exercise or key');
-      final figure = variant['useBase'] == true
-          ? base
-          : Figure3D.fromJson(variant['figure'] as Map<String, Object?>, dims);
+      final figure =
+          variant['useBase'] == true ? base : Figure3D.fromJson(variant['figure'] as Map<String, Object?>, dims);
       if (nameKey(figure.name) != nameKey(exercise)) {
         throw const FormatException('Physical variant belongs to a different exercise');
       }
@@ -622,9 +621,8 @@ class Figure3DCatalog {
   final Map<(String, String), Figure3D> _physicalVariants = {};
 
   Figure3D? forExercise(String name, {String? grip, bool? loaded, String? side, String? physicalVariantKey}) {
-    final base = physicalVariantKey == null
-        ? _byKey[nameKey(name)]
-        : _physicalVariants[(nameKey(name), physicalVariantKey)];
+    final base =
+        physicalVariantKey == null ? _byKey[nameKey(name)] : _physicalVariants[(nameKey(name), physicalVariantKey)];
     if (base == null) return null;
     final isPull = nameKey(name) == nameKey('Dominadas');
     final supinated = isPull && grip != null && gripKey(grip) == 'supina';

@@ -1,0 +1,15 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart
+00:00 +0: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: timeline inverse preserves any selected intermediate pose
+00:00 +1: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: inline pause retains the visible intermediate pose
+00:00 +2: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: play starts at selected frame and pause resumes without restarting
+00:01 +3: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: scrolling the inline figure away pauses without losing its pose
+00:01 +4: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: reduced motion stops playback and keeps manual frames available
+00:01 +5: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: covered route ticker mode pauses and requires explicit resume
+00:01 +6: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: changing fullscreen exercise resets playback and retains the requested initial pose
+00:01 +7: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: FIFA parts and playback remain reachable at phone width and large text
+00:02 +8: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_035_controls_test.dart: inline FIFA reduced motion preserves direct part navigation and painter identity
+00:02 +9: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_physical_variant_test.dart
+00:03 +9: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_physical_variant_test.dart: physical variants resolve by exercise and explicit key without substituting a base pose
+00:03 +10: C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_physical_variant_test.dart: the shared view shows the selected physical pose or explicit absence
+00:04 +11: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T175255840-65928-32a8f2cea724447fb2f0a82047675e4f.json
