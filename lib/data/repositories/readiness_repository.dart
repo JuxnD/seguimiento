@@ -43,6 +43,64 @@ class TestMove {
   final List<String> reasons;
 }
 
+/// Si el test de ese día se puede hacer.
+enum TestDayStatus {
+  /// Se hace.
+  ready,
+
+  /// Piernas sin escaleras anotadas ese día: se hace sólo si salen ≤ 2.
+  stairsUnknown,
+
+  /// Piernas con escaleras > 2: ese día no se hace (§19.16).
+  stairsHigh,
+
+  /// El rojo de 032 manda: descanso, sin test.
+  rest,
+}
+
+class TestDayGate {
+  const TestDayGate(this.status, {this.kneeStairs});
+  final TestDayStatus status;
+  final int? kneeStairs;
+
+  /// Lo que se dice de ese día en avisos e informe; null = se hace.
+  String? get label => switch (status) {
+        TestDayStatus.ready => null,
+        TestDayStatus.stairsUnknown =>
+          'sólo si las escaleras salen ≤ 2 al despertar; si no, se mueve',
+        TestDayStatus.stairsHigh =>
+          'escaleras $kneeStairs/10: ese día no se hace el test de piernas',
+        TestDayStatus.rest => 'toca descanso: el test no se hace',
+      };
+}
+
+/// Un test de la agenda efectiva: su identidad, el día previsto y el de ahora.
+class EffectiveTest {
+  const EffectiveTest({
+    required this.key,
+    required this.planned,
+    required this.date,
+    required this.moves,
+    this.gate,
+  });
+
+  final TestScheduleKey key;
+  final DateTime planned;
+  final DateTime date;
+  final int moves;
+
+  /// null cuando se leyó sin mirar el día.
+  final TestDayGate? gate;
+
+  int get round => key.round;
+  TestPart get part => key.part;
+  bool get moved => moves > 0;
+  bool get canMove => moves < maxTestMoves;
+
+  EffectiveTest withGate(TestDayGate gate) => EffectiveTest(
+      key: key, planned: planned, date: date, moves: moves, gate: gate);
+}
+
 /// Recuperación activa propuesta por la carga (§19.17). Una lectura para Hoy,
 /// el aviso de la noche y el informe.
 class ReadinessRepository {
@@ -171,13 +229,21 @@ class ReadinessRepository {
 
   // ---------- Tests movidos ----------
 
-  String _movePrefix(DateTime start, int round, TestPart part) =>
-      '$testMoveProposalKind:${dayKey(dateOnly(start))}:$round:${part.name}:';
+  /// Prefijo de los movimientos de un test. El v3.1 (12 pruebas) usa siempre
+  /// el prefijo de antes, con o sin clave tipada: así sus movimientos viejos y
+  /// los nuevos son una sola historia. Otro protocolo usa su clave completa
+  /// (esquema, inicio, protocolo, ronda y parte) y nunca lee los de antes.
+  String _movePrefix(DateTime start, int round, TestPart part,
+          [TestScheduleKey? key]) =>
+      key == null || key.protocolId == TestProtocolId.v31_12
+          ? '$testMoveProposalKind:${dayKey(dateOnly(key?.blockStart ?? start))}:'
+              '${key?.round ?? round}:${(key?.part ?? part).name}:'
+          : key.prefix;
 
   /// Movimientos de un test de un plan (el v3.1 que empezó `start`), en orden.
   Future<List<TestMove>> moves(DateTime start, int round, TestPart part,
       {TestScheduleKey? key}) async {
-    final prefix = key?.prefix ?? _movePrefix(start, round, part);
+    final prefix = _movePrefix(start, round, part, key);
     final rows = await (db.select(db.coachProposals)
           ..where((t) =>
               t.kind.equals(testMoveProposalKind) & t.id.like('$prefix%'))
@@ -198,12 +264,8 @@ class ReadinessRepository {
     );
   }
 
-  /// Día que le toca ahora a ese test: el del calendario o el del último
-  /// movimiento.
-  Future<DateTime?> currentTestDate(DateTime start, int round, TestPart part,
-      {TestScheduleKey? key}) async {
-    final done = await moves(start, round, part, key: key);
-    if (done.isNotEmpty) return done.last.to;
+  /// Día del calendario de ese test, sin movimientos.
+  DateTime? plannedTestDate(DateTime start, int round, TestPart part) {
     final s = dateOnly(start);
     for (var i = 0; i < 70; i++) {
       final d = addDays(s, i);
@@ -211,6 +273,15 @@ class ReadinessRepository {
       if (t?.round == round && t?.part == part) return d;
     }
     return null;
+  }
+
+  /// Día que le toca ahora a ese test: el del calendario o el del último
+  /// movimiento.
+  Future<DateTime?> currentTestDate(DateTime start, int round, TestPart part,
+      {TestScheduleKey? key}) async {
+    final done = await moves(start, round, part, key: key);
+    if (done.isNotEmpty) return done.last.to;
+    return plannedTestDate(key?.blockStart ?? start, round, part);
   }
 
   /// Mueve el test al día siguiente de `from`, que tiene que ser el día que
@@ -236,15 +307,17 @@ class ReadinessRepository {
         }
         final to = addDays(current, 1);
         await db.into(db.coachProposals).insert(CoachProposalsCompanion.insert(
-              id: '${key?.prefix ?? _movePrefix(start, round, part)}${done.length + 1}',
+              id: '${_movePrefix(start, round, part, key)}${done.length + 1}',
               kind: testMoveProposalKind,
               status: 'aceptada',
               evidence: jsonEncode({
-                'start': dayKey(dateOnly(start)),
+                'start': dayKey(dateOnly(key?.blockStart ?? start)),
                 'round': round,
                 'part': part.name,
                 'from': dayKey(current),
                 'reasons': reasons,
+                if (key != null) 'scheme': key.scheme,
+                if (key != null) 'protocol': key.protocolId.name,
               }),
               createdOn: dayKey(current),
               decidedOn: Value(dayKey(dateOnly(now ?? DateTime.now()))),
@@ -259,55 +332,89 @@ class ReadinessRepository {
       DateTime start, DateTime date,
       {String scheme = 'v3.1',
       TestProtocolId protocol = TestProtocolId.v31_12}) async {
-    if (protocol != TestProtocolId.v31_12 || scheme != 'v3.1') {
-      for (final round in [1, 2, 3]) {
-        for (final part in TestPart.values) {
-          final key = TestScheduleKey(
-              scheme: scheme,
-              blockStart: start,
-              protocolId: protocol,
-              round: round,
-              part: part);
-          final current = await currentTestDate(start, round, part, key: key);
-          if (current == dateOnly(date)) {
-            return (
-              round: round,
-              part: part,
-              moves: (await moves(start, round, part, key: key)).length
-            );
-          }
-        }
+    final t = await effectiveTestOn(date,
+        scheme: scheme, blockStart: start, protocol: protocol, gate: false);
+    return t == null ? null : (round: t.round, part: t.part, moves: t.moves);
+  }
+
+  /// El test efectivo de `date`, o null. Con `gate`, si se puede hacer ese día.
+  Future<EffectiveTest?> effectiveTestOn(DateTime date,
+      {required String scheme,
+      required DateTime blockStart,
+      required TestProtocolId protocol,
+      bool gate = true}) async {
+    final t = (await testAgenda(
+            scheme: scheme,
+            blockStart: blockStart,
+            protocol: protocol,
+            gates: false))
+        .where((t) => t.date == dateOnly(date))
+        .firstOrNull;
+    if (t == null || !gate) return t;
+    return t.withGate(await _gate(t.part, t.date));
+  }
+
+  /// La agenda efectiva de los tests de un bloque: los de cada ronda y parte,
+  /// con su día previsto, el de ahora y cuántas veces se movieron. La misma
+  /// lectura para Hoy, los recordatorios y el informe. Con `gates`, cada test
+  /// lleva si ese día se puede hacer: el descanso de 032 manda, y el de
+  /// piernas sólo se hace con escaleras ≤ 2 anotadas (§19.16, §16.26.7).
+  Future<List<EffectiveTest>> testAgenda({
+    required String scheme,
+    required DateTime blockStart,
+    required TestProtocolId protocol,
+    bool gates = true,
+  }) async {
+    final s = dateOnly(blockStart);
+    final out = <EffectiveTest>[];
+    for (final round in [1, 2, 3]) {
+      for (final part in TestPart.values) {
+        final key = TestScheduleKey(
+            scheme: scheme,
+            blockStart: s,
+            protocolId: protocol,
+            round: round,
+            part: part);
+        final planned = plannedTestDate(s, round, part);
+        if (planned == null) continue;
+        final done = await moves(s, round, part, key: key);
+        final date = done.isEmpty ? planned : done.last.to;
+        out.add(EffectiveTest(
+          key: key,
+          planned: planned,
+          date: date,
+          moves: done.length,
+          gate: gates ? await _gate(part, date) : null,
+        ));
       }
-      return null;
     }
-    final s = dateOnly(start);
-    final d = dateOnly(date);
-    final planned = scheduledTest(s, d);
-    if (planned != null &&
-        (await moves(s, planned.round, planned.part)).isEmpty) {
-      return (round: planned.round, part: planned.part, moves: 0);
+    // Un día, un test: si un movimiento cae sobre el previsto de otro test,
+    // manda el que se movió a ese día.
+    out.sort((a, b) {
+      final d = a.date.compareTo(b.date);
+      return d != 0 ? d : b.moves.compareTo(a.moves);
+    });
+    final seen = <DateTime>{};
+    return [
+      for (final t in out)
+        if (seen.add(t.date)) t
+    ];
+  }
+
+  Future<TestDayGate> _gate(TestPart part, DateTime date) async {
+    final advice = await readinessOn(date, testOrAttemptToday: true);
+    if (advice.action == SuggestedAction.restOnly) {
+      return const TestDayGate(TestDayStatus.rest);
     }
-    // Un test de este plan movido a este día (manda su último movimiento).
-    final rows = await (db.select(db.coachProposals)
-          ..where((t) =>
-              t.kind.equals(testMoveProposalKind) &
-              t.id.like('$testMoveProposalKind:${dayKey(s)}:%'))
-          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-        .get();
-    final last = <String, TestMove>{};
-    for (final r in rows) {
-      final m = _move(r);
-      last['${m.round}:${m.part.name}'] = m;
-    }
-    for (final m in last.values) {
-      if (m.to != d) continue;
-      return (
-        round: m.round,
-        part: m.part,
-        moves: (await moves(s, m.round, m.part)).length
-      );
-    }
-    return null;
+    if (part == TestPart.torso) return const TestDayGate(TestDayStatus.ready);
+    final stairs = (await RecoveryRepository(db).morningOn(date))?.kneeStairs;
+    return TestDayGate(
+        stairs == null
+            ? TestDayStatus.stairsUnknown
+            : stairs <= 2
+                ? TestDayStatus.ready
+                : TestDayStatus.stairsHigh,
+        kneeStairs: stairs);
   }
 
   // ---------- Informe ----------

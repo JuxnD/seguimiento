@@ -1,0 +1,117 @@
+00:00 +0: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart
+00:00 +0: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart: amarillo: la recuperación reemplaza la sesión; cancelar no decide, confirmar sí
+00:03 +1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart: rojo: solo descanso, sin la activación del amarillo
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "• Rodilla en escaleras 6/10": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:203:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart line 203
+The test description was:
+  rojo: solo descanso, sin la activación del amarillo
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +1 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart: rojo: solo descanso, sin la activación del amarillo [E]
+  Test failed. See exception logs above.
+  The test description was: rojo: solo descanso, sin la activación del amarillo
+  
+00:04 +1 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart: día de test amarillo: "Mover test a mañana" lo mueve y queda trazado
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:349:39)
+#6      main.open.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:86:20)
+#7      main.drive (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:61:17)
+#8      main.open (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:85:75)
+#9      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:211:22)
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:05 +2 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart: a medias no es hecho: sin ✓ ni "Día completo"; terminada sí
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:seguimiento/data/database.g.dart:15954:36)
+#4      new AppDatabase (package:seguimiento/data/database.dart)
+#5      openInMemoryDatabase (package:seguimiento/data/database.dart:349:39)
+#6      main.open.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:86:20)
+#7      main.drive (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:61:17)
+#8      main.open (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:85:75)
+#9      main.<anonymous closure> (file:///C:/My%20Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart:225:22)
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:29)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+#12     StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:05 +3 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/readiness_home_test.dart: (tearDownAll)
+00:05 +3 -1: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/coherence_today_test.dart
+00:07 +3 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/coherence_today_test.dart: (setUpAll)
+00:07 +3 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/coherence_today_test.dart: Hoy suma dos partidos y abre detalle real, texto 1.0
+033 HARNESS: database created
+033 HARNESS: seed complete
+033 HARNESS: real dashboard loaded
+033 HARNESS: fonts loaded
+033 HARNESS: home mounted
+033 HARNESS: home pumped
+033 HARNESS: football anchor visible
+033 HARNESS: disposing widget
+033 HARNESS: widget disposed; closing database
+033 HARNESS: database closed
+00:10 +4 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/coherence_today_test.dart: Hoy suma dos partidos y abre detalle real, texto 2.0
+033 HARNESS: database created
+033 HARNESS: seed complete
+033 HARNESS: real dashboard loaded
+033 HARNESS: fonts loaded
+033 HARNESS: home mounted
+033 HARNESS: home pumped
+033 HARNESS: football anchor visible
+033 HARNESS: disposing widget
+033 HARNESS: widget disposed; closing database
+033 HARNESS: database closed
+00:10 +5 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/coherence_today_test.dart: (tearDownAll)
+00:10 +5 -1: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart
+00:11 +5 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: (setUpAll)
+00:11 +5 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: guard inicia antes de consultar plan: dos taps sólo una consulta y una fila
+00:14 +6 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: duplicado completo pide confirmación; corregir no escribe y aceptar una fila
+00:16 +7 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: primera progresión limpia de diez acredita hito tras guardar sin activar plan
+00:17 +8 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: una sola serie distinta no confirma y editar propio id no duplica
+00:18 +9 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: busy quita foco; fallo conserva formulario y retry guarda exactamente una fila
+00:19 +10 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: review desvinculada conserva procedencia tras DB error y retry no acredita hito
+00:20 +11 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: borrado existente elimina registro y carga/informe se recalculan
+00:21 +12 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/session_confirmation_test.dart: (tearDownAll)
+00:21 +12 -1: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/meal_estimate_flow_test.dart
+00:22 +12 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/meal_estimate_flow_test.dart: (setUpAll)
+00:22 +12 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/meal_estimate_flow_test.dart: estimación de 250 g no permite convertir la unidad a porción o ml
+00:24 +13 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/meal_estimate_flow_test.dart: IA→revisión/exclusión→borrador→Guardar→SQLite; no crea catálogo antes de Guardar
+00:26 +14 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/meal_estimate_flow_test.dart: volver con Recordar elegido no guarda comida ni catálogo
+00:26 +15 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/meal_estimate_flow_test.dart: fallo de red conserva frase y registro manual; cero escrituras
+00:27 +16 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/ui/meal_estimate_flow_test.dart: (tearDownAll)
+00:27 +16 -1: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T211316912-55584-d6d5a01fb72d452cba6bfbcf77dfcbbe.json
+exit=1

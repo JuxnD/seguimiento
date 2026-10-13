@@ -125,6 +125,8 @@ class ReminderDay {
     required this.type,
     this.planSummary,
     this.hasSession = false,
+    this.test,
+    this.benchmarks = false,
   });
 
   final DateTime date;
@@ -135,6 +137,27 @@ class ReminderDay {
 
   /// Ya hay una sesión registrada ese día.
   final bool hasSession;
+
+  /// El test que toca ese día según la agenda efectiva (con los movimientos
+  /// aplicados), o null.
+  final ReminderTest? test;
+
+  /// Ese día tocan los benchmarks de movilidad (§19.13).
+  final bool benchmarks;
+}
+
+/// Lo que el aviso de sesión dice del test del día.
+class ReminderTest {
+  const ReminderTest({required this.title, this.movedFrom, this.condition});
+
+  /// "Test 1 de piernas".
+  final String title;
+
+  /// Día previsto, si se movió.
+  final DateTime? movedFrom;
+
+  /// Cuándo se hace o por qué no: escaleras, descanso.
+  final String? condition;
 }
 
 /// Estado de hoy que cambia el texto o la necesidad de algunos avisos.
@@ -219,14 +242,28 @@ DateTime _at(DateTime day, ReminderSetting s) => DateTime(day.year, day.month, d
 
 Iterable<PlannedNotification> _sessionReminder(ReminderContext ctx, ReminderDay day) sync* {
   final s = ctx.setting(ReminderKind.sesion);
-  if (s == null || !s.enabled || !day.type.isTraining || day.hasSession) return;
+  final test = day.test;
+  if (s == null ||
+      !s.enabled ||
+      day.hasSession ||
+      !(day.type.isTraining || test != null || day.benchmarks)) {
+    return;
+  }
   // 15 minutos antes de la hora de entrenar.
   final when = _at(day.date, s).subtract(const Duration(minutes: 15));
+  final moved = test?.movedFrom;
   yield PlannedNotification(
     kind: ReminderKind.sesion,
     when: when,
-    title: 'En 15 min: ${day.type.label}',
-    body: day.planSummary ?? 'Toca entrenar',
+    title: 'En 15 min: ${test?.title ?? day.type.label}',
+    body: [
+      if (moved != null)
+        'Movido desde el ${weekdayShort(moved.weekday)} ${formatShort(moved)}.',
+      if (test?.condition case final condition?) condition,
+      if (day.benchmarks) 'Benchmarks de movilidad (5 min).',
+      // El test reemplaza la sesión de ese día (§16.26.7).
+      if (test == null) day.planSummary ?? 'Toca entrenar',
+    ].join(' '),
   );
 }
 

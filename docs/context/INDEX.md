@@ -371,3 +371,5 @@ No atribuir estas figuras a unAPK anterior ni a la instalación del owner.
 
 
 034 checkpoint parcial: contratos25/attempts/escaleras y source de3.2 para repartir lectores. Analyze lib+24 testpaths0, últimos7SQLite PASS, UIequipo/paquete43 pendiente de diagnóstico; NO R1final. Ver [checkpoint034](sessions/2026-10-13-034-functional-checkpoint.md) y [propuesta de relevo lector](sessions/2026-10-13-034-reader-handoff.md). Source35/36/39/40 no integrado aquí; cierre completo037 pendiente.
+
+043 local, dirigido y pendiente R1: lectores del Plan 3.2 sobre el checkpoint 034 (8eb5eed). Agenda efectiva tipada (v3.1 una sola historia; v3.2 con clave propia; máximo 2 movimientos), condición del día (descanso de 032, escaleras ≤ 2 en piernas, desconocido explícito), benchmarks cada 28 días que siguen al test de piernas movido, con corte asOf, avisos con el test el día efectivo, e informe con agenda, intentos por línea base y benchmarks. Ver [recibo, contratos y evidencia](sessions/2026-10-13-043-lectores.md). La UI que consume estos lectores, H1/H2/H3 y los 7 fallos preexistentes quedan en 034; el cierre completo, en 037.

@@ -1,0 +1,362 @@
+00:00 +0: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart
+00:00 +0: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: (setUpAll)
+00:00 +0: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: el fin de semana de tres partidos da amarillo; lo importado, la movilidad y el test no suman
+00:00 +1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: rodilla en escaleras sin registro de la mañana: sin dato
+00:00 +2: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: rodilla en escaleras responder dolor y enfermo no vale como 0 en escaleras
+00:00 +3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: rodilla en escaleras escaleras 3 explícitas: amarillo y sin hueco de escaleras
+00:00 +4: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: rodilla en escaleras rodilla 5 es rojo; enfermo también
+00:00 +5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: base del pulso: solo lecturas anteriores a hoy, las 14 más recientes
+00:00 +6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: responder dolor y enfermo no borra el pulso; borrar todo quita la fila
+00:00 +7: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: "Entrenar igual" guarda fecha y razones; la aceptación es la sesión guardada
+00:00 +8: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: tests movidos se mueve conservando plan, ronda y parte; máximo 2 veces
+00:00 +9: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: tests movidos no se mueve desde una fecha que no le toca ni se repite el mismo movimiento
+00:00 +10: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: tests movidos los movimientos de un plan no tocan otro plan con la misma ronda y parte
+00:00 +11: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: rutinas del día y racha de movilidad
+00:00 +12: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: aviso de la noche con la carga de ayer y hoy
+00:00 +13: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: semana del informe: propuestos, aceptados y entrenó igual
+00:00 +14: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: racha de constancia la recuperación activa mantiene la racha; Activa y Suelta no
+00:01 +15: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_repository_test.dart: (tearDownAll)
+00:01 +15: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart
+00:05 +15: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart: (setUpAll)
+00:05 +15: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart: a medias: queda guardada pero no es recuperación hecha, ni ✓, ni racha
+00:06 +16: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart: RPE > 5: "Sesión normal" suma carga; "Recuperación" no
+00:06 +17: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart: el provider real de Hoy se recalcula solo: "Entrenar igual" y la recuperación terminada
+00:06 +18: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart: racha de constancia la recuperación a medias no mantiene la racha; terminada sí
+00:06 +19: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart: racha de constancia una molestia anotada después llega a Hoy sin otra acción
+00:06 +20: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/readiness_partial_test.dart: (tearDownAll)
+00:06 +20: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart
+00:07 +20: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: (setUpAll)
+00:07 +20: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: peso con momento: uno por día salvo "otro"; solo en ayunas cuenta
+00:07 +21: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: día con circuito y fútbol intenso: Hoy dice día completo y avisa la carga
+00:07 +22: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: racha real crece más allá de7días y un moderado la corta
+00:08 +23: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: molestia en la pierna ayer y día de piernas: plan B
+00:08 +24: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: pulso alto 3 días seguidos llega a Hoy
+00:08 +25: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: planche: martes del v3.1 empieza con el bloque; el tuck entra con 3 × 30 s
+00:08 +26: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/recovery_data_test.dart: (tearDownAll)
+00:08 +26: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart
+00:09 +26: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: (setUpAll)
+00:09 +26: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: el aviso de sesión dice lo que toca ese día
+00:10 +27: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: un martes de bloques nombra los ejercicios del bloque
+00:10 +28: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: registrar la sesión calla los avisos de ese día
+00:10 +29: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: el aviso de proteína usa lo comido hoy
+00:10 +30: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: con la proteína cubierta no se programa ese aviso
+00:10 +31: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: la medición usa la fecha acordada del perfil
+00:10 +32: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: tras medir, el siguiente aviso sale del intervalo
+00:10 +33: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: apagar un recordatorio lo saca de la cola
+00:10 +34: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: programa varios días y respeta el fútbol del sábado
+00:10 +35: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: lo programado llega al sistema de notificaciones
+00:10 +36: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/reminder_scheduler_test.dart: (tearDownAll)
+00:10 +36: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coach_reminder_sync_test.dart
+00:11 +36: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coach_reminder_sync_test.dart: (setUpAll)
+00:11 +36: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coach_reminder_sync_test.dart: al despertar: guardar "cansado" retira el aviso; editar a "normal" o borrar lo vuelve a programar
+00:12 +37: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coach_reminder_sync_test.dart: recoveryOk=false al cerrar la sesión retira el aviso; corregirla o borrarla lo devuelve
+00:12 +38: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coach_reminder_sync_test.dart: una meta futura no cambia el aviso de hoy; cuando rige, el aviso usa la nueva
+00:12 +39: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coach_reminder_sync_test.dart: (tearDownAll)
+00:12 +39: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_baseline_cutoff_test.dart
+00:13 +39: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_baseline_cutoff_test.dart: (setUpAll)
+00:13 +39: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_baseline_cutoff_test.dart: añadir primera medida en ayunas futura no cambia el informe histórico
+00:13 +40: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_baseline_cutoff_test.dart: sin registros o sólo registros futuros no hay líneas base
+00:13 +41: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_baseline_cutoff_test.dart: conserva ayunas anterior y admite tomas en el último día
+00:13 +42: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_baseline_cutoff_test.dart: (tearDownAll)
+00:13 +42: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_goal_history_review_test.dart
+00:14 +42: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_goal_history_review_test.dart: (setUpAll)
+00:14 +42: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 130 no queda bajo mínimo
+00:14 +43: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_goal_history_review_test.dart: R2 control: 145 g con mínimo vigente 160 sí queda bajo mínimo
+00:14 +44: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_goal_history_review_test.dart: R2 historia: 145 g cumplieron 130 aunque el mínimo actual sea 160
+R2 histórico: [] | - Proteína promedio: 145 g (meta 130–160) · kcal promedio: 2.500 (meta 2.400) · días cerrados: 7/7
+00:14 +45: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_goal_history_review_test.dart: R2 desconocido: 145 g no prueban incumplir una meta histórica sin fecha
+R2 desconocido: [] | - Proteína promedio: 145 g (meta histórica no registrada) · kcal promedio: 2.500 (meta histórica no registrada) · días cerrados: 7/7
+00:14 +46: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_goal_history_review_test.dart: (tearDownAll)
+00:15 +46: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_meal_provider_test.dart
+00:15 +46: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_meal_provider_test.dart: (setUpAll)
+00:15 +46: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_meal_provider_test.dart: el informe observa macros con kcal constante y cierre del período previo
+00:16 +47: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_meal_provider_test.dart: (tearDownAll)
+00:16 +47: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_sleep_provider_test.dart
+00:17 +47: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_sleep_provider_test.dart: (setUpAll)
+00:17 +47: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_sleep_provider_test.dart: el informe se refresca al anotar o quitar sueño actual y previo
+00:17 +48: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/report_sleep_provider_test.dart: (tearDownAll)
+00:17 +48: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart
+00:18 +48: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: (setUpAll)
+00:18 +48: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: Hoy autoriza desde anterior limpia; fallo actual no inventa infracción
+00:18 +49: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: anterior fallida bloquea Hoy y reporte aunque actual salga limpia
+00:19 +50: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: calidad anterior null no desaparece fuera del rango
+00:19 +51: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: calidad anterior false no desaparece fuera del rango
+00:19 +52: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: incompleta anterior y meta pendiente no autorizan aumento
+00:19 +53: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: sin rondas en última anterior se explicita evidencia no evaluable
+00:19 +54: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: salto mayor al incremento permitido no se justifica por calidad
+00:19 +55: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: sin precedente y registro futuro no inventan permiso
+00:19 +56: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: precedente dentro de rango y dos filas del mismo día usan último ID como Hoy
+00:19 +57: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: no usar sesión del mismo día ni otro tipo para autorizar el intento
+00:19 +58: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: ausencia individual de técnica anterior sigue siendo bloqueo explícito
+00:20 +59: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: ausencia individual de rango completo anterior sigue siendo bloqueo explícito
+00:20 +60: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: ausencia individual de recuperación anterior sigue siendo bloqueo explícito
+00:20 +61: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: precedente importado no acredita permiso
+00:20 +62: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: precedente estimado no acredita permiso
+00:20 +63: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/coherence_progression_report_test.dart: (tearDownAll)
+00:20 +63: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart
+00:21 +63: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: (setUpAll)
+00:21 +63: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: condiciones declaradas: medida ayunas/noayunas y peso antes/después fútbol
+00:21 +64: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: peso antes/después fútbol y momento desconocido son registros distintos
+00:21 +65: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: Cindy20 y30min separadas; warmup/cooldown no cambian ventana real20
+00:21 +66: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: rango en todas las consultas, una medida, límite SQL y última fecha
+00:21 +67: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: nutrición nullable y cierre coinciden con informe, observado0 sobrevive
+00:21 +68: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: firma real separa dosis/técnica; importada/estimada/cortada/Cindy no son marca
+00:21 +69: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: metas requieren vigencia, unidad, fuente y cifra finita
+00:21 +70: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: sin registro no es cero de proteína observado
+00:21 +71: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: formato y calidad no desaparecen bajo mismo nombre Circuito
+00:21 +72: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/chart_evidence_test.dart: (tearDownAll)
+00:21 +72: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart
+00:22 +72: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: (setUpAll)
+00:22 +72: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: pasos holgados: propone; aceptar desde Hoy rige mañana y Hoy cambia a "en prueba"
+00:22 +73: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: "cansado" al despertar o RPE 9: recuperación primero en Hoy y sin aviso de pasos
+00:22 +74: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: el pulso del registro de la mañana no borra cómo amaneció, y al revés
+00:23 +75: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: Hoy trae la lectura del acompañamiento
+00:23 +76: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: informe: cada día con su meta; lo anterior a toda vigencia no se clasifica
+00:23 +77: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: borrar los pasos que sostenían la propuesta la retira con su razón
+00:23 +78: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: fuerza en Hoy: una serie guardada al fallo frena la subida y lo dice
+00:23 +79: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) recoveryOk=false con RPE 7 bloquea la propuesta
+00:23 +80: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) todo null con RPE 7 no demuestra buena recuperación
+00:23 +81: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) recoveryOk=true permite proponer si cobertura y carga son favorables
+00:23 +82: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: recuperación declarada (contrafactuales) test e importado no cuentan como señal de recuperación
+00:23 +83: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: ciclo nuevo (R2): aceptar 5.000→6.000, volver a 5.000 a mano y cumplir otra vez vuelve a proponer
+00:23 +84: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/adaptive_coach_data_test.dart: (tearDownAll)
+00:23 +84: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart
+00:24 +84: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: (setUpAll)
+00:24 +84: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: el lunes trae el peldaño del dragon flag y el jueves el del V-up, antes de lo opcional
+00:24 +85: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: peldaño 1 desde el lunes del v3.1; sube tras 2 sesiones limpias y 2 semanas
+00:24 +86: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: molestia lumbar: baja un peldaño y esa sesión no cuenta como limpia
+00:25 +87: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: día de test: el lunes de la semana 1 en Hoy, y al guardarlo cuenta como entrenado
+00:25 +88: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: el informe no toma el Tabata por aguantes; sí la vela y el hollow
+00:26 +89: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: martes del 6 oct: el v3.1 nuevo ya lo trae; uno activado antes se corrige
+00:26 +90: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/ladders_and_tests_data_test.dart: (tearDownAll)
+00:26 +90: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart
+00:27 +90: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: (setUpAll)
+00:27 +90: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: activarlo: semana 1, metas vigentes de §19.3 y abdomen el sábado
+00:28 +91: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: un v3 activado para el mismo lunes queda reemplazado por el v3.1
+00:28 +92: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: el viernes es circuito hasta las 10 limpias; después Cindy de prueba
+00:28 +93: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: 10 rondas sin los criterios no cuentan como limpias
+00:28 +94: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: partido entre semana: el viernes metabólico lo avisa
+00:29 +95: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: RIR por serie y últimas series de fuerza del mismo día de la semana
+00:29 +96: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: medir en una fecha del v3.1 corre la próxima a la siguiente
+00:29 +97: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v31_data_test.dart: (tearDownAll)
+00:29 +97: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart
+00:30 +97: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart: (setUpAll)
+00:30 +97: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart: Hoy propone el v3.1 desde el próximo lunes, sin esperar a las 10 limpias (§19)
+00:30 +98: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart: activarlo: el v2 sigue hasta el domingo, el lunes 12 es tren superior A en semana 1
+00:30 +99: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart: editar el v3 a mitad de bloque no reinicia las semanas
+00:30 +100: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart: semana 4: Hoy avisa la descarga y el miércoles toca Cindy
+00:30 +101: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart: una sesión de Cindy guarda formato y reps sueltas
+00:30 +102: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan_v3_data_test.dart: (tearDownAll)
+00:30 +102: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan034_readiness_stairs_test.dart
+00:31 +102: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan034_readiness_stairs_test.dart: (setUpAll)
+00:31 +102: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan034_readiness_stairs_test.dart: explicit stairs zero is known independently of generic knee soreness
+00:31 +103: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan034_readiness_stairs_test.dart: generic knee pain preserves severity with own source; it never fills stairs
+00:31 +104: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan034_readiness_stairs_test.dart: missing stairs remains unknown even when generic knee pain was recorded
+00:31 +105: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/plan034_readiness_stairs_test.dart: (tearDownAll)
+00:31 +105: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart
+00:32 +105: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: (setUpAll)
+00:32 +105: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: dominio IDs estables por evidencia y visibilidad de la decisión
+00:33 +106: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: fuerza mantener oculta la subida para esa evidencia; otra sesión es otra propuesta
+00:34 +107: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: fuerza "hoy no" vale sólo hoy: el próximo martes vuelve
+00:34 +108: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: fuerza R2 aceptar no prueba subida si la sesión siguiente mantiene carga y variante
+00:35 +109: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: fuerza R2 una sola serie de las cuatro previstas no sostiene la dosis subida
+00:35 +110: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: fuerza R2 control: carga mayor con cuatro series limpias sí se sostiene
+00:35 +111: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: fuerza R2 carga con otra variante y dosis guardada incompleta: no se afirma ni se rompe Hoy
+00:36 +112: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: fuerza subida aceptada (R2): sólo "subiste" si lo guardado lo demuestra
+00:41 +113: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: rondas "hoy no" deja las rondas de la última vez hoy; el viernes siguiente vuelve
+00:41 +114: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: escaleras "en 7 días" oculta la propuesta de subir en Hoy hasta su fecha; subir sigue en la confirmación existente
+00:42 +114 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: escaleras "en 7 días" oculta la propuesta de subir en Hoy hasta su fecha; subir sigue en la confirmación existente [E]
+  UnimplementedError
+  package:riverpod/src/framework/element.dart 692:23                    ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15                         ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 241:21                  ProviderContainer.read
+  test\data\proposal_tracking_test.dart 255:38                          main.<fn>.<fn>
+  package:test_api                                                      Invoker._waitForOutstandingCallbacks.<fn>
+  package:seguimiento/app/providers.dart 58:35                          localFlagsProvider.<fn>
+  package:riverpod/src/framework/element.dart 691:12                    ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15                         ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 241:21                  ProviderContainer.read
+  test\data\proposal_tracking_test.dart 255:38                          main.<fn>.<fn>
+  dart:async                                                            _CustomZone.registerUnaryCallback
+  test\data\proposal_tracking_test.dart 245:9                           main.<fn>.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                                            _BroadcastStreamController.addError
+  package:riverpod/src/stream_provider/base.dart 212:25                 StreamProviderElement.onError
+  package:riverpod/src/async_notifier/base.dart 416:7                   FutureHandlerProviderElementMixin._handleAsync
+  package:riverpod/src/async_notifier/base.dart 303:5                   FutureHandlerProviderElementMixin.handleStream
+  package:riverpod/src/stream_provider/base.dart 169:5                  StreamProviderElement.create
+  package:riverpod/src/framework/element.dart 426:7                     ProviderElementBase.buildState
+  package:riverpod/src/framework/element.dart 228:5                     ProviderElementBase.mount
+  package:riverpod/src/framework/container.dart 47:11                   _StateReader._create
+  package:riverpod/src/framework/container.dart 35:52                   _StateReader.getElement
+  package:riverpod/src/framework/container.dart 440:40                  ProviderContainer.readProviderElement.<fn>
+  package:riverpod/src/framework/container.dart 475:8                   ProviderContainer.readProviderElement
+  package:riverpod/src/framework/proxy_provider_listenable.dart 134:26  ProviderElementProxy.read
+  package:riverpod/src/framework/container.dart 241:21                  ProviderContainer.read
+  test\data\proposal_tracking_test.dart 255:38                          main.<fn>.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                                            _CustomZone.registerUnaryCallback
+  test\data\proposal_tracking_test.dart 245:9                           main.<fn>.<fn>
+  
+00:42 +114 -1: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) un fallo entre registrar y subir no deja aceptación sin peldaño
+00:42 +114 -2: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) un fallo entre registrar y subir no deja aceptación sin peldaño [E]
+  Expected: (bool, int):<(true, 1)>
+    Actual: (bool, int):<(false, 1)>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\proposal_tracking_test.dart 281:9         main.<fn>.<fn>.<fn>
+  
+00:42 +114 -2: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) doble toque: sube uno, una sola aceptación
+00:42 +114 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: escaleras aceptar y subir: una sola decisión (R2) doble toque: sube uno, una sola aceptación [E]
+  Expected: (bool, int):<(true, 1)>
+    Actual: (bool, int):<(false, 1)>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\proposal_tracking_test.dart 281:9         main.<fn>.<fn>.<fn>
+  
+00:42 +114 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/proposal_tracking_test.dart: (tearDownAll)
+00:42 +114 -3: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/technique_session_data_test.dart
+00:43 +114 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/technique_session_data_test.dart: (setUpAll)
+00:43 +114 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/technique_session_data_test.dart: plantilla del handoff: 8 ejercicios, lo de reps a RIR 4
+00:44 +115 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/technique_session_data_test.dart: se ofrece la víspera de cada test y de las pruebas, y en la descarga
+00:45 +116 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/technique_session_data_test.dart: una sesión técnica a RPE 4 no cuenta como intensa para la racha
+00:45 +117 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/technique_session_data_test.dart: (tearDownAll)
+00:45 +117 -3: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/football_today_summary_test.dart
+00:46 +117 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/football_today_summary_test.dart: (setUpAll)
+00:46 +117 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/football_today_summary_test.dart: todos los partidos: acumulado coincide con carga core y reporte
+00:46 +118 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/football_today_summary_test.dart: RPE desconocido: carga estimada core y ponderado sólo conocido
+00:46 +119 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/football_today_summary_test.dart: cero minutos no divide por cero; sin partidos no hay actividad
+00:47 +120 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/football_today_summary_test.dart: ayer intenso conserva lector y no contamina acumulado de hoy
+00:47 +121 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/football_today_summary_test.dart: (tearDownAll)
+00:47 +121 -3: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart
+00:48 +121 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: (setUpAll)
+00:48 +121 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: definir igual al placeholder y quitar conserva la fecha y los macros
+00:48 +122 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: piso definido mañana y retirado después no reclasifica el día sin piso
+00:48 +123 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: altura no acepta metas; fallo SQLite revierte altura y todas las decisiones
+00:48 +124 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: historia cargada sin proteína es desconocida, cero pasos observado sigue registrado
+00:48 +125 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: 023 rojo real: Más adelante no ofrece las proyecciones internas como objetivos en Hoy
+00:48 +126 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: 023 rojo real: informe y nueva fuente IA no inventan piso nutricional
+00:48 +127 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/goal_presence_readers_test.dart: (tearDownAll)
+00:48 +127 -3: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart
+00:49 +127 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: (setUpAll)
+00:49 +127 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: perfil por defecto: el programa arranca el día de la instalación
+00:49 +128 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: ejercicios: mismo nombre sin importar mayúsculas ni espacios
+00:49 +129 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: plan versionado: editar crea versión nueva y la vigente depende de la fecha
+00:49 +130 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: sesión: guardar, recargar con series partidas y vueltas, editar
+00:50 +131 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: comidas: macros congelados aunque cambie el catálogo; copiar comida
+00:50 +132 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: medidas: una toma por día, reemplazable
+00:50 +133 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: informe de extremo a extremo desde la base
+00:50 +134 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: editar una toma y cambiarle la fecha no la duplica
+00:50 +135 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: guardar la misma fecha al editar reemplaza, no suma
+00:50 +136 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: récord: las rondas estimadas no cuentan, las de una sesión incompleta sí
+00:50 +137 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: el plan no se guarda con rangos al revés ni ceros
+00:50 +138 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: un día del plan se relee por id aunque después haya versiones nuevas
+00:50 +139 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: borrar un alimento: se sabe qué combos lo usan
+00:50 +140 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: pesaje: uno por día y condición
+00:50 +141 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: el descanso de la sesión se guarda y se relee
+00:50 +142 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/repositories_test.dart: (tearDownAll)
+00:50 +142 -3: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart
+00:51 +142 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: (setUpAll)
+00:51 +142 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: A1: una prueba guardada no equivale a test completo
+00:51 +143 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: A2: pruebas de piernas no sustituyen la sesión normal
+00:52 +144 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: A3: valores no finitos no llegan a resultados persistidos
+00:52 +145 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: A4: un solo lado no determina el lado más débil
+00:52 +146 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: A5: snapshot persistido conserva guion/dosis/indice tras lumbar; nueva sesion baja
+00:52 +147 -3: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida
+00:52 +147 -4: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: A6: la propuesta se refresca al guardar otra sesión válida [E]
+  UnimplementedError
+  package:riverpod/src/framework/element.dart 692:23       ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15            ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 280:21     ProviderContainer.listen
+  test\data\release121_contracts_test.dart 141:36          main.<fn>
+  package:test_api                                         Invoker._waitForOutstandingCallbacks.<fn>
+  package:seguimiento/app/providers.dart 58:35             localFlagsProvider.<fn>
+  package:riverpod/src/framework/element.dart 691:12       ProviderElementBase.read
+  package:seguimiento/app/providers.dart 140:15            ladderAdviceProvider.<fn>
+  package:riverpod/src/framework/container.dart 280:21     ProviderContainer.listen
+  test\data\release121_contracts_test.dart 141:36          main.<fn>
+  dart:async                                               _CustomZone.registerUnaryCallback
+  test\data\release121_contracts_test.dart 136:5           main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                               _BroadcastStreamController.addError
+  package:riverpod/src/stream_provider/base.dart 212:25    StreamProviderElement.onError
+  package:riverpod/src/async_notifier/base.dart 416:7      FutureHandlerProviderElementMixin._handleAsync
+  package:riverpod/src/async_notifier/base.dart 303:5      FutureHandlerProviderElementMixin.handleStream
+  package:riverpod/src/stream_provider/base.dart 169:5     StreamProviderElement.create
+  package:riverpod/src/framework/element.dart 426:7        ProviderElementBase.buildState
+  package:riverpod/src/framework/element.dart 228:5        ProviderElementBase.mount
+  package:riverpod/src/framework/container.dart 47:11      _StateReader._create
+  package:riverpod/src/framework/container.dart 35:52      _StateReader.getElement
+  package:riverpod/src/framework/container.dart 440:40     ProviderContainer.readProviderElement.<fn>
+  package:riverpod/src/framework/container.dart 475:8      ProviderContainer.readProviderElement
+  package:riverpod/src/framework/provider_base.dart 79:26  ProviderBase.addListener
+  package:riverpod/src/framework/container.dart 280:21     ProviderContainer.listen
+  test\data\release121_contracts_test.dart 141:36          main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                               _CustomZone.registerUnaryCallback
+  test\data\release121_contracts_test.dart 136:5           main.<fn>
+  
+00:52 +147 -4: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes
+00:52 +147 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: Test completo cero sustituye tiron lunes, nunca Cindy viernes [E]
+  Expected: true
+    Actual: <false>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\release121_contracts_test.dart 172:5      main.<fn>
+  
+00:52 +147 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=true
+00:52 +148 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: piernas test y entrenamiento en ambos ordenes: testFirst=false
+00:53 +149 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: rechazo atomico reps NaN conserva resultado anterior
+00:53 +150 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: rechazo atomico reps Infinity conserva resultado anterior
+00:53 +151 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: rechazo atomico reps -Infinity conserva resultado anterior
+00:53 +152 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: rechazo atomico reps -1.0 conserva resultado anterior
+00:53 +153 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: rechazo atomico reps 1.5 conserva resultado anterior
+00:53 +154 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: rechazo item/lado/ronda/duplicado/vacio; segundos decimales validos
+00:53 +155 -5: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio
+00:53 +155 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: reset mismo peldaño excluye guia vieja guardada despues y sesiones de antes del cambio [E]
+  Expected: an object with length of <1>
+    Actual: []
+     Which: has length of <0>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\data\release121_contracts_test.dart 264:5      main.<fn>
+  
+00:53 +155 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: lumbar durable idempotente con mismo evento y separado por sesion
+00:53 +156 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/release121_contracts_test.dart: (tearDownAll)
+00:53 +156 -6: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart
+00:54 +156 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: (setUpAll)
+00:54 +156 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy un partido registrado hoy marca el día como hecho
+00:55 +157 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy en un día de circuito el partido no da por hecha la sesión, pero suma racha
+00:55 +158 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy la racha incluye los días de fútbol
+00:55 +159 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy el informe de la semana 23–29 sep cuenta el partido del domingo
+00:55 +160 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy el partido guarda el día elegido, no el de hoy
+00:55 +161 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.1 el fútbol cuenta en Hoy tras un domingo intenso o con golpe, el lunes avisa que baje
+00:55 +162 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.2 récord de 11 un circuito guardado en día de bloques se señala y al corregirlo sale del récord
+00:55 +163 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.2 récord de 11 un récord en día de circuito no se señala
+00:55 +164 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo el pan Mipan y los platos que se repiten vienen sembrados
+00:55 +165 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo el nombre se compara sin mayúsculas, tildes ni espacios de sobra
+00:55 +166 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo una entrada libre queda como alimento estimado de una porción
+00:55 +167 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo actualizar valores reescribe el alimento; guardar como nuevo busca otro nombre
+00:55 +168 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo sugerencias: favoritos, luego personalizados, luego lo sembrado
+00:55 +169 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo un alimento se convierte en combo de un toque
+00:55 +170 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §16.3–16.4 catálogo que crece solo dos cifras escritas a mano del mismo plato son la misma
+00:55 +171 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §14 pasos diarios anotar otra vez el mismo día reemplaza; Hoy muestra la cifra y la meta
+00:55 +172 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §14 pasos diarios el informe trae el promedio semanal y lo compara con la semana anterior
+00:55 +173 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: §13 movilidad es opcional: no marca Hoy, no sostiene la racha y va aparte en el informe
+00:56 +174 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: aguantes en segundos (28 sep) el informe muestra la plancha en segundos, no en repeticiones
+00:56 +175 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_27sep_test.dart: (tearDownAll)
+00:56 +175 -6: loading C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart
+00:57 +175 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart: (setUpAll)
+00:57 +175 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza sin anotar cómo fue, se mantiene y dice qué falta anotar
+00:57 +176 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza con técnica, rango y recuperación en sí, Hoy propone 9
+00:57 +177 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza un criterio en "no" mantiene la meta aunque los demás estén bien
+00:57 +178 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza un día que no es de progresión sigue con la meta del plan
+00:57 +179 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart: §16.9 la meta del viernes avanza una progresión cortada en la ronda 1 de 8 no baja la meta a 1
+00:57 +180 -6: C:/My Projects/seguimiento-043-lectores-plan-v32/test/data/uso_real_2oct_test.dart: (tearDownAll)
+00:57 +180 -6: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T211201149-67696-0fa66f0624ed4d0f817bd35a45c5a905.json
+exit=1

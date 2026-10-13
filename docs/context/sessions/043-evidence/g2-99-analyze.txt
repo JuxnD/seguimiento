@@ -1,0 +1,4 @@
+Analyzing seguimiento-043-lectores-plan-v32...                  
+No issues found! (ran in 19.3s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T210749640-25628-55a7cd9901514585be5463b16a7ba137.json
+exit=0

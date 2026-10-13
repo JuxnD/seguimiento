@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 
 import '../../domain/core_ladders.dart';
+import '../../domain/fitness_test.dart';
+import '../../domain/test_protocol.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/report/report_input.dart';
@@ -9,6 +11,9 @@ import '../../domain/session_script.dart' show tabataBlock;
 import '../database.dart';
 import '../history_import.dart' show firstDataDay;
 import 'exercise_repository.dart';
+import 'fitness_test_repository.dart';
+import 'mobility_benchmark_repository.dart';
+import 'plan_repository.dart';
 import 'nutrition_repository.dart';
 import 'profile_repository.dart';
 import 'readiness_repository.dart';
@@ -255,8 +260,17 @@ class ReportRepository {
         ? await ReadinessRepository(db).week(from, to)
         : null;
 
+    // Sólo el rango pedido; la semana anterior no los muestra.
+    final tests = withPrevious
+        ? await _tests(from, to, span, today ?? DateTime.now())
+        : _noTests;
+
     return ReportInput(
       kneeStairs: {for (final row in knees) parseDay(row.date): row.kneeStairs},
+      testAgenda: tests.agenda,
+      testAttempts: tests.attempts,
+      testResults: tests.results,
+      benchmarkSchedule: tests.benchmarks,
       mobilityBenchmarks: [
         for (final row in benchmarks)
           '${row.date} · ${row.item}${row.side == null ? '' : ' (${row.side})'}: '
@@ -338,7 +352,7 @@ class ReportRepository {
           if (names[pe.exerciseId] case final name?) name,
         // Las escaleras de core (§19.10) no están en el plan guardado.
         hollowHold,
-        for (final l in coreLadders)
+        for (final l in allLadders)
           for (final s in l.steps)
             if (s.holdMin != null) s.exercise,
       },
@@ -349,7 +363,7 @@ class ReportRepository {
               ..where((x) => x.perSide.equals(true)))
             .get())
           if (names[pe.exerciseId] case final name?) name,
-        for (final l in coreLadders)
+        for (final l in allLadders)
           for (final s in l.steps)
             if (s.perSide) s.exercise,
       },
@@ -359,6 +373,120 @@ class ReportRepository {
           : notes
               .map((n) => '**Semana ${n.weekIndex}:** ${n.body}')
               .join('\n\n'),
+    );
+  }
+
+  static const _noTests = (
+    agenda: <TestAgendaEntry>[],
+    attempts: <TestAttemptEntry>[],
+    results: <TestResult>[],
+    benchmarks: <BenchmarkScheduleEntry>[],
+  );
+
+  /// Tests y benchmarks del bloque v3.1/v3.2 que toca el rango (§19.11,
+  /// §19.13): la misma agenda efectiva que Hoy y los avisos, los intentos con
+  /// su sesión y todos los resultados hasta el final del rango para comparar
+  /// cada intento con su línea base. Rangos de más de 9 semanas no leen la
+  /// agenda día a día.
+  Future<
+      ({
+        List<TestAgendaEntry> agenda,
+        List<TestAttemptEntry> attempts,
+        List<TestResult> results,
+        List<BenchmarkScheduleEntry> benchmarks,
+      })> _tests(DateTime from, DateTime to, int span, DateTime today) async {
+    final f = dateOnly(from), t = dateOnly(to);
+    bool inRange(DateTime d) => !d.isBefore(f) && !d.isAfter(t);
+    final agenda = <TestAgendaEntry>[];
+    final benchmarks = <BenchmarkScheduleEntry>[];
+    if (span <= 63) {
+      final exercises = ExerciseRepository(db);
+      final plan = PlanRepository(db, exercises);
+      final training = TrainingRepository(db, exercises);
+      final blocks = <String, (String, DateTime, TestProtocolId)>{};
+      for (var d = f; !d.isAfter(t); d = addDays(d, 1)) {
+        final v3 = await training.blockDay(await plan.dayFor(d), d);
+        if (v3 == null || !v3.isV31) continue;
+        final start = addDays(d, -(d.weekday - 1) - (v3.week - 1) * 7);
+        blocks['${v3.scheme}|${dayKey(start)}'] = (
+          v3.scheme,
+          start,
+          v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12
+        );
+      }
+      for (final (scheme, start, protocol) in blocks.values) {
+        for (final e in await ReadinessRepository(db)
+            .testAgenda(scheme: scheme, blockStart: start, protocol: protocol)) {
+          if (!inRange(e.planned) && !inRange(e.date)) continue;
+          final gate = e.gate!;
+          agenda.add(TestAgendaEntry(
+            round: e.round,
+            part: e.part,
+            planned: e.planned,
+            date: e.date,
+            moves: e.moves,
+            maxMoves: maxTestMoves,
+            condition: !inRange(e.date)
+                ? null
+                : gate.status == TestDayStatus.stairsUnknown &&
+                        e.date.isBefore(dateOnly(today))
+                    ? 'escaleras sin anotar ese día'
+                    : gate.label,
+          ));
+        }
+        if (protocol != TestProtocolId.v32_13) continue;
+        for (final m in await MobilityBenchmarkRepository(db).schedule(
+            scheme: scheme,
+            blockStart: start,
+            protocol: protocol,
+            from: f,
+            to: t,
+            // Lo medido después del rango o de hoy no completa una toma.
+            asOf: t.isAfter(dateOnly(today)) ? dateOnly(today) : t)) {
+          benchmarks.add(BenchmarkScheduleEntry(
+            planned: m.planned,
+            date: m.date,
+            withMovedLegTest: m.withMovedLegTest,
+            missing: m.missing,
+            total: mobilityBenchmarkItems.length + 1,
+          ));
+        }
+      }
+    }
+    final sessions = {
+      for (final r in await (db.selectOnly(db.sessions)
+            ..addColumns([db.sessions.id]))
+          .get())
+        r.read(db.sessions.id)!
+    };
+    final attempts = [
+      for (final a in await (db.select(db.fitnessTestAttempts)
+            ..where((x) => x.date.isBetweenValues(dayKey(f), dayKey(t)))
+            ..orderBy([
+              (x) => OrderingTerm(expression: x.date),
+              (x) => OrderingTerm(expression: x.id)
+            ]))
+          .get())
+        if (TestPart.values.where((p) => p.name == a.part).firstOrNull
+            case final part?)
+          TestAttemptEntry(
+            id: a.id,
+            date: parseDay(a.date),
+            round: a.round,
+            part: part,
+            protocolId: a.protocolId,
+            sessionLinked: a.sessionId != null && sessions.contains(a.sessionId),
+          ),
+    ];
+    final results = [
+      for (final r in await FitnessTestRepository(db).all())
+        if (r.date == null || !dateOnly(r.date!).isAfter(t)) r
+    ];
+    return (
+      agenda: agenda,
+      attempts: attempts,
+      results: results,
+      benchmarks: benchmarks
     );
   }
 

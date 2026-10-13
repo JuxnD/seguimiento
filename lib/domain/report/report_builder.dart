@@ -1,7 +1,10 @@
 import '../dates.dart';
 import '../enums.dart';
+import '../fitness_test.dart';
 import '../format.dart';
 import '../goal_history.dart';
+import '../test_attempt_evidence.dart';
+import '../test_protocol.dart';
 import '../habits.dart';
 import '../nutrition.dart';
 import '../readiness.dart' show readinessReportLines;
@@ -39,9 +42,119 @@ String buildReport(ReportInput input) {
     }
     b.writeln();
   }
+  _tests(b, input);
   _alerts(b, s);
   _notes(b, s);
   return b.toString().trimRight();
+}
+
+String _day(DateTime d) => '${weekdayShort(d.weekday)} ${formatShort(d)}';
+
+String _testName(int round, TestPart part) =>
+    'Test $round de ${part == TestPart.torso ? 'torso' : 'piernas'}';
+
+/// Agenda efectiva, intentos con sus condiciones y benchmarks (§19.11,
+/// §19.13, §16.26.6–7). Cada intento se compara sólo con el anterior de su
+/// misma línea base (protocolo, prueba y condiciones); lo de antes, sin
+/// intento ni condiciones, se muestra pero no se compara.
+void _tests(StringBuffer b, ReportInput input) {
+  final rangeStart = dateOnly(input.rangeStart),
+      rangeEnd = dateOnly(input.rangeEnd);
+  bool inRange(DateTime? d) =>
+      d != null &&
+      !dateOnly(d).isBefore(rangeStart) &&
+      !dateOnly(d).isAfter(rangeEnd);
+  final legacy = input.testResults
+      .where((r) => r.attemptId == null && inRange(r.date))
+      .toList();
+  if (input.testAgenda.isEmpty &&
+      input.testAttempts.isEmpty &&
+      legacy.isEmpty &&
+      input.benchmarkSchedule.isEmpty) {
+    return;
+  }
+  b.writeln('## Tests y benchmarks');
+  for (final t in input.testAgenda) {
+    final when = t.moves == 0
+        ? _day(t.date)
+        : 'previsto ${_day(t.planned)} → ${_day(t.date)} '
+            '(${t.moves} de ${t.maxMoves} movimientos)';
+    b.writeln('- ${_testName(t.round, t.part)}: $when'
+        '${t.condition == null ? '' : ' · ${t.condition}'}');
+  }
+  for (final m in input.benchmarkSchedule) {
+    final state = m.missing.isEmpty
+        ? 'completa'
+        : m.missing.length == m.total
+            ? 'pendiente'
+            : 'parcial (faltan: ${m.missing.join(', ')})';
+    b.writeln('- Benchmarks de movilidad: ${_day(m.date)}'
+        '${m.withMovedLegTest ? ', con el test de piernas movido' : ''} · $state');
+  }
+  for (final a in input.testAttempts) {
+    final protocol =
+        TestProtocolId.values.where((p) => p.name == a.protocolId).firstOrNull;
+    b.writeln('- Intento #${a.id} · ${_day(a.date)} · ${_testName(a.round, a.part)}'
+        ' · ${switch (protocol) {
+      TestProtocolId.v31_12 => 'v3.1 (12 pruebas)',
+      TestProtocolId.v32_13 => 'v3.2 (13 pruebas)',
+      null => 'protocolo desconocido',
+    }} · ${a.sessionLinked ? 'sesión de test vinculada' : 'sin sesión vinculada'}');
+    final rows = input.testResults.where((r) => r.attemptId == a.id).toList();
+    final items = protocol == null ? <TestItem>[] : protocolItems(protocol, a.part);
+    for (final item in items) {
+      final own = rows.where((r) => r.item == item.id).toList();
+      if (own.isEmpty) continue;
+      b.writeln('  - ${item.name}: ${_testValues(item, own)}'
+          ' · ${own.first.conditions == null ? 'condiciones desconocidas' : testConditionsLabel(own.first.conditions)}'
+          ' · ${_comparison(input.testResults, a, item)}');
+    }
+  }
+  for (final r in legacy) {
+    final item = allTests.where((t) => t.id == r.item).firstOrNull;
+    if (item == null) continue;
+    b.writeln('- ${dayKey(r.date!)} · ${item.name}: '
+        '${formatTestValue(item, r.value)}${r.side == null ? '' : ' (${r.side})'}'
+        ' · sin intento ni condiciones: no se compara');
+  }
+  b.writeln();
+}
+
+String _testValues(TestItem item, List<TestResult> rows) => item.perSide
+    ? ['I', 'D']
+        .map((side) => rows.where((r) => r.side == side).firstOrNull)
+        .map((r) => r == null ? 'falta un lado' : '${r.side} ${formatTestValue(item, r.value)}')
+        .join(' / ')
+    : formatTestValue(item, rows.first.value);
+
+String _comparison(
+    List<TestResult> results, TestAttemptEntry attempt, TestItem item) {
+  final current =
+      observedAttemptValue(results, attempt.id, item.id, asOf: attempt.date);
+  if (current == null) {
+    return 'no comparable: condiciones desconocidas, técnica con dudas o lados incompletos';
+  }
+  bool before(TestAttemptEvidence e) =>
+      e.attemptId != current.attemptId &&
+      (dateOnly(e.date).isBefore(dateOnly(current.date)) ||
+          (dateOnly(e.date) == dateOnly(current.date) &&
+              e.attemptId < current.attemptId));
+  final earlier = eligibleAttempts(results, item.id, asOf: attempt.date)
+      .where(before)
+      .toList();
+  final same = earlier.where((e) => e.baseline == current.baseline).lastOrNull;
+  if (same != null) {
+    final change = comparableAttemptImprovement(same, current);
+    if (change != null) {
+      return '${change >= 0 ? '+' : ''}${change.round()} % frente al '
+          '#${same.attemptId} (mismas condiciones)';
+    }
+  }
+  if (earlier.any((e) => e.protocol == current.protocol)) {
+    return 'línea base nueva (condiciones distintas)';
+  }
+  if (earlier.isNotEmpty) return 'línea base nueva (protocolo distinto)';
+  return 'primera medición de esta línea base';
 }
 
 void _header(StringBuffer b, ReportStats s) {
