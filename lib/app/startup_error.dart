@@ -35,7 +35,7 @@ class _StartupErrorScreen extends StatelessWidget {
       final dir = await getTemporaryDirectory();
       final path = p.join(dir.path, 'seguimiento-rescate-${dayKey(DateTime.now())}.sqlite');
       final file = await host!.exportTo(path);
-      await Share.shareXFiles([XFile(file.path)], subject: 'Respaldo Seguimiento (rescate)');
+      await Share.shareXFiles([XFile(file.path)], subject: 'Respaldo My Prime (rescate)');
     } on Object catch (e) {
       messenger.showSnackBar(SnackBar(content: Text('No se pudo exportar: $e')));
     }
@@ -43,7 +43,7 @@ class _StartupErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Seguimiento no pudo arrancar')),
+        appBar: AppBar(title: const Text('My Prime no pudo arrancar')),
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [

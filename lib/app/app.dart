@@ -20,7 +20,7 @@ class SeguimientoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Seguimiento',
+      title: 'My Prime',
       debugShowCheckedModeBanner: false,
       locale: const Locale('es'),
       supportedLocales: const [Locale('es'), Locale('en')],

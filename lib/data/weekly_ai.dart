@@ -18,7 +18,7 @@ class AiNote {
 }
 
 String aiReviewText(List<AiNote> notes) =>
-    'Comentarios de IA · Seguimiento\nVerifica la evidencia antes de actuar.\n\n'
+    'Comentarios de IA · My Prime\nVerifica la evidencia antes de actuar.\n\n'
     '${notes.map((n) => n.copyText).join('\n\n')}';
 
 /// El servidor recibe solo el informe elegido, nunca SQLite ni fotos.

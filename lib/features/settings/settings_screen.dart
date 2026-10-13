@@ -281,7 +281,7 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
         if (sharePartial != true || !context.mounted) return;
       }
       await Share.shareXFiles([XFile(exported.file.path, mimeType: 'application/zip')],
-          subject: 'Respaldo Seguimiento');
+          subject: 'Respaldo My Prime');
       if (context.mounted) showSnack(context, 'Comprueba que el ZIP quedó guardado donde lo puedas recuperar.');
     } on Object catch (e) {
       if (context.mounted) showSnack(context, 'No se pudo exportar: $e');

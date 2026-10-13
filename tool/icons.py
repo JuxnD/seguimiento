@@ -28,21 +28,23 @@ def save(img: Image.Image, path: Path, size: int) -> None:
     img.resize((size, size), Image.LANCZOS).save(path, optimize=True)
 
 
-def main() -> None:
+def main(root=ROOT, *, quiet=False) -> None:
+    src = root / 'assets' / 'icon'
+    res = root / 'android' / 'app' / 'src' / 'main' / 'res'
     # One editable source now drives every consumer, including status/mono.
-    generate_sources(SRC / 'seguimiento_icon.svg', SRC)
-    legacy = Image.open(SRC / 'icono_1024.png').convert('RGBA')
-    fg = Image.open(SRC / 'ic_launcher_foreground_432.png').convert('RGBA')
-    bg = Image.open(SRC / 'ic_launcher_background_432.png').convert('RGBA')
-    mono = Image.open(SRC / 'ic_launcher_monochrome_432.png').convert('RGBA')
+    generate_sources(src / 'seguimiento_icon.svg', src)
+    legacy = Image.open(src / 'icono_1024.png').convert('RGBA')
+    fg = Image.open(src / 'ic_launcher_foreground_432.png').convert('RGBA')
+    bg = Image.open(src / 'ic_launcher_background_432.png').convert('RGBA')
+    mono = Image.open(src / 'ic_launcher_monochrome_432.png').convert('RGBA')
 
     for name, f in DENSITIES.items():
-        save(legacy, RES / f'mipmap-{name}' / 'ic_launcher.png', round(48 * f))
-        save(fg, RES / f'mipmap-{name}' / 'ic_launcher_foreground.png', round(108 * f))
-        save(bg, RES / f'mipmap-{name}' / 'ic_launcher_background.png', round(108 * f))
-        save(mono, RES / f'mipmap-{name}' / 'ic_launcher_monochrome.png', round(108 * f))
+        save(legacy, res / f'mipmap-{name}' / 'ic_launcher.png', round(48 * f))
+        save(fg, res / f'mipmap-{name}' / 'ic_launcher_foreground.png', round(108 * f))
+        save(bg, res / f'mipmap-{name}' / 'ic_launcher_background.png', round(108 * f))
+        save(mono, res / f'mipmap-{name}' / 'ic_launcher_monochrome.png', round(108 * f))
 
-    adaptive = RES / 'mipmap-anydpi-v26' / 'ic_launcher.xml'
+    adaptive = res / 'mipmap-anydpi-v26' / 'ic_launcher.xml'
     adaptive.parent.mkdir(parents=True, exist_ok=True)
     adaptive.write_text(
         '<?xml version="1.0" encoding="utf-8"?>\n'
@@ -60,8 +62,9 @@ def main() -> None:
     off = (fg.width - side) // 2
     status = mono.crop((off, off, off + side, off + side))
     for name, f in DENSITIES.items():
-        save(status, RES / f'drawable-{name}' / 'ic_stat_seguimiento.png', round(24 * f))
-    print('íconos generados')
+        save(status, res / f'drawable-{name}' / 'ic_stat_seguimiento.png', round(24 * f))
+    if not quiet:
+        print('íconos generados')
 
 
 if __name__ == '__main__':

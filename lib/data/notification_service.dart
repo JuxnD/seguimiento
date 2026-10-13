@@ -206,7 +206,7 @@ class NotificationService implements NotificationSink {
     await init();
     await _plugin.show(
       testNotificationId,
-      'Prueba de Seguimiento',
+      'Prueba de My Prime',
       'Si ves esto, las notificaciones llegan.',
       NotificationDetails(
         android: AndroidNotificationDetails(

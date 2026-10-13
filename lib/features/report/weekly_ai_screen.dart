@@ -70,7 +70,7 @@ class _WeeklyAiScreenState extends State<WeeklyAiScreen> {
     final box = context.findRenderObject() as RenderBox?;
     try {
       await Share.share(text,
-          subject: 'Comentarios de IA · Seguimiento',
+          subject: 'Comentarios de IA · My Prime',
           sharePositionOrigin:
               box == null ? null : box.localToGlobal(Offset.zero) & box.size);
     } on Object {

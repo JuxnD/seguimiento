@@ -1,0 +1,17 @@
+E..
+======================================================================
+ERROR: test_explicit_closed_fill_has_solid_center_and_transparent_outside (__main__.IconVectorTests.test_explicit_closed_fill_has_solid_center_and_transparent_outside)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-036-my-prime\tool\icon_vector_test.py", line 29, in test_explicit_closed_fill_has_solid_center_and_transparent_outside
+    image=self.draw('<path d="M 256 256 L 768 256 L 768 768 L 256 768 Z" fill="#C1FF45"/>')
+  File "C:\My Projects\seguimiento-036-my-prime\tool\icon_vector_test.py", line 21, in draw
+    return render(file,size=128,layers=('symbol',))
+  File "C:\My Projects\seguimiento-036-my-prime\tool\icon_vector.py", line 93, in render
+    raise ValueError("Authored path must have an explicit round stroke")
+ValueError: Authored path must have an explicit round stroke
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.069s
+
+FAILED (errors=1)

@@ -1,0 +1,14 @@
+..F.
+======================================================================
+FAIL: test_old_well_formed_symbol_cannot_pass_as_current_generated_output (__main__.IconVectorTests.test_old_well_formed_symbol_cannot_pass_as_current_generated_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\My Projects\seguimiento-036-my-prime\tool\icon_vector_test.py", line 59, in test_old_well_formed_symbol_cannot_pass_as_current_generated_output
+    with self.assertRaisesRegex(ValueError,'Generated pixels mismatch: assets/icon/playstore_512.png'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 6.293s
+
+FAILED (failures=1)

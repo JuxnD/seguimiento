@@ -59,7 +59,7 @@ class UpdatesCard extends ConsumerWidget {
                 if (release.apkUrl != null)
                   const Padding(
                     padding: EdgeInsets.only(top: 4),
-                    child: Text('Al descargar, Seguimiento se cierra; cuando termine de instalar, ábrela de nuevo.'),
+                    child: Text('Al descargar, My Prime se cierra; cuando termine de instalar, ábrela de nuevo.'),
                   ),
               ],
             );

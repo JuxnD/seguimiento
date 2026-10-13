@@ -88,6 +88,15 @@ def render(source, size=1024, layers=("background", "symbol"), white=False):
                 points = [(x*scale, y*scale) for x, y in path_points(element.get("d", ""))]
                 if len(points) < 2:
                     raise ValueError("Empty path")
+                if element.get("fill") != "none":
+                    data = element.get("d", "").strip()
+                    if (set(element.attrib) != {"d", "fill"} or
+                            not re.fullmatch(r"#[0-9A-Fa-f]{6}", element.get("fill", "")) or
+                            not data.startswith("M") or not data.endswith("Z") or
+                            data.count("Z") != 1 or len(points) < 4):
+                        raise ValueError("Filled paths require one explicit closed contour and solid RGB fill")
+                    draw.polygon(points, fill=colour)
+                    continue
                 width = float(element.get("stroke-width", "0")) * scale
                 if width <= 0 or element.get("fill") != "none" or element.get("stroke-linecap") != "round" or element.get("stroke-linejoin") != "round":
                     raise ValueError("Authored path must have an explicit round stroke")

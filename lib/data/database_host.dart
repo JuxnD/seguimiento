@@ -290,7 +290,7 @@ class DatabaseHost {
       const required = {'profiles', 'sessions', 'meals', 'measurements'};
       final missing = required.difference(tables);
       if (missing.isNotEmpty) {
-        throw RestoreException('El archivo no es un respaldo de Seguimiento '
+        throw RestoreException('El archivo no es un respaldo compatible con My Prime '
             '(faltan tablas: ${missing.join(', ')}).');
       }
       final version = probe.select('pragma user_version').first.values.first as int;

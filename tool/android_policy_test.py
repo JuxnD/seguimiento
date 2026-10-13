@@ -2,6 +2,7 @@
 import shutil
 import tempfile
 import unittest
+from unittest import mock
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -9,7 +10,14 @@ import android_policy_verify as policy
 
 
 class AndroidPolicyTests(unittest.TestCase):
-    def test_real_source_and_013_inputs(self):
+    def test_changed_generated_png_is_rejected(self):
+        icons=policy.icon_verify.verify()
+        path=next(p for p in icons if p.endswith('.png'))
+        icons[path]['sha256']='0'*64
+        with mock.patch.object(policy.icon_verify,'verify',return_value=icons):
+            self.assertIn('BRAND_PNG_CHANGED',policy.verify()['violations'])
+
+    def test_real_source_and_036_inputs(self):
         result = policy.verify()
         self.assertEqual(result['violations'], [])
         self.assertEqual(result['nativeValidation'], 'PENDING_MERGED_XML_APK_STARTUP_AND_TRANSPORT')

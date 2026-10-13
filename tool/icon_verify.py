@@ -6,9 +6,12 @@ import argparse
 import hashlib
 import json
 import math
+import tempfile
+import shutil
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from PIL import Image
+import icons
 
 ROOT = Path(__file__).resolve().parent.parent
 DENSITIES = {'mdpi':1,'hdpi':1.5,'xhdpi':2,'xxhdpi':3,'xxxhdpi':4}
@@ -62,12 +65,26 @@ def verify():
         result[path.relative_to(ROOT).as_posix()]={'size':size,'alphaBounds':alpha.getbbox(),
                                                  'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
     source=src/'seguimiento_icon.svg'
+    # Compare delivered pixels with the real pipeline regenerated from the
+    # master in an isolated directory. A valid but stale S cannot pass as MP.
+    with tempfile.TemporaryDirectory(prefix='my-prime-generated-') as temp:
+        generated=Path(temp)
+        (generated/'assets/icon').mkdir(parents=True)
+        shutil.copyfile(source,generated/'assets/icon/seguimiento_icon.svg')
+        icons.main(generated,quiet=True)
+        for path in files:
+            relative=path.relative_to(ROOT)
+            expected=Image.open(generated/relative).convert('RGBA')
+            delivered=Image.open(path).convert('RGBA')
+            check(expected.size==delivered.size and expected.tobytes()==delivered.tobytes(),
+                  'Generated pixels mismatch: '+relative.as_posix())
     # Source and pipeline hashes bind the artifact set; no promise of APK identity.
     result['sources']={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
                       for p in (source,ROOT/'tool/icon_vector.py',ROOT/'tool/icons.py')}
     result['status']='VALIDATED_RESOURCE_INPUTS'
     result['nativePngs']=25
     result['sourcePngs']=5
+    result['sourceToOutput']='30 delivered images match regeneration from the master'
     return result
 
 

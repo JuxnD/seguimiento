@@ -1,5 +1,11 @@
 # Índice de contexto
 
+**Marca036 local:** My Prime/MP-Mrayo aprobado por owner; maestroSVG, variantes,
+wordmark y recursos con comparación fuente→pipeline→30PNG. Nombre visible
+actualizado; identidad técnica/SQLite conservados.
+[Recibo y gates](sessions/2026-10-13-036-my-prime.md). SinFlutter036, APK,
+publicación ni validación nativa/teléfono; PNG no acredita app instalada.
+
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
 Claude fe0b565/8b1cac5/74c26aa en ramaJuxnD/026-integridad-diaria. Fotos/ZIP y
 protección estricta reutilizados;029 cierra tres carreras nuevas de cola que
