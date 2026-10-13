@@ -1,0 +1,3 @@
+Analyzing seguimiento-035-ilustraciones...                      
+No issues found! (ran in 7.9s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T190803150-56932-8376fcbb7a7d4b818fac1c01e8cee2cb.json

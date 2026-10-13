@@ -405,4 +405,33 @@ void main() {
       expect((held.p['${side}Ankle']! - start.p['${side}Ankle']!).length, lessThan(.001));
     }
   });
+
+  testWidgets('doorway stretch turns the chest axially while keeping the supported forearm and feet fixed', (tester) async {
+    final fig=catalog.forExercise('Pectoral en el marco de la puerta')!;
+    final start=liftSkeleton(fig.skeletonAt(0),fig);
+    final held=liftSkeleton(fig.skeletonAt(.5),fig);
+    expect((held.front.z-start.front.z).abs(),greaterThan(.2),reason:'The guide requires turning away from the supported arm, not sagittal tilting.');
+    for(var i=0;i<=80;i++) {
+      final body=liftSkeleton(fig.skeletonAt(i/80),fig);
+      for(final joint in ['nearHand','nearElbow','nearAnkle','farAnkle']) {
+        expect((body.p[joint]!-start.p[joint]!).length,lessThan(.08),reason:'$joint/$i fixed in world space');
+      }
+    }
+    await tester.runAsync(() async {
+      final buffers=<List<int>>[];
+      for(final progress in [0.0,.5]) {
+        final recorder=ui.PictureRecorder();
+        paintFigure3D(ui.Canvas(recorder),const ui.Size(360,315),fig,progress,yaw:fig.initialYaw,pitch:fig.initialPitch);
+        final picture=recorder.endRecording();final image=await picture.toImage(360,315);
+        buffers.add((await image.toByteData(format:ui.ImageByteFormat.rawRgba))!.buffer.asUint8List());
+        image.dispose();picture.dispose();
+      }
+      var changed=0;
+      for(var i=0;i<buffers[0].length;i+=4) {
+        if(buffers[0][i]!=buffers[1][i] || buffers[0][i+1]!=buffers[1][i+1] || buffers[0][i+2]!=buffers[1][i+2]) changed++;
+      }
+      expect(changed,greaterThan(300),reason:'The real default camera must show the chest turn.');
+    });
+  });
+
 }
