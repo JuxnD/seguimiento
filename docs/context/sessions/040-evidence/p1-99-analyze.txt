@@ -1,0 +1,14 @@
+Analyzing seguimiento-040-registros...                          
+
+   info - Don't invoke 'print' in production code - test\data\registros_zip_040_test.dart:163:7 - avoid_print
+
+powershell.exe : 1 issue found. (ran in 5.1s)
+En C:\Users\Acer\AppData\Local\Temp\claude\C--My-Projects-kata\6db9cb30-df08-43e9-87db-e1d7b6a75d84\scratchpad\lease040
+.ps1: 8 Carácter: 1
++ & powershell -NoProfile -ExecutionPolicy Bypass -Command $inner *> "$ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (1 issue found. (ran in 5.1s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T194943256-8680-a20e9fa6114c4f6ebaf66a721b56a4ff.json
+exit=1

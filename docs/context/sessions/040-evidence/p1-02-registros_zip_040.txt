@@ -1,0 +1,8 @@
+00:00 +0: loading C:/My Projects/seguimiento-040-registros/test/data/registros_zip_040_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: ZIP 25: campos de 040, ids, defaults exactos y flag tras restaurar, reabrir y restaurar otra vez
+ZIP040 zip=9226217704d00b2831f754b6adb4e8dc7d28d3fd8f3da6bb24450bac2040d05a expected=135176ef3d32fd9e35449c462c434f150364a395ab0f72f723ba359ceb6e302d
+00:00 +1: (tearDownAll)
+00:00 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T194931288-52772-897e97c8b0774f1dada610530fe56ccf.json
+exit=0
