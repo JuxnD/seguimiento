@@ -73,9 +73,14 @@ List<String> buildAlerts(ReportStats s) {
     out.add('${e.key} partidas en ${e.value} sesiones');
   }
 
-  for (final (session, before, blockers) in progressionViolations(s)) {
+  final progression = progressionReview(s);
+  for (final (session, before, blockers) in progression.violations) {
     out.add('Subiste de $before a ${session.roundsDone} rondas el ${formatShort(session.date)} '
         'sin cumplir la regla de progresión (${blockers.join(', ')})');
+  }
+  for (final session in progression.unknown) {
+    out.add('Regla de progresión no evaluable el ${formatShort(session.date)} '
+        '(${session.type.label}): dato anterior sin registrar o no comparable');
   }
 
   final shortWarmups = s.input.sessions.where((x) => x.warmupSec < t.minWarmupSec).length;

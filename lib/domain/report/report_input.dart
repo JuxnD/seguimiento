@@ -3,6 +3,7 @@
 library;
 
 import '../enums.dart';
+import '../progress.dart';
 import '../nutrition.dart';
 import '../goal_history.dart';
 
@@ -89,6 +90,7 @@ class SetEntry {
 
 class SessionEntry {
   const SessionEntry({
+    this.id,
     required this.date,
     required this.type,
     this.startTime,
@@ -118,6 +120,7 @@ class SessionEntry {
     this.imported = false,
   });
 
+  final int? id;
   final DateTime date;
   final String? startTime;
   final SessionType type;
@@ -181,13 +184,20 @@ class SessionEntry {
   final bool? recoveryOk;
 
   /// Motivos por los que esta sesión no habilita subir de ronda.
-  List<String> get progressionBlockers => [
-        if (sets.any((s) => s.split)) 'series partidas',
-        if (sets.any((s) => s.toFailure)) 'series al fallo',
-        if (techniqueOk == false) 'técnica',
-        if (fullRange == false) 'rango reducido',
-        if (recoveryOk == false) 'recuperación',
-      ];
+  ProgressionProposal? get progressionEvidence => imported || roundsEstimated
+      ? null
+      : proposeProgression(
+          lastRounds: roundsDone,
+          lastPlanned: plannedRounds,
+          anySplit: sets.any((s) => s.split),
+          anyFailure: sets.any((s) => s.toFailure),
+          techniqueOk: techniqueOk,
+          fullRange: fullRange,
+          recoveryOk: recoveryOk,
+          incomplete: incomplete,
+        );
+
+  List<String> get progressionBlockers => progressionEvidence?.unmet ?? ['rondas sin registrar'];
 }
 
 class MobilityEntry {
@@ -278,6 +288,7 @@ class ReportInput {
     this.sessions = const [],
     this.previousRoundsRecord,
     this.roundsBeforeRange = const {},
+    this.sessionsBeforeRange = const {},
     this.football = const [],
     this.meals = const [],
     this.weightsInRange = const [],
@@ -314,9 +325,12 @@ class ReportInput {
   /// Máximo de rondas de circuito antes del rango.
   final int? previousRoundsRecord;
 
-  /// Últimas rondas hechas antes del rango, por tipo de circuito: es contra
-  /// esto que se juzga si una sesión subió de ronda.
+  /// Últimas rondas por tipo, conservadas para lectores cuantitativos legados.
+  /// La evaluación de progresión requiere sessionsBeforeRange.
   final Map<SessionType, int> roundsBeforeRange;
+  /// Última sesión completa por tipo antes del rango. Los enteros legados
+  /// anteriores no prueban calidad ni permiso para progresar.
+  final Map<SessionType, SessionEntry> sessionsBeforeRange;
   final List<FootballEntry> football;
   final List<MealEntry> meals;
   final List<WeightEntry> weightsInRange;

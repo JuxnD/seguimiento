@@ -8,6 +8,7 @@ import 'package:seguimiento/data/repositories/profile_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/data/seed_plan.dart';
 import 'package:seguimiento/domain/enums.dart';
+import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/domain/plan_v3.dart';
 
 import '../support/sqlite_host.dart';
@@ -41,21 +42,28 @@ void main() {
     return id;
   }
 
-  test('activarlo: semana 1, metas de §19.3 y abdomen el sábado 17', () async {
-    await activatePlanV31(db, plan, d(10, 12));
+  test('activarlo: semana 1, metas vigentes de §19.3 y abdomen el sábado', () async {
+    // La aceptación rige desde la operación real, nunca retroactivamente.
+    // Un lunes estrictamente futuro conserva el calendario L–S y evita que
+    // cruzar medianoche vuelva anterior a la aceptación el día del oráculo.
+    final operation = dateOnly(DateTime.now());
+    final start = nextWeekday(addDays(operation, 1), DateTime.monday);
+    await activatePlanV31(db, plan, start);
 
-    expect((await plan.dayFor(d(10, 11)))!.scheme, isNull, reason: 'el domingo todavía rige el v2');
-    final monday = await dashboard.today(now: d(10, 12));
+    expect((await plan.dayFor(addDays(start, -1)))!.scheme, isNull, reason: 'el domingo todavía rige el v2');
+    expect((await dashboard.today(now: addDays(operation, -1))).kcalTarget, isNull,
+        reason: 'aceptar hoy no fabrica una meta en el pasado');
+    final monday = await dashboard.today(now: start);
     expect(monday.dayType, DayType.trenSuperior);
     expect((monday.v3!.isV31, monday.v3!.week, monday.v3!.phase), (true, 1, V3Phase.bloque1));
     expect(monday.v3Suggestion, isNull, reason: 'ya hay v3.1');
     expect(monday.kcalTarget, 2100);
     expect(monday.blockExercises.first, startsWith('Antes, sin fatiga: Pino pecho a la pared'));
-    expect((await dashboard.today(now: d(10, 17))).kcalTarget, 2400, reason: 'sábado de fútbol');
+    expect((await dashboard.today(now: addDays(start, 5))).kcalTarget, 2400, reason: 'sábado de fútbol');
 
     final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
     expect((profile.proteinMin, profile.proteinMax, profile.kcalTargetFootball), (130, 160, 2400));
-    expect(profile.nextMeasurementDate, '2026-10-17');
+    expect(profile.nextMeasurementDate, dayKey(addDays(start, 5)));
     expect((profile.measureIntervalDays, profile.measureIntervalMaxDays), (14, 21),
         reason: 'el abdomen cada 2 semanas no es "antes de tiempo" ni alerta en el informe');
 

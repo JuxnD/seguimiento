@@ -10,20 +10,22 @@ Future<void> showRecordCelebration(
   BuildContext context, {
   required int rounds,
   int? previous,
+  bool milestone = false,
 }) {
   unawaited(HapticFeedback.mediumImpact());
   return showDialog<void>(
     context: context,
     barrierColor: Colors.black87,
-    builder: (_) => _RecordDialog(rounds: rounds, previous: previous),
+    builder: (_) => _RecordDialog(rounds: rounds, previous: previous, milestone: milestone),
   );
 }
 
 class _RecordDialog extends StatefulWidget {
-  const _RecordDialog({required this.rounds, this.previous});
+  const _RecordDialog({required this.rounds, this.previous, this.milestone = false});
 
   final int rounds;
   final int? previous;
+  final bool milestone;
 
   @override
   State<_RecordDialog> createState() => _RecordDialogState();
@@ -70,7 +72,7 @@ class _RecordDialogState extends State<_RecordDialog> with SingleTickerProviderS
                     children: [
                       Icon(Icons.emoji_events, size: 56, color: scheme.primary),
                       const SizedBox(height: 8),
-                      Text('RÉCORD',
+                      Text(widget.milestone ? 'Meta del Plan v2 cumplida' : 'RÉCORD',
                           style: text.titleMedium?.copyWith(letterSpacing: 3, color: scheme.primary)),
                       const SizedBox(height: 4),
                       Text('${widget.rounds}',
@@ -78,7 +80,7 @@ class _RecordDialogState extends State<_RecordDialog> with SingleTickerProviderS
                       Text('rondas', style: text.titleMedium),
                       const SizedBox(height: 10),
                       Text(
-                        widget.previous == null
+                        widget.milestone ? '10 rondas limpias registradas. Tu marca quedó guardada.' : widget.previous == null
                             ? 'Primera marca registrada'
                             : 'Tu máximo anterior era ${widget.previous}',
                         style: text.bodyMedium,
