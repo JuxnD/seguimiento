@@ -1,5 +1,7 @@
 # Índice de contexto
 
+**045 local verificado, pendiente R1:** perfil explícito carrera15/15,960s con pausa final y snapshot completo;12 nuevas+49 regresiones PASS/analyze0. Caller034 e integración037 separados. [Contrato, evidencia y gates](sessions/2026-10-13-045-intervalos-timer.md).
+
 **033 local, dirigido y pendiente R1:** coherencia core Hoy/informe, fútbol diario acumulado/detalle/edición porID, guard de guardado y confirmación duplicadas, hito10 traspersistencia sinactivar plan. Fallo/retry no pierde procedencia guiada. [Recibo, negativos y gates](sessions/2026-10-13-033-coherencia.md). Full sólo integración032/034/035; sin esquema/assets/APK/publicación ni aceptación humana nueva.
 
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más

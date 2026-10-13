@@ -1,0 +1,21 @@
+{
+  "owner": "045",
+  "token": "708579394f4041f8a132954efa953492",
+  "pid": 50356,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--concurrency=1",
+    "--timeout=90s",
+    "--reporter=expanded",
+    "test/domain/plan045_baseline_probe_test.dart"
+  ],
+  "worktree": "C:/My Projects/seguimiento-045-intervalos-timer",
+  "startUtc": "2026-10-13T21:47:41.3323578Z",
+  "finishUtc": "2026-10-13T21:47:57.1991189Z",
+  "exit": 1,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

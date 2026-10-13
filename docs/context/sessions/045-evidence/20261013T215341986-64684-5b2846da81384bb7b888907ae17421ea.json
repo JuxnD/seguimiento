@@ -1,0 +1,23 @@
+{
+  "owner": "045",
+  "token": "45cdfe8078864ca487c077f0deab15a9",
+  "pid": 64684,
+  "tool": "dart",
+  "arguments": [
+    "format",
+    "--line-length",
+    "120",
+    "lib/domain/timer_profile.dart",
+    "lib/domain/active_session.dart",
+    "lib/features/training/v3_timers.dart",
+    "test/domain/plan045_baseline_probe_test.dart",
+    "test/ui/plan045_running_timer_test.dart"
+  ],
+  "worktree": "C:/My Projects/seguimiento-045-intervalos-timer",
+  "startUtc": "2026-10-13T21:53:39.9813140Z",
+  "finishUtc": "2026-10-13T21:53:41.9802515Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

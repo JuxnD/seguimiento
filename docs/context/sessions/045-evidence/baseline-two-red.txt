@@ -1,0 +1,23 @@
+00:00 +0: loading C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan045_baseline_probe_test.dart
+00:00 +0: running 15/15 needs both final pauses to reach two complete eight minute blocks
+00:00 +0 -1: running 15/15 needs both final pauses to reach two complete eight minute blocks [E]
+  Expected: <960>
+    Actual: <930>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\plan045_baseline_probe_test.dart 9:5    main.<fn>
+  
+00:00 +0 -1: timer JSON preserves a frozen running prescription instead of silently restoring defaults
+00:00 +0 -2: timer JSON preserves a frozen running prescription instead of silently restoring defaults [E]
+  Expected: 'running1515'
+    Actual: <null>
+     Which: not an <Instance of 'String'>
+  profile
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 474:18  expect
+  test\domain\plan045_baseline_probe_test.dart 40:7   main.<fn>
+  
+00:00 +0 -2: Some tests failed.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T214757203-50356-d50dc758ff4a4f90902e2328b25b4655.json

@@ -1,0 +1,17 @@
+{
+  "owner": "045",
+  "token": "e18a1830229b40b9bcc3f6a4eaca20b7",
+  "pid": 56504,
+  "tool": "flutter",
+  "arguments": [
+    "analyze",
+    "--no-pub"
+  ],
+  "worktree": "C:/My Projects/seguimiento-045-intervalos-timer",
+  "startUtc": "2026-10-13T21:56:37.3922802Z",
+  "finishUtc": "2026-10-13T21:57:04.5672398Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}
