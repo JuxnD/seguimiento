@@ -9,6 +9,7 @@ import '../support/test_fonts.dart';
 
 void main() {
   final output = Platform.environment['GUIDED_RENDER_OUT'];
+  final selectionFile = Platform.environment['GUIDED_RENDER_SELECTION'];
   final clipName = Platform.environment['GUIDED_RENDER_CLIP'];
   final source = Platform.environment['ILLUSTRATION_035_SOURCE_SHA'];
   final raw = jsonDecode(File(Figure3DCatalog.asset).readAsStringSync()) as Map<String, Object?>;
@@ -56,7 +57,12 @@ void main() {
             figure: catalog.forExercise(v['exercise'] as String, physicalVariantKey: v['key'] as String)!
           ),
     ];
-    expect(entries.length, 38);
+    expect(entries.length, 43);
+    if (selectionFile != null) {
+      final selection = (jsonDecode(File(selectionFile).readAsStringSync()) as List).cast<Map<String,Object?>>();
+      entries.removeWhere((entry) => !selection.any((item) => item['name']==entry.name && item['key']==(entry.key ?? 'base')));
+      expect(entries.length, selection.length);
+    }
     final manifest = <Map<String, Object?>>[];
     for (final (number, entry) in entries.indexed) {
       final fig = entry.figure;

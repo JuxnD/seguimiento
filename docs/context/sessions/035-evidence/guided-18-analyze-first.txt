@@ -1,0 +1,6 @@
+Analyzing seguimiento-035-ilustraciones...                      
+
+   info - Method invocation or property access on a 'dynamic' target - test\ui\illustration_guided_geometry_test.dart:369:50 - avoid_dynamic_calls
+
+1 issue found. (ran in 5.7s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T185953132-47916-47372ce4e9344136adce3b7a44d332ea.json

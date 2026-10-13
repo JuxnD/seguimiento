@@ -1,0 +1,3 @@
+Formatted lib/ui/exercise_figure_3d.dart
+Formatted 1 file (1 changed) in 0.80 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T185837161-60876-6ecc184880604ccc8ed4c1d2edf47abb.json

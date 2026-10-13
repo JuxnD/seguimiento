@@ -366,7 +366,7 @@ void main() {
       final variant =
           (stripped['physicalVariants'] as List).cast<Map<String, Object?>>().firstWhere((v) => v['key'] == spec.$2);
       final raw = variant['figure'] as Map<String, Object?>;
-      (raw['props'] as List).removeWhere((p) => (p['type'] as String).startsWith('guided'));
+      (raw['props'] as List).removeWhere((p) => ((p as Map<String, Object?>)['type'] as String).startsWith('guided'));
       final bare =
           Figure3DCatalog.fromJsonString(jsonEncode(stripped)).forExercise(spec.$1, physicalVariantKey: spec.$2)!;
       await tester.runAsync(() async {

@@ -2312,19 +2312,19 @@ class _Scene {
         case 'guidedHandWeight':
           final joint = body.p[pr['joint'] as String]!;
           parts.add(DepthPart(zc(joint), () {
-            _capsule(joint - const V3(0,0,2),joint + const V3(0,0,2),.35,.35,_metal,nearOf(joint));
-            for(final sign in [-1.0,1.0]) {
-              final center=joint + V3(0,0,sign*1.7);
-              _capsule(center-const V3(0,0,.35),center+const V3(0,0,.35),1.1,1.1,_metal,nearOf(center));
+            _capsule(joint - const V3(0, 0, 2), joint + const V3(0, 0, 2), .35, .35, _metal, nearOf(joint));
+            for (final sign in [-1.0, 1.0]) {
+              final center = joint + V3(0, 0, sign * 1.7);
+              _capsule(center - const V3(0, 0, .35), center + const V3(0, 0, .35), 1.1, 1.1, _metal, nearOf(center));
             }
           }, 'guidedHandWeight'));
         case 'guidedFootPack':
           final foot = body.p[pr['joint'] as String]!;
-          final center=foot + const V3(0,1.7,0);
+          final center = foot + const V3(0, 1.7, 0);
           parts.add(DepthPart(zc(center), () {
-            _box(center,[const V3(1.6,0,0),const V3(0,1.2,0),const V3(0,0,1.5)],_pack.mid);
-            for(final sign in [-1.0,1.0]) {
-              _capsule(foot,center+V3(0,-1.2,sign*1.3),.18,.18,_strap,nearOf(foot));
+            _box(center, [const V3(1.6, 0, 0), const V3(0, 1.2, 0), const V3(0, 0, 1.5)], _pack.mid);
+            for (final sign in [-1.0, 1.0]) {
+              _capsule(foot, center + V3(0, -1.2, sign * 1.3), .18, .18, _strap, nearOf(foot));
             }
           }, 'guidedFootPack'));
         case 'band':
