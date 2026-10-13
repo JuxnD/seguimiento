@@ -1,0 +1,8 @@
+Analyzing seguimiento-045-intervalos-timer...                   
+
+warning - The '!' will have no effect because the receiver can't be null - test\ui\plan045_running_timer_test.dart:91:32 - unnecessary_non_null_assertion
+warning - The '!' will have no effect because the receiver can't be null - test\ui\plan045_running_timer_test.dart:91:53 - unnecessary_non_null_assertion
+warning - The '!' will have no effect because the receiver can't be null - test\ui\plan045_running_timer_test.dart:91:76 - unnecessary_non_null_assertion
+
+3 issues found. (ran in 26.8s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T215450613-64068-74f91f26c0a44313a074569ed32d474f.json

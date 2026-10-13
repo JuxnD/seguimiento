@@ -1,0 +1,16 @@
+00:00 +0: loading C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan045_baseline_probe_test.dart
+00:00 +0: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan045_baseline_probe_test.dart: running 15/15 needs both final pauses to reach two complete eight minute blocks
+00:00 +1: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan045_baseline_probe_test.dart: timer JSON preserves a frozen running prescription instead of silently restoring defaults
+00:00 +2: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan045_baseline_probe_test.dart: legacy timeline remains unchanged and unknown or partial profiles are rejected
+00:00 +3: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan045_baseline_probe_test.dart: custom Tabata prescription survives JSON without inheriting the running profile
+00:00 +4: loading C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart
+00:01 +4: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 14 seconds with its frozen prescription
+00:02 +5: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 15 seconds with its frozen prescription
+00:02 +6: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 479 seconds with its frozen prescription
+00:02 +7: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 480 seconds with its frozen prescription
+00:02 +8: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 959 seconds with its frozen prescription
+00:03 +9: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 960 seconds with its frozen prescription
+00:03 +10: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: physical snapshot restores running at 980 seconds with its frozen prescription
+00:04 +11: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/plan045_running_timer_test.dart: new running session emits all parameters and includes its last pause before completion
+00:04 +12: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T215405756-52076-c7fee79e7ec943c6a723f2868a12b257.json

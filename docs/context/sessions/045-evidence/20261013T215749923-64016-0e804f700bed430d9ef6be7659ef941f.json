@@ -1,0 +1,25 @@
+{
+  "owner": "045",
+  "token": "e18a1830229b40b9bcc3f6a4eaca20b7",
+  "pid": 64016,
+  "tool": "flutter",
+  "arguments": [
+    "test",
+    "--no-pub",
+    "--concurrency=1",
+    "--timeout=90s",
+    "--reporter=expanded",
+    "test/ui/v3_timers_test.dart",
+    "test/domain/plan_v31_test.dart",
+    "test/domain/active_session_test.dart",
+    "test/ui/restored_session_resume_test.dart",
+    "test/data/active_session_restore_queue_test.dart"
+  ],
+  "worktree": "C:/My Projects/seguimiento-045-intervalos-timer",
+  "startUtc": "2026-10-13T21:57:14.5358998Z",
+  "finishUtc": "2026-10-13T21:57:49.9212868Z",
+  "exit": 0,
+  "dryRun": false,
+  "startedTool": true,
+  "error": null
+}

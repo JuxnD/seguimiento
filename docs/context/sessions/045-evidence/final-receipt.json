@@ -1,0 +1,40 @@
+{
+  "sourceCommit": "a52b5e240e3f5acdc51a3945fd46a992f151aa52",
+  "base": "b2d4bf7777f1df2d24b69f2134907a1128b930fc",
+  "status": "LOCAL_VERIFIED_PENDING_ROOT_R1",
+  "newTests": 12,
+  "legacyTests": 49,
+  "skipped": 0,
+  "analyzeExit": 0,
+  "baseline": "Two functional failures: 930 vs 960; profile lost in JSON. Timeline green explicitly opts into final rest; legacy default unchanged.",
+  "files": [
+    {
+      "path": "lib/domain/active_session.dart",
+      "sha256": "D38B4108EE4BDA23F27FB7402EA1665362745A5A784C24D8CA441E4EAC84B81F"
+    },
+    {
+      "path": "lib/domain/timer_profile.dart",
+      "sha256": "840BA7349883FF329245DCC89E9197280CBAAB975D2C74776E9FA6441B128ABE"
+    },
+    {
+      "path": "lib/features/training/v3_timers.dart",
+      "sha256": "3C3507306461957FEDCA17932C8B457D16FF8076D2FD3723304987FAA911DD1D"
+    },
+    {
+      "path": "test/domain/plan045_baseline_probe_test.dart",
+      "sha256": "B614CF33C5C25A95B4C4838B6B9BCAB6E27B06A9DA24876CB90AF7BC8782EBE0"
+    },
+    {
+      "path": "test/ui/plan045_running_timer_test.dart",
+      "sha256": "FDCC3CF8BA771D85BE1E9370DDCFF5B15BA83E9240F535816B82E72FCCCAFD1B"
+    }
+  ],
+  "receipts": [
+    "20261013T214757203-50356-d50dc758ff4a4f90902e2328b25b4655.json",
+    "20261013T215341986-64684-5b2846da81384bb7b888907ae17421ea.json",
+    "20261013T215405756-52076-c7fee79e7ec943c6a723f2868a12b257.json",
+    "20261013T215450613-64068-74f91f26c0a44313a074569ed32d474f.json",
+    "20261013T215704572-56504-82275ea0a11144b1a11552ea98cf613b.json",
+    "20261013T215749923-64016-0e804f700bed430d9ef6be7659ef941f.json"
+  ]
+}

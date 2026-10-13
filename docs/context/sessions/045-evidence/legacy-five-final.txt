@@ -1,0 +1,58 @@
+00:00 +0: loading C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart
+00:00 +0: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy completa con fracciones no inventa un segundo de circuito
+00:02 +1: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy completa con segundos enteros conserva sus tiempos
+00:02 +2: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy cortada mide 2:00 reales con fracciones y conserva la foto
+00:03 +3: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy sin inicio de trabajo no convierte el cap en tiempo hecho
+00:04 +4: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy conserva ventana medida distinta del cap sin normalizarla
+00:04 +5: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Tabata conserva su cálculo y dosis sin composición de Cindy
+00:04 +6: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: la foto de Cindy o Tabata vuelve igual tras pasar por JSON
+00:04 +7: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy de prueba: calentamiento y checklist a la vista; la normal no los muestra
+00:04 +8: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy retomada sigue con sus rondas y su reloj
+00:04 +9: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Cindy que terminó con la app cerrada pide la ronda a medias
+00:05 +10: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/v3_timers_test.dart: Tabata retomado sigue en el bloque en que iba
+00:05 +11: loading C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart
+00:06 +11: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: calendario (§19.4) 9 semanas: bloque 1 de 5, descarga en la 6, bloque 2 de 3
+00:06 +12: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: calendario (§19.4) pruebas el viernes 11 dic; abdomen cada 2 semanas en sábado
+00:06 +13: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: calendario (§19.4) el día dice semana, fase y la nota de la descarga
+00:06 +14: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: viernes (§19.1) sin 10 rondas limpias es el circuito de progresión
+00:06 +15: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: viernes (§19.1) desde el viernes siguiente a las 10 limpias: Cindy y Tabata alternos, Cindy de prueba cada 4 semanas
+00:06 +16: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: viernes (§19.1) las 10 limpias de un viernes cambian el siguiente, no el mismo
+00:06 +17: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: viernes (§19.1) el viernes de pruebas siempre es Cindy
+00:06 +18: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: semana tipo (§19.1) tipos por día y esquema
+00:06 +19: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: semana tipo (§19.1) lunes: pino primero, luego dominadas; remo y laterales en superserie
+00:06 +20: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: semana tipo (§19.1) miércoles: el FIFA 11+ es el calentamiento, no un paso
+00:06 +21: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: semana tipo (§19.1) viernes: pino, 10 rondas y habilidades; el Tabata no entra al cronómetro
+00:06 +22: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: semana tipo (§19.1) jueves: compresión (A) o L-sit (B)
+00:06 +23: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: semana tipo (§19.1) descarga del v3.1: la mitad de las series, redondeando hacia arriba
+00:06 +24: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: doble progresión (§19.2) todas al tope sin fallo: con lastre, +2–5 kg
+00:06 +25: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: doble progresión (§19.2) sin lastre: el siguiente escalón de la cadena
+00:06 +26: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: doble progresión (§19.2) no toca: una serie por debajo, una al fallo o faltan series
+00:06 +27: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: Tabata cortado: solo cuentan las pausas que llegaron
+00:06 +28: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/plan_v31_test.dart: meta de kcal: sábado y domingo usan la de fútbol (§19.3)
+00:06 +29: loading C:/My Projects/seguimiento-045-intervalos-timer/test/domain/active_session_test.dart
+00:07 +29: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/active_session_test.dart: el guiado vuelve igual tras pasar por JSON
+00:07 +30: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/active_session_test.dart: el libre vuelve igual tras pasar por JSON
+00:07 +31: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/active_session_test.dart: JSON raro o de otra versión no revienta: devuelve null
+00:07 +32: C:/My Projects/seguimiento-045-intervalos-timer/test/domain/active_session_test.dart: una foto de antes de registrar el descanso se lee con descanso 0
+00:07 +33: loading C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart
+00:09 +33: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: (setUpAll)
+00:09 +33: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: el id del día no existe en la copia restaurada: se retoma con el guion congelado
+00:11 +34: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: tras restaurar, el mismo id es de otro día: no se asigna a ese plan
+00:12 +35: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: el id coincide con el mismo día: se conserva el vínculo normal
+00:13 +36: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: tras restaurar, mismo martes y tipo con otros ejercicios: el guion se retoma sin vincular
+00:14 +37: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: el guion trae un bloque añadido (escalera): sigue siendo el mismo día y se vincula
+00:16 +38: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: legado sin lo hecho y un día ajeno con el mismo id: pide decisión, no reconstruye solo
+00:19 +39: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: snapshot legado sin guion y sin día: se conserva y se pide decisión
+00:21 +40: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: legado cuyo id es de un día con otros ejercicios: no se reconstruye con ese día
+00:22 +41: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: guion congelado inválido: el archivo se conserva y se pide decisión
+00:23 +42: C:/My Projects/seguimiento-045-intervalos-timer/test/ui/restored_session_resume_test.dart: (tearDownAll)
+00:23 +42: loading C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart
+00:24 +42: C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart: save inmediato al encolar restore no reintroduce ID ni pierde campos
+00:24 +43: C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart: segunda restore fallida conserva protección de restore previa
+00:24 +44: C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart: callback retirado no sobrescribe sesión nueva tras clear
+00:24 +45: C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart: restauración retiene la cola completa hasta terminar callback
+00:24 +46: C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart: lectura crítica I/O fallida no reemplaza DB y la cola se recupera
+00:24 +47: C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart: archivo no interpretable bloquea restore y conserva bytes
+00:24 +48: C:/My Projects/seguimiento-045-intervalos-timer/test/data/active_session_restore_queue_test.dart: clear sin restauración permite guardar la misma sesión ordinaria
+00:24 +49: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T215749923-64016-0e804f700bed430d9ef6be7659ef941f.json
