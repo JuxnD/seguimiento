@@ -1,0 +1,4 @@
+00:00 +0: loading C:/My Projects/seguimiento-035-ilustraciones/test/ui/illustration_guided_geometry_test.dart
+00:00 +0: seated soleus load is visible above the working thighs in both cameras
+00:00 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T201806663-5664-abae7d308c21497b9ad70ec4a0067506.json
