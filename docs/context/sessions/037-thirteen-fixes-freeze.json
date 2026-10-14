@@ -1,0 +1,46 @@
+{
+  "head": "a1bd50c1911dbe6ccdad2e68d3268c0be0693cf4",
+  "productionUnchanged": true,
+  "full": {
+    "pass": 1244,
+    "fail": 13,
+    "skip": 16
+  },
+  "testFiles": [
+    "test/data/backup_archive_test.dart",
+    "test/data/catalog_upgrade_test.dart",
+    "test/data/pilot_profile_test.dart",
+    "test/data/restore_032_test.dart",
+    "test/data/schema21_122_integration_test.dart",
+    "test/tool/android_policy_test.dart",
+    "test/ui/progress_evidence_test.dart",
+    "test/ui/release121_flows_test.dart"
+  ],
+  "formatAnalyze": [
+    "test/data/backup_archive_test.dart",
+    "test/data/catalog_upgrade_test.dart",
+    "test/data/pilot_profile_test.dart",
+    "test/data/restore_032_test.dart",
+    "test/data/schema21_122_integration_test.dart",
+    "test/tool/android_policy_test.dart",
+    "test/ui/progress_evidence_test.dart",
+    "test/ui/release121_flows_test.dart",
+    "test/support/derived_historical_037.dart"
+  ],
+  "files": {
+    "test/data/backup_archive_test.dart": "db1e41df420e19a7e72ff593be6a141b2baab15e24a223d878aabd1927d74b06",
+    "test/data/catalog_upgrade_test.dart": "e9a95971746bc84b03855fbfa2cf290802a645c6fbe7869594048669db942bb0",
+    "test/data/pilot_profile_test.dart": "de041d7ddf3da8b023fec14d006468b62e1d633bda81a65148fff3bf587bb36e",
+    "test/data/restore_032_test.dart": "d8f35f8513538e02a57ee7f7129322ba6d2a214e9dbc3506ed0194f6082e253b",
+    "test/data/schema21_122_integration_test.dart": "c13fd376469680a9a9355a88885a1eaae84bca5c65ce54e628d11cb6f07954f0",
+    "test/tool/android_policy_test.dart": "2324e423352882c0778894b421f6283bc164c5d9c363520f395d4a9c57682ea7",
+    "test/ui/progress_evidence_test.dart": "866ae56b39afcbaec0b9764825107ea6ee40fadc897392d4997e92823b8d7df5",
+    "test/ui/release121_flows_test.dart": "613bb36832dce23592373733668dfa476005865cc14fb0d071d2efa6b576e3d3",
+    "test/support/derived_historical_037.dart": "dd380a304b6dab11d8ba1c23b1b1c12874cfceecf2823b40d20aa405048a725b",
+    "test/fixtures/derived_historical_037/manifest.json": "4ed88a7da0cb512f525f4fa2077ab1ae0f5d9dcf5b017775828071e33e5601dd",
+    "test/fixtures/derived_historical_037/schema20.sqlite": "23d4166ecc6b43d5f832a2e646a79140940fd473597d17a959e649e0dc181a7b",
+    "test/fixtures/derived_historical_037/schema22.sqlite": "a39d4b0b27e2820ab67bd2f37d5bf8f65aea3510f38d9d23cbe0e20b4f5cf58f",
+    "test/fixtures/derived_historical_037/schema23.sqlite": "898183b8a270e3d70eda9605892208ffd128b8bf86a25241268f22672e7de3be"
+  },
+  "priorAnalyzeCompileErrors": 6
+}

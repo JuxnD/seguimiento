@@ -1,0 +1,10 @@
+Formatted test/data/backup_archive_test.dart
+Formatted test/data/pilot_profile_test.dart
+Formatted test/data/restore_032_test.dart
+Formatted test/data/schema21_122_integration_test.dart
+Formatted test/tool/android_policy_test.dart
+Formatted test/ui/progress_evidence_test.dart
+Formatted test/ui/release121_flows_test.dart
+Formatted test/support/derived_historical_037.dart
+Formatted 9 files (8 changed) in 0.48 seconds.
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261013T232843154-14660-d6d33664b31143d6afe214a54c1dc4c2.json

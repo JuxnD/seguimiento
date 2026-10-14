@@ -1,0 +1,6 @@
+00:00 +0: loading C:/My Projects/seguimiento-037-entrega-funcional/test/ui/progress_evidence_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: SQLite→Cuerpo: T3 parcial visible conserva dosis T2, dudas no dan dosis
+00:01 +1: (tearDownAll)
+00:01 +1: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261014T133932860-66220-d6345963ee544f09945514c293e1a609.json

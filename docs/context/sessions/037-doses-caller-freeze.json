@@ -1,0 +1,13 @@
+{
+  "head": "a1bd50c1911dbe6ccdad2e68d3268c0be0693cf4",
+  "files": {
+    "lib/features/body/test_results_screen.dart": "db8a5770b505ade9b436112864ae82da6d4165f4f8bfdc06aea06b427c0c5f15",
+    "test/ui/progress_evidence_test.dart": "53040e00cc9fe03c4a331d5fac324e169491fd199dd181f6784998b210f957ae",
+    "test/ui/plan034_test_doses_test.dart": "e06de0a5fffdf75ffc2ecae1ee654fd2ffebe0748fe00d548bded706a447316b"
+  },
+  "testFiles": [
+    "test/ui/progress_evidence_test.dart",
+    "test/ui/plan034_test_doses_test.dart"
+  ],
+  "scope": "Reuse existing TestDoses in actual results screen; UI observable2s history boundary. No new algorithm/schema/data."
+}

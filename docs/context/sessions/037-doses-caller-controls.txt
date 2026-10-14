@@ -1,0 +1,5 @@
+00:00 +0: loading C:/My Projects/seguimiento-037-entrega-funcional/test/ui/plan034_test_doses_test.dart
+00:00 +0: public dose never uses unknown legacy conditions
+00:00 +1: public dose labels the single known attempt and reverse maximum
+00:00 +2: All tests passed!
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261014T133951498-51052-e45bbcfa49104ff99a0f5b00e9d528ce.json

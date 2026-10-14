@@ -44,7 +44,9 @@ class _Notifications extends NotificationService {
   @override
   Future<void> init() async {}
   @override
-  Future<bool> scheduleRestEnd({required Duration inSeconds, required String nextLabel}) async => true;
+  Future<bool> scheduleRestEnd(
+          {required Duration inSeconds, required String nextLabel}) async =>
+      true;
   @override
   Future<void> cancelRestEnd() async {}
 }
@@ -87,7 +89,8 @@ void main() {
     }).ignore();
     for (var i = 0; i < 200 && !done; i++) {
       await t.pump(const Duration(milliseconds: 5));
-      await t.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 2)));
+      await t.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 2)));
     }
     if (!done) throw TimeoutException('IO QA no completó tras 200 ciclos');
     return task;
@@ -115,7 +118,9 @@ void main() {
     }
     try {
       dir.deleteSync(recursive: true);
-    } on FileSystemException {/* Windows conserva el handle hasta que salga flutter_tester. Sólo QA temporal. */}
+    } on FileSystemException {
+      /* Windows conserva el handle hasta que salga flutter_tester. Sólo QA temporal. */
+    }
   });
   Future<void> settle(WidgetTester t) async {
     await t.pump();
@@ -125,21 +130,26 @@ void main() {
     await t.pump();
   }
 
-  Future<void> pump(WidgetTester t, Widget Function(BuildContext, WidgetRef) child) async {
+  Future<void> pump(
+      WidgetTester t, Widget Function(BuildContext, WidgetRef) child) async {
     currentTester = t;
     t.view.physicalSize = const Size(1500, 6500);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
 
-    await t.pumpWidget(ProviderScope(overrides: [
-      databaseProvider.overrideWithValue(db),
-      todayProvider.overrideWith(_Today.new),
-      activeSessionStoreProvider.overrideWithValue(store),
-      localFlagsProvider.overrideWithValue(LocalFlags(File('${dir.path}/flags.json'))),
-      notificationServiceProvider.overrideWithValue(_Notifications()),
-      latestWeightProvider.overrideWithValue(70),
-      profileProvider.overrideWith((ref) => const Stream.empty()),
-    ], child: MaterialApp(home: Consumer(builder: (c, ref, _) => child(c, ref)))));
+    await t.pumpWidget(ProviderScope(
+        overrides: [
+          databaseProvider.overrideWithValue(db),
+          todayProvider.overrideWith(_Today.new),
+          activeSessionStoreProvider.overrideWithValue(store),
+          localFlagsProvider
+              .overrideWithValue(LocalFlags(File('${dir.path}/flags.json'))),
+          notificationServiceProvider.overrideWithValue(_Notifications()),
+          latestWeightProvider.overrideWithValue(70),
+          profileProvider.overrideWith((ref) => const Stream.empty()),
+        ],
+        child: MaterialApp(
+            home: Consumer(builder: (c, ref, _) => child(c, ref)))));
     await settle(t);
   }
 
@@ -151,46 +161,74 @@ void main() {
                 onPressed: () => Navigator.push(
                     c,
                     MaterialPageRoute(
-                        builder: (_) => TestModeScreen(date: DateTime(2026, 10, 12), round: 1, part: TestPart.torso))),
+                        builder: (_) => TestModeScreen(
+                            date: DateTime(2026, 10, 12),
+                            round: 1,
+                            part: TestPart.torso))),
                 child: const Text('abrir'))));
     await t.tap(find.text('abrir'));
     await settle(t);
   }
 
-  Finder field(String item, [String side = '']) => find.byKey(ValueKey('test-value-$item-$side'));
-  testWidgets('reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha', (t) async {
+  Finder field(String item, [String side = '']) =>
+      find.byKey(ValueKey('test-value-$item-$side'));
+  testWidgets(
+      'reentrada precarga ambos lados y editar otro campo conserva calidad I/D y fecha',
+      (t) async {
     // The scenario is October26 (_Today); execution dates must use that same
     // clock, not the host day, otherwise October12 becomes a future fixture.
-    await withClock(Clock.fixed(DateTime(2026,10,26)), () async {
-    try {
-      final repo = FitnessTestRepository(db);
-      await io(
-          t,
-          () => repo.save(date: DateTime(2026, 10, 12), round: 1, part: TestPart.torso, totalSec: 0, results: const [
-                TestResult(round: 1, item: 'one_arm_pushup', side: 'I', value: 5, clean: true),
-                TestResult(round: 1, item: 'one_arm_pushup', side: 'D', value: 4, clean: false),
-              ]));
-      await pump(t, (c, ref) => const TestResultsScreen());
-      await t.tap(find.text('T1 torso'));
-      await settle(t);
-      expect(t.widget<TextField>(field('one_arm_pushup', 'I')).controller!.text, '5.0');
-      expect(t.widget<TextField>(field('one_arm_pushup', 'D')).controller!.text, '4.0');
-      await t.enterText(field('dips'), '7');
-      await t.pump();
-      await t.tap(find.text('Guardar test'));
-      await settle(t);
-      final rows = (await io(t, () => repo.all()));
-      expect(rows.firstWhere((r) => r.side == 'I').clean, isTrue);
-      expect(rows.firstWhere((r) => r.side == 'D').clean, isFalse);
-      expect(rows.firstWhere((r) => r.item == 'dips').value, 7);
-      expect(await io(t, () => repo.done(1, TestPart.torso)), isFalse);
-      expect((await io(t, () => db.select(db.sessions).get())).single.date, '2026-10-12');
-    } finally {
-      await cleanup(t);
-    }
+    await withClock(Clock.fixed(DateTime(2026, 10, 26)), () async {
+      try {
+        final repo = FitnessTestRepository(db);
+        await io(
+            t,
+            () => repo.save(
+                    date: DateTime(2026, 10, 12),
+                    round: 1,
+                    part: TestPart.torso,
+                    totalSec: 0,
+                    results: const [
+                      TestResult(
+                          round: 1,
+                          item: 'one_arm_pushup',
+                          side: 'I',
+                          value: 5,
+                          clean: true),
+                      TestResult(
+                          round: 1,
+                          item: 'one_arm_pushup',
+                          side: 'D',
+                          value: 4,
+                          clean: false),
+                    ]));
+        await pump(t, (c, ref) => const TestResultsScreen());
+        await t.tap(find.text('T1 torso'));
+        await settle(t);
+        expect(
+            t.widget<TextField>(field('one_arm_pushup', 'I')).controller!.text,
+            '5.0');
+        expect(
+            t.widget<TextField>(field('one_arm_pushup', 'D')).controller!.text,
+            '4.0');
+        await t.enterText(field('dips'), '7');
+        await t.pump();
+        await t.tap(find.text('Guardar test'));
+        await settle(t);
+        final rows = (await io(t, () => repo.all()));
+        expect(rows.firstWhere((r) => r.side == 'I').clean, isTrue);
+        expect(rows.firstWhere((r) => r.side == 'D').clean, isFalse);
+        expect(rows.firstWhere((r) => r.item == 'dips').value, 7);
+        expect(await io(t, () => repo.done(1, TestPart.torso)), isFalse);
+        expect((await io(t, () => db.select(db.sessions).get())).single.date,
+            '2026-10-12');
+      } finally {
+        await cleanup(t);
+      }
     });
   });
-  testWidgets('validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial', (t) async {
+  testWidgets(
+      'validacion muestra error sin guardar ni perder texto; coma segundos guarda parcial',
+      (t) async {
     try {
       await openTest(t);
       await t.enterText(field('pullup'), '1.5');
@@ -212,16 +250,23 @@ void main() {
       await cleanup(t);
     }
   });
-  testWidgets('caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash', (t) async {
+  testWidgets(
+      'caller resume usa snapshot efectivo tras lumbar y recupera evento de BD tras crash',
+      (t) async {
     try {
       final date = DateTime(2026, 10, 19);
       final ladder = LadderRepository(db);
-      await io(t, () => ladder.setStep(dragonFlagLadder, 2, DateTime(2026, 10, 12)));
+      await io(
+          t, () => ladder.setStep(dragonFlagLadder, 2, DateTime(2026, 10, 12)));
       final view = (await io(t, () => plan.dayFor(date)))!;
       final day = (await io(
-          t, () async => training.withV31Blocks(view.day, date, await training.blockDay(view, date), planche: false)));
+          t,
+          () async => training.withV31Blocks(
+              view.day, date, await training.blockDay(view, date),
+              planche: false)));
       final script = buildScript(scriptDayFrom(day));
-      final index = script.indexWhere((s) => s is WorkStep && s.exercise == 'Vela');
+      final index =
+          script.indexWhere((s) => s is WorkStep && s.exercise == 'Vela');
       final start = clock.now().subtract(const Duration(minutes: 1));
       final snapshot = GuidedSnapshot(
           date: '2026-10-19',
@@ -231,13 +276,19 @@ void main() {
           index: index,
           effectiveDay: freezeGuidedDay(day));
       await io(t, () => store.save(snapshot));
-      await io(t, () => ladder.lumbar(dragonFlagLadder, date, eventKey: 'guided:${start.toIso8601String()}'));
+      await io(
+          t,
+          () => ladder.lumbar(dragonFlagLadder, date,
+              eventKey: 'guided:${start.toIso8601String()}'));
       // Deliberadamente sin lumbar en JSON: crash entre commit de BD y save.
-      final loaded = (await io(t, () => ActiveSessionStore(store.file).load()))!;
+      final loaded =
+          (await io(t, () => ActiveSessionStore(store.file).load()))!;
       await pump(
           t,
           (c, ref) => Scaffold(
-              body: TextButton(onPressed: () => resumeActiveSession(c, ref, loaded), child: const Text('retomar'))));
+              body: TextButton(
+                  onPressed: () => resumeActiveSession(c, ref, loaded),
+                  child: const Text('retomar'))));
       await t.tap(find.text('retomar'));
       await settle(t);
       await settle(t);
@@ -257,13 +308,22 @@ void main() {
       await cleanup(t);
     }
   });
-  testWidgets('consumer advice cambia tras guardar editar y borrar sin reiniciar', (t) async {
+  testWidgets(
+      'consumer advice cambia tras guardar editar y borrar sin reiniciar',
+      (t) async {
     try {
-      SessionDraft core(int day, int reps) =>
-          SessionDraft(date: DateTime(2026, 10, day), type: SessionType.trenSuperior, sets: [
-            for (var i = 0; i < 3; i++) SetDraft(exercise: 'Encogimiento inverso', reps: reps),
-            for (var i = 0; i < 3; i++) SetDraft(exercise: hollowHold, reps: 40),
-          ]);
+      SessionDraft core(int day, int reps) => SessionDraft(
+              date: DateTime(2026, 10, day),
+              type: SessionType.trenSuperior,
+              techniqueOk: true,
+              fullRange: true,
+              recoveryOk: true,
+              sets: [
+                for (var i = 0; i < 3; i++)
+                  SetDraft(exercise: 'Encogimiento inverso', reps: reps),
+                for (var i = 0; i < 3; i++)
+                  SetDraft(exercise: hollowHold, reps: 40),
+              ]);
       await io(t, () => training.save(core(19, 12)));
       await pump(t, (c, ref) => const LaddersScreen());
       expect(find.text('Subir a Vela'), findsNothing);
@@ -287,23 +347,32 @@ void main() {
     }
   });
 
-  testWidgets('legado1.20 conserva secuencia e indice sin agregar escalera; si no hay con qué comprobar el día, pide confirmación', (t) async {
+  testWidgets(
+      'legado1.20 conserva secuencia e indice sin agregar escalera; si no hay con qué comprobar el día, pide confirmación',
+      (t) async {
     try {
       final date = DateTime(2026, 10, 19);
       final view = (await io(t, () => plan.dayFor(date)))!;
       final v3 = await io(t, () => training.blockDay(view, date));
-      final old = await io(t, () => training.withPlanche(view.day, date, v3, enabled: false));
+      final old = await io(
+          t, () => training.withPlanche(view.day, date, v3, enabled: false));
       final script = buildScript(scriptDayFrom(old));
       final index = script.lastIndexWhere((s) => s is WorkStep);
       final expected = script[index] as WorkStep;
       final legacy = GuidedSnapshot(
-          date: '2026-10-19', startedAt: clock.now(), planDayId: view.dayId, phase: GuidedPhase.trabajo, index: index);
+          date: '2026-10-19',
+          startedAt: clock.now(),
+          planDayId: view.dayId,
+          phase: GuidedPhase.trabajo,
+          index: index);
       final json = legacy.toJson()..remove('effectiveDay');
       final loaded = ActiveSession.fromJson(json)!;
       await pump(
           t,
           (c, ref) => Scaffold(
-              body: TextButton(onPressed: () => resumeActiveSession(c, ref, loaded), child: const Text('legado'))));
+              body: TextButton(
+                  onPressed: () => resumeActiveSession(c, ref, loaded),
+                  child: const Text('legado'))));
       await t.tap(find.text('legado'));
       await settle(t);
       await settle(t);
@@ -314,12 +383,14 @@ void main() {
       expect(find.text(expected.exercise), findsWidgets);
       final current = await io(t, () => store.load()) as GuidedSnapshot;
       expect(current.index, index);
-      expect(freezeGuidedDay(thawGuidedDay(current.effectiveDay!)), freezeGuidedDay(old));
+      expect(freezeGuidedDay(thawGuidedDay(current.effectiveDay!)),
+          freezeGuidedDay(old));
     } finally {
       await cleanup(t);
     }
   });
-  testWidgets('snapshot con mapa efectivo malformado no tumba la pantalla', (t) async {
+  testWidgets('snapshot con mapa efectivo malformado no tumba la pantalla',
+      (t) async {
     try {
       final view = (await io(t, () => plan.dayFor(DateTime(2026, 10, 19))))!;
       final snapshot = GuidedSnapshot(
@@ -333,7 +404,9 @@ void main() {
       await pump(
           t,
           (c, ref) => Scaffold(
-              body: TextButton(onPressed: () => resumeActiveSession(c, ref, snapshot), child: const Text('corrupto'))));
+              body: TextButton(
+                  onPressed: () => resumeActiveSession(c, ref, snapshot),
+                  child: const Text('corrupto'))));
       await t.tap(find.text('corrupto'));
       await settle(t);
       await settle(t);

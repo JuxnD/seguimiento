@@ -1,0 +1,3 @@
+Analyzing seguimiento-037-entrega-funcional...                  
+No issues found! (ran in 37.9s)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261014T133907352-21936-e1b7e18795db4260b713b4d1cc0ba84f.json

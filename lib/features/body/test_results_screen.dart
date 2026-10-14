@@ -63,6 +63,10 @@ class TestResultsScreen extends ConsumerWidget {
                             ]),
                           ])),
             _AttemptHistory(results: r),
+            if (r.isNotEmpty)
+              AppCard(
+                  title: 'Dosis del último intento elegible',
+                  children: [TestDoses(results: r)]),
             const AppCard(children: [
               Text(
                   'Elige Test 1, 2 o 3 y la parte que quieras registrar. Por lado cuenta el más débil. Lo marcado "con dudas" lleva *. Abrir una prueba no guarda resultados.')

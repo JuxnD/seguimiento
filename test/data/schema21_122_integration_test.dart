@@ -97,21 +97,25 @@ void main() {
       List<Map<String, dynamic>>? firstGoals;
       for (var opening = 0; opening < 2; opening++) {
         db = AppDatabase(NativeDatabase(file));
-        expect(db.schemaVersion, 24);
+        expect(db.schemaVersion, 25);
         expect(
             (await db.customSelect('PRAGMA user_version').getSingle())
                 .data
                 .values
                 .single,
-            24);
+            25);
         final names = (await db
                 .customSelect(
                     "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
                 .get())
             .map((r) => r.data['name'])
             .toSet();
-        expect(names.difference(expectedNames),
-            {'goal_versions', 'coach_proposals'});
+        expect(names.difference(expectedNames), {
+          'goal_versions',
+          'coach_proposals',
+          'fitness_test_attempts',
+          'mobility_benchmarks'
+        });
         expect(names.containsAll(expectedNames), isTrue);
         for (final entry in tables.entries) {
           final columns = (entry.value['columns'] as List<Object?>)
@@ -133,7 +137,17 @@ void main() {
                   .toList(),
               switch (entry.key) {
                 // Plan 032 (esquema 24): dolor muscular y enfermo.
-                'morning_checks' => ['feeling', 'muscle_soreness', 'ill'],
+                'morning_checks' => [
+                    'knee_stairs',
+                    'feeling',
+                    'muscle_soreness',
+                    'ill'
+                  ],
+                'plan_exercises' => ['purpose', 'physical_variant_key'],
+                'football_games' => ['weights_comparable'],
+                'fitness_tests' => ['attempt_id', 'conditions', 'baseline_key'],
+                'sleep_logs' => ['sleep_start', 'wake_at', 'source', 'note'],
+                'custom_reminders' => ['origin'],
                 // Plan 022 (esquema 23): origen y estado del alta.
                 'profiles' => [
                     'profile_origin',
@@ -143,7 +157,7 @@ void main() {
                   ],
                 _ => <String>[],
               },
-              reason: '${entry.key} only schema22/23/24 columns');
+              reason: '${entry.key} only declared schema22/23/24/25 columns');
           final fields = columns.map(_quoted).join(',');
           expect(
               (await db

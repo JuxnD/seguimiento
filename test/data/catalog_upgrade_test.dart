@@ -13,6 +13,7 @@ import 'package:seguimiento/domain/nutrition.dart';
 import 'package:seguimiento/domain/enums.dart';
 import '../support/ready_profile.dart';
 import '../support/sqlite_host.dart';
+import '../support/derived_historical_037.dart';
 
 void main() {
   setUpAll(useHostSqlite);
@@ -23,27 +24,10 @@ void main() {
         await Directory('build/010-catalog-upgrade').create(recursive: true);
     final file = File(
         '${dir.path}/synthetic-${DateTime.now().microsecondsSinceEpoch}.sqlite');
+    copyHistorical037(20, file);
+    // Empty authentic20 DDL, with one independently inserted custom homonym.
+    const id = 1;
     var db = AppDatabase(NativeDatabase(file));
-    final id = await db.into(db.foods).insert(FoodsCompanion.insert(
-        name: 'Leche entera',
-        basis: FoodBasis.per100,
-        unitLabel: const Value('ml'),
-        kcal: 65,
-        protein: 3,
-        origin: const Value(FoodOrigin.usuario),
-        favorite: const Value(true)));
-    await db.customStatement('DROP TABLE catalog_patches');
-    // Esquema 20 fiel: tampoco existe lo del 22 (plan 009, integración).
-    await db.customStatement('DROP TABLE goal_versions');
-    await db.customStatement('DROP TABLE coach_proposals');
-    await db.customStatement('ALTER TABLE morning_checks DROP COLUMN feeling');
-    // Ni lo del 23 (plan 022): el perfil sin origen/estado del alta.
-    for (final column in ['profile_origin', 'setup_state', 'setup_confirmed_at', 'handoff_consent_at']) {
-      await db.customStatement('ALTER TABLE profiles DROP COLUMN $column');
-    }
-    await db.customStatement('PRAGMA user_version=20');
-    await db.close();
-    db = AppDatabase(NativeDatabase(file));
     final custom =
         await (db.select(db.foods)..where((f) => f.id.equals(id))).getSingle();
     expect(custom.kcal, 65);
