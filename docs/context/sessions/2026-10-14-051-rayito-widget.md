@@ -37,3 +37,53 @@ Commit sanitizado de fuente/tests/docs; APK release1.25.0+34, firma histórica; 
 Flutter3.22 por wrapper SDK lease serial. Para build reproducir entorno local050: Gradle8.7 y Android Studio JBR21.0.10 observado (daemon16716, receipt adbe6238c9fb419d99886459a82391bc). Java17 PATH no fue runtime Gradle. No APPDATA override/globalsettings/SDK upgrade.
 AndroidSdk %USERPROFILE%/AppData/Local/Android/Sdk, build-tools34.0.0 aapt/apksigner. Firma defaultrelease fallback signingConfigs.debug con EXISTENTE %USERPROFILE%/.android/debug.keystore; cert6f839c41abf9e17634544a8ae5dff18ca64333b070ef40cd582dbdc9ac133ed7. No crear/cambiar/copiar/publicar llave.
 Destino estable final: %USERPROFILE%/Documents/ChatGPT/FIT APP/entregables/MyPrime-1.25.0/ para APK+manifest+README+2-3 capturas sintéticas. APK candidato NO generado, NO publicado; artefacto/helper QA no equivale release. Root revisión exacta/GO pendientes. Teléfono y aceptación humana separados.
+## Cierre por Claude (14 oct, 19:20–19:35 UTC)
+
+Estado: **APK RELEASE CANDIDATO VALIDADO EN EMULADOR PROPIO.** Falta la
+publicación por el canal ya autorizado y la aceptación en el teléfono del
+owner.
+
+- **Fuente:** commit `105c92f` sobre `3250bdc`, 41 rutas, sin NUL; ruta de
+  usuario anonimizada en este recibo. Las fuentes compiladas no cambian
+  respecto de la FULL3 (sólo cambió una línea de este documento).
+- **Build:** `flutter build apk --release --no-pub` por el wrapper (owner 051c),
+  exit 0, recibo `20261014T192156379-31624-99b3197369fa46e0a56bd757b9461c37`.
+  El árbol quedó limpio antes y después del build.
+- **APK:** `app-release.apk`, 75 525 810 bytes, SHA-256
+  `8783ca4884e9d00db60085c5fe82396ac3f2762c7e7720a9ea33ad004cb33fde`.
+  - aapt: `com.juandiego.seguimiento`, 1.25.0 (34), etiqueta My Prime, min 26,
+    target 34; `allowBackup=false`; receiver `RayitoWidgetProvider` con
+    APPWIDGET_UPDATE.
+  - apksigner: v2, 1 firmante, certificado SHA-256 `6f839c41…33ed7`, el
+    histórico.
+
+### QA nativa (AVD `MyPrime_QA_051`, emulator-5590, qemu, sin rutas de red)
+
+| Prueba | Resultado |
+|---|---|
+| Estado previo frente a `baseline33-state.json` | 37 tablas idénticas |
+| `adb install -r` 34 sobre 33 (sin desinstalar), abrir la app | Success; versionCode 34; firstInstallTime conservado |
+| Datos después de actualizar y abrir | 37 tablas idénticas a baseline33 (sesión 1 de movilidad intacta) |
+| Hoy en el release | Rayito · Despierto, «1 día de racha», frase de fase y «Faltan 2 días para Cargado» |
+| Widget real (host QA propio, RemoteViews) | Rayito · Despierto, 1 día, fecha y «Configura tu rutina» |
+| Toque, proceso vivo sin actividad | abre MainActivity en Hoy |
+| Toque en caliente desde la pestaña Entreno | vuelve a Hoy |
+| Toque en frío tras `am kill` | arranca la app en Hoy |
+| Toque tras «Forzar detención» | no abre: Android cancela los PendingIntents de una app detenida a la fuerza hasta que se vuelve a abrir. Es la plataforma, igual para todo widget; no es un defecto |
+| Texto ×2 | legible, envuelve sin cortar |
+| Día vencido (fecha +1 y TIME_SET) | respaldo «Rayito · My Prime / Abre Hoy para actualizar» con la fecha del día, sin la racha vieja |
+| Abrir Hoy desde el vencido | Hoy del 15 y widget refrescado (Dormido, 15 oct) |
+| Reinicio sin abrir la app | se redibuja con el respaldo seguro (la foto era de otro día) |
+
+**Sin ejecutar en nativo:** limpieza del widget con el perfil pendiente o con
+error y fallo de escritura atómica. Ambos están cubiertos por pruebas Flutter
+(guard 5/5 y cola/ACK); el fixture `integration_test/plan051_native_test.dart`
+sigue NOT_RUN. El emulador no acredita el teléfono.
+
+**Pendiente encontrado, previo a este entregable:** sin ninguna versión de
+plan, `_streak` devuelve sólo hoy (`versions.isEmpty → hoy ? 1 : 0`), así que
+un usuario nuevo sin rutina no acumula racha. Es la regla del 050; no se tocó.
+
+Capturas y estados: `build/qa/051-claude/` (pre34 y post34 state,
+post34-hoy, widget-x1 y x2, tap-*, widget-stale, widget-refreshed,
+widget-after-reboot).
