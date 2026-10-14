@@ -327,7 +327,7 @@ class DashboardRepository {
         ? await legChain.planB(date, dayHasLegs: dayHasLegs, legs: (await legChain.chains(date)).legs)
         : PlanBAdvice.none;
     final planB = planBAdvice.show;
-    final constancy = await _streak(date);
+    final constancy = await _streak(date, goals: history);
     return TodayDashboard(
       date: date,
       weekIndex: weekIndexFor(p.programStart, date),
@@ -537,16 +537,47 @@ class DashboardRepository {
         .join(' · ');
   }
 
-  /// Días seguidos con actividad guardada, sin que el descanso planificado
-  /// los rompa. Incluye movilidad, técnica, rutinas parciales y fútbol;
-  /// no cambia el criterio de entrenamiento/adherencia de Hoy.
-  Future<({int streak, bool activeToday})> _streak(DateTime today) async {
-    final rows = await db.select(db.sessions).get();
-    final games = await db.select(db.footballGames).get();
-    final dates = {...rows.map((s) => s.date), ...games.map((g) => g.date)};
+  /// Días seguidos con cualquier registro guardado, sin que el descanso
+  /// planificado los rompa (plan 052, decisión del owner: «todo registro»).
+  /// Cuentan sesiones de cualquier tipo (también movilidad, técnica y
+  /// recuperación parcial), fútbol, comidas, peso, medidas, fotos, sueño,
+  /// check matinal, molestias, pruebas y benchmarks, logros y días de comida
+  /// cerrados. Los pasos sólo cuentan el día que llegan a su meta vigente:
+  /// el reloj escribe pasos todos los días y eso solo no es constancia. No
+  /// cambia el criterio de entrenamiento/adherencia de Hoy.
+  Future<({int streak, bool activeToday})> _streak(DateTime today,
+      {GoalHistory? goals}) async {
+    final dates = <String>{
+      for (final r in await db.select(db.sessions).get()) r.date,
+      for (final r in await db.select(db.footballGames).get()) r.date,
+      for (final r in await db.select(db.meals).get()) r.date,
+      for (final r in await db.select(db.bodyWeights).get()) r.date,
+      for (final r in await db.select(db.measurements).get()) r.date,
+      for (final r in await db.select(db.progressPhotos).get()) r.date,
+      for (final r in await db.select(db.sleepLogs).get()) r.date,
+      for (final r in await db.select(db.morningChecks).get()) r.date,
+      for (final r in await db.select(db.sorenessLogs).get()) r.date,
+      for (final r in await db.select(db.fitnessTestAttempts).get()) r.date,
+      for (final r in await db.select(db.mobilityBenchmarks).get()) r.date,
+      for (final r in await db.select(db.skillAchievements).get()) r.date,
+      for (final r in await db.select(db.closedDays).get()) r.date,
+    };
+    for (final r in await db.select(db.dailySteps).get()) {
+      final day = parseDay(r.date);
+      final goal = day.weekday >= DateTime.saturday
+          ? const GoalAt(null, known: true)
+          : goalReferenceOn(goals, GoalMetric.pasos, day);
+      if (goal.comparable && r.steps >= goal.value!) dates.add(r.date);
+    }
     final versions = await plan.versions();
     final activeToday = dates.contains(dayKey(today));
-    if (versions.isEmpty) return (streak: activeToday ? 1 : 0, activeToday: activeToday);
+    // Sin plan no hay descanso planificado: cada día pide un registro.
+    if (versions.isEmpty) {
+      return (
+        streak: currentStreak(today: today, trainingDates: dates, isRestDay: (_) => false),
+        activeToday: activeToday,
+      );
+    }
 
     // Mapa weekday → tipo por versión, para no recargar el plan por día.
     final byVersion = <int, Map<int, DayType>>{};

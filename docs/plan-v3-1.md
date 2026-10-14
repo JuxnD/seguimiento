@@ -245,3 +245,22 @@ tiempo quedan incompletos (desde la 1.16.0).
   cuando el usuario llegue).
 - Pulso en reposo desde Health Connect (`RestingHeartRateRecord`); hoy se
   anota a mano.
+
+## Ajustes v3.2 del plan 052 (auditoría 047, decisiones del owner del 14 oct 2026)
+
+Se aplican al componer el día (`TrainingRepository.withV31Blocks`), así que
+llegan también a un plan v3.2 ya activado, sin migrar nada:
+
+- **Lunes:** el calentamiento suma muñecas 2 min tras las scap pull-ups (§19.13 L1).
+- **Martes desde la semana 5:** intervalos 15″/15″, 2 bloques de 8 min con
+  temporizador, sólo si no hay fútbol registrado entre semana (lunes–martes);
+  en la descarga no van y el día dice por qué. Con escaleras altas se quitan
+  como los sprints.
+- **Miércoles:** el aterrizaje clavado va justo después del FIFA 11+ y progresa
+  por semana: dos piernas en 1–2 y en la descarga, una pierna en 3–5, salto
+  lateral a una pierna desde la 7 (§19.16).
+- **Viernes de 10 rondas:** sólo en la semana 4 del bloque 1. El bloque 2 tiene
+  3 semanas y la 9 ya lleva las pruebas: no hay viernes de 10 allí, y la
+  descarga mantiene 6 rondas.
+- La descarga v3.2 del planche deja sólo inclinaciones (y support hold a la
+  mitad) desde 034 (`aee1837`).

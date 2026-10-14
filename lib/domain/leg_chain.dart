@@ -37,6 +37,7 @@ const chainLegExercises = {
   'Nórdico inverso',
   'Bajada lateral del escalón',
   'Aterrizaje clavado',
+  'Intervalos 15/15',
   // Catálogo y planes anteriores.
   'Sentadilla con salto',
   'Puente de glúteo',

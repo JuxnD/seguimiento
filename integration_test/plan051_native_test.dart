@@ -40,7 +40,7 @@ void main() {
     for (var i = 0; i < 30; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(find.text('Rayito · Dormido'), findsOneWidget);
+    expect(find.text('Nivel 1 de 8 · Sin racha todavía'), findsOneWidget);
     final writer = await DatabaseHost.open();
     await TrainingRepository(writer.db, ExerciseRepository(writer.db)).save(
         SessionDraft(
@@ -62,7 +62,7 @@ void main() {
     for (var i = 0; i < 30; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(find.text('Rayito · Despierto'), findsOneWidget);
+    expect(find.text('Nivel 2 de 8 · 1 día de racha'), findsOneWidget);
     await tester.tap(find.text('Cuerpo').last);
     await tester.pump(const Duration(milliseconds: 500));
     final warm = await Process.run('/system/bin/am', [
@@ -77,7 +77,7 @@ void main() {
     for (var i = 0; i < 15; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(find.text('Rayito · Despierto'), findsOneWidget);
+    expect(find.text('Nivel 2 de 8 · 1 día de racha'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await binding.convertFlutterSurfaceToImage();
     await binding.takeScreenshot('native051-hoy');

@@ -50,12 +50,15 @@ dato en grande y píldoras de estado. Debajo, filas con icono de color
 | Cuerpo | Verde | Último peso, cambio desde el primero, cuándo medir |
 | Informe | Naranja | Semana con navegación |
 
-La racha de constancia cuenta días con sesiones de actividad guardadas de
-cualquier tipo, incluidas movilidad, Activa/Suelta, técnica y recuperación
-parcial; fútbol conserva su participación y el descanso planificado no rompe
-la racha. Comidas, pesos, sueño y checks no son actividad. Este cálculo relee
-el historial existente: no modifica registros ni el criterio de «Hoy hecho»
-o adherencia al entrenamiento. Corrección local050, 14 oct 2026.
+La racha de constancia cuenta días con **cualquier registro guardado**
+(plan 052, decisión del owner del 14 oct 2026): sesiones de cualquier tipo
+(movilidad, Activa/Suelta, técnica y recuperación parcial incluidas), fútbol,
+comidas, peso, medidas, fotos, sueño, check matinal, molestias, pruebas,
+benchmarks, logros y días de comida cerrados. Los pasos sólo cuentan el día
+que llegan a su meta vigente (el reloj escribe pasos a diario). El descanso
+planificado no la rompe; sin plan cargado, cada día pide un registro. Se
+recalcula desde el historial existente: no modifica registros ni el criterio
+de «Hoy hecho» o adherencia al entrenamiento.
 
 ## Pantalla Hoy
 
@@ -104,9 +107,9 @@ no sustituyen la aceptación del usuario en el teléfono.
 
 ## Racha
 
-[`currentStreak`](../lib/domain/progress.dart): días seguidos con sesión. Un día
-de **descanso o fútbol planificado no la rompe ni la suma**; un día de
-entrenamiento sin sesión sí la corta. Hoy sin entrenar todavía no rompe lo de
+[`currentStreak`](../lib/domain/progress.dart): días seguidos con algún registro
+(ver arriba). Un día de **descanso o fútbol planificado no la rompe ni la suma**;
+un día de entrenamiento sin ningún registro sí la corta. Hoy sin entrenar todavía no rompe lo de
 ayer. Probado en [`test/domain/progress_test.dart`](../test/domain/progress_test.dart).
 
 ## Récord

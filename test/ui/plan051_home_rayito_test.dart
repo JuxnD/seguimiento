@@ -114,7 +114,7 @@ void main() {
                   child: child!),
               home: RepaintBoundary(key: key, child: const HomeScreen()))));
       await settle(tester);
-      expect(find.text('Rayito · Dormido'), findsOneWidget);
+      expect(find.text('Nivel 1 de 8 · Sin racha todavía'), findsOneWidget);
       expect(bridge.sent.last.streak, 0);
       expect(bridge.sent.last.date, day);
       await drive(
@@ -125,7 +125,7 @@ void main() {
               totalSec: 60,
               incomplete: true)));
       await settle(tester);
-      expect(find.text('Rayito · Despierto'), findsOneWidget);
+      expect(find.text('Nivel 2 de 8 · 1 día de racha'), findsOneWidget);
       expect(bridge.sent.last.mood, MascotMood.contento);
       expect(bridge.sent.last.streak, 1);
       expect(bridge.sent.last.today, 'Tren superior');

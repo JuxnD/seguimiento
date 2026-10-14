@@ -60,6 +60,19 @@ class SettingsScreen extends ConsumerWidget {
                 ),
             const HealthConnectCard(),
             AppCard(
+              title: 'Rayito',
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Rayito en pantalla'),
+                  subtitle: const Text(
+                      'Tu compañero abajo a la derecha: te habla y festeja lo que guardas. Mantenlo presionado para esconderlo.'),
+                  value: !ref.watch(rayitoHiddenProvider),
+                  onChanged: (show) => setRayitoHidden(ref, !show),
+                ),
+              ],
+            ),
+            AppCard(
               title: 'Catálogos',
               children: [
                 ListTile(

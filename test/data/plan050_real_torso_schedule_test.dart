@@ -96,16 +96,48 @@ void main() {
             .read<int>('n'),
         before);
   });
-  test(
-      'lunes conserva miércoles; torso parcial y bloque/protocolo distinto no transfieren fechas',
+  test('lunes conserva miércoles y un torso parcial no mueve piernas',
       () async {
     await save(date: start);
     expect((await on(wed))!.part, TestPart.piernas);
     await save(partial: true);
     expect((await on(wed))!.part, TestPart.piernas);
-    await save(block: DateTime(2026, 9, 14));
-    await save(p: TestProtocolId.v31_12);
-    expect((await on(wed))!.part, TestPart.piernas);
+  });
+  // Plan 052, reporte real del owner (torso completo el martes, piernas
+  // seguía el miércoles): el descanso sigue al esfuerzo real aunque el torso
+  // se guardara con otro bloque, otro protocolo o sin agenda. Sólo la fecha.
+  for (final other in ['otro bloque', 'protocolo v3.1']) {
+    test('torso completo martes con $other también deja piernas el jueves',
+        () async {
+      if (other == 'otro bloque') {
+        await save(block: DateTime(2026, 9, 14));
+      } else {
+        await save(p: TestProtocolId.v31_12);
+      }
+      expect(await on(wed), isNull);
+      expect((await on(thu))!.part, TestPart.piernas);
+      expect(
+          await FitnessTestRepository(db).done(1, TestPart.torso,
+              protocol: protocol, key: key(TestPart.torso)),
+          isFalse,
+          reason: 'sólo mueve la fecha: no completa el torso de este bloque');
+    });
+  }
+  test('torso sin agenda (botón de Cuerpo) completo martes: piernas el jueves',
+      () async {
+    final items = protocolItems(TestProtocolId.v31_12, TestPart.torso);
+    await FitnessTestRepository(db).save(
+        date: tue,
+        round: 1,
+        part: TestPart.torso,
+        totalSec: 0,
+        results: [
+          for (final item in items)
+            for (final side in item.perSide ? ['I', 'D'] : [null])
+              TestResult(round: 1, item: item.id, side: side, value: 5)
+        ]);
+    expect(await on(wed), isNull);
+    expect((await on(thu))!.part, TestPart.piernas);
   });
   test('v3.1 martes a jueves también cruza Dashboard.today con plan existente',
       () async {
@@ -298,6 +330,9 @@ void main() {
     'originOtherBlock',
     'torsoAfterActivation'
   ]) {
+    // Plan 052: la transición sigue sin heredar identidad ni marcas, pero el
+    // torso real del martes deja piernas el jueves; sólo un torso posterior
+    // a piernas no la mueve.
     test('transición rechazada: $scenario', () async {
       final plan = PlanRepository(db, ExerciseRepository(db));
       await seedIfEmpty(db, plan);
@@ -319,7 +354,11 @@ void main() {
           agenda
               .singleWhere((t) => t.round == 1 && t.part == TestPart.piernas)
               .date,
-          wed);
+          scenario == 'torsoAfterActivation' ? wed : thu);
+      expect(
+          await FitnessTestRepository(db).done(1, TestPart.torso,
+              protocol: protocol, key: key(TestPart.torso)),
+          isFalse);
     });
   }
 }

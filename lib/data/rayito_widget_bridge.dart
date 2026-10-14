@@ -29,10 +29,10 @@ class RayitoWidgetData {
   /// Fecha local de la lectura; el widget nunca presenta ayer como hoy.
   final DateTime? date;
 
-  String get title => 'Rayito · ${phase.label}';
+  String get title => 'Rayito';
   String get streakLine => streak == 0
       ? 'Sin racha todavía'
-      : '$streak ${streak == 1 ? 'día' : 'días'} de racha';
+      : 'Nivel ${phase.level} · $streak ${streak == 1 ? 'día' : 'días'} de racha';
   String get todayLine => 'Hoy: $today';
 
   @override

@@ -10,25 +10,25 @@ void main() {
     expect(say(5, active: true),
         'Hoy ya sumaste. 5 días seguidos construyendo tu mejor versión.');
     expect(say(1, active: true),
-        '¡Rayito pasó a Despierto! 1 día construyendo tu mejor versión.');
+        '¡Rayito subió al nivel 2! 1 día construyendo tu mejor versión.');
     expect(say(7, active: true),
-        '¡Rayito pasó a Energizado! 7 días construyendo tu mejor versión.');
+        '¡Rayito subió al nivel 4! 7 días construyendo tu mejor versión.');
     expect(say(30, active: true),
-        '¡Rayito pasó a Prime! 30 días construyendo tu mejor versión.');
+        '¡Rayito subió al nivel 7! 30 días construyendo tu mejor versión.');
   });
 
   test('pendiente hoy: dice qué gana con registrar, sin culpar', () {
-    expect(say(4), 'Guarda una actividad hoy y llegas a 5 días.');
-    expect(say(6), 'Guarda una actividad hoy y Rayito pasa a Energizado.');
-    expect(say(59), 'Guarda una actividad hoy y Rayito pasa a Leyenda.');
+    expect(say(4), 'Guarda un registro hoy y llegas a 5 días.');
+    expect(say(6), 'Guarda un registro hoy y Rayito sube al nivel 4.');
+    expect(say(59), 'Guarda un registro hoy y Rayito sube al nivel 8.');
     expect(say(0),
-        'Una actividad guardada despierta a Rayito. Empieza a tu ritmo.');
+        'Cualquier registro despierta a Rayito. Empieza a tu ritmo.');
   });
 
   test('descanso indicado por 032: no presiona y recuerda que lo suave cuenta',
       () {
     expect(say(9, rest: true),
-        'Descansar también es parte del plan. Si te apetece moverte suave, esa actividad cuenta.');
+        'Descansar también es parte del plan. Registrar tu comida o tu sueño también cuenta.');
     expect(say(9, active: true, rest: true), startsWith('Hoy ya sumaste.'));
   });
 

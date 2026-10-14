@@ -84,6 +84,26 @@ final activeSessionProvider = FutureProvider<ActiveSession?>(
 /// contra la base nueva.
 final databaseGenerationProvider = StateProvider<int>((ref) => 0);
 
+/// Plan 052: Rayito flotante visible. Empieza con lo guardado en el teléfono;
+/// [setRayitoHidden] cambia ambos.
+final rayitoHiddenProvider = StateProvider<bool>((ref) {
+  try {
+    return ref.watch(localFlagsProvider).get<bool>(FlagKeys.rayitoHidden) ??
+        false;
+  } on UnimplementedError {
+    return false; // Pruebas sin banderas: visible.
+  }
+});
+
+Future<void> setRayitoHidden(WidgetRef ref, bool hidden) async {
+  ref.read(rayitoHiddenProvider.notifier).state = hidden;
+  try {
+    await ref.read(localFlagsProvider).set(FlagKeys.rayitoHidden, hidden);
+  } on UnimplementedError {
+    // Pruebas sin banderas: sólo en memoria.
+  }
+}
+
 final databaseProvider = Provider<AppDatabase>((ref) {
   ref.watch(databaseGenerationProvider);
   return ref.watch(databaseHostProvider).db;
@@ -373,9 +393,24 @@ final recoverySignalsProvider = StreamProvider<void>((ref) {
   ]));
 });
 
+/// Plan 052: el resto de registros que también sostienen la racha.
+final streakSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables([
+    db.progressPhotos,
+    db.measurements,
+    db.bodyWeights,
+    db.fitnessTestAttempts,
+    db.mobilityBenchmarks,
+    db.skillAchievements,
+    db.closedDays,
+  ]));
+});
+
 final dashboardProvider = FutureProvider((ref) {
   final today = ref.watch(todayProvider);
   ref.watch(recoverySignalsProvider);
+  ref.watch(streakSignalsProvider);
   ref.watch(goalHistoryProvider);
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);

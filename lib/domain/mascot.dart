@@ -20,6 +20,11 @@ enum MascotPhase {
   final int fromDays;
   final String label;
 
+  /// Nivel de 1 a [levels] que ve el usuario (plan 052): el nombre de la
+  /// mascota es sólo «Rayito»; la fase no se muestra con nombre propio.
+  int get level => index + 1;
+  static const levels = 8;
+
   /// La fase siguiente, o null en la última.
   MascotPhase? get next => index + 1 < MascotPhase.values.length
       ? MascotPhase.values[index + 1]

@@ -266,8 +266,19 @@ const exerciseDetails = <String, ExerciseDetail>{
         'Estabiliza antes del siguiente salto.'
       ],
       mistakes: ['Rebotar sin estabilizar o colapsar rodillas.'],
-      easier: 'Bilateral.',
-      harder: 'Una pierna desde sem3; después salto lateral.'),
+      easier: 'Dos piernas (semanas 1–2 y descarga).',
+      harder: 'Una pierna en las semanas 3–5; salto lateral a una pierna desde la 7.'),
+  'Intervalos 15/15': ExerciseDetail(
+      muscles: 'Piernas, corazón y pulmones',
+      steps: [
+        'En un espacio plano y seguro, 15 s de carrera rápida y 15 s trotando o caminando.',
+        'Repite durante 8 min sin parar; descansa 3 min y haz el segundo bloque.',
+        'Rápido no es al máximo: que puedas repetirlo igual hasta el final.'
+      ],
+      mistakes: ['Salir al máximo y no poder sostener los últimos minutos.'],
+      easier: 'Un solo bloque o 15 s a ritmo medio.',
+      harder: 'Más distancia en cada tramo rápido, mismo tiempo.',
+      note: 'Sólo desde la semana 5 y si no jugaste fútbol entre semana. Pinchazo o rodilla molesta: para.'),
   'Mesa invertida': ExerciseDetail(
       muscles: 'Cadena posterior',
       steps: [

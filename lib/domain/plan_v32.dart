@@ -63,7 +63,16 @@ const v32ExerciseNames = <String, String>{
   'reverse_nordic': 'Nórdico inverso',
   'lateral_step_down': 'Bajada lateral del escalón',
   'landing_stick': 'Aterrizaje clavado',
+  'intervals_15_15': intervals1515,
 };
+
+/// Intervalos del martes desde la semana 5 (§19.13); los agrega el día.
+const intervals1515 = 'Intervalos 15/15';
+
+/// Variantes físicas del aterrizaje clavado por semana (§19.16).
+const landingBilateral = 'landing_bilateral';
+const landingUnilateral = 'landing_unilateral';
+const landingLateral = 'landing_lateral';
 
 const v32Purposes = <String, String>{
   'Copenhague': 'Aductores y control de la ingle en cambios de dirección.',
@@ -80,6 +89,7 @@ const v32Purposes = <String, String>{
   'Nórdico inverso': 'Cuádriceps en posición alargada.',
   'Bajada lateral del escalón': 'Control de la rodilla sobre el pie.',
   'Aterrizaje clavado': 'Alinear y estabilizar el aterrizaje.',
+  intervals1515: 'Capacidad de repetir esfuerzos cortos, como en el partido.',
 };
 
 const v32PurposeGoals = <String, String>{
@@ -97,4 +107,5 @@ const v32PurposeGoals = <String, String>{
   'Nórdico inverso': 'Fuerte',
   'Bajada lateral del escalón': 'Ágil',
   'Aterrizaje clavado': 'Ágil',
+  intervals1515: 'Veloz',
 };

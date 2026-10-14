@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/body/body_screen.dart';
 import '../features/home/home_screen.dart';
+import '../features/home/rayito_companion.dart';
 import '../features/meals/meals_screen.dart';
 import '../features/onboarding/app_entry.dart';
 import '../features/report/report_screen.dart';
@@ -49,6 +50,7 @@ class HomeShell extends ConsumerStatefulWidget {
 class _HomeShellState extends ConsumerState<HomeShell>
     with WidgetsBindingObserver {
   int _index = 0;
+  bool _peek = false;
   static const _widgetChannel = MethodChannel('seguimiento/widget');
 
   void _openToday() {
@@ -154,7 +156,30 @@ class _HomeShellState extends ConsumerState<HomeShell>
     // Deja programados los recordatorios y los mantiene al día.
     ref.watch(reminderSyncProvider);
     return Scaffold(
-      body: IndexedStack(index: _index, children: _tabs),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (n) {
+          // Rayito se asoma mientras la lista se mueve y vuelve al parar.
+          final moving = n is ScrollUpdateNotification &&
+              (n.scrollDelta ?? 0).abs() > 0.5;
+          final stopped = n is ScrollEndNotification;
+          if (n.depth == 0 && (moving && !_peek || stopped && _peek)) {
+            setState(() => _peek = moving);
+          }
+          return false;
+        },
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            IndexedStack(index: _index, children: _tabs),
+            if (!ref.watch(rayitoHiddenProvider))
+              Positioned(
+                right: 12,
+                bottom: 12,
+                child: SafeArea(child: RayitoCompanion(peek: _peek)),
+              ),
+          ],
+        ),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),

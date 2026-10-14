@@ -999,6 +999,52 @@ class TrainingRepository {
               ? 10
               : 15;
     }
+    // §19.13 L1 (047 hallazgo 3): el lunes calienta también las muñecas.
+    if (date.weekday == DateTime.monday &&
+        !result.exercises.any((e) => e.name == 'Muñecas (planche)')) {
+      result.exercises.add(PlanExerciseDraft(
+          name: 'Muñecas (planche)',
+          sets: 1,
+          holdSecMin: 120,
+          holdSecMax: 120,
+          block: 'calentamiento',
+          notes: 'Calentamiento del lunes: 2 min.'));
+    }
+    // §19.16 (047 hallazgo 4, decisión del owner): el aterrizaje progresa por
+    // semana; la descarga vuelve a dos piernas.
+    for (final e in result.exercises.where((e) => e.name == 'Aterrizaje clavado')) {
+      final (key, note) = v3.reducedVolume || v3.week <= 2
+          ? (landingBilateral, 'Dos piernas: aterriza y quédate quieto 2 s.')
+          : v3.week <= 5
+              ? (landingUnilateral, 'Una pierna (desde la semana 3): aterriza y quédate quieto 2 s.')
+              : (landingLateral, 'Salto lateral a una pierna (desde la semana 7): aterriza y quédate quieto 2 s.');
+      e.physicalVariantKey = key;
+      e.notes = note;
+    }
+    // §19.13 martes 11 (047 hallazgo 2, decisión del owner): desde la semana
+    // 5, 2 bloques de 8 min de 15″/15″ si no hubo fútbol entre semana; en la
+    // descarga se omiten.
+    if (date.weekday == DateTime.tuesday && v3.week >= 5) {
+      final monday = addDays(date, DateTime.monday - date.weekday);
+      final weekdayGames = await (db.select(db.footballGames)
+            ..where((t) => t.date.isBetweenValues(dayKey(monday), dayKey(date))))
+          .get();
+      if (v3.reducedVolume) {
+        result.notes = '${result.notes ?? ''} · Intervalos 15/15: no van en la descarga.';
+      } else if (weekdayGames.isNotEmpty) {
+        result.notes =
+            '${result.notes ?? ''} · Intervalos 15/15 omitidos: fútbol entre semana el ${weekdayGames.map((g) => g.date).join(', ')}.';
+      } else if (!result.exercises.any((e) => e.name == intervals1515)) {
+        result.exercises.add(PlanExerciseDraft(
+            name: intervals1515,
+            sets: 2,
+            holdSecMin: 480,
+            holdSecMax: 480,
+            restSec: 180,
+            purpose: v32Purposes[intervals1515],
+            notes: '15 s rápido y 15 s suave durante 8 min. Si juegas fútbol esta semana entre semana, sáltalos.'));
+      }
+    }
     if (date.weekday == DateTime.tuesday) {
       final maximum = v3.blockStart == null
           ? null
@@ -1144,7 +1190,8 @@ class TrainingRepository {
             'Salto vertical',
             'Salto largo',
             'Salto de patinador',
-            'Aterrizaje clavado'
+            'Aterrizaje clavado',
+            intervals1515
           ].contains(e.name));
       result.notes =
           '${result.notes ?? ''} · Escaleras ${morning!.kneeStairs}/10: saltos y sprints aplazados; la excepción de fútbol no aplica.';

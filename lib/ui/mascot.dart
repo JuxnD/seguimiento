@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -30,7 +31,7 @@ class Rayito extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
         container: true,
-        label: semanticLabel ?? 'Rayito, ${phase.label}',
+        label: semanticLabel ?? 'Rayito, nivel ${phase.level} de ${MascotPhase.levels}',
         image: true,
         child: SizedBox.square(
           dimension: size,
@@ -39,11 +40,156 @@ class Rayito extends StatelessWidget {
       );
 }
 
-class RayitoPainter extends CustomPainter {
-  RayitoPainter({required this.phase, required this.mood});
+/// Rayito se mueve en la app y queda quieto en `flutter test`, donde un ciclo
+/// infinito no dejaría asentar las pantallas. Las pruebas de la animación lo
+/// encienden a mano.
+bool rayitoAnimationsEnabled = () {
+  try {
+    return !Platform.environment.containsKey('FLUTTER_TEST');
+  } catch (_) {
+    return true;
+  }
+}();
+
+/// Rayito vivo (plan 052): flota, respira, parpadea, el halo late y las
+/// estrellas titilan; dormido, sube sus Z. Cada vez que [hop] cambia da un
+/// salto con estirón. Con «quitar animaciones» del sistema queda quieto.
+class RayitoAlive extends StatefulWidget {
+  const RayitoAlive({
+    super.key,
+    required this.phase,
+    required this.mood,
+    this.size = 72,
+    this.semanticLabel,
+    this.hop = 0,
+  });
 
   final MascotPhase phase;
   final MascotMood mood;
+  final double size;
+  final String? semanticLabel;
+  final int hop;
+
+  @override
+  State<RayitoAlive> createState() => _RayitoAliveState();
+}
+
+class _RayitoAliveState extends State<RayitoAlive>
+    with TickerProviderStateMixin {
+  late final AnimationController _loop =
+      AnimationController(vsync: this, duration: const Duration(seconds: 6));
+  late final AnimationController _hop = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 700));
+  bool _still = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _still = !rayitoAnimationsEnabled ||
+        (MediaQuery.maybeDisableAnimationsOf(context) ?? false);
+    if (_still) {
+      _loop.stop();
+      _loop.value = 0;
+    } else if (!_loop.isAnimating) {
+      _loop.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(RayitoAlive old) {
+    super.didUpdateWidget(old);
+    if (old.hop != widget.hop && !_still) _hop.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _loop.dispose();
+    _hop.dispose();
+    super.dispose();
+  }
+
+  /// Parpadeo breve dos veces por vuelta, el segundo doble.
+  static double _blink(double t) {
+    double pulse(double at) {
+      final d = (t - at).abs();
+      return d > 0.018 ? 0 : 1 - d / 0.018;
+    }
+
+    return math.max(pulse(0.31), math.max(pulse(0.81), pulse(0.86)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final asleep =
+        widget.phase == MascotPhase.dormido && widget.mood != MascotMood.contento;
+    return Semantics(
+      container: true,
+      label: widget.semanticLabel ?? 'Rayito',
+      image: true,
+      child: SizedBox.square(
+        dimension: widget.size,
+        child: AnimatedBuilder(
+          animation: Listenable.merge([_loop, _hop]),
+          builder: (context, _) {
+            final t = _still ? 0.0 : _loop.value;
+            final wave = math.sin(2 * math.pi * t * 2);
+            final float = asleep ? 0.012 * wave : 0.035 * wave;
+            final breathe = 1 + (asleep ? 0.035 : 0.02) * math.cos(2 * math.pi * t * 2);
+            final h = _hop.value;
+            final jump = -0.22 * math.sin(math.pi * h);
+            final squash = 0.09 * math.sin(2 * math.pi * h);
+            return Transform.translate(
+              offset: Offset(0, widget.size * (float + jump)),
+              child: Transform(
+                alignment: Alignment.bottomCenter,
+                transform: Matrix4.diagonal3Values(
+                    breathe * (1 + squash), breathe * (1 - squash), 1),
+                child: CustomPaint(
+                  size: Size.square(widget.size),
+                  painter: RayitoPainter(
+                    phase: widget.phase,
+                    mood: widget.mood,
+                    blink: _still || asleep ? 0 : _blink(t),
+                    glow: _still ? 1 : 0.75 + 0.25 * math.sin(2 * math.pi * t * 3),
+                    twinkle: _still ? 0 : t,
+                    look: _still || widget.mood != MascotMood.atento
+                        ? 0
+                        : 0.6 * math.sin(2 * math.pi * t),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class RayitoPainter extends CustomPainter {
+  RayitoPainter({
+    required this.phase,
+    required this.mood,
+    this.blink = 0,
+    this.glow = 1,
+    this.twinkle = 0,
+    this.look = 0,
+  });
+
+  final MascotPhase phase;
+  final MascotMood mood;
+
+  /// Animación (plan 052): 0 ojos abiertos, 1 cerrados en un parpadeo.
+  final double blink;
+
+  /// Intensidad del halo, 0–1; late suave cuando Rayito está vivo.
+  final double glow;
+
+  /// Vuelta de 0 a 1 que hace titilar las estrellas y subir las Z al dormir.
+  final double twinkle;
+
+  /// Hacia dónde mira, −1 izquierda a 1 derecha.
+  final double look;
 
   bool get _prime => phase.index >= MascotPhase.prime.index;
   bool get _asleep =>
@@ -99,27 +245,28 @@ class RayitoPainter extends CustomPainter {
                 r,
                 _prime
                     ? [
-                        const Color(0xE6E6FF9C),
-                        mascotLime.withOpacity(0.35),
+                        const Color(0xFFE6FF9C).withOpacity(0.9 * glow),
+                        mascotLime.withOpacity(0.35 * glow),
                         mascotLime.withOpacity(0)
                       ]
                     : [
-                        mascotLime.withOpacity(0.55),
-                        mascotLime.withOpacity(0.18),
+                        mascotLime.withOpacity(0.55 * glow),
+                        mascotLime.withOpacity(0.18 * glow),
                         mascotLime.withOpacity(0)
                       ],
                 const [0, 0.58, 1]));
     }
     if (phase.index >= MascotPhase.tormenta.index) {
       final color = _prime ? const Color(0xFFE6FF9C) : mascotIvory;
-      for (final (a, r) in const [
+      for (final (i, (a, r)) in const [
         (-2.4, 7.0),
         (-1.0, 5.0),
         (0.4, 6.0),
         (1.6, 4.5),
         (2.7, 5.5)
-      ]) {
-        _star(canvas, Offset(math.cos(a) * 64, math.sin(a) * 60), r, color);
+      ].indexed) {
+        _star(canvas, Offset(math.cos(a) * 64, math.sin(a) * 60),
+            r * _twinkleScale(i), color);
       }
     }
     if (phase == MascotPhase.leyenda) {
@@ -139,8 +286,10 @@ class RayitoPainter extends CustomPainter {
       }
     }
     if (phase.index >= MascotPhase.cargado.index && !_prime) {
-      _star(canvas, const Offset(44, -52), 6, const Color(0xFFE6FF9C));
-      _star(canvas, const Offset(-44, 38), 4.5, const Color(0xFFE6FF9C));
+      _star(canvas, const Offset(44, -52), 6 * _twinkleScale(0),
+          const Color(0xFFE6FF9C));
+      _star(canvas, const Offset(-44, 38), 4.5 * _twinkleScale(3),
+          const Color(0xFFE6FF9C));
     }
 
     // Cuerpo con volumen: borde, relleno degradado y brillo lateral.
@@ -179,7 +328,35 @@ class RayitoPainter extends CustomPainter {
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2));
 
     _face(canvas);
+    if (_asleep && twinkle > 0) _sleepyZ(canvas);
     canvas.restore();
+  }
+
+  /// Cada estrella titila con su propio desfase; quieta si no hay animación.
+  double _twinkleScale(int i) => twinkle == 0
+      ? 1
+      : 0.7 + 0.3 * (0.5 + 0.5 * math.sin(2 * math.pi * (twinkle + i / 5)));
+
+  /// Dormido: dos Z suben y se desvanecen.
+  void _sleepyZ(Canvas canvas) {
+    for (final k in const [0.0, 0.5]) {
+      final t = (twinkle + k) % 1;
+      final size = 9 + 7 * t;
+      final at = Offset(30 + 18 * t, -58 - 34 * t);
+      final paint = Paint()
+        ..color = mascotIvory.withOpacity(0.9 * (1 - t))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.6
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round;
+      canvas.drawPath(
+          Path()
+            ..moveTo(at.dx, at.dy)
+            ..lineTo(at.dx + size, at.dy)
+            ..lineTo(at.dx, at.dy + size)
+            ..lineTo(at.dx + size, at.dy + size),
+          paint);
+    }
   }
 
   void _star(Canvas canvas, Offset c, double r, Color color) {
@@ -220,17 +397,23 @@ class RayitoPainter extends CustomPainter {
             line);
         continue;
       }
+      if (blink > 0.85) {
+        // Parpadeo: el ojo se vuelve una rayita un instante.
+        canvas.drawLine(eye - const Offset(6, 0), eye + const Offset(6, 0), line);
+        continue;
+      }
+      final open = 1 - blink;
+      final pupil = eye + Offset(1 + 2.2 * look, 1.5 * open);
       canvas
-        ..drawOval(Rect.fromCenter(center: eye, width: 14, height: 18),
+        ..drawOval(Rect.fromCenter(center: eye, width: 14, height: 18 * open),
             Paint()..color = Colors.white)
         ..drawOval(
-            Rect.fromCenter(
-                center: eye + const Offset(1, 1.5), width: 9.6, height: 12.4),
+            Rect.fromCenter(center: pupil, width: 9.6, height: 12.4 * open),
             Paint()..color = mascotCarbon)
-        ..drawCircle(
-            eye + const Offset(2.6, -1.6), 2, Paint()..color = Colors.white)
-        ..drawCircle(
-            eye + const Offset(-0.6, 4), 1, Paint()..color = Colors.white);
+        ..drawCircle(pupil + const Offset(1.6, -3.1) * open, 2 * open,
+            Paint()..color = Colors.white)
+        ..drawCircle(pupil + const Offset(-1.6, 2.5) * open, 1 * open,
+            Paint()..color = Colors.white);
     }
     if (!_asleep) {
       final cheek = Paint()..color = const Color(0xFFFF8FA3).withOpacity(0.55);
@@ -291,5 +474,10 @@ class RayitoPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(RayitoPainter oldDelegate) =>
-      oldDelegate.phase != phase || oldDelegate.mood != mood;
+      oldDelegate.phase != phase ||
+      oldDelegate.mood != mood ||
+      oldDelegate.blink != blink ||
+      oldDelegate.glow != glow ||
+      oldDelegate.twinkle != twinkle ||
+      oldDelegate.look != look;
 }

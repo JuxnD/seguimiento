@@ -378,12 +378,52 @@ class ReadinessRepository {
             protocolId: key.protocolId,
             round: key.round,
             part: TestPart.torso)) ??
-        await _priorProtocolTorsoDate(key);
+        await _priorProtocolTorsoDate(key) ??
+        await _anyCompleteTorsoBefore(date);
     if (torso != null) {
       final earliest = addDays(torso, 2);
       if (earliest.isAfter(date)) date = earliest;
     }
     return date;
+  }
+
+  /// Plan 052 (reporte del owner del 14 oct: torso completo el martes y
+  /// piernas seguía el miércoles): el descanso entre torso y piernas depende
+  /// del esfuerzo real, no de con qué identidad se guardó. Un torso completo
+  /// según su propio protocolo y ronda, guardado en los 6 días anteriores a
+  /// piernas, separa piernas aunque venga de otro bloque, de otro protocolo o
+  /// del botón de Cuerpo sin agenda. Sólo mueve la fecha: no completa este
+  /// test ni comparte marcas, dosis o identidad. Parciales y legados sin
+  /// cabecera no cuentan.
+  Future<DateTime?> _anyCompleteTorsoBefore(DateTime legs) async {
+    final from = addDays(legs, -6);
+    // Pocas filas; la fecha se interpreta igual que en el resto del resolver.
+    final headers = await (db.select(db.fitnessTestAttempts)
+          ..where((t) => t.part.equals(TestPart.torso.name)))
+        .get();
+    DateTime? latest;
+    for (final header in headers) {
+      final date = recordedTestDate(header.date);
+      final protocol = TestProtocolId.values
+          .where((p) => p.name == header.protocolId)
+          .firstOrNull;
+      if (date == null || protocol == null) continue;
+      if (date.isBefore(from) || !date.isBefore(legs)) continue;
+      final rows = await (db.select(db.fitnessTests)
+            ..where((t) => t.attemptId.equals(header.id)))
+          .get();
+      if (rows.isEmpty || rows.any((r) => recordedTestDate(r.date) != date)) {
+        continue;
+      }
+      final results = [
+        for (final r in rows)
+          TestResult(round: r.round, item: r.item, side: r.side, value: r.value)
+      ];
+      final complete = protocolItems(protocol, TestPart.torso).every(
+          (item) => testValue(results, header.round, item.id) != null);
+      if (complete && (latest == null || date.isAfter(latest))) latest = date;
+    }
+    return latest;
   }
 
   /// Transición explícita 31→32 en la primera semana: la fecha del torso12

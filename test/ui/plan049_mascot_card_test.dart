@@ -100,48 +100,44 @@ void main() {
       (tester) async {
     final semantics = tester.ensureSemantics();
     await mount(tester, dashboard(streak: 5, activeToday: true));
-    expect(find.text('Rayito · Cargado'), findsOneWidget);
-    expect(find.text('5 días de racha'), findsOneWidget);
-    expect(find.text('Faltan 2 días para Energizado.'), findsOneWidget);
+    // Plan 052: el nombre es sólo «Rayito»; la fase se dice como nivel y la
+    // frase del día la dice el compañero flotante, no la tarjeta.
+    expect(find.text('Rayito'), findsOneWidget);
+    expect(find.text('Nivel 3 de 8 · 5 días de racha'), findsOneWidget);
+    expect(find.text('Faltan 2 días para el nivel 4.'), findsOneWidget);
+    expect(find.textContaining('Cargado'), findsNothing);
     expect(
         find.text(
             'Hoy ya sumaste. 5 días seguidos construyendo tu mejor versión.'),
-        findsOneWidget);
+        findsNothing);
     expect((painter(tester).phase, painter(tester).mood),
         (MascotPhase.cargado, MascotMood.contento));
     expect(
         find.bySemanticsLabel(
-            'Rayito, fase Cargado, estado contento, 5 días de racha'),
+            'Rayito, Nivel 3 de 8, 5 días de racha'),
         findsOneWidget);
     semantics.dispose();
   });
 
   testWidgets('sin racha: dormido y a un día de despertar', (tester) async {
     await mount(tester, dashboard(streak: 0));
-    expect(find.text('Rayito · Dormido'), findsOneWidget);
-    expect(find.text('Sin racha todavía'), findsOneWidget);
-    expect(find.text('Un día más y llega a Despierto.'), findsOneWidget);
+    expect(find.text('Rayito'), findsOneWidget);
+    expect(find.text('Nivel 1 de 8 · Sin racha todavía'), findsOneWidget);
+    expect(find.text('Un día más y sube al nivel 2.'), findsOneWidget);
     expect(painter(tester).mood, MascotMood.dormido);
-    expect(
-        find.text(
-            'Una actividad guardada despierta a Rayito. Empieza a tu ritmo.'),
-        findsOneWidget);
   });
 
   testWidgets('amarillo de 032 sin registro hoy: sereno, no presiona',
       (tester) async {
     await mount(tester, dashboard(streak: 9), level: ReadinessLevel.yellow);
     expect(painter(tester).mood, MascotMood.sereno);
-    expect(
-        find.text(
-            'Descansar también es parte del plan. Si te apetece moverte suave, esa actividad cuenta.'),
-        findsOneWidget);
+    expect(find.textContaining('Faltan'), findsNothing, reason: 'no presiona');
     expect(painter(tester).phase, MascotPhase.energizado);
   });
 
   testWidgets('Leyenda no promete una fase siguiente', (tester) async {
     await mount(tester, dashboard(streak: 75, activeToday: true));
-    expect(find.text('Rayito · Leyenda'), findsOneWidget);
+    expect(find.text('Nivel 8 de 8 · 75 días de racha'), findsOneWidget);
     expect(find.textContaining('Faltan'), findsNothing);
     expect(find.textContaining('Un día más'), findsNothing);
   });
@@ -154,8 +150,6 @@ void main() {
         level: ReadinessLevel.red, widgetBridge: bridge);
     expect(bridge.sent.last.today, 'Descanso');
     expect(painter(tester).mood, MascotMood.sereno);
-    expect(find.text('Hoy toca descansar. Rayito te acompaña a tu ritmo.'),
-        findsOneWidget);
     expect(find.textContaining('Un día más'), findsNothing);
     expect(find.textContaining('Registra'), findsNothing);
     expect(find.textContaining('suave'), findsNothing);
@@ -199,7 +193,7 @@ void main() {
         (tester) async {
       await mount(tester, dashboard(streak: 21, activeToday: false),
           textScale: scale, size: const Size(360, 800));
-      expect(find.text('Rayito · Súper'), findsOneWidget);
+      expect(find.text('Nivel 6 de 8 · 21 días de racha'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }

@@ -35,7 +35,7 @@ void main() {
     final args = (calls.single.arguments as Map).cast<String, Object?>();
     expect(calls.single.method, 'update');
     expect((args['title'], args['streak'], args['today']),
-        ('Rayito · Cargado', '5 días de racha', 'Hoy: Tren superior'));
+        ('Rayito', 'Nivel 3 · 5 días de racha', 'Hoy: Tren superior'));
     final png = args['png']! as Uint8List;
     expect(png.sublist(0, 4), [0x89, 0x50, 0x4E, 0x47], reason: 'firma PNG');
     expect(png.length, greaterThan(2000), reason: 'no es una imagen vacía');
@@ -61,7 +61,7 @@ void main() {
                 streak: 1,
                 today: 'Piernas')
             .streakLine,
-        '1 día de racha');
+        'Nivel 2 · 1 día de racha');
   });
 
   test('fuera de Android no llama al canal', () async {
@@ -100,7 +100,7 @@ void main() {
     firstAck.complete(1);
     expect(await first, isTrue);
     expect(await newest, isTrue);
-    expect((calls.last.arguments as Map)['streak'], '6 días de racha');
+    expect((calls.last.arguments as Map)['streak'], 'Nivel 3 · 6 días de racha');
   });
 
   test('un error del canal no confirma envío y permite reintento', () async {

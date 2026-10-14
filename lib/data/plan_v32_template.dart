@@ -198,7 +198,7 @@ PlanDraft planV32(DateTime start) {
         'Copenhague' => 'copenhagen_short',
         'Sóleo sentado con mochila' => 'seated_soleus_bilateral',
         'Rotación externa con banda' => 'band_rotation_side',
-        'Aterrizaje clavado' => 'landing_bilateral',
+        'Aterrizaje clavado' => landingBilateral,
         _ => null,
       };
     }
@@ -212,6 +212,7 @@ void orderV32Exercises(PlanDayDraft day) {
   const orders = <int, List<String>>{
     1: [
       'Scap pull-up',
+      'Muñecas (planche)',
       'Pino pecho a la pared',
       'Dominadas',
       'Remo invertido (mesa)',
@@ -251,12 +252,12 @@ void orderV32Exercises(PlanDayDraft day) {
     ],
     3: [
       'Calentamiento tipo FIFA 11+',
+      'Aterrizaje clavado',
       'Sprint lanzado',
       'Aceleración 10–20 m',
       'Salto vertical',
       'Salto largo',
       'Salto de patinador',
-      'Aterrizaje clavado',
       'Sentadilla búlgara',
       'Peso muerto a una pierna con mochila',
       'Nórdico (isquios)',

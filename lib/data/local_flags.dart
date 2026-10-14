@@ -95,4 +95,7 @@ abstract final class FlagKeys {
   /// Día (`YYYY-MM-DD`) en que se respondió "está bien así" a "¿Te faltó
   /// registrar algo de ayer?": no se vuelve a preguntar por ese día.
   static const yesterdayCheckDismissed = 'yesterdayCheckDismissed';
+
+  /// Plan 052: el usuario escondió a Rayito flotante (vuelve desde Ajustes).
+  static const rayitoHidden = 'rayitoHidden';
 }

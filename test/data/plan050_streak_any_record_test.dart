@@ -110,11 +110,11 @@ void main() {
   });
 
   test(
-      'comidas, pesos, sueño y checks de la mañana no son actividad: no sostienen la racha',
+      'plan 052: comidas, peso, sueño y check de la mañana también sostienen la racha',
       () async {
     await training.save(SessionDraft(
         date: d(21), type: SessionType.circuito, roundsDone: 8, rpe: 8));
-    // Martes 22, día de bloques: sólo registros que no son actividad.
+    // Martes 22, día de bloques: sólo registros que no son entreno.
     await db
         .into(db.bodyWeights)
         .insert(BodyWeightsCompanion.insert(date: '2026-09-22', kg: 80));
@@ -123,8 +123,14 @@ void main() {
         .insert(SleepLogsCompanion.insert(date: '2026-09-22', hours: 7.5));
     await db.into(db.morningChecks).insert(MorningChecksCompanion.insert(
         date: '2026-09-22', kneeStairs: const Value(1)));
-    expect(await streakOn(d(23)), 0,
-        reason: 'el martes de entreno sin actividad corta la racha');
-    expect((await dashboard.today(now: d(22))).activeToday, isFalse);
+    expect(await streakOn(d(22)), 2);
+    expect((await dashboard.today(now: d(22))).activeToday, isTrue);
+    expect((await dashboard.today(now: d(22))).trained, isFalse,
+        reason: 'adherencia del plan: sigue siendo sólo entreno');
+    // Miércoles 23 sin nada: hoy todavía no rompe.
+    expect(await streakOn(d(23)), 2);
+    // Jueves 24: el miércoles de entreno quedó vacío y la corta.
+    expect(await streakOn(d(24)), 0,
+        reason: 'un día de entreno sin ningún registro corta la racha');
   });
 }

@@ -16,22 +16,22 @@ String mascotMessage({
   final phase = mascotPhase(streak);
   if (activeToday) {
     if (streak == phase.fromDays && phase != MascotPhase.dormido) {
-      return '¡Rayito pasó a ${phase.label}! $streak ${_days(streak)} construyendo tu mejor versión.';
+      return '¡Rayito subió al nivel ${phase.level}! $streak ${_days(streak)} construyendo tu mejor versión.';
     }
     return 'Hoy ya sumaste. $streak ${_days(streak)} seguidos construyendo tu mejor versión.';
   }
   if (restOnly) return 'Hoy toca descansar. Rayito te acompaña a tu ritmo.';
   if (restAdvised) {
-    return 'Descansar también es parte del plan. Si te apetece moverte suave, esa actividad cuenta.';
+    return 'Descansar también es parte del plan. Registrar tu comida o tu sueño también cuenta.';
   }
   if (streak == 0) {
-    return 'Una actividad guardada despierta a Rayito. Empieza a tu ritmo.';
+    return 'Cualquier registro despierta a Rayito. Empieza a tu ritmo.';
   }
   final tomorrow = mascotPhase(streak + 1);
   if (tomorrow != phase) {
-    return 'Guarda una actividad hoy y Rayito pasa a ${tomorrow.label}.';
+    return 'Guarda un registro hoy y Rayito sube al nivel ${tomorrow.level}.';
   }
-  return 'Guarda una actividad hoy y llegas a ${streak + 1} días.';
+  return 'Guarda un registro hoy y llegas a ${streak + 1} días.';
 }
 
 String _days(int n) => n == 1 ? 'día' : 'días';

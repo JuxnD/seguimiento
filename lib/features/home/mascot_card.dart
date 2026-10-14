@@ -6,18 +6,15 @@ export '../../app/providers.dart' show rayitoWidgetBridgeProvider;
 import '../../data/rayito_widget_bridge.dart';
 import '../../data/repositories/dashboard_repository.dart';
 import '../../domain/dates.dart';
-import '../../domain/enums.dart';
-import '../../domain/mascot.dart';
-import '../../domain/mascot_message.dart';
-import '../../domain/readiness.dart';
 import '../../ui/mascot.dart';
+import 'rayito_state.dart';
 import 'readiness_card.dart';
 
 /// Puente al widget de inicio; reemplazable en pruebas.
 
-/// Rayito en Hoy (plan 049): crece con la racha de constancia y su cara dice
-/// cómo va el día. Lee la misma racha que el chip de Hoy y el mismo
-/// readiness de 032; no guarda nada en la base. Cuando cambia lo que muestra,
+/// Rayito en Hoy (planes 049 y 052): nivel y avance de la racha; la frase del
+/// día la dice el compañero flotante. Lee la misma racha que el chip de Hoy y
+/// el mismo readiness de 032; no guarda nada en la base. Cuando cambia lo que muestra,
 /// refresca el widget de inicio con los mismos datos.
 class MascotCard extends ConsumerStatefulWidget {
   const MascotCard({super.key, required this.dashboard});
@@ -51,40 +48,20 @@ class _MascotCardState extends ConsumerState<MascotCard> {
         .watch(
             readinessViewProvider((day: dayKey(dashboard.date), test: false)))
         .valueOrNull;
-    final restAdvised = view != null &&
-        !view.trainedAnyway &&
-        view.advice.action != SuggestedAction.trainAsPlanned;
-    final plannedRest =
-        dashboard.planVersion != null && dashboard.dayType == DayType.descanso;
-    final restOnly = view != null &&
-        !view.trainedAnyway &&
-        view.advice.action == SuggestedAction.restOnly;
-    final todayLabel = dashboard.planVersion == null
-        ? 'Configura tu rutina'
-        : view == null
-            ? 'Abre Hoy para revisar tu agenda'
-            : restOnly
-                ? 'Descanso'
-                : restAdvised
-                    ? 'Recuperación activa'
-                    : dashboard.planB
-                        ? 'Plan B: solo torso'
-                        : dashboard.dayType.label;
-    final streak = dashboard.streak;
-    final phase = mascotPhase(streak);
-    final mood = mascotMood(
-        streak: streak,
-        activeToday: dashboard.activeToday,
-        restAdvised: restAdvised || plannedRest);
-    final toNext = daysToNextPhase(streak);
+    final rayito = rayitoView(dashboard, view);
     _syncWidget(RayitoWidgetData(
-        phase: phase,
-        mood: mood,
-        streak: streak,
-        today: todayLabel,
+        phase: rayito.phase,
+        mood: rayito.mood,
+        streak: rayito.streak,
+        today: rayito.todayLabel,
         date: dashboard.date));
     final text = Theme.of(context).textTheme;
-    final days = streak == 1 ? '1 día' : '$streak días';
+    final phase = rayito.phase;
+    final next = phase.next;
+    final progress = next == null
+        ? 1.0
+        : ((rayito.streak - phase.fromDays) / (next.fromDays - phase.fromDays))
+            .clamp(0.0, 1.0);
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 6, 12, 6),
       child: Padding(
@@ -93,40 +70,32 @@ class _MascotCardState extends ConsumerState<MascotCard> {
           children: [
             Rayito(
               phase: phase,
-              mood: mood,
-              size: 76,
-              semanticLabel:
-                  'Rayito, fase ${phase.label}, estado ${mood.name}, $days de racha',
+              mood: rayito.mood,
+              size: 56,
+              semanticLabel: rayito.semanticLabel,
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Rayito · ${phase.label}', style: text.titleMedium),
+                  Text('Rayito', style: text.titleMedium),
                   const SizedBox(height: 2),
-                  Text(
-                    streak == 0 ? 'Sin racha todavía' : '$days de racha',
-                    style: text.bodyMedium,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    mascotMessage(
-                        streak: streak,
-                        activeToday: dashboard.activeToday,
-                        restAdvised: restAdvised || plannedRest,
-                        restOnly: restOnly),
-                    style:
-                        text.bodyMedium?.copyWith(fontStyle: FontStyle.italic),
-                  ),
-                  if (toNext != null && !restAdvised && !plannedRest) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      toNext == 1
-                          ? 'Un día más y llega a ${phase.next!.label}.'
-                          : 'Faltan $toNext días para ${phase.next!.label}.',
-                      style: text.bodySmall,
+                  Text('${rayito.levelLine} · ${rayito.streakLine}',
+                      style: text.bodyMedium),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 6,
+                      color: mascotLime,
+                      semanticsLabel: 'Avance al nivel siguiente',
                     ),
+                  ),
+                  if (rayito.progressLine case final line?) ...[
+                    const SizedBox(height: 6),
+                    Text(line, style: text.bodySmall),
                   ],
                 ],
               ),
