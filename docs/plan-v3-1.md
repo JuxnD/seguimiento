@@ -207,13 +207,28 @@ tiempo quedan incompletos (desde la 1.16.0).
   - Test 3: miércoles de la semana 9 (piernas) y el viernes de pruebas
     (torso, 11 dic).
 - Hoy y Cuerpo → Test permiten abrir, continuar y editar conservando la fecha
-  original. **Modo test**: campo y calidad por lado, descanso de 3 min. Vacío
+  original. Para piernas pendientes, la agenda común respeta al menos dos días
+  de calendario desde el torso completo real de esa ronda/bloque/protocolo
+  cuando el calendario nominal pone torso antes de piernas (Tests 1 y 2),
+  sin adelantar la fecha nominal ni consumir movimientos manuales. Los
+  resultados legacy v3.1 sin cabecera permiten sólo una inferencia de calendario:
+  fecha válida única, todos los ítems/lados y plan vigente del mismo bloque;
+  fechas mixtas, incompletas o sin plan compatible quedan desconocidas. No se
+  reescribe el historial ni se fabrican cabeceras. Esta separación es una
+  decisión del owner, no una recomendación médica. El Test 3 mantiene piernas
+  miércoles antes del torso viernes. **Modo test**: campo y calidad por lado,
+  descanso de 3 min. Vacío
   queda pendiente, 0 es un intento válido. Completo requiere todos los ítems y
   ambos lados; guardar parcial mantiene acceso. Una sesión `otro`/`test` cuenta
   como actividad para la racha, pero sólo torso **completo en lunes** sustituye
   tirón. Piernas deja su sesión pendiente; el Test 3 de torso no sustituye Cindy.
   El tiempo de esta pantalla no mide esfuerzo: duración 0, sin estimación de kcal.
   Los resultados/lados/calidad se incluyen en el contexto del informe.
+- Si se activa v3.2 dentro de la misma primera semana después de un torso12
+  completo del v3.1 anterior, su fecha permite sólo separar las piernas dos
+  días. Se exige origen31 vigente al medir y target32 posterior del mismo
+  ancla; no completa las 13 pruebas del32 ni transfiere marcas o dosis. Si esa
+  evidencia falta o corresponde a otra semana/bloque, no se infiere la fecha.
 - Por lado cuenta el más débil sólo si se midieron I y D; parcial no produce
   mejora ni dosis bilateral. Tu progreso y Cuerpo → Test muestran
   T1 / T2 / T3 con el % de mejora contra el Test 1 y la dosis inicial:

@@ -95,7 +95,7 @@ void main() {
     expect((r.complete, r.stepsDone, r.stepsTotal), (true, 3, 3));
   });
 
-  testWidgets('recuperación a medias: el resumen no promete la racha', (tester) async {
+  testWidgets('recuperación a medias: constancia sólo al guardar, recuperación hecha no', (tester) async {
     await open(tester, const MobilityRoutine(id: recoveryActiveId, name: 'Recuperación activa', exercises: _exercises));
     await tester.tap(find.text('Saltar'));
     await tester.pump();
@@ -103,7 +103,7 @@ void main() {
     await tester.pump();
     expect(find.text('Rutina a medias'), findsOneWidget);
     expect(find.textContaining('mantiene la racha y no suma carga'), findsNothing);
-    expect(find.text('A medias: queda guardada, pero no cuenta como recuperación hecha ni mantiene la racha.'),
+    expect(find.text('Al guardar, mantiene la racha de actividad; no suma carga ni cuenta como recuperación hecha.'),
         findsOneWidget);
   });
 }

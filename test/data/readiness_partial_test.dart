@@ -113,9 +113,9 @@ void main() {
       await seedIfEmpty(db, plan);
     });
 
-    test('la recuperación a medias no mantiene la racha; terminada sí', () async {
+    test('la recuperación guardada mantiene constancia incluso a medias', () async {
       await routine(today, recoveryActiveId, complete: false);
-      expect((await dashboard.today(now: today)).streak, 0);
+      expect((await dashboard.today(now: today)).streak, 1);
       await routine(today, recoveryActiveId, complete: true);
       expect((await dashboard.today(now: today)).streak, 1);
     });

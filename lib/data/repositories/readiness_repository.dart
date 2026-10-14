@@ -275,13 +275,168 @@ class ReadinessRepository {
     return null;
   }
 
-  /// Día que le toca ahora a ese test: el del calendario o el del último
-  /// movimiento.
+  /// Fecha real completa del último intento de esta identidad. Los legados
+  /// sin cabecera/bloque o fecha válida siguen desconocidos: no se les asigna
+  /// arbitrariamente un bloque ni se mezclan intentos para completar un test.
+  Future<DateTime?> _completedTestDate(TestScheduleKey key) async {
+    final header = await (db.select(db.fitnessTestAttempts)
+          ..where((t) =>
+              t.scheme.equals(key.scheme) &
+              t.blockStart.equals(dayKey(key.blockStart)) &
+              t.protocolId.equals(key.protocolId.name) &
+              t.round.equals(key.round) &
+              t.part.equals(key.part.name))
+          ..orderBy([(t) => OrderingTerm.desc(t.id)])
+          ..limit(1))
+        .getSingleOrNull();
+    if (header == null) return _legacyCompletedTestDate(key);
+    final date = recordedTestDate(header.date);
+    if (date == null) return null;
+    final rows = await (db.select(db.fitnessTests)
+          ..where((t) => t.attemptId.equals(header.id)))
+        .get();
+    if (rows.any((r) => recordedTestDate(r.date) != date)) return null;
+    final results = [
+      for (final r in rows)
+        TestResult(round: r.round, item: r.item, side: r.side, value: r.value)
+    ];
+    return protocolItems(key.protocolId, key.part)
+            .every((item) => testValue(results, key.round, item.id) != null)
+        ? date
+        : null;
+  }
+
+  /// Inferencia de calendario para resultados v3.1 anteriores a las cabeceras.
+  /// Exige una sola fecha completa dentro de la ventana de esta ronda y que
+  /// el plan vigente ese día sea exactamente este bloque. No crea atribución
+  /// persistida ni combina días/lados de otras mediciones. Sin evidencia,
+  /// devuelve desconocido y conserva el calendario nominal.
+  Future<DateTime?> _legacyCompletedTestDate(TestScheduleKey key) async {
+    if (key.protocolId != TestProtocolId.v31_12 || key.scheme != 'v3.1') {
+      return null;
+    }
+    final items = protocolItems(key.protocolId, key.part);
+    final rows = await (db.select(db.fitnessTests)
+          ..where((t) =>
+              t.attemptId.isNull() &
+              t.round.equals(key.round) &
+              t.item.isIn(items.map((item) => item.id))))
+        .get();
+    if (rows.isEmpty) return null;
+    final dates = rows.map((r) => recordedTestDate(r.date)).toSet();
+    if (dates.length != 1 || dates.single == null) return null;
+    final date = dates.single!;
+    final nominal = plannedTestDate(key.blockStart, key.round, key.part);
+    final next = key.round < 3
+        ? plannedTestDate(key.blockStart, key.round + 1, TestPart.torso)
+        : addDays(key.blockStart, 70);
+    if (nominal == null ||
+        next == null ||
+        date.isBefore(nominal) ||
+        !date.isBefore(next)) return null;
+    final active = await (db.select(db.planVersions)
+          ..where((t) => t.validFrom.isSmallerOrEqualValue(dayKey(date)))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.validFrom),
+            (t) => OrderingTerm.desc(t.id)
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+    if (active?.scheme != key.scheme ||
+        active?.validFrom != dayKey(key.blockStart)) {
+      return null;
+    }
+    final results = [
+      for (final r in rows)
+        TestResult(round: r.round, item: r.item, side: r.side, value: r.value)
+    ];
+    return items.every((item) => testValue(results, key.round, item.id) != null)
+        ? date
+        : null;
+  }
+
+  /// Fecha efectiva común: conserva movimientos explícitos y, para piernas
+  /// pendientes, al menos dos días de calendario desde el torso completo real.
+  /// No adelanta el calendario nominal ni modifica resultados/movimientos.
+  Future<DateTime?> _resolvedTestDate(
+      TestScheduleKey key, List<TestMove> movements) async {
+    final planned = plannedTestDate(key.blockStart, key.round, key.part);
+    if (planned == null) return null;
+    var date = movements.isEmpty ? planned : movements.last.to;
+    if (key.part != TestPart.piernas || await _completedTestDate(key) != null) {
+      return date;
+    }
+    final plannedTorso =
+        plannedTestDate(key.blockStart, key.round, TestPart.torso);
+    // El Test3 tiene piernas antes del torso: conserva su orden propio.
+    if (plannedTorso == null || plannedTorso.isAfter(planned)) {
+      return date;
+    }
+    final torso = await _completedTestDate(TestScheduleKey(
+            scheme: key.scheme,
+            blockStart: key.blockStart,
+            protocolId: key.protocolId,
+            round: key.round,
+            part: TestPart.torso)) ??
+        await _priorProtocolTorsoDate(key);
+    if (torso != null) {
+      final earliest = addDays(torso, 2);
+      if (earliest.isAfter(date)) date = earliest;
+    }
+    return date;
+  }
+
+  /// Transición explícita 31→32 en la primera semana: la fecha del torso12
+  /// previo sólo determina descanso de calendario. No completa torso13 ni
+  /// comparte marcas, dosis o identidad de resultados entre protocolos.
+  Future<DateTime?> _priorProtocolTorsoDate(TestScheduleKey key) async {
+    if (key.protocolId != TestProtocolId.v32_13 ||
+        key.scheme != 'v3.2' ||
+        key.round != 1) return null;
+    final date = await _completedTestDate(TestScheduleKey(
+        scheme: 'v3.1',
+        blockStart: key.blockStart,
+        protocolId: TestProtocolId.v31_12,
+        round: 1,
+        part: TestPart.torso));
+    if (date == null ||
+        date.isBefore(key.blockStart) ||
+        !date.isBefore(addDays(key.blockStart, 7))) return null;
+    final versions = await (db.select(db.planVersions)
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.validFrom),
+            (t) => OrderingTerm(expression: t.id)
+          ]))
+        .get();
+    final origin =
+        versions.where((v) => !parseDay(v.validFrom).isAfter(date)).lastOrNull;
+    if (origin == null ||
+        origin.scheme != 'v3.1' ||
+        origin.validFrom != dayKey(key.blockStart)) return null;
+    final target = versions
+        .where((v) =>
+            v.scheme == key.scheme &&
+            parseDay(v.validFrom).isAfter(date) &&
+            !parseDay(v.validFrom).isBefore(key.blockStart) &&
+            parseDay(v.validFrom).isBefore(addDays(key.blockStart, 7)))
+        .firstOrNull;
+    if (target == null) return null;
+    return date;
+  }
+
+  /// Día que le toca ahora a ese test, con la misma resolución que la agenda.
   Future<DateTime?> currentTestDate(DateTime start, int round, TestPart part,
       {TestScheduleKey? key}) async {
     final done = await moves(start, round, part, key: key);
-    if (done.isNotEmpty) return done.last.to;
-    return plannedTestDate(key?.blockStart ?? start, round, part);
+    return _resolvedTestDate(
+        key ??
+            TestScheduleKey(
+                scheme: 'v3.1',
+                blockStart: dateOnly(start),
+                protocolId: TestProtocolId.v31_12,
+                round: round,
+                part: part),
+        done);
   }
 
   /// Mueve el test al día siguiente de `from`, que tiene que ser el día que
@@ -380,7 +535,7 @@ class ReadinessRepository {
         final planned = plannedTestDate(s, round, part);
         if (planned == null) continue;
         final done = await moves(s, round, part, key: key);
-        final date = done.isEmpty ? planned : done.last.to;
+        final date = (await _resolvedTestDate(key, done))!;
         out.add(EffectiveTest(
           key: key,
           planned: planned,

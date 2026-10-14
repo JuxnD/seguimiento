@@ -378,7 +378,7 @@ void main() {
       await seedIfEmpty(db, plan);
     });
 
-    test('la recuperación activa mantiene la racha; Activa y Suelta no',
+    test('Activa, Suelta y recuperación guardadas mantienen la racha de actividad',
         () async {
       final today = dateOnly(DateTime.now());
       await training.save(SessionDraft(
@@ -391,7 +391,7 @@ void main() {
           type: SessionType.movilidad,
           mode: nightSueltaId,
           totalSec: 600));
-      expect((await dashboard.today(now: today)).streak, 0);
+      expect((await dashboard.today(now: today)).streak, 1);
       await training.save(SessionDraft(
           date: today,
           type: SessionType.movilidad,

@@ -1,6 +1,7 @@
 /// Rutinas opcionales de movilidad (traspaso §13). Van por fuera del plan:
-/// no cuentan para adherencia, récords, racha ni RPE, y no generan alertas si
-/// no se hacen. Pensadas para la noche y los fines de semana, 8–10 min.
+/// no cuentan para adherencia, récords ni RPE, y no generan alertas si no se
+/// hacen. Al guardarlas sostienen la racha de actividad, incluso parciales.
+/// Pensadas para la noche y los fines de semana, 8–10 min.
 library;
 
 class MobilityExercise {

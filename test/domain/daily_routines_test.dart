@@ -71,10 +71,10 @@ void main() {
     }
   });
 
-  test('solo la recuperación activa mantiene la racha de constancia', () {
+  test('cualquier movilidad ya guardada mantiene constancia, también modo desconocido', () {
     expect(keepsConstancyStreak(recoveryActiveId), isTrue);
-    expect(keepsConstancyStreak(morningActivaId), isFalse);
-    expect(keepsConstancyStreak(nightSueltaId), isFalse);
-    expect(keepsConstancyStreak(null), isFalse);
+    expect(keepsConstancyStreak(morningActivaId), isTrue);
+    expect(keepsConstancyStreak(nightSueltaId), isTrue);
+    expect(keepsConstancyStreak(null), isTrue);
   });
 }

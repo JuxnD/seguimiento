@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 
-import '../../domain/daily_routines.dart' show recoveryActiveId;
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/fitness_test.dart';
@@ -533,18 +532,11 @@ class DashboardRepository {
         .join(' · ');
   }
 
-  /// Días seguidos entrenando, sin que el descanso planificado los rompa. Un
-  /// partido de fútbol cuenta como día entrenado.
+  /// Días seguidos con actividad guardada, sin que el descanso planificado
+  /// los rompa. Incluye movilidad, técnica, rutinas parciales y fútbol;
+  /// no cambia el criterio de entrenamiento/adherencia de Hoy.
   Future<int> _streak(DateTime today) async {
-    // La recuperación activa terminada (§19.17) mantiene la racha aunque no
-    // sume carga; guardada a medias, no.
-    final rows = await (db.select(db.sessions)
-          ..where((t) =>
-              db.trainingSessions |
-              (t.type.equalsValue(SessionType.movilidad) &
-                  t.mode.equals(recoveryActiveId) &
-                  t.incomplete.equals(false))))
-        .get();
+    final rows = await db.select(db.sessions).get();
     final games = await db.select(db.footballGames).get();
     final dates = {...rows.map((s) => s.date), ...games.map((g) => g.date)};
     final versions = await plan.versions();

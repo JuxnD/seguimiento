@@ -38,7 +38,8 @@ class MobilityResult {
 
 /// Abre la rutina y, si se guarda, la registra como sesión de movilidad con
 /// su id en `mode`: sin carga ni cadena intensa, fuera de adherencia y
-/// récords. La recuperación activa (§19.17) pide el RPE y mantiene la racha;
+/// récords. Toda actividad guardada mantiene constancia, también parcial.
+/// La recuperación activa (§19.17) pide el RPE;
 /// con RPE > 5 ofrece guardarla como sesión normal.
 Future<void> startMobility(BuildContext context, WidgetRef ref, {MobilityRoutine routine = mobilityNight}) async {
   final result = await Navigator.push<MobilityResult>(
@@ -60,7 +61,7 @@ Future<void> startMobility(BuildContext context, WidgetRef ref, {MobilityRoutine
           title: const Text('Esto ya no fue recuperación'),
           content: Text('Con RPE $rpe se pasó de suave. ¿Cómo la guardo?\n\n'
               '• Sesión normal: suma carga (RPE × minutos) y cuenta para los días intensos.\n'
-              '${result.complete ? '• Recuperación: no suma carga y mantiene la racha, aunque haya salido más dura.' : '• Recuperación a medias: no suma carga, pero tampoco mantiene la racha ni cuenta como hecha.'}'),
+              '${result.complete ? '• Recuperación: no suma carga y al guardarla mantiene la racha, aunque haya salido más dura.' : '• Recuperación a medias: al guardarla mantiene la racha; no suma carga ni cuenta como recuperación hecha.'}'),
           actions: [
             TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Recuperación')),
             FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Sesión normal')),
@@ -375,10 +376,10 @@ class _MobilityScreenState extends State<MobilityScreen> {
         const SizedBox(height: 8),
         Text(
             widget.routine.id != recoveryActiveId
-                ? 'Es opcional: no cuenta para adherencia, récords ni racha.'
+                ? 'Al guardar, suma a la racha de actividad; no cuenta para adherencia ni récords.'
                 : complete
-                    ? 'Cuenta como recuperación: mantiene la racha y no suma carga.'
-                    : 'A medias: queda guardada, pero no cuenta como recuperación hecha ni mantiene la racha.',
+                    ? 'Al guardar, cuenta como recuperación hecha: mantiene la racha y no suma carga.'
+                    : 'Al guardar, mantiene la racha de actividad; no suma carga ni cuenta como recuperación hecha.',
             textAlign: TextAlign.center,
             style: text.bodySmall),
         if (widget.routine.closingNote != null) ...[

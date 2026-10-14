@@ -1,4 +1,8 @@
-**Estado vigente14oct — My Prime1.24.0+32 LOCAL disponible:** integración037 funcional048 validada con1257PASS/0FAIL/16capturas opcionales, analyzeALL0; APK construido yfirma/paquete/versión/backup compilado verificados también porroot. Fuente productiva d09c4ab, buildHEAD562d1fb, copiaestable enFITAPP/entregables. [Entrega, SHA, referencias y límites](sessions/2026-10-14-037-local-apk-delivery.md). Nuevasguías035 DEFERRED; sinpublicación ni instalación/aceptación delteléfono.
+**Corrección050 local verificada, 14oct:** agenda desde torso completo y racha con toda actividad guardada; Test3 y transición31→32 preservan identidad/orden. Fuente7de905e, FULL1275/16/0, APKlocal1.24.1+33 firmado y releído,542identidades sin deriva. [Recibo y gates](sessions/2026-10-14-050-agenda-racha.md). Publicación e instalación/aceptación del teléfono pendientes.
+
+**Estado vigente, 14 de octubre — My Prime 1.24.0+32 publicada y verificada:** [release estable/latest](https://github.com/JuxnD/seguimiento/releases/tag/v1.24.0), tag `56be4b9`, APK público con SHA idéntico al local y firma histórica comprobada mediante descarga independiente sin autenticación. Integración funcional048: 1.257 pruebas aprobadas, cero fallos, 16 capturas opcionales omitidas y análisis sin incidencias. [Entrega, fuente, recibos y límites](sessions/2026-10-14-037-local-apk-delivery.md). La instalación, continuidad de datos y aceptación del teléfono siguen pendientes del owner. Nuevas guías035 diferidas.
+
+Esta actualización de contexto es local y posterior al tag publicado: no cambia el APK, la fuente funcional ni la etiqueta `v1.24.0`; no se empujó a GitHub.
 
 Los checkpoints034/039/040/044/045/046 marcados «pendienteR1» abajo son históricos: sus finales aprobados ya integrados están enumerados enelrecibo vigente. No reactivarbacklogs diferidos por su existencia.
 

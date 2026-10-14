@@ -1,7 +1,7 @@
 /// Rutinas diarias del Plan v3.2 (§19.14, §19.15) y la recuperación activa
 /// (§19.17). Se guardan como movilidad con su id en `mode`: no suman carga
-/// ni la cadena de días intensos. La recuperación activa sí mantiene la racha
-/// de constancia; Activa y Suelta llevan su propia racha de movilidad.
+/// ni la cadena de días intensos. Toda actividad guardada mantiene constancia;
+/// las rutinas completas llevan además su propia racha de movilidad.
 library;
 
 import 'mobility.dart';
@@ -13,8 +13,10 @@ const recoveryActiveId = 'recovery_active';
 /// Ids que cuentan como rutina diaria guardada (chips "Mañana ✓", "Noche ✓").
 const dailyRoutineIds = {morningActivaId, nightSueltaId, recoveryActiveId};
 
-/// ¿La sesión de movilidad con este `mode` mantiene la racha de constancia?
-bool keepsConstancyStreak(String? mode) => mode == recoveryActiveId;
+/// Precondición: una sesión de movilidad ya guardada, incluso parcial.
+/// Su modo (también desconocido) no excluye actividad de la constancia.
+/// No sirve para adherencia, recuperación hecha ni racha de rutinas completas.
+bool keepsConstancyStreak(String? mode) => true;
 
 /// RPE por encima del cual una recuperación ya no lo fue (§19.17).
 const recoveryMaxRpe = 5;

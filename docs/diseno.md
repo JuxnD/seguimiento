@@ -57,6 +57,13 @@ dato en grande y píldoras de estado. Debajo, filas con icono de color
 | Cuerpo | Verde | Último peso, cambio desde el primero, cuándo medir |
 | Informe | Naranja | Semana con navegación |
 
+La racha de constancia cuenta días con sesiones de actividad guardadas de
+cualquier tipo, incluidas movilidad, Activa/Suelta, técnica y recuperación
+parcial; fútbol conserva su participación y el descanso planificado no rompe
+la racha. Comidas, pesos, sueño y checks no son actividad. Este cálculo relee
+el historial existente: no modifica registros ni el criterio de «Hoy hecho»
+o adherencia al entrenamiento. Corrección local050, 14 oct 2026.
+
 ## Pantalla Hoy
 
 [`home_screen.dart`](../lib/features/home/home_screen.dart), alimentada por
