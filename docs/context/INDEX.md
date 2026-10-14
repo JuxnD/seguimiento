@@ -1,4 +1,6 @@
-**037 DRAFT funcional048:** integración local de commits aprobados en sesión037, source034 en R1root; nuevas guías035 diferidas. [Contrato, conflictos y gates](sessions/2026-10-13-037-functional-integration.md). Sin entregaAPK todavía.
+**Estado vigente14oct — My Prime1.24.0+32 LOCAL disponible:** integración037 funcional048 validada con1257PASS/0FAIL/16capturas opcionales, analyzeALL0; APK construido yfirma/paquete/versión/backup compilado verificados también porroot. Fuente productiva d09c4ab, buildHEAD562d1fb, copiaestable enFITAPP/entregables. [Entrega, SHA, referencias y límites](sessions/2026-10-14-037-local-apk-delivery.md). Nuevasguías035 DEFERRED; sinpublicación ni instalación/aceptación delteléfono.
+
+Los checkpoints034/039/040/044/045/046 marcados «pendienteR1» abajo son históricos: sus finales aprobados ya integrados están enumerados enelrecibo vigente. No reactivarbacklogs diferidos por su existencia.
 
 # Índice de contexto
 

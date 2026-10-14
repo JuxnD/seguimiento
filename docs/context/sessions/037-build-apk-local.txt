@@ -1,0 +1,88 @@
+
+Running Gradle task 'assembleRelease'...                        
+Warning: The plugin sqlite3_flutter_libs requires Android SDK version 35 or higher.
+For more information about build configuration, see https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+One or more plugins require a higher Android SDK version.
+Fix this issue by adding the following to C:\My Projects\seguimiento-037-entrega-funcional\android\app\build.gradle:
+android {
+  compileSdkVersion 35
+  ...
+}
+
+One or more plugins require a higher Android NDK version.
+Fix this issue by adding the following to C:\My Projects\seguimiento-037-entrega-funcional\android\app\build.gradle:
+android {
+  ndkVersion "25.1.8937393"
+  ...
+}
+
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 19912 bytes (98.8% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+Generating lint files for backported methods only (compile API B)
+Generating lint files for com.tools.android:desugar_jdk_libs:1.2.2 (compile API R)
+Generating lint files for com.tools.android:desugar_jdk_libs_configuration:2.0.4 (compile API R)
+Info: Proguard configuration rule does not match anything: `-keepclassmembers class j$.util.concurrent.ConcurrentHashMap$TreeBin {
+  int lockState;
+}`
+Info: Proguard configuration rule does not match anything: `-keepclassmembers class j$.util.concurrent.ConcurrentHashMap {
+  int sizeCtl;
+  int transferIndex;
+  long baseCount;
+  int cellsBusy;
+}`
+Info: Proguard configuration rule does not match anything: `-keepclassmembers class j$.util.concurrent.ConcurrentHashMap$CounterCell {
+  long value;
+}`
+Info: Proguard configuration rule does not match anything: `-keepclassmembers enum * {
+  public static **[] values();
+  public static ** valueOf(java.lang.String);
+  public static final synthetic <fields>;
+}`
+Info: Proguard configuration rule does not match anything: `-keepclassmembers class j$.util.IntSummaryStatistics {
+  long count;
+  long sum;
+  int min;
+  int max;
+}`
+Info: Proguard configuration rule does not match anything: `-keepclassmembers class j$.util.LongSummaryStatistics {
+  long count;
+  long sum;
+  long min;
+  long max;
+}`
+Info: Proguard configuration rule does not match anything: `-keepclassmembers class j$.util.DoubleSummaryStatistics {
+  long count;
+  double sum;
+  double min;
+  double max;
+}`
+Running Gradle task 'assembleRelease'...                         1499,0s
+√ Built build\app\outputs\flutter-apk\app-release.apk (71.9MB)
+LEASE_RECEIPT=C:\My Projects\seguimiento-122-integracion\plans\lease-receipts\20261014T142454663-3056-d2ec026fa74942c0aacf83a38addf2ee.json

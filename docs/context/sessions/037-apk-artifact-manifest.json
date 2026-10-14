@@ -1,0 +1,59 @@
+{
+  "artifact": "C:\\My Projects\\seguimiento-037-entrega-funcional\\build\\app\\outputs\\flutter-apk\\app-release.apk",
+  "sha256": "1ce06ba87a239b0955d87f13d92d518717c9d8ab872b67e02e30ce2f9d57ee27",
+  "bytes": 75407294,
+  "buildHead": "562d1fbf5c46bf9da1a5eba27463dc80462243ec",
+  "productiveCheckpoint": "d09c4ab",
+  "package": "com.juandiego.seguimiento",
+  "versionName": "1.24.0",
+  "versionCode": 32,
+  "label": "My Prime",
+  "minimumSdk": 26,
+  "compileSdk": 34,
+  "nativeAbis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "debuggable": false,
+  "allowBackup": false,
+  "certificateSha256": "6f839c41abf9e17634544a8ae5dff18ca64333b070ef40cd582dbdc9ac133ed7",
+  "signatureV2": true,
+  "historicalCertificateMatch": true,
+  "backupPolicy": {
+    "compiledManifestRefs": [
+      "0x7f0d0000",
+      "0x7f0d0001"
+    ],
+    "resolvedCompiledXml": [
+      "res/Qq.xml",
+      "res/4j.xml"
+    ],
+    "backupDomainsExcluded": 9,
+    "cloudDomainsExcluded": 9,
+    "deviceTransferDomainsExcluded": 9
+  },
+  "sourceFilesCount": 509,
+  "sourceDrift": {},
+  "declaredFlutterAssetsExact": {
+    "assets/tecnica/figuras.json": "9bed8ec265add852121094ca49be1249a11770c5f1ba3bfb9410404c125a252d",
+    "assets/tecnica/figuras3d.json": "1ee6e443f42f91fa3096af7a3006de374f45334ca25400e924e5e5376c3d992a"
+  },
+  "assetsCoverage": "Both and only two asset paths declared inpubspec.flutter.assets. Sourceassets/icon/nativelauncher files are native resources, not Flutterasset declarations; LEEME.md intentionally not packaged.",
+  "validation": {
+    "fullPass": 1257,
+    "fullFail": 0,
+    "fullSkip": 16,
+    "skipScope": "preexisting optional render capture gates outside functional048",
+    "analyzeAllIssues": 0,
+    "fullReceipt": "20261014T135643418-28576-e4ca1d3ee03a481ba847bcb6d57d4d14.json",
+    "buildReceipt": "20261014T142454663-3056-d2ec026fa74942c0aacf83a38addf2ee.json"
+  },
+  "rootIndependentVerification": "Root independently verified sameSHA/cert/package/version/compiledbackup on2026-10-14",
+  "deliveryScope": "LOCAL ONLY; not installed on owner phone; no publication/push; new035 illustrations deferred",
+  "buildWarnings": [
+    "compileSdk35/NDK25.1 requested byplugin; build succeeded compiledSDK34",
+    "obsoleteJava8options/nonmatchingProguardrules; noerror"
+  ],
+  "stableOwnerArtifact": "C:\\Users\\Acer\\Documents\\ChatGPT\\FIT APP\\entregables\\MyPrime-1.24.0+32.apk"
+}
