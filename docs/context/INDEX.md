@@ -24,6 +24,16 @@ wordmark y recursos con comparación fuente→pipeline→30PNG. Nombre visible
 actualizado; identidad técnica/SQLite conservados.
 [Recibo y gates](sessions/2026-10-13-036-my-prime.md). SinFlutter036, APK,
 publicación ni validación nativa/teléfono; PNG no acredita app instalada.
+**035 local en QA:** movimiento solicitado y catálogo111/18 implementados;
+se conservan rojos visuales y se corrigen guiones antes de cierre.
+[Recibo fase2 y pendientes](sessions/2026-10-13-035-fase2.md).
+Sin nueva APK ni aceptación humana inferida.
+**052 integra 035 sobre 1.25.0:** merge local que conserva la API de variantes
+físicas de 034 (idéntica a la de 035) y las guías 035; la evidencia binaria de
+035 queda local en el worktree `seguimiento-035-ilustraciones`, fuera del repo.
+Los hashes de pose 035 excluyen `muscles` (fuente: `exercise_details.dart` de
+1.25.0) y una prueba Python nueva exige que coincidan con esa fuente.
+Validación Flutter y aceptación humana pendientes.
 
 **Entrega combinada local026/027/028/029 (12oct):** fuente Codex5b184b7 más
 Claude fe0b565/8b1cac5/74c26aa en ramaJuxnD/026-integridad-diaria. Fotos/ZIP y
