@@ -101,10 +101,19 @@ def squat(caption, low=False, jump=False, x=0):
 
 def seated(caption, angle=-15, wide=False, torso=-65):
     # El torso se inclina ligeramente; el suelo está bajo glúteos y palmas.
+    # En straddle las palmas apoyan delante: inclinar el tronco permite
+    # alcanzar el suelo sin alargar los brazos ni despegar los glúteos.
+    if wide:
+        torso = -50
     legs = limb(angle, angle, foot=angle)
     if wide:
-        legs.update(reach3=[24, 24 * math.sin(math.radians(angle)), 9],
-                    pole=[0, -1, 0], end3=[1, 0, .2])
+        elevation = math.radians(angle)
+        spread = math.radians(30)
+        legs.update(reach3=[28 * math.cos(elevation) * math.cos(spread),
+                           28 * math.sin(elevation),
+                           28 * math.cos(elevation) * math.sin(spread)],
+                    pole=[0, -1, 0], end3=[math.cos(spread), 0, math.sin(spread)],
+                    keepReachRadius=True)
     other = cp(legs)
     if wide:
         other['reach3'][2] *= -1
@@ -121,6 +130,7 @@ def supine(caption, legs, *, torso=180, hip=(0, -5), arms=None):
 
 
 def reference_names():
+    from illustration_guided import NAMES
     names = set()
     for path, pattern in [
         ('lib/data/catalog_updates.dart', r"name: '([^']+)'"),
@@ -130,6 +140,7 @@ def reference_names():
         names.update(re.findall(pattern, (ROOT / path).read_text(encoding='utf-8'), re.M))
     names -= {'Movilidad nocturna', 'Recuperación de piernas'}
     names.update(e['name'] for e in flat.EXERCISES)
+    names.update(NAMES)
     return sorted(names)
 
 
@@ -172,8 +183,13 @@ def band(name):
         end['caption'] = 'Lleva las manos hacia las costillas; codos atrás'
         props = [dict(type='band', a=[36, -38, 0], b='nearHand'), dict(type='band', a=[36, -38, 0], b='farHand')]
     elif name == 'Curl con banda':
-        end['nearArm'] = arm(83, -100, hand=-90)
-        end['farArm'] = arm(83, -100, hand=-90)
+        end['nearArm'] = arm(90, -65, hand=-65)
+        end['farArm'] = arm(90, -65, hand=-65)
+        # Each hand stays in its shoulder's sagittal plane. The generic grip
+        # width/elbow flare is for free grips, not an anchored curl elbow.
+        for frame in (start,end):
+            for sd,sign in [('near',1),('far',-1)]:
+                frame[sd+'Arm'].update(depth=sign*4.5,pole=[0,1,0],planarAngles=True)
         end['caption'] = 'Dobla los codos; deja el brazo junto al torso'
         props = [dict(type='band', a='nearToe', b='nearHand'), dict(type='band', a='farToe', b='farHand')]
     elif name == 'Extensión de tríceps sobre la cabeza con banda':
@@ -193,7 +209,7 @@ def band(name):
                  muscles='Zona indicada en la guía del ejercicio')
 
 
-def generate(name):
+def _generate_base(name):
     existing = {e['name']: e for e in legacy.EXERCISES}
     old = {e['name']: e for e in flat.EXERCISES}
     if name == 'Círculos de hombros':
@@ -306,6 +322,8 @@ def generate(name):
         if name == 'Dominadas':
             e.pop('variant', None)
             e['props'] = [p for p in e['props'] if p['type'] != 'backpack']
+            # Oblique view separates both elbows; geometry/grips stay intact.
+            e.setdefault('view', {})['yaw'] = 35
         return e
     if name == 'Colgarse de la barra':
         e = cp(existing['Dominadas']); e.pop('variant', None)
@@ -314,6 +332,12 @@ def generate(name):
         e['frames'] = [cp(e['frames'][0]), cp(e['frames'][0])]
         e['frames'][0]['caption'] = 'Colócate: manos en la barra, pies libres'
         e['frames'][1]['caption'] = 'Sostén y respira, sin balancearte'
+        # Active shoulders lift the trunk while straight arms and bar stay
+        # fixed; a local shoulder offset preserves the arm root in world space.
+        for f in e['frames']:
+            f['hip'] = (4, -32.2)
+            f['shoulderOffset'] = (0, -1)
+        e['annotations'] = [dict(joint='nearShoulder',text='Hombros ligeramente activos',corner='tl')]
         return e
     if name in {'Separaciones con banda','Elevaciones laterales con banda','Pallof press con banda','Face pull con banda','Remo con banda','Curl con banda','Extensión de tríceps sobre la cabeza con banda'}:
         return band(name)
@@ -427,7 +451,7 @@ def generate(name):
         return basic(name,[a,b,dict(cp(a),caption='Baja el talón despacio')],group='Piernas',props=[box([5,-1.5,0],[10,3,20])],focus='nearAnkle')
     if name in {'Carga de maleta con mochila','Carga abrazada al pecho'}:
         a=pose('Colócate de pie: costillas sobre la pelvis')
-        b=pose('Camina sin inclinarte hacia la carga',nl=limb(75,100),fl=limb(105,75))
+        b=pose('Camina sin inclinarte hacia la carga',nl=limb(75,100),fl=limb(105,120))
         props=[dict(type='heldPack',single=True)]
         if name=='Carga abrazada al pecho':
             for f in [a,b]:
@@ -441,7 +465,7 @@ def generate(name):
         core=plank(24,'4: Plancha frontal')
         side=cp(generate('Plancha lateral')['frames'][0]);side['caption']='5: Plancha lateral, por ambos lados'
         nordic=cp(existing['Nórdico (isquios)']['frames'][1]);nordic['caption']='6: Nórdico suave';nordic['props']=cp(existing['Nórdico (isquios)']['props'])
-        single=cp(generate('Progresión de pistol')['frames'][1]);single['caption']='7: Sentadilla a una pierna con apoyo'
+        single=cp(generate('Progresión de pistol')['frames'][1]);single['caption']='7: Sentadilla a una pierna'
         jump=squat('8: Saltos verticales cortos',jump=True)
         skate=cp(generate('Salto de patinador')['frames'][1]);skate['caption']='9: Saltos laterales cortos'
         run=cp(generate('Aceleración 10–20 m')['frames'][1]);run['caption']='10: Aceleraciones progresivas; luego cambia de dirección'
@@ -488,8 +512,9 @@ def generate(name):
         a=seated('Siéntate: manos al lado de los muslos',0,wide)
         b=seated('Eleva las piernas sin impulsarte',-20,wide)
         if name=='Barca / V-sit':
-            a=pose('Equilibrio sobre glúteos, pecho abierto',(0,-5),-120,limb(-35,-35),limb(-35,-35),arm(-20,-20),arm(-20,-20))
-            b=cp(a);b['caption']='Sostén la V sin redondear la espalda'
+            a=pose('Entrada: sentado, piernas delante y brazos libres',(0,-5),-105,limb(0,0),limb(0,0),arm(-20,-20),arm(-20,-20))
+            b=pose('Sostén: equilibrio sobre glúteos, brazos libres; respira',(0,-5),-120,limb(-35,-35),limb(-35,-35),arm(-20,-20),arm(-20,-20))
+            return basic(name,[a,b,dict(cp(a),caption='Salida: baja las piernas con control')],group='Core',yaw=15,focus=None)
         return basic(name,[a,b,dict(cp(a),caption='Baja lentamente; las manos permanecen firmes')],group='Core',yaw=50 if wide else 15,focus=None)
     if name in {'Hollow rocks','Plancha inversa con patada','Progresión de pistol','Toes-to-bar'}:
         if name=='Toes-to-bar':
@@ -606,6 +631,184 @@ def generate(name):
     raise ValueError('Falta especificación explícita: '+name)
 
 
+def phase(label, *, kind='interpolate', ground='preserve', contacts=(), part='', seconds=2.4):
+    return dict(label=label, kind=kind, ground=ground, contacts=list(contacts), part=part, seconds=seconds)
+
+
+def generate(name):
+    """Opt-in authored timelines; unselected legacy specifications stay intact."""
+    from illustration_guided import NAMES, generate as guided
+    if name in NAMES:
+        return guided(name)
+    e = _generate_base(name)
+    if name == 'Barca / V-sit':
+        a,b,c = e['frames']
+        e['frames'] = [a,b,cp(b),c]
+        e['motion'] = [phase('Entrada'),phase('Sostén y respira',kind='hold',seconds=3),phase('Salida')]
+    elif name == '90/90 de cadera':
+        a,b,c = e['frames']
+        # Transfer through knees-up, rather than linear interpolation of
+        # opposite poles (which goes through the zero vector).
+        middle = cp(a); middle['caption'] = 'Cambio de lado: rodillas arriba, pelvis apoyada'
+        for sd,sign in [('near',1),('far',-1)]:
+            middle[sd+'Leg'].update(reach3=[sign*14,2.5,0],pole=[0,-1,0],end3=[sign,0,0])
+        c['caption']='Otro lado: ambas rodillas hacia el suelo, sin forzar'
+        finish=cp(c);finish['torso']=-60;finish['caption']='Inclina el torso hacia la otra pierna'
+        e['frames']=[a,b,cp(a),middle,c,finish,cp(c),cp(middle),cp(a)]
+        e['motion']=[phase(label, contacts=['hip']) for label in
+                     ['Inclina','Vuelve al centro','Eleva las rodillas','Cambia de lado',
+                      'Inclina al otro lado','Vuelve al centro','Eleva las rodillas','Regresa']]
+    elif name == 'Aceleración 10–20 m':
+        # Support, recovery, propulsion, flight and opposite reception are
+        # distinct poses. A fixed free-leg angle made the old stride slide
+        # as a diamond instead of recovering its heel and advancing its knee.
+        half=[(0,-27,(3,-1),(2,-15),(50,-40),(140,50)),
+              (3,-27,(3,-1),(8,-17),(35,-55),(150,60)),
+              (6,-28,(3,-1),(18,-10),(30,-60),(150,60)),
+              (9,-29,(10,-14),(15,-4),(90,0),(90,0))]
+        captions=['Apoya bajo el cuerpo; recupera el talón libre',
+                  'Rodilla libre al frente; acompaña con el brazo contrario',
+                  'Extiende la pierna de apoyo hacia atrás',
+                  'Vuelo: prepara el contacto de la otra pierna']
+        frames=[]
+        for lap in range(2):
+            for i,(x,y,near,far,na,fa) in enumerate(half):
+                near=(near[0]+12*lap,near[1]);far=(far[0]+12*lap,far[1])
+                if lap: near,far,na,fa=far,near,fa,na
+                f=pose(captions[i],(x+12*lap,y),-65,
+                       nl=reach(*near,foot=0 if near[1]==-1 else -10),
+                       fl=reach(*far,foot=0 if far[1]==-1 else -10),
+                       na=arm(*na),fa=arm(*fa))
+                frames.append(f)
+        final=cp(frames[0]);final['hip']=(24,-27)
+        for side in ['nearLeg','farLeg']: final[side]['reach'][0]+=24
+        final['caption']='Completa la zancada: vuelve el primer apoyo'
+        frames.append(final)
+        frames.append(cp(frames[0]));frames[-1]['caption']='Nuevo tramo: vuelve a la salida de la demostración'
+        e['frames']=frames
+        e['motion']=[]
+        for side in ['near','far']:
+            e['motion'] += [phase('Recupera el talón y mueve el brazo contrario',contacts=[side+'Ankle'],seconds=.5),
+                            phase('Extiende el apoyo; rodilla libre al frente',contacts=[side+'Ankle'],seconds=.4),
+                            phase('Despegue y vuelo',ground='flight',seconds=.3),
+                            phase('Recepción con la otra pierna',ground='flight',seconds=.3)]
+        e['motion'].append(phase('Nuevo tramo: reinicio de la demostración',kind='cut',seconds=.5))
+    elif name == 'Burpees':
+        standing,crouch,plank_frame,collect,jump=e['frames']
+        for f in (crouch,collect):
+            f['nearArm']=reach(16.4,-.75,hand=0)
+            f['farArm']=reach(16.4,-.75,hand=0)
+        jump['caption']='Vuelo: manos y pies libres'
+        landing=squat('Aterriza: flexiona cadera y rodillas',True)
+        e['frames']=[standing,crouch,plank_frame,collect,standing,jump,landing,cp(standing)]
+        e['motion']=[phase('Manos al suelo'),phase('Extiende las piernas',contacts=['nearHand','farHand']),
+                     phase('Recoge los pies',contacts=['nearHand','farHand']),phase('Prepárate para saltar'),
+                     phase('Despegue',ground='flight'),phase('Aterrizaje',ground='flight'),phase('Vuelve de pie')]
+    elif name == 'Calentamiento tipo FIFA 11+':
+        # Ten named parts, each animated within its own exercise. A cut is
+        # an announced change of task, never a morph between unrelated bodies.
+        originals=e['frames']
+        preparation = generate('Burpees')['frames']
+        plank_part = basic('Plancha frontal',
+                           [cp(preparation[1]),cp(preparation[2]),cp(preparation[2]),cp(preparation[1])],
+                           group='Core')
+        plank_part['frames'][0]['caption']='Entrada: manos al suelo'
+        plank_part['frames'][1]['caption']='Plancha: cuerpo alineado, manos y pies apoyados'
+        plank_part['frames'][2]['caption']='Sostén: respira sin perder los apoyos'
+        plank_part['frames'][3]['caption']='Salida: recoge los pies'
+        plank_part['motion']=[phase('Entra a la plancha',contacts=['nearHand','farHand']),
+                              phase('Sostén la plancha',kind='hold',seconds=3),
+                              phase('Sal de la plancha',contacts=['nearHand','farHand'])]
+        side_part=generate('Plancha lateral')
+        side_part['motion']=[phase('Sostén lateral',kind='hold',seconds=3)
+                             for _ in side_part['frames'][1:]]
+        def lateral_step(z, near_z, near_y, far_z, far_y, caption):
+            f=pose(caption,(0,-24),-80,na=arm(-20,-20),fa=arm(-20,-20))
+            f['bodyZ']=z
+            for sd,sign,foot_z,foot_y in [('near',1,near_z,near_y),('far',-1,far_z,far_y)]:
+                f[sd+'Leg'].update(reach3=[0,foot_y+24,foot_z-z-sign*3.3],pole=[1,0,0],end3=[1,0,0])
+            return f
+        outward=[
+            lateral_step(0,3.3,-1,-3.3,-1,'Prepara el paso lateral'),
+            lateral_step(1,7.3,-5,-3.3,-1,'Despega el pie que abre el paso'),
+            lateral_step(3,11.3,-1,-3.3,-1,'Apoya más al lado sin cruzar los pies'),
+            lateral_step(6,11.3,-1,-3.3,-1,'Transfiere el peso con ambos pies apoyados'),
+            lateral_step(7,11.3,-1,.7,-5,'Despega el pie que sigue'),
+            lateral_step(8,11.3,-1,4.7,-1,'Junta la base sin cruzar los pies'),
+        ]
+        supports=[['farAnkle'],['farAnkle'],['nearAnkle','farAnkle'],['nearAnkle'],['nearAnkle']]
+        step_part=basic('Paso lateral',[*outward,cp(outward[-1]),*[cp(f) for f in reversed(outward[:-1])]],group='Condición')
+        step_part['motion']=([phase('Paso lateral: '+outward[i+1]['caption'],contacts=s) for i,s in enumerate(supports)]
+                             +[phase('Cambia de dirección con control',kind='hold',seconds=1)]
+                             +[phase('Regresa de lado',contacts=s) for s in reversed(supports)])
+        def lateral_landing(side, z, caption):
+            f=pose(caption,(0,-17),-75,nl=limb(90,90,foot=0),fl=limb(90,90,foot=0),
+                   na=arm(40,-20),fa=arm(135,40))
+            f['bodyZ']=z
+            for sd,sign in [('near',1),('far',-1)]:
+                target=[0,16,sign*6] if sd==side else [-10,10,sign*2]
+                f[sd+'Leg'].update(reach3=target,pole=[1,0,0],end3=[1,0,0])
+            return f
+        right=lateral_landing('near',6,'Apoyo en una pierna: la otra queda libre')
+        left=lateral_landing('far',-6,'Aterriza al otro lado sobre la otra pierna')
+        airborne=cp(right);airborne['hip']=(0,-27);airborne['bodyZ']=0
+        airborne['caption']='Vuelo lateral: ambos pies libres, cadera viaja al otro lado'
+        airborne['nearLeg']['reach3']=[0,16,3]
+        airborne['farLeg']['reach3']=[-4,14,-3]
+        back_airborne=cp(airborne)
+        back_airborne['nearLeg']['reach3']=[-4,14,3]
+        back_airborne['farLeg']['reach3']=[0,16,-3]
+        back_airborne['caption']='Salta de regreso: ambos pies libres'
+        skate_part=basic('Salto lateral corto',[right,airborne,left,back_airborne,cp(right)],group='Condición')
+        skate_part['motion']=[phase(label,ground='flight') for label in
+                              ['Impulsa hacia el otro lado','Aterriza con control',
+                               'Impulsa de regreso','Estabiliza el apoyo']]
+        part_specs=[generate('Aceleración 10–20 m'), None, step_part,
+                    plank_part, side_part,
+                    generate('Nórdico (isquios)'), generate('Progresión de pistol'),
+                    generate('Sentadilla con salto'), skate_part,
+                    generate('Aceleración 10–20 m')]
+        frames=[];motions=[]
+        for i,spec in enumerate(part_specs):
+            title=originals[i]['caption']
+            if spec is None:
+                start=cp(originals[i]);end=cp(start)
+                if i==1:
+                    start['nearLeg'].update(reach3=[14,0,0],pole=[1,-1,0])
+                    end['nearLeg'].update(reach3=[8,0,12],pole=[1,-1,1])
+                spec=basic(title,[start,end,cp(start)],group='Condición')
+            fs=cp(spec['frames'])
+            # Skip a running demonstration's reset; next part owns its cut.
+            ms=cp(spec.get('motion', [phase('Recorrido') for _ in fs[1:]]))
+            if i in (7,8):
+                for p in ms: p['ground']='flight'
+            if spec.get('pivot'):
+                for p in ms: p['pivot']=list(spec['pivot'])
+            if ms and ms[-1]['kind']=='cut': fs.pop();ms.pop()
+            for f in fs:
+                f['caption']=title+' · '+f['caption'];f['props']=cp(spec['props'])
+            if frames:motions.append(phase('Siguiente parte: '+title,kind='cut',part=str(i+1),seconds=1))
+            frames.extend(fs)
+            motions.extend([dict(p,part=str(i+1)) for p in ms])
+        e['frames']=frames;e['motion']=motions
+        e['frames'].append(cp(frames[0]))
+        e['motion'].append(phase('Reiniciar recorrido: parte 1',kind='cut',part='1',seconds=1))
+    elif name == 'Vela':
+        a,b,c=e['frames'];e['frames']=[a,b,cp(b),c]
+        e['motion']=[phase('Entrada a la vertical'),phase('Sostén vertical',kind='hold',seconds=3),phase('Salida controlada')]
+    elif 'dragon flag' in name.lower():
+        e['motion']=[phase('Desciende en bloque') for _ in e['frames'][1:]]
+        if name=='Dragon flag':
+            e['frames'] += [cp(e['frames'][1]),cp(e['frames'][0])]
+            e['motion'] += [phase('Sube en bloque'),phase('Vuelve a la vertical')]
+        else:
+            e['frames'].append(cp(e['frames'][0]))
+            e['motion'].append(phase('Preparación de otro descenso',kind='cut',seconds=1))
+    if 'motion' in e:
+        assert len(e['motion']) == len(e['frames'])-1, name
+    return e
+
+
 def export(ex):
     for prop in list(ex['props']):
         if prop.get('type') == 'band' and isinstance(prop.get('a'), list):
@@ -614,16 +817,20 @@ def export(ex):
     # El chequeo legado sólo ve XY: los alcances/frontales/roll se validan
     # contra el cuerpo real 3D en illustration_geometry_test y audit_test.
     per_side = ex['name'] == 'Balanceos de pierna' or any(word in ex['name'].lower() for word in ['una pierna','una mano','búlgara','pistol','plancha lateral','maleta','pallof','caballero','90/90','rotación torácica','tobillo','cuádriceps','gemelo contra','isquios con','figura 4','flexor de cadera de'])
-    out['perSide'] = per_side
+    out['perSide'] = ex.get('perSide', per_side)
+    if ex.get('barefoot'): out['barefoot'] = True
     out['annotations'] = ex.get('annotations',[])
+    if 'motion' in ex:
+        out['motion'] = ex['motion']
     out.update(continuous=ex['name'] not in {'90/90 de cadera','Hollow body hold','Calentamiento tipo FIFA 11+','Salto vertical','Salto largo','Salto de patinador','Aceleración 10–20 m','Rodillas arriba','Burpees','Sentadilla con salto'},group=ex.get('group','Otros'),focus=ex.get('focus'),source=ex.get('source','guía local; revisión candidata'))
+    if 'motion' in ex: out['continuous'] = True
     for raw, target in zip(ex['frames'],out['frames']):
-        for key in ['bodyZ','bodyRoll','props']:
+        for key in ['bodyZ','bodyRoll','props','spineBend','breath','footArch']:
             if key in raw: target[key] = raw[key]
         for name in ('nearArm','farArm','nearLeg','farLeg'):
             spec=raw.get(name)
             if spec:
-                target['limbs'][name].update({k:spec[k] for k in ('depth','pole','end3','reach3','keepReachRadius') if k in spec})
+                target['limbs'][name].update({k:spec[k] for k in ('depth','pole','end3','reach3','keepReachRadius','planarAngles') if k in spec})
                 if 'reach3' in spec: target['limbs'][name].pop('pin',None)
                 if 'angles' in spec:
                     delta=math.sin(math.radians(spec['angles'][1]-spec['angles'][0]))
@@ -632,6 +839,7 @@ def export(ex):
 
 
 def main():
+    from illustration_guided import VARIANTS, generate as guided
     names=reference_names()
     specs=[generate(name) for name in names]
     details=(ROOT/'lib/data/exercise_details.dart').read_text(encoding='utf-8')
@@ -639,9 +847,14 @@ def main():
     for e in specs:
         e['muscles']=muscles.get(e['name'],e.get('muscles',''))
     figures=[export(e) for e in specs]
+    variants=[]
+    for name, keys in VARIANTS.items():
+        for i,key in enumerate(keys):
+            variants.append(dict(exercise=name,key=key,**(
+                dict(useBase=True) if i==0 else dict(figure=export(guided(name,key))))))
     consts={'T':flat.T,'UA':flat.UA,'FA':flat.FA,'TH':flat.TH,'SH':flat.SH,'FT':flat.FT,'HEAD_OFF':flat.HEAD_OFF,'HEAD_R':flat.HEAD_R}
     target=ROOT/'assets/tecnica/figuras3d.json'
-    target.write_text(json.dumps(dict(version=2,consts=consts,figures=flat._round(figures)),ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+    target.write_text(json.dumps(dict(version=2,consts=consts,figures=flat._round(figures),physicalVariants=flat._round(variants)),ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     print(f'{len(figures)} figuras con especificación propia → {target}')
 
 

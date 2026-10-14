@@ -201,9 +201,26 @@ para crear una pose independiente del generador. `Figure3DPainter` dibuja el
 mismo rig en miniaturas, guía, movilidad, pantalla ampliada y capturas.
 
 La animación inicia sólo por acción del usuario: pausa de 0.6 s en momentos
-y transición de 2.4 s con suavizado cúbico, ida y vuelta. Cambiar la figura o
+y transición de 2.4 s con suavizado cúbico, ida y vuelta en figuras legadas.
+Las figuras con etapas035 declaran su propio recorrido hacia delante:
+`interpolate` para transiciones, `hold` para sostener, `cut` para cambios
+anunciados de ejercicio o reinicio. Los contactos conservan coordenadas de
+mundo; vuelo no se normaliza al suelo. No activar continuidad sin una
+secuencia y apoyos explícitos. El contrato generado exige `motion` ⇒
+`continuous: true`, comprobado sobre todas las entradas del asset. La consulta
+manual y el movimiento reducido son estados del controlador: no convierten
+una figura con etapas en `continuous: false` ni aplican el ajuste de suelo legado.
+El curl conserva ángulos sagitales mediante
+`planarAngles`, opt-in sólo para brazos sin pin y mano al plano del hombro;
+las demás figuras conservan la resolución histórica.
+
+Pausa/reanudar conserva pose y offset; salir del viewport o desactivar la
+ruta detiene la reproducción. FIFA ofrece diez partes en selector compartido
+entre visores: reproducir anima únicamente la seleccionada, detiene al final
+y «Siguiente parte» cambia directamente a la siguiente postura/equipo.
+Cambiar la figura o
 activar movimiento reducido detiene la reproducción. Recorrer momentos sigue
-disponible. Arrastrar gira la cámara; `Vista inicial`, `De perfil` y `Ver apoyos`
+disponible, así como la selección manual de partes. Arrastrar gira la cámara; `Vista inicial`, `De perfil` y `Ver apoyos`
 dan alternativas explícitas. El giro horizontal está limitado a ±180° y la
 inclinación a 0–85°. Las etiquetas semánticas incluyen ejercicio y momento.
 
@@ -211,6 +228,16 @@ Si una entrada personalizada no tiene figura se informa esa ausencia. Carga
 fallida permite reintentar; no se sustituye silenciosamente la variante por
 otra figura. Las pruebas de cobertura, geometría, navegación y render cruzan
 costuras concretas, pero no certifican enseñanza segura ni comprensión humana.
+
+Las variantes físicas se piden mediante `physicalVariantKey` opcional en
+`ExerciseFigureView` y `Figure3DCatalog.forExercise`. Null conserva la figura
+base. Una clave explícita se resuelve por ejercicio y clave, nunca por dosis;
+si no existe, se informa que esa variante carece de ilustración. El asset admite
+`physicalVariants` con `exercise`, `key` y `figure` (mismo rig), o `useBase: true`
+para una identidad que coincide exactamente con la base. No se reutiliza la
+alternancia semanal A/B. Duplicados y variantes asignadas a otro ejercicio
+fallan al cargar el catálogo. Esta interfaz no equivale a cobertura de las
+figuras032/034: sus poses y variantes se incorporan y verifican en la fase2.
 
 ## Do's and Don'ts
 
@@ -238,3 +265,35 @@ de hombros, y el equipo permanece fijo. Barra transversal y paralela tienen
 ejes distintos; asa y sujeción corporal prolongan la muñeca en vez de heredar
 el puño de barra. La suela sigue el plano corporal. Cada pose conserva su
 orientación explícita; no hay normalización universal de tobillos.
+
+
+## Extensiones locales de anatomía y equipo035
+
+`spineBend`, `breath` y `footArch` son campos opcionales de poses; sus valores
+por defecto conservan el renderer anterior. La curvatura mantiene extremos
+del torso, la respiración modifica su sección, y Pie corto muestra talón,
+metatarso, arco y dedos extendidos. `focus: nearFoot` usa la misma primitiva
+del pie con un tobillo corto; no dibuja el cuerpo entero detrás del detalle.
+
+Las bandas con `depthSorted: true` se ordenan en segmentos con el cuerpo;
+las históricas conservan su camino anterior. `guidedHandWeight` y
+`guidedFootPack` se anclan al joint explícito de la variante y reutilizan
+las primitivas de equipo. No se elige una carga visual por la dosis numérica.
+El catálogo guiado permanece en `tool/illustration_guided.py`; el generador
+principal conserva una sola salida y un solo renderer.
+
+La cobertura actual111/18 es técnica; el recibo de fase2 registra qué capturas
+pasaron revisión, cuáles se preservan como fallidas y qué cierre sigue abierto.
+
+### Cierre visual035: equipo apoyado y detalle del arco
+
+`guidedThighPack` usa `guidedThighLoadBounds` con la superficie real de muslos,
+profundidad nativa, bolsillo/correas; no modifica cajas legacy. La variante
+unilateral sigue el muslo activo. `barefoot` por defecto false habilita, junto
+con focusnearFoot, dedos sin contorno grueso; cue `footArch` usa el landmark
+real. Pie corto cambia cámara/cue, nunca amplitud ni apoyos.
+
+La evidencia final está en la sesión2026-10-13-035-fase2 y sus manifiestos:
+43hojas/434muestras,9clips,49pruebas dirigidas y analyze0. Las capturas reusadas
+conservan SHA original y agregan validatedAgainst con prueba512RGBA exacta.
+R1 formal/integración037 quedan separadas de QA visual completa.
