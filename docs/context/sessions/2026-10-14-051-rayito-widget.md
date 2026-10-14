@@ -87,3 +87,16 @@ un usuario nuevo sin rutina no acumula racha. Es la regla del 050; no se tocó.
 Capturas y estados: `build/qa/051-claude/` (pre34 y post34 state,
 post34-hoy, widget-x1 y x2, tap-*, widget-stale, widget-refreshed,
 widget-after-reboot).
+
+## Publicación (14 oct, con el sí del owner)
+
+- Rama `JuxnD/051-segundo-entregable` subida sin force; main intacto.
+- GitHub Release `v1.25.0` «My Prime 1.25.0 - Rayito y widget», latest y
+  estable, etiqueta sobre `911a2d6`. Assets: `MyPrime-1.25.0+34.apk`
+  (SHA 8783ca48…3fde), manifiesto y LEEME. Un solo APK.
+- El workflow `release.yml` que dispara la etiqueta quedó cancelado
+  (run 38628507888), como en 1.24.0 y 1.24.1.
+- Descarga pública sin credenciales: SHA y tamaño idénticos,
+  `com.juandiego.seguimiento` 1.25.0 (34), firmante v2 6f839c41…33ed7.
+- Pendiente: aceptación en el teléfono del owner (actualizar desde Ajustes y
+  agregar el widget). Pendientes previos: racha sin plan (050), guías 035.
