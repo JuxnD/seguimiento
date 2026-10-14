@@ -6,7 +6,7 @@ from load/repetitions. Geometry units are illustrative, not user measurements.
 from copy import deepcopy as cp
 import math
 
-NAMES = '''Respiración 90/90|Gato-camello|Libro abierto|Muñecas a cuatro patas|Deslizamientos en la pared|Zancada del mundo|Rodilla a la pared|Sentadilla profunda|Pie corto|Pike sentado|Pancake|Dorsal en la cama|Pectoral en el marco de la puerta|Sóleo en la pared|Scap pull-up|Y-T prono|Abducción de cadera de lado|Copenhague|Sóleo sentado con mochila|Tibial en la pared|Rotación externa con banda|Support hold en paralelas|Sprint lanzado|Sentadilla isométrica en la pared|Nórdico inverso|Bajada lateral del escalón|Aterrizaje clavado|Mesa invertida|Plancha inversa sobre antebrazos|Plancha inversa sobre las manos|Plancha inversa a una pierna|Plancha inversa con pies elevados'''.split('|')
+NAMES = '''Respiración 90/90|Gato-camello|Libro abierto|Muñecas a cuatro patas|Deslizamientos en la pared|Zancada del mundo|Rodilla a la pared|Sentadilla profunda|Pie corto|Pike sentado|Pancake|Dorsal en la cama|Pectoral en el marco de la puerta|Sóleo en la pared|Scap pull-up|Y-T prono|Abducción de cadera de lado|Copenhague|Sóleo sentado con mochila|Tibial en la pared|Rotación externa con banda|Support hold en paralelas|Sprint lanzado|Intervalos 15/15|Sentadilla isométrica en la pared|Nórdico inverso|Bajada lateral del escalón|Aterrizaje clavado|Mesa invertida|Plancha inversa sobre antebrazos|Plancha inversa sobre las manos|Plancha inversa a una pierna|Plancha inversa con pies elevados'''.split('|')
 VARIANTS = {
     'Tibial en la pared': ('tibialis_wall_close', 'tibialis_wall_far', 'tibialis_wall_loaded'),
     'Y-T prono': ('prone_y_t_floor', 'prone_y_t_bed_edge', 'prone_y_t_loaded'),
@@ -365,6 +365,11 @@ def _plan034(name, variant, result, cycle):
     if name == 'Sprint lanzado':
         e=existing('Aceleración 10–20 m')
         for f in e['frames']: f['caption']='Tramo lanzado · '+f['caption']
+        return result(e['frames'],e['motion'],yaw=35)
+    if name == 'Intervalos 15/15':
+        # Misma zancada real de Aceleración; el ritmo lo marca el reloj.
+        e=existing('Aceleración 10–20 m')
+        for f in e['frames']: f['caption']='15 s rápido · '+f['caption']
         return result(e['frames'],e['motion'],yaw=35)
     if name == 'Sentadilla isométrica en la pared':
         a=pose('Espalda a pared; pies adelantados',(-3,-23),-90,reach(13,-1),reach(13,-1))

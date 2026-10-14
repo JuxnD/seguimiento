@@ -139,7 +139,14 @@ Future<void> startGuidedSession(BuildContext context, WidgetRef ref,
     return;
   }
 
-  if (v3?.isV32 == true && v3!.week >= 5 && day.weekday == DateTime.tuesday) {
+  // Plan 052: no se ofrecen en la descarga ni con fútbol entre semana.
+  final offerIntervals = v3?.isV32 == true &&
+      v3!.week >= 5 &&
+      day.weekday == DateTime.tuesday &&
+      await ref.read(trainingRepositoryProvider).intervals1515Blocked(day, v3) ==
+          null;
+  if (!context.mounted) return;
+  if (offerIntervals) {
     final choice = await showDialog<bool>(
         context: context,
         builder: (c) => AlertDialog(

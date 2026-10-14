@@ -67,7 +67,10 @@ void main() {
       // que se ve: al salir de la L la pierna recta sube rápido al principio
       // del tramo, pero el bucle arranca despacio.
       final discontinuities = <String>[];
-      for (final f in catalog.all.where((f) => f.continuous)) {
+      // Las figuras con movimiento authored (035) no usan este bucle: sus
+      // bordes, cortes declarados y apoyos en el mundo se prueban en
+      // illustration_035_motion_test e illustration_guided_geometry_test.
+      for (final f in catalog.all.where((f) => f.continuous && !f.hasMotion)) {
         var prev = f.skeletonAt(0).joints;
         for (var frame = 1; frame < 60 * (0.6 + 2 * (f.frames.length - 1) * 3.0).ceil(); frame++) {
           final p = loopProgress(frame / 60, f.frames.length);
@@ -219,7 +222,9 @@ void main() {
 
     for (final scale in [1.0, 1.3, 1.6]) {
       testWidgets('texto ×$scale: se leen todos los pies sin desbordar', (tester) async {
-        for (final fig in catalog.all) {
+        // FIFA navega por partes, no por páginas: lo cubre
+        // illustration_035_controls_test a 360 px y texto grande.
+        for (final fig in catalog.all.where((f) => figureMotionParts(f).isEmpty)) {
           await mount(tester, fig, scale: scale);
           for (var i = 0; i < fig.frames.length; i++) {
             if (i > 0) {

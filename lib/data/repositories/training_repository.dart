@@ -956,6 +956,24 @@ class TrainingRepository {
     );
   }
 
+  /// Por qué los intervalos 15/15 del martes no se ofrecen hoy, o null si se
+  /// ofrecen: semana 5 en adelante del v3.2, fuera de la descarga y sin
+  /// fútbol registrado entre semana (plan 052, hallazgo 047-2).
+  Future<String?> intervals1515Blocked(DateTime date, V3Day v3) async {
+    if (!v3.isV32 || v3.week < 5 || date.weekday != DateTime.tuesday) {
+      return 'Intervalos 15/15: sólo los martes desde la semana 5.';
+    }
+    if (v3.reducedVolume) return 'Intervalos 15/15: no van en la descarga.';
+    final monday = addDays(date, DateTime.monday - date.weekday);
+    final games = await (db.select(db.footballGames)
+          ..where((t) => t.date.isBetweenValues(dayKey(monday), dayKey(date))))
+        .get();
+    if (games.isNotEmpty) {
+      return 'Intervalos 15/15 omitidos: fútbol entre semana el ${games.map((g) => g.date).join(', ')}.';
+    }
+    return null;
+  }
+
   /// Los bloques que el v3.1 agrega al día: planche (si hay paralelas) y la
   /// escalera de core. Igual para Hoy, para empezar y para retomar.
   Future<PlanDayDraft> withV31Blocks(PlanDayDraft day, DateTime date, V3Day? v3,
@@ -1022,28 +1040,11 @@ class TrainingRepository {
       e.notes = note;
     }
     // §19.13 martes 11 (047 hallazgo 2, decisión del owner): desde la semana
-    // 5, 2 bloques de 8 min de 15″/15″ si no hubo fútbol entre semana; en la
-    // descarga se omiten.
+    // 5 el temporizador 15/15 del 045 se ofrece al empezar; el día dice si
+    // hoy no van y por qué.
     if (date.weekday == DateTime.tuesday && v3.week >= 5) {
-      final monday = addDays(date, DateTime.monday - date.weekday);
-      final weekdayGames = await (db.select(db.footballGames)
-            ..where((t) => t.date.isBetweenValues(dayKey(monday), dayKey(date))))
-          .get();
-      if (v3.reducedVolume) {
-        result.notes = '${result.notes ?? ''} · Intervalos 15/15: no van en la descarga.';
-      } else if (weekdayGames.isNotEmpty) {
-        result.notes =
-            '${result.notes ?? ''} · Intervalos 15/15 omitidos: fútbol entre semana el ${weekdayGames.map((g) => g.date).join(', ')}.';
-      } else if (!result.exercises.any((e) => e.name == intervals1515)) {
-        result.exercises.add(PlanExerciseDraft(
-            name: intervals1515,
-            sets: 2,
-            holdSecMin: 480,
-            holdSecMax: 480,
-            restSec: 180,
-            purpose: v32Purposes[intervals1515],
-            notes: '15 s rápido y 15 s suave durante 8 min. Si juegas fútbol esta semana entre semana, sáltalos.'));
-      }
+      result.notes =
+          '${result.notes ?? ''} · ${await intervals1515Blocked(date, v3) ?? 'Intervalos 15/15: al empezar puedes elegirlos (2 × 8 min con temporizador).'}';
     }
     if (date.weekday == DateTime.tuesday) {
       final maximum = v3.blockStart == null
@@ -1190,8 +1191,7 @@ class TrainingRepository {
             'Salto vertical',
             'Salto largo',
             'Salto de patinador',
-            'Aterrizaje clavado',
-            intervals1515
+            'Aterrizaje clavado'
           ].contains(e.name));
       result.notes =
           '${result.notes ?? ''} · Escaleras ${morning!.kneeStairs}/10: saltos y sprints aplazados; la excepción de fútbol no aplica.';

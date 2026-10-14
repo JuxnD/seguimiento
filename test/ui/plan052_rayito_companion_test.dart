@@ -144,7 +144,7 @@ void main() {
       (tester) async {
     rayitoAnimationsEnabled = true;
     addTearDown(() => rayitoAnimationsEnabled = false);
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(const MaterialApp(
         home: Center(
             child: RayitoAlive(
                 phase: MascotPhase.energizado, mood: MascotMood.atento))));
@@ -163,13 +163,13 @@ void main() {
     expect(seen.length, greaterThan(50), reason: 'cambia cuadro a cuadro');
     expect(blinked, isTrue, reason: 'parpadea en 6 s');
     // Sin animaciones del sistema queda quieto.
-    await tester.pumpWidget(MediaQuery(
-        data: const MediaQueryData(disableAnimations: true),
-        child: MaterialApp(
-            home: Center(
-                child: RayitoAlive(
-                    phase: MascotPhase.energizado,
-                    mood: MascotMood.atento)))));
+    await tester.pumpWidget(MaterialApp(
+        builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(disableAnimations: true),
+            child: child!),
+        home: const Center(
+            child: RayitoAlive(
+                phase: MascotPhase.energizado, mood: MascotMood.atento))));
     await tester.pump(const Duration(seconds: 1));
     final still = painter();
     await tester.pump(const Duration(seconds: 1));

@@ -33,7 +33,8 @@ class GuidedContract(unittest.TestCase):
 
     def test_every_requested_identity_has_an_authored_specific_figure(self):
         self.assertEqual(set(NAMES) - self.figures.keys(), set())
-        self.assertEqual(len(self.figures), 111)
+        # 111 del 035 + Intervalos 15/15 (plan 052, zancada de Aceleración).
+        self.assertEqual(len(self.figures), 112)
         for name in NAMES:
             if name in ['Flexiones escapulares', 'Plancha inversa con patada']:
                 continue

@@ -58,21 +58,29 @@ void main() {
     }
   });
 
-  test('hallazgo 2: intervalos 15/15 desde la semana 5, 2 × 8 min con temporizador', () async {
-    expect(names(await day(DateTime(2030, 2, 26))), isNot(contains(intervals1515)), reason: 'semana 4');
+  Future<String?> blocked(DateTime date) async {
+    final view = (await plan.dayFor(date))!;
+    return training.intervals1515Blocked(date, (await training.blockDay(view, date))!);
+  }
+
+  test('hallazgo 2: el temporizador 15/15 (045) se ofrece desde la semana 5 y no en la descarga',
+      () async {
+    expect(await blocked(DateTime(2030, 2, 26)), isNotNull, reason: 'semana 4');
+    expect(await blocked(DateTime(2030, 3, 5)), isNull, reason: 'semana 5');
+    expect(await blocked(DateTime(2030, 3, 12)), 'Intervalos 15/15: no van en la descarga.');
+    expect(await blocked(DateTime(2030, 3, 19)), isNull, reason: 'semana 7');
     final week5 = await day(DateTime(2030, 3, 5));
-    final intervals = week5.exercises.singleWhere((e) => e.name == intervals1515);
-    expect((intervals.sets, intervals.holdSecMin), (2, 480));
-    expect(names(await day(DateTime(2030, 3, 12))), isNot(contains(intervals1515)), reason: 'descarga');
-    expect(names(await day(DateTime(2030, 3, 19))), contains(intervals1515), reason: 'semana 7');
+    expect(names(week5), isNot(contains(intervals1515)),
+        reason: 'no duplica el temporizador dentro de la fuerza');
+    expect(week5.notes, contains('al empezar puedes elegirlos'));
+    expect((await day(DateTime(2030, 3, 12))).notes, contains('no van en la descarga'));
   });
 
-  test('hallazgo 2: con fútbol entre semana no van y el día dice por qué', () async {
+  test('hallazgo 2: con fútbol entre semana no se ofrecen y el día dice por qué', () async {
     await training.saveFootball(FootballGamesCompanion.insert(
         date: '2030-03-04', minutes: 60, intensity: const Value(6)));
-    final tuesday = await day(DateTime(2030, 3, 5));
-    expect(names(tuesday), isNot(contains(intervals1515)));
-    expect(tuesday.notes, contains('fútbol entre semana el 2030-03-04'));
+    expect(await blocked(DateTime(2030, 3, 5)), contains('fútbol entre semana el 2030-03-04'));
+    expect((await day(DateTime(2030, 3, 5))).notes, contains('fútbol entre semana el 2030-03-04'));
   });
 
   test('hallazgo 5: el bloque 2 no tiene viernes de 10 rondas (decisión del owner)', () {

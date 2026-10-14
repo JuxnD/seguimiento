@@ -537,6 +537,26 @@ class DashboardRepository {
         .join(' · ');
   }
 
+  /// Tablas cuyo registro de un día sostiene la racha (plan 052).
+  static const streakRecordTables = [
+    'sessions',
+    'football_games',
+    'meals',
+    'body_weights',
+    'measurements',
+    'progress_photos',
+    'sleep_logs',
+    'morning_checks',
+    'soreness_logs',
+    'fitness_test_attempts',
+    'mobility_benchmarks',
+    'skill_achievements',
+    'closed_days',
+  ];
+
+  /// Igual que el límite de [currentStreak]: más atrás no cambia la cuenta.
+  static const streakLookbackDays = 400;
+
   /// Días seguidos con cualquier registro guardado, sin que el descanso
   /// planificado los rompa (plan 052, decisión del owner: «todo registro»).
   /// Cuentan sesiones de cualquier tipo (también movilidad, técnica y
@@ -547,22 +567,18 @@ class DashboardRepository {
   /// cambia el criterio de entrenamiento/adherencia de Hoy.
   Future<({int streak, bool activeToday})> _streak(DateTime today,
       {GoalHistory? goals}) async {
+    // Sólo las fechas, en una consulta: el historial puede tener años.
+    final since = dayKey(addDays(today, -streakLookbackDays));
     final dates = <String>{
-      for (final r in await db.select(db.sessions).get()) r.date,
-      for (final r in await db.select(db.footballGames).get()) r.date,
-      for (final r in await db.select(db.meals).get()) r.date,
-      for (final r in await db.select(db.bodyWeights).get()) r.date,
-      for (final r in await db.select(db.measurements).get()) r.date,
-      for (final r in await db.select(db.progressPhotos).get()) r.date,
-      for (final r in await db.select(db.sleepLogs).get()) r.date,
-      for (final r in await db.select(db.morningChecks).get()) r.date,
-      for (final r in await db.select(db.sorenessLogs).get()) r.date,
-      for (final r in await db.select(db.fitnessTestAttempts).get()) r.date,
-      for (final r in await db.select(db.mobilityBenchmarks).get()) r.date,
-      for (final r in await db.select(db.skillAchievements).get()) r.date,
-      for (final r in await db.select(db.closedDays).get()) r.date,
+      for (final row in await db.customSelect(
+        'SELECT date FROM (${streakRecordTables.map((t) => 'SELECT date FROM $t').join(' UNION ')}) WHERE date >= ?',
+        variables: [Variable.withString(since)],
+      ).get())
+        row.read<String>('date'),
     };
-    for (final r in await db.select(db.dailySteps).get()) {
+    for (final r in await (db.select(db.dailySteps)
+          ..where((t) => t.date.isBiggerOrEqualValue(since)))
+        .get()) {
       final day = parseDay(r.date);
       final goal = day.weekday >= DateTime.saturday
           ? const GoalAt(null, known: true)
@@ -574,7 +590,11 @@ class DashboardRepository {
     // Sin plan no hay descanso planificado: cada día pide un registro.
     if (versions.isEmpty) {
       return (
-        streak: currentStreak(today: today, trainingDates: dates, isRestDay: (_) => false),
+        streak: currentStreak(
+            today: today,
+            trainingDates: dates,
+            isRestDay: (_) => false,
+            maxLookback: streakLookbackDays),
         activeToday: activeToday,
       );
     }
@@ -600,6 +620,7 @@ class DashboardRepository {
       today: today,
       trainingDates: dates,
       isRestDay: (d) => !typeFor(d).isTraining,
+      maxLookback: streakLookbackDays,
     ), activeToday: activeToday);
   }
 }

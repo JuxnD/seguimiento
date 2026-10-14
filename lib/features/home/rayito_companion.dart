@@ -143,15 +143,15 @@ class _RayitoCompanionState extends ConsumerState<RayitoCompanion> {
                     margin: const EdgeInsets.only(bottom: 6, right: 8),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: mascotIvory,
-                      borderRadius: const BorderRadius.only(
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
                         bottomLeft: Radius.circular(16),
                         bottomRight: Radius.circular(4),
                       ),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(blurRadius: 10, color: Color(0x66000000))
                       ],
                     ),

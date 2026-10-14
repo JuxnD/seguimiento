@@ -55,7 +55,10 @@ void main() {
     });
 
     test('en los extremos coincide con los momentos clave', () {
-      for (final fig in catalog.all) {
+      // Las figuras con movimiento authored (035) conservan vuelo y apoyos en
+      // el mundo en vez de bajar al suelo 2D; sus momentos clave se prueban
+      // en illustration_035_motion_test e illustration_guided_geometry_test.
+      for (final fig in catalog.all.where((f) => !f.hasMotion)) {
         for (final (i, f) in fig.frames.indexed) {
           final raw = solveKeyPose(f, fig.dims);
           final key = f.bodyRoll.abs() > .001 ? raw : raw.grounded();
@@ -98,7 +101,9 @@ void main() {
     });
 
     test('nada atraviesa el suelo en ningún punto del recorrido', () {
-      for (final fig in catalog.all) {
+      // Authored (035): suelo y apoyos en coordenadas de mundo, en
+      // illustration_guided_geometry_test e illustration_supports_test.
+      for (final fig in catalog.all.where((f) => !f.hasMotion)) {
         for (var k = 0; k <= 40; k++) {
           if (fig.skeletonAt(k / 40).bodyRoll == 0) {
             expect(fig.skeletonAt(k / 40).lowest, lessThanOrEqualTo(0.06), reason: '${fig.name} t=${k / 40}');

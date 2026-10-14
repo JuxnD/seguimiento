@@ -252,10 +252,10 @@ Se aplican al componer el día (`TrainingRepository.withV31Blocks`), así que
 llegan también a un plan v3.2 ya activado, sin migrar nada:
 
 - **Lunes:** el calentamiento suma muñecas 2 min tras las scap pull-ups (§19.13 L1).
-- **Martes desde la semana 5:** intervalos 15″/15″, 2 bloques de 8 min con
-  temporizador, sólo si no hay fútbol registrado entre semana (lunes–martes);
-  en la descarga no van y el día dice por qué. Con escaleras altas se quitan
-  como los sprints.
+- **Martes desde la semana 5:** el temporizador de carrera 15″/15″ del 045
+  (2 bloques de 8 min) se ofrece al empezar, salvo en la descarga o si hay
+  fútbol registrado entre semana (lunes–martes); el día dice cuál aplica. La
+  rodilla y el «sólo descanso» siguen aplazándolos como en 045.
 - **Miércoles:** el aterrizaje clavado va justo después del FIFA 11+ y progresa
   por semana: dos piernas en 1–2 y en la descarga, una pierna en 3–5, salto
   lateral a una pierna desde la 7 (§19.16).
