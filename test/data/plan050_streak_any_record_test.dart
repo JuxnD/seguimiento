@@ -68,6 +68,8 @@ void main() {
     await training.save(
         SessionDraft(date: d(25), type: SessionType.movilidad, totalSec: 900));
     expect(await streakOn(d(25)), 3);
+    expect((await dashboard.today(now: d(25))).activeToday, isTrue);
+    expect((await dashboard.today(now: d(26))).activeToday, isFalse);
     expect((await dashboard.today(now: d(25))).trained, isFalse,
         reason: 'adherencia del plan: sigue sin contar');
   });
@@ -103,6 +105,8 @@ void main() {
         date: '2026-09-26', minutes: 60, intensity: const Value(7)));
     // Domingo 27 sin nada: es descanso para la racha.
     expect(await streakOn(d(27)), 2);
+    expect((await dashboard.today(now: d(26))).activeToday, isTrue);
+    expect((await dashboard.today(now: d(27))).activeToday, isFalse);
   });
 
   test(
@@ -121,5 +125,6 @@ void main() {
         date: '2026-09-22', kneeStairs: const Value(1)));
     expect(await streakOn(d(23)), 0,
         reason: 'el martes de entreno sin actividad corta la racha');
+    expect((await dashboard.today(now: d(22))).activeToday, isFalse);
   });
 }

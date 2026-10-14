@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,27 +13,52 @@ import 'onboarding_screen.dart';
 /// qué se monta. Mientras esté pendiente no existe HomeShell, así que no hay
 /// permisos, pasos, respaldos ni avisos. Se reconsulta con cada generación de
 /// la base (restaurar, incluido el rollback).
-class AppEntry extends ConsumerWidget {
+class AppEntry extends ConsumerStatefulWidget {
   const AppEntry({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppEntry> createState() => _AppEntryState();
+}
+
+class _AppEntryState extends ConsumerState<AppEntry> {
+  @override
+  void initState() {
+    super.initState();
     // Listo → pendiente o inválido con la app abierta (restaurar desde
     // Ajustes): los avisos del perfil anterior se retiran y las rutas abiertas
     // sobre el shell (Ajustes, editores) se cierran, para que el alta o el
     // error queden visibles (plan 024). Listo → listo no toca la navegación.
-    ref.listen<AsyncValue<SetupStatus>>(setupStatusProvider, (prev, next) {
+    ref.listenManual<AsyncValue<SetupStatus>>(setupStatusProvider,
+        (prev, next) {
+      final bridge = ref.read(rayitoWidgetBridgeProvider);
+      if (next is AsyncData<SetupStatus>) {
+        if (next.value.ready) {
+          bridge.enable();
+        } else {
+          unawaited(bridge.clear());
+        }
+      } else if (next is AsyncError) {
+        unawaited(bridge.clear());
+      }
       final wasReady = prev?.valueOrNull?.ready == true;
-      final leftReady = next is AsyncError || (next is AsyncData<SetupStatus> && !next.value.ready);
+      final leftReady = next is AsyncError ||
+          (next is AsyncData<SetupStatus> && !next.value.ready);
       if (!wasReady || !leftReady) return;
-      if (next is AsyncData<SetupStatus>) ref.read(rescheduleRemindersProvider)();
+      if (next is AsyncData<SetupStatus>) {
+        ref.read(rescheduleRemindersProvider)();
+      }
       Navigator.of(context).popUntil((route) => route.isFirst);
-    });
+    }, fireImmediately: true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ref.watch(setupStatusProvider).when(
           // Al cambiar de base se conserva lo que había hasta saber el nuevo
           // estado: Ajustes no se desmonta por recargar.
           skipLoadingOnReload: true,
-          loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
           error: (e, _) => SetupErrorScreen(error: e),
           data: (s) => s.ready ? const HomeShell() : const OnboardingScreen(),
         );
@@ -53,7 +79,8 @@ class SetupErrorScreen extends ConsumerWidget {
           children: [
             AppCard(
               children: [
-                Text('El estado del perfil guardado no es válido y la app no lo corrige sola.',
+                Text(
+                    'El estado del perfil guardado no es válido y la app no lo corrige sola.',
                     style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 8),
                 Text('$error'),

@@ -49,7 +49,7 @@ extension DayTypeLabel on DayType {
 
 /// Tipo de una sesión registrada. El fútbol va aparte (FootballGames).
 /// `movilidad` es opcional y fuera del plan: no cuenta para adherencia,
-/// récords, racha ni RPE.
+/// récords ni RPE. Sí mantiene la racha de actividad guardada.
 enum SessionType { circuito, bloques, otro, circuitoLigero, progresion, movilidad, trenSuperior, piernas, resistencia, densidad }
 
 extension SessionTypeLabel on SessionType {
@@ -66,7 +66,7 @@ extension SessionTypeLabel on SessionType {
         SessionType.densidad => 'Densidad',
       };
 
-  /// Cuenta como entrenamiento del plan (adherencia, racha, avisos de sesión).
+  /// Cuenta como entrenamiento del plan (adherencia y avisos de sesión).
   bool get isTraining => this != SessionType.movilidad;
 
   /// Las sesiones de circuito son las que cuentan rondas y récords. La

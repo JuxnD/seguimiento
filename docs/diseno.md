@@ -10,18 +10,11 @@ del logo: fondo `#0B0806`, superficies `#150F0B` y `#241A13`, naranja base
 `#F08A34` (profundo `#E4661F`) reservado para lo accionable y el dato en foco,
 texto `#FFF6EC`. Todo lo demás son neutros cálidos.
 
-**Ícono de la candidata013**: S en movimiento, una única ruta naranja con la
-inicial de Seguimiento. Conserva la paleta y elimina la asociación fija a diez
-rondas del ícono anterior (anillo segmentado y figura en la barra). El SVG
-editable en `assets/icon/` es fuente única; `python tool/icons.py` regenera
-clásico, tienda, capas adaptables/monocroma y barra de estado.
-Direcciones, comparación en pequeño y límites de validación:
-[logo013](design/logo-013.md). No se cambió nombre, paquete ni firma; revisión
-del owner e ícono en APK integrado pendientes.
+**Marca actual My Prime (036):** icono MP/M-rayo, maestro SVG y pipeline determinista en assets/icon y tool/brand_assets.py. La inicial S de la candidata013 queda como referencia histórica; la identidad técnica y la base local se conservan.
 
-**Arranque016:** reutiliza ese foreground013, cuadrado108dp y centrado en
+**Referencia histórica de arranque016:** reutilizaba el foreground013, cuadrado108dp y centrado en
 legacy; icono nativo31+ y fondo`#0B0806` también en NormalTheme/día/noche.
-No imagen nueva ni espera artificial.30PNG originales se conservan; XML y
+El arranque actual usa la marca036 MP/M-rayo y conserva el formato adaptativo sin espera artificial. Los30PNG013 quedan como evidencia histórica; XML y
 referencias se verifican en fuente. Arranque frío/transición del APK exacto y
 lectura del owner pendientes: [ADR0018](adr/0018-arranque-y-respaldo-android.md).
 
@@ -188,3 +181,7 @@ Tests prueban cobertura/geometría/flujo; no certifican técnica deportiva ni
 comprensión por usuario. Orden por piezas puede ocultar contactos en giros
 extremos: conserva vista inicial y permite volver a ella. No publicar sin
 verificarAPK, firma, upgrade y pendientes explícitos de revisión.
+
+
+## Rayito y widget (051)
+Rayito es el rayo sin cuerpo ni extremidades: ocho fases de constancia y cuatro estados del día. La fase no representa condición física. Hoy calcula racha y actividad guardada desde la misma consulta; el ánimo respeta recuperación/descanso y evita culpa. El widget Android sólo muestra mascota, racha y agenda efectiva con fecha visible; tocar abre Hoy. Snapshot único atómico fuera de respaldos, sin fotos ni registros de salud. Datos vencidos se sustituyen por una invitación a abrir Hoy. No añade notificaciones, permisos, migraciones, IA ni dependencias. Guías035 diferidas.

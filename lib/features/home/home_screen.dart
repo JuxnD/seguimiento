@@ -56,6 +56,7 @@ import '../training/training_screen.dart';
 import '../../ui/theme.dart';
 import '../../data/repositories/goal_repository.dart';
 import '../../domain/adaptive_coach.dart';
+import 'mascot_card.dart';
 
 final _stairsAlertProvider =
     StreamProvider.family<bool, DateTime>((ref, today) {
@@ -216,6 +217,7 @@ class HomeScreen extends ConsumerWidget {
                       MaterialPageRoute(
                           builder: (_) => const SettingsScreen())),
                 ),
+                MascotCard(dashboard: d),
                 if (noRoutine)
                   _NoRoutineCard(today: today)
                 else
@@ -2067,6 +2069,20 @@ class _WalksLine extends StatelessWidget {
     }
     final left = walksLeft(dashboard.stepsToday ?? 0, goal);
     if (left == 0) return const SizedBox.shrink();
+    if (MediaQuery.textScalerOf(context).scale(16) > 20) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 6),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(children: [
+            const Icon(Icons.directions_walk, size: 18, color: AppColors.steps),
+            const SizedBox(width: 8),
+            Expanded(child: Text('Te ${left == 1 ? 'falta 1 caminata' : 'faltan $left caminatas'} de 10 min', style: Theme.of(context).textTheme.bodyMedium)),
+          ]),
+          const SizedBox(height: 6),
+          FilledButton.tonal(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalkScreen())), child: const Text('Caminata 10 min')),
+        ]),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 6),
       child: Row(

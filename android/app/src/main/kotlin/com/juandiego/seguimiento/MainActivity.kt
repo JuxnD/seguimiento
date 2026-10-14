@@ -15,6 +15,20 @@ import io.flutter.plugin.common.MethodChannel
 /// usa" está activo. Ambos pueden callar los recordatorios programados.
 class MainActivity : FlutterActivity() {
     private var health: HealthConnectBridge? = null
+    private var widgetChannel: MethodChannel? = null
+    private var widgetOpen = false
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra("rayito_open_today", false)) {
+            widgetOpen = true
+            widgetChannel?.invokeMethod("openToday", null, object : MethodChannel.Result {
+                override fun success(result: Any?) { widgetOpen = false }
+                override fun error(code: String, message: String?, details: Any?) { }
+                override fun notImplemented() { }
+            })
+        }
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -24,6 +38,15 @@ class MainActivity : FlutterActivity() {
         val bridge = HealthConnectBridge(this).also { health = it }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "seguimiento/salud")
             .setMethodCallHandler { call, result -> bridge.handle(call, result) }
+        widgetOpen = widgetOpen || intent.getBooleanExtra("rayito_open_today", false)
+        widgetChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "seguimiento/widget").also { channel ->
+            channel.setMethodCallHandler { call, result ->
+                if (call.method == "consumeOpenToday") {
+                    result.success(widgetOpen)
+                    widgetOpen = false
+                } else RayitoWidget.handle(applicationContext, call, result)
+            }
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "seguimiento/sistema").setMethodCallHandler { call, result ->
             when (call.method) {
                 "batteryOptimized" -> result.success(batteryOptimized())

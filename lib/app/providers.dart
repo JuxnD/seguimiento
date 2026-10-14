@@ -16,6 +16,7 @@ import '../data/reminder_scheduler.dart';
 import '../data/repositories/reminder_repository.dart';
 import '../data/database_host.dart';
 import '../data/local_flags.dart';
+import '../data/rayito_widget_bridge.dart';
 import '../data/update_service.dart';
 import '../data/repositories/body_repository.dart';
 import '../data/repositories/chart_repository.dart';
@@ -56,6 +57,9 @@ final databaseHostProvider =
 /// Se sobreescribe en `main` con las banderas ya abiertas.
 final localFlagsProvider =
     Provider<LocalFlags>((ref) => throw UnimplementedError());
+
+/// Una cola para Hoy, la barrera de perfil y el error de arranque.
+final rayitoWidgetBridgeProvider = Provider((ref) => RayitoWidgetBridge.shared);
 
 /// Respaldo automático semanal (ver `data/auto_backup.dart`).
 final autoBackupProvider = FutureProvider<AutoBackup>((ref) => AutoBackup.open(
@@ -186,12 +190,12 @@ final personalRadarProvider =
 });
 
 /// Horas en cama anotadas la mañana de ese día (`YYYY-MM-DD`).
-final sleepDayProvider =
-    StreamProvider.family((ref, String day) => ref.watch(sleepRepositoryProvider).watchDay(parseDay(day)));
+final sleepDayProvider = StreamProvider.family((ref, String day) =>
+    ref.watch(sleepRepositoryProvider).watchDay(parseDay(day)));
 
 /// La noche con inicio, despertar, procedencia y nota (plan 040).
-final sleepDetailProvider =
-    StreamProvider.family((ref, String day) => ref.watch(sleepRepositoryProvider).watchDetail(parseDay(day)));
+final sleepDetailProvider = StreamProvider.family((ref, String day) =>
+    ref.watch(sleepRepositoryProvider).watchDetail(parseDay(day)));
 final healthConnectProvider = Provider((ref) => const HealthConnect());
 final stepsSyncProvider = Provider((ref) => StepsSync(
       health: ref.watch(healthConnectProvider),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,8 +46,27 @@ class HomeShell extends ConsumerStatefulWidget {
   ConsumerState<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserver {
+class _HomeShellState extends ConsumerState<HomeShell>
+    with WidgetsBindingObserver {
   int _index = 0;
+  static const _widgetChannel = MethodChannel('seguimiento/widget');
+
+  void _openToday() {
+    if (!mounted) return;
+    ref.read(todayProvider.notifier).refresh();
+    ref.invalidate(dashboardProvider);
+    setState(() => _index = 0);
+  }
+
+  Future<void> _consumeWidgetOpen() async {
+    try {
+      if (await _widgetChannel.invokeMethod<bool>('consumeOpenToday') == true) {
+        _openToday();
+      }
+    } on MissingPluginException {
+      /* Plataforma sin widget. */
+    } on PlatformException {/* No impide abrir la app. */}
+  }
 
   /// Mientras la app está abierta, los pasos del reloj se traen solos cada
   /// tanto: Innova los escribe en Health Connect cuando sincroniza.
@@ -55,15 +75,20 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
 
   void _startStepsTimer() {
     _stepsTimer?.cancel();
-    _stepsTimer = Timer.periodic(_stepsEvery, (_) => ref.read(syncStepsProvider)());
+    _stepsTimer =
+        Timer.periodic(_stepsEvery, (_) => ref.read(syncStepsProvider)());
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _widgetChannel.setMethodCallHandler((call) async {
+      if (call.method == 'openToday') _openToday();
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _askNotificationsOnce();
+      _consumeWidgetOpen();
       _autoBackup();
       ref.read(syncStepsProvider)();
       _startStepsTimer();
@@ -73,6 +98,7 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
   @override
   void dispose() {
     _stepsTimer?.cancel();
+    _widgetChannel.setMethodCallHandler(null);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -83,6 +109,7 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       ref.read(todayProvider.notifier).refresh();
+      ref.invalidate(dashboardProvider);
       // Los pasos del reloj llegan a Health Connect mientras la app duerme.
       ref.read(syncStepsProvider)();
       _startStepsTimer();
@@ -132,15 +159,26 @@ class _HomeShellState extends ConsumerState<HomeShell> with WidgetsBindingObserv
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.today_outlined), selectedIcon: Icon(Icons.today), label: 'Hoy'),
           NavigationDestination(
-              icon: Icon(Icons.fitness_center_outlined), selectedIcon: Icon(Icons.fitness_center), label: 'Entreno'),
+              icon: Icon(Icons.today_outlined),
+              selectedIcon: Icon(Icons.today),
+              label: 'Hoy'),
           NavigationDestination(
-              icon: Icon(Icons.restaurant_outlined), selectedIcon: Icon(Icons.restaurant), label: 'Comidas'),
+              icon: Icon(Icons.fitness_center_outlined),
+              selectedIcon: Icon(Icons.fitness_center),
+              label: 'Entreno'),
           NavigationDestination(
-              icon: Icon(Icons.straighten_outlined), selectedIcon: Icon(Icons.straighten), label: 'Cuerpo'),
+              icon: Icon(Icons.restaurant_outlined),
+              selectedIcon: Icon(Icons.restaurant),
+              label: 'Comidas'),
           NavigationDestination(
-              icon: Icon(Icons.description_outlined), selectedIcon: Icon(Icons.description), label: 'Informe'),
+              icon: Icon(Icons.straighten_outlined),
+              selectedIcon: Icon(Icons.straighten),
+              label: 'Cuerpo'),
+          NavigationDestination(
+              icon: Icon(Icons.description_outlined),
+              selectedIcon: Icon(Icons.description),
+              label: 'Informe'),
         ],
       ),
     );

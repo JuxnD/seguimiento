@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'providers.dart' show rayitoWidgetBridgeProvider;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -9,17 +12,28 @@ import '../ui/theme.dart';
 
 /// Pantalla de último recurso cuando la app no logra arrancar. Dice qué pasó
 /// y, si la base alcanzó a abrir, permite exportarla antes de tocar nada más.
-class StartupErrorApp extends StatelessWidget {
+class StartupErrorApp extends ConsumerStatefulWidget {
   const StartupErrorApp({super.key, required this.error, this.host});
 
   final Object error;
   final DatabaseHost? host;
 
   @override
+  ConsumerState<StartupErrorApp> createState() => _StartupErrorAppState();
+}
+
+class _StartupErrorAppState extends ConsumerState<StartupErrorApp> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(ref.read(rayitoWidgetBridgeProvider).clear());
+  }
+
+  @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: buildGymTheme(),
-        home: _StartupErrorScreen(error: error, host: host),
+        home: _StartupErrorScreen(error: widget.error, host: widget.host),
       );
 }
 
@@ -33,11 +47,14 @@ class _StartupErrorScreen extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     try {
       final dir = await getTemporaryDirectory();
-      final path = p.join(dir.path, 'seguimiento-rescate-${dayKey(DateTime.now())}.sqlite');
+      final path = p.join(
+          dir.path, 'seguimiento-rescate-${dayKey(DateTime.now())}.sqlite');
       final file = await host!.exportTo(path);
-      await Share.shareXFiles([XFile(file.path)], subject: 'Respaldo My Prime (rescate)');
+      await Share.shareXFiles([XFile(file.path)],
+          subject: 'Respaldo My Prime (rescate)');
     } on Object catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('No se pudo exportar: $e')));
+      messenger
+          .showSnackBar(SnackBar(content: Text('No se pudo exportar: $e')));
     }
   }
 
@@ -47,12 +64,15 @@ class _StartupErrorScreen extends StatelessWidget {
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Text('Algo falló al abrir la app. Tus datos no se han borrado.'),
+            const Text(
+                'Algo falló al abrir la app. Tus datos no se han borrado.'),
             const SizedBox(height: 12),
-            SelectableText('$error', style: Theme.of(context).textTheme.bodySmall),
+            SelectableText('$error',
+                style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 16),
             if (host != null) ...[
-              const Text('La base sí abrió: expórtala antes de reinstalar o actualizar.'),
+              const Text(
+                  'La base sí abrió: expórtala antes de reinstalar o actualizar.'),
               const SizedBox(height: 8),
               FilledButton.icon(
                 onPressed: () => _export(context),
@@ -60,7 +80,8 @@ class _StartupErrorScreen extends StatelessWidget {
                 label: const Text('Exportar base de datos'),
               ),
             ] else
-              const Text('La base no abrió. Actualiza la app o restaura un respaldo desde Ajustes '
+              const Text(
+                  'La base no abrió. Actualiza la app o restaura un respaldo desde Ajustes '
                   'cuando vuelva a abrir.'),
           ],
         ),

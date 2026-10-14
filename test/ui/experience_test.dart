@@ -402,6 +402,8 @@ void main() {
                 .text('Registro de la mañana: peso, pulso, sueño y molestias');
             await tester.scrollUntilVisible(morning, 120,
                 scrollable: find.byType(Scrollable).first);
+            await Scrollable.ensureVisible(tester.element(morning), alignment: 0.5);
+            await tester.pump();
             expect(morning.hitTestable(), findsOneWidget);
             await tester.scrollUntilVisible(find.text('Ver rutina'), -120,
                 scrollable: find.byType(Scrollable).first);

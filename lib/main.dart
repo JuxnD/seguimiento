@@ -50,6 +50,6 @@ Future<void> main() async {
     // Sin esto, un fallo al abrir la base deja una pantalla en blanco. Aquí se
     // explica qué pasó y, si la base abrió, se puede exportar para no perderla.
     debugPrint('Error al arrancar: $e\n$st');
-    runApp(StartupErrorApp(error: e, host: host));
+    runApp(ProviderScope(child: StartupErrorApp(error: e, host: host)));
   }
 }

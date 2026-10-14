@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget de Rayito (plan 049). -->
+    <string name="rayito_widget_title">Rayito</string>
+    <string name="rayito_widget_open">Abre My Prime para despertarlo</string>
+    <string name="rayito_widget_image">Rayito, la mascota de My Prime</string>
+    <string name="rayito_widget_description">Tu racha, la fase de Rayito y lo que toca hoy</string>
+</resources>

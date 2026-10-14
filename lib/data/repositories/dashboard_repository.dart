@@ -46,6 +46,7 @@ class TodayDashboard {
     this.footballGamesToday = const [],
     this.hardFootballYesterday,
     required this.streak,
+    this.activeToday = false,
     required this.macros,
     required this.proteinMin,
     required this.proteinMax,
@@ -131,6 +132,8 @@ class TodayDashboard {
   /// Partido de ayer si fue intenso (≥ 8) o hubo golpe: hoy se baja la carga.
   final FootballGameRow? hardFootballYesterday;
   final int streak;
+  /// Misma lectura de actividad guardada que calcula la racha.
+  final bool activeToday;
   final Macros macros;
   final int? proteinMin;
   final int? proteinMax;
@@ -324,6 +327,7 @@ class DashboardRepository {
         ? await legChain.planB(date, dayHasLegs: dayHasLegs, legs: (await legChain.chains(date)).legs)
         : PlanBAdvice.none;
     final planB = planBAdvice.show;
+    final constancy = await _streak(date);
     return TodayDashboard(
       date: date,
       weekIndex: weekIndexFor(p.programStart, date),
@@ -358,7 +362,8 @@ class DashboardRepository {
       footballGamesToday: footballGames,
       hardFootballYesterday:
           yesterday != null && isHardGame(yesterday) ? yesterday : null,
-      streak: await _streak(date),
+      streak: constancy.streak,
+      activeToday: constancy.activeToday,
       macros: Macros.sum(meals.map((m) => m.macros)),
       proteinMin: protein.comparable ? protein.value!.round() : null,
       proteinMax: proteinMax.comparable ? proteinMax.value!.round() : null,
@@ -535,12 +540,13 @@ class DashboardRepository {
   /// Días seguidos con actividad guardada, sin que el descanso planificado
   /// los rompa. Incluye movilidad, técnica, rutinas parciales y fútbol;
   /// no cambia el criterio de entrenamiento/adherencia de Hoy.
-  Future<int> _streak(DateTime today) async {
+  Future<({int streak, bool activeToday})> _streak(DateTime today) async {
     final rows = await db.select(db.sessions).get();
     final games = await db.select(db.footballGames).get();
     final dates = {...rows.map((s) => s.date), ...games.map((g) => g.date)};
     final versions = await plan.versions();
-    if (versions.isEmpty) return dates.contains(dayKey(today)) ? 1 : 0;
+    final activeToday = dates.contains(dayKey(today));
+    if (versions.isEmpty) return (streak: activeToday ? 1 : 0, activeToday: activeToday);
 
     // Mapa weekday → tipo por versión, para no recargar el plan por día.
     final byVersion = <int, Map<int, DayType>>{};
@@ -559,11 +565,11 @@ class DashboardRepository {
       return byVersion[active.id]?[day.weekday] ?? DayType.descanso;
     }
 
-    return currentStreak(
+    return (streak: currentStreak(
       today: today,
       trainingDates: dates,
       isRestDay: (d) => !typeFor(d).isTraining,
-    );
+    ), activeToday: activeToday);
   }
 }
 
