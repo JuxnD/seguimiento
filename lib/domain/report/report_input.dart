@@ -117,10 +117,18 @@ class PlanVersionInfo {
       {required this.number,
       required this.validFrom,
       required this.dayTypes,
-      this.notes});
+      this.notes,
+      this.scheme});
 
   /// 1-based: v1, v2…
   final int number;
+
+  /// Esquema del bloque ('v3', 'v3.1', 'v3.2'); null en planes libres.
+  final String? scheme;
+
+  /// §16.27.2: en un bloque la etiqueta sale del esquema, no del número de
+  /// fila (la tercera fila de un v3.2 no es «v3»).
+  String get tag => scheme ?? 'v$number';
   final DateTime validFrom;
 
   /// weekday (1 = lunes … 7 = domingo) → tipo. Días ausentes = descanso.

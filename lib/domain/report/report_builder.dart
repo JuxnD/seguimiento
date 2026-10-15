@@ -172,9 +172,9 @@ void _header(StringBuffer b, ReportStats s) {
   final plans = s.plansInRange;
   final planLabel = switch (plans.length) {
     0 => 'Sin plan',
-    1 => 'Plan v${plans.first.number}',
+    1 => 'Plan ${plans.first.tag}',
     _ =>
-      'Plan ${plans.map((p) => 'v${p.number} (desde ${formatShort(p.validFrom)})').join(' → ')}',
+      'Plan ${plans.map((p) => '${p.tag} (desde ${formatShort(p.validFrom)})').join(' → ')}',
   };
   b.writeln(
       '$weekLabel desde inicio (${formatShort(i.programStart)}) · $planLabel');

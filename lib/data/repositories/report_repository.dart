@@ -58,6 +58,7 @@ class ReportRepository {
         number: i + 1,
         validFrom: parseDay(v.validFrom),
         notes: v.notes,
+        scheme: v.scheme,
         dayTypes: {for (final d in days) d.weekday: d.type},
       ));
     }
