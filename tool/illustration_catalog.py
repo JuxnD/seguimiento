@@ -732,12 +732,13 @@ def _group_b(name):
                        phase('Pausa arriba', kind='hold', seconds=.5),
                        phase('Baja en 3 s', contacts=['nearHand', 'farHand'], seconds=3.0)]
         return e
-    if name in ('Negativo de dragon flag recogido', 'Negativo de dragon flag a una pierna'):
+    if name in ('Negativo de dragon flag', 'Negativo de dragon flag recogido', 'Negativo de dragon flag a una pierna'):
         # Hombros fijos en la colchoneta (pivote) y manos en el agarre. Baja en
         # bloque con la rodilla recogida a 90° constante; para volver recoge
         # cadera y rodillas, sube a la vela recogido y extiende.
         pivot = (-18, -4)
-        tucked = {'far', 'near'} if name.endswith('recogido') else {'far'}
+        straight = name == 'Negativo de dragon flag'
+        tucked = {'far', 'near'} if name.endswith('recogido') else set() if straight else {'far'}
         def flag(caption, angle, hip_flex=0, all_tucked=False):
             hip = (pivot[0] + 18 * math.cos(math.radians(angle)), pivot[1] - 18 * math.sin(math.radians(angle)))
             thigh = -angle - hip_flex
@@ -750,9 +751,11 @@ def _group_b(name):
                     f[sd + 'Leg'] = limb(thigh, thigh, foot=thigh)
             f['gaze'] = angle  # Cabeza quieta: los hombros pivotan, la cabeza no.
             return f
-        top = flag('Vela: hombros apoyados, manos sujetas detrás', 75)
-        mid = flag('Baja en bloque: cadera extendida, rodilla recogida a 90°', 45)
-        low = flag('Detén el descenso antes de perder la línea', 25)
+        top = flag('Desde la vela: cuerpo recto de hombros a pies' if straight
+                   else 'Vela: hombros apoyados, manos sujetas detrás', 75)
+        mid = flag('Baja en bloque como una tabla (5 s)' if straight
+                   else 'Baja en bloque: cadera extendida, rodilla recogida a 90°', 45)
+        low = flag('Detén el descenso antes de perder la línea', 15 if straight else 25)
         fold = flag('Para volver: recoge cadera y rodillas', 12, hip_flex=95, all_tucked=True)
         rise = flag('Sube a la vela recogido', 80, hip_flex=35, all_tucked=True)
         frames = [top, mid, low, fold, rise, cp(top)]
@@ -764,8 +767,9 @@ def _group_b(name):
                                dict(joint='nearHand', text='Sujeción detrás de la cabeza', corner='tl')])
         e['pivot'] = pivot
         hands = ['nearHand', 'farHand']
-        e['motion'] = [phase('Desciende en bloque (4 s)', contacts=hands, seconds=2.0),
-                       phase('Desciende en bloque (4 s)', contacts=hands, seconds=2.0),
+        down = 'Desciende en bloque (5 s)' if straight else 'Desciende en bloque (4 s)'
+        e['motion'] = [phase(down, contacts=hands, seconds=2.5 if straight else 2.0),
+                       phase(down, contacts=hands, seconds=2.5 if straight else 2.0),
                        phase('Recoge cadera y rodillas', contacts=hands, seconds=1.0),
                        phase('Vuelve a la vela recogido', contacts=hands, seconds=1.2),
                        phase('Extiende a la vela', contacts=hands, seconds=.8)]
