@@ -132,9 +132,15 @@ void main() {
       ((f['limbs'] as Map)['nearLeg'] as Map).remove('keepReachRadius');
     }
     final figure = Figure3DCatalog.fromJsonString(jsonEncode(source)).forExercise('Balanceos de pierna')!;
-    final p = liftSkeleton(figure.skeletonAt(15 / 60), figure).p;
-    final shin = (p['nearAnkle']! - p['nearKnee']!).unit;
-    final foot = (p['nearToe']! - p['nearAnkle']!).unit;
-    expect(shin.dot(foot).abs(), greaterThan(.35), reason: 'mutante real reproduce exactamente la cuerda defectuosa');
+    // Auditoría 052: la secuencia es más larga; el defecto aparece entre
+    // claves, así que se busca en todo el recorrido.
+    var worst = 0.0;
+    for (var sample = 0; sample <= 120; sample++) {
+      final p = liftSkeleton(figure.skeletonAt(sample / 120), figure).p;
+      final shin = (p['nearAnkle']! - p['nearKnee']!).unit;
+      final foot = (p['nearToe']! - p['nearAnkle']!).unit;
+      if (shin.dot(foot).abs() > worst) worst = shin.dot(foot).abs();
+    }
+    expect(worst, greaterThan(.35), reason: 'mutante real reproduce exactamente la cuerda defectuosa');
   });
 }

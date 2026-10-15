@@ -131,9 +131,13 @@ void main() {
   test('FIFA lateral hops translate the pelvis and lift both feet between grounded landings', () {
     final fig = catalog.forExercise('Calentamiento tipo FIFA 11+')!;
     final first = fig.motion.indexWhere((stage) => stage.part == '9' && stage.kind != 'cut');
+    // Auditoría 052: apoyo con pausa, empuje, despegue y vuelo; el cuadro
+    // donde empieza «Aterriza…» es el punto más alto del salto.
+    final peak = fig.motion.indexWhere((stage) => stage.part == '9' && stage.label.startsWith('Aterriza'));
+    expect(peak, greaterThan(first));
     final start = liftSkeleton(fig.skeletonAt(first / fig.motion.length), fig).p;
-    final airborne = liftSkeleton(fig.skeletonAt((first + 1) / fig.motion.length), fig).p;
-    final landing = liftSkeleton(fig.skeletonAt((first + 2) / fig.motion.length), fig).p;
+    final airborne = liftSkeleton(fig.skeletonAt(peak / fig.motion.length), fig).p;
+    final landing = liftSkeleton(fig.skeletonAt((peak + 1) / fig.motion.length), fig).p;
     expect((landing['hip']!.z - start['hip']!.z).abs(), greaterThan(8));
     expect(airborne['nearAnkle']!.y, lessThan(-4));
     expect(airborne['farAnkle']!.y, lessThan(-4));
@@ -269,7 +273,8 @@ void main() {
     }
     expect(fig.frameCoordinate(1), n.toDouble());
     expect(figureMotionTime(fig, 1), closeTo(time, 1e-8));
-    final legacy = catalog.forExercise('Dominadas')!;
+    // Dominadas tiene recorrido propio desde la auditoría 052.
+    final legacy = catalog.forExercise('Colgado pasivo')!;
     expect(legacy.stageAt(.43), isNull);
     expect(legacy.frameCoordinate(.43), .43 * (legacy.frames.length - 1));
   });

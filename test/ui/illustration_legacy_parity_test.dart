@@ -50,13 +50,19 @@ void main() {
       'Negativo de dragon flag recogido',
       'Vela',
     };
+    // Auditoría 052: las figuras reabiertas por no coincidir con su guía
+    // tienen sus propios oráculos; el resto sigue idéntico al rig histórico.
+    final reopened052 = ((jsonDecode(File('test/fixtures/illustration_052_reopened.json').readAsStringSync())
+            as Map)['names'] as List)
+        .cast<String>()
+        .toSet();
     final referenceCatalog = legacy.Figure3DCatalog.fromJsonString(utf8.decode(assetBytes));
     expect(referenceCatalog.all.map((f) => f.name).toSet(), hashes.keys.toSet());
     for (final entry in hashes.entries) {
       final previous = referenceCatalog.forExercise(entry.key as String)!;
       final candidates = [
         catalog.forExercise(entry.key as String)!,
-        if (!selected035.contains(entry.key)) current.forExercise(entry.key as String)!,
+        if (!selected035.contains(entry.key) && !reopened052.contains(entry.key)) current.forExercise(entry.key as String)!,
       ];
       for (final fig in candidates) {
         for (var i = 0; i <= 60; i++) {

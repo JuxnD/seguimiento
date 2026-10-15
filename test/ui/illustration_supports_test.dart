@@ -57,8 +57,9 @@ void main() {
       if (name == 'Remo invertido (mesa)') {
         final table = fig.props.first;
         final center = vector(table['center']), size = vector(table['size']);
-        supports.add(
-            (center + V3(-size.x / 2, -size.y / 2, -size.z / 2), center + V3(-size.x / 2, -size.y / 2, size.z / 2)));
+        // Auditoría 052: la mano rodea el canto frontal del tablero (su línea
+        // media), así el antebrazo queda por debajo y no lo atraviesa.
+        supports.add((center + V3(-size.x / 2, 0, -size.z / 2), center + V3(-size.x / 2, 0, size.z / 2)));
       } else {
         for (final prop in fig.props) {
           if (prop['type'] == 'bar') {
@@ -144,7 +145,14 @@ void main() {
         final shin = (p['nearAnkle']! - p['nearKnee']!).unit, foot = (p['nearToe']! - p['nearAnkle']!).unit;
         expect(shin.dot(foot).abs(), lessThan(.35), reason: 'pie móvil sin inversión extrema');
       }
-      expect((liftSkeleton(fig.skeletonAt(1 / 6), fig).p['nearAnkle']! - first['nearAnkle']!).length, greaterThan(10));
+      // Auditoría 052: la amplitud crece de a poco; el pie móvil se aleja
+      // de verdad en algún momento del recorrido, no en un instante fijo.
+      var farthest = 0.0;
+      for (var sample = 0; sample <= 60; sample++) {
+        final d = (liftSkeleton(fig.skeletonAt(sample / 60), fig).p['nearAnkle']! - first['nearAnkle']!).length;
+        if (d > farthest) farthest = d;
+      }
+      expect(farthest, greaterThan(10));
     }
   });
 

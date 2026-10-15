@@ -66,7 +66,10 @@ class GuidedContract(unittest.TestCase):
         # authored stride. The historical baseline is deliberately unchanged.
         # Hashes are recomputed without `muscles` from the same 598d7d5 asset
         # (merge 052); every pose field is still frozen.
-        self.assertEqual(changed, {'Aceleración 10–20 m', 'Calentamiento tipo FIFA 11+'})
+        # Auditoría 052: las figuras que no coincidían con su guía se reabrieron;
+        # ninguna otra puede moverse.
+        reopened = set(json.loads((ROOT/'test/fixtures/illustration_052_reopened.json').read_text(encoding='utf-8'))['names'])
+        self.assertEqual(changed, {'Aceleración 10–20 m', 'Calentamiento tipo FIFA 11+'} | (reopened & set(baseline)))
 
     def test_muscle_labels_follow_exercise_details(self):
         details = (ROOT/'lib/data/exercise_details.dart').read_text(encoding='utf-8')

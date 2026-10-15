@@ -330,15 +330,16 @@ void main() {
     });
 
     testWidgets('tocar un momento lo abre en grande; arrastrar gira y se vuelve de perfil', (tester) async {
-      await pumpSheet(tester, 'Dominadas');
-      final fig = catalog.forExercise('Dominadas')!;
+      // Figura de tres momentos (Dominadas tiene seis desde la auditoría 052).
+      await pumpSheet(tester, 'Nórdico (isquios)');
+      final fig = catalog.forExercise('Nórdico (isquios)')!;
       await tester.tap(find.byKey(const ValueKey('figura3d-0')));
       await tester.pumpAndSettle();
       expect(find.byType(Figure3DFullScreen), findsOneWidget);
       expect(find.widgetWithText(ChoiceChip, 'Inicio'), findsOneWidget);
       expect(find.text('De perfil'), findsOneWidget);
 
-      await tester.drag(find.byKey(const ValueKey('figura3d-giro')), const Offset(600, 0));
+      await tester.drag(find.byKey(const ValueKey('figura3d-giro')), const Offset(1200, 0));
       await tester.pump();
       final painter = tester
           .widgetList<CustomPaint>(

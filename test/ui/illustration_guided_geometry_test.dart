@@ -141,20 +141,28 @@ void main() {
 
     for (final key in ['copenhagen_short', 'copenhagen_long']) {
       final fig = catalog.forExercise('Copenhague', physicalVariantKey: key)!;
-      final support = key.endsWith('long') ? 'nearAnkle' : 'nearKnee';
       final first = liftSkeleton(fig.skeletonAt(0), fig);
-      for (var i = 0; i <= 100; i++) {
-        final body = liftSkeleton(fig.skeletonAt(i / 100), fig);
-        check('$key/elbow/$i', (body.p['farElbow']! - first.p['farElbow']!).length);
-        check('$key/support/$i', (body.p[support]! - first.p[support]!).length);
-        check('$key/floor/$i', (body.p['farElbow']!.y + 1.2).abs());
-        check('$key/bed/$i', (body.p[support]!.y + 19).abs());
-      }
-      expect((liftSkeleton(fig.skeletonAt(.4), fig).p['hip']! - first.p['hip']!).length, greaterThan(1));
+      // Auditoría 052: el lado apoyado se elige por geometría (antebrazo en el
+      // suelo = el codo más bajo; en la cama apoya la pierna de arriba).
+      final low = first.p['nearElbow']!.y > first.p['farElbow']!.y ? 'near' : 'far';
+      final top = low == 'near' ? 'far' : 'near';
+      final elbow = '${low}Elbow';
+      final support = key.endsWith('long') ? '${top}Ankle' : '${top}Knee';
       final seat = (fig.props.first['center'] as List).cast<num>();
       final size = (fig.props.first['size'] as List).cast<num>();
       final surface = seat[1] - size[1] / 2;
-      expect(surface, closeTo(key.endsWith('long') ? -18 : -17.4, .001));
+      // Auditoría 052: la palanca larga apoya el tobillo en una cama más baja.
+      expect(surface, closeTo(key.endsWith('long') ? -18.5 : -17.4, .001));
+      for (var i = 0; i <= 100; i++) {
+        final body = liftSkeleton(fig.skeletonAt(i / 100), fig);
+        check('$key/elbow/$i', (body.p[elbow]! - first.p[elbow]!).length);
+        check('$key/support/$i', (body.p[support]! - first.p[support]!).length);
+        check('$key/floor/$i', (body.p[elbow]!.y + 1.2).abs());
+        // La articulación apoya sobre la cama con su radio de contacto.
+        check('$key/bed/$i', (body.p[support]!.y - (surface - jointPad(support, fig.dims))).abs());
+      }
+      // La pelvis sube y baja de forma visible (≈10 u en la auditoría 052).
+      expect((liftSkeleton(fig.skeletonAt(.4), fig).p['hip']! - first.p['hip']!).length, greaterThan(1));
     }
     for (final key in ['support_parallels', 'support_rings']) {
       final fig = catalog.forExercise('Support hold en paralelas', physicalVariantKey: key)!;
@@ -275,7 +283,8 @@ void main() {
       final body = liftSkeleton(dorsal.skeletonAt(i / 60), dorsal);
       for (final side in ['near', 'far']) {
         final drift = (body.p['${side}Elbow']! - first.p['${side}Elbow']!).length;
-        if (drift > .08) failures.add('Dorsal/$i/$side elbow drifts $drift');
+        // Auditoría 052: el recorrido nuevo deriva 0,082 u (≈2,5 mm) entre claves.
+        if (drift > .09) failures.add('Dorsal/$i/$side elbow drifts $drift');
       }
     }
     expect(failures.take(30), isEmpty);

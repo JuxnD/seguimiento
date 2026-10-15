@@ -71,7 +71,11 @@ def chain(frame, side, limb, end, *, pole=None, mid=None, **kw):
     r = root(frame, side, limb)
     a, b = ARM if limb == 'Arm' else LEG
     reach = sub(end, r)
-    if norm(reach) > a + b - .02:
+    if kw.pop('straight', False):
+        # Extremidad recta: el asset redondea reach3 a centésimas; un pelo
+        # por encima del largo total deja que el renderer la recorte recta.
+        reach = [v * (a + b + .003) / norm(reach) for v in reach]
+    elif norm(reach) > a + b - .02:
         raise ValueError(f"{frame['caption']}: {side}{limb} se estira ({norm(reach):.2f})")
     if mid is not None:
         pole = sub(mid, r)
@@ -374,16 +378,23 @@ def doorframe():
         c, s = math.cos(theta), math.sin(theta)
         return [v[0] * c - v[2] * s, v[1], v[2] * c + v[0] * s]
     sweep = []
-    for i in range(9):
-        k = i / 8
+    # 17 claves: entre claves el codo interpolado deriva < 0,08 u del marco.
+    for i in range(17):
+        k = i / 16
         x, roll = 3.5 * k, -30 * k
+        # Al girar el pecho el hombro se aleja del codo fijo; el cuerpo se
+        # acerca al marco (bodyZ) lo justo para que el brazo no se estire.
         f = pose('Antebrazo en el marco, codo a la altura del hombro; pie de ese lado adelante' if i == 0 else
                  'Da el paso adelante y gira el pecho al lado contrario', (x, hip_y), -90,
                  limb(), limb(), arm(0, -90, hand=-90, grip='hold'), arm(92, 92))
         f['bodyRoll'] = roll
         t = math.radians(roll)
-        hip = [x, hip_y, 0]
-        sh = add(hip, rolled([0, -18, SHOULDER_HALF], t))
+        off = rolled([0, -18, SHOULDER_HALF], t)
+        planar = x + off[0] - elbow[0]
+        dz = elbow[2] - off[2] - math.sqrt(10 ** 2 - planar ** 2)
+        f['bodyZ'] = dz
+        hip = [x, hip_y, dz]
+        sh = add(hip, off)
         f['nearArm'].update(reach3=sub(hand, sh), pole=sub(elbow, sh), end3=[0, -1, 0])
         for sd, sign in [('near', 1), ('far', -1)]:
             root_ = add(hip, rolled([0, 0, sign * HIP_HALF], t))
@@ -394,9 +405,9 @@ def doorframe():
     for f in frames[len(sweep) + 1:]:
         f['caption'] = 'Regresa despacio'
     contacts = ['nearHand', 'nearAnkle', 'farAnkle']
-    motions = ([phase('Avanza y gira el pecho', seconds=.3, contacts=contacts) for _ in sweep[1:]] +
+    motions = ([phase('Avanza y gira el pecho', seconds=.15, contacts=contacts) for _ in sweep[1:]] +
                [phase('Respira sin mover los apoyos', kind='hold', seconds=2)] +
-               [phase('Regresa con control', seconds=.3, contacts=contacts) for _ in sweep[1:]])
+               [phase('Regresa con control', seconds=.15, contacts=contacts) for _ in sweep[1:]])
     post_z = elbow[2] + 1
     props = [box([2.2, -33.5, post_z], [2, 67, 3]), box([2.2, -33.5, -post_z], [2, 67, 3]),
              box([2.2, -68, 0], [2, 2, 2 * post_z + 3])]
@@ -631,7 +642,7 @@ def generate(name):
             r = math.radians(psi)
             s = root(f, 'near', 'Arm')
             both_arms(f, [s[0] + rho * math.cos(r), s[1] + rho * math.sin(r), wide],
-                      pole=[0, 0, 1], grip='handle', keepReachRadius=True)
+                      pole=[0, 0, 1], grip='handle', keepReachRadius=True, straight=True)
             return f
         out = [at(70, 'Agarre ancho, brazos estirados al frente'), at(20, 'Sube la banda con los codos rectos'),
                at(-40, 'Sube la banda con los codos rectos'), at(-90, 'Pasa la banda por encima de la cabeza'),

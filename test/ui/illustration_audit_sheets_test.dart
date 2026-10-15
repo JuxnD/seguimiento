@@ -13,8 +13,9 @@ import 'package:seguimiento/ui/exercise_figure_3d_view.dart';
 
 import '../support/test_fonts.dart';
 
-/// Auditoría 052 (temporal, no va al repositorio): una hoja por figura con
-/// sus momentos desde la cámara inicial y de perfil, y los textos de su guía.
+/// Auditoría 052 (opt-in con AUDIT_OUT; AUDIT_NAMES=«a;b» filtra): una hoja
+/// por figura con sus momentos desde la cámara inicial y de perfil, y los
+/// textos de su guía, para revisar a ojo que la figura coincida con ella.
 void main() {
   final out = Platform.environment['AUDIT_OUT'];
   testWidgets('auditoría de figuras contra la guía', (tester) async {

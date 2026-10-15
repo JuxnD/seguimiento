@@ -159,3 +159,48 @@ sesión de torso real, al menos la mitad de sus pruebas medidas ese día; una o
 dos sueltas siguen sin mover piernas. Rojo causal: los dos protocolos sin el
 pino y el caso v3.1 del teléfono fallan con la regla de la 1.26.0 (piernas el
 miércoles) y pasan con el parche (miércoles de movilidad, test el jueves).
+
+## Parche 1.26.2+37 (15 oct UTC, borrador sin publicar)
+
+Con la 1.26.1 el teléfono del owner seguía con el test de piernas el
+miércoles: el torso del martes se guardó con la 1.23, antes de las cabeceras
+de intento (`attemptId` nulo), y `_anyCompleteTorsoBefore` sólo miraba
+intentos con cabecera. Arreglo: las filas de torso sin cabecera se agrupan por
+día y cuentan con la misma regla de la mitad. Rojo causal con filas sin
+cabecera. Release `v1.26.2` quedó como **borrador** (APK `de510198…b83b`);
+no se publicó. Sus cambios viajan en la 1.26.3.
+
+## Auditoría de figuras contra la guía (15 oct UTC)
+
+Reporte del owner: 90/90 de cadera «imposible de replicar» y rotación
+torácica «tampoco tiene sentido»; pidió verificar el resto. Método:
+
+- Una hoja por figura (`test/ui/illustration_audit_sheets_test.dart`,
+  opt-in con `AUDIT_OUT`/`AUDIT_NAMES`): 6 instantes de la animación desde dos
+  cámaras y el texto de su guía (detalle, cues de rutinas y, desde esta
+  sesión, `exerciseGuides` de `catalog_updates.dart`; once figuras se habían
+  revisado sin texto).
+- Cuatro revisiones independientes de las 112 hojas: ~30 graves y ~30 medias
+  (figura que contradice la guía o es físicamente imposible).
+- Corrección por grupos (carrera y saltos; suelo, core y colgado; tren
+  superior y banda; plancha, piernas y apoyos), revisión visual de cada hoja
+  y una ronda extra para Copenhague (antebrazo, tibia en la cama, pelvis
+  visible) y el negativo de dragon flag.
+- 61 figuras reabiertas, listadas en
+  `test/fixtures/illustration_052_reopened.json`; las guardas de huellas
+  (Python y paridad histórica en Dart) siguen congelando todas las demás.
+- Correcciones de geometría encontradas por las pruebas: sentadilla con
+  salto completa con vuelo real (la parte 8 del FIFA ya no se fuerza a
+  vuelo), pie de la plancha lateral apoyado, balanceo máximo a 65° (a 70°
+  la punta saltaba 1,5 u entre cuadros), pectoral en el marco con el cuerpo
+  acercándose al marco para no estirar el brazo, dislocaciones con codos
+  realmente rectos (opción `straight` del generador: `reach3` se redondea a
+  centésimas en el asset), gripZ de dominadas igual al agarre real.
+- Tests ajustados sólo donde el contrato describía la figura vieja (número de
+  momentos, vista inicial, fase del salto lateral, superficie de la cama
+  larga, agarre en el canto de la mesa). Única tolerancia ampliada: deriva
+  del codo en «Dorsal en la cama», 0,08 → 0,09 u (máximo medido 0,082 u ≈
+  2,5 mm).
+- Pendiente fuera de alcance: círculos de muñeca y pulgares atrás del face
+  pull sólo existen en el texto; en la flexión arquero los pies se desplazan
+  ~25 cm con el cuerpo.

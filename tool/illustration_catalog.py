@@ -266,8 +266,8 @@ def side_plank_frames(n=8):
                  'Eleva la pelvis hasta alinear tobillo, cadera y cabeza',
                  hip, math.degrees(phi), limb(), limb(), arm(), arm())
         f['bodyRoll'] = -90
-        f['nearLeg'] = limb(reach3=[ankle[0] - hn[0], ankle[1] - hn[1], 0], pole=[0, 0, -1], end3=[.2, 0, -1])
-        f['farLeg'] = limb(reach3=[far_ankle[0] - far_hip[0], far_ankle[1] - far_hip[1], 0], pole=[0, 0, -1], end3=[.2, 0, -1])
+        f['nearLeg'] = limb(reach3=[ankle[0] - hn[0], ankle[1] - hn[1], 0], pole=[0, 0, -1], end3=[.2, .06, -1])
+        f['farLeg'] = limb(reach3=[far_ankle[0] - far_hip[0], far_ankle[1] - far_hip[1], 0], pole=[0, 0, -1], end3=[.2, .06, -1])
         f['nearArm'] = arm(90, 0, reach3=[elbow[0] + .3 - sh[0], elbow[1] + .25 - sh[1], -9],
                            pole=[elbow[0] - sh[0], elbow[1] - sh[1], 0], end3=[0, 0, -1])
         f['farArm'] = arm(-90, -90, reach3=[0, -18.8, 0], pole=[1, 0, 0], end3=[0, -1, 0])
@@ -461,7 +461,7 @@ def _generate_base(name):
                  sag(-20,'Atrás sin arquear la espalda'),
                  sag(50,'Cada vez un poco más alto'),
                  sag(-30,'Atrás, la cadera no rota'),
-                 sag(70,'Más alto aún, sin patear'),
+                 sag(65,'Más alto aún, sin patear'),
                  sag(-38,'Atrás con la espalda quieta'),
                  sag(0,'Vuelve al centro antes del balanceo lateral'),
                  lat(25,'Abre la pierna hacia el lado'),

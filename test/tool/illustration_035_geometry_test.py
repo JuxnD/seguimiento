@@ -100,6 +100,8 @@ class Geometry035(unittest.TestCase):
                     'Colgarse de la barra','Colgado pasivo','Curl con banda','Dragon flag','Dominadas',
                     'Elevaciones en straddle','Negativo de dragon flag','Negativo de dragon flag a una pierna',
                     'Negativo de dragon flag recogido','Vela'}
+        # Auditoría 052: figuras reabiertas por no coincidir con su guía.
+        selected |= set(json.loads((root/'test/fixtures/illustration_052_reopened.json').read_text(encoding='utf-8'))['names'])
         current = json.loads((root/'assets/tecnica/figuras3d.json').read_text(encoding='utf-8'))['figures']
         # Phase2 adds32 independent identities; no historical identity may
         # disappear. Exact111/11 coverage is checked by guided_contract_test.

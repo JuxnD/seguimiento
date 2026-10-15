@@ -429,9 +429,12 @@ def _plan034(name, variant, result, cycle):
             if long:
                 f['farLeg'].update(reach3=[support[0]-top[0], support[1]-top[1], 0], pole=[0, -1, .3], end3=[1, -.2, 0])
             else:
-                ankle = (support[0] + 14, bed_top - .9)
-                f['farLeg'].update(reach3=[ankle[0]-top[0], ankle[1]-top[1], 0],
-                                   pole=[support[0]-top[0], support[1]-top[1], 0], end3=[.8, -.6, 0])
+                # Tibia sobre el colchón, abierta 40° hacia atrás: la rodilla no
+                # queda casi recta (la IK sería inestable) y se lee apoyada.
+                shin = math.sqrt(14**2 - .4**2); back = math.radians(40)
+                ankle = (support[0] + shin*math.cos(back), bed_top - .9, -shin*math.sin(back))
+                f['farLeg'].update(reach3=[ankle[0]-top[0], ankle[1]-top[1], ankle[2]],
+                                   pole=[support[0]-top[0], support[1]-top[1], 0], end3=[.75, 0, -.65])
             # Pierna de abajo: libre bajo la cama, sin apoyar.
             ay = -4.5 - 4.5*k
             ax = low[0] + math.sqrt(27.4**2 - (ay - low[1])**2 - 1.5**2)
