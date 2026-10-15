@@ -461,11 +461,13 @@ const v31ProteinMax = 160;
 /// versión más nueva), completa las guías de los ejercicios nuevos, pone las
 /// metas de §19.3 y fija la próxima medición (sábado 17 oct, abdomen en
 /// ayunas). Devuelve el id de la versión.
-Future<int> activatePlanV31(AppDatabase db, PlanRepository plan, DateTime start) async {
+/// `now` fija el día desde el que rigen las metas (por defecto, hoy).
+Future<int> activatePlanV31(AppDatabase db, PlanRepository plan, DateTime start,
+    {DateTime? now}) async {
   final id = await plan.saveAsNewVersion(planV31(start));
   await applyExerciseGuides(db);
   // Por GoalRepository: las metas del v3.1 quedan con su vigencia (plan 009).
-  await GoalRepository(db).updateProfile(origin: GoalOrigin.plan, reason: 'Activación del v3.1', ProfilesCompanion(
+  await GoalRepository(db).updateProfile(origin: GoalOrigin.plan, reason: 'Activación del v3.1', now: now, ProfilesCompanion(
     nextMeasurementDate: Value(dayKey(v31MeasurementDates(start).first)),
     kcalTarget: const Value(v31KcalWeekday),
     kcalTargetFootball: const Value(v31KcalFootball),

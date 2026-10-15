@@ -80,6 +80,15 @@ una sola consulta.
    atajos. El registro de la mañana sigue junto a los anillos.
 4. **Medición**: días para la próxima, o que ya toca.
 
+### Rodar la programación un día (053)
+
+En la tarjeta del día, **Rodar 1 día** corre la semana: el día elegido (hoy por
+defecto, o uno anterior de esta semana si en la práctica ya se corrió) queda
+libre y las sesiones siguientes, con sus tests, van un día más tarde. El fútbol
+no se mueve; el primer descanso absorbe y, sin descanso, se avisa qué sesión se
+pierde antes de confirmar. El día libre lo dice y ofrece **Deshacer**. Toda la
+app lee el mismo día corrido (`PlanRepository.dayFor`).
+
 ## Edición del plan y claves de técnica
 
 El editor de una nueva versión permite modificar sostén mínimo/máximo en

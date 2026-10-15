@@ -169,7 +169,8 @@ void main() {
     await asExistingUser(db, since: start);
     final plan = PlanRepository(db, ExerciseRepository(db));
     await seedIfEmpty(db, plan);
-    await activatePlanV31(db, plan, start);
+    // Metas vigentes desde el lunes: la lectura no depende del reloj real.
+    await activatePlanV31(db, plan, start, now: start);
     await save(p: TestProtocolId.v31_12);
     final dashboard = DashboardRepository(
         db, plan, NutritionRepository(db), ProfileRepository(db));
@@ -262,7 +263,8 @@ void main() {
     await asExistingUser(db, since: start);
     final plan = PlanRepository(db, ExerciseRepository(db));
     await seedIfEmpty(db, plan);
-    await activatePlanV31(db, plan, start);
+    // Metas vigentes desde el lunes: la lectura no depende del reloj real.
+    await activatePlanV31(db, plan, start, now: start);
     for (final item in torsoTests) {
       for (final side in item.perSide ? ['I', 'D'] : [null]) {
         await db.into(db.fitnessTests).insert(FitnessTestsCompanion.insert(
@@ -319,7 +321,8 @@ void main() {
       await asExistingUser(db, since: start);
       final plan = PlanRepository(db, ExerciseRepository(db));
       await seedIfEmpty(db, plan);
-      await activatePlanV31(db, plan, start);
+      // Metas vigentes desde el lunes: la lectura no depende del reloj real.
+      await activatePlanV31(db, plan, start, now: start);
       if (legacy) {
         for (final item in torsoTests) {
           for (final side in item.perSide ? ['I', 'D'] : [null]) {
@@ -369,7 +372,8 @@ void main() {
       final plan = PlanRepository(db, ExerciseRepository(db));
       await seedIfEmpty(db, plan);
       await activatePlanV31(db, plan,
-          scenario == 'originOtherBlock' ? addDays(start, -7) : start);
+          scenario == 'originOtherBlock' ? addDays(start, -7) : start,
+          now: start);
       await save(p: TestProtocolId.v31_12,
           date: scenario == 'torsoAfterActivation' ? thu : tue);
       await activatePlanV32(
