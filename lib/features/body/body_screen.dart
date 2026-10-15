@@ -11,6 +11,7 @@ import '../../domain/habits.dart';
 import '../../domain/progress.dart';
 import '../../domain/nutrition.dart';
 import '../../domain/recovery.dart';
+import '../../domain/supplements.dart';
 import '../../data/database.dart';
 import '../../ui/hero.dart';
 import '../../ui/widgets.dart';
@@ -232,6 +233,20 @@ class _DecisionCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (weights.isEmpty) return const SizedBox.shrink();
+    final today = ref.watch(todayProvider);
+    // Creatina (§16.27.5): la que empezó más recientemente, hasta hoy.
+    final windows = ref.watch(creatineWindowsProvider).valueOrNull ?? const [];
+    DateTime? creatineStart;
+    for (final w in windows) {
+      if (w.start.isAfter(today)) continue;
+      if (creatineStart == null || w.start.isAfter(creatineStart)) {
+        creatineStart = w.start;
+      }
+    }
+    final waterNow = [
+      for (final w in windows)
+        if (inCreatineWindow(w.start, today)) w
+    ];
     final reading = twoWeekRule(
       weeks: weeklyWeightAverages(
           [for (final w in weights) (parseDay(w.date), w.kg, w.fasted)]),
@@ -240,7 +255,8 @@ class _DecisionCard extends ConsumerWidget {
           if (c.fasted && c.valuesCm[MeasureSite.abdomen] != null)
             (c.date, c.valuesCm[MeasureSite.abdomen]!),
       ],
-      today: ref.watch(todayProvider),
+      today: today,
+      creatineStart: creatineStart,
     );
     final text = Theme.of(context).textTheme;
     final (icon, color) = switch (reading.action) {
@@ -260,6 +276,14 @@ class _DecisionCard extends ConsumerWidget {
             Expanded(child: Text(reading.message, style: text.bodyLarge)),
           ],
         ),
+        for (final w in waterNow)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+                '$creatineWaterNote hasta el ${formatShort(w.end)}: '
+                'en estas semanas el peso no se lee como grasa.',
+                style: text.bodySmall),
+          ),
         const SizedBox(height: 6),
         Text(
             'Compara el promedio semanal en ayunas con el de 2 semanas antes. Si caen las repeticiones, '

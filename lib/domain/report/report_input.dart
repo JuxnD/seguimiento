@@ -9,6 +9,7 @@ import '../readiness.dart' show ReadinessWeek;
 import '../progress.dart';
 import '../nutrition.dart';
 import '../goal_history.dart';
+import '../supplements.dart' show SupplementEntry;
 
 /// Un test de la agenda efectiva del bloque.
 class TestAgendaEntry {
@@ -405,7 +406,12 @@ class ReportInput {
     this.testAttempts = const [],
     this.testResults = const [],
     this.benchmarkSchedule = const [],
+    this.supplements = const [],
   });
+
+  /// Suplementos con todas sus tomas (§16.27.5): constancia del rango y
+  /// nota del peso en las 4 semanas de la creatina.
+  final List<SupplementEntry> supplements;
 
   /// Tests del bloque previstos o efectivos en el rango (agenda efectiva).
   final List<TestAgendaEntry> testAgenda;

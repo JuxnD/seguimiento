@@ -18,6 +18,7 @@ import 'nutrition_repository.dart';
 import 'leg_chain_repository.dart';
 import 'profile_repository.dart';
 import 'readiness_repository.dart';
+import 'supplement_repository.dart';
 import 'training_repository.dart';
 import 'goal_repository.dart';
 
@@ -373,6 +374,7 @@ class ReportRepository {
             if (s.perSide) s.exercise,
       },
       previous: previous,
+      supplements: await SupplementRepository(db).entries(),
       notes: notes.length <= 1
           ? notes.firstOrNull?.body
           : notes

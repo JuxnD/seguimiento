@@ -243,6 +243,7 @@ class HomeScreen extends ConsumerWidget {
                 _YesterdayCheckCard(today: today),
                 const _CorrectionsBanner(),
                 const TodayCustomRemindersCard(),
+                const SupplementStockCard(),
                 _WeekGlanceCard(today: today),
                 if (d.v3Suggestion != null && !noRoutine && !newInstall)
                   _V3SuggestionCard(monday: d.v3Suggestion!),
@@ -259,6 +260,31 @@ class HomeScreen extends ConsumerWidget {
         },
       ),
     );
+  }
+}
+
+/// Suplementos (§16.27.5): con 7 tomas o menos en el envase, o ninguna,
+/// una línea por suplemento. Se recalcula al marcar una toma o editarlo.
+class SupplementStockCard extends ConsumerWidget {
+  const SupplementStockCard({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final stock = ref.watch(supplementStockProvider).valueOrNull ?? const [];
+    final lines = [
+      for (final s in stock)
+        if (s.message case final m?) (m, (s.remaining ?? 0) <= 0)
+    ];
+    if (lines.isEmpty) return const SizedBox.shrink();
+    return AppCard(children: [
+      for (final (message, out) in lines)
+        Row(children: [
+          Icon(out ? Icons.info_outline : Icons.inventory_2_outlined,
+              size: 20),
+          const SizedBox(width: 10),
+          Expanded(child: Text(message)),
+        ]),
+    ]);
   }
 }
 

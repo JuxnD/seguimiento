@@ -267,6 +267,14 @@ rechaza: es de una versión más nueva y restaurarlo rompería los datos.
   paralelas y anillas se sincronizan con sus filas.
 - Tablas `supplements` (nombre, dosis, porciones por envase, fecha de inicio,
   activo) y `supplement_logs` (una toma por suplemento y día) (§16.27.5).
+  Se dan de alta en Ajustes → Suplementos; la toma se marca en el registro de
+  la mañana (sólo activos con inicio ese día o antes). Quedan = envase −
+  tomas desde el inicio; Hoy avisa con 7 o menos y al acabarse. Un nombre con
+  «creatina» (sin tildes ni mayúsculas) abre 28 días de nota de agua
+  (+0,5–1,5 kg) en la gráfica de peso, Cuerpo y el informe; en ellos la regla
+  de las 2 semanas no lee como grasa un peso que no baja y decide con la
+  cintura. El informe da la constancia «N de M días». No sostienen la racha.
+  El respaldo copia la base entera: no requiere cambios.
 - Migración 19–25 → 26: un `addColumn` en cada tabla existente y cuatro
   `createTable`; antes del 19 `fitness_tests` nace con la definición actual.
   Sin backfill ni cambio de valores.

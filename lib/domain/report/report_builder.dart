@@ -11,6 +11,7 @@ import '../leg_chain.dart' show legChainReportLines;
 import '../readiness.dart' show readinessReportLines;
 import '../session_math.dart';
 import '../steps.dart';
+import '../supplements.dart';
 import 'alerts.dart';
 import 'period_summary.dart';
 import 'report_input.dart';
@@ -329,7 +330,32 @@ void _summary(StringBuffer b, ReportStats s) {
     b.writeln(
         '- Peso promedio: ${fmtDec(avg)} kg ($tag, $n ${n == 1 ? 'pesaje' : 'pesajes'})$delta');
   }
+  _supplements(b, i);
   b.writeln();
+}
+
+/// Suplementos (§16.27.5): constancia del rango y, en las 4 semanas de la
+/// creatina, por qué el peso sube sin que sea grasa.
+void _supplements(StringBuffer b, ReportInput i) {
+  for (final sup in i.supplements) {
+    final c = supplementConstancy(
+        start: sup.start,
+        logDates: sup.logs,
+        from: i.rangeStart,
+        to: i.rangeEnd,
+        today: i.today);
+    if (c == null || (!sup.active && c.taken == 0)) continue;
+    b.writeln(
+        '- ${sup.name}: ${c.taken} de ${c.days} ${c.days == 1 ? 'día' : 'días'}');
+  }
+  for (final sup in i.supplements) {
+    if (!sup.active || !sup.isCreatine || sup.start == null) continue;
+    if (!creatineWindowOverlaps(sup.start!, i.rangeStart, i.rangeEnd)) continue;
+    final w = creatineWindow(sup.start!);
+    b.writeln(
+        '- $creatineWaterNote (${formatShort(w.start)} – ${formatShort(w.end)}): '
+        'en esas semanas una subida del peso no se lee como grasa; la regla de las 2 semanas decide con la cintura.');
+  }
 }
 
 void _sessions(StringBuffer b, ReportStats s) {
