@@ -216,6 +216,9 @@ def band(name):
 
 
 def _generate_base(name):
+    import illustration_upper as upper
+    if name in upper.NAMES:
+        return upper.generate(name)
     existing = {e['name']: e for e in legacy.EXERCISES}
     old = {e['name']: e for e in flat.EXERCISES}
     if name == 'Círculos de hombros':
