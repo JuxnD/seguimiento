@@ -62,6 +62,48 @@ def generate(name, variant=None):
                       [phase('Redondea', contacts=contacts), phase('Pausa redondeado', kind='hold', seconds=3),
                        phase('Extiende suavemente', contacts=contacts), phase('Pausa abierto', kind='hold', seconds=3),
                        phase('Vuelve a neutro', contacts=contacts)], yaw=10)
+    if name == 'Libro abierto':
+        # 052: de lado (bodyRoll 90: pecho a la cámara, lado cercano abajo),
+        # rodillas juntas a 90° y brazos al frente. El brazo de arriba barre por
+        # arriba hasta el suelo del otro lado mientras el pecho gira; la mirada
+        # lo sigue. Cadera, rodillas y pies se quedan en su sitio.
+        hip = (0, -5)
+        def side(roll, k, caption):
+            th = math.radians(roll)
+            f = pose(caption, hip, 180)
+            f['bodyRoll'] = roll
+            def root(half):   # raíz rodada alrededor del eje del tronco (-x)
+                return (0, hip[1] + half*math.sin(th), half*math.cos(th))
+            for sd, sign, ky in [('near', 1, -1.7), ('far', -1, -6.7)]:
+                r = root(sign*3.3)
+                kz = r[2] + math.sqrt(max(0, 14**2 - (ky - r[1])**2))
+                ankle = (14, ky, kz)
+                f[sd+'Leg'].update(reach3=[ankle[0]-r[0], ankle[1]-r[1], ankle[2]-r[2]],
+                                   pole=[0, ky-r[1], kz-r[2]], end3=[1, 0, .3])
+            def shoulder(half):
+                r = root(half); return (-18, r[1], r[2])
+            ns = shoulder(4.5)
+            f['nearArm'].update(reach3=[0, -.75-ns[1], 18.9-ns[2]], pole=[0, -1, 0], end3=[0, 0, 1])
+            fs = shoulder(-4.5)
+            start = (0, -2.6-fs[1], 17.6-fs[2])
+            # Barrido por arriba: al frente → techo → suelo del otro lado.
+            reach_floor = math.sqrt(max(0, 18.9**2 - (-.9-fs[1])**2))
+            path = [start, (0, -18.9, 0), (0, -.9-fs[1], -reach_floor)]
+            seg = min(1, int(k*2)); w = k*2 - seg
+            a0, a1 = path[seg], path[min(2, seg+1)]
+            v = [a0[i]*(1-w) + a1[i]*w for i in range(3)]
+            n = math.sqrt(sum(c*c for c in v)); L = math.sqrt(sum(c*c for c in a0))*(1-w) + math.sqrt(sum(c*c for c in a1))*w
+            f['farArm'].update(reach3=[c*L/n for c in v], pole=[1, -.3, 0], end3=[0, 0, 1] if k < .5 else [0, 0, -1])
+            f['gaze'] = -40*k
+            return f
+        keys = [side(90 - 35*i/6, i/6, 'Abre el brazo de arriba al otro lado; síguelo con la mirada') for i in range(7)]
+        keys[0]['caption'] = 'De lado: rodillas juntas a 90°, brazos juntos al frente'
+        keys[-1]['caption'] = 'Abierto: mano al suelo del otro lado, pecho girado; pausa 2 s'
+        back = [dict(cp(f), caption='Vuelve despacio; las rodillas no se separan') for f in reversed(keys[:-1])]
+        frames = keys + [cp(keys[-1])] + back
+        motions = ([phase('Abre el libro', seconds=.35) for _ in keys[1:]] + [phase('Pausa 2 s', kind='hold', seconds=2)]
+                   + [phase('Vuelve despacio', seconds=.45) for _ in back])
+        return result(frames, motions, yaw=105, pitch=40, per_side=True)
     if name in ('Libro abierto', 'Abducción de cadera de lado'):
         # Body roll turns the same skeleton onto its side. Explicit world
         # reaches keep the upper limb movement independent from the pelvis.
@@ -99,15 +141,67 @@ def generate(name, variant=None):
             b[sd+'Arm'].update(reach3=[-2,-15,sign*11],pole=[0,1,sign],end3=[0,-1,0])
         return cycle(a,b,props=[dict(type='wall',x=-3,top=-72,depth=25,thick=1)],yaw=70)
     if name == 'Zancada del mundo':
-        a=pose('Zancada larga; rodilla posterior libre', (0,-18),0,
-               reach(15,-1),reach(-22.25,-1),reach(18,-.75,hand=0),reach(7,-.75,hand=0))
-        b=cp(a); b['caption']='Acerca el codo por dentro del pie delantero'; b['nearArm']=arm(45,145)
-        c=cp(a); c['caption']='Gira el pecho y lleva el brazo hacia arriba'; c['nearArm']=arm(-90,-90)
-        d=cp(a); d.update(hip=(-10,-13.6),torso=0,caption='Cadera atrás; extiende la rodilla delantera')
-        d['nearLeg']=reach(15,-1); d['nearArm']=reach(7,-.75,hand=0)
-        return result([a,b,cp(b),c,cp(c),d,cp(d),cp(a)],
-                      [phase('Acerca el codo'),phase('Pausa',kind='hold'),phase('Abre el pecho'),phase('Pausa',kind='hold'),
-                       phase('Extiende delante'),phase('Pausa',kind='hold'),phase('Vuelve a zancada')],per_side=True)
+        # 052: pies fijos en el mundo; la rodilla de atrás siempre estirada y
+        # en el aire. 1) codo hacia el empeine por dentro del pie delantero;
+        # 2) gira el pecho (bodyRoll) y lleva ese brazo al techo; 3) manos al
+        # suelo junto al pie, cadera atrás y rodilla delantera extendida.
+        front_foot=(15,-1,9); back_foot=(-25.5,-3.5,-3.3)
+        def world(hip, torso, roll, targets, caption):
+            t=math.radians(torso); u=(math.cos(t),math.sin(t),0)
+            c,s_=math.cos(math.radians(roll)),math.sin(math.radians(roll))
+            def side(base, half):   # raíz rodada: base + R(0,0,half)
+                return (base[0]+half*s_*u[1], base[1]-half*s_*u[0], half*c)
+            neck=(hip[0]+18*u[0],hip[1]+18*u[1])
+            f=pose(caption,hip,torso)
+            if roll: f['bodyRoll']=roll
+            for limb_name,(target,pole,end) in targets.items():
+                sd=limb_name[:-3] if limb_name.endswith('Leg') else limb_name[:-3]
+                sign=1 if limb_name.startswith('near') else -1
+                root=side(hip,sign*3.3) if limb_name.endswith('Leg') else side(neck,sign*4.5)
+                f[limb_name].update(reach3=[target[i]-root[i] for i in range(3)],pole=pole,end3=end)
+            return f
+        def legs(): return {'nearLeg':(front_foot,[1,-1,.3],[1,0,.1]),
+                            'farLeg':(back_foot,[1,0,0],[math.cos(math.radians(40)),math.sin(math.radians(40)),0])}
+        lunge_hip=(0.5,-13.5)
+        floor_near=((17,-.75,3.5),[0,1,0],[1,0,0]); floor_far=((17,-.75,-4),[0,1,0],[1,0,0])
+        a=world(lunge_hip,-12,0,{**legs(),'nearArm':floor_near,'farArm':floor_far},
+                'Zancada larga: rodilla de atrás estirada y en el aire; manos al suelo')
+        b=world(lunge_hip,4,0,{**legs(),'nearArm':((17,-1.2,5),[-.5,1,0],[1,0,0]),'farArm':floor_far},
+                'Codo hacia el empeine, por dentro del pie delantero (3 s)')
+        def opened(k, caption):
+            roll=45*k
+            f=world(lunge_hip,-12+16*(1-k),roll,{**legs(),'farArm':floor_far},caption)
+            t=math.radians(f['torso']); u=(math.cos(t),math.sin(t))
+            c,s_=math.cos(math.radians(roll)),math.sin(math.radians(roll))
+            neck=(lunge_hip[0]+18*u[0],lunge_hip[1]+18*u[1])
+            sh=(neck[0]+4.5*s_*u[1],neck[1]-4.5*s_*u[0],4.5*c)
+            # El brazo abre por el lado (+z) hasta el techo, sin cruzar el pecho.
+            down=(17-sh[0],-1.2-sh[1],5-sh[2]); dl=math.sqrt(sum(v*v for v in down))
+            a0,a1,w=((down[0]/dl,down[1]/dl,down[2]/dl),(0,0,1),k*2) if k<=.5 else ((0,0,1),(0,-1,0),k*2-1)
+            vec=[a0[i]*(1-w)+a1[i]*w for i in range(3)]
+            n=math.sqrt(sum(v*v for v in vec)); L=dl+(18.9-dl)*k
+            f['nearArm'].update(reach3=[v*L/n for v in vec],pole=[.3*(1-k),1-2*k,-.4],end3=[0,-1,0] if k>.5 else [-1,0,0])
+            f['gaze']=-35*k
+            return f
+        turn=[opened(i/4,'Gira el pecho y lleva ese brazo al techo (3 s)') for i in range(1,5)]
+        unturn=[opened(i/4,'Vuelve: mano al suelo junto al pie') for i in (3,2,1)]
+        # Isquios: cadera atrás y arriba; ambas rodillas estiradas.
+        fx,fy=front_foot[0],front_foot[1]; bx,by=back_foot[0],back_foot[1]
+        rf=math.sqrt(27.7**2-(front_foot[2]-3.3)**2); rb=27.7
+        d=math.dist((fx,fy),(bx,by)); al=(rb**2-rf**2+d**2)/(2*d); h=math.sqrt(rb**2-al**2)
+        ex,ey=(fx-bx)/d,(fy-by)/d
+        ham_hip=(bx+al*ex+h*ey, by+al*ey-h*ex)
+        ham=world(ham_hip,30,0,{'nearLeg':(front_foot,[1,-1,.3],[.6,-.8,.1]),'farLeg':legs()['farLeg'],
+                                'nearArm':((19,-.75,4),[0,1,0],[1,0,0]),'farArm':((19,-.75,-3),[0,1,0],[1,0,0])},
+                  'Manos al suelo; cadera atrás y rodilla delantera extendida (3 s)')
+        frames=[a,b,cp(b),*turn,cp(turn[-1]),*unturn,cp(a),ham,cp(ham),cp(a)]
+        frames[-1]['caption']='Vuelve a la zancada; repite'
+        motions=([phase('Codo al empeine',seconds=1.5),phase('Pausa 3 s',kind='hold',seconds=3)]
+                 +[phase('Gira y brazo al techo',seconds=.5) for _ in turn]+[phase('Pausa 3 s',kind='hold',seconds=3)]
+                 +[phase('Mano al suelo',seconds=.4) for _ in range(len(unturn)+1)]
+                 +[phase('Cadera atrás, rodilla delantera recta',seconds=1.8),phase('Pausa 3 s',kind='hold',seconds=3),
+                   phase('Vuelve a la zancada',seconds=1.8)])
+        return result(frames,motions,per_side=True,yaw=30,pitch=14)
     if name == 'Rodilla a la pared':
         # 052: punta del pie a ~3 u (8–10 cm) de la pared; la tibia avanza
         # sobre el talón fijo hasta que la rodilla toca la pared. La rodilla
@@ -167,40 +261,78 @@ def generate(name, variant=None):
         b=cp(a); b.update(caption='Eleva suavemente el arco sin encoger los dedos',footArch=.6)
         return cycle(a,b,contacts=['nearAnkle','farAnkle'],barefoot=True,focus='nearFoot',per_side=True,yaw=0,pitch=0,
                      annotations=[dict(joint='footArch',text='Arco',corner='bl')])
-    if name in ('Pike sentado','Pancake'):
+    if name == 'Pancake':
+        # 052: piernas abiertas y rectas con rodillas al techo; manos en la
+        # nuca y codos abiertos. Good mornings: bisagra de cadera con la
+        # espalda larga y el cuello neutro; la última vez se queda abajo.
+        def seated(caption, torso):
+            f=pose(caption,(0,-5),torso,limb(0,0,foot=-60),limb(0,0,foot=-60))
+            for sd,sign in [('near',1),('far',-1)]:
+                f[sd+'Leg'].update(reach3=[28*math.cos(math.pi/5),0,sign*28*math.sin(math.pi/5)],
+                                   pole=[0,-1,0],end3=[0,-1,0],keepReachRadius=True)
+                t=math.radians(torso); u=(math.cos(t),math.sin(t)); fr=(-u[1],u[0])
+                # Mano en la nuca: arriba del hombro, un poco atrás y al centro.
+                f[sd+'Arm'].update(reach3=[6*u[0]-5*fr[0],6*u[1]-5*fr[1],-sign*3.0],
+                                   pole=[.3*u[0]-fr[0]*.2,.3*u[1]-fr[1]*.2,sign],end3=[-u[0],-u[1],0])
+            f['gaze']=0
+            return f
+        up=seated('Piernas abiertas y rectas, rodillas al techo; manos en la nuca, codos abiertos',-90)
+        down=seated('Bisagra desde la cadera: espalda larga, cuello neutro',-48)
+        frames=[up,down,cp(up),cp(down),dict(cp(down),caption='Quédate abajo y respira, sin redondear'),
+                dict(cp(up),caption='Sube con la espalda larga')]
+        hold=['hip','nearAnkle','farAnkle']
+        motions=[phase('Good morning',contacts=hold,seconds=1.5),phase('Sube',contacts=hold,seconds=1.5),
+                 phase('Good morning',contacts=hold,seconds=1.5),phase('Quédate abajo',kind='hold',seconds=3),
+                 phase('Sube con control',contacts=hold,seconds=1.5)]
+        return result(frames,motions,yaw=115,pitch=18)
+    if name == 'Pike sentado':
         a=pose('Siéntate con piernas rectas y espalda larga',(0,-5),-90,
                limb(0,0,foot=-60),limb(0,0,foot=-60),arm(45,45),arm(45,45))
-        if name=='Pancake':
-            for sd,sign in [('near',1),('far',-1)]:
-                a[sd+'Leg'].update(reach3=[28*math.cos(math.pi/5),0,sign*28*math.sin(math.pi/5)],
-                                  pole=[0,-1,0],end3=[0,-1,0],keepReachRadius=True)
         b=cp(a); b.update(torso=-45,caption='Inclínate desde la cadera; conserva las rodillas rectas')
-        return cycle(a,b,contacts=['hip','nearAnkle','farAnkle'],yaw=55 if name=='Pancake' else 15)
+        return cycle(a,b,contacts=['hip','nearAnkle','farAnkle'],yaw=15)
     if name == 'Dorsal en la cama':
-        # Closed chain: knee stays on floor and elbow stays on the bed.
-        # Solve the shoulder as the intersection of torso/upper-arm circles;
-        # dense authored keys keep those supports throughout the movement.
-        elbow=(24,-19)
-        sweep=[]
-        for i in range(17):
-            leg=math.radians(90-8*i/16)
-            hip=(-14*math.cos(leg),-1.6-14*math.sin(leg))
+        # 052: cadena cerrada. Rodillas fijas en el suelo y codos fijos en el
+        # borde de la cama, manos juntas arriba. La cadera va hacia los
+        # talones; al pasar la línea brazos-tronco el pecho y la cabeza bajan
+        # entre los brazos, y al exhalar bajan un poco más.
+        elbow=(19,-17.5)
+        def kneel(thigh, low):
+            r=math.radians(thigh)
+            hip=(-14*math.cos(r),-1.6-14*math.sin(r))
             dx,dy=elbow[0]-hip[0],elbow[1]-hip[1]
-            distance=math.hypot(dx,dy)
+            distance=min(math.hypot(dx,dy),27.999)
             along=(18**2-10**2+distance**2)/(2*distance)
-            offset=math.sqrt(max(0,18**2-along**2))
-            neck=(hip[0]+along*dx/distance+offset*dy/distance,
-                  hip[1]+along*dy/distance-offset*dx/distance)
+            offset=math.sqrt(max(0,18**2-along**2))*(-1 if low else 1)
+            d=math.hypot(dx,dy)
+            neck=(hip[0]+along*dx/d+offset*dy/d, hip[1]+along*dy/d-offset*dx/d)
             torso=math.degrees(math.atan2(neck[1]-hip[1],neck[0]-hip[0]))
-            upper=math.degrees(math.atan2(elbow[1]-neck[1],elbow[0]-neck[0]))
-            f=pose('Cadera atrás; pecho entre brazos, codos apoyados',hip,torso,
-                   limb(math.degrees(leg),180,foot=180),limb(math.degrees(leg),180,foot=180),
-                   arm(upper,-90,hand=-90,planarAngles=True),arm(upper,-90,hand=-90,planarAngles=True))
-            sweep.append(f)
-        sweep[0]['caption']='Rodillas al suelo; codos en el borde de la cama'
-        frames=sweep+[cp(sweep[-1])]+[cp(f) for f in reversed(sweep[:-1])]
-        motions=[phase('Cadera atrás',seconds=.15) for _ in sweep[1:]]+[phase('Respira',kind='hold')]+[phase('Regresa',seconds=.15) for _ in sweep[1:]]
-        return result(frames,motions,props=bench(elbow[0]+3,elbow[1]+1.4,width=15,depth=12),yaw=10,gripZ=4.5)
+            f=pose('',hip,torso,limb(thigh,180,foot=180),limb(thigh,180,foot=180))
+            for sd,sign in [('near',1),('far',-1)]:
+                f[sd+'Arm'].update(reach3=[elbow[0]-neck[0],elbow[1]-8.2-neck[1],-sign*3.7],
+                                  pole=[elbow[0]-neck[0],elbow[1]-neck[1],0],end3=[0,-1,0])
+            # Cabeza entre los brazos: la mirada cae hacia el suelo.
+            f['gaze']=max(0.0,min(35.0,(neck[1]-(elbow[1]+2))*7))
+            return f
+        # Muslo con el que tronco y brazo quedan en línea (distancia 28).
+        cross=52.208
+        lean=[kneel(90-(90-cross)*(1-(1-i/8)**2),False) for i in range(9)]           # cadera atrás
+        sink=[kneel(cross+(61-cross)*(i/5)**1.5,True) for i in range(1,6)]          # el pecho baja
+        exhale=[kneel(61+4*i/3,True) for i in range(1,4)]        # exhala: un poco más
+        lean[0]['caption']='De rodillas; codos en el borde de la cama y manos juntas'
+        for f in lean[1:]: f['caption']='Cadera hacia los talones'
+        for f in sink: f['caption']='Deja caer pecho y cabeza entre los brazos'
+        for f in exhale: f['caption']='Al exhalar baja un poco más, sin arquear la lumbar'
+        go=lean+sink
+        frames=go+[cp(go[-1])]+exhale+[cp(exhale[-1])]+[cp(f) for f in reversed(go[:-1])]
+        back=len(go)-1
+        for f in frames[-back:]: f['caption']='Vuelve despacio a la posición inicial'
+        motions=([phase('Cadera atrás',seconds=.2) for _ in lean[1:]]
+                 +[phase('Pecho entre los brazos',seconds=.25) for _ in sink]
+                 +[phase('Respira',kind='hold',seconds=1.5)]
+                 +[phase('Exhala y baja un poco más',seconds=.4) for _ in exhale]
+                 +[phase('Sostén',kind='hold',seconds=1.5)]
+                 +[phase('Regresa',seconds=.15) for _ in range(back)])
+        return result(frames,motions,props=bench(elbow[0]+3,elbow[1]+1.4,width=15,depth=12),yaw=15,gripZ=4.5)
     if name == 'Pectoral en el marco de la puerta':
         # 052: marco al costado, brazo abducido 90° con el antebrazo vertical
         # en el marco; pie de ese lado adelante y el pecho gira al otro lado.
@@ -252,45 +384,81 @@ def generate(name, variant=None):
 def _plan034(name, variant, result, cycle):
     from illustration_catalog import pose, limb, arm, reach, phase, box, bench, tube, squat, running, generate as existing
     if name == 'Copenhague':
+        # 052: plancha lateral sobre el antebrazo. bodyRoll=90: pecho a la
+        # cámara (+z), lado cercano abajo. Codo fijo en el suelo y antebrazo al
+        # frente; rodilla de arriba en el borde de la cama con la tibia sobre
+        # el colchón (palanca corta) o tobillo en el borde (palanca larga).
+        # Cadena cerrada: para cada giro del tronco t se resuelve la
+        # inclinación phi del brazo (hombro alrededor del codo) que conserva el
+        # apoyo de la pierna de arriba. Abajo la cadera roza el suelo; arriba
+        # hombro, cadera y rodilla quedan en línea.
         long = variant == 'copenhagen_long'
-        support_x=28 if long else 14
-        length=28 if long else 14
-        def supported(y):
-            # Closed chain: superior knee/ankle on bed and inferior elbow on
-            # floor. Solve hip-x and torso rotation with anatomical lengths.
-            def constraints(x,t):
-                ux,uy=math.cos(t),math.sin(t); fx,fy=-uy,ux
-                hip_top=(x+fx*3.3,y+fy*3.3)
-                shoulder_bottom=(x+ux*18-fx*4.5,y+uy*18-fy*4.5)
-                return ((support_x-hip_top[0])**2+(-19-hip_top[1])**2-length**2,
-                        (-18-shoulder_bottom[0])**2+(-1.2-shoulder_bottom[1])**2-100)
-            x,t=0.,math.pi
-            for _ in range(30):
-                f,g=constraints(x,t)
-                if max(abs(f),abs(g))<1e-10: break
-                h=1e-5; fx,gx=constraints(x+h,t); ft,gt=constraints(x,t+h)
-                a,b,c,d=(fx-f)/h,(ft-f)/h,(gx-g)/h,(gt-g)/h
-                det=a*d-b*c
-                x-=(d*f-b*g)/det; t-=(-c*f+a*g)/det
-            ux,uy=math.cos(t),math.sin(t); front=(-uy,ux)
-            hip_top=(x+front[0]*3.3,y+front[1]*3.3)
-            shoulder=(x+ux*18-front[0]*4.5,y+uy*18-front[1]*4.5)
-            f=pose('Eleva o baja la pelvis; apoyos inmóviles',(x,y),math.degrees(t),
-                   limb(0,0),limb(0,0),arm(90,0),arm(90,0))
-            f['bodyRoll']=-90
-            knee=[support_x-hip_top[0],-19-hip_top[1],0]
-            target=cp(knee)
-            if not long: target[2]=14
-            f['nearLeg'].update(reach3=target,pole=knee,end3=[1,0,0] if long else [0,0,1])
-            f['farArm'].update(reach3=[-9-shoulder[0],-1.2-shoulder[1],0],
-                               pole=[-18-shoulder[0],-1.2-shoulder[1],0],end3=[1,0,0])
+        elbow = (-18.0, -1.2)
+        bed_top = -18.5 if long else -17.4
+        lever = 28 if long else 14
+        support_y = bed_top - (0.9 if long else 1.3)
+        def geo(phi, t_deg):
+            sh = (elbow[0] + 10*math.sin(math.radians(phi)), elbow[1] - 10*math.cos(math.radians(phi)))
+            t = math.radians(t_deg); u = (math.cos(t), math.sin(t)); n = (u[1], -u[0])
+            hip = (sh[0] - 18*u[0] - 4.5*n[0], sh[1] - 18*u[1] - 4.5*n[1])
+            top = (hip[0] - 3.3*n[0], hip[1] - 3.3*n[1])
+            low = (hip[0] + 3.3*n[0], hip[1] + 3.3*n[1])
+            return sh, u, n, hip, top, low
+        _, _, _, _, top0, _ = geo(0, 174.5)
+        support = (top0[0] + math.sqrt(lever**2 - (support_y - top0[1])**2), support_y)
+        def gap(phi, t): return math.dist(geo(phi, t)[4], support) - lever
+        def root(f, a, b):
+            for _ in range(60):
+                m = (a + b)/2
+                if f(a)*f(m) <= 0: b = m
+                else: a = m
+            return (a + b)/2
+        t_sag = root(lambda t: gap(0, t), 190, 225)
+        def solve_phi(t):
+            for a, b in [(-25, 0), (0, 15)]:
+                if gap(a, t)*gap(b, t) <= 0: return root(lambda ph: gap(ph, t), a, b)
+            return 0.0
+        # La pelvis roza el suelo sin atravesarlo.
+        if geo(0, t_sag)[5][1] > -4.4:
+            t_sag = root(lambda t: geo(solve_phi(t), t)[5][1] + 4.4, 185, t_sag)
+        def side(t_deg, k):
+            phi = solve_phi(t_deg)
+            sh, u, n, hip, top, low = geo(phi, t_deg)
+            f = pose('Eleva o baja la pelvis; apoyos inmóviles', hip, t_deg)
+            f['bodyRoll'] = 90
+            if long:
+                f['farLeg'].update(reach3=[support[0]-top[0], support[1]-top[1], 0], pole=[0, -1, .3], end3=[1, -.2, 0])
+            else:
+                ankle = (support[0] + 14, bed_top - .9)
+                f['farLeg'].update(reach3=[ankle[0]-top[0], ankle[1]-top[1], 0],
+                                   pole=[support[0]-top[0], support[1]-top[1], 0], end3=[.8, -.6, 0])
+            # Pierna de abajo: libre bajo la cama, sin apoyar.
+            ay = -4.5 - 4.5*k
+            ax = low[0] + math.sqrt(27.4**2 - (ay - low[1])**2 - 1.5**2)
+            f['nearLeg'].update(reach3=[ax-low[0], ay-low[1], 1.5], pole=[1, -.2, .2], end3=[.85, -.5, 0])
+            # Antebrazo en el suelo al frente, codo bajo el hombro.
+            f['nearArm'].update(reach3=[elbow[0]-sh[0], -1.0-sh[1], 9], pole=[elbow[0]-sh[0], elbow[1]-sh[1], 0], end3=[0, 0, 1])
+            f['farArm'].update(reach3=[-18.8*u[0] - 1.5*n[0], -18.8*u[1] - 1.5*n[1], 1.5],
+                               pole=[0, -.3, -1], end3=[-u[0], -u[1], 0])
+            f['gaze'] = 0
             return f
-        up=[supported(-13.7-2*i/16) for i in range(17)]
-        up[0]['caption']='Codo al suelo; '+('tobillo' if long else 'rodilla')+' superior sobre cama'
-        up[-1]['caption']='Pelvis alineada; sostén sin girarte'
-        frames=up+[cp(up[-1])]+[cp(f) for f in reversed(up[:-1])]
-        motions=[phase('Eleva la pelvis',seconds=.15) for _ in up[1:]]+[phase('Sostén',kind='hold',seconds=2)]+[phase('Baja con control',seconds=.15) for _ in up[1:]]
-        return result(frames,motions,props=bench(support_x,-18 if long else -17.4,width=10,depth=7),per_side=True,yaw=25,pitch=25)
+        sweep = [side(t_sag + (174.5 - t_sag)*i/8, i/8) for i in range(9)]
+        sweep[0]['caption'] = ('Antebrazo al suelo, codo bajo el hombro; '
+                               + ('tobillo de arriba en el borde de la cama' if long
+                                  else 'rodilla de arriba en el borde y tibia sobre la cama') + '; cadera abajo')
+        for f in sweep[1:]: f['caption'] = 'Eleva la pelvis: pecho al frente, cuerpo en línea'
+        sweep[-1]['caption'] = 'Arriba: hombro, cadera y rodilla en línea; sostén sin girarte'
+        frames = sweep + [cp(sweep[-1])] + [cp(f) for f in reversed(sweep[:-1])]
+        for f in frames[len(sweep)+1:]: f['caption'] = 'Baja la pelvis con control hasta rozar el suelo'
+        motions = ([phase('Eleva la pelvis', seconds=.15) for _ in sweep[1:]] + [phase('Sostén', kind='hold', seconds=2)]
+                   + [phase('Baja con control', seconds=.15) for _ in sweep[1:]])
+        x0 = support[0] - (3 if long else 2)
+        width = 14 if long else 20
+        props = [box([x0 + width/2, bed_top + 1, -2], [width, 2, 18]),
+                 box([x0 + 1, bed_top/2, -10], [1.5, -bed_top, 1.5]),
+                 box([x0 + width - 1, bed_top/2, -10], [1.5, -bed_top, 1.5]),
+                 box([x0 + width - 1, bed_top/2, 6], [1.5, -bed_top, 1.5])]
+        return result(frames, motions, props=props, per_side=True, yaw=50, pitch=25)
     if name == 'Sóleo sentado con mochila':
         a=pose('Sentado; mochila sobre muslos, antepiés apoyados',(0,-15),-90,
                limb(0,90,foot=0),limb(0,90,foot=0),arm(60,20),arm(60,20))
