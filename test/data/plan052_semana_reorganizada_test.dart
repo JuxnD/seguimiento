@@ -193,4 +193,26 @@ void main() {
     final t = await dash.today(now: thu);
     expect(t.fitnessTest!.part, TestPart.piernas);
   });
+
+  test('caso real: torso del martes guardado con la 1.23 (sin cabecera) y sin el pino → test el jueves',
+      () async {
+    final db31 = openInMemoryDatabase();
+    addTearDown(db31.close);
+    await asExistingUser(db31, since: mon);
+    final plan31 = PlanRepository(db31, ExerciseRepository(db31));
+    await seedIfEmpty(db31, plan31);
+    await activatePlanV31(db31, plan31, mon);
+    for (final item in protocolItems(TestProtocolId.v31_12, TestPart.torso)
+        .where((i) => i.id != 'wall_handstand')) {
+      for (final side in item.perSide ? ['I', 'D'] : [null]) {
+        await db31.into(db31.fitnessTests).insert(FitnessTestsCompanion.insert(
+            date: '2026-10-13', round: 1, item: item.id, side: Value(side), value: 5));
+      }
+    }
+    final dash = DashboardRepository(db31, plan31, NutritionRepository(db31), ProfileRepository(db31));
+    final w = await dash.today(now: wed);
+    expect(w.fitnessTest, isNull);
+    expect(w.dayType, DayType.descanso);
+    expect((await dash.today(now: thu)).fitnessTest!.part, TestPart.piernas);
+  });
 }

@@ -293,8 +293,10 @@ void main() {
         reason: 'no se hereda a otro bloque');
     await db.into(db.fitnessTests).insert(FitnessTestsCompanion.insert(
         date: dayKey(start), round: 1, item: 'pullup', value: 5));
-    expect(await repo.currentTestDate(start, 1, TestPart.piernas), wed,
-        reason: 'fechas mixtas quedan desconocidas');
+    // 1.26.2: la identidad sigue desconocida con fechas mixtas, pero el
+    // torso real del martes (12 pruebas antiguas sin cabecera) separa piernas.
+    expect(await repo.currentTestDate(start, 1, TestPart.piernas), thu,
+        reason: 'el descanso sigue al esfuerzo real');
   });
   test('Test3 piernas miércoles precede torso viernes: conserva orden nominal',
       () async {

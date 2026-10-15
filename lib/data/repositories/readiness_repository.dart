@@ -622,6 +622,29 @@ class ReadinessRepository {
       final real = measured * 2 >= items.length;
       if (real && (latest == null || date.isAfter(latest))) latest = date;
     }
+    // 1.26.2: los tests guardados antes de las cabeceras (1.23, esquema 24)
+    // no tienen intento; la migración no los inventa. También son esfuerzo
+    // real: cuenta el día con al menos la mitad de las pruebas de torso.
+    final torsoIds = {
+      for (final p in TestProtocolId.values)
+        for (final item in protocolItems(p, TestPart.torso)) item.id
+    };
+    final legacy = await (db.select(db.fitnessTests)
+          ..where((t) => t.attemptId.isNull() & t.item.isIn(torsoIds)))
+        .get();
+    final byDay = <DateTime, Set<String>>{};
+    for (final r in legacy) {
+      final date = recordedTestDate(r.date);
+      if (date == null || date.isBefore(from) || !date.isBefore(legs)) continue;
+      byDay.putIfAbsent(date, () => {}).add(r.item);
+    }
+    final half = protocolItems(TestProtocolId.v31_12, TestPart.torso).length;
+    for (final entry in byDay.entries) {
+      if (entry.value.length * 2 >= half &&
+          (latest == null || entry.key.isAfter(latest))) {
+        latest = entry.key;
+      }
+    }
     return latest;
   }
 
