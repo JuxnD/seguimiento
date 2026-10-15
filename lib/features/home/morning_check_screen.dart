@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
+import '../../data/database.dart' show SupplementRow;
 import '../../domain/dates.dart';
 import '../../domain/format.dart';
 import '../../domain/recovery.dart';
@@ -10,8 +11,9 @@ import '../../ui/widgets.dart';
 import 'sleep_hours_dialog.dart';
 
 /// Registro de la mañana (§16.15, §19.6) en una sola pantalla: peso en
-/// ayunas, pulso en reposo al despertar, horas en cama y molestias por zona.
-/// Cada dato es opcional: lo que se deja vacío no se toca.
+/// ayunas, pulso en reposo al despertar, horas en cama, molestias por zona y
+/// la toma de cada suplemento (§16.27.5). Cada dato es opcional: lo que se
+/// deja vacío no se toca.
 class MorningCheckScreen extends ConsumerStatefulWidget {
   const MorningCheckScreen({super.key, this.date});
 
@@ -38,6 +40,10 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   /// molestias por zona.
   int _muscle = 0;
   bool _ill = false;
+
+  /// Suplementos activos que ya empezaron ese día y los marcados (plan 052).
+  List<SupplementRow> _supplements = const [];
+  final _taken = <int>{};
   bool _loading = true;
 
   @override
@@ -71,6 +77,9 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
             .read(recoveryRepositoryProvider)
             .sorenessRange(_date, days: 1))[_date] ??
         const {};
+    final supplements =
+        await ref.read(supplementRepositoryProvider).dueOn(_date);
+    final taken = await ref.read(supplementRepositoryProvider).logsOn(_date);
     if (!mounted) return;
     setState(() {
       _kg.text = fasted == null ? '' : fmtDec(fasted.kg);
@@ -83,6 +92,10 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
       _sore
         ..clear()
         ..addAll(sore);
+      _supplements = supplements;
+      _taken
+        ..clear()
+        ..addAll(taken);
       _loading = false;
     });
   }
@@ -112,6 +125,12 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
         await ref.read(sleepRepositoryProvider).set(_date, _sleep!);
       }
       await ref.read(recoveryRepositoryProvider).setSoreness(_date, _sore);
+      // Marcada escribe la toma del día; desmarcada la quita.
+      for (final s in _supplements) {
+        await ref
+            .read(supplementRepositoryProvider)
+            .setTaken(s.id, _date, _taken.contains(s.id));
+      }
     }, ok: 'Registro de la mañana guardado');
     if (!ok || !mounted) return;
     ref.invalidate(dashboardProvider);
@@ -183,6 +202,35 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                         style: text.bodySmall),
                   ],
                 ),
+                if (_supplements.isNotEmpty)
+                  AppCard(
+                    title: 'Suplementos',
+                    children: [
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: [
+                          for (final s in _supplements)
+                            FilterChip(
+                              label: Text(_taken.contains(s.id)
+                                  ? '${s.name} ✓'
+                                  : s.name),
+                              showCheckmark: false,
+                              selected: _taken.contains(s.id),
+                              onSelected: (v) => setState(() =>
+                                  v ? _taken.add(s.id) : _taken.remove(s.id)),
+                            ),
+                        ],
+                      ),
+                      Text(
+                          [
+                            for (final s in _supplements)
+                              if (s.dose.isNotEmpty) '${s.name}: ${s.dose}'
+                          ]
+                              .join(' · '),
+                          style: text.bodySmall),
+                    ],
+                  ),
                 AppCard(
                   title: 'Horas en cama anoche',
                   children: [

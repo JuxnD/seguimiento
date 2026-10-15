@@ -117,6 +117,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
               ],
             ),
+            const _SupplementsCard(),
             const _BackupCard(),
             const UpdatesCard(),
           ],
@@ -124,6 +125,222 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Suplementos (plan 052, §16.27.5): nombre, dosis, tomas por envase,
+/// fecha de inicio (la elige el usuario el día que empieza) y si está activo.
+/// La toma se marca en el registro de la mañana; Hoy avisa con 7 o menos.
+class _SupplementsCard extends ConsumerWidget {
+  const _SupplementsCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => AppCard(
+        title: 'Suplementos',
+        trailing: IconButton(
+          tooltip: 'Agregar suplemento',
+          icon: const Icon(Icons.add),
+          onPressed: () => _edit(context, ref, null),
+        ),
+        children: [
+          ref.watch(supplementsProvider).when(
+                loading: () => const LinearProgressIndicator(),
+                error: (e, _) => Text('Error: $e'),
+                data: (rows) => rows.isEmpty
+                    ? const Text('Sin suplementos. Agrega uno para marcar la toma '
+                        'en el registro de la mañana y saber cuántas tomas quedan.')
+                    : Column(children: [
+                        for (final s in rows)
+                          ListTile(
+                            key: ValueKey('supplement:${s.id}'),
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(Icons.medication_outlined),
+                            title: Text(s.name),
+                            subtitle: Text(_supplementSummary(s)),
+                            trailing: Switch(
+                              value: s.active,
+                              onChanged: (v) => guarded(
+                                  context,
+                                  () => ref
+                                      .read(supplementRepositoryProvider)
+                                      .setActive(s.id, v)),
+                            ),
+                            onTap: () => _edit(context, ref, s),
+                          ),
+                      ]),
+              ),
+        ],
+      );
+
+  Future<void> _edit(
+      BuildContext context, WidgetRef ref, SupplementRow? existing) async {
+    final draft = await showDialog<_SupplementDraft>(
+        context: context,
+        builder: (_) => _SupplementDialog(existing: existing));
+    if (draft == null || !context.mounted) return;
+    final repo = ref.read(supplementRepositoryProvider);
+    await guarded(
+        context,
+        () async {
+          if (existing == null) {
+            await repo.add(
+                name: draft.name,
+                dose: draft.dose,
+                servingsPerPack: draft.servings,
+                start: draft.start,
+                active: draft.active);
+          } else {
+            await repo.edit(existing.id,
+                name: draft.name,
+                dose: draft.dose,
+                servingsPerPack: draft.servings,
+                start: draft.start,
+                active: draft.active);
+          }
+        },
+        ok: existing == null ? 'Suplemento agregado' : 'Suplemento guardado');
+  }
+}
+
+String _supplementSummary(SupplementRow s) => [
+      if (s.dose.isNotEmpty) s.dose,
+      if (s.servingsPerPack != null) '${s.servingsPerPack} tomas por envase',
+      s.startDate == null
+          ? 'sin empezar'
+          : 'desde el ${formatLong(parseDay(s.startDate!))}',
+      if (!s.active) 'en pausa',
+    ].join(' · ');
+
+typedef _SupplementDraft = ({
+  String name,
+  String dose,
+  int? servings,
+  DateTime? start,
+  bool active,
+});
+
+/// Alta o edición. El diálogo es dueño de sus controllers.
+class _SupplementDialog extends StatefulWidget {
+  const _SupplementDialog({this.existing});
+
+  final SupplementRow? existing;
+
+  @override
+  State<_SupplementDialog> createState() => _SupplementDialogState();
+}
+
+class _SupplementDialogState extends State<_SupplementDialog> {
+  late final _name = TextEditingController(text: widget.existing?.name ?? '');
+  late final _dose = TextEditingController(text: widget.existing?.dose ?? '');
+  late final _servings = TextEditingController(
+      text: widget.existing?.servingsPerPack?.toString() ?? '');
+  late DateTime? _start = widget.existing?.startDate == null
+      ? null
+      : parseDay(widget.existing!.startDate!);
+  late bool _active = widget.existing?.active ?? true;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _dose.dispose();
+    _servings.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final name = _name.text.trim();
+    if (name.isEmpty) {
+      showSnack(context, 'Escribe el nombre del suplemento');
+      return;
+    }
+    final raw = _servings.text.trim();
+    final servings = raw.isEmpty ? null : int.tryParse(raw);
+    if (raw.isNotEmpty && (servings == null || servings <= 0)) {
+      showSnack(context, 'Las tomas del envase van de 1 en adelante');
+      return;
+    }
+    final _SupplementDraft draft = (
+      name: name,
+      dose: _dose.text.trim(),
+      servings: servings,
+      start: _start,
+      active: _active,
+    );
+    Navigator.pop(context, draft);
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        scrollable: true,
+        title: Text(widget.existing == null
+            ? 'Agregar suplemento'
+            : 'Editar suplemento'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              key: const ValueKey('supplement-name'),
+              controller: _name,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(
+                  labelText: 'Nombre', hintText: 'Creatina'),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              key: const ValueKey('supplement-dose'),
+              controller: _dose,
+              decoration: const InputDecoration(
+                  labelText: 'Dosis diaria',
+                  hintText: '1 cucharada (6 g ≈ 5 g de creatina)'),
+            ),
+            const SizedBox(height: 8),
+            NumberField(
+                key: const ValueKey('supplement-servings'),
+                controller: _servings,
+                label: 'Tomas por envase',
+                suffix: 'tomas'),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.event),
+              title: const Text('Inicio'),
+              subtitle: Text(_start == null
+                  ? 'Sin fecha: elígela el día que empieces'
+                  : '${weekdayLong(_start!.weekday)} ${formatLong(_start!)}'),
+              trailing: _start == null
+                  ? const Icon(Icons.edit_calendar)
+                  : IconButton(
+                      tooltip: 'Quitar fecha',
+                      icon: const Icon(Icons.clear),
+                      onPressed: () => setState(() => _start = null),
+                    ),
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: _start ?? dateOnly(DateTime.now()),
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2100),
+                );
+                if (picked != null && mounted) {
+                  setState(() => _start = dateOnly(picked));
+                }
+              },
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Activo'),
+              subtitle: const Text('Aparece en el registro de la mañana.'),
+              value: _active,
+              onChanged: (v) => setState(() => _active = v),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar')),
+          FilledButton(onPressed: _submit, child: const Text('Guardar')),
+        ],
+      );
 }
 
 class _BackupCard extends ConsumerStatefulWidget {

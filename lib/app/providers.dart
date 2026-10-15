@@ -38,6 +38,7 @@ import '../data/repositories/recovery_repository.dart';
 import '../data/repositories/sleep_repository.dart';
 import '../data/repositories/ai_conversation_repository.dart';
 import '../data/repositories/steps_repository.dart';
+import '../data/repositories/supplement_repository.dart';
 import '../data/repositories/training_repository.dart';
 import '../domain/active_session.dart';
 import '../domain/dates.dart';
@@ -135,6 +136,36 @@ final aiConversationCountProvider = StreamProvider(
     (ref) => ref.watch(aiConversationRepositoryProvider).watchCount());
 final recoveryRepositoryProvider =
     Provider((ref) => RecoveryRepository(ref.watch(databaseProvider)));
+
+/// Suplementos (plan 052, §16.27.5): Ajustes, registro de la mañana, Hoy,
+/// peso e informe. No sostienen la racha: fuera de `streakSignalsProvider`.
+final supplementRepositoryProvider =
+    Provider((ref) => SupplementRepository(ref.watch(databaseProvider)));
+
+/// Cualquier cambio de suplementos o tomas: recalcula sus lectores.
+final supplementSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(
+      TableUpdateQuery.onAllTables([db.supplements, db.supplementLogs]));
+});
+
+/// Lista de Ajustes.
+final supplementsProvider = StreamProvider(
+    (ref) => ref.watch(supplementRepositoryProvider).watchAll());
+
+/// Lo que queda de cada suplemento activo (aviso de Hoy).
+final supplementStockProvider =
+    FutureProvider<List<SupplementStock>>((ref) {
+  ref.watch(supplementSignalsProvider);
+  return ref.watch(supplementRepositoryProvider).stock();
+});
+
+/// Las 4 semanas de agua de cada creatina activa (gráfica y Cuerpo).
+final creatineWindowsProvider =
+    FutureProvider<List<({String name, DateTime start, DateTime end})>>((ref) {
+  ref.watch(supplementSignalsProvider);
+  return ref.watch(supplementRepositoryProvider).creatineWindows();
+});
 
 /// ¿Ya se hizo el registro de la mañana ese día (`YYYY-MM-DD`)? Basta el
 /// pulso o el peso en ayunas.
@@ -556,6 +587,7 @@ final reportInputProvider =
   ref.watch(checkInsProvider);
   ref.watch(planVersionsProvider);
   ref.watch(profileProvider);
+  ref.watch(supplementSignalsProvider);
   final from = parseDay(range.$1), to = parseDay(range.$2);
   final span = daysBetween(from, to) + 1;
   final comparedRange = (dayKey(addDays(from, -span)), range.$2);

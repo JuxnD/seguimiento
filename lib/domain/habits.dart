@@ -6,6 +6,7 @@ library;
 import 'dates.dart';
 import 'progress.dart' show WeekAverage;
 import 'search.dart';
+import 'supplements.dart' show creatineWindow, creatineWindowOverlaps;
 
 // ---------------------------------------------------------------------------
 // Hidratación del partido
@@ -131,7 +132,7 @@ const sleepGoalHours = 8.0;
 enum KcalAction { subir, mantener, bajar, faltanDatos }
 
 class DecisionReading {
-  const DecisionReading(this.action, this.message, {this.kgPerWeek, this.lastWeek});
+  const DecisionReading(this.action, this.message, {this.kgPerWeek, this.lastWeek, this.creatine = false});
 
   final KcalAction action;
   final String message;
@@ -141,6 +142,10 @@ class DecisionReading {
 
   /// Lunes de la última semana completa usada.
   final DateTime? lastWeek;
+
+  /// La última semana cae en las 4 semanas de la creatina (§16.27.5): el
+  /// peso que no baja no se lee como grasa; decide la cintura.
+  final bool creatine;
 }
 
 /// Compara el promedio de la última semana completa con el de dos semanas
@@ -148,10 +153,17 @@ class DecisionReading {
 /// la cintura (abdomen) sin moverse en 3 semanas → −150 kcal o +2.000 pasos.
 /// Si caen las repeticiones, también se sube, pero eso lo decide quien
 /// entrena: la regla lo recuerda.
+///
+/// Creatina (§16.27.5): si la última semana toca sus 4 semanas desde
+/// [creatineStart], el peso sube 0,5–1,5 kg de agua intramuscular. Ahí un
+/// peso que no baja (o sube) no se lee como grasa: decide sólo la cintura.
+/// Una bajada de 0,25 kg/sem o más se lee igual que siempre: el agua sólo
+/// puede esconder bajada, no inventarla.
 DecisionReading twoWeekRule({
   required List<WeekAverage> weeks,
   required List<(DateTime, double)> abdomen,
   required DateTime today,
+  DateTime? creatineStart,
 }) {
   final complete = weeks.where((w) => addDays(w.monday, 6).isBefore(dateOnly(today)) && w.count >= 3).toList()
     ..sort((a, b) => a.monday.compareTo(b.monday));
@@ -189,6 +201,23 @@ DecisionReading twoWeekRule({
         kgPerWeek: loss, lastWeek: last.monday);
   }
   final still = _waistStill(abdomen, today);
+  if (creatineStart != null && creatineWindowOverlaps(creatineStart, last.monday, addDays(last.monday, 6))) {
+    final w = creatineWindow(creatineStart);
+    final why = '${_cap(rate())}, pero es la creatina (del ${formatShort(w.start)} al ${formatShort(w.end)}): '
+        '+0,5–1,5 kg de agua intramuscular esperada, no grasa. Decide la cintura';
+    return DecisionReading(
+      still == true ? KcalAction.bajar : KcalAction.mantener,
+      switch (still) {
+        true => '$why: no se mueve en 3 semanas, −150 kcal o +2.000 pasos.',
+        false => '$why: baja, no cambiar.',
+        null => '$why: falta una medida reciente de abdomen y otra comparable de hace 3 semanas; '
+            'no cambiar hasta registrarla.',
+      },
+      kgPerWeek: loss,
+      lastWeek: last.monday,
+      creatine: true,
+    );
+  }
   if (still == true) {
     return DecisionReading(
         KcalAction.bajar, '${_cap(rate())} y la cintura no se mueve en 3 semanas: −150 kcal o +2.000 pasos.',

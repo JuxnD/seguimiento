@@ -6,6 +6,7 @@ import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/progress.dart';
 import '../../domain/chart_evidence.dart';
+import '../../domain/supplements.dart';
 import '../../ui/widgets.dart';
 import '../../ui/theme.dart';
 import 'charts.dart';
@@ -20,6 +21,13 @@ class ChartsSection extends ConsumerWidget {
     final protein = ref.watch(proteinSeriesProvider(range));
     final weights = ref.watch(weightSeriesProvider(range));
     final sites = ref.watch(measurementSitesProvider(range));
+    // Creatina (§16.27.5): sus 4 semanas que tocan el período.
+    final water = [
+      for (final w in ref.watch(creatineWindowsProvider).valueOrNull ?? const [])
+        if (creatineWindowOverlaps(
+            w.start, parseDay(range.$1), parseDay(range.$2)))
+          w
+    ];
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Text(
           'Gráficas: ${formatLong(parseDay(range.$1))} — ${formatLong(parseDay(range.$2))}'),
@@ -74,6 +82,13 @@ class ChartsSection extends ConsumerWidget {
                     ])),
       ]),
       AppCard(title: 'Peso', children: [
+        for (final w in water)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(
+                '$creatineWaterNote (${formatShort(w.start)} – ${formatShort(w.end)}). '
+                'En esas semanas una subida del peso no se lee como grasa.'),
+          ),
         weights.when(
             loading: () => const LinearProgressIndicator(),
             error: (_, __) => const Text(
