@@ -24,6 +24,7 @@ import '../data/repositories/personal_radar_repository.dart';
 import '../domain/progress_metrics.dart';
 import '../data/repositories/dashboard_repository.dart';
 import '../data/repositories/exercise_repository.dart';
+import '../data/repositories/equipment_repository.dart';
 import '../data/repositories/fitness_test_repository.dart';
 import '../data/repositories/ladder_repository.dart';
 import '../data/repositories/nutrition_repository.dart';
@@ -407,10 +408,48 @@ final streakSignalsProvider = StreamProvider<void>((ref) {
   ]));
 });
 
+/// Banderas locales si las hay: algunas pruebas no las sobreescriben.
+final optionalLocalFlagsProvider = Provider<LocalFlags?>((ref) {
+  try {
+    return ref.watch(localFlagsProvider);
+  } on UnimplementedError {
+    return null;
+  }
+});
+
+/// Material del usuario (plan 052, §16.27.4). Con las banderas: mini
+/// paralelas y anillas las mantienen al día.
+final equipmentRepositoryProvider = Provider((ref) => EquipmentRepository(
+    ref.watch(databaseProvider),
+    flags: ref.watch(optionalLocalFlagsProvider)));
+final equipmentRowsProvider =
+    StreamProvider((ref) => ref.watch(equipmentRepositoryProvider).watchRows());
+
+/// Plan 052 (§16.27.4): el material, las pruebas pendientes y sus resultados
+/// cambian Hoy (qué ejercicios se ofrecen y el test pendiente).
+final equipmentSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables([
+    db.equipmentItems,
+    db.fitnessTestPending,
+    db.fitnessTests,
+  ]));
+});
+
+/// Pruebas que quedaron pendientes por material y ya se pueden hacer.
+final pendingEquipmentTestsProvider =
+    FutureProvider<List<PendingEquipmentTest>>((ref) {
+  ref.watch(equipmentSignalsProvider);
+  ref.watch(databaseGenerationProvider);
+  return EquipmentRepository(ref.watch(databaseProvider))
+      .pendingReadyForEquipment();
+});
+
 final dashboardProvider = FutureProvider((ref) {
   final today = ref.watch(todayProvider);
   ref.watch(recoverySignalsProvider);
   ref.watch(streakSignalsProvider);
+  ref.watch(equipmentSignalsProvider);
   ref.watch(goalHistoryProvider);
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);

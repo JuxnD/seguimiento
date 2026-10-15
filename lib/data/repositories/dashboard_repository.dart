@@ -19,6 +19,7 @@ import '../../domain/technique_session.dart';
 import '../database.dart';
 import '../../domain/adaptive_coach.dart';
 import 'coach_repository.dart';
+import 'equipment_repository.dart';
 import 'goal_repository.dart';
 import 'exercise_repository.dart';
 import 'fitness_test_repository.dart';
@@ -49,6 +50,7 @@ class TodayDashboard {
     required this.streak,
     this.activeToday = false,
     this.weekReorganized,
+    this.equipmentNotes = const [],
     required this.macros,
     required this.proteinMin,
     required this.proteinMax,
@@ -141,6 +143,10 @@ class TodayDashboard {
 
   /// Plan 052: por qué la semana se reorganizó (test movido); null si no.
   final String? weekReorganized;
+
+  /// Ejercicios que hoy salen por falta de material obligatorio (plan 052,
+  /// §16.27.4): "Pino pecho a la pared pendiente: falta colchoneta.".
+  final List<String> equipmentNotes;
   final Macros macros;
   final int? proteinMin;
   final int? proteinMax;
@@ -265,12 +271,18 @@ class DashboardRepository {
     final week = v3 != null && v3.isV31
         ? await training.testWeekFor(date, v3)
         : null;
-    final effective = view == null
+    // Plan 052 (§16.27.4): también el día sin bloques pasa por el material;
+    // lo que sale queda anotado para Hoy.
+    final checked = view == null
         ? null
         : v3?.isV32 == true || (week != null && week.role != TestWeekRole.none)
-            ? await training.withV31Blocks(view.day, date, v3,
+            ? await training.withV31BlocksChecked(view.day, date, v3,
                 planche: planche, rings: rings)
-            : view.day;
+            : applyEquipmentDetailed(
+                view.day,
+                await EquipmentRepository(db)
+                    .statuses(parallettes: planche, rings: rings));
+    final effective = checked?.day;
     // El viernes del v3.1 deja de ser circuito cuando ya salieron 10 limpias.
     final type = v3 != null && v3.isV31 && v3.resistance != null
         ? DayType.resistencia
@@ -405,6 +417,7 @@ class DashboardRepository {
       streak: constancy.streak,
       activeToday: constancy.activeToday,
       weekReorganized: week?.reason,
+      equipmentNotes: checked?.pending ?? const [],
       macros: Macros.sum(meals.map((m) => m.macros)),
       proteinMin: protein.comparable ? protein.value!.round() : null,
       proteinMax: proteinMax.comparable ? proteinMax.value!.round() : null,

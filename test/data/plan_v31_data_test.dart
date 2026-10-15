@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/repositories/dashboard_repository.dart';
+import 'package:seguimiento/data/repositories/equipment_repository.dart';
 import 'package:seguimiento/data/repositories/exercise_repository.dart';
 import 'package:seguimiento/data/repositories/nutrition_repository.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
@@ -8,6 +9,7 @@ import 'package:seguimiento/data/repositories/profile_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
 import 'package:seguimiento/data/seed_plan.dart';
 import 'package:seguimiento/domain/enums.dart';
+import 'package:seguimiento/domain/equipment.dart';
 import 'package:seguimiento/domain/dates.dart';
 import 'package:seguimiento/domain/plan_v3.dart';
 
@@ -58,7 +60,13 @@ void main() {
     expect((monday.v3!.isV31, monday.v3!.week, monday.v3!.phase), (true, 1, V3Phase.bloque1));
     expect(monday.v3Suggestion, isNull, reason: 'ya hay v3.1');
     expect(monday.kcalTarget, 2100);
-    expect(monday.blockExercises.first, startsWith('Antes, sin fatiga: Pino pecho a la pared'));
+    // Plan 052 (§16.27.4): sin colchoneta el pino no se ofrece y Hoy lo dice;
+    // con ella, va primero.
+    expect(monday.blockExercises.join(' '), isNot(contains('Pino pecho a la pared')));
+    expect(monday.equipmentNotes, ['Pino pecho a la pared pendiente: falta colchoneta.']);
+    await EquipmentRepository(db).set(EquipmentKeys.mat, EquipmentStatus.tengo);
+    expect((await dashboard.today(now: start)).blockExercises.first,
+        startsWith('Antes, sin fatiga: Pino pecho a la pared'));
     expect((await dashboard.today(now: addDays(start, 5))).kcalTarget, 2400, reason: 'sábado de fútbol');
 
     final profile = await (db.select(db.profiles)..where((t) => t.id.equals(1))).getSingle();
