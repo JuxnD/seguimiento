@@ -235,7 +235,7 @@ class _DecisionCard extends ConsumerWidget {
     if (weights.isEmpty) return const SizedBox.shrink();
     final today = ref.watch(todayProvider);
     // Creatina (§16.27.5): la que empezó más recientemente, hasta hoy.
-    final windows = ref.watch(creatineWindowsProvider).valueOrNull ?? const [];
+    final windows = ref.watch(creatineWindowsProvider).valueOrNull ?? const <({String name, DateTime start, DateTime end})>[];
     DateTime? creatineStart;
     for (final w in windows) {
       if (w.start.isAfter(today)) continue;

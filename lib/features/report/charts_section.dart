@@ -23,7 +23,7 @@ class ChartsSection extends ConsumerWidget {
     final sites = ref.watch(measurementSitesProvider(range));
     // Creatina (§16.27.5): sus 4 semanas que tocan el período.
     final water = [
-      for (final w in ref.watch(creatineWindowsProvider).valueOrNull ?? const [])
+      for (final w in ref.watch(creatineWindowsProvider).valueOrNull ?? const <({String name, DateTime start, DateTime end})>[])
         if (creatineWindowOverlaps(
             w.start, parseDay(range.$1), parseDay(range.$2)))
           w
