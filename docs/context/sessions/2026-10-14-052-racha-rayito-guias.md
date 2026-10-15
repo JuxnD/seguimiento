@@ -204,3 +204,16 @@ torácica «tampoco tiene sentido»; pidió verificar el resto. Método:
 - Pendiente fuera de alcance: círculos de muñeca y pulgares atrás del face
   pull sólo existen en el texto; en la flexión arquero los pies se desplazan
   ~25 cm con el cuerpo.
+
+## Publicación 1.26.3+38 (15 oct UTC, con el «publica» del owner)
+
+- Rama `JuxnD/052-racha-guias-hallazgos` subida sin force hasta `2a4553a`;
+  `main` intacto.
+- Release `v1.26.3` «My Prime 1.26.3 - Figuras que coinciden con su guía»,
+  latest y estable; un solo APK (`MyPrime-1.26.3+38.apk`, SHA
+  `44fc2132…faeb`), manifiesto y LEEME.
+- Run `release.yml` de la etiqueta cancelado (38749705209); el release
+  conserva sólo esos tres archivos.
+- Descarga pública sin credenciales: 200, 76 378 262 bytes, SHA idéntico.
+- El borrador `v1.26.2` sigue sin publicar (su arreglo viaja en la 1.26.3).
+- Pendiente: aceptación de las figuras en el teléfono del owner.
