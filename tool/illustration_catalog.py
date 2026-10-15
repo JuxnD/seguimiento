@@ -150,6 +150,185 @@ def reference_names():
     return sorted(names)
 
 
+def torso_to_hands(hip, hand=(16.4, -.75), length=18.95, guess=-18.0):
+    """Ángulo del tronco que deja el hombro a `length` de la mano apoyada
+    (brazos rectos); de las dos soluciones, la más cercana a `guess`."""
+    best = None
+    for i in range(-300, 301):
+        t = guess + i / 10
+        n = flat.add(hip, flat.dirv(t), flat.T)
+        err = abs(math.hypot(n[0] - hand[0], n[1] - hand[1]) - length)
+        if best is None or err < best[0]:
+            best = (err, t)
+    return best[1]
+
+
+def reverse_plank_lift(heel, hand_x, caption_seated, caption_plank, n=8, seated_y=-4.6, arm_len=18.9):
+    """052 · Plancha inversa con brazos rectos: de sentado a la línea
+    hombros–talones. Las piernas rectas giran sobre el talón fijo; el tronco
+    se resuelve para que el hombro quede siempre a `arm_len` de la mano (sin
+    flexionar codos como en un fondo). Dedos de las manos hacia los pies."""
+    hx, hy = heel
+
+    def hip_at(th):
+        return (hx - 28 * math.cos(th), hy - 28 * math.sin(th))
+
+    lo, hi = -.6, 1.0
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        h = hip_at(mid)
+        neck = (h[0] - 18 * math.cos(mid), h[1] - 18 * math.sin(mid))
+        if math.hypot(neck[0] - hand_x, neck[1] + .75) > arm_len:
+            hi = mid
+        else:
+            lo = mid
+    top = (lo + hi) / 2
+    start = math.asin((hy - seated_y) / 28)
+    frames, previous = [], -130.0
+    for i in range(n + 1):
+        th = start + (top - start) * i / n
+        hip = hip_at(th)
+        if i == n:
+            torso = 180 + math.degrees(top)
+        else:
+            # Raíz más cercana al cuadro anterior: el tronco no salta.
+            roots = []
+            for k in range(3600):
+                t = -179.95 + k * .05
+                neck = flat.add(hip, flat.dirv(t), flat.T)
+                err = math.hypot(neck[0] - hand_x, neck[1] + .75) - arm_len
+                roots.append((abs(err), t))
+            close = [t for e, t in roots if e < .03] or [min(roots)[1]]
+            torso = min(close, key=lambda t: abs(t - previous))
+        previous = torso if torso < 0 else torso - 360
+        legs = reach(hx, hy, foot=-90)
+        hands = reach(hand_x, -.75, hand=0)
+        frames.append(pose(caption_seated if i == 0 else caption_plank, hip, torso, legs, cp(legs), hands, cp(hands)))
+    return frames
+
+
+def straight_legs(frame):
+    """Piernas rectas por ángulos con el talón donde estaba: la patada
+    interpola un arco en vez de una cuerda que doblaría la rodilla."""
+    joints = flat.solve(frame)['joints']
+    for sd in ('near', 'far'):
+        a = joints[sd + 'Ankle']
+        d = math.degrees(math.atan2(a[1] - frame['hip'][1], a[0] - frame['hip'][0]))
+        frame[sd + 'Leg'] = limb(d, d, foot=frame[sd + 'Leg'].get('foot', -90))
+    return frame
+
+
+def side_plank_frames(n=8):
+    """052 · Plancha lateral sobre el antebrazo, de la cadera en el suelo a
+    la línea tobillo–cabeza. Cuerpo girado (bodyRoll −90): el lado `near`
+    queda abajo y el pecho mira a −z. Codo fijo bajo el hombro, antebrazo al
+    frente (perpendicular al cuerpo); tobillos fijos y apilados. Todo se
+    autoriza en el mundo con reach3, como Copenhague."""
+    ankle = (0.0, -.9)
+    elbow = (45.0, -1.3)
+
+    def solve(h):
+        # Cadera de abajo a altura h sobre el círculo de la pierna recta;
+        # hombro de abajo a 10 u del codo y a 18,04 u de esa cadera.
+        hn = (ankle[0] + math.sqrt(28 ** 2 - (h - ankle[1]) ** 2), h)
+        dx, dy = elbow[0] - hn[0], elbow[1] - hn[1]
+        d = math.hypot(dx, dy)
+        r1, r2 = 18.04, 10.0
+        along = (r1 ** 2 - r2 ** 2 + d ** 2) / (2 * d)
+        off = math.sqrt(max(0.0, r1 ** 2 - along ** 2))
+        sh = (hn[0] + along * dx / d + off * dy / d, hn[1] + along * dy / d - off * dx / d)
+        phi = math.atan2(sh[1] - hn[1], sh[0] - hn[0]) - math.atan2(1.2, 18)
+        u = (math.cos(phi), math.sin(phi)); front = (-u[1], u[0])
+        hip = (hn[0] - 3.3 * front[0], hn[1] - 3.3 * front[1])
+        leg = math.atan2(hn[1] - ankle[1], hn[0] - ankle[0])
+        return hn, sh, hip, phi, front, leg
+
+    # Arriba: pierna y tronco alineados.
+    lo, hi = -14.0, -2.6
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        hn, sh, hip, phi, front, leg = solve(mid)
+        if phi < leg:
+            hi = mid
+        else:
+            lo = mid
+    top = (lo + hi) / 2
+    frames = []
+    for i in range(n + 1):
+        h = -2.6 + (top + 2.6) * i / n
+        hn, sh, hip, phi, front, leg = solve(h)
+        far_hip = (hip[0] - 3.3 * front[0], hip[1] - 3.3 * front[1])
+        target = (ankle[0] + .4, ankle[1] - 2.8)
+        span = math.hypot(target[0] - far_hip[0], target[1] - far_hip[1])
+        k = 27.95 / span
+        far_ankle = (far_hip[0] + (target[0] - far_hip[0]) * k, far_hip[1] + (target[1] - far_hip[1]) * k)
+        f = pose('Colócate: cadera en el suelo, codo bajo el hombro, antebrazo al frente' if i == 0 else
+                 'Eleva la pelvis hasta alinear tobillo, cadera y cabeza',
+                 hip, math.degrees(phi), limb(), limb(), arm(), arm())
+        f['bodyRoll'] = -90
+        f['nearLeg'] = limb(reach3=[ankle[0] - hn[0], ankle[1] - hn[1], 0], pole=[0, 0, -1], end3=[.2, 0, -1])
+        f['farLeg'] = limb(reach3=[far_ankle[0] - far_hip[0], far_ankle[1] - far_hip[1], 0], pole=[0, 0, -1], end3=[.2, 0, -1])
+        f['nearArm'] = arm(90, 0, reach3=[elbow[0] + .3 - sh[0], elbow[1] + .25 - sh[1], -9],
+                           pole=[elbow[0] - sh[0], elbow[1] - sh[1], 0], end3=[0, 0, -1])
+        f['farArm'] = arm(-90, -90, reach3=[0, -18.8, 0], pole=[1, 0, 0], end3=[0, -1, 0])
+        frames.append(f)
+    frames[-1]['caption'] = 'Sostén: línea recta, cadera alta, pecho al frente'
+    return frames
+
+
+def climbers():
+    """052 · Escaladores: plancha alta y una rodilla al pecho por vez.
+
+    Cada pierna se autoriza en 3D (reach3 relativo a su cadera). La de apoyo
+    conserva el tobillo en el mundo; la que se mueve recorre un arco con el
+    talón alto y una leve apertura al pasar bajo la cadera, de modo que la
+    rodilla nunca toca el suelo. La cadera apenas sube (2 u ≈ 6 cm)."""
+    base = plank(24, 'Plancha alta: hombros sobre las manos')
+    joints = flat.solve(base)['joints']
+    hip0 = base['hip']
+    ankle = joints['nearAnkle']
+    foot0 = base['nearLeg']['foot']
+    a0 = math.degrees(math.atan2(ankle[1] - hip0[1], ankle[0] - hip0[0]))
+    end0 = [math.cos(math.radians(foot0)), math.sin(math.radians(foot0)), 0]
+
+    def key(moving, s, caption):
+        lift = 2.0 * math.sin(math.pi * s)
+        hip = (hip0[0] - lift, hip0[1] - lift)
+        f = pose(caption, hip, torso_to_hands(hip, guess=base['torso']),
+                 limb(), limb(), reach(16.4, -.75, hand=0), reach(16.4, -.75, hand=0))
+        for sd, sz in (('near', 1), ('far', -1)):
+            if sd != moving or s == 0:
+                f[sd + 'Leg'] = limb(reach3=[ankle[0] - hip[0], ankle[1] - hip[1], 0],
+                                     pole=[0, 1, 0], end3=end0)
+                continue
+            alpha = math.radians(a0 + (25 - a0) * s)
+            beta = math.radians(36 * math.sin(math.pi * s))
+            gamma = a0 + (205 - a0) * s / .5 if s <= .5 else 205 + (170 - 205) * (s - .5) / .5
+            foot = gamma - (90 + (30 - 90) * min(1, s / .15))
+            knee = [14 * math.cos(alpha) * math.cos(beta), 14 * math.sin(alpha) * math.cos(beta),
+                    sz * 14 * math.sin(beta)]
+            g = math.radians(gamma)
+            f[sd + 'Leg'] = limb(reach3=[knee[0] + 14 * math.cos(g), knee[1] + 14 * math.sin(g), knee[2]],
+                                 pole=knee, end3=[math.cos(math.radians(foot)), math.sin(math.radians(foot)), 0])
+        return f
+
+    steps = [0, 1/6, 2/6, 3/6, 4/6, 5/6, 1]
+    frames, motion = [key('near', 0, base['caption'])], []
+    for sd, first in (('near', 'Lleva una rodilla al pecho; el pie no toca el suelo'),
+                      ('far', 'Alterna: la otra rodilla al pecho')):
+        support = ('far' if sd == 'near' else 'near') + 'Ankle'
+        for s in steps[1:]:
+            frames.append(key(sd, s, first if s < 1 else 'Rodilla al pecho; cadera baja y estable'))
+            motion.append(dict(label=first, contacts=['nearHand', 'farHand', support]))
+        for s in reversed(steps[:-1]):
+            frames.append(key(sd, s, 'Vuelve atrás: sólo la punta del pie apoya' if s else base['caption']))
+            motion.append(dict(label='Vuelve a la plancha alta', contacts=['nearHand', 'farHand', support]))
+    e = basic('Escaladores', frames, group='Condición', focus=None)
+    e['view']['pitch'] = 4  # cámara baja: se ve el aire bajo la rodilla
+    e['motion'] = [dict(kind='interpolate', ground='preserve', part='', seconds=.14, **m) for m in motion]
+    return e
+
+
 def band(name):
     start, end = pose('Colócate: torso estable'), pose('Realiza el recorrido sin mover el torso')
     props, group, focus = [], 'Banda', 'nearHand'
@@ -264,19 +443,31 @@ def _generate_base(name):
         ex['gripZ']=4.5
         return ex
     if name == 'Balanceos de pierna':
-        vectors=[([0,28,0],[1,0,0],'Una mano en la pared; el otro pie sostiene el cuerpo'),
-                 ([28*math.cos(math.radians(55)),28*math.sin(math.radians(55)),0],
-                  [math.cos(math.radians(-35)),math.sin(math.radians(-35)),0],'Pierna móvil relajada y pie libre: balancea delante, sin patear'),
-                 ([28*math.cos(math.radians(115)),28*math.sin(math.radians(115)),0],
-                  [math.cos(math.radians(25)),math.sin(math.radians(25)),0],'Balancea atrás sin arquear la espalda'),
-                 ([0,28,0],[1,0,0],'Vuelve al centro antes del balanceo lateral'),
-                 ([0,28*math.cos(math.radians(30)),14],[1,0,0],'Abre la pierna hacia el lado; el pie de apoyo no se mueve'),
-                 ([5,math.sqrt(28**2-5**2-7**2),-7],[1,0,0],'Cruza suavemente por delante, no detrás del apoyo'),
-                 ([0,28,0],[1,0,0],'Vuelve al centro; cambia de pierna')]
+        # 052: la pierna móvil va despegada (rodilla apenas flexionada) y la
+        # amplitud crece en cada balanceo; luego de lado a lado por delante.
+        r=26.5
+        def sag(deg,caption):
+            t=math.radians(deg)
+            return ([r*math.sin(t),r*math.cos(t),0],[math.cos(-t),math.sin(-t),0],caption)
+        def lat(deg,caption,forward=0):
+            t=math.radians(deg)
+            y=math.sqrt(r**2-forward**2-(r*math.sin(t))**2)
+            return ([forward,y,r*math.sin(t)],[1,0,0],caption)
+        vectors=[sag(0,'Una mano en la pared; la pierna móvil cuelga despegada'),
+                 sag(30,'Balancea adelante, relajada: primero poco'),
+                 sag(-20,'Atrás sin arquear la espalda'),
+                 sag(50,'Cada vez un poco más alto'),
+                 sag(-30,'Atrás, la cadera no rota'),
+                 sag(70,'Más alto aún, sin patear'),
+                 sag(-38,'Atrás con la espalda quieta'),
+                 sag(0,'Vuelve al centro antes del balanceo lateral'),
+                 lat(25,'Abre la pierna hacia el lado'),
+                 lat(-14,'Cruza por delante del pie de apoyo',forward=6),
+                 lat(38,'Abre un poco más; el pie de apoyo no se mueve'),
+                 lat(-20,'Cruza por delante, cada vez más',forward=7),
+                 sag(0,'Vuelve al centro; cambia de pierna')]
         frames=[]
         for vector,end,caption in vectors:
-            # Mobile leg is relaxed: slight knee flexion leaves the foot clear.
-            vector=[component * 27.5 / 28 for component in vector]
             f=pose(caption,nl=limb(90,90,reach3=vector,pole=[1,0,0],end3=end,keepReachRadius=True),
                    fl=limb(90,90,foot=0),na=arm(),
                    fa=arm(160,160,reach3=[0,4,-12],pole=[1,-1,0],end3=[0,-1,0],grip='hold'))
@@ -348,14 +539,14 @@ def _generate_base(name):
     if name in {'Separaciones con banda','Elevaciones laterales con banda','Pallof press con banda','Face pull con banda','Remo con banda','Curl con banda','Extensión de tríceps sobre la cabeza con banda'}:
         return band(name)
     if name == 'Plancha lateral':
-        angle = 14.5
-        hip_y = -.9 - 28*math.sin(math.radians(angle)) - 3.3*math.cos(math.radians(angle))
-        f = pose('Colócate: antebrazo bajo el hombro, pies apilados',(0,hip_y),-angle,
-                 limb(180-angle,180-angle,foot=90-angle),limb(180-angle,180-angle,foot=90-angle),
-                 arm(90,0,reach3=[9,10.58,0],pole=[0,1,0],end3=[1,0,0]),
-                 arm(-90,-90,reach3=[0,-18.8,0],pole=[1,0,0],end3=[0,-1,0]))
-        f['bodyRoll']=-90
-        return basic(name,[f,dict(cp(f),caption='Sostén: hombros y cadera apilados, pelvis elevada')],group='Core',yaw=180)
+        up = side_plank_frames()
+        frames = up + [cp(up[-1])] + [cp(f) for f in reversed(up[:-1])]
+        frames[-1]['caption'] = 'Baja la cadera con control; cambia de lado'
+        e = basic(name, frames, group='Core', yaw=180)
+        e['motion'] = ([phase('Eleva la pelvis', seconds=.25) for _ in up[1:]] +
+                       [phase('Sostén por lado', kind='hold', seconds=3)] +
+                       [phase('Baja con control', seconds=.25) for _ in up[1:]])
+        return e
     if name == 'Colgado pasivo':
         e=cp(existing['Dominadas']); e['name']=name; e.pop('variant',None); e['props']=[p for p in e['props'] if p['type']!='backpack']
         f=cp(e['frames'][0]); f['caption']='Cierra las manos sobre la barra y deja caer el peso'
@@ -468,9 +659,39 @@ def _generate_base(name):
             return pose(c,(0,h),-165,reach(20,-1,foot=0),limb(-40,-40,foot=0),arm(0,0,hand=0),arm(0,0,hand=0))
         return basic(name,[bridge('Boca arriba: un pie apoyado y la otra pierna elevada',-5),bridge('Eleva la cadera; conserva la pelvis nivelada',-15),bridge('Baja de forma controlada',-5)],group='Piernas',focus='hip')
     if name == 'Gemelos a una pierna en escalón':
-        a=pose('Apoya el antepié en el borde del escalón',(0,-32),nl=limb(90,90,foot=0),fl=limb(60,160,foot=150))
-        b=cp(a);b['hip']=(0,-36);b['nearLeg']['foot']=55;b['caption']='Eleva el talón, sin rebote'
-        return basic(name,[a,b,dict(cp(a),caption='Baja el talón despacio')],group='Piernas',props=[box([5,-1.5,0],[10,3,20])],focus='nearAnkle')
+        # 052: el antepié gira sobre el borde del escalón y una mano se apoya
+        # en una pared lateral: el talón baja por debajo del borde y sube a
+        # punta. Barrido
+        # denso para que la planta pivote en el borde y no lo atraviese.
+        step, wall_z, hand = 6.0, -15.0, (2.0, -41.0)
+        def calf(angle, caption):
+            # Talón abajo: el pie gira sobre el borde (a 3,2 u del tobillo).
+            # A punta: gira sobre la punta, que queda quieta en el escalón.
+            r = math.radians(angle)
+            pivot, arm_ = ((0.0, -step), 3.2) if angle <= 0 else ((1.8, -step), 5.0)
+            ankle = (pivot[0] - arm_*math.cos(r) + math.sin(r), pivot[1] - arm_*math.sin(r) - math.cos(r))
+            hip = (ankle[0] + 1.2, ankle[1] - 27.7)
+            neck = flat.add(hip, flat.dirv(-88), flat.T)
+            # Mano de la pared lateral fija en el mundo: alcance desde el hombro.
+            return pose(caption, hip, -88, reach(*ankle, foot=angle), limb(96, 150, foot=165), arm(92, 92),
+                        arm(90, 90, reach3=[hand[0] - neck[0], hand[1] - neck[1], wall_z + .5 + 4.5],
+                            pole=[0, 1, -.3], end3=[0, -1, 0]))
+        def sweep(a, b, n, caption):
+            return [calf(a + (b - a) * i / n, caption) for i in range(1, n + 1)]
+        frames = [calf(0, 'Antepié en el borde del escalón; una mano en la pared')]
+        frames += sweep(0, -30, 3, 'Baja el talón todo lo posible, por debajo del borde')
+        frames += sweep(-30, 40, 6, 'Sube hasta la punta del pie')
+        frames.append(dict(cp(frames[-1]), caption='Aguanta 1 s arriba'))
+        frames += sweep(40, -30, 6, 'Baja despacio, sin rebotar abajo')
+        frames += sweep(-30, 0, 3, 'Vuelve al apoyo y repite')
+        e = basic(name, frames, group='Piernas', props=[box([6, -step / 2, -2], [12, step, 22]),
+                  box([0, -32, wall_z - .5], [44, 64, 1], alpha=.28)], focus='nearAnkle', yaw=12)
+        e['motion'] = ([phase('Baja el talón', contacts=['farHand'], seconds=.6) for _ in range(3)] +
+                       [phase('Sube a punta', contacts=['farHand'], seconds=.25) for _ in range(6)] +
+                       [phase('Aguanta arriba', kind='hold', seconds=1)] +
+                       [phase('Baja despacio', contacts=['farHand'], seconds=.5) for _ in range(6)] +
+                       [phase('Vuelve al apoyo', contacts=['farHand'], seconds=.4) for _ in range(3)])
+        return e
     if name in {'Carga de maleta con mochila','Carga abrazada al pecho'}:
         a=pose('Colócate de pie: costillas sobre la pelvis')
         b=pose('Camina sin inclinarte hacia la carga',nl=limb(75,100),fl=limb(105,120))
@@ -494,8 +715,13 @@ def _generate_base(name):
         return basic(name,[jogging,opened,lateral,core,side,nordic,single,jump,skate,run],group='Condición',yaw=30)
     if name in {'Salto vertical','Salto largo','Sentadilla con salto','Salto de patinador','Aceleración 10–20 m','Rodillas arriba','Burpees','Calentamiento tipo FIFA 11+'}:
         if name=='Burpees':
-            crouch=pose('Lleva las manos al suelo',(-8,-9),-15,reach(0,-1,foot=0),reach(0,-1,foot=0),reach(13,-.75,hand=0),reach(13,-.75,hand=0))
-            return basic(name,[squat('Colócate de pie'),crouch,plank(24,'Pasa a plancha'),dict(cp(crouch),caption='Recoge los pies junto a las manos'),squat('Salta y aterriza con control',jump=True)],group='Condición',focus='hip')
+            # 052: los pies saltan atrás con la cadera alta (cuadro `hop`), así
+            # las rodillas nunca tocan el suelo: plancha alta, no cuadrupedia.
+            hands=reach(16.4,-.75,hand=0)
+            crouch=pose('Agáchate: manos al suelo delante de los pies',(-2,-15),-15,reach(3,-1,foot=0),reach(3,-1,foot=0),hands,cp(hands))
+            hop_hip=(2,-21)
+            hop=pose('Salta atrás con los pies; cadera alta',hop_hip,torso_to_hands(hop_hip,guess=0),reach(-20,-9,foot=60),reach(-20,-9,foot=60),cp(hands),cp(hands))
+            return basic(name,[squat('De pie: pies a la anchura de la cadera',x=3),crouch,hop,plank(24,'Plancha alta: sólo manos y puntas de los pies apoyadas'),squat('Salta y aterriza con control',jump=True)],group='Condición',focus='hip')
         if name in {'Aceleración 10–20 m','Rodillas arriba','Calentamiento tipo FIFA 11+'}:
             a=pose('Paso inicial: cadera estable',(0,-27),-80,limb(-15,90,foot=0),reach(0,-1,foot=0),arm(110,-20),arm(-40,80))
             b=pose('Alterna piernas y brazos',(0,-27),-80,reach(0,-1,foot=0),limb(-15,90,foot=0),arm(-40,80),arm(110,-20))
@@ -562,27 +788,34 @@ def _generate_base(name):
                 e['frames'].append(f)
             return e
         if name=='Progresión de pistol':
-            a=pose('Una pierna de apoyo; otra al frente',nl=limb(),fl=limb(0,0),na=arm(0,0),fa=arm(0,0))
-            b=pose('Baja sobre la pierna de apoyo; usa ayuda si la necesitas',(-10,-15),-65,reach(0,-1,foot=0),limb(0,0),arm(0,0),arm(0,0))
-            return basic(name,[a,b,dict(cp(a),caption='Empuja el suelo y vuelve a subir')],group='Piernas',focus='hip')
-        # Brazos rectos con manos fijas; no recortar un alcance imposible.
-        lo,hi=0.0,40.0
-        for _ in range(40):
-            mid=(lo+hi)/2;r=math.radians(mid)
-            dist=math.hypot(47-46*math.cos(r),46*math.sin(r)+.25)
-            if dist>18.99:hi=mid
-            else:lo=mid
-        r=math.radians((lo+hi)/2)
-        hip=(27-28*math.cos(r),-1-28*math.sin(r))
-        a=pose('Palmas detrás, brazos rectos, pelvis elevada',hip,180+math.degrees(r),reach(27,-1,foot=-90),reach(27,-1,foot=-90),reach(-20,-.75,hand=180),reach(-20,-.75,hand=180))
-        b=cp(a);b['farLeg']=limb(-20,-20,foot=-110);b['caption']='Eleva una pierna; manos y talón de apoyo no se mueven'
-        return basic(name,[a,b,dict(cp(a),caption='Apoya la pierna y alterna')],group='Core',focus='hip')
+            # 052: banco detrás a la altura de la cadera en la pose baja; se
+            # baja hasta sentarse con el talón pegado y se sube sin impulso.
+            a=pose('De pie sobre una pierna, banco detrás; la otra estirada al frente',nl=limb(),fl=limb(0,0),na=arm(0,0),fa=arm(0,0))
+            b=pose('Baja controlado hasta sentarte; talón de apoyo pegado al suelo',(-10,-15),-65,reach(0,-1,foot=0),limb(-4,-4),arm(0,0),arm(0,0))
+            e=basic(name,[a,b,dict(cp(b),caption='Toca el banco sin dejarte caer'),dict(cp(a),caption='Sube sin impulso, brazos al frente')],
+                    group='Piernas',props=bench(-13,-11.8,width=12,depth=9),focus='hip')
+            e['motion']=[phase('Baja controlado',contacts=['nearAnkle'],seconds=2.4),phase('Sentado en el banco',kind='hold',seconds=1),
+                         phase('Sube sin impulso',contacts=['nearAnkle'],seconds=2)]
+            return e
+        # 052: sentado, manos detrás con los dedos hacia los pies; la pelvis
+        # sube con los brazos rectos y la patada alterna sin bajar la cadera.
+        lift=reverse_plank_lift((27,-1),-20,'Sentado: manos detrás de la cadera, dedos hacia los pies',
+                                'Sube la cadera con los brazos rectos')
+        top=straight_legs(cp(lift[-1]));top['caption']='Cuerpo recto de hombros a talones'
+        far=cp(top);far['farLeg']=limb(-20,-20,foot=-110);far['caption']='Patea una pierna arriba sin dejar caer la cadera'
+        near=cp(top);near['nearLeg']=limb(-20,-20,foot=-110);near['caption']='Alterna: patea la otra pierna'
+        frames=lift+[top,far,cp(top),near,cp(top)]+[cp(f) for f in reversed(lift[:-1])]
+        frames[-1]['caption']='Baja la cadera con control'
+        e=basic(name,frames,group='Core',focus='hip')
+        hands,heels=['nearHand','farHand'],['nearAnkle','farAnkle']
+        e['motion']=([phase('Sube la cadera',contacts=heels,seconds=.25) for _ in lift[1:]]+
+                     [phase('Sostén la línea',kind='hold',seconds=.8),phase('Patea arriba',contacts=hands+['nearAnkle'],seconds=.8),phase('Baja la pierna',contacts=hands+['nearAnkle'],seconds=.8),
+                      phase('Patea la otra',contacts=hands+['farAnkle'],seconds=.8),phase('Baja la pierna',contacts=hands+['farAnkle'],seconds=.8)]+
+                     [phase('Baja la cadera con control',contacts=heels,seconds=.25) for _ in lift[1:]])
+        return e
     if name in {'Escaladores','Vela','Negativo de dragon flag recogido','Negativo de dragon flag a una pierna','Negativo de dragon flag','Dragon flag','V-up a una pierna','V-up','V-up con bajada lenta'}:
         if name=='Escaladores':
-            a=plank(24,'Colócate en plancha: hombros sobre manos');b=cp(a)
-            b['nearLeg']=limb(-25,110,foot=0);b['caption']='Lleva una rodilla hacia el pecho, sin levantar la cadera'
-            c=cp(a);c['farLeg']=limb(-25,110,foot=0);c['caption']='Alterna la rodilla, manos fijas'
-            return basic(name,[a,b,c],group='Condición',focus=None)
+            return climbers()
         if name.startswith('V-up'):
             a=supine('Boca arriba: brazos y piernas alargados',[limb(0,0),limb(0,0)],arms=arm(180,180,hand=180))
             b=pose('Acerca el torso y las piernas en una V',(0,-5),-135,limb(-40,-40),limb(0,0) if name=='V-up a una pierna' else limb(-40,-40),arm(-30,-30),arm(-30,-30))
@@ -646,9 +879,20 @@ def _generate_base(name):
             b=cp(a);b['caption']='Talón hacia glúteo: la rodilla sigue hacia el suelo'
             return basic(name,[a,b],group='Movilidad',yaw=-25,props=[dict(type='wall',x=18,top=-62,depth=12,thick=2)],focus=None,annotations=[dict(joint='nearAnkle',text='Talón hacia el glúteo',corner='bl'),dict(joint='nearKnee',text='Rodilla hacia abajo',corner='tr')])
         if name=='Gemelo contra la pared':
-            a=pose('Manos en la pared: una pierna queda detrás',(-12,-26),-75,reach(-20,-1,foot=0),reach(0,-1,foot=0),reach(12,-40,hand=-90),reach(12,-40,hand=-90))
-            b=cp(a);b['caption']='Acerca el pecho; el talón trasero no se despega';b['torso']=-65
-            return basic(name,[a,b],group='Movilidad',props=[dict(type='wall',x=13,top=-64,depth=12,thick=2)],focus=None)
+            # 052: pierna de atrás recta con el talón abajo (cadera sobre el
+            # círculo de 27,9 u alrededor del tobillo); luego se inclina en
+            # bloque y al final dobla un poco esa rodilla.
+            def calf(c,hip,torso):
+                return pose(c,hip,torso,reach(-22,-1,foot=0),reach(-4,-1,foot=0),reach(11.3,-39,hand=-90),reach(11.3,-40,hand=-90))
+            a=calf('Manos en la pared; pierna de atrás estirada, talón en el suelo',(-13,-27.4),-68)
+            b=calf('Inclínate hacia la pared; la pierna de atrás sigue recta',(-10,-26.2),-64.5)
+            c=calf('Luego dobla un poco la rodilla de atrás; el talón no se despega',(-10.5,-24.4),-66)
+            e=basic(name,[a,b,cp(b),c,cp(c),cp(a)],group='Movilidad',props=[dict(type='wall',x=13,top=-64,depth=12,thick=2)],focus=None)
+            contacts=['nearAnkle','farAnkle','nearHand','farHand']
+            e['motion']=[phase('Inclínate hacia la pared',contacts=contacts),phase('Sostén: talón de atrás abajo',kind='hold',seconds=2),
+                         phase('Dobla un poco la rodilla de atrás',contacts=contacts),phase('Sostén',kind='hold',seconds=2),
+                         phase('Regresa con control',contacts=contacts)]
+            return e
         a=supine('Glúteos cerca de la pared, espalda en el suelo',[limb(-90,-90,foot=180),limb(-90,-90,foot=180)])
         b=cp(a);b['caption']='Apoya las piernas en la pared y respira'
         return basic(name,[a,b],group='Movilidad',props=[dict(type='wall',x=2,top=-48,depth=12,thick=2)],focus=None)
@@ -711,34 +955,60 @@ def generate(name):
                             phase('Recepción con la otra pierna',ground='flight',seconds=.3)]
         e['motion'].append(phase('Nuevo tramo: reinicio de la demostración',kind='cut',seconds=.5))
     elif name == 'Burpees':
-        standing,crouch,plank_frame,collect,jump=e['frames']
-        for f in (crouch,collect):
-            f['nearArm']=reach(16.4,-.75,hand=0)
-            f['farArm']=reach(16.4,-.75,hand=0)
-        jump['caption']='Vuelo: manos y pies libres'
-        landing=squat('Aterriza: flexiona cadera y rodillas',True)
-        e['frames']=[standing,crouch,plank_frame,collect,standing,jump,landing,cp(standing)]
-        e['motion']=[phase('Manos al suelo'),phase('Extiende las piernas',contacts=['nearHand','farHand']),
-                     phase('Recoge los pies',contacts=['nearHand','farHand']),phase('Prepárate para saltar'),
-                     phase('Despegue',ground='flight'),phase('Aterrizaje',ground='flight'),phase('Vuelve de pie')]
+        # 052: plancha alta (sólo manos y puntas), pecho al suelo como pide la
+        # guía, recoger, contramovimiento, despegue con brazos arriba, vuelo
+        # con los pies despegados y aterrizaje flexionando.
+        standing,crouch,hop,plank_frame,_=e['frames']
+        chest=plank(12,'Pecho al suelo: el cuerpo baja en bloque')
+        pushed=cp(plank_frame);pushed['caption']='Empuja: vuelve a la plancha alta'
+        back=cp(hop);back['caption']='Salta hacia las manos con la cadera alta'
+        collect=cp(crouch);collect['caption']='Recoge los pies junto a las manos'
+        ready=pose('Levanta el pecho: cadera atrás, brazos atrás',(-1.5,-21),-62,
+                   reach(3,-1,foot=0),reach(3,-1,foot=0),arm(118,100),arm(118,100))
+        takeoff=pose('Despegue: extiende cadera, rodillas y tobillos',(2.6,-33),-88,
+                     reach(1.3,-5.3,foot=70),reach(1.3,-5.3,foot=70),arm(-100,-100),arm(-100,-100))
+        flight=pose('Vuelo: brazos arriba, pies despegados',(3,-39),-89,
+                    limb(91,91,foot=72),limb(91,91,foot=72),arm(-98,-98),arm(-98,-98))
+        landing=pose('Aterriza suave: rodillas flexionadas',(-1.5,-20.5),-65,
+                     reach(3,-1,foot=0),reach(3,-1,foot=0),arm(55,25),arm(55,25))
+        finish=cp(standing);finish['caption']='Vuelve de pie y repite'
+        e['frames']=[standing,crouch,hop,plank_frame,chest,pushed,back,collect,ready,takeoff,flight,landing,finish]
+        e['view']['pitch']=5  # cámara baja: se ve el aire bajo rodillas y pies
+        hands,feet=['nearHand','farHand'],['nearAnkle','farAnkle']
+        e['motion']=[phase('Agáchate: manos al suelo',contacts=feet,seconds=1),
+                     phase('Salta atrás con los pies',contacts=hands,seconds=.5),
+                     phase('Cae en plancha alta',contacts=hands,seconds=.5),
+                     phase('Pecho al suelo',contacts=hands,seconds=1.2),
+                     phase('Empuja a plancha alta',contacts=hands,seconds=1.2),
+                     phase('Salta hacia las manos',contacts=hands,seconds=.5),
+                     phase('Recoge los pies',contacts=hands,seconds=.5),
+                     phase('Levanta el pecho',contacts=feet,seconds=1),
+                     phase('Despegue',seconds=.8),
+                     phase('Vuelo',ground='flight',seconds=.8),
+                     phase('Aterrizaje',ground='flight',seconds=.8),
+                     phase('Vuelve de pie',contacts=feet,seconds=1)]
     elif name == 'Calentamiento tipo FIFA 11+':
         # Ten named parts, each animated within its own exercise. A cut is
         # an announced change of task, never a morph between unrelated bodies.
         originals=e['frames']
         preparation = generate('Burpees')['frames']
+        # 052: cuclillas, pies atrás con la cadera alta y plancha (Burpees
+        # 1–3); la salida repite el salto: las rodillas no tocan el suelo.
+        crouch,hop,plank_key=(cp(preparation[i]) for i in (1,2,3))
         plank_part = basic('Plancha frontal',
-                           [cp(preparation[1]),cp(preparation[2]),cp(preparation[2]),cp(preparation[1])],
+                           [crouch,hop,plank_key,cp(plank_key),cp(hop),cp(crouch)],
                            group='Core')
         plank_part['frames'][0]['caption']='Entrada: manos al suelo'
-        plank_part['frames'][1]['caption']='Plancha: cuerpo alineado, manos y pies apoyados'
-        plank_part['frames'][2]['caption']='Sostén: respira sin perder los apoyos'
-        plank_part['frames'][3]['caption']='Salida: recoge los pies'
+        plank_part['frames'][2]['caption']='Plancha: cuerpo alineado, manos y pies apoyados'
+        plank_part['frames'][3]['caption']='Sostén: respira sin perder los apoyos'
+        plank_part['frames'][5]['caption']='Salida: recoge los pies'
         plank_part['motion']=[phase('Entra a la plancha',contacts=['nearHand','farHand']),
+                              phase('Entra a la plancha',contacts=['nearHand','farHand']),
                               phase('Sostén la plancha',kind='hold',seconds=3),
+                              phase('Sal de la plancha',contacts=['nearHand','farHand']),
                               phase('Sal de la plancha',contacts=['nearHand','farHand'])]
+        # 052: la plancha lateral trae su propio recorrido (sube, sostén, baja).
         side_part=generate('Plancha lateral')
-        side_part['motion']=[phase('Sostén lateral',kind='hold',seconds=3)
-                             for _ in side_part['frames'][1:]]
         def lateral_step(z, near_z, near_y, far_z, far_y, caption):
             f=pose(caption,(0,-24),-80,na=arm(-20,-20),fa=arm(-20,-20))
             f['bodyZ']=z
