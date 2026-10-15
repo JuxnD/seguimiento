@@ -7,6 +7,7 @@ import '../../data/local_flags.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
+import '../../domain/equipment.dart' show EquipmentKeys;
 import '../../domain/plan_v3.dart';
 import '../../domain/plan_v32.dart';
 import '../../ui/widgets.dart';
@@ -89,6 +90,11 @@ class _PlancheCardState extends ConsumerState<_PlancheCard> {
           value: _on,
           onChanged: (v) async {
             setState(() => _on = v);
+            // Plan 052 (§16.27.4): el inventario de Ajustes registra el
+            // cambio y deja la bandera igual.
+            await ref
+                .read(equipmentRepositoryProvider)
+                .setFromToggle(EquipmentKeys.parallettes, v);
             await ref.read(localFlagsProvider).set(FlagKeys.hasParallettes, v);
             if (v) await applyExerciseGuides(ref.read(databaseProvider));
             ref.invalidate(dashboardProvider);
@@ -102,6 +108,9 @@ class _PlancheCardState extends ConsumerState<_PlancheCard> {
             value: _rings,
             onChanged: (v) async {
               setState(() => _rings = v);
+              await ref
+                  .read(equipmentRepositoryProvider)
+                  .setFromToggle(EquipmentKeys.rings, v);
               await ref.read(localFlagsProvider).set(FlagKeys.hasRings, v);
               ref.invalidate(dashboardProvider);
               ref.invalidate(ladderAdviceProvider);

@@ -58,6 +58,7 @@ import '../../ui/theme.dart';
 import '../../data/repositories/goal_repository.dart';
 import '../../domain/adaptive_coach.dart';
 import 'mascot_card.dart';
+import 'pending_test_card.dart';
 
 final _stairsAlertProvider =
     StreamProvider.family<bool, DateTime>((ref, today) {
@@ -212,6 +213,7 @@ class HomeScreen extends ConsumerWidget {
                 const ActiveSessionBanner(),
                 KneeStairsAlert(date: today),
                 CollidingTestAgenda(date: today),
+                const PendingEquipmentTestCard(),
                 UpdateBanner(
                   onOpenSettings: () => Navigator.push(
                       context,
@@ -424,6 +426,15 @@ class _PlanHero extends StatelessWidget {
                   'hoy conviene la versión ligera (una ronda menos, el bloque con una serie menos).',
                   style: text.bodyMedium?.copyWith(color: style.color),
                 ),
+              ),
+            // Plan 052 (§16.27.4): lo que hoy no se ofrece por falta de
+            // material, en una línea.
+            if (dashboard.equipmentNotes.isNotEmpty &&
+                dashboard.dayType.isTraining)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(dashboard.equipmentNotes.join(' '),
+                    style: text.bodySmall),
               ),
             if (dashboard.proposal case final p? when !dashboard.trained)
               _ProposalLine(

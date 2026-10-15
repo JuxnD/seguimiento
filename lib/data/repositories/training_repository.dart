@@ -19,6 +19,8 @@ import 'exercise_repository.dart';
 import 'ladder_repository.dart';
 import 'plan_repository.dart';
 import 'readiness_repository.dart';
+import 'equipment_repository.dart';
+import '../../domain/equipment.dart' show EquipmentKeys, EquipmentStatus;
 import 'fitness_test_repository.dart';
 import '../../domain/test_protocol.dart';
 import '../../domain/fitness_test.dart' show TestPart;
@@ -978,8 +980,29 @@ class TrainingRepository {
   /// Los bloques que el v3.1 agrega al día: planche (si hay paralelas) y la
   /// escalera de core. Igual para Hoy, para empezar y para retomar. En el
   /// v3.2, si el test de piernas de la semana se movió, aplica la semana
-  /// reorganizada de §16.27 (plan 052).
+  /// reorganizada de §16.27 (plan 052). Al final, en todas las ramas, el
+  /// filtro de material (§16.27.4).
   Future<PlanDayDraft> withV31Blocks(PlanDayDraft day, DateTime date, V3Day? v3,
+          {required bool planche, bool rings = false}) async =>
+      (await withV31BlocksChecked(day, date, v3,
+              planche: planche, rings: rings))
+          .day;
+
+  /// [withV31Blocks] con lo que salió por falta de material, para Hoy.
+  /// `planche`/`rings` son las banderas locales: sólo cuentan sin fila en el
+  /// inventario, que manda (plan 052, §16.27.4).
+  Future<EquipmentApplied> withV31BlocksChecked(
+      PlanDayDraft day, DateTime date, V3Day? v3,
+      {required bool planche, bool rings = false}) async {
+    final statuses = await EquipmentRepository(db)
+        .statuses(parallettes: planche, rings: rings);
+    final composed = await _composeV31Day(day, date, v3,
+        planche: statuses[EquipmentKeys.parallettes] == EquipmentStatus.tengo,
+        rings: statuses[EquipmentKeys.rings] == EquipmentStatus.tengo);
+    return applyEquipmentDetailed(composed, statuses);
+  }
+
+  Future<PlanDayDraft> _composeV31Day(PlanDayDraft day, DateTime date, V3Day? v3,
       {required bool planche, bool rings = false}) async {
     if (v3 == null || !v3.isV31) {
       return _composeBlocks(day, date, v3, date,

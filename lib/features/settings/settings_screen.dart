@@ -18,6 +18,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import 'corrections_screen.dart';
+import 'equipment_card.dart';
 import 'restore_access.dart';
 import '../../ui/widgets.dart';
 import '../meals/foods_screen.dart';
@@ -120,6 +121,8 @@ class SettingsScreen extends ConsumerWidget {
             const _SupplementsCard(),
             const _BackupCard(),
             const UpdatesCard(),
+            // Plan 052 (§16.27.4): al final, para no mover lo de arriba.
+            const EquipmentCard(),
           ],
         ),
       ),
