@@ -421,14 +421,15 @@ class ReadinessRepository {
   Future<DateTime?> _resolvedTestDate(
       TestScheduleKey key, List<TestMove> movements,
       {bool kneePush = true}) async {
-    final planned = plannedTestDate(key.blockStart, key.round, key.part);
+    final planned =
+        await _shiftedPlanned(key.blockStart, key.round, key.part);
     if (planned == null) return null;
     var date = movements.isEmpty ? planned : movements.last.to;
     if (key.part != TestPart.piernas || await _completedTestDate(key) != null) {
       return date;
     }
     final plannedTorso =
-        plannedTestDate(key.blockStart, key.round, TestPart.torso);
+        await _shiftedPlanned(key.blockStart, key.round, TestPart.torso);
     // El Test3 tiene piernas antes del torso: conserva su orden propio.
     if (plannedTorso == null || plannedTorso.isAfter(planned)) {
       return date;
@@ -446,6 +447,15 @@ class ReadinessRepository {
       if (earliest.isAfter(date)) date = earliest;
     }
     return _legsSafeDate(date, planned, kneePush: kneePush);
+  }
+
+  /// Plan 053: el día previsto del test con la programación rodada (el test
+  /// viaja con su sesión). Sin corrimientos es el calendario nominal.
+  Future<DateTime?> _shiftedPlanned(
+      DateTime start, int round, TestPart part) async {
+    final nominal = plannedTestDate(start, round, part);
+    if (nominal == null) return null;
+    return PlanRepository(db, ExerciseRepository(db)).realDateOf(nominal);
   }
 
   /// Plan 052 (§16.27): piernas nunca cae dentro de las 48 h siguientes a un
@@ -513,8 +523,9 @@ class ReadinessRepository {
       return day.exercises.isNotEmpty && legs.length * 2 >= day.exercises.length;
     }
     for (final round in [1, 2, 3]) {
-      final planned = plannedTestDate(s, round, TestPart.piernas);
-      final plannedTorso = plannedTestDate(s, round, TestPart.torso);
+      // Plan 053: con la programación rodada, lo previsto es el día corrido.
+      final planned = await _shiftedPlanned(s, round, TestPart.piernas);
+      final plannedTorso = await _shiftedPlanned(s, round, TestPart.torso);
       if (planned == null || plannedTorso == null) continue;
       // El Test3 tiene piernas antes que torso: conserva su orden propio.
       if (plannedTorso.isAfter(planned)) continue;
@@ -794,7 +805,7 @@ class ReadinessRepository {
             protocolId: protocol,
             round: round,
             part: part);
-        final planned = plannedTestDate(s, round, part);
+        final planned = await _shiftedPlanned(s, round, part);
         if (planned == null) continue;
         final done = await moves(s, round, part, key: key);
         final date = (await _resolvedTestDate(key, done))!;

@@ -39,6 +39,7 @@ import '../body/mobility_benchmarks_screen.dart';
 import '../meals/meal_form_screen.dart';
 import 'coach_card.dart';
 import 'morning_check_screen.dart';
+import 'roll_day_row.dart';
 import 'readiness_card.dart';
 import 'sleep_hours_dialog.dart';
 import 'steps_source_line.dart';
@@ -417,6 +418,8 @@ class _PlanHero extends StatelessWidget {
               const SizedBox(height: 14),
               _StartButtons(dashboard: dashboard, color: style.color),
             ],
+            // Plan 053: rodar la programación un día (o deshacerlo hoy).
+            RollDayRow(date: dashboard.date, trained: dashboard.trained),
             if (dashboard.hardFootballYesterday case final game?
                 when dashboard.dayType.isTraining)
               Padding(

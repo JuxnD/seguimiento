@@ -1,12 +1,18 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
+import '../../domain/plan_shift.dart';
 import '../../domain/plan_v32.dart';
 import '../database.dart';
 import '../exercise_details.dart';
 import 'exercise_repository.dart';
+
+/// Plan 053: un día rodado se guarda como decisión, sin tabla nueva.
+const planShiftProposalKind = 'rodar_dia';
 
 class PlanExerciseDraft {
   PlanExerciseDraft({
@@ -258,11 +264,25 @@ class PlanDayView {
     required this.day,
     this.validFrom,
     this.scheme,
+    this.nominalDate,
+    this.vacated = false,
+    this.vacatedFor,
   });
 
   final int versionNumber;
   final int dayId;
   final PlanDayDraft day;
+
+  /// Plan 053: si la programación se rodó, la fecha nominal cuyo contenido
+  /// se ve este día (para armar sus bloques como ese día). null si es el suyo.
+  final DateTime? nominalDate;
+
+  /// Plan 053: el día quedó libre porque se rodó la programación.
+  final bool vacated;
+
+  /// Plan 053: con [vacated], la fecha en la que se ve la sesión que tenía
+  /// (null si esa semana se perdió).
+  final DateTime? vacatedFor;
 
   /// Desde cuándo rige la versión y su periodización: con 'v3', la semana del
   /// bloque sale de aquí.
@@ -459,7 +479,57 @@ class PlanRepository {
         return versionId;
       });
 
+  /// El día del plan para `date` con los corrimientos aplicados (plan 053):
+  /// lo que de verdad toca ese día. Todas las pantallas leen éste.
   Future<PlanDayView?> dayFor(DateTime date) async {
+    final d = dateOnly(date);
+    final shifts = await shiftsInWeek(d);
+    if (shifts.isEmpty) return nominalDayFor(d);
+    final kinds = await _weekKinds(d);
+    ShiftDayKind kindOf(DateTime n) => kinds[dateOnly(n)] ?? ShiftDayKind.rest;
+    final nominal = shiftedNominal(d, shifts, kindOf);
+    if (nominal == d) return nominalDayFor(d);
+    if (nominal == null) {
+      final own = await nominalDayFor(d);
+      if (own == null) return null;
+      final content = vacatedContent(d, shifts, kindOf);
+      final target =
+          content == null ? null : shiftedRealOrNull(content, shifts, kindOf);
+      final type =
+          content == null ? null : (await nominalDayFor(content))?.day.type;
+      final what =
+          type == null ? 'lo de hoy' : 'la sesión de ${type.label.toLowerCase()}';
+      return PlanDayView(
+        versionNumber: own.versionNumber,
+        dayId: own.dayId,
+        day: PlanDayDraft(
+            weekday: d.weekday,
+            type: DayType.descanso,
+            notes: target == null
+                ? 'Rodaste la programación: hoy queda libre y $what se pierde esta semana.'
+                : 'Rodaste la programación: hoy queda libre y $what pasa al '
+                    '${weekdayShort(target.weekday).toLowerCase()} ${formatShort(target)}.'),
+        validFrom: own.validFrom,
+        scheme: own.scheme,
+        vacated: true,
+        vacatedFor: target,
+      );
+    }
+    final view = await nominalDayFor(nominal);
+    if (view == null) return null;
+    return PlanDayView(
+      versionNumber: view.versionNumber,
+      dayId: view.dayId,
+      day: view.day,
+      validFrom: view.validFrom,
+      scheme: view.scheme,
+      nominalDate: nominal,
+    );
+  }
+
+  /// El día tal como se programó, sin corrimientos (plan 053). Para armar el
+  /// contenido de una fecha nominal y para clasificar la semana.
+  Future<PlanDayView?> nominalDayFor(DateTime date) async {
     final v = await activeVersion(date);
     if (v == null) return null;
     final row = await (db.select(db.planDays)
@@ -497,9 +567,120 @@ class PlanRepository {
     );
   }
 
-  /// Cambia cuando cambia cualquier versión; útil para refrescar "Hoy".
-  Stream<PlanDayView?> watchDayFor(DateTime date) =>
-      db.select(db.planVersions).watch().asyncMap((_) => dayFor(date));
+  /// Cambia cuando cambia cualquier versión o se rueda un día; útil para
+  /// refrescar "Hoy".
+  Stream<PlanDayView?> watchDayFor(DateTime date) => db
+      .customSelect('SELECT 1',
+          readsFrom: {db.planVersions, db.coachProposals})
+      .watch()
+      .asyncMap((_) => dayFor(date));
+
+  // ---------- Rodar la programación (plan 053) ----------
+
+  /// Corrimientos vigentes de la semana de `anyDay`, en el orden en que se
+  /// pidieron.
+  Future<List<DateTime>> shiftsInWeek(DateTime anyDay) async {
+    final week = weekAnchor(dateOnly(anyDay));
+    final rows = await (db.select(db.coachProposals)
+          ..where((t) =>
+              t.kind.equals(planShiftProposalKind) &
+              t.status.equals('aceptada') &
+              t.createdOn
+                  .isBetweenValues(dayKey(week), dayKey(addDays(week, 6))))
+          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+        .get();
+    return [for (final r in rows) parseDay(r.createdOn)];
+  }
+
+  /// [shiftsInWeek] que se actualiza al rodar o deshacer.
+  Stream<List<DateTime>> watchShiftsInWeek(DateTime anyDay) => db
+      .customSelect('SELECT 1', readsFrom: {db.coachProposals})
+      .watch()
+      .asyncMap((_) => shiftsInWeek(anyDay));
+
+  /// Clase de cada día nominal de la semana: fútbol fijo, descanso o sesión.
+  Future<Map<DateTime, ShiftDayKind>> _weekKinds(DateTime anyDay) async {
+    final week = weekAnchor(dateOnly(anyDay));
+    final kinds = <DateTime, ShiftDayKind>{};
+    for (var i = 0; i < 7; i++) {
+      final day = addDays(week, i);
+      final type = (await nominalDayFor(day))?.day.type;
+      kinds[day] = type == DayType.futbol
+          ? ShiftDayKind.fixed
+          : type == null || !type.isTraining
+              ? ShiftDayKind.rest
+              : ShiftDayKind.session;
+    }
+    return kinds;
+  }
+
+  /// Si ese día se puede rodar: tiene sesión (ya con corrimientos previos).
+  Future<bool> canRollDay(DateTime date) async {
+    final view = await dayFor(date);
+    return view != null && !view.vacated && view.day.type.isTraining;
+  }
+
+  /// Rueda la programación desde `from`: ese día queda libre y las sesiones
+  /// siguientes de la semana van un día más tarde (plan 053). false si ese
+  /// día no tiene sesión que rodar.
+  Future<bool> rollDay(DateTime from, {DateTime? now}) =>
+      db.transaction(() async {
+        final d = dateOnly(from);
+        if (!await canRollDay(d)) return false;
+        final count = (await (db.select(db.coachProposals)
+                  ..where((t) => t.kind.equals(planShiftProposalKind)))
+                .get())
+            .length;
+        await db.into(db.coachProposals).insert(CoachProposalsCompanion.insert(
+              id: '$planShiftProposalKind:${(count + 1).toString().padLeft(5, '0')}',
+              kind: planShiftProposalKind,
+              status: 'aceptada',
+              evidence: jsonEncode({'from': dayKey(d)}),
+              createdOn: dayKey(d),
+              decidedOn: Value(dayKey(dateOnly(now ?? DateTime.now()))),
+            ));
+        return true;
+      });
+
+  /// Deshace el último corrimiento pedido desde `from`. false si no había.
+  Future<bool> undoRoll(DateTime from) => db.transaction(() async {
+        final row = await (db.select(db.coachProposals)
+              ..where((t) =>
+                  t.kind.equals(planShiftProposalKind) &
+                  t.status.equals('aceptada') &
+                  t.createdOn.equals(dayKey(dateOnly(from))))
+              ..orderBy([(t) => OrderingTerm.desc(t.id)])
+              ..limit(1))
+            .getSingleOrNull();
+        if (row == null) return false;
+        await (db.update(db.coachProposals)..where((t) => t.id.equals(row.id)))
+            .write(const CoachProposalsCompanion(status: Value('deshecha')));
+        return true;
+      });
+
+  /// Fecha real en la que se ve el contenido nominal `nominal` (plan 053):
+  /// la misma si nada se rodó o si el corrimiento lo dejó sin día.
+  Future<DateTime> realDateOf(DateTime nominal) async {
+    final n = dateOnly(nominal);
+    final shifts = await shiftsInWeek(n);
+    if (shifts.isEmpty) return n;
+    final kinds = await _weekKinds(n);
+    return shiftedReal(n, shifts, (x) => kinds[dateOnly(x)] ?? ShiftDayKind.rest);
+  }
+
+  /// Qué contenido nominal se pierde esta semana si se rueda desde `from`
+  /// (para avisarlo antes de confirmar).
+  Future<List<DateTime>> droppedIfRolled(DateTime from) async {
+    final d = dateOnly(from);
+    final shifts = await shiftsInWeek(d);
+    final kinds = await _weekKinds(d);
+    ShiftDayKind kindOf(DateTime n) => kinds[dateOnly(n)] ?? ShiftDayKind.rest;
+    final before = shiftDropped(d, shifts, kindOf).toSet();
+    return [
+      for (final n in shiftDropped(d, [...shifts, d], kindOf))
+        if (!before.contains(n)) n
+    ];
+  }
 }
 
 String? _blankToNull(String? s) =>

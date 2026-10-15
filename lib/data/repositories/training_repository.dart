@@ -724,10 +724,13 @@ class TrainingRepository {
     if (view == null || !isBlockScheme(view.scheme) || view.validFrom == null) {
       return null;
     }
-    final cleanTen = view.scheme == v31Scheme && date.weekday == DateTime.friday
-        ? await firstCleanTen(before: date)
+    // Plan 053: con la programación rodada, el día se arma como su fecha
+    // nominal (semana, test y viernes de referencia).
+    final at = view.nominalDate ?? date;
+    final cleanTen = view.scheme == v31Scheme && at.weekday == DateTime.friday
+        ? await firstCleanTen(before: at)
         : null;
-    return v3Day(view.validFrom!, date,
+    return v3Day(view.validFrom!, at,
         scheme: view.scheme!, cleanTen: cleanTen);
   }
 
@@ -750,8 +753,9 @@ class TrainingRepository {
           ])
           ..limit(40))
         .get();
-    for (final r
-        in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
+    final weekday = await _contentWeekday(date);
+    for (final r in rows) {
+      if (await _sessionWeekday(r.planDayId, r.date) != weekday) continue;
       final sets = await (db.select(db.sessionSets)
             ..where((t) => t.sessionId.equals(r.id) & t.exerciseId.equals(exId))
             ..orderBy([(t) => OrderingTerm(expression: t.id)]))
@@ -771,6 +775,24 @@ class TrainingRepository {
       ];
     }
     return const [];
+  }
+
+  /// Plan 053: día de la semana del contenido que toca `date` (con la
+  /// programación rodada, el lunes corrido al martes se compara con lunes).
+  Future<int> _contentWeekday(DateTime date) async =>
+      ((await PlanRepository(db, exercises).dayFor(date))?.nominalDate ?? date)
+          .weekday;
+
+  /// Día de la semana de una sesión guardada: el de su día del plan si lo
+  /// tiene (una sesión rodada conserva su contenido), si no el de su fecha.
+  Future<int> _sessionWeekday(int? planDayId, String date) async {
+    if (planDayId != null) {
+      final day = await (db.select(db.planDays)
+            ..where((t) => t.id.equals(planDayId)))
+          .getSingleOrNull();
+      if (day != null) return day.weekday;
+    }
+    return parseDay(date).weekday;
   }
 
   /// Same weekday limits weekly protocol changes; explicit session/plan and
@@ -793,8 +815,9 @@ class TrainingRepository {
             (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)
           ]))
         .get();
-    for (final row
-        in rows.where((r) => parseDay(r.date).weekday == date.weekday)) {
+    final weekday = await _contentWeekday(date);
+    for (final row in rows) {
+      if (await _sessionWeekday(row.planDayId, row.date) != weekday) continue;
       final sets = await (db.select(db.sessionSets)
             ..where(
                 (t) => t.sessionId.equals(row.id) & t.exerciseId.equals(exId))
@@ -996,16 +1019,20 @@ class TrainingRepository {
       {required bool planche, bool rings = false}) async {
     final statuses = await EquipmentRepository(db)
         .statuses(parallettes: planche, rings: rings);
-    final composed = await _composeV31Day(day, date, v3,
+    // Plan 053: los bloques se arman como el día cuyo contenido se ve.
+    final at =
+        (await PlanRepository(db, exercises).dayFor(date))?.nominalDate ?? date;
+    final composed = await _composeV31Day(day, date, v3, at,
         planche: statuses[EquipmentKeys.parallettes] == EquipmentStatus.tengo,
         rings: statuses[EquipmentKeys.rings] == EquipmentStatus.tengo);
     return applyEquipmentDetailed(composed, statuses);
   }
 
-  Future<PlanDayDraft> _composeV31Day(PlanDayDraft day, DateTime date, V3Day? v3,
+  Future<PlanDayDraft> _composeV31Day(
+      PlanDayDraft day, DateTime date, V3Day? v3, DateTime at,
       {required bool planche, bool rings = false}) async {
     if (v3 == null || !v3.isV31) {
-      return _composeBlocks(day, date, v3, date,
+      return _composeBlocks(day, date, v3, at,
           planche: planche, rings: rings);
     }
     final week = await testWeekFor(date, v3);
@@ -1021,15 +1048,14 @@ class TrainingRepository {
         exercises: d.exercises,
         coreEpochs: d.coreEpochs);
     Future<PlanDayDraft> composeFrom(DateTime donor) async {
-      final template =
-          (await PlanRepository(db, exercises).dayFor(donor))?.day ?? day;
-      return _composeBlocks(template, date, v3, donor,
+      final view = await PlanRepository(db, exercises).dayFor(donor);
+      return _composeBlocks(view?.day ?? day, date, v3, view?.nominalDate ?? donor,
           planche: planche, rings: rings);
     }
 
     switch (week.role) {
       case TestWeekRole.none:
-        final normal = await _composeBlocks(day, date, v3, date,
+        final normal = await _composeBlocks(day, date, v3, at,
             planche: planche, rings: rings);
         if (!await _dayAfterTorsoTest(date, v3)) return normal;
         // §16.27 regla 3: el día después del test de torso no lleva series
@@ -1092,7 +1118,7 @@ class TrainingRepository {
                 coreEpochs: legs.coreEpochs),
             'Hoy: FIFA 11+ → test de piernas (4 pruebas) + benchmarks de movilidad (5) → sesión de piernas corta. Sin sprints ni saltos extra: el salto largo ya está en el test. La sesión propia de hoy se descarta.');
       case TestWeekRole.noLegLoad:
-        final today = await _composeBlocks(day, date, v3, date,
+        final today = await _composeBlocks(day, date, v3, at,
             planche: planche, rings: rings);
         today.exercises.removeWhere((e) => chainLegExercises.contains(e.name));
         return labeled(today,
