@@ -160,4 +160,37 @@ void main() {
         view.day, tue, (await training.blockDay(view, tue))!, planche: false);
     expect(day.notes, contains('sin series máximas de torso'));
   });
+
+  test('caso del teléfono: v3.1 activo, torso del martes sin el pino → mié movilidad, test el jueves',
+      () async {
+    final db31 = openInMemoryDatabase();
+    addTearDown(db31.close);
+    await asExistingUser(db31, since: mon);
+    final ex = ExerciseRepository(db31);
+    final plan31 = PlanRepository(db31, ex);
+    await seedIfEmpty(db31, plan31);
+    await activatePlanV31(db31, plan31, mon);
+    final items = protocolItems(TestProtocolId.v31_12, TestPart.torso)
+        .where((i) => i.id != 'wall_handstand');
+    await FitnessTestRepository(db31).save(
+        date: tue,
+        round: 1,
+        part: TestPart.torso,
+        protocol: TestProtocolId.v31_12,
+        scheme: 'v3.1',
+        blockStart: mon,
+        totalSec: 0,
+        results: [
+          for (final item in items)
+            for (final side in item.perSide ? ['I', 'D'] : [null])
+              TestResult(round: 1, item: item.id, side: side, value: 5)
+        ]);
+    final dash = DashboardRepository(db31, plan31, NutritionRepository(db31), ProfileRepository(db31));
+    final w = await dash.today(now: wed);
+    expect(w.fitnessTest, isNull, reason: 'el miércoles ya no es día de test');
+    expect(w.dayType, DayType.descanso, reason: 'víspera del test: movilidad');
+    expect(w.weekReorganized, contains('pasa al jue'));
+    final t = await dash.today(now: thu);
+    expect(t.fitnessTest!.part, TestPart.piernas);
+  });
 }

@@ -123,6 +123,31 @@ void main() {
           reason: 'sólo mueve la fecha: no completa el torso de este bloque');
     });
   }
+  // 1.26.1, caso real del owner: el torso del martes sin el pino (piso
+  // resbaloso) y con su versión v3.1 activa seguía dejando piernas el
+  // miércoles.
+  for (final p in [TestProtocolId.v31_12, TestProtocolId.v32_13]) {
+    test('torso del martes sin el pino (${p.name}) también deja piernas el jueves',
+        () async {
+      final items = protocolItems(p, TestPart.torso)
+          .where((i) => i.id != 'wall_handstand');
+      await FitnessTestRepository(db).save(
+          date: tue,
+          round: 1,
+          part: TestPart.torso,
+          protocol: p,
+          scheme: p == protocol ? 'v3.2' : 'v3.1',
+          blockStart: start,
+          totalSec: 0,
+          results: [
+            for (final item in items)
+              for (final side in item.perSide ? ['I', 'D'] : [null])
+                TestResult(round: 1, item: item.id, side: side, value: 5)
+          ]);
+      expect(await on(wed), isNull);
+      expect((await on(thu))!.part, TestPart.piernas);
+    });
+  }
   test('torso sin agenda (botón de Cuerpo) completo martes: piernas el jueves',
       () async {
     final items = protocolItems(TestProtocolId.v31_12, TestPart.torso);

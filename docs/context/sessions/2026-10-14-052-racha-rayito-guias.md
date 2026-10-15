@@ -147,3 +147,15 @@ El owner pidió «todo junto en la 1.26.0» tras compartir
   `com.juandiego.seguimiento` 1.26.0 (35).
 - Pendiente: aceptación en el teléfono del owner y decisión de integrar a
   `main`.
+
+## Parche 1.26.1+36 (15 oct UTC, reporte del owner con la 1.26.0)
+
+Captura del owner el miércoles 14 a las 20:59: Hoy seguía con el test 1 de
+piernas, «Plan v3.1 · semana 1 de 9». Causa: el respaldo
+`_anyCompleteTorsoBefore` exigía el torso **completo**, y el del martes 13
+no tiene el pino (§16.27.3: no hecho por el piso resbaloso); además la
+versión activa ese día es la v3.1. Arreglo: para el descanso cuenta una
+sesión de torso real, al menos la mitad de sus pruebas medidas ese día; una o
+dos sueltas siguen sin mover piernas. Rojo causal: los dos protocolos sin el
+pino y el caso v3.1 del teléfono fallan con la regla de la 1.26.0 (piernas el
+miércoles) y pasan con el parche (miércoles de movilidad, test el jueves).

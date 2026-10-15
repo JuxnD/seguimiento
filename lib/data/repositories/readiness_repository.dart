@@ -579,14 +579,14 @@ class ReadinessRepository {
     return const TestWeekDay(TestWeekRole.none);
   }
 
-  /// Plan 052 (reporte del owner del 14 oct: torso completo el martes y
-  /// piernas seguía el miércoles): el descanso entre torso y piernas depende
-  /// del esfuerzo real, no de con qué identidad se guardó. Un torso completo
-  /// según su propio protocolo y ronda, guardado en los 6 días anteriores a
-  /// piernas, separa piernas aunque venga de otro bloque, de otro protocolo o
-  /// del botón de Cuerpo sin agenda. Sólo mueve la fecha: no completa este
-  /// test ni comparte marcas, dosis o identidad. Parciales y legados sin
-  /// cabecera no cuentan.
+  /// Plan 052 (reporte del owner del 14 oct: torso el martes y piernas
+  /// seguía el miércoles): el descanso entre torso y piernas depende del
+  /// esfuerzo real, no de con qué identidad se guardó ni de que estén todas
+  /// las pruebas. Un torso con al menos la mitad de sus pruebas medidas, en
+  /// los 6 días anteriores a piernas, la separa aunque venga de otro bloque,
+  /// de otro protocolo o del botón de Cuerpo sin agenda. Sólo mueve la fecha:
+  /// no completa este test ni comparte marcas, dosis o identidad. Una o dos
+  /// pruebas sueltas y los legados sin cabecera no cuentan.
   Future<DateTime?> _anyCompleteTorsoBefore(DateTime legs) async {
     final from = addDays(legs, -6);
     // Pocas filas; la fecha se interpreta igual que en el resto del resolver.
@@ -611,9 +611,16 @@ class ReadinessRepository {
         for (final r in rows)
           TestResult(round: r.round, item: r.item, side: r.side, value: r.value)
       ];
-      final complete = protocolItems(protocol, TestPart.torso).every(
-          (item) => testValue(results, header.round, item.id) != null);
-      if (complete && (latest == null || date.isAfter(latest))) latest = date;
+      // Plan 052 (1.26.1, reporte real: torso sin el pino por el piso):
+      // para el descanso cuenta el esfuerzo, no que estén todas. Con al menos
+      // la mitad de las pruebas medidas ese día fue una sesión de torso real;
+      // una o dos sueltas no mueven piernas.
+      final items = protocolItems(protocol, TestPart.torso);
+      final measured = items
+          .where((item) => testValue(results, header.round, item.id) != null)
+          .length;
+      final real = measured * 2 >= items.length;
+      if (real && (latest == null || date.isAfter(latest))) latest = date;
     }
     return latest;
   }
