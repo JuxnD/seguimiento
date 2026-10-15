@@ -111,4 +111,27 @@ El owner pidió «todo junto en la 1.26.0» tras compartir
 
 ## Evidencia
 
-Pendiente de completar al cierre (suite completa, analyze, APK, QA nativa).
+- Rojos causales: racha (4 fallan con la regla anterior), piernas tras
+  torso real (6 fallan sin el respaldo: el agenda deja piernas el miércoles,
+  como en el teléfono del owner).
+- Suite completa en `046f633`: 1410 aprobadas, 20 capturas opcionales
+  omitidas; las 2 fallas restantes (línea nocturna «¿Ya no comes más?» que
+  desbordaba 26–95 px con letra ×1.6–2.0 sólo después de las 20:00) se
+  corrigieron y la interfaz completa volvió a pasar 374/0. `flutter analyze`
+  sin incidencias. Pruebas heredadas ajustadas al contrato nuevo: esquema 26,
+  rodilla 3–4 → siguiente sesión de piernas, carga en el anillo de fútbol,
+  renderer 035 (sólo figuras sin movimiento authored en las pruebas 2D).
+- APK release `MyPrime-1.26.0+35.apk`: 76 361 538 B, SHA-256
+  `b16097937bef9c42cae92209951aae1d0c3ddb4c635fcae308480adbbd9a0b67`,
+  `com.juandiego.seguimiento` 1.26.0 (35), min 26 / target 34, firma v2
+  histórica `6f839c41…33ed7`, `allowBackup=false`, receiver del widget.
+- QA nativa en `MyPrime_QA_051` (sin red, datos sintéticos): `install -r`
+  35 sobre 34 con 37 tablas idénticas y las 4 nuevas vacías; Rayito flotante
+  en Hoy y Entreno con globo al tocarlo; widget real «Rayito / Nivel 2 · 1 día
+  de racha». Casos de 051 que faltaban: perfil pendiente (alta), error de
+  perfil y arranque con base corrupta borran la caché del widget y muestran el
+  respaldo seguro; con `no_backup` de sólo lectura la app sigue, no deja
+  archivos a medias y el widget se refresca al volver el permiso.
+- Evidencia en `build/qa/052/` (logs, capturas, estados pre35/post35);
+  entrega en `Documents/ChatGPT/FIT APP/entregables/MyPrime-1.26.0/`.
+- Pendiente: publicación (con el sí del owner) y aceptación en su teléfono.
