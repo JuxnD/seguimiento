@@ -90,12 +90,12 @@ class _PlancheCardState extends ConsumerState<_PlancheCard> {
           value: _on,
           onChanged: (v) async {
             setState(() => _on = v);
+            await ref.read(localFlagsProvider).set(FlagKeys.hasParallettes, v);
             // Plan 052 (§16.27.4): el inventario de Ajustes registra el
-            // cambio y deja la bandera igual.
+            // mismo cambio.
             await ref
                 .read(equipmentRepositoryProvider)
                 .setFromToggle(EquipmentKeys.parallettes, v);
-            await ref.read(localFlagsProvider).set(FlagKeys.hasParallettes, v);
             if (v) await applyExerciseGuides(ref.read(databaseProvider));
             ref.invalidate(dashboardProvider);
           },
@@ -108,10 +108,10 @@ class _PlancheCardState extends ConsumerState<_PlancheCard> {
             value: _rings,
             onChanged: (v) async {
               setState(() => _rings = v);
+              await ref.read(localFlagsProvider).set(FlagKeys.hasRings, v);
               await ref
                   .read(equipmentRepositoryProvider)
                   .setFromToggle(EquipmentKeys.rings, v);
-              await ref.read(localFlagsProvider).set(FlagKeys.hasRings, v);
               ref.invalidate(dashboardProvider);
               ref.invalidate(ladderAdviceProvider);
               ref.invalidate(ladderDecisionsProvider);

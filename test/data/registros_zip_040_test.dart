@@ -126,7 +126,7 @@ void main() {
       final package = ZipDecoder().decodeBytes(bytes);
       final manifest = jsonDecode(utf8.decode(package.findFile(BackupArchive.manifestName)!.content as List<int>))
           as Map<String, dynamic>;
-      expect(manifest['schemaVersion'], 25);
+      expect(manifest['schemaVersion'], 26); // plan 052
       expect(package.findFile(BackupArchive.databaseName), isNotNull);
 
       // Después del respaldo se cambia lo que el paquete debe devolver.

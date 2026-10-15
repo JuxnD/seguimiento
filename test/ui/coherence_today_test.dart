@@ -72,7 +72,7 @@ void main() {
           debugPrint('033 HARNESS: football anchor visible');
           expect(t.takeException(), isNull, reason: 'Hoy con anillos montados no debe desbordar');
           expect(find.text("90'"), findsOneWidget);
-          expect(find.text('2 sesiones'), findsOneWidget);
+          expect(find.textContaining('2 sesiones · carga'), findsOneWidget); // plan 052: carga total
           await Scrollable.ensureVisible(t.element(find.text('Fútbol')), alignment: 0.5);
           await t.pump();
           expect(find.text('Fútbol').hitTestable(), findsOneWidget, reason: 'el ancla debe recibir el toque real bajo la cabecera');

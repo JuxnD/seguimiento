@@ -129,7 +129,14 @@ class EffectiveTest {
     required this.date,
     required this.moves,
     this.gate,
+    this.kneePushedFrom,
+    this.kneeStairsThen,
   });
+
+  /// Plan 052: día del que la rodilla (escaleras 3–4) corrió el test de
+  /// piernas a la siguiente sesión de piernas, y con cuánto.
+  final DateTime? kneePushedFrom;
+  final int? kneeStairsThen;
 
   final TestScheduleKey key;
   final DateTime planned;
@@ -145,7 +152,13 @@ class EffectiveTest {
   bool get canMove => moves < maxTestMoves;
 
   EffectiveTest withGate(TestDayGate gate) => EffectiveTest(
-      key: key, planned: planned, date: date, moves: moves, gate: gate);
+      key: key,
+      planned: planned,
+      date: date,
+      moves: moves,
+      gate: gate,
+      kneePushedFrom: kneePushedFrom,
+      kneeStairsThen: kneeStairsThen);
 }
 
 /// Recuperación activa propuesta por la carga (§19.17). Una lectura para Hoy,
@@ -755,12 +768,19 @@ class ReadinessRepository {
         if (planned == null) continue;
         final done = await moves(s, round, part, key: key);
         final date = (await _resolvedTestDate(key, done))!;
+        final unpushed = part == TestPart.piernas
+            ? (await _resolvedTestDate(key, done, kneePush: false))!
+            : date;
         out.add(EffectiveTest(
           key: key,
           planned: planned,
           date: date,
           moves: done.length,
           gate: gates ? await _gate(part, date) : null,
+          kneePushedFrom: unpushed == date ? null : unpushed,
+          kneeStairsThen: unpushed == date
+              ? null
+              : (await RecoveryRepository(db).morningOn(unpushed))?.kneeStairs,
         ));
       }
     }

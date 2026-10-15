@@ -97,7 +97,10 @@ class MobilityBenchmarkRepository {
       final leg = agenda
           .where((t) => t.part == TestPart.piernas && t.planned == planned)
           .firstOrNull;
-      final date = leg?.date ?? planned;
+      // Plan 052 (§16.27): si la rodilla corrió el test de piernas, los
+      // benchmarks se quedan el día que se iba a testear (isométricos +
+      // benchmarks).
+      final date = leg?.kneePushedFrom ?? leg?.date ?? planned;
       if (date.isBefore(dateOnly(from)) || date.isAfter(dateOnly(to))) continue;
       final windowStart = date.isBefore(planned) ? date : planned;
       final windowEnd = addDays(planned, 27);

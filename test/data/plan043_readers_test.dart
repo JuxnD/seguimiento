@@ -153,8 +153,10 @@ void main() {
           key: key('v3.2', TestProtocolId.v32_13, 1, TestPart.piernas));
       await db.into(db.morningChecks).insert(MorningChecksCompanion.insert(date: '2030-03-07', kneeStairs: const Value(3)));
       final text = await report(start, DateTime(2030, 3, 10));
-      expect(text, contains('Test 1 de piernas: previsto mié 6 mar → jue 7 mar (1 de 2 movimientos)'));
-      expect(text, contains('escaleras 3/10'));
+      // Plan 052 (§16.27): escaleras 3 el jueves corre piernas al miércoles
+      // siguiente; los benchmarks se quedan el jueves.
+      expect(text, contains('Test 1 de piernas: previsto mié 6 mar → mié 13 mar (1 de 2 movimientos)'));
+      expect(text, contains('escaleras 3/10 el jue 7 mar: pasó a la siguiente sesión de piernas'));
       expect(text, contains('Benchmarks de movilidad: jue 7 mar, con el test de piernas movido · pendiente'));
     });
 

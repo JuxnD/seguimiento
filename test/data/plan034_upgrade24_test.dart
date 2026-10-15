@@ -27,8 +27,14 @@ void main() {
     return true;
   }
   Future<void> assert25(AppDatabase db, Map<String, dynamic> manifest) async {
-    expect(db.schemaVersion, 25);
-    expect((await db.customSelect('PRAGMA user_version').getSingle()).data.values.single, 25);
+    // Plan 052: el destino es 26; lo de 25 y 26 llega vacío o en null.
+    expect(db.schemaVersion, 26);
+    expect((await db.customSelect('PRAGMA user_version').getSingle()).data.values.single, 26);
+    expect((await db.select(db.footballGames).get()).every((r) => r.startTime == null), isTrue);
+    expect((await db.select(db.fitnessTests).get()).every((r) => r.limitedBy == null), isTrue);
+    for (final t in ['fitness_test_pending', 'equipment_items', 'supplements', 'supplement_logs']) {
+      expect((await db.customSelect('SELECT count(*) AS n FROM $t').getSingle()).read<int>('n'), 0, reason: t);
+    }
     expect(await legacyPreserved(db, manifest), isTrue);
     expect((await db.select(db.morningChecks).get()).every((r) => r.kneeStairs == null), isTrue);
     expect((await db.select(db.sleepLogs).get()).every((r) => r.sleepStart == null && r.wakeAt == null && r.source == null && r.note == null), isTrue);

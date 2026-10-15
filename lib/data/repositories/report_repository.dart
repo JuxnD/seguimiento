@@ -424,8 +424,13 @@ class ReportRepository {
       for (final (scheme, start, protocol) in blocks.values) {
         for (final e in await ReadinessRepository(db)
             .testAgenda(scheme: scheme, blockStart: start, protocol: protocol)) {
-          if (!inRange(e.planned) && !inRange(e.date)) continue;
+          if (!inRange(e.planned) &&
+              !inRange(e.date) &&
+              !(e.kneePushedFrom != null && inRange(e.kneePushedFrom!))) {
+            continue;
+          }
           final gate = e.gate!;
+          final pushed = e.kneePushedFrom;
           agenda.add(TestAgendaEntry(
             round: e.round,
             part: e.part,
@@ -433,7 +438,9 @@ class ReportRepository {
             date: e.date,
             moves: e.moves,
             maxMoves: maxTestMoves,
-            condition: !inRange(e.date)
+            condition: pushed != null
+                ? 'escaleras ${e.kneeStairsThen}/10 el ${weekdayShort(pushed.weekday).toLowerCase()} ${formatShort(pushed)}: pasó a la siguiente sesión de piernas'
+                : !inRange(e.date)
                 ? null
                 : gate.status == TestDayStatus.stairsUnknown &&
                         e.date.isBefore(dateOnly(today))

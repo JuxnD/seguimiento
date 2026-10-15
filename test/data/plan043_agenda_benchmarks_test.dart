@@ -50,9 +50,13 @@ void main() {
       expect((await on(wed))!.gate!.status, TestDayStatus.ready);
       await stairs(thu, 3);
       await readiness.moveTest(start: start, round: 1, part: TestPart.piernas, from: wed, reasons: const ['x'], key: legs);
-      final moved = (await on(thu))!;
-      expect((moved.planned, moved.date, moved.moved, moved.canMove), (wed, thu, true, true));
-      expect((moved.gate!.status, moved.gate!.kneeStairs), (TestDayStatus.stairsHigh, 3));
+      // Plan 052 (§16.27): con escaleras 3–4 ese día, piernas pasa a la
+      // siguiente sesión de piernas en vez de quedar bloqueado.
+      expect(await on(thu), isNull);
+      final next = DateTime(wed.year, wed.month, wed.day + 7);
+      final moved = (await on(next))!;
+      expect((moved.planned, moved.date, moved.moved), (wed, next, true));
+      expect(moved.gate!.status, TestDayStatus.stairsUnknown);
       expect(await on(wed), isNull, reason: 'el miércoles ya no tiene test');
     });
 
