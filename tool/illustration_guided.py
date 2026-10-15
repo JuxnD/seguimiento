@@ -239,7 +239,7 @@ def generate(name, variant=None):
 
 
 def _plan034(name, variant, result, cycle):
-    from illustration_catalog import pose, limb, arm, reach, phase, box, bench, tube, squat, generate as existing
+    from illustration_catalog import pose, limb, arm, reach, phase, box, bench, tube, squat, running, generate as existing
     if name == 'Copenhague':
         long = variant == 'copenhagen_long'
         support_x=28 if long else 14
@@ -363,14 +363,13 @@ def _plan034(name, variant, result, cycle):
             props += [tube([x,-29,z],[x,0,z],.6) for x in [-7,7] for z in [-5,5]]
         return cycle(a,b,contacts=['nearHand','farHand'],props=props,yaw=35)
     if name == 'Sprint lanzado':
-        e=existing('Aceleración 10–20 m')
-        for f in e['frames']: f['caption']='Tramo lanzado · '+f['caption']
-        return result(e['frames'],e['motion'],yaw=35)
+        # 052: velocidad máxima, tronco casi erguido y extensión completa.
+        frames,motions=running('lanzado','Tramo lanzado · ')
+        return result(frames,motions,yaw=35)
     if name == 'Intervalos 15/15':
-        # Misma zancada real de Aceleración; el ritmo lo marca el reloj.
-        e=existing('Aceleración 10–20 m')
-        for f in e['frames']: f['caption']='15 s rápido · '+f['caption']
-        return result(e['frames'],e['motion'],yaw=35)
+        # 052: zancada de carrera erguida, sin agacharse; el ritmo lo marca el reloj.
+        frames,motions=running('carrera','15 s rápido · ')
+        return result(frames,motions,yaw=35)
     if name == 'Sentadilla isométrica en la pared':
         a=pose('Espalda a pared; pies adelantados',(-3,-23),-90,reach(13,-1),reach(13,-1))
         b=cp(a); b.update(hip=(-3,-15),caption='Desliza la espalda y sostén con rodillas flexionadas')
