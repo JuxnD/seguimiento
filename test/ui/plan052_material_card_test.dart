@@ -92,7 +92,7 @@ void main() {
           reason: 'la mochila es sí/no');
 
       final rings = find.byKey(
-          ValueKey('material:${EquipmentKeys.rings}:${EquipmentStatus.tengo}'));
+          const ValueKey('material:${EquipmentKeys.rings}:${EquipmentStatus.tengo}'));
       await t.ensureVisible(rings);
       await settle(t);
       await t.runAsync(() async {
