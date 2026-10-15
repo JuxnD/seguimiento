@@ -140,7 +140,7 @@ void main() {
             expect((today.day.type, today.nominalDate),
                 (DayType.piernas, DateTime(2026, 10, 14)),
                 reason: 'el jueves vuelve a ser piernas con su test');
-            expect(find.text('Programación rodada desde el lun 12 oct.'),
+            expect(find.text('Programación rodada 1 día: desde el lun 12 oct.'),
                 findsOneWidget);
             await tester.tap(find.text('Deshacer el del lun 12 oct'));
             await settle(tester);

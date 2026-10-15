@@ -642,6 +642,19 @@ class PlanRepository {
         return true;
       });
 
+  /// Deshace todos los corrimientos vigentes de la semana de `anyDay`.
+  /// Devuelve cuántos deshizo.
+  Future<int> undoWeekRolls(DateTime anyDay) => db.transaction(() async {
+        final week = weekAnchor(dateOnly(anyDay));
+        return (db.update(db.coachProposals)
+              ..where((t) =>
+                  t.kind.equals(planShiftProposalKind) &
+                  t.status.equals('aceptada') &
+                  t.createdOn
+                      .isBetweenValues(dayKey(week), dayKey(addDays(week, 6)))))
+            .write(const CoachProposalsCompanion(status: Value('deshecha')));
+      });
+
   /// Deshace el último corrimiento pedido desde `from`. false si no había.
   Future<bool> undoRoll(DateTime from) => db.transaction(() async {
         final row = await (db.select(db.coachProposals)

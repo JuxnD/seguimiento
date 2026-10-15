@@ -31,10 +31,18 @@ class RollDayRow extends ConsumerWidget {
     for (var d = weekAnchor(today); !d.isAfter(today); d = addDays(d, 1)) {
       if (await plan.canRollDay(d)) options[d] = await plan.droppedIfRolled(d);
     }
-    if (options.isEmpty || !context.mounted) return;
+    if (!context.mounted) return;
+    if (options.isEmpty) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(const SnackBar(
+          content: Text('Esta semana no queda una sesión que rodar.')));
+      return;
+    }
+    final already = await plan.shiftsInWeek(today);
+    if (!context.mounted) return;
     final from = await showDialog<DateTime>(
       context: context,
-      builder: (_) => _RollDialog(today: today, options: options),
+      builder: (_) =>
+          _RollDialog(today: today, options: options, already: already),
     );
     if (from == null) return;
     await plan.rollDay(from, now: clock.now());
@@ -70,16 +78,30 @@ class RollDayRow extends ConsumerWidget {
               icon: const Icon(Icons.event_repeat),
               label: const Text('Rodar 1 día'),
             ),
-          if (!view.vacated && earlier.isNotEmpty) ...[
-            Text('Programación rodada desde el ${_day(earlier.last)}.',
+          // Todos los días rodados de la semana: cada uno corre un día más.
+          if (rolls.isNotEmpty) ...[
+            Text(
+                rolls.length == 1
+                    ? 'Programación rodada 1 día: desde el ${_day(rolls.single)}.'
+                    : 'Programación rodada ${rolls.length} días esta semana '
+                        '(desde ${rolls.map(_day).join(', ')}).',
                 style: Theme.of(context).textTheme.bodySmall),
-            TextButton.icon(
-              key: const ValueKey('deshacer-rodar-anterior'),
-              onPressed: () =>
-                  ref.read(planRepositoryProvider).undoRoll(earlier.last),
-              icon: const Icon(Icons.undo),
-              label: Text('Deshacer el del ${_day(earlier.last)}'),
-            ),
+            if (!view.vacated && earlier.isNotEmpty)
+              TextButton.icon(
+                key: const ValueKey('deshacer-rodar-anterior'),
+                onPressed: () =>
+                    ref.read(planRepositoryProvider).undoRoll(earlier.last),
+                icon: const Icon(Icons.undo),
+                label: Text('Deshacer el del ${_day(earlier.last)}'),
+              ),
+            if (rolls.length > 1)
+              TextButton.icon(
+                key: const ValueKey('deshacer-rodar-todo'),
+                onPressed: () =>
+                    ref.read(planRepositoryProvider).undoWeekRolls(date),
+                icon: const Icon(Icons.restart_alt),
+                label: const Text('Deshacer todos: volver a la semana normal'),
+              ),
           ],
         ],
       ),
@@ -90,10 +112,14 @@ class RollDayRow extends ConsumerWidget {
 /// Confirmación con el día desde el que se rueda (hoy por defecto) y lo que
 /// se pierde esa semana.
 class _RollDialog extends StatefulWidget {
-  const _RollDialog({required this.today, required this.options});
+  const _RollDialog(
+      {required this.today, required this.options, this.already = const []});
 
   final DateTime today;
   final Map<DateTime, List<DateTime>> options;
+
+  /// Corrimientos que ya tiene la semana.
+  final List<DateTime> already;
 
   @override
   State<_RollDialog> createState() => _RollDialogState();
@@ -133,6 +159,11 @@ class _RollDialogState extends State<_RollDialog> {
               const SizedBox(height: 12),
             ],
             Text([
+              if (widget.already.isNotEmpty)
+                'Esta semana ya está rodada desde el '
+                    '${widget.already.map(_day).join(', ')}: rodar otra vez la '
+                    'corre un día más. Si sólo querías corregir el día, usa '
+                    '«Deshacer» en Hoy.',
               isToday
                   ? 'Hoy queda libre y lo de hoy pasa a mañana; el resto de la '
                       'semana también va un día más tarde, con sus tests.'

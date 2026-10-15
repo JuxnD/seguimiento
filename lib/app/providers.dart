@@ -425,6 +425,14 @@ final recoverySignalsProvider = StreamProvider<void>((ref) {
   ]));
 });
 
+/// Plan 053: rodar o deshacer un día cambia qué toca hoy (decisiones
+/// guardadas en coachProposals). Sin esto Hoy y Entreno seguían con el día
+/// anterior hasta reabrir la app (reporte del owner, 15 oct).
+final planShiftSignalsProvider = StreamProvider<void>((ref) {
+  final db = ref.watch(databaseProvider);
+  return db.tableUpdates(TableUpdateQuery.onAllTables([db.coachProposals]));
+});
+
 /// Plan 052: el resto de registros que también sostienen la racha.
 final streakSignalsProvider = StreamProvider<void>((ref) {
   final db = ref.watch(databaseProvider);
@@ -485,6 +493,7 @@ final dashboardProvider = FutureProvider((ref) {
   ref.watch(sessionsProvider);
   ref.watch(footballProvider);
   ref.watch(planVersionsProvider);
+  ref.watch(planShiftSignalsProvider);
   ref.watch(profileProvider);
   ref.watch(checkInsProvider);
   ref.watch(mealsForDayProvider(dayKey(today)));
