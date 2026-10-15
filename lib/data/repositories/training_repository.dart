@@ -21,6 +21,7 @@ import 'plan_repository.dart';
 import 'readiness_repository.dart';
 import 'fitness_test_repository.dart';
 import '../../domain/test_protocol.dart';
+import '../../domain/fitness_test.dart' show TestPart;
 import '../../domain/readiness.dart';
 import '../../domain/series_side_proof.dart';
 import '../../domain/ladder_prescription_proof.dart';
@@ -975,33 +976,187 @@ class TrainingRepository {
   }
 
   /// Los bloques que el v3.1 agrega al día: planche (si hay paralelas) y la
-  /// escalera de core. Igual para Hoy, para empezar y para retomar.
+  /// escalera de core. Igual para Hoy, para empezar y para retomar. En el
+  /// v3.2, si el test de piernas de la semana se movió, aplica la semana
+  /// reorganizada de §16.27 (plan 052).
   Future<PlanDayDraft> withV31Blocks(PlanDayDraft day, DateTime date, V3Day? v3,
       {required bool planche, bool rings = false}) async {
+    if (v3 == null || !v3.isV31) {
+      return _composeBlocks(day, date, v3, date,
+          planche: planche, rings: rings);
+    }
+    final week = await testWeekFor(date, v3);
+    PlanDayDraft labeled(PlanDayDraft d, String? note) => PlanDayDraft(
+        weekday: date.weekday,
+        type: d.type,
+        targetRounds: d.targetRounds,
+        restBetweenRoundsSec: d.restBetweenRoundsSec,
+        notes: [
+          if (note != null) note,
+          if (d.notes != null && d.notes!.trim().isNotEmpty) d.notes!,
+        ].join(' · '),
+        exercises: d.exercises,
+        coreEpochs: d.coreEpochs);
+    Future<PlanDayDraft> composeFrom(DateTime donor) async {
+      final template =
+          (await PlanRepository(db, exercises).dayFor(donor))?.day ?? day;
+      return _composeBlocks(template, date, v3, donor,
+          planche: planche, rings: rings);
+    }
+
+    switch (week.role) {
+      case TestWeekRole.none:
+        final normal = await _composeBlocks(day, date, v3, date,
+            planche: planche, rings: rings);
+        if (!await _dayAfterTorsoTest(date, v3)) return normal;
+        // §16.27 regla 3: el día después del test de torso no lleva series
+        // máximas de torso.
+        var touched = false;
+        for (final e in normal.exercises
+            .where((e) => chainTorsoExercises.contains(e.name))) {
+          e.rirMin = e.rirMin == null || e.rirMin! < 3 ? 3 : e.rirMin;
+          if (e.rirMax != null && e.rirMax! < e.rirMin!) e.rirMax = e.rirMin;
+          touched = true;
+        }
+        return touched
+            ? labeled(normal,
+                'Ayer fue el test de torso: hoy sin series máximas de torso (RIR 3 o más).')
+            : normal;
+      case TestWeekRole.legsMobility:
+        return PlanDayDraft(
+            weekday: date.weekday,
+            type: DayType.descanso,
+            notes:
+                'Movilidad: mañana va el test de piernas. Rutina de mañana, rutina de noche con el módulo de piernas y caminata opcional; sin carga de piernas. Cuenta para la racha.');
+      case TestWeekRole.legsKneeIsometrics:
+        return PlanDayDraft(
+            weekday: date.weekday,
+            type: DayType.piernas,
+            notes:
+                'Escaleras 3–4: sólo isométricos de rodilla y los benchmarks de movilidad. El test de piernas pasa al ${weekdayShort(week.legsEffective!.weekday).toLowerCase()} ${formatShort(week.legsEffective!)}.',
+            exercises: [
+              PlanExerciseDraft(
+                  name: 'Sentadilla isométrica en la pared',
+                  sets: 3,
+                  holdSecMin: 30,
+                  holdSecMax: 30,
+                  purpose: v32Purposes['Sentadilla isométrica en la pared'])
+            ]);
+      case TestWeekRole.legsTest:
+        final legs = await composeFrom(week.legsPlanned!);
+        var short = [
+          for (final e in legs.exercises)
+            if (testDayLegExercises.contains(e.name)) e
+        ];
+        // Plantillas sin esos nombres (v3.1): piernas sin sprints ni saltos.
+        if (short.length <= 1) {
+          short = [
+            for (final e in legs.exercises)
+              if (!RegExp('Salto|Sprint|Aceleración|Aterrizaje|Burpee')
+                  .hasMatch(e.name))
+                e
+          ];
+        }
+        for (final e in short) {
+          if (testDayTwoSets.contains(e.name) && (e.sets ?? 0) > 2) e.sets = 2;
+        }
+        return labeled(
+            PlanDayDraft(
+                weekday: date.weekday,
+                type: legs.type,
+                notes: legs.notes,
+                exercises: short,
+                coreEpochs: legs.coreEpochs),
+            'Hoy: FIFA 11+ → test de piernas (4 pruebas) + benchmarks de movilidad (5) → sesión de piernas corta. Sin sprints ni saltos extra: el salto largo ya está en el test. La sesión propia de hoy se descarta.');
+      case TestWeekRole.noLegLoad:
+        final today = await _composeBlocks(day, date, v3, date,
+            planche: planche, rings: rings);
+        today.exercises.removeWhere((e) => chainLegExercises.contains(e.name));
+        return labeled(today,
+            'Mañana va el test de piernas: hoy sin carga de piernas.');
+      case TestWeekRole.displacedSession:
+        final moved = await composeFrom(week.donor!);
+        moved.exercises.removeWhere((e) =>
+            chainLegExercises.contains(e.name) ||
+            e.name.toLowerCase().contains('pistol'));
+        return labeled(moved,
+            'Hoy va la sesión que desplazó el test de piernas, sin pistol ni piernas: ayer se testearon.');
+    }
+  }
+
+  /// Ejercicios de la sesión corta de piernas tras el test (§16.27).
+  static const testDayLegExercises = {
+    'Calentamiento tipo FIFA 11+',
+    'Sentadilla búlgara',
+    'Peso muerto a una pierna con mochila',
+    'Nórdico (isquios)',
+    'Gemelos a una pierna en escalón',
+    'Sóleo sentado con mochila',
+    'Pallof press con banda',
+  };
+  static const testDayTwoSets = {
+    'Sentadilla búlgara',
+    'Peso muerto a una pierna con mochila',
+    'Nórdico (isquios)',
+  };
+
+  Future<bool> _dayAfterTorsoTest(DateTime date, V3Day v3) async {
+    final start =
+        addDays(dateOnly(date), -(date.weekday - 1) - (v3.week - 1) * 7);
+    final protocol = v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12;
+    final readiness = ReadinessRepository(db);
+    for (final round in [1, 2, 3]) {
+      final torso = await readiness.currentTestDate(start, round, TestPart.torso,
+          key: TestScheduleKey(
+              scheme: v3.scheme,
+              blockStart: start,
+              protocolId: protocol,
+              round: round,
+              part: TestPart.torso));
+      if (torso != null && addDays(torso, 1) == dateOnly(date)) return true;
+    }
+    return false;
+  }
+
+  /// La semana del día según el test de piernas de su ronda (plan 052).
+  Future<TestWeekDay> testWeekFor(DateTime date, V3Day v3) =>
+      ReadinessRepository(db).testWeekDay(date,
+          scheme: v3.scheme,
+          blockStart: addDays(dateOnly(date),
+              -(date.weekday - 1) - (v3.week - 1) * 7),
+          protocol: v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12);
+
+  /// Compone el día del bloque. `at` es el día de la semana cuyo contenido
+  /// se arma (plan 052: en una semana reorganizada el jueves lleva la sesión
+  /// de piernas del miércoles y el viernes la de Torso B del jueves); la
+  /// rodilla, el check, el readiness y el fútbol se leen siempre de `date`.
+  Future<PlanDayDraft> _composeBlocks(PlanDayDraft day, DateTime date,
+      V3Day? v3, DateTime at,
+      {required bool planche, bool rings = false}) async {
     var result = await withLadder(
-        await withPlanche(day, date, v3, enabled: planche), date, v3);
+        await withPlanche(day, at, v3, enabled: planche), at, v3);
     if (v3?.isV32 != true) return result;
     final stopped = await (db.select(db.ladderEvents)
           ..where((t) =>
               t.date.equals(dayKey(date)) &
               t.eventKey.like('accessoryAlarm:hamstring_pinch:%')))
         .get();
-    result = await withAccessoryLadders(result, date, v3!, rings: rings);
+    result = await withAccessoryLadders(result, at, v3!, rings: rings);
     if (!planche &&
         rings &&
-        [DateTime.tuesday, DateTime.thursday].contains(date.weekday)) {
+        [DateTime.tuesday, DateTime.thursday].contains(at.weekday)) {
       final support = ladderById('support_hold')!;
       final state = await LadderRepository(db).state(support, today: date);
       if (state.current.physicalVariantKey == 'support_rings') {
         final e = PlanExerciseDraft(
             name: state.current.exercise,
-            sets: date.weekday == DateTime.thursday ? 2 : 3,
-            holdSecMin: date.weekday == DateTime.thursday ? 30 : 20,
+            sets: at.weekday == DateTime.thursday ? 2 : 3,
+            holdSecMin: at.weekday == DateTime.thursday ? 30 : 20,
             holdSecMax: 30,
             physicalVariantKey: 'support_rings',
             purpose: exercisePurpose(state.current.exercise));
         result.exercises.add(e);
-        result = await withAccessoryLadders(result, date, v3, rings: rings);
+        result = await withAccessoryLadders(result, at, v3, rings: rings);
       }
     }
     for (final exercise in result.exercises.where((e) =>
@@ -1018,7 +1173,7 @@ class TrainingRepository {
               : 15;
     }
     // §19.13 L1 (047 hallazgo 3): el lunes calienta también las muñecas.
-    if (date.weekday == DateTime.monday &&
+    if (at.weekday == DateTime.monday &&
         !result.exercises.any((e) => e.name == 'Muñecas (planche)')) {
       result.exercises.add(PlanExerciseDraft(
           name: 'Muñecas (planche)',
@@ -1042,11 +1197,11 @@ class TrainingRepository {
     // §19.13 martes 11 (047 hallazgo 2, decisión del owner): desde la semana
     // 5 el temporizador 15/15 del 045 se ofrece al empezar; el día dice si
     // hoy no van y por qué.
-    if (date.weekday == DateTime.tuesday && v3.week >= 5) {
+    if (at.weekday == DateTime.tuesday && v3.week >= 5) {
       result.notes =
           '${result.notes ?? ''} · ${await intervals1515Blocked(date, v3) ?? 'Intervalos 15/15: al empezar puedes elegirlos (2 × 8 min con temporizador).'}';
     }
-    if (date.weekday == DateTime.tuesday) {
+    if (at.weekday == DateTime.tuesday) {
       final maximum = v3.blockStart == null
           ? null
           : await FitnessTestRepository(db).latestMeasurement(
@@ -1072,10 +1227,10 @@ class TrainingRepository {
             '${result.notes ?? ''} Colgado pendiente: falta un máximo comparable mayor de 10 s; no se inventa duración.';
       }
     }
-    if (date.weekday == DateTime.friday) {
+    if (at.weekday == DateTime.friday) {
       result.targetRounds = maintenanceRounds(v3.week);
     }
-    if ([DateTime.thursday, DateTime.friday].contains(date.weekday)) {
+    if ([DateTime.thursday, DateTime.friday].contains(at.weekday)) {
       final state =
           await LadderRepository(db).state(reversePlankLadder, today: date);
       final step = state.current;
@@ -1105,7 +1260,7 @@ class TrainingRepository {
             ...result.exercises,
             PlanExerciseDraft(
                 name: step.exercise,
-                sets: date.weekday == DateTime.friday ? 2 : step.sets,
+                sets: at.weekday == DateTime.friday ? 2 : step.sets,
                 repsMin: step.repsMin,
                 repsMax: step.repsMax,
                 holdSecMin: holdMin,
@@ -1121,7 +1276,7 @@ class TrainingRepository {
           coreEpochs: {
             ...result.coreEpochs,
             reversePlankLadder.id: state.identity,
-            if (date.weekday == DateTime.friday)
+            if (at.weekday == DateTime.friday)
               LadderPrescriptionProof.key(reversePlankLadder.id):
                   LadderPrescriptionProof.maintenance(
                       identity: state.identity,
@@ -1167,7 +1322,7 @@ class TrainingRepository {
                 purpose: v32Purposes['Sentadilla isométrica en la pared'])
           ]);
     }
-    final recentGames = date.weekday == DateTime.wednesday
+    final recentGames = at.weekday == DateTime.wednesday
         ? await (db.select(db.footballGames)
               ..where((t) => t.date.isBetweenValues(
                   dayKey(addDays(date, -2)), dayKey(addDays(date, -1)))))

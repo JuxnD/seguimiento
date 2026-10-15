@@ -47,6 +47,7 @@ class TodayDashboard {
     this.hardFootballYesterday,
     required this.streak,
     this.activeToday = false,
+    this.weekReorganized,
     required this.macros,
     required this.proteinMin,
     required this.proteinMax,
@@ -134,6 +135,9 @@ class TodayDashboard {
   final int streak;
   /// Misma lectura de actividad guardada que calcula la racha.
   final bool activeToday;
+
+  /// Plan 052: por qué la semana se reorganizó (test movido); null si no.
+  final String? weekReorganized;
   final Macros macros;
   final int? proteinMin;
   final int? proteinMax;
@@ -248,9 +252,14 @@ class DashboardRepository {
     final view = await plan.dayFor(date);
     final training = TrainingRepository(db, ExerciseRepository(db));
     final v3 = await training.blockDay(view, date);
+    // Plan 052 (§16.27): la semana reorganizada por un test movido manda
+    // también en v3.1; el resto del v3.1 sigue mostrando su plantilla.
+    final week = v3 != null && v3.isV31
+        ? await training.testWeekFor(date, v3)
+        : null;
     final effective = view == null
         ? null
-        : v3?.isV32 == true
+        : v3?.isV32 == true || (week != null && week.role != TestWeekRole.none)
             ? await training.withV31Blocks(view.day, date, v3,
                 planche: planche, rings: rings)
             : view.day;
@@ -364,6 +373,7 @@ class DashboardRepository {
           yesterday != null && isHardGame(yesterday) ? yesterday : null,
       streak: constancy.streak,
       activeToday: constancy.activeToday,
+      weekReorganized: week?.reason,
       macros: Macros.sum(meals.map((m) => m.macros)),
       proteinMin: protein.comparable ? protein.value!.round() : null,
       proteinMax: proteinMax.comparable ? proteinMax.value!.round() : null,

@@ -8,8 +8,11 @@ import '../../domain/enums.dart';
 import '../../domain/fitness_test.dart';
 import '../../domain/test_protocol.dart';
 import '../../domain/readiness.dart';
+import '../../domain/leg_chain.dart' show chainLegExercises;
 import '../database.dart';
 import 'coach_repository.dart';
+import 'exercise_repository.dart';
+import 'plan_repository.dart';
 import 'recovery_repository.dart';
 
 /// Tipo de decisión en `coach_proposals` para "Entrenar igual" (§19.17).
@@ -75,6 +78,50 @@ class TestDayGate {
 }
 
 /// Un test de la agenda efectiva: su identidad, el día previsto y el de ahora.
+/// Lo que la semana reorganizada pide a un día (plan 052, §16.27).
+enum TestWeekRole {
+  none,
+
+  /// Día anterior al test de piernas (o su día nominal ya vacío): sólo
+  /// movilidad y recuperación, sin carga de piernas.
+  legsMobility,
+
+  /// Día del test movido: FIFA 11+ → test + benchmarks → piernas corta. La
+  /// sesión propia del día se descarta.
+  legsTest,
+
+  /// Día del test con escaleras 3–4: isométricos y benchmarks; el test pasa
+  /// a la siguiente sesión de piernas.
+  legsKneeIsometrics,
+
+  /// Viernes tras el test: recibe la sesión que el test desplazó, sin
+  /// piernas.
+  displacedSession,
+
+  /// Día anterior al test que no es de piernas: su sesión sin carga de
+  /// piernas.
+  noLegLoad,
+}
+
+class TestWeekDay {
+  const TestWeekDay(this.role,
+      {this.round,
+      this.legsPlanned,
+      this.legsDate,
+      this.legsEffective,
+      this.donor,
+      this.reason});
+
+  final TestWeekRole role;
+  final int? round;
+  final DateTime? legsPlanned, legsDate, legsEffective, donor;
+
+  /// Por qué se reorganizó la semana; null en la semana nominal.
+  final String? reason;
+
+  bool get reorganized => reason != null;
+}
+
 class EffectiveTest {
   const EffectiveTest({
     required this.key,
@@ -359,7 +406,8 @@ class ReadinessRepository {
   /// pendientes, al menos dos días de calendario desde el torso completo real.
   /// No adelanta el calendario nominal ni modifica resultados/movimientos.
   Future<DateTime?> _resolvedTestDate(
-      TestScheduleKey key, List<TestMove> movements) async {
+      TestScheduleKey key, List<TestMove> movements,
+      {bool kneePush = true}) async {
     final planned = plannedTestDate(key.blockStart, key.round, key.part);
     if (planned == null) return null;
     var date = movements.isEmpty ? planned : movements.last.to;
@@ -384,7 +432,138 @@ class ReadinessRepository {
       final earliest = addDays(torso, 2);
       if (earliest.isAfter(date)) date = earliest;
     }
-    return date;
+    return _legsSafeDate(date, planned, kneePush: kneePush);
+  }
+
+  /// Plan 052 (§16.27): piernas nunca cae dentro de las 48 h siguientes a un
+  /// partido (jugado o del plan) y, con escaleras 3–4 anotadas ese día, pasa
+  /// a la siguiente sesión de piernas (mismo día de la semana que el
+  /// nominal). Sólo lectura: no guarda movimientos.
+  Future<DateTime> _legsSafeDate(DateTime date, DateTime planned,
+      {required bool kneePush}) async {
+    var d = date;
+    for (var guard = 0; guard < 6; guard++) {
+      if (kneePush) {
+        final stairs = (await RecoveryRepository(db).morningOn(d))?.kneeStairs;
+        if (stairs != null && stairs >= 3 && stairs <= 4) {
+          d = _nextWeekday(d, planned.weekday);
+          continue;
+        }
+      }
+      if (await _footballWithin48h(d)) {
+        d = _nextWeekday(d, planned.weekday);
+        continue;
+      }
+      break;
+    }
+    return d;
+  }
+
+  static DateTime _nextWeekday(DateTime from, int weekday) {
+    final ahead = (weekday - from.weekday) % 7;
+    return addDays(from, ahead == 0 ? 7 : ahead);
+  }
+
+  Future<bool> _footballWithin48h(DateTime day) async {
+    final games = await (db.select(db.footballGames)
+          ..where((t) => t.date.isBetweenValues(
+              dayKey(addDays(day, -2)), dayKey(addDays(day, -1)))))
+        .get();
+    if (games.isNotEmpty) return true;
+    // Sin registro manda el plan: un partido previsto también protege piernas.
+    final plan = PlanRepository(db, ExerciseRepository(db));
+    for (final back in [1, 2]) {
+      if ((await plan.dayFor(addDays(day, -back)))?.day.type == DayType.futbol) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Plan 052 (§16.27, reorganizar la semana cuando se mueve un test): qué le
+  /// toca a `date` si el test de piernas de su semana quedó en otra fecha. La
+  /// semana nominal devuelve [TestWeekRole.none] y no cambia nada.
+  Future<TestWeekDay> testWeekDay(DateTime date,
+      {required String scheme,
+      required DateTime blockStart,
+      required TestProtocolId protocol}) async {
+    final d = dateOnly(date);
+    final s = dateOnly(blockStart);
+    final plan = PlanRepository(db, ExerciseRepository(db));
+    Future<bool> training(DateTime x) async =>
+        (await plan.dayFor(x))?.day.type.isTraining ?? false;
+    Future<bool> legsDay(DateTime x) async {
+      final day = (await plan.dayFor(x))?.day;
+      if (day == null) return false;
+      if (day.type == DayType.piernas) return true;
+      final legs = day.exercises.where((e) => chainLegExercises.contains(e.name));
+      return day.exercises.isNotEmpty && legs.length * 2 >= day.exercises.length;
+    }
+    for (final round in [1, 2, 3]) {
+      final planned = plannedTestDate(s, round, TestPart.piernas);
+      final plannedTorso = plannedTestDate(s, round, TestPart.torso);
+      if (planned == null || plannedTorso == null) continue;
+      // El Test3 tiene piernas antes que torso: conserva su orden propio.
+      if (plannedTorso.isAfter(planned)) continue;
+      final key = TestScheduleKey(
+          scheme: scheme,
+          blockStart: s,
+          protocolId: protocol,
+          round: round,
+          part: TestPart.piernas);
+      final done = await moves(s, round, TestPart.piernas, key: key);
+      final scheduled = (await _resolvedTestDate(key, done, kneePush: false))!;
+      if (scheduled == planned) continue;
+      final week = weekAnchor(planned);
+      if (d.isBefore(week) || d.isAfter(addDays(scheduled, 1))) continue;
+      final effective = (await _resolvedTestDate(key, done))!;
+      final torso = await currentTestDate(s, round, TestPart.torso,
+          key: TestScheduleKey(
+              scheme: scheme,
+              blockStart: s,
+              protocolId: protocol,
+              round: round,
+              part: TestPart.torso));
+      final why = done.isNotEmpty
+          ? 'movido por recuperación'
+          : torso != null && !addDays(torso, 2).isBefore(scheduled)
+              ? 'para llegar descansado tras el test de torso del ${weekdayShort(torso.weekday).toLowerCase()} ${formatShort(torso)}'
+              : 'a más de 48 h del partido';
+      final reason =
+          'Test $round de piernas: del ${weekdayShort(planned.weekday).toLowerCase()} ${formatShort(planned)} pasa al ${weekdayShort(scheduled.weekday).toLowerCase()} ${formatShort(scheduled)}, $why.'
+          '${effective == scheduled ? '' : ' Con escaleras 3–4 ese día, va el ${weekdayShort(effective.weekday).toLowerCase()} ${formatShort(effective)} dentro de la sesión de piernas.'}';
+      // En un día de piernas el test va dentro de su sesión, como en la
+      // semana nominal; en otro día lo reemplaza con la sesión corta.
+      final onLegsDay = await legsDay(scheduled);
+      TestWeekRole role = TestWeekRole.none;
+      DateTime? donor;
+      if (d == scheduled) {
+        role = effective != scheduled
+            ? TestWeekRole.legsKneeIsometrics
+            : onLegsDay
+                ? TestWeekRole.none
+                : TestWeekRole.legsTest;
+      } else if (d == addDays(scheduled, -1) && await training(d)) {
+        role = await legsDay(d)
+            ? TestWeekRole.legsMobility
+            : TestWeekRole.noLegLoad;
+      } else if (!onLegsDay &&
+          d == addDays(scheduled, 1) &&
+          d.weekday == DateTime.friday &&
+          await training(d) &&
+          await training(scheduled)) {
+        role = TestWeekRole.displacedSession;
+        donor = scheduled;
+      }
+      return TestWeekDay(role,
+          round: round,
+          legsPlanned: planned,
+          legsDate: scheduled,
+          legsEffective: effective,
+          donor: donor,
+          reason: reason);
+    }
+    return const TestWeekDay(TestWeekRole.none);
   }
 
   /// Plan 052 (reporte del owner del 14 oct: torso completo el martes y

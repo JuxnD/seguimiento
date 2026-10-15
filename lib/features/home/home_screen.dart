@@ -35,6 +35,7 @@ import '../../ui/widgets.dart';
 import '../body/body_screen.dart' show addWeightDialog;
 import '../body/ladders_screen.dart';
 import '../body/measurement_form_screen.dart';
+import '../body/mobility_benchmarks_screen.dart';
 import '../meals/meal_form_screen.dart';
 import 'coach_card.dart';
 import 'morning_check_screen.dart';
@@ -369,8 +370,11 @@ class _PlanHero extends StatelessWidget {
                       if (dashboard.targetRounds != null)
                         Text('Meta: ${dashboard.targetRounds} rondas',
                             style: text.titleSmall),
+                      // §16.27: una sola etiqueta, la del esquema activo.
                       if (dashboard.planVersion != null)
-                        Text('Plan v${dashboard.planVersion}',
+                        Text(
+                            dashboard.v3?.title ??
+                                'Plan · versión ${dashboard.planVersion}',
                             style: text.bodySmall),
                     ],
                   ),
@@ -577,9 +581,20 @@ class _StartButtons extends ConsumerWidget {
                     : d.date.weekday == DateTime.monday
                         ? 'Día de test ${test.round}: torso, core y habilidades. Completo sustituye tirón.'
                         : 'Test ${test.round} de torso y core. La Cindy de hoy sigue pendiente.')
-                : 'Test ${test.round} de piernas: 4 pruebas después del FIFA 11+, antes de la sesión.',
+                : 'Test ${test.round} de piernas: 4 pruebas + 5 benchmarks de movilidad, después del FIFA 11+.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
+          if (!torso) ...[
+            const SizedBox(height: 4),
+            TextButton.icon(
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const MobilityBenchmarksScreen())),
+              icon: const Icon(Icons.straighten_outlined),
+              label: const Text('Anotar los 5 benchmarks de movilidad'),
+            ),
+          ],
           const SizedBox(height: 8),
           FilledButton.icon(
             onPressed: openTest,
@@ -1827,6 +1842,29 @@ class _V3Strip extends StatelessWidget {
         children: [
           Text('${v3.title} · $week · ${v3.phase.label}',
               style: text.labelLarge?.copyWith(color: color)),
+          if (dashboard.weekReorganized case final why?)
+            Row(children: [
+              Expanded(
+                child: Text('Semana ${v3.week} reorganizada (test movido)',
+                    style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+              ),
+              TextButton(
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (c) => AlertDialog(
+                    title: const Text('Por qué cambió la semana'),
+                    content: Text(
+                        '$why\n\nEl test reemplaza la sesión de su día y esa sesión se descarta. El día antes del test de piernas va movilidad; el día después de un test de torso, sin series máximas de torso; y piernas nunca cae a menos de 48 h de un partido.'),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(c),
+                          child: const Text('Entendido'))
+                    ],
+                  ),
+                ),
+                child: const Text('Por qué'),
+              ),
+            ]),
           if (v3.reducedVolume || (v3.isV31 && v3.week == 1))
             Text(v3.hint, style: text.bodyMedium),
           if (dashboard.dayType == DayType.resistencia && resistance != null)

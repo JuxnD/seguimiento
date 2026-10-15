@@ -195,12 +195,17 @@ void main() {
     await save();
     final fri = addDays(thu, 1);
     expect(await on(thu), isNull);
+    // Plan 052 (§16.27): con escaleras 3–4 ese día, piernas pasa a la
+    // siguiente sesión de piernas (miércoles 21); no espera bloqueado.
     await db.into(db.morningChecks).insert(MorningChecksCompanion.insert(
         date: dayKey(fri), kneeStairs: const Value(3)));
-    expect((await on(fri))!.gate!.status, TestDayStatus.stairsHigh);
+    expect(await on(fri), isNull);
+    final next = DateTime(2026, 10, 21);
+    expect((await on(next))!.part, TestPart.piernas);
+    expect((await on(next))!.gate!.status, TestDayStatus.stairsUnknown);
     await RecoveryRepository(db)
-        .setReadinessAnswers(fri, muscleSoreness: 0, ill: true);
-    expect((await on(fri))!.gate!.status, TestDayStatus.rest);
+        .setReadinessAnswers(next, muscleSoreness: 0, ill: true);
+    expect((await on(next))!.gate!.status, TestDayStatus.rest);
   });
   test('piernas ya completas no reaparecen jueves por reajuste', () async {
     await save();
