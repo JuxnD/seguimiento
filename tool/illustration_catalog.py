@@ -766,6 +766,11 @@ def _generate_base(name):
             e=basic(name,frames,group='Condición',yaw=120,focus=None)
             e['motion']=motion
             return e
+        if name=='Sentadilla con salto':
+            frames,motion=squat_jump()
+            e=basic(name,frames,group='Condición',yaw=25,focus='hip')
+            e['motion']=motion
+            return e
         if name=='Salto vertical':
             frames,motion=vertical_jump()
             e=basic(name,frames,group='Condición',yaw=25,focus='hip')
@@ -1100,6 +1105,33 @@ def vertical_jump():
     return frames, motion
 
 
+def squat_jump():
+    # 052: la guía pide sentadilla completa, salto con todo (los pies
+    # despegan) y aterrizaje suave con las rodillas en línea con los pies.
+    def jump(caption, hip, torso, legs, arms):
+        return pose(caption, hip, torso, cp(legs), cp(legs), arm(arms, arms), arm(arms, arms))
+    flat = reach(0, -1, foot=0)
+    toes = reach(1.17, -4.21, foot=40)
+    stand = jump('De pie: pies al ancho de los hombros', (0, -28.9), -90, flat, 90)
+    deep = jump('Baja a sentadilla completa; brazos atrás', (-8, -17), -55, flat, 150)
+    drive = jump('Empuja el suelo; los brazos pasan adelante', (-3, -24), -68, flat, 40)
+    take = jump('Salta con todo: cadera, rodillas y tobillos extendidos', (1, -31.9), -86, toes, -75)
+    air = jump('Vuelo: los pies despegan', (1, -39), -88, limb(90, 90, foot=60), -95)
+    touch = jump('Aterriza en la parte delantera del pie', (1, -31.6), -86, toes, 5)
+    absorb = jump('Amortigua: rodillas en línea con los pies', (-6, -20), -60, flat, 30)
+    back = cp(stand); back['caption'] = 'Vuelve a la posición inicial'
+    frames = [stand, deep, drive, take, air, touch, absorb, back]
+    feet = ['nearAnkle', 'farAnkle']
+    motion = [phase('Baja a sentadilla completa', contacts=feet, seconds=.8),
+              phase('Impulso: los brazos suben', contacts=feet, seconds=.25),
+              phase('Despegue', seconds=.2),
+              phase('Vuelo', ground='flight', seconds=.35),
+              phase('Recepción en el antepié', ground='flight', seconds=.35),
+              phase('Aterriza suave', seconds=.3),
+              phase('Vuelve de pie', contacts=feet, seconds=.8)]
+    return frames, motion
+
+
 def generate(name):
     """Opt-in authored timelines; unselected legacy specifications stay intact."""
     from illustration_guided import NAMES, generate as guided
@@ -1228,8 +1260,6 @@ def generate(name):
             fs=cp(spec['frames'])
             # Skip a running demonstration's reset; next part owns its cut.
             ms=cp(spec.get('motion', [phase('Recorrido') for _ in fs[1:]]))
-            if i==7:
-                for p in ms: p['ground']='flight'
             if spec.get('pivot'):
                 for p in ms: p['pivot']=list(spec['pivot'])
             if ms and ms[-1]['kind']=='cut': fs.pop();ms.pop()

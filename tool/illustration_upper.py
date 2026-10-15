@@ -567,6 +567,7 @@ def generate(name):
         e.setdefault('view', {})['yaw'] = -80
         bar = (4, -68)
         hand = [bar[0], bar[1], 8.5]   # prono: un poco más ancho que los hombros
+        e['gripZ'] = hand[2]
         legs = limb(95, 165, foot=135)
 
         def hang(caption, neck_at, torso):

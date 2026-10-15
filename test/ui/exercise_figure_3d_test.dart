@@ -21,13 +21,17 @@ void main() {
 
   group('datos', () {
     test('los tres ejercicios de la iteración, con inicio, medio y final', () {
-      for (final name in ['Pino pecho a la pared', 'Nórdico (isquios)', 'Dominadas']) {
+      // Dominadas pasó a 6 momentos en la auditoría 052 (sube, pausa, baja en 2 s).
+      for (final name in ['Pino pecho a la pared', 'Nórdico (isquios)']) {
         final fig = catalog.forExercise(name);
         expect(fig, isNotNull, reason: name);
         expect(fig!.frames, hasLength(3));
         expect(fig.regions, isNotEmpty, reason: 'el naranja señala un músculo');
         expect([for (var i = 0; i < 3; i++) momentLabel(fig, i)], ['Inicio', 'Medio', 'Final']);
       }
+      final pull = catalog.forExercise('Dominadas')!;
+      expect(pull.frames, hasLength(6));
+      expect(pull.regions, isNotEmpty);
       expect(catalog.forExercise('  nordico (ISQUIOS) ')?.name, 'Nórdico (isquios)');
       expect(catalog.forExercise('Flexiones'), isNotNull, reason: 'la renovación cubre también el catálogo plano');
     });

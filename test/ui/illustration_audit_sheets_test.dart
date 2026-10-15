@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:seguimiento/data/catalog_updates.dart';
 import 'package:seguimiento/data/exercise_details.dart';
 import 'package:seguimiento/domain/daily_routines.dart';
 import 'package:seguimiento/domain/mobility.dart';
@@ -29,6 +30,10 @@ void main() {
     }
     for (final e in [...legsModule, ...recoveryActivation]) {
       add(e.name, e.formCues);
+    }
+    // Las guías del catálogo (Burpees, Plancha lateral…) viven en la base.
+    for (final g in exerciseGuides) {
+      add(g.name, g.formCues);
     }
     final index = <Map<String, Object?>>[];
     final only = Platform.environment['AUDIT_NAMES']?.split(';').toSet();
