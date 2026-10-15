@@ -39,6 +39,12 @@ def pose(caption, hip=(0, -29), torso=-90, nl=None, fl=None, na=None, fa=None):
     return result
 
 
+def reach3_arm(pole):
+    # Mano apoyada detrás de la cabeza (relativa al hombro): adelante, arriba
+    # y hacia el centro; `pole` dice hacia dónde apunta el codo.
+    return dict(angles=[0, -150], hand=-150, reach3=[7.5, -4, -4], pole=pole)
+
+
 def box(center, size, color='equipment', alpha=1):
     return dict(type='box', center=center, size=size, color=color, alpha=alpha)
 
@@ -371,6 +377,22 @@ def _generate_base(name):
         return basic(name,[a,b,dict(cp(a),caption='Alarga de nuevo, sin dejar caer la espalda')],group='Core')
     if name == 'Flexiones':
         return basic(name,[plank(24,'Palmas y dedos de los pies apoyados, cuerpo recto'),plank(12,'Baja el pecho, sin dejar caer la cadera'),plank(24,'Empuja hasta estirar los brazos')],group='Empuje',focus='neck')
+    if name == 'Rotación torácica en cuatro apoyos':
+        # 052: la mano queda en la nuca todo el recorrido y sólo gira el codo
+        # (suelo → lado → techo). Antes se interpolaban ángulos 2D y el brazo
+        # pasaba estirado hacia adelante, contra la guía.
+        def quad(caption, pole):
+            f = pose(caption, (0, -15.5), -10,
+                     reach(-14, -1.5, foot=180), reach(-13.5, -1.5, foot=180),
+                     reach3_arm(pole), reach(18, 0))
+            return f
+        frames = [quad('Mano en la nuca, codo hacia el suelo', [0, 1, 0]),
+                  quad('Abre el codo hacia el lado', [0, 0, 1]),
+                  quad('Codo al techo; la cadera no se mueve', [0, -1, 0])]
+        frames.append(dict(cp(frames[1]), caption='Vuelve despacio, mano en la nuca'))
+        e = basic(name, frames, group='Movilidad', yaw=25, focus=None,
+                  muscles='Espalda alta y oblicuos')
+        return e
     if name in old and name != '90/90 de cadera':
         e = cp(old[name]); e['frames'] = [f for f in e['frames'] if not f.get('wrong')]
         if len(e['frames']) == 1:
@@ -589,15 +611,17 @@ def _generate_base(name):
             e=cp(old['Estiramiento de flexor de cadera (caballero)']);e['name']=name;e['group']='Movilidad';e['regions']=[];e['view']=dict(yaw=25,pitch=10)
             return e
         if name=='90/90 de cadera':
-            a=pose('Sentado: una rodilla delante y otra al lado',(0,-4),-75,limb(0,90),limb(180,90),reach(10,-3.5,hand=0),reach(1.8,-3.5,hand=0))
-            a['nearLeg'].update(reach3=[14,2.5,-14],pole=[1,0,0],end3=[0,0,-1])
-            a['farLeg'].update(reach3=[-14,2.5,-14],pole=[0,0,-1],end3=[-1,0,0])
-            b=cp(a);b['caption']='Inclina el torso hacia la pierna de delante, sin forzar'
-            b['torso']=-60
-            c=cp(a);c['caption']='Gira ambas rodillas al otro lado, sin levantar los glúteos'
-            c['nearLeg']['reach3']=[14,2.5,14];c['farLeg']['reach3']=[-14,2.5,14]
-            c['nearLeg']['end3']=[0,0,1];c['farLeg']['pole']=[0,0,1]
-            e=basic(name,[a,b,c],group='Movilidad',yaw=65,focus=None);e['view']['pitch']=50
+            # 052: pies fijos y abiertos; las rodillas caen a un lado (90/90),
+            # suben juntas y caen al otro. Torso erguido, manos atrás.
+            def nine(caption, side):
+                f=pose(caption,(0,-4),-85,limb(0,90),limb(0,90),reach(-9,-.75,hand=0),reach(-8.5,-.75,hand=0))
+                for leg,z in [('nearLeg',-15),('farLeg',15)]:
+                    f[leg].update(reach3=[7,2.5,z],pole=[0,-1,0] if side==0 else [0,.35,side],end3=[1,0,0])
+                return f
+            left=nine('Rodillas a un lado: delante y al lado, a 90°',-1)
+            up=nine('Sube las rodillas juntas; los pies no se mueven',0)
+            right=nine('Al otro lado, despacio; pecho alto',1)
+            e=basic(name,[left,up,right],group='Movilidad',yaw=145,focus=None);e['view']['pitch']=18
             return e
         if name=='Rodillas al pecho':
             a=supine('Boca arriba: rodillas dobladas',[limb(-70,90),limb(-70,90)])
@@ -646,18 +670,11 @@ def generate(name):
         e['frames'] = [a,b,cp(b),c]
         e['motion'] = [phase('Entrada'),phase('Sostén y respira',kind='hold',seconds=3),phase('Salida')]
     elif name == '90/90 de cadera':
-        a,b,c = e['frames']
-        # Transfer through knees-up, rather than linear interpolation of
-        # opposite poles (which goes through the zero vector).
-        middle = cp(a); middle['caption'] = 'Cambio de lado: rodillas arriba, pelvis apoyada'
-        for sd,sign in [('near',1),('far',-1)]:
-            middle[sd+'Leg'].update(reach3=[sign*14,2.5,0],pole=[0,-1,0],end3=[sign,0,0])
-        c['caption']='Otro lado: ambas rodillas hacia el suelo, sin forzar'
-        finish=cp(c);finish['torso']=-60;finish['caption']='Inclina el torso hacia la otra pierna'
-        e['frames']=[a,b,cp(a),middle,c,finish,cp(c),cp(middle),cp(a)]
-        e['motion']=[phase(label, contacts=['hip']) for label in
-                     ['Inclina','Vuelve al centro','Eleva las rodillas','Cambia de lado',
-                      'Inclina al otro lado','Vuelve al centro','Eleva las rodillas','Regresa']]
+        left,up,right = e['frames']
+        e['frames']=[left,up,right,cp(up),cp(left)]
+        e['frames'][4]['caption']='Vuelve al primer lado'
+        e['motion']=[phase(label, contacts=['hip','nearAnkle','farAnkle']) for label in
+                     ['Sube las rodillas','Bájalas al otro lado','Sube de nuevo','Vuelve al primer lado']]
     elif name == 'Aceleración 10–20 m':
         # Support, recovery, propulsion, flight and opposite reception are
         # distinct poses. A fixed free-leg angle made the old stride slide
