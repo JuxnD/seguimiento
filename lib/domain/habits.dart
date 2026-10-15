@@ -13,7 +13,7 @@ import 'search.dart';
 
 /// Lo que dice el peso antes y después de jugar.
 class SweatReading {
-  const SweatReading({required this.lossKg, required this.ratePerHourL, required this.replaceL});
+  const SweatReading({required this.lossKg, required this.ratePerHourL, required this.replaceL, this.replaceMinL = 0});
 
   /// Peso perdido en el partido (kg ≈ litros de sudor no repuestos).
   final double lossKg;
@@ -21,8 +21,15 @@ class SweatReading {
   /// Tasa de sudor: (peso perdido + lo bebido) por hora.
   final double ratePerHourL;
 
-  /// Cuánto beber después: 1,5 L por cada kg perdido.
+  /// Cuánto beber después: 1,5 L por cada kg perdido (tope del rango).
   final double replaceL;
+
+  /// Piso del rango (§16.26.5): 1,25 L por kg perdido.
+  final double replaceMinL;
+
+  /// «1,3–1,5 L con sal», o null si no hay que reponer.
+  String? get replaceText => replaceL <= 0 ? null : '${_l(replaceMinL)}–${_l(replaceL)} L con algo de sal';
+  static String _l(double v) => v.toStringAsFixed(1).replaceAll('.', ',');
 }
 
 /// null si falta algún peso, los minutos o lo bebido, o si no se confirmó que
@@ -46,6 +53,7 @@ SweatReading? sweatReading({
     lossKg: loss,
     ratePerHourL: sweat < 0 ? 0 : sweat / (minutes / 60),
     replaceL: loss > 0 ? loss * 1.5 : 0,
+    replaceMinL: loss > 0 ? loss * 1.25 : 0,
   );
 }
 

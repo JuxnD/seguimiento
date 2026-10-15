@@ -97,13 +97,13 @@ void main() {
       List<Map<String, dynamic>>? firstGoals;
       for (var opening = 0; opening < 2; opening++) {
         db = AppDatabase(NativeDatabase(file));
-        expect(db.schemaVersion, 25);
+        expect(db.schemaVersion, 26);
         expect(
             (await db.customSelect('PRAGMA user_version').getSingle())
                 .data
                 .values
                 .single,
-            25);
+            26);
         final names = (await db
                 .customSelect(
                     "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
@@ -114,7 +114,12 @@ void main() {
           'goal_versions',
           'coach_proposals',
           'fitness_test_attempts',
-          'mobility_benchmarks'
+          'mobility_benchmarks',
+          // Plan 052 (esquema 26).
+          'fitness_test_pending',
+          'equipment_items',
+          'supplements',
+          'supplement_logs'
         });
         expect(names.containsAll(expectedNames), isTrue);
         for (final entry in tables.entries) {
@@ -144,8 +149,13 @@ void main() {
                     'ill'
                   ],
                 'plan_exercises' => ['purpose', 'physical_variant_key'],
-                'football_games' => ['weights_comparable'],
-                'fitness_tests' => ['attempt_id', 'conditions', 'baseline_key'],
+                'football_games' => ['weights_comparable', 'start_time'],
+                'fitness_tests' => [
+                    'attempt_id',
+                    'conditions',
+                    'baseline_key',
+                    'limited_by'
+                  ],
                 'sleep_logs' => ['sleep_start', 'wake_at', 'source', 'note'],
                 'custom_reminders' => ['origin'],
                 // Plan 022 (esquema 23): origen y estado del alta.
@@ -157,7 +167,7 @@ void main() {
                   ],
                 _ => <String>[],
               },
-              reason: '${entry.key} only declared schema22/23/24/25 columns');
+              reason: '${entry.key} only declared schema22–26 columns');
           final fields = columns.map(_quoted).join(',');
           expect(
               (await db

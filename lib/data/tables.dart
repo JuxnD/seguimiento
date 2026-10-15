@@ -277,6 +277,9 @@ class FootballGames extends Table {
 
   /// Del historial anterior a la app (§16.16), por confirmar: sin minutos.
   BoolColumn get imported => boolean().withDefault(const Constant(false))();
+
+  /// Plan 052 (§16.26.1): hora de inicio `HH:mm`; null = sin registrar.
+  TextColumn get startTime => text().nullable()();
 }
 
 /// Macros por 1 unidad (`unit`) o por 100 g/ml (`per100`).
@@ -569,6 +572,62 @@ class FitnessTests extends Table {
 
   /// true = limpia; false = con dudas.
   BoolColumn get clean => boolean().withDefault(const Constant(true))();
+
+  /// Plan 052 (§16.27.3): qué la limitó (`tecnica`, `fuerza`, `agarre`,
+  /// `piel`, `dolor`, `equipo`). Con piel, dolor o equipo no es un máximo
+  /// real. null = sin anotar.
+  TextColumn get limitedBy => text().nullable()();
+}
+
+/// Plan 052 (§16.27.3): prueba no hecha de un intento, con su motivo y el
+/// material que falta. Queda pendiente hasta medirla en otro intento.
+@DataClassName('TestPendingRow')
+class FitnessTestPending extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get attemptId => integer().references(FitnessTestAttempts, #id)();
+  TextColumn get item => text()();
+  TextColumn get reason => text()();
+
+  /// Material que falta, separado por comas (`mat`); null si nada.
+  TextColumn get requires => text().nullable()();
+
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {attemptId, item},
+      ];
+}
+
+/// Plan 052 (§16.27.4): material del usuario. `status`: `tengo`,
+/// `en_compra` o `no_tengo`; `kg` sólo para la mochila con peso.
+@DataClassName('EquipmentRow')
+class EquipmentItems extends Table {
+  TextColumn get key => text()();
+  TextColumn get status => text()();
+  RealColumn get kg => real().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+/// Plan 052 (§16.27.5): suplementos con su dosis, envase y fecha de inicio.
+@DataClassName('SupplementRow')
+class Supplements extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  TextColumn get dose => text()();
+  IntColumn get servingsPerPack => integer().nullable()();
+  TextColumn get startDate => text().nullable()();
+  BoolColumn get active => boolean().withDefault(const Constant(true))();
+}
+
+/// Una toma marcada en el registro de la mañana.
+@DataClassName('SupplementLogRow')
+class SupplementLogs extends Table {
+  IntColumn get supplementId => integer().references(Supplements, #id)();
+  TextColumn get date => text()();
+
+  @override
+  Set<Column> get primaryKey => {supplementId, date};
 }
 
 /// Append-only attempts; editing addresses an ID, never a date/text prefix.

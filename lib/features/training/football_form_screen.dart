@@ -270,7 +270,7 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
                   child: Text(
                     s.lossKg > 0
                         ? 'Perdiste ${fmtDec(s.lossKg)} kg · sudor ≈ ${fmtDec(s.ratePerHourL)} L/h. '
-                            'Bebe ≈ ${fmtDec(s.replaceL)} L en las próximas horas.'
+                            'Repón ${s.replaceText} en las próximas horas.'
                         : 'No perdiste peso: la hidratación alcanzó (sudor ≈ ${fmtDec(s.ratePerHourL)} L/h).',
                     style: Theme.of(context).textTheme.titleSmall,
                   ),

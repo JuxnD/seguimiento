@@ -56,7 +56,7 @@ El código generado (`database.g.dart`) no se edita a mano.
 
 ## Migraciones
 
-`schemaVersion` vale **24** en el candidato local del plan 032 (ver al final). Al cambiar una tabla:
+`schemaVersion` vale **26** desde el plan 052 (ver al final). Al cambiar una tabla:
 
 1. Subir `schemaVersion` en [`lib/data/database.dart`](../lib/data/database.dart).
 2. Añadir el paso en `onUpgrade` (`m.addColumn`, `m.createTable`, …).
@@ -251,3 +251,22 @@ rechaza: es de una versión más nueva y restaurarlo rompería los datos.
   para no mover los ids de notificación.
 - Oráculos: `migration_test` (23 → 24 y las bases viejas → 24),
   `schema21_122_integration_test`, `readiness_repository_test`.
+
+### Esquema 26 (plan 052, 14 oct 2026)
+
+- `football_games.start_time` (`HH:mm`, null = sin registrar) para listar los
+  partidos del día con su hora (§16.26.1).
+- `fitness_tests.limited_by` (`tecnica`, `fuerza`, `agarre`, `piel`, `dolor`,
+  `equipo`; null = sin anotar). Con piel, dolor o equipo el resultado no es un
+  máximo real (§16.27.3).
+- Tabla `fitness_test_pending`: prueba no hecha de un intento (`attempt_id`,
+  `item` único por intento), motivo y material que falta (`requires`, por
+  comas). Se resuelve al medirla en otro intento; no se inventa valor.
+- Tabla `equipment_items`: material con estado `tengo` / `en_compra` /
+  `no_tengo` y `kg` para la mochila (§16.27.4). Las banderas locales de
+  paralelas y anillas se sincronizan con sus filas.
+- Tablas `supplements` (nombre, dosis, porciones por envase, fecha de inicio,
+  activo) y `supplement_logs` (una toma por suplemento y día) (§16.27.5).
+- Migración 19–25 → 26: un `addColumn` en cada tabla existente y cuatro
+  `createTable`; antes del 19 `fitness_tests` nace con la definición actual.
+  Sin backfill ni cambio de valores.

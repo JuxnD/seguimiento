@@ -17,7 +17,7 @@ const _fixture19Sha =
     '45cea7fcdb225e0d24671335d6932b0def99cf80a4e11bf66752e81965830d46';
 
 // Declared destination for this candidate; never read back from the migrated DB.
-const _targetSchema = 25;
+const _targetSchema = 26; // plan 052
 const _restoredReminderDefaults = [
   {
     'kind': 'recuperacionManana',

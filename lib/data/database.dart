@@ -58,6 +58,10 @@ const databaseFileName = 'seguimiento.sqlite';
   LadderEvents,
   GoalVersions,
   CoachProposals,
+  FitnessTestPending,
+  EquipmentItems,
+  Supplements,
+  SupplementLogs,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -65,7 +69,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 25;
+  int get schemaVersion => 26;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -100,6 +104,17 @@ class AppDatabase extends _$AppDatabase {
               await m.addColumn(sleepLogs, sleepLogs.note);
             }
             if (from >= 12) await m.addColumn(customReminders, customReminders.origin);
+          }
+          if (from < 26) {
+            // Plan 052 (§16.26–§16.27): hora del partido, límite y pruebas
+            // pendientes del test, material y suplementos. Sólo agrega:
+            // nada existente cambia de valor.
+            await m.addColumn(footballGames, footballGames.startTime);
+            if (from >= 19) await m.addColumn(fitnessTests, fitnessTests.limitedBy);
+            await m.createTable(fitnessTestPending);
+            await m.createTable(equipmentItems);
+            await m.createTable(supplements);
+            await m.createTable(supplementLogs);
           }
           if (from < 2) {
             // v2: el plan admite bloques extra, sostenes, RIR y rangos de

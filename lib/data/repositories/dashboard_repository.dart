@@ -11,6 +11,7 @@ import '../../domain/plan_v3.dart';
 import '../../domain/progress.dart';
 import '../../domain/football_summary.dart';
 import '../../domain/recovery.dart';
+import '../../domain/readiness.dart' show ReadinessLevel;
 import '../../domain/session_script.dart'
     show preBlocks, tabataBlock, warmupBlock;
 import '../../domain/goal_history.dart';
@@ -52,6 +53,8 @@ class TodayDashboard {
     required this.proteinMin,
     required this.proteinMax,
     required this.kcalTarget,
+    this.kcalMax,
+    this.kcalDay,
     this.proteinReference,
     this.kcalReference,
     this.stepsReference,
@@ -142,6 +145,11 @@ class TodayDashboard {
   final int? proteinMin;
   final int? proteinMax;
   final int? kcalTarget;
+
+  /// Tope del rango de kcal del día y por qué cambió («fútbol» o
+  /// «recuperación»; null en un día normal).
+  final int? kcalMax;
+  final String? kcalDay;
   final GoalAt? proteinReference;
   final GoalAt? kcalReference;
   final GoalAt? stepsReference;
@@ -301,6 +309,29 @@ class DashboardRepository {
           ..orderBy([(t) => OrderingTerm(expression: t.id)]))
         .get();
     final football = footballGames.isEmpty ? null : footballGames.last;
+    // §16.27.7, §19.6 y §19.17: la meta de kcal sigue el tipo de día. Fútbol
+    // (también entre semana) usa su meta; un día amarillo sube de la de entre
+    // semana hacia la de fútbol. Rango de 100 kcal como en §19.3.
+    final weekdayKcal = goalReferenceOn(history, GoalMetric.kcal, date);
+    final footballKcal = goalReferenceOn(history, GoalMetric.kcalFutbol, date);
+    final footballDay = footballGames.isNotEmpty ||
+        effective?.type == DayType.futbol ||
+        date.weekday >= DateTime.saturday;
+    final yellowDay = !footballDay &&
+        weekdayKcal.comparable &&
+        (await ReadinessRepository(db).readinessOn(date)).level ==
+            ReadinessLevel.yellow;
+    final (kcalGoal, kcalMax, kcalDay) = footballDay && footballKcal.comparable
+        ? (footballKcal, footballKcal.value! + 100, 'fútbol')
+        : yellowDay
+            ? (
+                GoalAt(weekdayKcal.value! + 100, known: true),
+                footballKcal.comparable
+                    ? footballKcal.value!
+                    : weekdayKcal.value! + 300,
+                'recuperación'
+              )
+            : (kcal, kcal.comparable ? kcal.value! + 100 : null, null);
     final yesterday = await _lastGame(addDays(date, -1));
 
     final maxRounds = db.sessions.roundsDone.max();
@@ -377,7 +408,9 @@ class DashboardRepository {
       macros: Macros.sum(meals.map((m) => m.macros)),
       proteinMin: protein.comparable ? protein.value!.round() : null,
       proteinMax: proteinMax.comparable ? proteinMax.value!.round() : null,
-      kcalTarget: kcal.comparable ? kcal.value!.round() : null,
+      kcalTarget: kcalGoal.comparable ? kcalGoal.value!.round() : null,
+      kcalMax: kcalGoal.comparable ? kcalMax?.round() : null,
+      kcalDay: kcalGoal.comparable ? kcalDay : null,
       proteinReference: protein,
       kcalReference: kcal,
       stepsReference: steps,

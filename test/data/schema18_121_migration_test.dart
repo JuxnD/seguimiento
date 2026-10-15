@@ -25,7 +25,7 @@ class _LegacyTable {
 }
 
 // Declared destination for this candidate; never read back from the migrated DB.
-const _targetSchema = 25;
+const _targetSchema = 26; // plan 052
 const _restoredReminderDefaults = [
   {
     'kind': 'recuperacionManana',

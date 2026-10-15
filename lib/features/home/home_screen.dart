@@ -725,9 +725,9 @@ class _DayComplete extends ConsumerWidget {
           child: Text(
             [
               if (sweat != null && sweat.replaceL > 0)
-                'Hidratación: bebe ≈ ${fmtDec(sweat.replaceL)} L en las próximas horas'
+                'Hidratación: repón ${sweat.replaceText} en las próximas horas'
               else if (game != null)
-                'Hidratación: 1,5 L por cada kg perdido (pésate antes y después del partido)',
+                'Hidratación: 1,25–1,5 L por cada kg perdido, con algo de sal (pésate antes y después del partido)',
               'Dormir ≥ 8 h en cama',
             ].map((l) => '• $l').join('\n'),
             style: text.bodyMedium,
@@ -1162,8 +1162,11 @@ class _RingsCard extends ConsumerWidget {
               size: size,
               progress: d.kcalProgress,
               value: fmtInt(d.macros.kcal),
-              sublabel:
-                  d.kcalTarget == null ? null : 'de ${fmtInt(d.kcalTarget!)}',
+              sublabel: d.kcalTarget == null
+                  ? null
+                  : 'de ${fmtInt(d.kcalTarget!)}'
+                      '${d.kcalMax == null ? '' : '–${fmtInt(d.kcalMax!)}'}'
+                      '${d.kcalDay == null ? '' : ' · ${d.kcalDay}'}',
               label: 'kcal',
               color: AppColors.kcal,
             ),
@@ -1184,8 +1187,9 @@ class _RingsCard extends ConsumerWidget {
                     size: size,
                     progress: 1,
                     value: "${d.footballSummary.minutes}'",
+                    // §16.26.1: también la carga total del día.
                     sublabel:
-                        '${d.footballSummary.count} ${d.footballSummary.count == 1 ? 'sesión' : 'sesiones'}',
+                        '${d.footballSummary.count} ${d.footballSummary.count == 1 ? 'sesión' : 'sesiones'} · carga ${d.footballSummary.estimated ? '≈' : ''}${fmtInt(d.footballSummary.load)}',
                     label: 'Fútbol',
                     color: style.color,
                   ))
@@ -1204,7 +1208,7 @@ class _RingsCard extends ConsumerWidget {
             onPressed: () => _showFootballDay(context, ref, d),
             icon: const Icon(Icons.sports_soccer),
             label: Text(
-                "Fútbol · ${d.footballSummary.minutes}' · ${d.footballSummary.count} sesiones"),
+                "Fútbol · ${d.footballSummary.minutes}' · ${d.footballSummary.count} sesiones · carga ${d.footballSummary.estimated ? '≈' : ''}${fmtInt(d.footballSummary.load)}"),
           ),
         if (d.proteinMin == null ||
             d.kcalTarget == null ||

@@ -61,6 +61,9 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   bool _dateWasConfirmed = false;
   String _dateIssue = '';
 
+  /// Ronda de la que se copiaron las condiciones (retest), si alguna.
+  int? _inheritedRound;
+
   String _key(TestItem t, String side) => '${t.id}|$side';
   List<String> _sides(TestItem t) => t.perSide ? const ['I', 'D'] : const [''];
 
@@ -115,6 +118,38 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
           _dateIssue =
               'Hay condiciones sin validar; el registro original se conserva.';
         }
+      }
+    }
+    // §16.26.6: el retest de otra ronda arranca con las condiciones de la
+    // ronda anterior, para repetirlas igual.
+    if (_conditions.isEmpty && !_editing && widget.round > 1) {
+      for (var round = widget.round - 1;
+          round >= 1 && _conditions.isEmpty;
+          round--) {
+        final key = widget.scheduleKey;
+        final earlier = await repo.resultsFor(round, widget.part,
+            protocol: _protocol,
+            key: key == null
+                ? null
+                : TestScheduleKey(
+                    scheme: key.scheme,
+                    blockStart: key.blockStart,
+                    protocolId: key.protocolId,
+                    round: round,
+                    part: key.part));
+        if (!mounted) return;
+        for (final r in earlier) {
+          if (r.conditions == null || !_items.any((t) => t.id == r.item)) {
+            continue;
+          }
+          try {
+            final parsed =
+                (jsonDecode(r.conditions!) as Map).cast<String, Object?>();
+            canonicalTestConditions(r.item, parsed);
+            _conditions[r.item] = parsed;
+          } catch (_) {/* Condición antigua inválida: no se copia. */}
+        }
+        if (_conditions.isNotEmpty) _inheritedRound = round;
       }
     }
     _dateNeedsConfirmation = _editing && (invalid || mixed || future);
@@ -283,6 +318,9 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
                       Text(_dateNeedsConfirmation
                           ? 'Fecha del intento sin confirmar: revisa la fecha de toda esta parte. $_dateIssue'
                           : 'Fecha del intento: ${dayKey(_executionDate)}${_dateWasConfirmed ? ' (confirmada para esta parte)' : _editing ? ' (conservada)' : ''}'),
+                      if (_inheritedRound case final round?)
+                        Text(
+                            'Condiciones copiadas del Test $round: repítelas igual. Si cambian, se crea una línea base nueva.'),
                       if (!_editing ||
                           _dateNeedsConfirmation ||
                           _dateWasConfirmed)

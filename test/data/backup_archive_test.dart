@@ -237,7 +237,7 @@ void main() {
             .customSelect('pragma user_version')
             .map((row) => row.data.values.first as int)
             .getSingle(),
-        25);
+        26);
     expect(await AiConversationRepository(b.db).count(), 0);
     expect(
         (await BodyRepository(b.db).watchWeights().first).map((row) => row.kg),

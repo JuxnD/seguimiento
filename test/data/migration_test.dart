@@ -86,7 +86,7 @@ const _v25Columns = {
   'sleep_logs': ['sleep_start', 'wake_at', 'source', 'note'],
   'custom_reminders': ['origin'],
 };
-const _targetSchema = 25; // destino declarado, nunca leído como oráculo.
+const _targetSchema = 26; // destino declarado, nunca leído como oráculo.
 
 void main() {
   setUpAll(useHostSqlite);
@@ -114,6 +114,20 @@ void main() {
       {Future<void> Function(AppDatabase db)? rows}) async {
     final db = AppDatabase(NativeDatabase(file));
     await db.customStatement('select 1'); // crea el esquema actual
+    if (version < 26) {
+      // Plan 052: hora del partido, límite del test, pendientes, material y
+      // suplementos no existían.
+      await db.customStatement('alter table football_games drop column start_time');
+      await db.customStatement('alter table fitness_tests drop column limited_by');
+      for (final table in [
+        'supplement_logs',
+        'supplements',
+        'equipment_items',
+        'fitness_test_pending'
+      ]) {
+        await db.customStatement('drop table $table');
+      }
+    }
     if (version < 25) {
       for (final table in _v25Columns.entries) {
         for (final column in table.value) {
@@ -382,7 +396,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 1 llega al 25 sin perder datos', () async {
+  test('una base del esquema 1 llega al 26 sin perder datos', () async {
     await buildOldSchema(1);
 
     // Datos ya registrados por el usuario antes de actualizar.
@@ -442,7 +456,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 2 llega al 25 conservando el catálogo', () async {
+  test('una base del esquema 2 llega al 26 conservando el catálogo', () async {
     await buildOldSchema(2);
 
     final old = AppDatabase(NativeDatabase(file));
@@ -460,7 +474,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 7 llega al 25 con guías, catálogo nuevo y rondas sin separar',
+      'una base del esquema 7 llega al 26 con guías, catálogo nuevo y rondas sin separar',
       () async {
     await buildOldSchema(7, rows: (old) async {
       // 'Separaciones con banda' lleva anclaje: antes la guía se escribía en
@@ -543,7 +557,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 6 llega al 25: las sesiones viejas quedan con descanso 0',
+      'una base del esquema 6 llega al 26: las sesiones viejas quedan con descanso 0',
       () async {
     await buildOldSchema(6);
     final old = AppDatabase(NativeDatabase(file));
@@ -560,7 +574,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 9 llega al 25: pasos, golpe en el fútbol y alimentos marcados',
+      'una base del esquema 9 llega al 26: pasos, golpe en el fútbol y alimentos marcados',
       () async {
     await buildOldSchema(9, rows: (db) async {
       await db.customStatement(
@@ -596,7 +610,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 10 llega al 25 con la tabla de fotos de referencia',
+      'una base del esquema 10 llega al 26 con la tabla de fotos de referencia',
       () async {
     await buildOldSchema(10);
     final migrated = AppDatabase(NativeDatabase(file));
@@ -606,7 +620,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 11 llega al 25 con la tabla de recordatorios propios',
+      'una base del esquema 11 llega al 26 con la tabla de recordatorios propios',
       () async {
     await buildOldSchema(11);
     final migrated = AppDatabase(NativeDatabase(file));
@@ -615,7 +629,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 12 llega al 25: pan y salchichón por gramos',
+  test('una base del esquema 12 llega al 26: pan y salchichón por gramos',
       () async {
     late int panId;
     await buildOldSchema(12, rows: (db) async {
@@ -684,7 +698,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 13 llega al 25: las sesiones quedan revisadas',
+  test('una base del esquema 13 llega al 26: las sesiones quedan revisadas',
       () async {
     await buildOldSchema(13, rows: (db) async {
       await db.customStatement(
@@ -698,7 +712,7 @@ void main() {
     await migrated.close();
   });
 
-  test('una base del esquema 14 llega al 25: plan y sesiones listos para el v3',
+  test('una base del esquema 14 llega al 26: plan y sesiones listos para el v3',
       () async {
     await buildOldSchema(14, rows: (db) async {
       await db.customStatement(
@@ -716,7 +730,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 15 llega al 25: RIR, fútbol, sueño y meta de fútbol',
+      'una base del esquema 15 llega al 26: RIR, fútbol, sueño y meta de fútbol',
       () async {
     await buildOldSchema(15, rows: (db) async {
       await db
@@ -746,7 +760,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 16 llega al 25: momento del pesaje, mañana y huevos por porción',
+      'una base del esquema 16 llega al 26: momento del pesaje, mañana y huevos por porción',
       () async {
     await buildOldSchema(16, rows: (db) async {
       await db.customStatement(
@@ -774,7 +788,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 18 llega al 25: historial importado, tests y escaleras',
+      'una base del esquema 18 llega al 26: historial importado, tests y escaleras',
       () async {
     await buildOldSchema(18, rows: (db) async {
       await db.customStatement(
@@ -799,7 +813,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 20 llega al 25: metas legadas sin fecha, sin propuestas',
+      'una base del esquema 20 llega al 26: metas legadas sin fecha, sin propuestas',
       () async {
     await buildOldSchema(20, rows: (db) async {
       await (db.update(db.profiles)..where((t) => t.id.equals(1))).write(
@@ -836,7 +850,7 @@ void main() {
   });
 
   test(
-      'una base del esquema 23 llega al 25: el registro de la mañana gana dolor y enfermo sin respuesta',
+      'una base del esquema 23 llega al 26: el registro de la mañana gana dolor y enfermo sin respuesta',
       () async {
     await buildOldSchema(23, rows: (db) async {
       await db.customStatement(
@@ -905,7 +919,7 @@ void main() {
   // sin propuestas nuevas. Lo existente queda legacyUnknown/ready.
   for (final version in [20, 21, 22]) {
     test(
-        'una base del esquema $version llega al 25 conservando cada tabla, columna y fila',
+        'una base del esquema $version llega al 26 conservando cada tabla, columna y fila',
         () async {
       await buildOldSchema(version, rows: (db) async {
         await db.customStatement(
@@ -1051,4 +1065,34 @@ void main() {
           reason: 'antes de la migración: meta histórica no registrada');
     });
   }
+
+  test('una base del esquema 25 llega al 26 sin tocar lo guardado y con las tablas nuevas vacías',
+      () async {
+    await buildOldSchema(25, rows: (db) async {
+      await db.customStatement(
+          "insert into football_games (date, minutes, intensity) values ('2026-10-11', 90, 7)");
+      await db.customStatement(
+          "insert into body_weights (date, kg, fasted) values ('2026-10-12', 79.5, 1)");
+    });
+    final raw = sqlite.sqlite3.open(file.path);
+    List<Object?> snapshot(sqlite.Database d, String sql) =>
+        [for (final r in d.select(sql)) r.values];
+    final games = snapshot(raw, 'select id, date, minutes, intensity from football_games order by id');
+    final weights = snapshot(raw, 'select date, kg from body_weights order by date');
+    raw.dispose();
+    final migrated = AppDatabase(NativeDatabase(file));
+    expect(await userVersion(migrated), _targetSchema);
+    await migrated.close();
+    final after = sqlite.sqlite3.open(file.path);
+    expect(snapshot(after, 'select id, date, minutes, intensity from football_games order by id'), games);
+    expect(snapshot(after, 'select date, kg from body_weights order by date'), weights);
+    expect(after.select('select start_time from football_games').single.values.single, isNull);
+    for (final table in ['fitness_test_pending', 'equipment_items', 'supplements', 'supplement_logs']) {
+      expect(after.select('select count(*) from $table').single.values.single, 0, reason: table);
+    }
+    expect(
+        after.select("select name from pragma_table_info('fitness_tests') where name = 'limited_by'"),
+        hasLength(1));
+    after.dispose();
+  });
 }
