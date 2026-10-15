@@ -496,22 +496,36 @@ def _generate_base(name):
         if name=='Burpees':
             crouch=pose('Lleva las manos al suelo',(-8,-9),-15,reach(0,-1,foot=0),reach(0,-1,foot=0),reach(13,-.75,hand=0),reach(13,-.75,hand=0))
             return basic(name,[squat('Colócate de pie'),crouch,plank(24,'Pasa a plancha'),dict(cp(crouch),caption='Recoge los pies junto a las manos'),squat('Salta y aterriza con control',jump=True)],group='Condición',focus='hip')
-        if name in {'Aceleración 10–20 m','Rodillas arriba','Calentamiento tipo FIFA 11+'}:
-            a=pose('Paso inicial: cadera estable',(0,-27),-80,limb(-15,90,foot=0),reach(0,-1,foot=0),arm(110,-20),arm(-40,80))
-            b=pose('Alterna piernas y brazos',(0,-27),-80,reach(0,-1,foot=0),limb(-15,90,foot=0),arm(-40,80),arm(110,-20))
-            title='Carrera suave: ejemplo de la primera parte, no el programa completo' if name=='Calentamiento tipo FIFA 11+' else 'Alterna piernas y brazos'
-            a['caption']=title
-            if name == 'Aceleración 10–20 m':
-                a['torso']=-65;b['torso']=-65;b['hip']=(4,-27)
-                a['nearArm']=arm(125,35);a['farArm']=arm(60,-30)
-                b['nearArm']=arm(60,-30);b['farArm']=arm(125,35)
-                a['caption']='Inclínate desde los tobillos e inicia la carrera'
-                b['caption']='Avanza: brazo contrario a la pierna'
-            else:
-                a['torso']=-90;b['torso']=-90
-                a['caption']='Torso vertical: sube una rodilla hacia la cadera'
-                b['caption']='Alterna la rodilla manteniéndote en el sitio'
-            return basic(name,[a,b,dict(cp(a),caption='Continúa alternando con control')],group='Condición',yaw=35,focus=None)
+        if name=='Aceleración 10–20 m':
+            # 052: tronco inclinado desde los tobillos, talón libre bajo el
+            # glúteo, rodilla al frente en su plano, brazos opuestos de la
+            # cadera a la mejilla, vuelo y avance. Sprint lanzado e Intervalos
+            # usan su propia postura (illustration_guided).
+            frames,motion=running('aceleracion')
+            e=basic(name,frames,group='Condición',yaw=35,focus=None)
+            e['motion']=motion
+            return e
+        if name=='Rodillas arriba':
+            # 052: trote en el sitio; la rodilla sube a la cadera y el brazo
+            # contrario va adelante (mano al mentón) con el codo a 90°, el otro
+            # atrás a la cadera. Apoyo en la punta del pie.
+            def knees(caption, up, hip_y):
+                f=pose(caption,(0,hip_y),-90)
+                for sd,sign in [('near',1),('far',-1)]:
+                    f[sd+'Leg']=limb(0,90,foot=60) if sd==up else reach(sign*.6,-2.5,foot=25)
+                    swing=0 if up is None else (-1 if sd==up else 1)
+                    f[sd+'Arm']=run_arm(-90,swing,55,50)
+                return f
+            a=knees('Rodilla a la altura de la cadera; brazo contrario adelante','near',-29.8)
+            m=knees('Apoya la punta del pie y cambia de pierna',None,-29.3)
+            b=knees('Alterna: la otra rodilla arriba, codos a 90°','far',-29.8)
+            last=cp(a);last['caption']='Continúa alternando con el torso erguido'
+            e=basic(name,[a,m,b,cp(m),last],group='Condición',yaw=20,focus=None)
+            e['motion']=[phase('Baja la rodilla',contacts=['farAnkle'],seconds=.35),
+                         phase('Sube la otra rodilla',contacts=['nearAnkle'],seconds=.35),
+                         phase('Baja la rodilla',contacts=['nearAnkle'],seconds=.35),
+                         phase('Sube la otra rodilla',contacts=['farAnkle'],seconds=.35)]
+            return e
         if name=='Salto largo':
             a=squat('Flexiona cadera y rodillas; brazos atrás',True)
             a['nearArm']=arm(140,140);a['farArm']=arm(140,140)
@@ -519,11 +533,15 @@ def _generate_base(name):
             c=squat('Aterriza más adelante: flexiona ambas rodillas',True,x=36)
             return basic(name,[a,b,c],group='Condición',focus='hip')
         if name=='Salto de patinador':
-            a=squat('Apoya una pierna, la otra queda libre',True)
-            a['farLeg']=limb(140,80,foot=-10)
-            b=cp(a);b['nearLeg'],b['farLeg']=cp(a['farLeg']),cp(a['nearLeg']);b['caption']='Salta al otro lado; aterriza sobre la otra pierna'
-            a['nearLeg'].update(reach3=[0,16,6],pole=[1,0,0]);b['farLeg'].update(reach3=[0,16,-6],pole=[1,0,0])
-            return basic(name,[a,b,dict(cp(a),caption='Estabiliza antes del siguiente salto')],group='Condición',yaw=80,focus=None)
+            frames,motion=skater()
+            e=basic(name,frames,group='Condición',yaw=120,focus=None)
+            e['motion']=motion
+            return e
+        if name=='Salto vertical':
+            frames,motion=vertical_jump()
+            e=basic(name,frames,group='Condición',yaw=25,focus='hip')
+            e['motion']=motion
+            return e
         travel=18 if name=='Salto largo' else 0
         return basic(name,[squat('Flexiona cadera y rodillas',True),squat('Impúlsate con ambos pies',jump=True,x=travel/2),squat('Aterriza suave y estabiliza',True,x=travel)],group='Condición',focus='hip')
     if name in {'Elevaciones en pike sentado','Elevaciones en straddle','Barca / V-sit','L-sit'}:
@@ -659,6 +677,182 @@ def phase(label, *, kind='interpolate', ground='preserve', contacts=(), part='',
     return dict(label=label, kind=kind, ground=ground, contacts=list(contacts), part=part, seconds=seconds)
 
 
+def run_arm(torso, swing, front, back):
+    # Braceo de carrera con el codo a 90°: swing=+1 lleva la mano adelante a
+    # la altura de la mejilla, -1 atrás hasta la cadera. Ángulos relativos al
+    # tronco, así el brazo acompaña la inclinación.
+    flex = front * swing if swing > 0 else back * swing
+    upper = torso + 180 - flex
+    return arm(upper, upper - 90)
+
+
+# 052: cada carrera tiene su postura. lean = tronco adelante desde la
+# vertical; push = ángulo de la pierna de apoyo extendida al despegar (casi
+# alineada con el tronco en la aceleración); td = dónde apoya el pie respecto
+# de la cadera; free/heel/rear/swing/fold = (muslo, tibia) de la pierna libre.
+RUN_STYLES = {
+    'aceleracion': dict(lean=28, push=26, reach=27.8, td=.5, mid=4, land=-27.0, stance=-26.2, air=-27.8,
+                        flight=5, free=(15, 118), heel=(70, 210), rear=(105, 170), swing=(42, 100),
+                        fold=(115, 150), front=75, back=50, step=1.3),
+    'lanzado': dict(lean=6, push=22, reach=27.95, td=4, mid=.5, land=-27.3, stance=-26.8, air=-28.4,
+                    flight=8, free=(5, 112), heel=(75, 215), rear=(110, 175), swing=(35, 95),
+                    fold=(120, 150), front=80, back=55, step=.9),
+    'carrera': dict(lean=4, push=18, reach=27.6, td=3, mid=.5, land=-27.8, stance=-27.6, air=-28.0,
+                    flight=5, free=(28, 115), heel=(80, 190), rear=(108, 165), swing=(45, 100),
+                    fold=(118, 155), front=65, back=45, step=1.1),
+    'trote': dict(lean=3, push=15, reach=27.3, td=2.5, mid=.5, land=-27.9, stance=-27.5, air=-28.0,
+                  flight=3, free=(42, 115), heel=(85, 175), rear=(105, 155), swing=(55, 100),
+                  fold=(115, 150), front=45, back=35, step=1.4),
+}
+
+RUN_CAPTIONS = {
+    'aceleracion': ['Apoya bajo la cadera; cuerpo inclinado desde los tobillos',
+                    'Talón libre bajo el glúteo; la rodilla pasa al frente',
+                    'Empuja el suelo atrás: pierna de apoyo extendida, rodilla libre arriba',
+                    'Vuelo: brazos opuestos, de la cadera a la mejilla'],
+    'lanzado': ['Apoya bajo la cadera; tronco casi erguido',
+                'Talón libre alto, bajo el glúteo',
+                'Extensión completa de la pierna de apoyo; rodilla libre alta',
+                'Vuelo largo: brazos opuestos, codos a 90°'],
+    'carrera': ['Tronco erguido; apoya bajo la cadera',
+                'Recoge el talón; la rodilla pasa al frente',
+                'Empuja con la pierna de apoyo extendida',
+                'Vuelo corto: brazo contrario adelante'],
+    'trote': ['Trote suave: tronco erguido, apoyo bajo la cadera',
+              'Recoge el talón sin esfuerzo',
+              'Empuja suave; rodilla libre al frente',
+              'Vuelo corto; brazos relajados a 90°'],
+}
+
+
+def running(style, prefix=''):
+    """Dos pasos de carrera que avanzan, con apoyo, recuperación, despegue y
+    vuelo distintos, y un corte que reinicia la demostración."""
+    s = RUN_STYLES[style]
+    torso = -90 + s['lean']
+    push_dx = s['reach'] * math.sin(math.radians(s['push']))
+    push_y = -1 - s['reach'] * math.cos(math.radians(s['push']))
+    def free(angles):
+        return limb(angles[0], angles[1], foot=angles[1] - 85)
+    frames, motion, x0 = [], [], 0.0
+    times = [s['td'] + s['mid'], push_dx - s['mid'], s['flight'] / 2, s['flight'] / 2]
+    total = sum(times)
+    seconds = [max(.18, s['step'] * t / total) for t in times]
+    for support, other in [('near', 'far'), ('far', 'near')]:
+        foot_x = x0 + s['td']
+        stance = reach(foot_x, -1, foot=8)
+        keys = [((x0, s['land']), free(s['rear']), -.7),
+                ((foot_x + s['mid'], s['stance']), free(s['heel']), 0),
+                ((foot_x + push_dx, push_y), free(s['free']), 1)]
+        for i, (hip, leg, swing) in enumerate(keys):
+            f = pose(prefix + RUN_CAPTIONS[style][i], hip, torso)
+            f[support + 'Leg'] = cp(stance)
+            f[other + 'Leg'] = leg
+            f[support + 'Arm'] = run_arm(torso, swing, s['front'], s['back'])
+            f[other + 'Arm'] = run_arm(torso, -swing, s['front'], s['back'])
+            frames.append(f)
+        air = pose(prefix + RUN_CAPTIONS[style][3], (foot_x + push_dx + s['flight'] / 2, s['air']), torso)
+        air[support + 'Leg'] = free(s['fold'])
+        air[other + 'Leg'] = free(s['swing'])
+        air[support + 'Arm'] = run_arm(torso, .85, s['front'], s['back'])
+        air[other + 'Arm'] = run_arm(torso, -.85, s['front'], s['back'])
+        frames.append(air)
+        motion += [phase('Apoyo: recupera el talón y mueve el brazo contrario', contacts=[support + 'Ankle'], seconds=seconds[0]),
+                   phase('Empuja: extiende el apoyo, rodilla libre al frente', contacts=[support + 'Ankle'], seconds=seconds[1]),
+                   phase('Despegue y vuelo', ground='flight', seconds=seconds[2]),
+                   phase('Recepción con la otra pierna', ground='flight', seconds=seconds[3])]
+        x0 = foot_x + push_dx + s['flight']
+    final = cp(frames[0]); final['hip'] = (x0, s['land'])
+    final['nearLeg']['reach'][0] += x0
+    final['caption'] = prefix + 'Completa la zancada: vuelve el primer apoyo'
+    restart = cp(frames[0]); restart['caption'] = prefix + 'Nuevo tramo: vuelve a la salida de la demostración'
+    frames += [final, restart]
+    motion.append(phase('Nuevo tramo: reinicio de la demostración', kind='cut', seconds=.5))
+    return frames, motion
+
+
+def skate_pose(caption, support, kind):
+    """Salto de patinador visto en 3D: z es el lado. `kind`: 'land' (apoyo
+    en una pierna, la otra cruza por detrás sin tocar el suelo), 'push'
+    (la pierna de apoyo se extiende y empuja hacia el otro lado) o 'air'."""
+    sign = 1 if support == 'near' else -1
+    other = 'far' if support == 'near' else 'near'
+    if kind == 'land':
+        z, hip, torso = 13 * sign, (0, -23.5), -66
+        legs = {support: dict(reach3=[2, 22.5, .5 * sign], pole=[1, 0, .15 * sign], end3=[1, 0, 0]),
+                other: dict(reach3=[-10, 13.5, 5.5 * sign], pole=[1, .2, 0], end3=[-.5, .85, 0])}
+        arms = {other: dict(reach3=[7, 15, 9 * sign], pole=[0, .5, -sign]),
+                support: dict(reach3=[-14, 8, 3 * sign], pole=[0, 1, sign])}
+    elif kind == 'push':
+        z, hip, torso = 7 * sign, (0, -25.5), -66
+        legs = {support: dict(reach3=[2, 24.5, 6.5 * sign], pole=[1, 0, .15 * sign], end3=[1, 0, 0]),
+                other: dict(reach3=[-4, 19.5, -.7 * sign], pole=[1, .2, 0], end3=[-.2, .95, 0])}
+        arms = {other: dict(reach3=[-2, 17, .5 * sign], pole=[0, .3, -sign]),
+                support: dict(reach3=[-4, 16.5, -1 * sign], pole=[.3, 1, .5 * sign])}
+    else:
+        z, hip, torso = 0, (0, -32), -70
+        legs = {support: dict(reach3=[-2, 19.5, 5 * sign], pole=[1, 0, .15 * sign], end3=[.3, .9, 0]),
+                other: dict(reach3=[1.5, 19.5, -5 * sign], pole=[1, 0, -.15 * sign], end3=[.6, .75, 0])}
+        arms = {other: dict(reach3=[-8, 14, -1 * sign], pole=[0, .3, -sign]),
+                support: dict(reach3=[6, 14, -2 * sign], pole=[.3, 1, .5 * sign])}
+    f = pose(caption, hip, torso)
+    f['bodyZ'] = z
+    for sd in ('near', 'far'):
+        f[sd + 'Leg'] = limb(90, 90, foot=0, **legs[sd])
+        f[sd + 'Arm'] = arm(90, 90, **arms[sd])
+    return f
+
+
+def skater():
+    # 052: apoyo en una pierna, salto lateral y aterrizaje en la otra con la
+    # rodilla sobre el pie; la pierna libre cruza por detrás sin apoyar y el
+    # brazo contrario cruza al frente. Pausa de 1 s y espejo al otro lado.
+    frames, motion = [], []
+    for support in ('near', 'far'):
+        land = skate_pose('Apoyo en una pierna: rodilla sobre el pie; la otra cruza por detrás sin apoyar', support, 'land')
+        hold = cp(land); hold['caption'] = 'Pausa 1 s: brazo contrario cruzado al frente'
+        push = skate_pose('Empuja de lado con la pierna de apoyo', support, 'push')
+        air = skate_pose('Salto lateral: los brazos cambian de lado', support, 'air')
+        frames += [land, hold, push, air]
+        motion += [phase('Pausa 1 s sobre una pierna', kind='hold', seconds=1),
+                   phase('Empuja hacia el otro lado', contacts=[support + 'Ankle'], seconds=.35),
+                   phase('Salto lateral', ground='flight', seconds=.3),
+                   phase('Aterriza en la otra pierna, rodilla sobre el pie', ground='flight', seconds=.3)]
+    frames.append(cp(frames[0]))
+    frames[4]['caption'] = 'Aterriza en la otra pierna; la libre cruza por detrás'
+    return frames, motion
+
+
+def vertical_jump():
+    # 052: carga con los brazos atrás, despegue extendiendo cadera, rodillas y
+    # tobillos mientras los brazos suben, vuelo, recepción en el antepié y
+    # estabilización antes de volver a empezar.
+    def jump(caption, hip, torso, legs, arms):
+        return pose(caption, hip, torso, cp(legs), cp(legs), arm(arms, arms), arm(arms, arms))
+    flat = reach(0, -1, foot=0)
+    toes = reach(1.17, -4.21, foot=40)
+    stand = jump('De pie: pies al ancho de la cadera', (0, -28.9), -90, flat, 90)
+    load = jump('Media sentadilla: lleva los brazos atrás', (-4.5, -22), -60, flat, 150)
+    drive = jump('Empuja el suelo; los brazos pasan adelante', (-2, -26), -72, flat, 50)
+    take = jump('Despega: cadera, rodillas y tobillos extendidos; brazos arriba', (1, -31.9), -86, toes, -75)
+    air = jump('Vuelo: cuerpo extendido, brazos arriba', (1, -39), -88, limb(90, 90, foot=60), -95)
+    touch = jump('Aterriza suave en la parte delantera del pie', (1, -31.6), -86, toes, 5)
+    absorb = jump('Flexiona cadera y rodillas; rodillas alineadas con las puntas', (-4, -23), -63, flat, 35)
+    hold = cp(absorb); hold['caption'] = 'Estabiliza antes del siguiente salto'
+    back = cp(stand); back['caption'] = 'Vuelve a la posición inicial'
+    frames = [stand, load, drive, take, air, touch, absorb, hold, back]
+    feet = ['nearAnkle', 'farAnkle']
+    motion = [phase('Carga: baja y lleva los brazos atrás', contacts=feet, seconds=.8),
+              phase('Impulso: los brazos suben', contacts=feet, seconds=.25),
+              phase('Despegue', seconds=.2),
+              phase('Vuelo', ground='flight', seconds=.35),
+              phase('Recepción en el antepié', ground='flight', seconds=.35),
+              phase('Amortigua', seconds=.3),
+              phase('Estabiliza', kind='hold', seconds=1),
+              phase('Vuelve de pie', contacts=feet, seconds=.8)]
+    return frames, motion
+
+
 def generate(name):
     """Opt-in authored timelines; unselected legacy specifications stay intact."""
     from illustration_guided import NAMES, generate as guided
@@ -675,41 +869,6 @@ def generate(name):
         e['frames'][4]['caption']='Vuelve al primer lado'
         e['motion']=[phase(label, contacts=['hip','nearAnkle','farAnkle']) for label in
                      ['Sube las rodillas','Bájalas al otro lado','Sube de nuevo','Vuelve al primer lado']]
-    elif name == 'Aceleración 10–20 m':
-        # Support, recovery, propulsion, flight and opposite reception are
-        # distinct poses. A fixed free-leg angle made the old stride slide
-        # as a diamond instead of recovering its heel and advancing its knee.
-        half=[(0,-27,(3,-1),(2,-15),(50,-40),(140,50)),
-              (3,-27,(3,-1),(8,-17),(35,-55),(150,60)),
-              (6,-28,(3,-1),(18,-10),(30,-60),(150,60)),
-              (9,-29,(10,-14),(15,-4),(90,0),(90,0))]
-        captions=['Apoya bajo el cuerpo; recupera el talón libre',
-                  'Rodilla libre al frente; acompaña con el brazo contrario',
-                  'Extiende la pierna de apoyo hacia atrás',
-                  'Vuelo: prepara el contacto de la otra pierna']
-        frames=[]
-        for lap in range(2):
-            for i,(x,y,near,far,na,fa) in enumerate(half):
-                near=(near[0]+12*lap,near[1]);far=(far[0]+12*lap,far[1])
-                if lap: near,far,na,fa=far,near,fa,na
-                f=pose(captions[i],(x+12*lap,y),-65,
-                       nl=reach(*near,foot=0 if near[1]==-1 else -10),
-                       fl=reach(*far,foot=0 if far[1]==-1 else -10),
-                       na=arm(*na),fa=arm(*fa))
-                frames.append(f)
-        final=cp(frames[0]);final['hip']=(24,-27)
-        for side in ['nearLeg','farLeg']: final[side]['reach'][0]+=24
-        final['caption']='Completa la zancada: vuelve el primer apoyo'
-        frames.append(final)
-        frames.append(cp(frames[0]));frames[-1]['caption']='Nuevo tramo: vuelve a la salida de la demostración'
-        e['frames']=frames
-        e['motion']=[]
-        for side in ['near','far']:
-            e['motion'] += [phase('Recupera el talón y mueve el brazo contrario',contacts=[side+'Ankle'],seconds=.5),
-                            phase('Extiende el apoyo; rodilla libre al frente',contacts=[side+'Ankle'],seconds=.4),
-                            phase('Despegue y vuelo',ground='flight',seconds=.3),
-                            phase('Recepción con la otra pierna',ground='flight',seconds=.3)]
-        e['motion'].append(phase('Nuevo tramo: reinicio de la demostración',kind='cut',seconds=.5))
     elif name == 'Burpees':
         standing,crouch,plank_frame,collect,jump=e['frames']
         for f in (crouch,collect):
@@ -758,29 +917,34 @@ def generate(name):
         step_part['motion']=([phase('Paso lateral: '+outward[i+1]['caption'],contacts=s) for i,s in enumerate(supports)]
                              +[phase('Cambia de dirección con control',kind='hold',seconds=1)]
                              +[phase('Regresa de lado',contacts=s) for s in reversed(supports)])
-        def lateral_landing(side, z, caption):
-            f=pose(caption,(0,-17),-75,nl=limb(90,90,foot=0),fl=limb(90,90,foot=0),
-                   na=arm(40,-20),fa=arm(135,40))
-            f['bodyZ']=z
-            for sd,sign in [('near',1),('far',-1)]:
-                target=[0,16,sign*6] if sd==side else [-10,10,sign*2]
-                f[sd+'Leg'].update(reach3=target,pole=[1,0,0],end3=[1,0,0])
+        # 052: parte 9 = salto de patinador real (aterriza en una pierna y
+        # sostiene); parte 2 = apertura y cierre de cadera con brazos de trote.
+        skate_frames,skate_motion=skater()
+        skate_part=basic('Salto lateral corto',skate_frames,group='Condición')
+        skate_part['motion']=skate_motion
+        def hip_turn(caption, target, pole):
+            f=pose(caption,(0,-29),-90,fl=limb(90,90,foot=0),
+                   na=run_arm(-90,0,60,45),fa=run_arm(-90,0,60,45))
+            f['nearLeg']=limb(90,90,foot=0,reach3=target,pole=pole,end3=[.45,.9,0] if target[1]<20 else [1,0,0],
+                              keepReachRadius=True)
             return f
-        right=lateral_landing('near',6,'Apoyo en una pierna: la otra queda libre')
-        left=lateral_landing('far',-6,'Aterriza al otro lado sobre la otra pierna')
-        airborne=cp(right);airborne['hip']=(0,-27);airborne['bodyZ']=0
-        airborne['caption']='Vuelo lateral: ambos pies libres, cadera viaja al otro lado'
-        airborne['nearLeg']['reach3']=[0,16,3]
-        airborne['farLeg']['reach3']=[-4,14,-3]
-        back_airborne=cp(airborne)
-        back_airborne['nearLeg']['reach3']=[-4,14,3]
-        back_airborne['farLeg']['reach3']=[0,16,-3]
-        back_airborne['caption']='Salta de regreso: ambos pies libres'
-        skate_part=basic('Salto lateral corto',[right,airborne,left,back_airborne,cp(right)],group='Condición')
-        skate_part['motion']=[phase(label,ground='flight') for label in
-                              ['Impulsa hacia el otro lado','Aterriza con control',
-                               'Impulsa de regreso','Estabiliza el apoyo']]
-        part_specs=[generate('Aceleración 10–20 m'), None, step_part,
+        open_side=[14*math.cos(math.radians(70)),14,14*math.sin(math.radians(70))]
+        open_pole=[open_side[0],-14,open_side[2]]
+        stand_leg=([0,27.9,0],[1,0,0])
+        hip_frames=[hip_turn('Apoyo en una pierna, tronco erguido',*stand_leg),
+                    hip_turn('Sube la rodilla al frente',[14,14,0],[1,-1,0]),
+                    hip_turn('Ábrela hacia afuera sin girar el tronco',open_side,open_pole),
+                    hip_turn('Baja el pie y cambia el sentido',*stand_leg),
+                    hip_turn('Cierre: sube la rodilla por el lado',open_side,open_pole),
+                    hip_turn('Llévala hacia adentro, al frente',[14,14,0],[1,-1,0]),
+                    hip_turn('Baja el pie; alterna de pierna al trotar',*stand_leg)]
+        hip_part=basic('Apertura y cierre de cadera',hip_frames,group='Condición')
+        hip_part['motion']=[phase(label,contacts=['farAnkle'],seconds=.7) for label in
+                            ['Rodilla arriba','Apertura hacia afuera','Baja','Rodilla por el lado','Cierre hacia adentro','Baja']]
+        jog_frames,jog_motion=running('trote')
+        jog_part=basic('Trote suave',jog_frames,group='Condición')
+        jog_part['motion']=jog_motion
+        part_specs=[jog_part, hip_part, step_part,
                     plank_part, side_part,
                     generate('Nórdico (isquios)'), generate('Progresión de pistol'),
                     generate('Sentadilla con salto'), skate_part,
@@ -788,16 +952,10 @@ def generate(name):
         frames=[];motions=[]
         for i,spec in enumerate(part_specs):
             title=originals[i]['caption']
-            if spec is None:
-                start=cp(originals[i]);end=cp(start)
-                if i==1:
-                    start['nearLeg'].update(reach3=[14,0,0],pole=[1,-1,0])
-                    end['nearLeg'].update(reach3=[8,0,12],pole=[1,-1,1])
-                spec=basic(title,[start,end,cp(start)],group='Condición')
             fs=cp(spec['frames'])
             # Skip a running demonstration's reset; next part owns its cut.
             ms=cp(spec.get('motion', [phase('Recorrido') for _ in fs[1:]]))
-            if i in (7,8):
+            if i==7:
                 for p in ms: p['ground']='flight'
             if spec.get('pivot'):
                 for p in ms: p['pivot']=list(spec['pivot'])
