@@ -86,19 +86,10 @@ def generate(name, variant=None):
             b['nearLeg']['reach3'] = [28*math.cos(angle), -28*math.sin(angle), 0]
         return cycle(a, b, yaw=35, pitch=35, per_side=True)
     if name == 'Muñecas a cuatro patas':
-        frames, motions = [], []
-        for part, angle, grip, caption in [('1', 0, '', 'Palmas abajo; dedos hacia delante'),
-                                            ('2', 0, 'dorsum', 'Dorsos apoyados; balanceo muy suave'),
-                                            ('3', 180, '', 'Palmas abajo; dedos hacia las rodillas')]:
-            a = quadruped(caption)
-            for sd in ['near', 'far']:
-                a[sd+'Arm'].update(hand=angle, grip=grip)
-            b = cp(a); b.update(torso=-5, caption='Lleva suavemente los hombros hacia delante')
-            if frames: motions.append(phase('Cambia el apoyo de manos', kind='cut', part=part, seconds=1))
-            frames.extend([a, b, cp(a)])
-            motions.extend([phase('Balancea', part=part, contacts=['nearHand','farHand','nearKnee','farKnee']),
-                            phase('Regresa', part=part, contacts=['nearHand','farHand','nearKnee','farKnee'])])
-        frames.append(cp(frames[0])); motions.append(phase('Vuelve a palmas delante',kind='cut',part='1',seconds=1))
+        # 052: codos rectos; el balanceo lleva los hombros por delante de las
+        # manos (rodillas y manos fijas, cadena cerrada resuelta por clave).
+        from illustration_upper import wrists
+        frames, motions = wrists(name)
         return result(frames, motions, yaw=25)
     if name == 'Deslizamientos en la pared':
         a = pose('Espalda junto a pared; brazos en W')
@@ -175,29 +166,11 @@ def generate(name, variant=None):
         motions=[phase('Cadera atrás',seconds=.15) for _ in sweep[1:]]+[phase('Respira',kind='hold')]+[phase('Regresa',seconds=.15) for _ in sweep[1:]]
         return result(frames,motions,props=bench(elbow[0]+3,elbow[1]+1.4,width=15,depth=12),yaw=10,gripZ=4.5)
     if name == 'Pectoral en el marco de la puerta':
-        # Rotate around the supported shoulder, closing each world-space
-        # chain. The hand, elbow and staggered feet stay at their supports.
-        sweep=[]
-        for i in range(9):
-            angle=20*i/8; theta=math.radians(angle)
-            x=4.5*math.sin(theta); z=4.5*(1-math.cos(theta))
-            f=pose('Antebrazo al marco; adelanta la pierna de ese lado' if i==0 else
-                   'Gira suavemente el pecho hacia el lado contrario',
-                   (x,-28),-90,reach(3,-1),reach(-3,-1),reach(10,-55,hand=-90),arm(90,90))
-            f.update(bodyRoll=angle,bodyZ=z)
-            f['nearArm'].update(reach3=[10,-9,0],pole=[1,0,0],end3=[0,-1,0])
-            for side,sign,target_x in [('near',1,3),('far',-1,-3)]:
-                root_x=x-sign*3.3*math.sin(theta)
-                root_z=z+sign*3.3*math.cos(theta)
-                f[side+'Leg'].update(reach3=[target_x-root_x,27,sign*3.3-root_z],
-                                    pole=[1,0,0],end3=[1,0,0])
-            sweep.append(f)
-        frames=sweep+[cp(sweep[-1])]+[cp(f) for f in reversed(sweep[:-1])]
-        contacts=['nearHand','nearAnkle','farAnkle']
-        motions=[phase('Gira el pecho',seconds=.3,contacts=contacts) for _ in sweep[1:]]
-        motions+=[phase('Respira sin mover los apoyos',kind='hold',seconds=2)]
-        motions+=[phase('Regresa con control',seconds=.3,contacts=contacts) for _ in sweep[1:]]
-        return result(frames,motions,props=[box([12,-32,4.5],[2,64,2]),box([12,-64,0],[2,2,18])],per_side=True,yaw=55)
+        # 052: marco al costado, brazo abducido 90° con el antebrazo vertical
+        # en el marco; pie de ese lado adelante y el pecho gira al otro lado.
+        from illustration_upper import doorframe
+        frames, motions, props = doorframe()
+        return result(frames, motions, props=props, per_side=True, yaw=-50, pitch=14)
     if name == 'Sóleo en la pared':
         a=pose('Manos a la pared; ambos talones apoyados',(-10,-25),-80,
                reach(-17,-1),reach(2,-1),reach(9,-37,hand=-90),reach(9,-37,hand=-90))
