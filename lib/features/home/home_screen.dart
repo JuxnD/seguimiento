@@ -402,7 +402,7 @@ class _PlanHero extends StatelessWidget {
                       if (dashboard.planVersion != null)
                         Text(
                             dashboard.v3?.title ??
-                                'Plan · versión ${dashboard.planVersion}',
+                                'Plan v${dashboard.planVersion}',
                             style: text.bodySmall),
                     ],
                   ),
@@ -1992,14 +1992,22 @@ class _CloseDayLine extends ConsumerWidget {
     if (closed) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(top: 8),
-      child: Row(
+      // Con letra grande el botón baja de línea en vez de desbordar.
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          const Icon(Icons.nightlight_round, size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-                '¿Ya no comes más? ${fmtInt(d.macros.kcal)} kcal · ${fmtInt(d.macros.protein)} g',
-                style: Theme.of(context).textTheme.bodyMedium),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.nightlight_round, size: 18),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                    '¿Ya no comes más? ${fmtInt(d.macros.kcal)} kcal · ${fmtInt(d.macros.protein)} g',
+                    style: Theme.of(context).textTheme.bodyMedium),
+              ),
+            ],
           ),
           TextButton(
             onPressed: () => guarded(
