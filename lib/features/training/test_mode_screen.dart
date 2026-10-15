@@ -52,6 +52,15 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
   final _fields = <String, TextEditingController>{};
   final _doubtful = <String>{};
 
+  /// Plan 052 (§16.27.3): qué limitó cada prueba y las no hechas, con su
+  /// motivo y si falta la colchoneta.
+  final _limits = <String, String>{};
+  final _notDone = <String>{};
+  final _needsMat = <String>{};
+  final _pendingReasons = <String, TextEditingController>{};
+  TextEditingController _reason(String item) =>
+      _pendingReasons.putIfAbsent(item, TextEditingController.new);
+
   DateTime? _restEndsAt;
   Timer? _ticker;
   bool _saving = false;
@@ -175,8 +184,17 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
         if (r != null && !widget.newAttempt) {
           c.text = r.value.toString();
           if (!r.clean) _doubtful.add(_key(t, side));
+          if (r.limitedBy != null) _limits[t.id] = r.limitedBy!;
         }
       }
+    }
+    if (_attemptId != null && !widget.newAttempt) {
+      for (final p in await repo.pendingFor(_attemptId!)) {
+        _notDone.add(p.item);
+        _reason(p.item).text = p.reason;
+        if ((p.requires ?? '').split(',').contains('mat')) _needsMat.add(p.item);
+      }
+      if (!mounted) return;
     }
     _jumpRestriction = await repo.jumpRestriction(_executionDate);
     if (!mounted) return;
@@ -215,6 +233,9 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     for (final c in _fields.values) {
       c.dispose();
     }
+    for (final c in _pendingReasons.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -233,18 +254,29 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
     }
     final results = <TestResult>[
       for (final t in _items)
-        for (final side in _sides(t))
-          if (!(t.id == 'broad_jump' && !_editing && _jumpRestriction != null))
-            if (_value(t, side) case final v?)
-              TestResult(
-                round: widget.round,
-                item: t.id,
-                side: side.isEmpty ? null : side,
-                value: v,
-                clean: !_doubtful.contains(_key(t, side)),
-              ),
+        if (!_notDone.contains(t.id))
+          for (final side in _sides(t))
+            if (!(t.id == 'broad_jump' && !_editing && _jumpRestriction != null))
+              if (_value(t, side) case final v?)
+                TestResult(
+                  round: widget.round,
+                  item: t.id,
+                  side: side.isEmpty ? null : side,
+                  value: v,
+                  clean: !_doubtful.contains(_key(t, side)),
+                  limitedBy: _limits[t.id],
+                ),
     ];
-    if (results.isEmpty) return;
+    final pending = [
+      for (final item in _notDone)
+        TestPendingItem(
+            item: item,
+            reason: _reason(item).text.trim().isEmpty
+                ? 'No se hizo'
+                : _reason(item).text.trim(),
+            requires: [if (_needsMat.contains(item)) 'mat']),
+    ];
+    if (results.isEmpty && pending.isEmpty) return;
     setState(() => _saving = true);
     final ok = await guarded(
       context,
@@ -259,6 +291,7 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
             blockStart: widget.scheduleKey?.blockStart,
             attemptId: _attemptId,
             conditions: _conditions,
+            pending: pending,
           ),
     );
     if (!mounted) return;
@@ -624,6 +657,54 @@ class _TestModeScreenState extends ConsumerState<TestModeScreen> {
             ],
           ],
         ),
+        // Plan 052 (§16.27.3): qué la limitó y si quedó sin hacer.
+        const SizedBox(height: 6),
+        Text('Qué te limitó (opcional)', style: text.bodySmall),
+        Wrap(
+          spacing: 6,
+          runSpacing: 4,
+          children: [
+            for (final limit in testLimits.entries)
+              ChoiceChip(
+                label: Text(limit.value),
+                selected: _limits[t.id] == limit.key,
+                onSelected: (on) => setState(() {
+                  _changed = true;
+                  on ? _limits[t.id] = limit.key : _limits.remove(t.id);
+                }),
+              ),
+          ],
+        ),
+        if (testLimitsNotMax.contains(_limits[t.id]))
+          Text('No es un máximo real: la app te propondrá repetirla.',
+              style: text.bodySmall),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('No la hice'),
+          subtitle: const Text('Queda pendiente con su motivo'),
+          value: _notDone.contains(t.id),
+          onChanged: (on) => setState(() {
+            _changed = true;
+            on ? _notDone.add(t.id) : _notDone.remove(t.id);
+          }),
+        ),
+        if (_notDone.contains(t.id)) ...[
+          TextField(
+            controller: _reason(t.id),
+            onChanged: (_) => _changed = true,
+            decoration: const InputDecoration(
+                labelText: 'Motivo', hintText: 'Piso resbaloso, sin material…'),
+          ),
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Falta la colchoneta antideslizante'),
+            value: _needsMat.contains(t.id),
+            onChanged: (on) => setState(() {
+              _changed = true;
+              on == true ? _needsMat.add(t.id) : _needsMat.remove(t.id);
+            }),
+          ),
+        ],
       ],
     );
   }

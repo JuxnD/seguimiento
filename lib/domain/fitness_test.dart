@@ -116,7 +116,15 @@ class TestResult {
       this.attemptId,
       this.protocolId = 'v31_12',
       this.conditions,
-      this.baselineKey});
+      this.baselineKey,
+      this.limitedBy});
+
+  /// Plan 052 (§16.27.3): qué la limitó (ver [testLimits]); null sin anotar.
+  final String? limitedBy;
+
+  /// Con piel, dolor o equipo el resultado no es un máximo real: se marca y
+  /// se propone repetir la prueba.
+  bool get notRealMax => testLimitsNotMax.contains(limitedBy);
 
   final int? attemptId;
   final String protocolId;
@@ -131,6 +139,30 @@ class TestResult {
 
   /// Día realmente guardado; null en evidencia sin procedencia temporal.
   final DateTime? date;
+}
+
+/// Qué limitó una prueba (§16.27.3), con su texto.
+const testLimits = <String, String>{
+  'tecnica': 'Técnica',
+  'fuerza': 'Fuerza',
+  'agarre': 'Agarre',
+  'piel': 'Piel / callos',
+  'dolor': 'Dolor',
+  'equipo': 'Equipo',
+};
+
+/// Límites que hacen que el resultado no sea un máximo real.
+const testLimitsNotMax = {'piel', 'dolor', 'equipo'};
+
+/// Una prueba no hecha en un intento: queda pendiente con su motivo y el
+/// material que falta (§16.27.3). No tiene valor.
+class TestPendingItem {
+  const TestPendingItem(
+      {required this.item, required this.reason, this.requires = const []});
+
+  final String item;
+  final String reason;
+  final List<String> requires;
 }
 
 /// SQLite contract is YYYY-MM-DD. tryParse alone normalizes e.g. February30;
@@ -229,6 +261,67 @@ String? initialDose(TestItem item, double max) {
   return lo == hi || lo < 1
       ? 'Tope del rango: $hi reps'
       : 'Tope del rango: $lo–$hi reps';
+}
+
+/// Plan 052 (§16.27.3): tope del rango del plan por prueba y la variante más
+/// difícil que toca cuando la dosis lo supera: más reps no construyen fuerza.
+const planRangeTops = <String, ({int top, String plan, String harder})>{
+  'pullup': (
+    top: 8,
+    plan: 'Dominadas con mochila 4 × 5–8',
+    harder: 'dominadas con mochila de 5 kg (sin mochila: bajada de 3 s)'
+  ),
+  'dips': (
+    top: 10,
+    plan: 'Fondos con mochila 4 × 6–10',
+    harder: 'fondos con mochila de 5 kg (sin mochila: bajada de 3 s)'
+  ),
+  'pike_pushup': (
+    top: 10,
+    plan: 'Pike push-up 3 × 6–10',
+    harder: 'pike con pies elevados (en una silla)'
+  ),
+  'hanging_leg_raise': (
+    top: 12,
+    plan: 'Elevaciones colgado 3 × 6–12',
+    harder: 'toes-to-bar'
+  ),
+  'tuck_up': (
+    top: 12,
+    plan: 'Escalera del V-up, peldaño 1: 3 × 8–12',
+    harder: 'el peldaño 2 del V-up (a una pierna)'
+  ),
+  'reverse_crunch': (
+    top: 12,
+    plan: 'Escalera del dragon flag, peldaño 1: 3 × 8–12',
+    harder: 'el peldaño siguiente del dragon flag'
+  ),
+  'hollow_hold': (
+    top: 30,
+    plan: 'Hollow rock 3 × 20–30 s',
+    harder: 'hollow con los brazos estirados atrás'
+  ),
+  'tuck_lsit': (
+    top: 20,
+    plan: 'L-sit 4 × 10–20 s',
+    harder: 'L-sit con una pierna estirada'
+  ),
+  'reverse_plank_forearm': (
+    top: 45,
+    plan: 'Plancha inversa, peldaño 1: 3 × 20–45 s',
+    harder: 'el peldaño siguiente de la plancha inversa'
+  ),
+};
+
+/// Si la dosis del test supera el tope del rango del plan, qué variante más
+/// difícil usar en vez de subir reps; null si la dosis cabe en el rango.
+String? harderVariantAdvice(TestItem item, double max) {
+  final range = planRangeTops[item.id];
+  if (range == null || !max.isFinite || max <= 0) return null;
+  final hi = item.isHold ? (max * .6).round() : (max * .75).round();
+  if (hi <= range.top) return null;
+  return 'Supera el tope del plan (${range.top}${item.isHold ? ' s' : ''}): no subas '
+      '${item.isHold ? 'el tiempo' : 'las reps'}, pasa a ${range.harder} dentro de ${range.plan}.';
 }
 
 String formatTestValue(TestItem item, double v) => !v.isFinite || v < 0

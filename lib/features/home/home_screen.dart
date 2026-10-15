@@ -1300,7 +1300,7 @@ Future<void> _showFootballDay(
                 subtitle: Text(
                     'Formato ${game.format} · ${game.intensity == null ? 'Carga estimada' : 'Carga'} '
                     '${LoadItem(date: d.date, minutes: game.minutes, effort: game.intensity, isFootball: true).load}'
-                    ' · Hora no registrada'),
+                    ' · ${game.startTime == null ? 'Hora no registrada' : 'Empezó a las ${game.startTime}'}'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Navigator.pop(sheet, game),
               ),

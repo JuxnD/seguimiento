@@ -34,7 +34,35 @@ class FitnessTestRepository {
             protocolId: attempts[r.attemptId]?.protocolId ?? 'v31_12',
             conditions: r.conditions,
             baselineKey: r.baselineKey,
+            limitedBy: r.limitedBy,
             date: recordedTestDate(r.date)),
+    ];
+  }
+
+  /// Plan 052: pruebas no hechas de un intento.
+  Future<List<TestPendingRow>> pendingFor(int attemptId) =>
+      (db.select(db.fitnessTestPending)
+            ..where((t) => t.attemptId.equals(attemptId)))
+          .get();
+
+  /// Pendientes que siguen sin medirse en un intento posterior del mismo
+  /// protocolo y parte.
+  Future<List<({TestPendingRow pending, FitnessTestAttempt attempt})>>
+      openPending() async {
+    final attempts = {
+      for (final a in await db.select(db.fitnessTestAttempts).get()) a.id: a
+    };
+    final rows = await db.select(db.fitnessTests).get();
+    return [
+      for (final p in await db.select(db.fitnessTestPending).get())
+        if (attempts[p.attemptId] case final attempt?)
+          if (!rows.any((r) =>
+              r.item == p.item &&
+              r.attemptId != null &&
+              r.attemptId! > p.attemptId &&
+              attempts[r.attemptId]?.protocolId == attempt.protocolId &&
+              attempts[r.attemptId]?.part == attempt.part))
+            (pending: p, attempt: attempt),
     ];
   }
 
@@ -171,8 +199,9 @@ class FitnessTestRepository {
     DateTime? blockStart,
     int? attemptId,
     Map<String, Map<String, Object?>> conditions = const {},
+    List<TestPendingItem> pending = const [],
   }) async {
-    if (round < 1 || round > 3 || totalSec < 0 || results.isEmpty) {
+    if (round < 1 || round > 3 || totalSec < 0 || (results.isEmpty && pending.isEmpty)) {
       throw const FormatException('Test vacío o duración inválida');
     }
     if ((protocol == TestProtocolId.v32_13 &&
@@ -279,7 +308,27 @@ class FitnessTestRepository {
             attemptId: Value(id),
             conditions: Value(condition),
             baselineKey:
-                Value(testBaselineKey(protocol, r.item, r.side, condition))));
+                Value(testBaselineKey(protocol, r.item, r.side, condition)),
+            limitedBy: Value(testLimits.containsKey(r.limitedBy) ? r.limitedBy : null)));
+      }
+      // Plan 052: las no hechas quedan pendientes con su motivo; medirlas
+      // en este mismo intento las quita.
+      await (db.delete(db.fitnessTestPending)
+            ..where((t) => t.attemptId.equals(id)))
+          .go();
+      for (final p in pending) {
+        if (results.any((r) => r.item == p.item) ||
+            !allowed.containsKey(p.item) ||
+            p.reason.trim().isEmpty) {
+          continue;
+        }
+        await db.into(db.fitnessTestPending).insert(
+            FitnessTestPendingCompanion.insert(
+                attemptId: id,
+                item: p.item,
+                reason: p.reason.trim(),
+                requires: Value(p.requires.isEmpty ? null : p.requires.join(','))),
+            mode: InsertMode.insertOrReplace);
       }
       return id;
     });

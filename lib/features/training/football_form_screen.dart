@@ -29,6 +29,9 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
   late final _minutes = TextEditingController(text: widget.existing?.minutes.toString() ?? '');
   late final _steps = TextEditingController(text: widget.existing?.steps?.toString() ?? '');
   late final _notes = TextEditingController(text: widget.existing?.notes ?? '');
+
+  /// Plan 052 (§16.26.1): hora de inicio `HH:mm`; null = sin registrar.
+  late String? _startTime = widget.existing?.startTime;
   late int? _intensity = widget.existing?.intensity;
   late int? _fatigue = widget.existing?.fatigueAfter;
   late bool _knock = widget.existing?.knock ?? false;
@@ -137,6 +140,7 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
           weightAfterKg: Value(parseNum(_after.text)),
           fluidMl: Value(int.tryParse(_fluid.text)),
           weightsComparable: Value(_bothWeights ? _comparable : null),
+          startTime: Value(_startTime),
         )));
     if (ok && mounted) Navigator.pop(context, true);
   }
@@ -192,6 +196,26 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
                   const SizedBox(width: 8),
                   Expanded(child: NumberField(controller: _steps, label: 'Pasos')),
                 ],
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  icon: const Icon(Icons.schedule),
+                  label: Text(_startTime == null ? 'Hora de inicio (opcional)' : 'Empezó a las $_startTime'),
+                  onPressed: () async {
+                    final parts = _startTime?.split(':');
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: parts == null
+                          ? TimeOfDay.now()
+                          : TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1])),
+                    );
+                    if (picked != null && mounted) {
+                      setState(() => _startTime =
+                          '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}');
+                    }
+                  },
+                ),
               ),
             ],
           ),

@@ -67,6 +67,20 @@ class TestResultsScreen extends ConsumerWidget {
               AppCard(
                   title: 'Dosis del último intento elegible',
                   children: [TestDoses(results: r)]),
+            // Plan 052 (§16.27.3): lo que quedó sin hacer, con su motivo.
+            FutureBuilder(
+                future: ref.read(fitnessTestRepositoryProvider).openPending(),
+                builder: (context, snapshot) {
+                  final open = snapshot.data ?? const [];
+                  if (open.isEmpty) return const SizedBox.shrink();
+                  return AppCard(title: 'Pruebas pendientes', children: [
+                    for (final p in open)
+                      Text(
+                          '• ${testItem(p.pending.item)?.name ?? p.pending.item} '
+                          '(Test ${p.attempt.round}): ${p.pending.reason}'
+                          '${(p.pending.requires ?? '').split(',').contains('mat') ? ' · necesita colchoneta' : ''}'),
+                  ]);
+                }),
             const AppCard(children: [
               Text(
                   'Elige Test 1, 2 o 3 y la parte que quieras registrar. Por lado cuenta el más débil. Lo marcado "con dudas" lleva *. Abrir una prueba no guarda resultados.')
@@ -339,8 +353,13 @@ class TestDoses extends StatelessWidget {
       final latest = measurements.last;
       final dose = initialDose(t, latest.value);
       if (dose == null) continue;
+      final harder = harderVariantAdvice(t, latest.value);
+      final notMax = results.any((r) =>
+          r.attemptId == latest.attemptId && r.item == t.id && r.notRealMax);
       lines.add('${t.name}: $dose${t.perSide ? ' por lado' : ''} '
-          '(intento${latest.attemptId}, ${dayKey(latest.date)}, ${latest.protocol}; condiciones conocidas)');
+          '(intento${latest.attemptId}, ${dayKey(latest.date)}, ${latest.protocol}; condiciones conocidas)'
+          '${harder == null ? '' : '. $harder'}'
+          '${notMax ? '. ⚠ No es un máximo real (piel, dolor o equipo): repítela cuando se resuelva.' : ''}');
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
