@@ -135,3 +135,15 @@ El owner pidió «todo junto en la 1.26.0» tras compartir
 - Evidencia en `build/qa/052/` (logs, capturas, estados pre35/post35);
   entrega en `Documents/ChatGPT/FIT APP/entregables/MyPrime-1.26.0/`.
 - Pendiente: publicación (con el sí del owner) y aceptación en su teléfono.
+
+## Publicación (15 oct UTC, con el sí del owner: «Publícala»)
+
+- Rama `JuxnD/052-racha-guias-hallazgos` subida sin force; `main` intacto.
+- Release `v1.26.0` «My Prime 1.26.0 - Racha, semana reorganizada y Rayito»,
+  latest y estable, etiqueta sobre `7efc3f5`; un solo APK
+  (`MyPrime-1.26.0+35.apk`, SHA `b1609793…0b67`), manifiesto y LEEME.
+- Run `release.yml` de la etiqueta cancelado (38668238289).
+- Descarga pública sin credenciales: SHA y tamaño idénticos,
+  `com.juandiego.seguimiento` 1.26.0 (35).
+- Pendiente: aceptación en el teléfono del owner y decisión de integrar a
+  `main`.
