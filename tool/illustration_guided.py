@@ -109,22 +109,58 @@ def generate(name, variant=None):
                       [phase('Acerca el codo'),phase('Pausa',kind='hold'),phase('Abre el pecho'),phase('Pausa',kind='hold'),
                        phase('Extiende delante'),phase('Pausa',kind='hold'),phase('Vuelve a zancada')],per_side=True)
     if name == 'Rodilla a la pared':
-        a=pose('Medio arrodillado; talón delantero apoyado',(-4,-15.6),-90,
-               reach(12,-1),limb(90,180,foot=180),arm(40,40),arm(90,90))
-        b=cp(a); b.update(hip=(0,-15.6),caption='Rodilla hacia pared; no levantes el talón')
-        # Posterior knee remains at x=-4 while the hip advances.
-        dy=math.sqrt(14**2-4**2)
-        b['hip']=(0,-1.6-dy); b['farLeg']=limb(math.degrees(math.atan2(dy,-4)),180,foot=180)
-        return cycle(a,b,contacts=['nearAnkle'],props=[dict(type='wall',x=19,top=-52,depth=14,thick=1)],per_side=True,yaw=15)
+        # 052: punta del pie a ~3 u (8–10 cm) de la pared; la tibia avanza
+        # sobre el talón fijo hasta que la rodilla toca la pared. La rodilla
+        # de atrás no se mueve del suelo: la cadera resulta de dos círculos.
+        wall_x, ankle, rear_knee = 19.0, (11.0, -1.0), (-3.0, -1.6)
+        touch = wall_x - .5 - 1.7  # cara de la pared menos el radio de la rodilla
+        reach_x = touch - ankle[0]
+        end_angle = math.degrees(math.asin(reach_x / 14))
+        sweep = []
+        for i in range(9):
+            shin = math.radians(end_angle * i / 8)
+            knee = (ankle[0] + 14 * math.sin(shin), ankle[1] - 14 * math.cos(shin))
+            dx, dy = knee[0] - rear_knee[0], knee[1] - rear_knee[1]
+            d = math.hypot(dx, dy); h = math.sqrt(14 ** 2 - (d / 2) ** 2)
+            hip = (rear_knee[0] + dx / 2 + dy / d * h, rear_knee[1] + dy / 2 - dx / d * h)
+            thigh = math.degrees(math.atan2(rear_knee[1] - hip[1], rear_knee[0] - hip[0]))
+            torso = -82 + 6 * i / 8
+            f = pose('Medio arrodillado: pie delantero a 8–10 cm de la pared' if i == 0 else
+                     'La rodilla avanza hasta tocar la pared; el talón no se despega',
+                     hip, torso, reach(*ankle, foot=0), limb(thigh, 180, foot=180),
+                     reach(wall_x - 1.3, -30, hand=-90), reach(wall_x - 1.3, -31, hand=-90))
+            sweep.append(f)
+        sweep[-1]['caption'] = 'Rodilla toca la pared, talón abajo; pausa 1 s'
+        frames = sweep + [cp(sweep[-1])] + [cp(f) for f in reversed(sweep[:-1])]
+        frames[-1]['caption'] = 'Regresa con control · ' + sweep[0]['caption']
+        contacts = ['nearAnkle', 'farKnee']
+        motions = ([phase('Rodilla hacia la pared', contacts=contacts, seconds=.25) for _ in sweep[1:]] +
+                   [phase('Pausa 1 s con el talón apoyado', kind='hold', seconds=1)] +
+                   [phase('Regresa con control', contacts=contacts, seconds=.25) for _ in sweep[1:]])
+        return result(frames, motions, props=[dict(type='wall', x=wall_x, top=-52, depth=14, thick=1)],
+                      per_side=True, yaw=15)
     if name == 'Sentadilla profunda':
-        a=squat('Pies abiertos, talones apoyados')
-        b=squat('Baja profundo; pecho alto y codos entre rodillas',True)
-        b['hip']=(-8,-10)
+        # 052: manos juntas frente al pecho; los codos, por dentro de las
+        # rodillas, las empujan hacia fuera. Talones abajo y vaivén suave.
+        a=squat('Pies algo más abiertos que la cadera, talones apoyados')
+        b=squat('Baja profundo: codos por dentro de las rodillas, pecho alto',True)
+        b['hip']=(-7,-7); b['torso']=-66; b['gaze']=-26
         for f in (a,b):
             for sd,sign in [('near',1),('far',-1)]:
                 f[sd+'Leg'].update(depth=sign*7,pole=[1,0,sign])
-        b['nearArm']=arm(70,-70); b['farArm']=arm(70,-70)
-        return cycle(a,b,contacts=['nearAnkle','farAnkle'],yaw=65)
+        up=(math.cos(math.radians(b['torso'])),math.sin(math.radians(b['torso'])))
+        front=(-up[1],up[0])
+        chest=[-4.5*up[0]+6.5*front[0],-4.5*up[1]+6.5*front[1]]
+        for sd,sign in [('near',1),('far',-1)]:
+            b[sd+'Arm']=arm(90,90,reach3=[chest[0],chest[1],-sign*3.8],pole=[.2,1,.3*sign],end3=[up[0],up[1],0])
+            a[sd+'Arm']=arm(90,90,reach3=[.6,18.8,0],pole=[-1,0,0],end3=[0,1,0])
+        left=cp(b); left.update(caption='Respira y muévete suave hacia un lado',bodyZ=1.6)
+        right=cp(b); right.update(caption='…y hacia el otro, talones abajo',bodyZ=-1.6)
+        feet=['nearAnkle','farAnkle']
+        return result([a,b,left,right,cp(b),cp(a)],
+                      [phase('Baja profundo',contacts=feet),phase('Vaivén a un lado',contacts=feet,seconds=1.6),
+                       phase('Al otro lado',contacts=feet,seconds=2.4),phase('Vuelve al centro',contacts=feet,seconds=1.6),
+                       phase('Sube con control',contacts=feet)],yaw=65)
     if name == 'Pie corto':
         a=pose('Pie descalzo apoyado; dedos largos')
         a['footArch']=0
@@ -172,9 +208,11 @@ def generate(name, variant=None):
         frames, motions, props = doorframe()
         return result(frames, motions, props=props, per_side=True, yaw=-50, pitch=14)
     if name == 'Sóleo en la pared':
-        a=pose('Manos a la pared; ambos talones apoyados',(-10,-25),-80,
-               reach(-17,-1),reach(2,-1),reach(9,-37,hand=-90),reach(9,-37,hand=-90))
-        b=cp(a); b.update(hip=(-7,-21),caption='Dobla ambas rodillas; talón posterior fijo')
+        # 052: pie de atrás a medio paso (~10 u ≈ 32 cm) y rodillas sólo
+        # moderadamente dobladas; la tibia de atrás se inclina poco.
+        a=pose('Manos en la pared; pie de atrás a medio paso, talones apoyados',(-3,-28.4),-80,
+               reach(-8,-1),reach(2,-1),reach(8.7,-34,hand=-90),reach(8.7,-35,hand=-90))
+        b=cp(a); b.update(hip=(-3.3,-26.8),torso=-78,caption='Dobla las dos rodillas; el talón de atrás sigue en el suelo')
         return cycle(a,b,contacts=['nearAnkle','farAnkle','nearHand','farHand'],
                      props=[dict(type='wall',x=10,top=-60,depth=14,thick=1)],per_side=True,yaw=15)
     if name == 'Scap pull-up':
@@ -378,7 +416,6 @@ def _plan034(name, variant, result, cycle):
                        phase('Estabiliza',kind='hold',seconds=3),phase('Nueva demostración',kind='cut',seconds=1)],
                       per_side=variant in ('landing_unilateral','landing_lateral'),yaw=55)
     if name.startswith('Plancha inversa') or name=='Mesa invertida':
-        base=cp(existing('Plancha inversa con patada')['frames'][0])
         props=[]
         if name=='Mesa invertida':
             a=pose('Sentado; palmas atrás y pies cerca',(0,-5),-140,reach(18,-1),reach(18,-1),reach(-16,-.75,hand=0),reach(-16,-.75,hand=0))
@@ -392,24 +429,32 @@ def _plan034(name, variant, result, cycle):
                    limb(math.degrees(angle),math.degrees(angle),foot=-90),arm(90,0,hand=0),arm(90,0,hand=0))
             return result([a,cp(a),cp(a)],[phase('Sostén sobre antebrazos',kind='hold'),phase('Respira sin perder la línea',kind='hold')],yaw=25)
         else:
-            b=base; b['caption']='Sostén la línea de hombros a talones'
-            a=cp(b); a['hip']=(a['hip'][0],-5); a['torso']=-150
-            a['caption']='Palmas atrás; prepara los talones'
+            # 052: brazos rectos todo el recorrido (sólo sube la pelvis, no es
+            # un fondo) y dedos hacia los pies. Ver reverse_plank_lift.
+            from illustration_catalog import reverse_plank_lift, straight_legs
+            elevated=name=='Plancha inversa con pies elevados'
+            lift=reverse_plank_lift((27,-10) if elevated else (27,-1),-17.95 if elevated else -20,
+                                    'Sentado en el suelo, talones sobre la cama; manos detrás' if elevated else
+                                    'Sentado: manos detrás de la cadera, dedos hacia los pies',
+                                    'Sube la pelvis con los brazos rectos')
+            top=straight_legs(cp(lift[-1]))
+            top['caption']='Mantén la línea de hombros a talones; cadera alta'
+            hands,heels=['nearHand','farHand'],['nearAnkle','farAnkle']
             if name=='Plancha inversa a una pierna':
-                a=cp(b); b=cp(b); b['farLeg']=limb(-20,-20,foot=-110)
-                b['caption']='Eleva una pierna sin girar la pelvis'
-            elif name=='Plancha inversa con pies elevados':
-                angle=math.asin(9.75/46)
-                neck=(27-46*math.cos(angle),-19.75)
-                hip=(neck[0]+18*math.cos(angle),neck[1]+18*math.sin(angle))
-                b=pose('Talones sobre soporte; cuerpo alineado',hip,180+math.degrees(angle),
-                       limb(math.degrees(angle),math.degrees(angle),foot=-90),
-                       limb(math.degrees(angle),math.degrees(angle),foot=-90),
-                       arm(90,90,hand=0),arm(90,90,hand=0))
-                a=cp(b); a.update(hip=(hip[0],-5),torso=-150,caption='Prepara los apoyos antes de elevar la pelvis')
-                for side in ['near','far']:
-                    a[side+'Leg']=reach(27,-10,foot=-90,bend=-1)
-                    a[side+'Arm']=reach(neck[0],-.75,hand=0)
+                far=cp(top); far['farLeg']=limb(-20,-20,foot=-110); far['caption']='Eleva una pierna sin girar la pelvis'
+                near=cp(top); near['nearLeg']=limb(-20,-20,foot=-110); near['caption']='Alterna: eleva la otra pierna'
+                return result([cp(top),far,cp(far),cp(top),near,cp(near),cp(top)],
+                              [phase('Eleva una pierna',contacts=hands+['nearAnkle']),phase('Sostén 10 s',kind='hold',seconds=3),
+                               phase('Apóyala',contacts=hands+['nearAnkle']),phase('Eleva la otra',contacts=hands+['farAnkle']),
+                               phase('Sostén 10 s',kind='hold',seconds=3),phase('Apóyala',contacts=hands+['farAnkle'])],
+                              per_side=True,yaw=25)
+            if elevated:
                 props=bench(29,-9,width=10,depth=10)
-        return cycle(a,b,props=props,per_side=name=='Plancha inversa a una pierna',yaw=25)
+            frames=lift+[top]+[cp(f) for f in reversed(lift[:-1])]
+            frames[-1]['caption']='Baja la pelvis con control'
+            motions=([phase('Sube la pelvis',contacts=heels,seconds=.25) for _ in lift[1:]]+
+                     [phase('Mantén sin bajar la cadera',kind='hold',seconds=3)]+
+                     [phase('Baja con control',contacts=heels,seconds=.25) for _ in lift[1:]])
+            return result(frames,motions,props=props,yaw=25)
+        return cycle(a,b,props=props,per_side=False,yaw=25)
     raise ValueError('Falta guion físico específico: '+name)

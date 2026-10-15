@@ -29,7 +29,7 @@ def main():
             image.thumbnail((270, 310))
             strip.paste(image, (col*270, 0))
         strip.save(output/f'{slug}-recorrido.jpg', quality=92)
-        indices = [0, 1, 4, 'intermedio-15'] if name == 'Balanceos de pierna' else [0, (count-1)//2, count-1, 'intermedio-15']
+        indices = [0, 3, 8, 'intermedio-15'] if name == 'Balanceos de pierna' else [0, (count-1)//2, count-1, 'intermedio-15']
         for col, index in enumerate(indices):
             image = Image.open(source/f'{slug}-{index}.png').convert('RGB')
             image.thumbnail((270, 410))
