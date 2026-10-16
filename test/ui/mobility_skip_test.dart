@@ -75,6 +75,11 @@ void main() {
     expect(find.text('Tobillo a la pared'), findsOneWidget);
     await tester.tap(find.text('Terminar'));
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    // Plan 057 (auditoría 053, P1-8): «Terminar» pide confirmación.
+    await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Rutina a medias'), findsOneWidget);
     expect(find.text('2 pasos saltados'), findsOneWidget);
     final r = await save(tester);
@@ -101,6 +106,11 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Terminar'));
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    // Plan 057 (auditoría 053, P1-8): «Terminar» pide confirmación.
+    await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Rutina a medias'), findsOneWidget);
     expect(find.textContaining('mantiene la racha y no suma carga'), findsNothing);
     expect(find.text('Al guardar, mantiene la racha de actividad; no suma carga ni cuenta como recuperación hecha.'),

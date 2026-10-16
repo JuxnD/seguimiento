@@ -20,11 +20,18 @@ const _surface = Color(0xFF150F0B);
 const _surfaceHigh = Color(0xFF241A13);
 const _outline = Color(0xFF4A3526);
 
+/// Auditoría 053, P1-5: el borde de los campos daba 1,48:1 con su relleno;
+/// este da 3,4:1 (mínimo 3:1 para bordes de controles).
+const _fieldBorder = Color(0xFF8A6A52);
+
+/// Auditoría 053, P1-5: con `_orangeDeep` el texto claro daba 3,07:1.
+const _orangeContainer = Color(0xFF9A3E0C);
+
 const appColors = ColorScheme(
   brightness: Brightness.dark,
   primary: _orange,
   onPrimary: Color(0xFF1A0C00),
-  primaryContainer: _orangeDeep,
+  primaryContainer: _orangeContainer,
   onPrimaryContainer: Color(0xFFFFF2E6),
   secondary: AppColors.kcal,
   onSecondary: Color(0xFF241100),
@@ -128,11 +135,11 @@ ThemeData buildGymTheme() {
       labelStyle: const TextStyle(color: Color(0xFFC9B8A8)),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: _outline),
+        borderSide: const BorderSide(color: _fieldBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: _outline),
+        borderSide: const BorderSide(color: _fieldBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -143,7 +150,14 @@ ThemeData buildGymTheme() {
       backgroundColor: _surfaceHigh,
       selectedColor: _orange,
       side: const BorderSide(color: _outline),
-      labelStyle: const TextStyle(color: Color(0xFFF3E6D8), fontWeight: FontWeight.w600),
+      // Auditoría 053, P1-5: el texto claro sobre el chip naranja daba
+      // 2,04:1; seleccionado va oscuro (como el SegmentedButton).
+      labelStyle: WidgetStateTextStyle.resolveWith((states) => TextStyle(
+          color: states.contains(WidgetState.selected)
+              ? const Color(0xFF1A0C00)
+              : const Color(0xFFF3E6D8),
+          fontWeight: FontWeight.w600)),
+      checkmarkColor: const Color(0xFF1A0C00),
       secondaryLabelStyle: const TextStyle(color: Color(0xFF1A0C00), fontWeight: FontWeight.w700),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),

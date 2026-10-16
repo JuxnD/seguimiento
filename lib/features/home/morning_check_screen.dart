@@ -147,7 +147,7 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final today = dateOnly(DateTime.now());
-    return Scaffold(
+    return UnsavedChangesGuard(child: Scaffold(
       appBar: AppBar(title: const Text('Registro de la mañana')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -354,6 +354,6 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
         icon: const Icon(Icons.save),
         label: const Text('Guardar'),
       ),
-    );
+    ));
   }
 }

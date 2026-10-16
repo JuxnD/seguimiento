@@ -228,7 +228,16 @@ class _MobilityScreenState extends State<MobilityScreen> {
     });
   }
 
-  void _finishNow() => setState(() => _endedAt = clock.now());
+  /// Auditoría 053, P1-8: «Terminar» pregunta antes de cortar la rutina.
+  Future<void> _finishNow() async {
+    if (!await confirmAction(context,
+        title: '¿Terminar la rutina?',
+        body: 'Lo que falte queda sin hacer; puedes guardar lo hecho.',
+        confirm: 'Terminar')) {
+      return;
+    }
+    if (mounted) setState(() => _endedAt = clock.now());
+  }
 
   Future<bool> _confirmExit() async {
     if (_finished) return true;
@@ -397,7 +406,17 @@ class _MobilityScreenState extends State<MobilityScreen> {
           label: const Text('Guardar'),
         ),
         const SizedBox(height: 8),
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Salir sin guardar')),
+        TextButton(
+            onPressed: () async {
+              if (await confirmAction(context,
+                      title: '¿Salir sin guardar?',
+                      body: 'La rutina no queda registrada.',
+                      confirm: 'Salir sin guardar') &&
+                  context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Salir sin guardar')),
       ],
     );
   }

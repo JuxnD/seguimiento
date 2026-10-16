@@ -59,7 +59,12 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     }
   }
 
-  Future<void> _save() async {
+  /// Auditoría 053, P1-6: un solo guardado aunque se toque dos veces.
+  final _saveOnce = SingleFlight();
+
+  Future<void> _save() => _saveOnce.run(_doSave);
+
+  Future<void> _doSave() async {
     final values = <MeasureSite, double>{};
     for (final e in _fields.entries) {
       final v = parseNum(e.value.text);

@@ -167,11 +167,19 @@ class DurationField extends StatelessWidget {
 }
 
 class DateTile extends StatelessWidget {
-  const DateTile({super.key, required this.date, required this.onChanged, this.label = 'Fecha'});
+  const DateTile(
+      {super.key,
+      required this.date,
+      required this.onChanged,
+      this.label = 'Fecha',
+      this.firstDate});
 
   final DateTime date;
   final String label;
   final ValueChanged<DateTime> onChanged;
+
+  /// Día más temprano que se puede elegir (por omisión, 2020).
+  final DateTime? firstDate;
 
   @override
   Widget build(BuildContext context) => ListTile(
@@ -183,8 +191,10 @@ class DateTile extends StatelessWidget {
         onTap: () async {
           final picked = await showDatePicker(
             context: context,
-            initialDate: date,
-            firstDate: DateTime(2020),
+            initialDate: firstDate != null && date.isBefore(firstDate!)
+                ? firstDate!
+                : date,
+            firstDate: firstDate ?? DateTime(2020),
             lastDate: DateTime(2100),
           );
           if (picked != null) onChanged(dateOnly(picked));
@@ -440,3 +450,99 @@ class TriToggle extends StatelessWidget {
     );
   }
 }
+
+/// Auditoría 053, P1-6: el doble toque duplicaba comidas, partidos, medidas,
+/// recordatorios y sesiones. Mientras `action` corre, otro toque no la
+/// repite.
+class SingleFlight {
+  SingleFlight();
+
+  /// Uno por elemento de pantalla: si una navegación nunca vuelve (otra
+  /// pantalla reemplaza la pila), el bloqueo se va con su widget en vez de
+  /// quedar para siempre.
+  static final _byContext = Expando<SingleFlight>('SingleFlight');
+  static SingleFlight of(BuildContext context) =>
+      _byContext[context] ??= SingleFlight();
+
+  bool _busy = false;
+  bool get busy => _busy;
+
+  Future<void> run(Future<void> Function() action) async {
+    if (_busy) return;
+    _busy = true;
+    try {
+      await action();
+    } finally {
+      _busy = false;
+    }
+  }
+}
+
+/// Auditoría 053, P1-7: «atrás» en un formulario tocado pregunta antes de
+/// perder lo anotado. Guardar sigue cerrando con `Navigator.pop` (no pasa
+/// por aquí). Sin tocar nada, sale directo.
+class UnsavedChangesGuard extends StatefulWidget {
+  const UnsavedChangesGuard({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  State<UnsavedChangesGuard> createState() => _UnsavedChangesGuardState();
+}
+
+class _UnsavedChangesGuardState extends State<UnsavedChangesGuard> {
+  bool _touched = false;
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+        canPop: !_touched,
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
+          final navigator = Navigator.of(context);
+          final leave = await showDialog<bool>(
+            context: context,
+            builder: (c) => AlertDialog(
+              title: const Text('¿Salir sin guardar?'),
+              content: const Text('Lo que anotaste en esta pantalla se pierde.'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(c, true),
+                    child: const Text('Salir sin guardar')),
+                FilledButton(
+                    onPressed: () => Navigator.pop(c, false),
+                    child: const Text('Seguir')),
+              ],
+            ),
+          );
+          if (leave == true) navigator.pop();
+        },
+        child: Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: (_) {
+            if (!_touched) setState(() => _touched = true);
+          },
+          child: widget.child,
+        ),
+      );
+}
+
+/// Auditoría 053, P1-8: confirmación para una acción que no se deshace.
+Future<bool> confirmAction(BuildContext context,
+    {required String title,
+    required String body,
+    required String confirm}) async =>
+    await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Cancelar')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true), child: Text(confirm)),
+        ],
+      ),
+    ) ==
+    true;

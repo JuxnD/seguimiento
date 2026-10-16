@@ -56,7 +56,7 @@ void main() {
                                   .push(MaterialPageRoute<void>(
                                 builder: (_) => PlanEditScreen(
                                     draft: PlanDraft.empty(
-                                        DateTime(2026, 10, 12))),
+                                        DateTime(2031, 1, 6))),
                               )),
                           child: const Text('Abrir')),
                     )))));

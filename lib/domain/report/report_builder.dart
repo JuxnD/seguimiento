@@ -582,7 +582,7 @@ void _nutrition(StringBuffer b, ReportStats s) {
     b.writeln();
     return;
   }
-  final hasOther = meals.any((m) => m.slot == MealSlot.otro);
+  final hasOther = meals.any((m) => m.reportSlot == MealSlot.otro);
   final slots = [
     MealSlot.desayuno,
     MealSlot.almuerzo,
@@ -597,8 +597,8 @@ void _nutrition(StringBuffer b, ReportStats s) {
     final dayMeals = meals.where((m) => dayKey(m.date) == dayKey(d)).toList();
     final cells = slots.map((slot) {
       final m = Macros.sum(
-          dayMeals.where((x) => x.slot == slot).map((x) => x.macros));
-      final any = dayMeals.any((x) => x.slot == slot);
+          dayMeals.where((x) => x.reportSlot == slot).map((x) => x.macros));
+      final any = dayMeals.any((x) => x.reportSlot == slot);
       return any ? '${fmtInt(m.kcal)} · ${fmtInt(m.protein)} g' : '—';
     });
     final total = s.macrosOn(d);

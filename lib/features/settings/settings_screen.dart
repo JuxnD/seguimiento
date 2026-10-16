@@ -481,9 +481,17 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
   Future<void> _exportManual(BuildContext context, WidgetRef ref) async {
     await guarded(context, () async {
       final version = await ref.read(appVersionProvider.future);
-      final text = await buildAppManual(ref.read(databaseProvider),
+      final data = await appManualData(ref.read(databaseProvider),
           appVersion: version);
-      await Share.share(text, subject: 'Manual de My Prime $version');
+      // Plan 057: Markdown para leer y JSON con los mismos datos.
+      final dir = await getTemporaryDirectory();
+      final stamp = dayKey(DateTime.now());
+      final md = File(p.join(dir.path, 'manual-my-prime-$version-$stamp.md'))
+        ..writeAsStringSync(renderAppManual(data));
+      final json = File(p.join(dir.path, 'manual-my-prime-$version-$stamp.json'))
+        ..writeAsStringSync(appManualJson(data));
+      await Share.shareXFiles([XFile(md.path), XFile(json.path)],
+          subject: 'Manual de My Prime $version');
     }, failure: 'No se pudo generar el manual');
   }
 

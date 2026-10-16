@@ -18,6 +18,7 @@ import 'foods_screen.dart';
 import 'meal_form_screen.dart';
 import '../../ui/theme.dart';
 
+
 class MealsScreen extends ConsumerStatefulWidget {
   const MealsScreen({super.key});
 
@@ -54,7 +55,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.only(bottom: 96),
+        padding: const EdgeInsets.only(bottom: 112), // Rayito (auditoría 053, P1-3)
         children: [
           HeroCard(
             color: _mealColor,
@@ -112,9 +113,15 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                 error: (e, _) => Text('Error: $e'),
                 data: (list) {
                   final total = Macros.sum(list.map((m) => m.macros));
-                  final kcal = history == null
-                      ? const GoalAt(null, known: false)
-                      : kcalGoalReferenceOn(history, _day);
+                  // Plan 057 (auditoría 053, P1-9): la meta del tipo de día
+                  // (fútbol, recuperación), igual que en Hoy.
+                  final dayGoal =
+                      ref.watch(kcalGoalOnProvider(dayKey(_day))).valueOrNull;
+                  final kcal = dayGoal?.target != null
+                      ? GoalAt(dayGoal!.target!.toDouble(), known: true)
+                      : history == null
+                          ? const GoalAt(null, known: false)
+                          : kcalGoalReferenceOn(history, _day);
                   final protein = history == null
                       ? const GoalAt(null, known: false)
                       : goalReferenceOn(history, GoalMetric.proteinaMin, _day);
@@ -141,7 +148,7 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                                 : null,
                             value: fmtInt(total.kcal),
                             sublabel: kcal.comparable
-                                ? 'de ${fmtInt(kcal.value!)}'
+                                ? 'de ${fmtInt(kcal.value!)}${dayGoal?.max == null ? '' : '–${fmtInt(dayGoal!.max!)}'}'
                                 : null,
                             label: 'kcal',
                             color: AppColors.kcal,
@@ -349,9 +356,12 @@ class _Shortcuts extends ConsumerWidget {
                         value: fmtInt(t.macros.kcal),
                         valueLabel: 'kcal',
                         // Cantidad sospechosa: se pregunta, no se bloquea (puede ser real).
-                        onTap: () => t.impossibleQuantity == null
-                            ? _logTemplate(context, ref, t)
-                            : _reviewSuspicious(context, ref, t),
+                        // Auditoría 053, P1-6: el combo de un toque no se
+                        // registra dos veces con un doble toque.
+                        onTap: () => SingleFlight.of(context).run(() async =>
+                            t.impossibleQuantity == null
+                                ? await _logTemplate(context, ref, t)
+                                : await _reviewSuspicious(context, ref, t)),
                         trailing: IconButton(
                           tooltip: 'Ajustar o borrar',
                           icon: const Icon(Icons.tune),

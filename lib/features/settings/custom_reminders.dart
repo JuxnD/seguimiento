@@ -96,7 +96,12 @@ class _CustomReminderFormScreenState extends ConsumerState<CustomReminderFormScr
     return v == null || v < 1 || v > 90 ? null : v;
   }
 
-  Future<void> _save() async {
+  /// Auditoría 053, P1-6: un solo guardado aunque se toque dos veces.
+  final _saveOnce = SingleFlight();
+
+  Future<void> _save() => _saveOnce.run(_doSave);
+
+  Future<void> _doSave() async {
     final title = _title.text.trim();
     final days = _days;
     if (title.isEmpty) {

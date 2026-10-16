@@ -320,7 +320,12 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     }
   }
 
-  Future<void> _save() async {
+  /// Auditoría 053, P1-6: un solo guardado aunque se toque dos veces.
+  final _saveOnce = SingleFlight();
+
+  Future<void> _save() => _saveOnce.run(_doSave);
+
+  Future<void> _doSave() async {
     if (widget.template != null) return _saveTemplateEdit();
     if (!await _confirmSlot()) return;
     d.notes = _notes.text;
@@ -407,7 +412,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
   @override
   Widget build(BuildContext context) {
     final m = d.macros;
-    return Scaffold(
+    return UnsavedChangesGuard(child: Scaffold(
       appBar: AppBar(
         title: Text(widget.template != null
             ? 'Editar combo'
@@ -547,7 +552,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
         icon: const Icon(Icons.save),
         label: const Text('Guardar'),
       ),
-    );
+    ));
   }
 }
 

@@ -210,7 +210,9 @@ class HomeScreen extends ConsumerWidget {
             },
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 24),
+              // Auditoría 053, P1-3: Rayito flota abajo (64 dp + globo); lo
+              // último de Hoy debe poder quedar por encima de él.
+              padding: const EdgeInsets.only(bottom: 112),
               children: [
                 const ActiveSessionBanner(),
                 KneeStairsAlert(date: today),
@@ -1663,6 +1665,25 @@ Future<void> editStepsDialog(
   final repo = ref.read(stepsRepositoryProvider);
   final steps = int.tryParse(result.replaceAll(RegExp(r'[.\s]'), ''));
   if (result.trim().isEmpty) {
+    // Auditoría 053, P1-7: guardar vacío borraba los pasos del reloj sin
+    // preguntar.
+    if (current == null) return;
+    final sure = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('¿Borrar los pasos de este día?'),
+        content: Text('Se quitan los ${fmtInt(current)} pasos anotados.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Cancelar')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: const Text('Borrar')),
+        ],
+      ),
+    );
+    if (sure != true || !context.mounted) return;
     await guarded(context, () => repo.clear(date));
   } else if (steps == null || steps < 0) {
     showSnack(context, 'Escribe solo el número de pasos');
@@ -1857,41 +1878,54 @@ class _ActionsCardState extends ConsumerState<_ActionsCard> {
           ],
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: ActionButton(
-                icon: Icons.edit_note,
-                label: 'Sesión',
-                onPressed: () =>
-                    openSessionForm(context, SessionDraft(date: _target)),
-              ),
+        // Auditoría 053, P1-10: con letra grande «Comida» quedaba en
+        // «Com…»; desde 1,3× los tres botones van en columna.
+        Builder(builder: (context) {
+          final buttons = [
+            ActionButton(
+              icon: Icons.edit_note,
+              label: 'Sesión',
+              onPressed: () =>
+                  openSessionForm(context, SessionDraft(date: _target)),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ActionButton(
-                icon: Icons.sports_soccer,
-                label: 'Fútbol',
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => FootballFormScreen(date: _target))),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ActionButton(
-                icon: Icons.restaurant,
-                label: 'Comida',
-                onPressed: () => Navigator.push(
+            ActionButton(
+              icon: Icons.sports_soccer,
+              label: 'Fútbol',
+              onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => MealFormScreen(draft: _mealNow(_target))),
-                ),
+                      builder: (_) => FootballFormScreen(date: _target))),
+            ),
+            ActionButton(
+              icon: Icons.restaurant,
+              label: 'Comida',
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => MealFormScreen(draft: _mealNow(_target))),
               ),
             ),
-          ],
-        ),
+          ];
+          if (MediaQuery.textScalerOf(context).scale(1) > 1.3) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < buttons.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 8),
+                  buttons[i],
+                ],
+              ],
+            );
+          }
+          return Row(
+            children: [
+              for (var i = 0; i < buttons.length; i++) ...[
+                if (i > 0) const SizedBox(width: 8),
+                Expanded(child: buttons[i]),
+              ],
+            ],
+          );
+        }),
         if (!isToday)
           Padding(
             padding: const EdgeInsets.only(top: 6),

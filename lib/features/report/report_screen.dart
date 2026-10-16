@@ -83,7 +83,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
             ],
           ),
           body: ListView(
-            padding: const EdgeInsets.only(bottom: 96),
+            padding: const EdgeInsets.only(bottom: 112), // Rayito (auditoría 053, P1-3)
             children: [
               HeroCard(
                 color: Theme.of(context).colorScheme.primary,

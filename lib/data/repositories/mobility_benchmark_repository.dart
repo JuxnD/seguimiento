@@ -41,9 +41,53 @@ class BenchmarkOccurrence {
   final List<String> missing;
 }
 
+/// Plan 057 (§16.30.2): la rodilla a la pared se repite cada 2 semanas,
+/// dentro de la rutina de mañana, mientras la diferencia entre lados pase de
+/// 2 cm.
+const kneeWallEveryDays = 14;
+const kneeWallMaxDiffCm = 2.0;
+
+class KneeWallDue {
+  const KneeWallDue(
+      {required this.last, required this.left, required this.right});
+  final DateTime last;
+  final double left, right;
+  double get diff => (left - right).abs();
+}
+
 class MobilityBenchmarkRepository {
   MobilityBenchmarkRepository(this.db);
   final AppDatabase db;
+
+  /// La rodilla a la pared toca hoy: la última medición con los dos lados
+  /// difiere en más de 2 cm y pasaron 14 días o más. null si no toca o si
+  /// todavía no hay una medición con los dos lados.
+  Future<KneeWallDue?> kneeWallDue(DateTime today) async {
+    final rows = await (db.select(db.mobilityBenchmarks)
+          ..where((t) =>
+              t.item.equals('knee_to_wall') &
+              t.value.isNotNull() &
+              t.date.isSmallerOrEqualValue(dayKey(dateOnly(today))))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.date),
+            (t) => OrderingTerm.desc(t.id)
+          ]))
+        .get();
+    double? left, right;
+    DateTime? last;
+    for (final r in rows) {
+      final d = parseDay(r.date);
+      if (last != null && d != last) break;
+      last ??= d;
+      if (r.side == 'I') left ??= r.value;
+      if (r.side == 'D') right ??= r.value;
+    }
+    if (last == null || left == null || right == null) return null;
+    final due = KneeWallDue(last: last, left: left, right: right);
+    if (due.diff <= kneeWallMaxDiffCm) return null;
+    if (daysBetween(last, dateOnly(today)) < kneeWallEveryDays) return null;
+    return due;
+  }
   Stream<List<MobilityBenchmark>> watch() => (db.select(db.mobilityBenchmarks)
         ..orderBy(
             [(t) => OrderingTerm.desc(t.date), (t) => OrderingTerm.desc(t.id)]))

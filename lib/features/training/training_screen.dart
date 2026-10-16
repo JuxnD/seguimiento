@@ -44,7 +44,14 @@ import '../../domain/adaptive_coach.dart';
 /// libre, que no inventa rondas.
 /// `light`: true arranca con la versión ligera marcada (botón de Hoy); null
 /// la sugiere si el día anterior hubo un partido intenso o con golpe.
+/// Auditoría 053, P1-6: «Empezar» y «Retomar» con doble toque abrían dos
+/// sesiones. El bloqueo es por pantalla (`SingleFlight.of`).
 Future<void> startGuidedSession(BuildContext context, WidgetRef ref,
+        {DateTime? date, bool? light}) =>
+    SingleFlight.of(context).run(() => _startGuidedSession(context, ref,
+        date: date, light: light));
+
+Future<void> _startGuidedSession(BuildContext context, WidgetRef ref,
     {DateTime? date, bool? light}) async {
   final canStart = await _noPendingSession(context, ref);
   if (!canStart || !context.mounted) return;
@@ -629,6 +636,11 @@ String describeActiveSession(ActiveSession s) {
 
 /// Retoma el cronómetro que Android cerró, en el punto exacto donde iba.
 Future<void> resumeActiveSession(
+        BuildContext context, WidgetRef ref, ActiveSession session) =>
+    SingleFlight.of(context)
+        .run(() => _resumeActiveSession(context, ref, session));
+
+Future<void> _resumeActiveSession(
     BuildContext context, WidgetRef ref, ActiveSession session) async {
   final recovery = session is GuidedSnapshot &&
       (session.sessionType == SessionType.movilidad ||

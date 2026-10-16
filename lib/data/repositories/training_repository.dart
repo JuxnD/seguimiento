@@ -23,7 +23,8 @@ import 'equipment_repository.dart';
 import '../../domain/equipment.dart' show EquipmentKeys, EquipmentStatus;
 import 'fitness_test_repository.dart';
 import '../../domain/test_protocol.dart';
-import '../../domain/fitness_test.dart' show TestPart;
+import '../../domain/fitness_test.dart'
+    show TestPart, formatTestValue, harderVariantAdvice, planRangeTops, testItem;
 import '../../domain/readiness.dart';
 import '../../domain/series_side_proof.dart';
 import '../../domain/ladder_prescription_proof.dart';
@@ -1159,6 +1160,61 @@ class TrainingRepository {
     }
   }
 
+  /// Plan 057 (§16.30.1, §16.27.3): con el v3.2, la dosis que sale del test
+  /// cambia la sesión. Reps: el tope del rango al 70–75 % del máximo;
+  /// aguantes: 50–60 %. Si la dosis supera el tope del rango del plan, se
+  /// queda en el tope y la nota dice qué variante más difícil usar. Sin un
+  /// máximo comparable, la prescripción del plan no cambia.
+  Future<void> _testDoses(PlanDayDraft day, DateTime date, V3Day v3) async {
+    if (v3.blockStart == null) return;
+    final tests = FitnessTestRepository(db);
+    for (final e in day.exercises) {
+      final id = testDoseTargets[e.name];
+      if (id == null) continue;
+      // Las dominadas del test son pronas: las supinas del jueves no.
+      if (id == 'pullup' && e.grip != 'prona') continue;
+      final item = testItem(id);
+      final m = await tests.latestInBlock(
+          item: id, blockStart: v3.blockStart!, asOf: date);
+      if (item == null || m == null || !m.value.isFinite || m.value <= 0) {
+        continue;
+      }
+      final hold = item.isHold;
+      final lo = hold ? (m.value * .5).round() : (m.value * .70).floor();
+      final hi = hold ? (m.value * .6).round() : (m.value * .75).round();
+      if (hi < 1) continue;
+      final top = planRangeTops[id]?.top ??
+          (hold ? e.holdSecMax : e.repsMax) ??
+          hi;
+      final max = hi > top ? top : hi;
+      final min = lo < 1 ? 1 : (lo > max ? max : lo);
+      if (hold) {
+        e.holdSecMin = min;
+        e.holdSecMax = max;
+      } else {
+        e.repsMin = min;
+        e.repsMax = max;
+      }
+      final advice = harderVariantAdvice(item, m.value);
+      e.notes = [
+        'Dosis del test (${dayKey(m.date)}, máximo ${formatTestValue(item, m.value)}): '
+            '${hold ? '50–60 %' : '70–75 %'}.',
+        if (advice != null) advice,
+        if (e.notes != null && e.notes!.trim().isNotEmpty) e.notes!.trim(),
+      ].join(' ');
+    }
+  }
+
+  /// Ejercicio del plan que dosifica cada prueba del test.
+  static const testDoseTargets = <String, String>{
+    'Dominadas': 'pullup',
+    'Fondos en barra': 'dips',
+    'Flexión a una mano': 'one_arm_pushup',
+    'Pike push-up': 'pike_pushup',
+    'Elevación de piernas colgado': 'hanging_leg_raise',
+    'L-sit': 'tuck_lsit',
+  };
+
   /// La sesión corta de piernas tras el test (§16.27): sin sprints ni
   /// saltos, y búlgara, peso muerto y nórdico a 2 series.
   PlanDayDraft _shortLegs(PlanDayDraft legs) {
@@ -1327,12 +1383,8 @@ class TrainingRepository {
     if (at.weekday == DateTime.tuesday) {
       final maximum = v3.blockStart == null
           ? null
-          : await FitnessTestRepository(db).latestMeasurement(
-              item: 'dead_hang',
-              scheme: v32Scheme,
-              blockStart: v3.blockStart!,
-              protocol: TestProtocolId.v32_13,
-              asOf: date);
+          : await FitnessTestRepository(db).latestInBlock(
+              item: 'dead_hang', blockStart: v3.blockStart!, asOf: date);
       final dose = maximum != null && maximum.value >= 11
           ? (maximum.value - 10).floor()
           : null;
@@ -1350,6 +1402,7 @@ class TrainingRepository {
             '${result.notes ?? ''} Colgado pendiente: falta un máximo comparable mayor de 10 s; no se inventa duración.';
       }
     }
+    await _testDoses(result, date, v3);
     if (at.weekday == DateTime.friday) {
       result.targetRounds = maintenanceRounds(v3.week);
     }
@@ -1359,11 +1412,9 @@ class TrainingRepository {
       final step = state.current;
       final maximum = v3.blockStart == null
           ? null
-          : await FitnessTestRepository(db).latestMeasurement(
+          : await FitnessTestRepository(db).latestInBlock(
               item: 'reverse_plank_forearm',
-              scheme: v32Scheme,
               blockStart: v3.blockStart!,
-              protocol: TestProtocolId.v32_13,
               asOf: date);
       final measuredDose = state.step == 1 &&
           maximum != null &&

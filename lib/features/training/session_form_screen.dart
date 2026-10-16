@@ -579,6 +579,9 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                         ),
                         for (var i = 0; i < entry.value.length; i++)
                           _SetRow(
+                            // Auditoría 053, P1-7: sin key, al quitar una
+                            // serie las demás mostraban reps ajenas.
+                            key: ObjectKey(entry.value[i]),
                             index: i + 1,
                             set: entry.value[i],
                             onChanged: () => setState(() {}),
@@ -843,6 +846,7 @@ class _RestsDialogState extends State<_RestsDialog> {
 
 class _SetRow extends StatelessWidget {
   const _SetRow({
+    super.key,
     required this.index,
     required this.set,
     required this.onChanged,

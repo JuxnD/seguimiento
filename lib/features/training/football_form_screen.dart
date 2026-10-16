@@ -100,7 +100,12 @@ class _FootballFormScreenState extends ConsumerState<FootballFormScreen> {
     super.dispose();
   }
 
-  Future<void> _save() async {
+  /// Auditoría 053, P1-6: un solo guardado aunque se toque dos veces.
+  final _saveOnce = SingleFlight();
+
+  Future<void> _save() => _saveOnce.run(_doSave);
+
+  Future<void> _doSave() async {
     final minutes = int.tryParse(_minutes.text);
     if (minutes == null) {
       showSnack(context, 'Faltan los minutos jugados');

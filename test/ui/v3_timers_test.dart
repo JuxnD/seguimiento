@@ -161,6 +161,9 @@ void main() {
           ), beforeFinish: () async {
         await tester.tap(find.text('Terminar antes'));
         await tester.pumpAndSettle();
+        // Plan 057 (auditoría 053, P1-8): «Terminar antes» pide confirmación.
+        await tester.tap(find.widgetWithText(FilledButton, 'Terminar'));
+        await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextField), '7');
         await tester.pump(); // onChanged habilita Listo en el siguiente frame.
         await tester.tap(find.text('Listo'));

@@ -1156,8 +1156,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 
   Widget _timesBar() => AppCard(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // Auditoría 053, P1-10: a 2,0× los tiempos se pegaban
+          // («0:000:000:00»); ahora bajan de línea.
+          Wrap(
+            alignment: WrapAlignment.spaceAround,
+            spacing: 16,
+            runSpacing: 6,
             children: [
               _Stat('Total', formatDuration(_totalSec)),
               _Stat('Calent.', formatDuration(_warmupSec)),
@@ -1655,7 +1659,10 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
             ],
           ),
         ),
-        Row(
+        // Auditoría 053, P1-10: con letra grande se salía de la pantalla.
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          spacing: 8,
           children: [
             TextButton(
               onPressed: () {
@@ -1664,7 +1671,6 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
               },
               child: const Text('Saltar calentamiento'),
             ),
-            const Spacer(),
             TextButton(
               onPressed: () => showModalBottomSheet<void>(
                 context: context,
@@ -1967,7 +1973,9 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   Future<void> _discard() async {
     final id = _savedId;
     if (id == null) {
-      Navigator.pop(context);
+      // Auditoría 053, P1-8: «Descartar» pregunta antes de perder la sesión.
+      if (_done.isNotEmpty && !await _confirmExit()) return;
+      if (mounted) Navigator.pop(context);
       return;
     }
     if (!await confirmDelete(context, 'la sesión que acabas de terminar')) {
@@ -2180,7 +2188,8 @@ class _BigButton extends StatelessWidget {
                 Flexible(
                   child: Text(
                     label,
-                    maxLines: 1,
+                    // Auditoría 053, P1-10: «Empezar pie…» se cortaba.
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: scheme.onPrimary, fontWeight: FontWeight.w800),

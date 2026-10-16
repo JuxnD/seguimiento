@@ -351,6 +351,15 @@ class MealEntry {
   final String? notes;
 
   Macros get macros => Macros.sum(items.map((i) => i.macros));
+
+  /// §16.29.9: el día cargado como un solo total («Total oct13»): no es una
+  /// cena, va en «Otro» en la tabla del informe.
+  bool get isDayTotal =>
+      items.length == 1 &&
+      items.single.label.trim().toLowerCase().startsWith('total');
+
+  /// La columna del informe: un total del día va en «Otro».
+  MealSlot get reportSlot => isDayTotal ? MealSlot.otro : slot;
 }
 
 class WeightEntry {

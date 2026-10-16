@@ -97,6 +97,17 @@ final rayitoHiddenProvider = StateProvider<bool>((ref) {
   }
 });
 
+/// Plan 057: «Deshacer» del aviso de Rayito, sin el `ref` de un widget que
+/// ya se desmontó.
+Future<void> showRayitoAgain(ProviderContainer container) async {
+  container.read(rayitoHiddenProvider.notifier).state = false;
+  try {
+    await container.read(localFlagsProvider).set(FlagKeys.rayitoHidden, false);
+  } on UnimplementedError {
+    // Pruebas sin banderas: sólo en memoria.
+  }
+}
+
 Future<void> setRayitoHidden(WidgetRef ref, bool hidden) async {
   ref.read(rayitoHiddenProvider.notifier).state = hidden;
   try {
@@ -298,6 +309,14 @@ final customReminderRepositoryProvider =
     Provider((ref) => CustomReminderRepository(ref.watch(databaseProvider)));
 final customRemindersProvider = StreamProvider(
     (ref) => ref.watch(customReminderRepositoryProvider).watchAll());
+
+/// Plan 057 (auditoría 053, P1-9): la meta de kcal de un día, la misma en
+/// Hoy, Comidas y la tarjeta de recuperación.
+final kcalGoalOnProvider = FutureProvider.autoDispose
+    .family<({int? target, int? max, String? day}), String>((ref, day) {
+  ref.watch(dashboardProvider);
+  return ref.watch(dashboardRepositoryProvider).kcalGoalOn(parseDay(day));
+});
 
 final dashboardRepositoryProvider = Provider((ref) => DashboardRepository(
       ref.watch(databaseProvider),

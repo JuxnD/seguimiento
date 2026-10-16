@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
+import '../../data/repositories/mobility_benchmark_repository.dart';
 import '../../data/repositories/readiness_repository.dart';
 import '../../domain/daily_routines.dart';
 import '../../domain/dates.dart';
@@ -11,6 +12,7 @@ import '../../domain/test_protocol.dart';
 import '../../domain/format.dart';
 import '../../domain/readiness.dart';
 import '../../ui/widgets.dart';
+import '../body/mobility_benchmarks_screen.dart';
 import '../training/mobility_screen.dart';
 
 /// Lo que Hoy necesita de la recuperación (§19.17) y de las rutinas diarias.
@@ -190,7 +192,13 @@ class RecoveryProposalCard extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 6),
                   child: Text(
-                      'Comida: 2.200–2.400 kcal y proteína ≥ 130 g, carbohidratos moderados.',
+                      // Plan 057 (auditoría 053, P1-9): la misma meta que Hoy
+                      // y Comidas, no un número escrito a mano.
+                      switch (ref.watch(kcalGoalOnProvider(dayKey(date))).valueOrNull) {
+                        (target: final t?, max: final m, day: _) =>
+                          'Comida: ${fmtInt(t)}${m == null ? '' : '–${fmtInt(m)}'} kcal y proteína ≥ 130 g, carbohidratos moderados.',
+                        _ => 'Comida: proteína ≥ 130 g, carbohidratos moderados.',
+                      },
                       style: text.bodySmall),
                 ),
             ],
@@ -225,6 +233,12 @@ class RecoveryProposalCard extends ConsumerWidget {
 
 /// Chips "Mañana ✓" y "Noche ✓" con la racha de movilidad (§19.14, §19.15).
 /// `legs`: hoy hubo fútbol o piernas, la noche lleva el módulo de piernas.
+/// Plan 057: si hoy toca repetir la rodilla a la pared (§16.30.2).
+final kneeWallDueProvider = FutureProvider.autoDispose
+    .family<KneeWallDue?, String>((ref, day) =>
+        MobilityBenchmarkRepository(ref.watch(databaseProvider))
+            .kneeWallDue(parseDay(day)));
+
 class DailyRoutinesRow extends ConsumerWidget {
   const DailyRoutinesRow(
       {super.key,
@@ -273,6 +287,27 @@ class DailyRoutinesRow extends ConsumerWidget {
           Text(
               'Movilidad: ${view!.mobilityStreak} ${view.mobilityStreak == 1 ? 'día' : 'días'} seguidos',
               style: text.bodySmall),
+        // §16.30.2: cada 2 semanas mientras la diferencia pase de 2 cm.
+        if (ref.watch(kneeWallDueProvider(dayKey(date))).valueOrNull
+            case final due?) ...[
+          const SizedBox(height: 6),
+          Text(
+              'En la rutina de mañana: rodilla a la pared, los dos lados. '
+              'La última (${formatShort(due.last)}) tenía ${fmtDec(due.diff)} cm de diferencia.',
+              key: const ValueKey('rodilla-pared'),
+              style: text.bodySmall),
+          TextButton.icon(
+            onPressed: () async {
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const MobilityBenchmarksScreen()));
+              ref.invalidate(kneeWallDueProvider);
+            },
+            icon: const Icon(Icons.straighten_outlined),
+            label: const Text('Anotar rodilla a la pared'),
+          ),
+        ],
       ],
     );
   }

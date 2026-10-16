@@ -44,9 +44,10 @@ class _RayitoCompanionState extends ConsumerState<RayitoCompanion> {
     _hide?.cancel();
     setState(() => _bubble = line);
     // En pruebas no queda un temporizador pendiente: el globo se cierra al
-    // tocarlo.
+    // tocar a Rayito.
     if (rayitoAnimationsEnabled) {
-      _hide = Timer(const Duration(seconds: 7), () {
+      // Auditoría 053, P1-3: 7 s tapando era mucho; 4 s.
+      _hide = Timer(const Duration(seconds: 4), () {
         if (mounted) setState(() => _bubble = null);
       });
     }
@@ -98,13 +99,17 @@ class _RayitoCompanionState extends ConsumerState<RayitoCompanion> {
 
   Future<void> _hideCompanion() async {
     final messenger = ScaffoldMessenger.maybeOf(context);
+    // Auditoría 053, P1-3: «Deshacer» corre cuando Rayito ya se desmontó;
+    // usa el contenedor, no el `ref` de este widget.
+    final container = ProviderScope.containerOf(context, listen: false);
     await setRayitoHidden(ref, true);
     messenger
       ?..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(
         content: const Text('Rayito se escondió. Vuelve desde Ajustes.'),
         action: SnackBarAction(
-            label: 'Deshacer', onPressed: () => setRayitoHidden(ref, false)),
+            label: 'Deshacer',
+            onPressed: () => unawaited(showRayitoAgain(container))),
       ));
   }
 
@@ -135,9 +140,10 @@ class _RayitoCompanionState extends ConsumerState<RayitoCompanion> {
           ),
           child: bubble == null || widget.peek
               ? const SizedBox.shrink()
-              : GestureDetector(
+              // Auditoría 053, P1-3: el globo no se queda con los toques de lo
+              // que tapa; a Rayito se le sigue tocando para que hable.
+              : IgnorePointer(
                   key: ValueKey(bubble),
-                  onTap: () => _onTap(rayito),
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 240),
                     margin: const EdgeInsets.only(bottom: 6, right: 8),

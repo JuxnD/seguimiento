@@ -31,7 +31,18 @@ class ProgressRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final ringColor = color ?? scheme.primary;
-    return Column(
+    // Auditoría 053, P1-4: en los anillos chicos la meta («de 2.100–2.200»)
+    // se encogía a ~3 sp dentro del FittedBox; va debajo, con letra normal
+    // que sí crece con la del sistema.
+    final small = size < 160;
+    final inside = small ? null : sublabel;
+    return Semantics(
+      // TalkBack anuncia el dato y la meta, no sólo el dibujo.
+      label: [label, value, if (sublabel != null) sublabel!]
+          .where((x) => x.isNotEmpty)
+          .join(', '),
+      excludeSemantics: true,
+      child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
@@ -66,11 +77,9 @@ class ProgressRing extends StatelessWidget {
                                   : Theme.of(context).textTheme.titleLarge)
                               ?.copyWith(fontWeight: FontWeight.w800, height: 1.1),
                         ),
-                        if (sublabel != null)
-                          Text(sublabel!,
-                              style: size >= 160
-                                  ? Theme.of(context).textTheme.titleSmall
-                                  : Theme.of(context).textTheme.labelSmall),
+                        if (inside != null)
+                          Text(inside,
+                              style: Theme.of(context).textTheme.titleSmall),
                       ],
                     ),
                   ),
@@ -83,7 +92,16 @@ class ProgressRing extends StatelessWidget {
           const SizedBox(height: 6),
           Text(label, style: Theme.of(context).textTheme.labelMedium),
         ],
+        if (small && sublabel != null)
+          SizedBox(
+            width: size + 24,
+            child: Text(sublabel!,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: Theme.of(context).textTheme.bodySmall),
+          ),
       ],
+    ),
     );
   }
 }

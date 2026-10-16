@@ -220,8 +220,24 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
   }
 
   Future<void> _finishEarly() async {
+    // Auditoría 053, P1-8: «Terminar antes» estaba a un toque del botón
+    // grande.
+    if (!await confirmAction(context,
+        title: '¿Terminar antes?',
+        body: 'Se corta la Cindy aquí; no cuenta como marca de 20 min.',
+        confirm: 'Terminar')) {
+      return;
+    }
+    if (!mounted) return;
     workEndedAt = clock.now();
     await _askPartial();
+  }
+
+  /// Auditoría 053, P1-8: un «+1 ronda» de más se puede quitar.
+  void _undoRound() {
+    if (workEndedAt != null || _roundMarks.isEmpty) return;
+    _roundMarks.removeLast();
+    _snapshot();
   }
 
   SessionDraft _draft() {
@@ -327,7 +343,18 @@ class _AmrapScreenState extends State<AmrapScreen> with _Ticking {
                       child: Text('+1 ronda', style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
                     ),
                   ),
-                  TextButton(onPressed: _finishEarly, child: const Text('Terminar antes')),
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    spacing: 8,
+                    children: [
+                      TextButton(
+                          onPressed: _roundMarks.isEmpty
+                              ? null
+                              : () => setState(_undoRound),
+                          child: const Text('Quitar la última ronda')),
+                      TextButton(onPressed: _finishEarly, child: const Text('Terminar antes')),
+                    ],
+                  ),
                 ],
               ),
             _Phase.enfriamiento => _PhasePanel(

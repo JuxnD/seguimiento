@@ -299,7 +299,18 @@ class TestTable extends StatelessWidget {
     if (rows.isEmpty) {
       return Text('Sin resultados todavía.', style: text.bodySmall);
     }
-    return Table(
+    // Auditoría 053, P1-10: con letra grande la tabla no cabía; se desplaza
+    // de lado con un ancho mínimo.
+    return LayoutBuilder(builder: (context, c) {
+      // Ancho de la tabla: el disponible, y con letra grande al menos 360
+      // escalados; si no cabe, se desplaza.
+      final wide = 360 * MediaQuery.textScalerOf(context).scale(1);
+      final width = c.maxWidth.isFinite && c.maxWidth > wide ? c.maxWidth : wide;
+      return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        width: width,
+        child: Table(
       columnWidths: const {0: FlexColumnWidth(2.4)},
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
@@ -334,7 +345,10 @@ class TestTable extends StatelessWidget {
             }),
           ]),
       ],
+    ),
+      ),
     );
+    });
   }
 }
 

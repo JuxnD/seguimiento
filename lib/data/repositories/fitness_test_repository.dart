@@ -172,6 +172,35 @@ class FitnessTestRepository {
         : observedAttemptValue(results, headers.last.id, item, asOf: asOf);
   }
 
+  /// Plan 057 (§16.30.1): el último máximo de `item` dentro del bloque,
+  /// con el v3.1 o con el v3.2. El v3.2 activado sobre el v3.1 sigue el
+  /// mismo bloque, y las pruebas comparten id entre los dos protocolos: el
+  /// Test 1 de torso del v3.1 sirve para dosificar el v3.2.
+  Future<TestAttemptEvidence?> latestInBlock(
+      {required String item,
+      required DateTime blockStart,
+      required DateTime asOf}) async {
+    TestAttemptEvidence? best;
+    for (final (scheme, protocol) in const [
+      ('v3.1', TestProtocolId.v31_12),
+      ('v3.2', TestProtocolId.v32_13),
+    ]) {
+      final m = await latestMeasurement(
+          item: item,
+          scheme: scheme,
+          blockStart: blockStart,
+          protocol: protocol,
+          asOf: asOf);
+      if (m != null &&
+          (best == null ||
+              m.date.isAfter(best.date) ||
+              (m.date == best.date && m.attemptId > best.attemptId))) {
+        best = m;
+      }
+    }
+    return best;
+  }
+
   /// La ausencia de escaleras no se convierte en cero. El aviso de
   /// descanso mantiene su fuente propia y domina cualquier entrada de test.
   Future<String?> jumpRestriction(DateTime date) async {

@@ -49,7 +49,7 @@ class BodyScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Cuerpo')),
       body: ListView(
-        padding: const EdgeInsets.only(bottom: 96),
+        padding: const EdgeInsets.only(bottom: 112), // Rayito (auditoría 053, P1-3)
         children: [
           _BodyHero(
             weights: weights.value ?? const [],

@@ -30,7 +30,7 @@ import '../support/test_fonts.dart';
 
 class _FixedToday extends TodayNotifier {
   @override
-  DateTime build() => DateTime(2026, 10, 12);
+  DateTime build() => DateTime(2031, 1, 6);
 }
 
 void main() {
@@ -130,7 +130,7 @@ void main() {
       (tester) async {
     final db = openInMemoryDatabase();
     final repo = PlanRepository(db, ExerciseRepository(db));
-    final original = PlanDraft.empty(DateTime(2026, 10, 12));
+    final original = PlanDraft.empty(DateTime(2031, 1, 6));
     original.days.first
       ..type = DayType.bloques
       ..exercises.add(PlanExerciseDraft(
@@ -145,7 +145,7 @@ void main() {
           supersetGroup: 'core'));
     final id = await repo.saveAsNewVersion(original);
     final draft = await repo.load(id)
-      ..validFrom = DateTime(2026, 10, 19);
+      ..validFrom = DateTime(2031, 1, 13);
     await mount(tester, PlanEditScreen(draft: draft),
         overrides: [databaseProvider.overrideWithValue(db)]);
     expect(field('Sostén mín (s)'), findsOneWidget);
@@ -229,7 +229,7 @@ void main() {
       (tester) async {
     final db = openInMemoryDatabase();
     final repo = PlanRepository(db, ExerciseRepository(db));
-    final draft = PlanDraft.empty(DateTime(2026, 10, 12));
+    final draft = PlanDraft.empty(DateTime(2031, 1, 6));
     draft.days.first
       ..type = DayType.bloques
       ..exercises.add(PlanExerciseDraft(name: 'Sostén'));
@@ -356,7 +356,7 @@ void main() {
                 Directory.systemTemp.createTempSync('seguimiento_experiencia');
             final db = openInMemoryDatabase();
             final flags = LocalFlags(File('${dir.path}/flags.json'));
-            final date = DateTime(2026, 10, 12);
+            final date = DateTime(2031, 1, 6);
             TodayDashboard dashboard({int sessions = 0, bool planB = false}) =>
                 TodayDashboard(
                   date: date,

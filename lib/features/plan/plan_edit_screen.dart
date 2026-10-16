@@ -32,7 +32,13 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
   Future<void> _save() async {
     if (_saving) return;
     d.notes = _notes.text;
-    final problem = planDraftProblem(d) ?? _extendedRangesProblem();
+    // Auditoría 053, P1-11: «Vigente desde» en el pasado rehacía días ya
+    // vividos.
+    final problem = planDraftProblem(d) ??
+        _extendedRangesProblem() ??
+        (dateOnly(d.validFrom).isBefore(dateOnly(DateTime.now()))
+            ? 'La versión nueva rige desde hoy o después: los días pasados conservan su plan'
+            : null);
     if (problem != null) {
       showSnack(context, problem);
       return;
@@ -80,7 +86,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return UnsavedChangesGuard(child: Scaffold(
       appBar: AppBar(title: const Text('Nueva versión del plan')),
       body: AbsorbPointer(
         absorbing: _saving,
@@ -91,6 +97,8 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
               children: [
                 DateTile(
                     label: 'Vigente desde',
+                    // Auditoría 053, P1-11: no rehace días ya vividos.
+                    firstDate: dateOnly(DateTime.now()),
                     date: d.validFrom,
                     onChanged: (v) => setState(() => d.validFrom = v)),
                 const SizedBox(height: 8),
@@ -122,7 +130,7 @@ class _PlanEditScreenState extends ConsumerState<PlanEditScreen> {
         icon: const Icon(Icons.save),
         label: Text(_saving ? 'Guardando…' : 'Guardar versión'),
       ),
-    );
+    ));
   }
 }
 

@@ -330,29 +330,11 @@ class DashboardRepository {
           ..orderBy([(t) => OrderingTerm(expression: t.id)]))
         .get();
     final football = footballGames.isEmpty ? null : footballGames.last;
-    // §16.27.7, §19.6 y §19.17: la meta de kcal sigue el tipo de día. Fútbol
-    // (también entre semana) usa su meta; un día amarillo sube de la de entre
-    // semana hacia la de fútbol. Rango de 100 kcal como en §19.3.
-    final weekdayKcal = goalReferenceOn(history, GoalMetric.kcal, date);
-    final footballKcal = goalReferenceOn(history, GoalMetric.kcalFutbol, date);
-    final footballDay = footballGames.isNotEmpty ||
-        effective?.type == DayType.futbol ||
-        date.weekday >= DateTime.saturday;
-    final yellowDay = !footballDay &&
-        weekdayKcal.comparable &&
-        (await ReadinessRepository(db).readinessOn(date)).level ==
-            ReadinessLevel.yellow;
-    final (kcalGoal, kcalMax, kcalDay) = footballDay && footballKcal.comparable
-        ? (footballKcal, footballKcal.value! + 100, 'fútbol')
-        : yellowDay
-            ? (
-                GoalAt(weekdayKcal.value! + 100, known: true),
-                footballKcal.comparable
-                    ? footballKcal.value!
-                    : weekdayKcal.value! + 300,
-                'recuperación'
-              )
-            : (kcal, kcal.comparable ? kcal.value! + 100 : null, null);
+    final (kcalGoal, kcalMax, kcalDay) = kcalGoalFor(
+        history, date,
+        football: footballGames.isNotEmpty || effective?.type == DayType.futbol,
+        yellow: (await ReadinessRepository(db).readinessOn(date)).level ==
+            ReadinessLevel.yellow);
     final yesterday = await _lastGame(addDays(date, -1));
 
     final maxRounds = db.sessions.roundsDone.max();
@@ -488,6 +470,51 @@ class DashboardRepository {
                     v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12) !=
             null ||
         dateOnly(v3.testDate) == tomorrow;
+  }
+
+  /// §16.27.7, §19.6 y §19.17: la meta de kcal sigue el tipo de día. Fútbol
+  /// (también entre semana y el fin de semana) usa su meta; un día amarillo
+  /// sube de la de entre semana hacia la de fútbol. Rango de 100 kcal como
+  /// en §19.3. Plan 057 (auditoría 053, P1-9): una sola fuente para Hoy,
+  /// Comidas y la tarjeta de recuperación.
+  static (GoalAt, double?, String?) kcalGoalFor(
+      GoalHistory history, DateTime date,
+      {required bool football, required bool yellow}) {
+    final kcal = kcalGoalReferenceOn(history, date);
+    final weekdayKcal = goalReferenceOn(history, GoalMetric.kcal, date);
+    final footballKcal = goalReferenceOn(history, GoalMetric.kcalFutbol, date);
+    final footballDay = football || date.weekday >= DateTime.saturday;
+    final yellowDay = !footballDay && weekdayKcal.comparable && yellow;
+    return footballDay && footballKcal.comparable
+        ? (footballKcal, footballKcal.value! + 100, 'fútbol')
+        : yellowDay
+            ? (
+                GoalAt(weekdayKcal.value! + 100, known: true),
+                footballKcal.comparable
+                    ? footballKcal.value!
+                    : weekdayKcal.value! + 300,
+                'recuperación'
+              )
+            : (kcal, kcal.comparable ? kcal.value! + 100 : null, null);
+  }
+
+  /// La meta de kcal de `date` con lo guardado (partidos, plan, mañana).
+  Future<({int? target, int? max, String? day})> kcalGoalOn(
+      DateTime date) async {
+    final history = await GoalRepository(db).history();
+    final games = await (db.select(db.footballGames)
+          ..where((t) => t.date.equals(dayKey(date))))
+        .get();
+    final type = (await plan.dayFor(date))?.day.type;
+    final (goal, max, day) = kcalGoalFor(history, date,
+        football: games.isNotEmpty || type == DayType.futbol,
+        yellow: (await ReadinessRepository(db).readinessOn(date)).level ==
+            ReadinessLevel.yellow);
+    return (
+      target: goal.comparable ? goal.value!.round() : null,
+      max: goal.comparable ? max?.round() : null,
+      day: goal.comparable ? day : null,
+    );
   }
 
   static DateTime? _v31StartFor(DateTime date, V3Day? v3) =>

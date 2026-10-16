@@ -262,7 +262,9 @@ class _ReminderCard extends ConsumerWidget {
           ],
         ),
         if (row.enabled && row.kind.isScheduled)
-          Row(
+          // Auditoría 053, P1-10: con letra grande la fila se desbordaba.
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               TextButton.icon(
                 icon: const Icon(Icons.schedule),

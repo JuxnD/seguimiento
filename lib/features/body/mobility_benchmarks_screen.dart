@@ -108,7 +108,11 @@ class MobilityBenchmarksScreen extends ConsumerWidget {
                           onPressed: () => Navigator.pop(c, true),
                           child: const Text('Guardar'))
                     ])));
-    if (ok == true && context.mounted) {
+    final raw = double.tryParse(field.text.replaceAll(',', '.'));
+    // Auditoría 053, P1-7: una toma vacía no se guarda.
+    if (ok == true && item != 'shoulder_wall' && raw == null) {
+      if (context.mounted) showSnack(context, 'Falta el valor: no se guardó nada');
+    } else if (ok == true && context.mounted) {
       await guarded(context, () async {
         final plan =
             await ref.read(planRepositoryProvider).dayFor(DateTime.now());
@@ -125,7 +129,10 @@ class MobilityBenchmarksScreen extends ConsumerWidget {
             blockStart: plan?.validFrom);
       }, ok: 'Medición guardada');
     }
-    field.dispose();
-    conditions.dispose();
+    // Los controladores se liberan cuando el diálogo ya cerró del todo.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      field.dispose();
+      conditions.dispose();
+    });
   }
 }
