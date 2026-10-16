@@ -97,13 +97,13 @@ void main() {
       List<Map<String, dynamic>>? firstGoals;
       for (var opening = 0; opening < 2; opening++) {
         db = AppDatabase(NativeDatabase(file));
-        expect(db.schemaVersion, 26);
+        expect(db.schemaVersion, 27); // plan 058
         expect(
             (await db.customSelect('PRAGMA user_version').getSingle())
                 .data
                 .values
                 .single,
-            26);
+            27);
         final names = (await db
                 .customSelect(
                     "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
@@ -119,7 +119,10 @@ void main() {
           'fitness_test_pending',
           'equipment_items',
           'supplements',
-          'supplement_logs'
+          'supplement_logs',
+          // Plan 058 (esquema 27): reloj.
+          'watch_activities',
+          'watch_vitals'
         });
         expect(names.containsAll(expectedNames), isTrue);
         for (final entry in tables.entries) {

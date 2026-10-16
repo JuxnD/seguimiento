@@ -8,7 +8,7 @@ void main() {
   test('schema25 declared target and nullable unknowns, zero remains distinct', () async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
-    expect((await db.customSelect('PRAGMA user_version').getSingle()).data.values.single, 26); // plan 052 subió el destino
+    expect((await db.customSelect('PRAGMA user_version').getSingle()).data.values.single, 27); // plan 058 subió el destino
     await db.customStatement("INSERT INTO morning_checks(date,knee_stairs) VALUES('2030-02-04',0),('2030-02-05',NULL)");
     expect((await db.select(db.morningChecks).get()).map((r) => r.kneeStairs).toList(), [0, null]);
     for (final (table, columns) in [

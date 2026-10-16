@@ -372,7 +372,12 @@ class _PlanHero extends StatelessWidget {
                 ),
                 _Chip(
                     icon: Icons.calendar_today_outlined,
-                    label: 'Sem ${dashboard.weekIndex}'),
+                    // Plan 058 (captura del owner, 16 oct): «Sem 8» contaba
+                    // desde el alta y la tarjeta decía «semana 1 de 9». Con
+                    // un bloque activo, la semana es la del bloque.
+                    label: dashboard.v3 == null
+                        ? 'Sem ${dashboard.weekIndex}'
+                        : 'Sem ${dashboard.v3!.week} de ${dashboard.v3!.totalWeeks}'),
               ],
             ),
             const SizedBox(height: 12),

@@ -308,6 +308,63 @@ void main() {
       await cleanup(t);
     }
   });
+  testWidgets('058: «Molestia lumbar» pide confirmación; cancelar no toca la escalera',
+      (t) async {
+    try {
+      final date = DateTime(2026, 10, 19);
+      final ladder = LadderRepository(db);
+      await io(
+          t, () => ladder.setStep(dragonFlagLadder, 2, DateTime(2026, 10, 12)));
+      final view = (await io(t, () => plan.dayFor(date)))!;
+      final day = (await io(
+          t,
+          () async => training.withV31Blocks(
+              view.day, date, await training.blockDay(view, date),
+              planche: false)));
+      final script = buildScript(scriptDayFrom(day));
+      final index =
+          script.indexWhere((s) => s is WorkStep && s.exercise == 'Vela');
+      final start = clock.now().subtract(const Duration(minutes: 1));
+      await io(
+          t,
+          () => store.save(GuidedSnapshot(
+              date: '2026-10-19',
+              startedAt: start,
+              planDayId: view.dayId,
+              phase: GuidedPhase.trabajo,
+              index: index,
+              effectiveDay: freezeGuidedDay(day))));
+      final loaded =
+          (await io(t, () => ActiveSessionStore(store.file).load()))!;
+      await pump(
+          t,
+          (c, ref) => Scaffold(
+              body: TextButton(
+                  onPressed: () => resumeActiveSession(c, ref, loaded),
+                  child: const Text('retomar'))));
+      await t.tap(find.text('retomar'));
+      await settle(t);
+      await settle(t);
+      await t.pump(const Duration(seconds: 1));
+      await t.tap(find.text('Hecho'));
+      await settle(t);
+      await t.tap(find.text('Molestia lumbar'));
+      await settle(t);
+      expect(find.text('¿Anotar molestia lumbar?'), findsOneWidget);
+      await t.tap(find.text('Cancelar'));
+      await settle(t);
+      expect(find.text('Molestia lumbar'), findsOneWidget);
+      expect((await io(t, () => ladder.state(dragonFlagLadder))).step, 2);
+      await t.tap(find.text('Molestia lumbar'));
+      await settle(t);
+      await t.tap(find.text('Anotar'));
+      await settle(t);
+      expect(find.text('Molestia lumbar anotada'), findsOneWidget);
+      expect((await io(t, () => ladder.state(dragonFlagLadder))).step, 1);
+    } finally {
+      await cleanup(t);
+    }
+  });
   testWidgets(
       'consumer advice cambia tras guardar editar y borrar sin reiniciar',
       (t) async {

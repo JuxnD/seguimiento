@@ -141,4 +141,47 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('058: con manifiesto, «Actualizar» pide el permiso de instalar una vez',
+      (tester) async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      nativeCalls.add(call);
+      return call.method == 'canInstallPackages' ? false : true;
+    });
+    await renderCard(tester, installed: '1.20.0', client: MockClient((_) async {
+      return http.Response(
+          jsonEncode({
+            'tag_name': 'v1.21.0',
+            'html_url': 'https://github.com/qa/ficticio/releases/tag/v1.21.0',
+            'body': '',
+            'assets': [
+              {'name': 'qa.apk', 'browser_download_url': _apk},
+              {
+                'name': 'qa.manifest.json',
+                'browser_download_url':
+                    'https://github.com/qa/ficticio/releases/download/v1.21.0/qa.manifest.json'
+              },
+            ],
+          }),
+          200);
+    }));
+    expect(find.byKey(const ValueKey('actualizar')), findsOneWidget);
+    expect(find.text('Descargar con el navegador'), findsOneWidget);
+    expect(find.text('Descargar APK'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('actualizar')));
+    await tester.pumpAndSettle();
+    expect(find.text('Permite instalar la actualización'), findsOneWidget);
+    await tester.tap(find.text('Abrir el ajuste'));
+    await tester.pumpAndSettle();
+    expect([for (final c in nativeCalls) c.method],
+        ['canInstallPackages', 'openInstallPermission']);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('058: sin manifiesto queda la descarga por el navegador', (tester) async {
+    await renderCard(tester,
+        installed: '1.20.0', client: MockClient((_) async => releaseResponse()));
+    expect(find.byKey(const ValueKey('actualizar')), findsNothing);
+    expect(find.text('Descargar APK'), findsOneWidget);
+  });
 }

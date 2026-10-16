@@ -17,6 +17,12 @@
          reloj). Nada se escribe ni sale del teléfono. -->
     <uses-permission android:name="android.permission.health.READ_STEPS"/>
 
+    <!-- Plan 058 (ADR 0018): la app descarga su propia actualización de
+         GitHub Releases, verifica el SHA-256 del manifiesto y abre el
+         instalador del sistema. Android pide confirmar cada instalación y
+         sólo acepta un APK firmado con la misma llave. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+
     <application
         android:label="My Prime"
         android:name="${applicationName}"
@@ -68,6 +74,17 @@
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
             </intent-filter>
         </activity-alias>
+        <!-- Plan 058 (ADR 0018): el APK descargado se comparte con el
+             instalador sólo por este proveedor (cache/updates). -->
+        <provider
+            android:name=".UpdateFileProvider"
+            android:authorities="${applicationId}.updates"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/update_paths" />
+        </provider>
         <!-- Widget de inicio de Rayito (plan 049): sólo lo que Hoy ya calculó. -->
         <receiver
             android:name=".RayitoWidgetProvider"

@@ -21,6 +21,7 @@ import 'ladders_screen.dart';
 import 'skills_screen.dart';
 import 'test_results_screen.dart';
 import 'mobility_benchmarks_screen.dart';
+import 'watch_vitals_card.dart';
 import 'knee_history_card.dart';
 import '../../ui/theme.dart';
 
@@ -66,6 +67,8 @@ class BodyScreen extends ConsumerWidget {
           const _LaddersCard(),
           const _TestCard(),
           const KneeHistoryCard(),
+          // Plan 058 (§16.17): presión y SpO₂ del reloj, sólo tendencia.
+          const WatchVitalsCard(),
           AppCard(title: 'Movilidad', children: [
             OutlinedButton(
                 onPressed: () => Navigator.push(

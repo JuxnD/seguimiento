@@ -30,7 +30,7 @@ Map<String, int> _multiplicity(Iterable<List<Object?>> rows) {
 }
 
 // Declared destination for this candidate; never read back from the migrated DB.
-const _targetSchema = 26; // plan 052
+const _targetSchema = 27; // plan 058
 const _restoredReminderRows = [
   ['recuperacionManana', 1, 22, 0, null],
   ['rutinaManana', 1, 7, 15, null],

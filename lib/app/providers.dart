@@ -13,6 +13,7 @@ import '../data/database.dart';
 import 'coalesce.dart';
 import '../data/notification_service.dart';
 import '../data/reminder_scheduler.dart';
+import '../data/repositories/watch_repository.dart';
 import '../data/repositories/reminder_repository.dart';
 import '../data/database_host.dart';
 import '../data/local_flags.dart';
@@ -146,6 +147,10 @@ final aiConversationsProvider = StreamProvider.family((ref, (int, int) page) =>
         .watchRecent(limit: page.$1, offset: page.$2));
 final aiConversationCountProvider = StreamProvider(
     (ref) => ref.watch(aiConversationRepositoryProvider).watchCount());
+/// Plan 058 (§16.17): datos del reloj INNOVA (captura o a mano).
+final watchRepositoryProvider =
+    Provider((ref) => WatchRepository(ref.watch(databaseProvider)));
+
 final recoveryRepositoryProvider =
     Provider((ref) => RecoveryRepository(ref.watch(databaseProvider)));
 

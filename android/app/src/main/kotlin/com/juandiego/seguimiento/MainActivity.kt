@@ -57,6 +57,11 @@ class MainActivity : FlutterActivity() {
                 "openUnusedAppSettings" -> result.success(openUnusedAppSettings())
                 "openAppDetails" -> result.success(openAppDetails())
                 "openApkDownload" -> openApkDownload(call.argument<String>("url"), result)
+                "canInstallPackages" -> result.success(packageManager.canRequestPackageInstalls())
+                "openInstallPermission" -> result.success(
+                    open(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
+                )
+                "installApk" -> installApk(call.argument<String>("path"), result)
                 else -> result.notImplemented()
             }
         }
@@ -91,6 +96,23 @@ class MainActivity : FlutterActivity() {
         val opened = open(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         result.success(opened)
         if (opened) finishAndRemoveTask()
+    }
+
+    /// Plan 058 (ADR 0018): abre el instalador del sistema con el APK ya
+    /// descargado y verificado en cache/updates. Android pide confirmar y
+    /// rechaza un APK firmado con otra llave.
+    private fun installApk(path: String?, result: MethodChannel.Result) {
+        val updates = java.io.File(cacheDir, "updates").canonicalFile
+        val file = path?.let { java.io.File(it).canonicalFile }
+        if (file == null || !file.exists() || file.parentFile != updates) {
+            result.success(false)
+            return
+        }
+        val uri = androidx.core.content.FileProvider.getUriForFile(this, "$packageName.updates", file)
+        val intent = Intent(Intent.ACTION_VIEW)
+            .setDataAndType(uri, "application/vnd.android.package-archive")
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        result.success(open(intent))
     }
 
     /// true si Android puede diferir o recortar el trabajo de la app en reposo.

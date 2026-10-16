@@ -75,7 +75,7 @@ void main() {
             .data
             .values
             .single,
-        26);
+        27);
     final row = await RecoveryRepository(host.db).morningOn(day);
     expect((
       row!.restingHr,

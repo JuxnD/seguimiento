@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'watch_activity_card.dart';
+
 import '../../app/providers.dart';
 import '../../data/repositories/training_repository.dart';
 import '../../domain/dates.dart';
@@ -696,6 +698,15 @@ class _SessionFormScreenState extends ConsumerState<SessionFormScreen> {
                       ),
                     ],
                   ),
+                  // Plan 058 (§16.17): pulso, kcal y duración del reloj.
+                  if (d.id case final id?)
+                    WatchActivityCard(sessionId: id, date: d.date)
+                  else
+                    AppCard(title: 'Datos del reloj', children: [
+                      Text(
+                          'Guarda la sesión y ábrela de nuevo para importar la captura del reloj.',
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ]),
                 ],
               ))),
       floatingActionButton: FloatingActionButton.extended(

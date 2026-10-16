@@ -33,8 +33,8 @@ void main() {
   }
   Future<void> assert25(AppDatabase db, Map<String, dynamic> manifest) async {
     // Plan 052: el destino es 26; lo de 25 y 26 llega vacío o en null.
-    expect(db.schemaVersion, 26);
-    expect((await db.customSelect('PRAGMA user_version').getSingle()).data.values.single, 26);
+    expect(db.schemaVersion, 27); // plan 058
+    expect((await db.customSelect('PRAGMA user_version').getSingle()).data.values.single, 27);
     expect((await db.select(db.footballGames).get()).every((r) => r.startTime == null), isTrue);
     expect((await db.select(db.fitnessTests).get()).every((r) => r.limitedBy == null), isTrue);
     for (final t in ['fitness_test_pending', 'equipment_items', 'supplements', 'supplement_logs']) {

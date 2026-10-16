@@ -767,3 +767,49 @@ class CoachProposals extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+
+/// Plan 058 (§16.17): una actividad del reloj INNOVA, leída de su captura o
+/// escrita a mano. INNOVA sólo escribe pasos en Health Connect. Va unida a
+/// una sesión de la app si se importó desde ella. Sus kcal son informativas:
+/// no suman a la meta del día.
+@DataClassName('WatchActivityRow')
+class WatchActivities extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get sessionId => integer()
+      .nullable()
+      .references(Sessions, #id, onDelete: KeyAction.setNull)();
+  TextColumn get date => text()();
+  TextColumn get startTime => text().nullable()();
+  TextColumn get kind => text().nullable()();
+  IntColumn get durationSec => integer().nullable()();
+  IntColumn get avgHr => integer().nullable()();
+  IntColumn get maxHr => integer().nullable()();
+  IntColumn get kcal => integer().nullable()();
+  IntColumn get steps => integer().nullable()();
+  IntColumn get distanceM => integer().nullable()();
+
+  /// 'captura' o 'manual'.
+  TextColumn get source => text()();
+  TextColumn get createdAt => text()();
+}
+
+/// Plan 058 (§16.17): presión y SpO₂. Las del reloj son una estimación (sin
+/// manguito no están validadas): sólo tendencia, nunca deciden carga ni
+/// alertas. Una medida con tensiómetro de brazo va como 'tensiometro' y
+/// tiene prioridad.
+@DataClassName('WatchVitalRow')
+class WatchVitals extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get date => text()();
+  TextColumn get time => text().nullable()();
+  IntColumn get systolic => integer().nullable()();
+  IntColumn get diastolic => integer().nullable()();
+  IntColumn get spo2 => integer().nullable()();
+
+  /// En reposo y sentado: sólo esas lecturas entran a la tendencia.
+  BoolColumn get atRest => boolean().withDefault(const Constant(true))();
+
+  /// 'reloj' o 'tensiometro'.
+  TextColumn get source => text()();
+  TextColumn get note => text().nullable()();
+}

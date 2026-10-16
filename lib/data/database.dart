@@ -62,6 +62,8 @@ const databaseFileName = 'seguimiento.sqlite';
   EquipmentItems,
   Supplements,
   SupplementLogs,
+  WatchActivities,
+  WatchVitals,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -69,7 +71,7 @@ class AppDatabase extends _$AppDatabase {
   /// Subir este número exige un paso en `onUpgrade` y una entrada en
   /// docs/modelo-datos.md (sección Migraciones).
   @override
-  int get schemaVersion => 26;
+  int get schemaVersion => 27;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -115,6 +117,12 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(equipmentItems);
             await m.createTable(supplements);
             await m.createTable(supplementLogs);
+          }
+          if (from < 27) {
+            // Plan 058 (§16.17): actividades y signos del reloj, leídos de su
+            // captura o a mano. Sólo agrega tablas.
+            await m.createTable(watchActivities);
+            await m.createTable(watchVitals);
           }
           if (from < 2) {
             // v2: el plan admite bloques extra, sostenes, RIR y rangos de

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/providers.dart';
@@ -7,8 +10,9 @@ import '../../config.dart';
 import '../../data/update_service.dart';
 import '../../ui/widgets.dart';
 
-/// Actualizaciones por GitHub Releases: la app avisa y abre la descarga en el
-/// navegador. No instala nada por su cuenta.
+/// Actualizaciones por GitHub Releases. Plan 058 (ADR 0018): «Actualizar»
+/// descarga el APK dentro de la app, comprueba su SHA-256 y abre el
+/// instalador del sistema; sin manifiesto, abre la descarga como antes.
 class UpdatesCard extends ConsumerWidget {
   const UpdatesCard({super.key});
 
@@ -45,22 +49,29 @@ class UpdatesCard extends ConsumerWidget {
                     child: Text(release.notes),
                   ),
                 const SizedBox(height: 8),
-                FilledButton.icon(
-                  onPressed: () => release.apkUrl == null
-                      ? _open(context, release.pageUrl)
-                      : _download(context, release.apkUrl!),
-                  icon: const Icon(Icons.download),
-                  label: Text(release.apkUrl == null ? 'Ver la versión en GitHub' : 'Descargar APK'),
-                ),
+                if (release.apkUrl != null && release.manifestUrl != null) ...[
+                  FilledButton.icon(
+                    key: const ValueKey('actualizar'),
+                    onPressed: () => _update(context, release),
+                    icon: const Icon(Icons.system_update),
+                    label: const Text('Actualizar'),
+                  ),
+                  TextButton(
+                    onPressed: () => _download(context, release.apkUrl!),
+                    child: const Text('Descargar con el navegador'),
+                  ),
+                ] else
+                  FilledButton.icon(
+                    onPressed: () => release.apkUrl == null
+                        ? _open(context, release.pageUrl)
+                        : _download(context, release.apkUrl!),
+                    icon: const Icon(Icons.download),
+                    label: Text(release.apkUrl == null ? 'Ver la versión en GitHub' : 'Descargar APK'),
+                  ),
                 const Padding(
                   padding: EdgeInsets.only(top: 8),
-                  child: Text('Al instalar encima, los datos se conservan. Aun así, exporta un respaldo antes.'),
+                  child: Text('Al instalar encima, los datos se conservan. Aun así, exporta un respaldo antes. Android te pide confirmar la instalación.'),
                 ),
-                if (release.apkUrl != null)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Text('Al descargar, My Prime se cierra; cuando termine de instalar, ábrela de nuevo.'),
-                  ),
               ],
             );
           },
@@ -72,6 +83,38 @@ class UpdatesCard extends ConsumerWidget {
           ),
       ],
     );
+  }
+
+  /// Plan 058: descarga, verifica y abre el instalador sin salir de la app.
+  Future<void> _update(BuildContext context, AppRelease release) async {
+    if (!await UpdateInstaller.canInstall()) {
+      if (!context.mounted) return;
+      final go = await showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('Permite instalar la actualización'),
+          content: const Text(
+              'Una sola vez: Android te va a mostrar «Instalar apps desconocidas». '
+              'Activa «Permitir de esta fuente» para My Prime, vuelve y toca «Actualizar» otra vez.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')),
+            FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Abrir el ajuste')),
+          ],
+        ),
+      );
+      if (go == true) await UpdateInstaller.openInstallPermission();
+      return;
+    }
+    if (!context.mounted) return;
+    final file = await showDialog<File?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _DownloadDialog(release: release),
+    );
+    if (file == null || !context.mounted) return;
+    if (!await UpdateInstaller.install(file) && context.mounted) {
+      showSnack(context, 'No se pudo abrir el instalador. Usa «Descargar con el navegador».');
+    }
   }
 
   /// La descarga va en su propia tarea y la app se cierra: así, tras instalar,
@@ -109,6 +152,72 @@ class UpdateBanner extends ConsumerWidget {
             TextButton(onPressed: onOpenSettings, child: const Text('Ver')),
           ],
         ),
+      ],
+    );
+  }
+}
+
+/// Plan 058: la descarga con su progreso; devuelve el APK verificado o null.
+class _DownloadDialog extends StatefulWidget {
+  const _DownloadDialog({required this.release});
+  final AppRelease release;
+
+  @override
+  State<_DownloadDialog> createState() => _DownloadDialogState();
+}
+
+class _DownloadDialogState extends State<_DownloadDialog> {
+  int _received = 0;
+  int? _total;
+  String? _error;
+  UpdateInstaller? _installer;
+
+  @override
+  void initState() {
+    super.initState();
+    _run();
+  }
+
+  Future<void> _run() async {
+    try {
+      final cache = await getTemporaryDirectory();
+      final installer = _installer = UpdateInstaller(cacheDir: cache);
+      final file = await installer.download(widget.release,
+          onProgress: (r, t) {
+        if (mounted) {
+          setState(() {
+            _received = r;
+            _total = t;
+          });
+        }
+      });
+      if (mounted) Navigator.pop(context, file);
+    } on Object catch (e) {
+      if (mounted) setState(() => _error = '$e');
+    } finally {
+      _installer?.close();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mb = (_received / 1e6).toStringAsFixed(1);
+    final total = _total == null ? null : (_total! / 1e6).toStringAsFixed(1);
+    return AlertDialog(
+      title: Text(_error == null ? 'Descargando ${widget.release.version}' : 'No se pudo actualizar'),
+      content: _error != null
+          ? Text(_error!)
+          : Column(mainAxisSize: MainAxisSize.min, children: [
+              LinearProgressIndicator(
+                  value: _total == null || _total == 0 ? null : _received / _total!),
+              const SizedBox(height: 8),
+              Text(total == null ? '$mb MB' : '$mb de $total MB'),
+              const SizedBox(height: 4),
+              const Text('Después se comprueba que sea el archivo publicado.'),
+            ]),
+      actions: [
+        if (_error != null)
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cerrar')),
       ],
     );
   }

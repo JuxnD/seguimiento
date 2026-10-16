@@ -86,7 +86,7 @@ const _v25Columns = {
   'sleep_logs': ['sleep_start', 'wake_at', 'source', 'note'],
   'custom_reminders': ['origin'],
 };
-const _targetSchema = 26; // destino declarado, nunca leído como oráculo.
+const _targetSchema = 27; // plan 058: // destino declarado, nunca leído como oráculo.
 
 void main() {
   setUpAll(useHostSqlite);

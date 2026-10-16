@@ -266,6 +266,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   /// desde la próxima sesión y hoy no cuenta como limpia.
   Future<void> _markLumbar(CoreLadder ladder) async {
     if (_lumbar.contains(ladder.id)) return;
+    // 058: un toque accidental no se puede deshacer (baja el peldaño y
+    // reinicia la cuenta): se confirma antes.
+    if (!await confirmAction(context,
+        title: '¿Anotar molestia lumbar?',
+        body: 'La escalera del ${ladder.name} baja un peldaño desde la próxima sesión '
+            'y la cuenta para subir vuelve a empezar. Hoy no cuenta como sesión limpia.',
+        confirm: 'Anotar')) {
+      return;
+    }
+    if (!mounted) return;
     final step = await ref.read(ladderRepositoryProvider).lumbar(
         ladder, widget.date,
         eventKey: 'guided:${_startedAt.toIso8601String()}');
@@ -588,6 +598,13 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     };
     try {
       final guides = await ref.read(exerciseRepositoryProvider).byNames(names);
+      // 058: un ejercicio que nunca se guardó (los nuevos del v3.2, como el
+      // Tuck-up) no tiene fila todavía; su guía igual existe y debe verse.
+      for (final n in names) {
+        if (!guides.containsKey(n) && exerciseDetail(n) != null) {
+          guides[n] = ExerciseRow(id: -1, name: n, tracksLoad: false);
+        }
+      }
       final training = ref.read(trainingRepositoryProvider);
       // Doble progresión: lo que toca subir hoy según la última vez (§19.2).
       final hints = <String, String>{};

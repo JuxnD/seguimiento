@@ -60,6 +60,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
+        // Plan 058: ML Kit agrega su librería por ABI; x86 de 32 bits sólo la
+        // traía ML Kit (Flutter no la usa). Se quitan ~12 MB.
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
+        }
     }
 
     signingConfigs {
