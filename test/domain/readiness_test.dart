@@ -33,7 +33,7 @@ void main() {
     expect(a.level, ReadinessLevel.yellow);
     expect(a.action, SuggestedAction.recoveryActive);
     expect(a.load3Days, 1410);
-    expect(a.reasons, contains('Carga de los últimos 3 días: 1.410 (sáb 300 · dom 630 · dom 480)'));
+    expect(a.reasons, contains('Carga de anteayer y ayer: 1.410 (sáb 300 · dom 630 · dom 480)'));
     expect(a.reasons, contains('2 partidos entre ayer y hoy'));
     expect(a.moveTestToTomorrow, isTrue);
     expect(a.reasons.join(' '), isNot(contains('48 h')), reason: 'las ventanas son por días, no por horas');
@@ -45,12 +45,14 @@ void main() {
     expect(a.moveTestToTomorrow, isFalse);
   });
 
-  test('carga de 3 días: 899 es verde, 900 es amarillo', () {
+  test('carga de anteayer y ayer: 899 es verde, 900 es amarillo', () {
     // 90 min × 10 = 900; 899 = 899 min × 1.
     expect(readiness(calm([session(sun, 899, 1)])).level, ReadinessLevel.green);
     expect(readiness(calm([session(sun, 90, 10)])).level, ReadinessLevel.yellow);
     // Lo de hace 3 días ya no entra.
     expect(readiness(calm([session(DateTime(2030, 3, 1), 90, 10)])).level, ReadinessLevel.green);
+    // §16.29.2: la sesión de hoy no cambia la decisión de hoy.
+    expect(readiness(calm([session(mon, 90, 10)])).level, ReadinessLevel.green);
   });
 
   test('dos partidos entre ayer y hoy, aunque la carga sea baja', () {

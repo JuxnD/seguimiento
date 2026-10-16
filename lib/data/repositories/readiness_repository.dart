@@ -242,6 +242,20 @@ class ReadinessRepository {
         ));
   }
 
+  /// §16.29.3: en el informe, la recuperación propuesta cuenta como aceptada
+  /// con la recuperación activa completa o con una movilidad terminada de 30
+  /// min o más ese día (el 12 oct se hizo 60 min y quedó como «Movilidad»).
+  Future<bool> recoveryAccepted(DateTime date) async =>
+      await recoveryDone(date) ||
+      (await (db.select(db.sessions)
+                ..where((t) =>
+                    t.date.equals(dayKey(dateOnly(date))) &
+                    t.type.equalsValue(SessionType.movilidad) &
+                    t.incomplete.equals(false) &
+                    t.totalSec.isBiggerOrEqualValue(30 * 60)))
+              .get())
+          .isNotEmpty;
+
   /// ¿Se eligió entrenar igual ese día?
   Future<bool> trainedAnyway(DateTime date) async =>
       (await (db.select(db.coachProposals)
@@ -961,7 +975,7 @@ class ReadinessRepository {
       if (a.load3Days > maxLoad) maxLoad = a.load3Days;
       if (a.level == ReadinessLevel.green) continue;
       days.add((d, a));
-      if (await recoveryDone(d)) accepted++;
+      if (await recoveryAccepted(d)) accepted++;
       if (await trainedAnyway(d)) anyway++;
     }
     return ReadinessWeek(

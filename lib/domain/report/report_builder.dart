@@ -479,7 +479,12 @@ String _setLabel(SetEntry e, {bool seconds = false}) {
           ? '$amount (partida)'
           : amount;
   if (e.loadKg != null) out += ' @ ${fmtDec(e.loadKg!)} kg';
-  if (e.variant != null) out += ' (${e.variant})';
+  // §16.29.4: «@ 3 kg (peso corporal)» se contradice; con carga externa no
+  // se repite «peso corporal».
+  if (e.variant != null &&
+      !(e.loadKg != null && e.variant!.toLowerCase().contains('peso corporal'))) {
+    out += ' (${e.variant})';
+  }
   if (e.rir != null) out += ' RIR ${e.rir}';
   if (e.toFailure) out += ' (fallo)';
   return out;
@@ -503,17 +508,21 @@ void _volume(StringBuffer b, ReportStats s) {
     b.writeln();
   }
   final holds = s.input.holdExercises;
-  String unit(String exercise, num v) =>
-      holds.contains(exercise) ? '$v s' : '$v';
+  // §16.29.4: las cargas (maleta, abrazada) van en metros, no en reps.
+  String unit(String exercise, num v) => holds.contains(exercise)
+      ? '$v s'
+      : isDistanceExercise(exercise)
+          ? '$v m'
+          : '$v';
   if (before == null) {
-    b.writeln('| Ejercicio | Reps o s |');
+    b.writeln('| Ejercicio | Reps, s o m |');
     b.writeln('|---|---|');
     for (final e in now.entries) {
       b.writeln('| ${e.key} | ${unit(e.key, e.value)} |');
     }
   } else {
     b.writeln(
-        '| Ejercicio | Reps o s | ${partial ? 'Anterior, mismo punto' : 'Semana anterior'} | Δ |');
+        '| Ejercicio | Reps, s o m | ${partial ? 'Anterior, mismo punto' : 'Semana anterior'} | Δ |');
     b.writeln('|---|---|---|---|');
     for (final e in now.entries) {
       final prev = before[e.key];
@@ -613,7 +622,9 @@ void _nutrition(StringBuffer b, ReportStats s) {
     b.writeln();
     b.writeln(
         'Promedio (días cerrados): ${fmtInt(s.avgKcal!)} kcal · P ${fmtInt(s.avgProtein!)} g · '
-        'C ${fmtInt(s.avgCarbs!)} g · G ${fmtInt(s.avgFat!)} g');
+        'C ${fmtInt(s.avgCarbs!)} g · G ${fmtInt(s.avgFat!)} g '
+        // §16.29.9 / §16.30.4: la grasa frente a su meta, como kcal y P.
+        '(meta $fatGoalMinG–$fatGoalMaxG g${s.avgFat! > fatGoalMaxG ? ' ⚠ por encima' : ''})');
   }
   b.writeln();
 
@@ -733,3 +744,6 @@ String _pct(double part, double total) => '${fmtInt(part / total * 100)}%';
 
 String _dayLabel(DateTime d, String? time) =>
     '${weekdayShort(d.weekday)} ${formatShort(d)}${time == null ? '' : ' $time'}';
+
+/// §16.29.4: ejercicios que se miden en metros (cargas caminando).
+bool isDistanceExercise(String name) => name.startsWith('Carga ');

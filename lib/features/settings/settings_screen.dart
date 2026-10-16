@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../app/providers.dart';
 import '../../data/backup_archive.dart';
+import '../../data/manual_export.dart';
 import '../../data/database.dart';
 import '../../data/repositories/goal_repository.dart';
 import '../../data/repositories/profile_repository.dart';
@@ -376,6 +377,14 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
             label: const Text('Exportar registros y fotos'),
           ),
           const SizedBox(height: 8),
+          // Plan 056 (§16.28.4 B): para el entrenador, generado de los datos.
+          OutlinedButton.icon(
+            key: const ValueKey('exportar-manual'),
+            onPressed: _busy ? null : () => _exportManual(context, ref),
+            icon: const Icon(Icons.menu_book_outlined),
+            label: const Text('Exportar manual'),
+          ),
+          const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: _busy ? null : () => _restore(context, ref),
             icon: const Icon(Icons.restore),
@@ -465,6 +474,17 @@ class _BackupCardState extends ConsumerState<_BackupCard> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// Plan 056: el manual de la app (plan, días, tests, metas y avisos) en
+  /// Markdown, generado de los datos vivos, para compartir.
+  Future<void> _exportManual(BuildContext context, WidgetRef ref) async {
+    await guarded(context, () async {
+      final version = await ref.read(appVersionProvider.future);
+      final text = await buildAppManual(ref.read(databaseProvider),
+          appVersion: version);
+      await Share.share(text, subject: 'Manual de My Prime $version');
+    }, failure: 'No se pudo generar el manual');
   }
 
   Future<void> _export(BuildContext context, WidgetRef ref) async {

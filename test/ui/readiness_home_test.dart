@@ -182,7 +182,7 @@ void main() {
     expect(find.text('Hoy: recuperación activa'), findsOneWidget);
     expect(
         find.text(
-            '• Carga de los últimos 3 días: 1.410 (sáb 300 · dom 630 · dom 480)'),
+            '• Carga de anteayer y ayer: 1.410 (sáb 300 · dom 630 · dom 480)'),
         findsOneWidget);
     expect(find.text('Empezar recuperación (30 min)'), findsOneWidget);
     expect(find.text('Empezar tren superior'), findsNothing);

@@ -100,7 +100,7 @@ class RecoveryProposalCard extends ConsumerWidget {
       builder: (c) => AlertDialog(
         title: const Text('¿Entrenar igual?'),
         content: Text(a.load3Days > 0
-            ? 'La carga de los últimos 3 días está en ${fmtInt(a.load3Days)}. ${a.reasons.first}. ¿Seguro?'
+            ? 'La carga de anteayer y ayer está en ${fmtInt(a.load3Days)}. ${a.reasons.first}. ¿Seguro?'
             : '${a.reasons.first}. ¿Seguro?'),
         actions: [
           FilledButton(

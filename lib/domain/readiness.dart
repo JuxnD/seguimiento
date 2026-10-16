@@ -18,7 +18,8 @@ enum ReadinessLevel { green, yellow, red }
 
 enum SuggestedAction { trainAsPlanned, recoveryActive, restOnly }
 
-/// Carga de los últimos 3 días a partir de la cual toca recuperación activa.
+/// Carga de anteayer y ayer a partir de la cual toca recuperación activa
+/// (§19.17: 48 h ≥ 900; §16.29.2: sin la sesión del mismo día).
 const readinessLoad3Days = 900;
 
 /// Partidos entre ayer y hoy a partir de los cuales toca recuperación activa.
@@ -99,7 +100,7 @@ class ReadinessAdvice {
 
   final ReadinessLevel level;
 
-  /// Por qué, con datos: "Carga de los últimos 3 días: 1.410 (sáb 300 · …)".
+  /// Por qué, con datos: "Carga de anteayer y ayer: 1.410 (sáb 300 · …)".
   final List<String> reasons;
 
   /// Lo que faltó para decidir: "Pulso: sin dato".
@@ -153,8 +154,9 @@ ReadinessAdvice readiness(ReadinessInput i) {
   int dayLoad(DateTime d) =>
       i.load.where((x) => dateOnly(x.date) == d).fold(0, (a, x) => a + x.load);
 
-  // Últimos 3 días, en orden.
-  final window = [for (var k = 2; k >= 0; k--) addDays(d0, -k)];
+  // §16.29.2: la decisión del día usa sólo la carga anterior a ese día
+  // (anteayer y ayer); la sesión de esa misma noche no la cambia.
+  final window = [for (var k = 2; k >= 1; k--) addDays(d0, -k)];
   final windowItems = [
     for (final d in window)
       for (final x in i.load)
@@ -165,7 +167,7 @@ ReadinessAdvice readiness(ReadinessInput i) {
     final detail = windowItems
         .map((x) => '${weekdayShort(x.date.weekday)} ${fmtInt(x.load)}')
         .join(' · ');
-    yellow.add('Carga de los últimos 3 días: ${fmtInt(load3)} ($detail)');
+    yellow.add('Carga de anteayer y ayer: ${fmtInt(load3)} ($detail)');
   }
 
   final games = i.load.where((x) =>

@@ -174,7 +174,7 @@ void main() {
     final evidence = jsonDecode(row.evidence) as Map<String, Object?>;
     expect(evidence['level'], 'yellow');
     expect((evidence['reasons'] as List).first,
-        startsWith('Carga de los últimos 3 días: 1.410'));
+        startsWith('Carga de anteayer y ayer: 1.410'));
 
     // Abrir una rutina no es aceptar: solo cuenta la sesión guardada.
     await training.save(SessionDraft(

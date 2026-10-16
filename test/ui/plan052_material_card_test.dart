@@ -88,7 +88,9 @@ void main() {
           segments(EquipmentKeys.rings).selected, {EquipmentStatus.noTengo});
       expect(segments(EquipmentKeys.backpack).selected,
           {EquipmentStatus.noTengo});
-      expect(find.text('En compra'), findsNWidgets(6),
+      // Plan 056: + el anclaje del nórdico («tengo» por omisión).
+      expect(segments(EquipmentKeys.anchor).selected, {EquipmentStatus.tengo});
+      expect(find.text('En compra'), findsNWidgets(7),
           reason: 'la mochila es sí/no');
 
       final rings = find.byKey(

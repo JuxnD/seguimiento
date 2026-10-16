@@ -28,6 +28,9 @@ abstract final class EquipmentKeys {
   static const parallettes = 'parallettes';
   static const rings = 'rings';
   static const backpack = 'backpack';
+
+  /// Plan 056 (§16.29.10, §16.30.3): dónde enganchar los pies en el nórdico.
+  static const anchor = 'anchor';
 }
 
 class EquipmentItem {
@@ -65,6 +68,10 @@ const equipmentCatalog = [
   EquipmentItem(EquipmentKeys.rings, 'Anillas', 'anillas'),
   EquipmentItem(EquipmentKeys.backpack, 'Mochila con peso', 'mochila con peso',
       defaultStatus: EquipmentStatus.noTengo, weighted: true),
+  // El nórdico ya se hizo el 15 oct: por omisión hay dónde anclar los pies.
+  EquipmentItem(EquipmentKeys.anchor, 'Anclaje para los pies (nórdico)',
+      'anclaje para los pies',
+      defaultStatus: EquipmentStatus.tengo),
 ];
 
 EquipmentItem? equipmentItem(String key) =>
@@ -116,6 +123,13 @@ const exerciseEquipment = <String, List<EquipmentNeed>>{
   'Colgarse de la barra': [_bar],
   'Elevación de piernas colgado': [_bar],
   'Toes-to-bar': [_bar],
+  // §16.30.3: sin anclaje, curl femoral deslizando (slider_leg_curl).
+  'Nórdico (isquios)': [
+    EquipmentNeed(EquipmentKeys.anchor,
+        required: true,
+        alternative:
+            'Sin anclaje: curl femoral deslizando (talones sobre una toalla en el piso), mismas series.')
+  ],
   'Scap pull-up': [
     EquipmentNeed(EquipmentKeys.bar,
         required: true,
