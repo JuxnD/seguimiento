@@ -1467,15 +1467,23 @@ double _framingRadius(String joint, BodyDims dims) => joint.endsWith('Hand')
 
 /// Local anatomical detail, shared by the painter and geometric inspection.
 /// Supports remain on the same plane; the toe stays long while the arch rises.
+/// 065: heel, both metatarsal heads and toe pads rest on the sole plane (one
+/// unit below the ankle); only the medial arch and the instep lift.
 Map<String, V3> shortFootLandmarks(Body3D body, double activation, {String side = 'near'}) {
   final ankle = body.p['${side}Ankle']!;
   final forward = (body.p['${side}Toe']! - ankle).unit;
   const down = V3(0, 1, 0);
+  // Lateral = away from the body midline; the big toe is medial.
+  final lateral = V3(0, 0, ankle.z >= (body.p['hip']?.z ?? 0) ? 1 : -1);
+  final metatarsal = ankle + forward * 3.4 - lateral * .55 + down * .4;
   return {
-    'heel': ankle - forward + down * .4,
-    'metatarsal': ankle + forward * 3.2 + down * .4,
-    'arch': ankle + forward * 1.4 - down * (.4 + activation),
-    'toe': ankle + forward * 5 + down * .4,
+    'heel': ankle - forward * 1.2 + down * .2,
+    'metatarsal': metatarsal,
+    'outer': ankle + forward * 3.0 + lateral * .6 + down * .5,
+    'arch': ankle + forward * 1.5 - lateral * .55 - down * (.15 + activation),
+    'instep': ankle + forward * 1.8 - down * (.75 + .35 * activation),
+    // Big toe pad on the floor, 1.8 u from its metatarsal head.
+    'toe': metatarsal + forward * 1.7657 + down * .35,
   };
 }
 
@@ -2079,19 +2087,29 @@ class _Scene {
     final a = body.p['${side}Ankle'], toe = body.p['${side}Toe'];
     if (a == null || toe == null) return;
     if (side == 'near' && skel.footArch >= 0) {
-      final landmarks = shortFootLandmarks(body, skel.footArch, side: side);
+      // 065: a recognisable bare foot. Lateral column, heel and toe pads stay
+      // on the sole plane; the medial column bows up into the arch.
+      final l = shortFootLandmarks(body, skel.footArch, side: side);
       final forward = (toe - a).unit;
-      final lateral = V3.zAxis * (fig.mirrored ? -1 : 1);
+      final sole = a.y + 1;
       final near = nearOf(a);
-      _capsule(landmarks['heel']!, landmarks['arch']!, .75, .85, _skin, near, outline: false);
-      _capsule(landmarks['arch']!, landmarks['metatarsal']!, .85, .8, _skin, near, outline: false);
-      _capsule(a - const V3(0, .4, 0), landmarks['arch']!, .7, .65, _skin, near, outline: false);
+      final ball = V3.lerp(l['metatarsal']!, l['outer']!, .5) - const V3(0, .35, 0);
+      final parts = <(V3, V3, double, double, bool)>[
+        (l['heel']!, l['outer']!, .8, .5, false), // lateral border
+        (a - const V3(0, .2, 0), l['instep']!, .78, .82, false), // instep
+        (l['instep']!, ball, .82, .62, false),
+        (l['heel']!, l['arch']!, .78, .7, false), // medial arch
+        (l['arch']!, l['metatarsal']!, .7, .6, false),
+      ];
       for (var digit = 0; digit < 5; digit++) {
-        final spread = lateral * ((digit - 2) * .38);
-        final start = landmarks['metatarsal']! + spread;
-        final end = landmarks['toe']! + spread - forward * (digit * .12);
-        _capsule(start, end, digit == 0 ? .28 : .22, digit == 0 ? .24 : .18, _skin, near,
-            outline: !(fig.barefoot && fig.focus == 'nearFoot'));
+        final base = V3.lerp(l['metatarsal']!, l['outer']!, digit / 4) + forward * (digit == 1 ? .1 : 0);
+        final r = digit == 0 ? .3 : .22 - digit * .012;
+        final tip = digit == 0 ? l['toe']! : base + forward * (1.55 - digit * .2);
+        parts.add((base, V3(tip.x, sole - r, tip.z), digit == 0 ? .34 : .26, r, true));
+      }
+      parts.sort((p, q) => cam.depth(V3.lerp(p.$1, p.$2, .5)).compareTo(cam.depth(V3.lerp(q.$1, q.$2, .5))));
+      for (final (from, to, ra, rb, digit) in parts) {
+        _capsule(from, to, ra, rb, _skin, near, outline: digit && !(fig.barefoot && fig.focus == 'nearFoot'));
       }
       return;
     }
@@ -2234,7 +2252,11 @@ class _Scene {
     }
     final zT = (zc(p['hip']!) + zc(p['neck']!)) / 2;
     parts.add(DepthPart(zT, _torso, 'torso'));
-    parts.add(DepthPart(zT + (zc(p['head']!) >= zc(p['hip']!) ? 0.2 : -0.2), _head, 'head'));
+    // 058: la cabeza va pegada al torso, salvo que esté más cerca o más lejos
+    // que él por sí misma (flexiones vistas de frente: con la profundidad
+    // del torso, el brazo lejano se pintaba sobre la cara).
+    final zh = zc(p['head']!);
+    parts.add(DepthPart(zh >= zc(p['hip']!) ? math.max(zT + 0.2, zh) : math.min(zT - 0.2, zh), _head, 'head'));
   }
 
   // --- props ---------------------------------------------------------------

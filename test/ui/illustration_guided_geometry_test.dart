@@ -448,10 +448,23 @@ void main() {
     final held = liftSkeleton(fig.skeletonAt(.5), fig);
     expect((held.front.z - start.front.z).abs(), greaterThan(.2),
         reason: 'The guide requires turning away from the supported arm, not sagittal tilting.');
+    // 063: the guide asks for a step forward first. Forearm, elbow and back
+    // foot never move; the front foot is fixed once planted until it returns.
+    final n = fig.motion.length;
+    final planted = fig.motion.indexWhere((stage) => stage.label != 'Paso adelante');
+    final lifting = fig.motion.indexWhere((stage) => stage.label == 'Recoge el pie');
+    expect(planted, greaterThan(0));
+    expect(lifting, greaterThan(planted));
+    final front = liftSkeleton(fig.skeletonAt(planted / n), fig).p['nearAnkle']!;
+    expect(front.x - start.p['nearAnkle']!.x, greaterThan(6), reason: 'The front foot steps forward.');
     for (var i = 0; i <= 80; i++) {
-      final body = liftSkeleton(fig.skeletonAt(i / 80), fig);
-      for (final joint in ['nearHand', 'nearElbow', 'nearAnkle', 'farAnkle']) {
+      final progress = i / 80;
+      final body = liftSkeleton(fig.skeletonAt(progress), fig);
+      for (final joint in ['nearHand', 'nearElbow', 'farAnkle']) {
         expect((body.p[joint]! - start.p[joint]!).length, lessThan(.08), reason: '$joint/$i fixed in world space');
+      }
+      if (progress >= planted / n && progress <= lifting / n) {
+        expect((body.p['nearAnkle']! - front).length, lessThan(.08), reason: 'nearAnkle/$i planted');
       }
     }
     await tester.runAsync(() async {

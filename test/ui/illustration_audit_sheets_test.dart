@@ -44,13 +44,19 @@ void main() {
       final guide = [...?detail?.steps, ...?cues[fig.name]];
       // Animadas: 6 puntos repartidos (incluye lo que se ve entre momentos);
       // fijas: sus momentos.
-      final samples = fig.continuous && fig.frames.length > 1
+      // AUDIT_KEYS=1: sólo los momentos clave (hasta 6).
+      final keys = Platform.environment['AUDIT_KEYS'] == '1';
+      final samples = keys && fig.frames.length > 1
+          ? [for (var k = 0; k < fig.frames.length && k < 6; k++) k / (fig.frames.length - 1)]
+          : fig.continuous && fig.frames.length > 1
           ? [for (var k = 0; k < 6; k++) k / 5]
           : fig.frames.length == 1
               ? [0.0]
               : [for (var k = 0; k < fig.frames.length && k < 6; k++) k / (fig.frames.length - 1)];
       const tile = Size(260, 300);
-      final angles = [fig.initialYaw, fig.initialYaw + 90];
+      // AUDIT_TOP=1 suma una fila casi cenital (para posturas en el suelo).
+      final top = Platform.environment['AUDIT_TOP'] == '1';
+      final angles = [fig.initialYaw, fig.initialYaw + 90, if (top) fig.initialYaw];
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
       canvas.drawColor(const Color(0xff0b0806), BlendMode.src);
@@ -68,11 +74,11 @@ void main() {
           canvas.save();
           canvas.translate(col * tile.width, 110 + row * tile.height);
           canvas.save();
-          Figure3DPainter(fig, p, yaw: yaw, pitch: fig.initialPitch).paint(canvas, const Size(260, 230));
+          Figure3DPainter(fig, p, yaw: yaw, pitch: row == 2 ? 70 : fig.initialPitch).paint(canvas, const Size(260, 230));
           canvas.restore();
           final caption = TextPainter(
               text: TextSpan(
-                  text: 'p=${p.toStringAsFixed(2)} yaw=${yaw.round()}\n'
+                  text: 'p=${p.toStringAsFixed(2)} yaw=${yaw.round()}${row == 2 ? ' desde arriba' : ''}\n'
                       '${fig.hasMotion ? figureMotionCaption(fig, p) : fig.frames[(p * (fig.frames.length - 1)).round()].caption}',
                   style: const TextStyle(color: Colors.white70, fontFamily: 'Roboto', fontSize: 11)),
               textDirection: TextDirection.ltr,
@@ -86,7 +92,7 @@ void main() {
       final picture = recorder.endRecording();
       final file = '${(i + 1).toString().padLeft(3, '0')}.png';
       await tester.runAsync(() async {
-        final image = await picture.toImage((tile.width * 6).round(), (110 + tile.height * 2).round());
+        final image = await picture.toImage((tile.width * 6).round(), (110 + tile.height * angles.length).round());
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         File('${dir.path}/$file').writeAsBytesSync(bytes!.buffer.asUint8List());
         image.dispose();
@@ -99,6 +105,16 @@ void main() {
         'frames': [for (final f in fig.frames) f.caption],
         'guide': guide,
         'mistakes': detail?.mistakes ?? const [],
+        // Articulaciones en cada muestra (y hacia abajo, suelo en 0): para
+        // medir apoyos y cruces sin depender sólo del ojo.
+        'joints': [
+          for (final p in samples)
+            {
+              'p': p,
+              for (final e in liftSkeleton(fig.skeletonAt(p), fig).p.entries)
+                e.key: [for (final v in [e.value.x, e.value.y, e.value.z]) (v * 10).round() / 10],
+            }
+        ],
       });
     }
     File('${dir.path}/index.json').writeAsStringSync(const JsonEncoder.withIndent(' ').convert(index));

@@ -372,21 +372,16 @@ def doorframe():
     shoulder0 = [0, hip_y - 18, SHOULDER_HALF]
     elbow = add(shoulder0, [0, 0, 10])
     hand = add(elbow, [0, -9, 0])
-    feet = {'near': [7, -1, HIP_HALF], 'far': [-5, -1, -HIP_HALF]}
 
     def rolled(v, theta):
         c, s = math.cos(theta), math.sin(theta)
         return [v[0] * c - v[2] * s, v[1], v[2] * c + v[0] * s]
-    sweep = []
-    # 17 claves: entre claves el codo interpolado deriva < 0,08 u del marco.
-    for i in range(17):
-        k = i / 16
-        x, roll = 3.5 * k, -30 * k
-        # Al girar el pecho el hombro se aleja del codo fijo; el cuerpo se
-        # acerca al marco (bodyZ) lo justo para que el brazo no se estire.
-        f = pose('Antebrazo en el marco, codo a la altura del hombro; pie de ese lado adelante' if i == 0 else
-                 'Da el paso adelante y gira el pecho al lado contrario', (x, hip_y), -90,
-                 limb(), limb(), arm(0, -90, hand=-90, grip='hold'), arm(92, 92))
+
+    def frame(caption, x, roll, feet):
+        # Al avanzar y girar el pecho el hombro se aleja del codo fijo; el
+        # cuerpo se acerca al marco (bodyZ) lo justo para que el brazo no se
+        # estire: el antebrazo nunca se despega del marco.
+        f = pose(caption, (x, hip_y), -90, limb(), limb(), arm(0, -90, hand=-90, grip='hold'), arm(92, 92))
         f['bodyRoll'] = roll
         t = math.radians(roll)
         off = rolled([0, -18, SHOULDER_HALF], t)
@@ -398,19 +393,45 @@ def doorframe():
         f['nearArm'].update(reach3=sub(hand, sh), pole=sub(elbow, sh), end3=[0, -1, 0])
         for sd, sign in [('near', 1), ('far', -1)]:
             root_ = add(hip, rolled([0, 0, sign * HIP_HALF], t))
-            f[sd + 'Leg'].update(reach3=sub(feet[sd], root_), pole=[1, 0, 0], end3=[1, 0, 0], foot=0)
-        sweep.append(f)
-    frames = sweep + [cp(sweep[-1])] + [cp(f) for f in reversed(sweep[:-1])]
-    frames[len(sweep)]['caption'] = 'Hombro abajo y atrás; si pincha delante del hombro, afloja'
-    for f in frames[len(sweep) + 1:]:
-        f['caption'] = 'Regresa despacio'
+            r = sub(feet[sd], root_)
+            assert norm(r) < 27.9, (caption, sd, norm(r))
+            f[sd + 'Leg'].update(reach3=r, pole=[1, 0, 0], end3=[1, 0, 0], foot=0)
+        return f
+    # 063: primero el paso (pies juntos → pie del lado del marco adelante),
+    # después el pecho cruza la puerta (+x) y gira al lado contrario.
+    far_foot = [0, -1, -HIP_HALF]
+    together = {'near': [0, -1, HIP_HALF], 'far': far_foot}
+    lifted = {'near': [4.5, -4.5, 5], 'far': far_foot}
+    planted = {'near': [9, -1, 6.5], 'far': far_foot}
+    x0, x1, x2 = 0, 1.5, 4.5
+    step = [frame('Antebrazo en el marco, codo a la altura del hombro; pies juntos', x0, 0, together),
+            frame('Da un paso adelante con el pie del lado del marco', (x0 + x1) / 2, 0, lifted),
+            frame('Pie adelante; el antebrazo sigue en el marco', x1, 0, planted)]
+    sweep = []
+    # 17 claves: entre claves el codo interpolado deriva < 0,08 u del marco.
+    for i in range(1, 17):
+        k = i / 16
+        sweep.append(frame('Pasa el pecho por la puerta y gíralo al lado contrario',
+                           x1 + (x2 - x1) * k, -30 * k, planted))
+    hold = cp(sweep[-1])
+    hold['caption'] = 'Hombro abajo y atrás; si pincha delante del hombro, afloja'
+    back = [cp(f) for f in reversed([step[2]] + sweep[:-1])]
+    for f in back:
+        f['caption'] = 'Regresa despacio con el pecho al frente'
+    home = [cp(step[1]), cp(step[0])]
+    home[0]['caption'] = 'Recoge el pie'
+    home[1]['caption'] = 'Pies juntos; cambia de brazo'
+    frames = step + sweep + [hold] + back + home
     contacts = ['nearHand', 'nearAnkle', 'farAnkle']
-    motions = ([phase('Avanza y gira el pecho', seconds=.15, contacts=contacts) for _ in sweep[1:]] +
+    motions = ([phase('Paso adelante', seconds=.6, contacts=['nearHand', 'farAnkle']) for _ in step[1:]] +
+               [phase('Pasa el pecho y gíralo', seconds=.15, contacts=contacts) for _ in sweep] +
                [phase('Respira sin mover los apoyos', kind='hold', seconds=2)] +
-               [phase('Regresa con control', seconds=.15, contacts=contacts) for _ in sweep[1:]])
+               [phase('Regresa con control', seconds=.15, contacts=contacts) for _ in back] +
+               [phase('Recoge el pie', seconds=.6, contacts=['nearHand', 'farAnkle']) for _ in home])
     post_z = elbow[2] + 1
-    props = [box([2.2, -33.5, post_z], [2, 67, 3]), box([2.2, -33.5, -post_z], [2, 67, 3]),
-             box([2.2, -68, 0], [2, 2, 2 * post_z + 3])]
+    # Jamba justo delante del antebrazo (cara trasera en x≈0,7).
+    props = [box([1.7, -33.5, post_z], [2, 67, 3]), box([1.7, -33.5, -post_z], [2, 67, 3]),
+             box([1.7, -68, 0], [2, 2, 2 * post_z + 3])]
     return frames, motions, props
 
 
