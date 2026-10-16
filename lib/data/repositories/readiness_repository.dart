@@ -21,6 +21,10 @@ const readinessProposalKind = 'recuperacion';
 /// Tipo de decisión en `coach_proposals` para un test movido (§19.17).
 const testMoveProposalKind = 'mover_test';
 
+/// Plan 054 (§16.28.1): «Saltar el test esta vez» deja la sesión del día
+/// habilitada y queda registrado; el test sigue pendiente.
+const testSkipProposalKind = 'saltar_test';
+
 /// Veces que un mismo test puede moverse; después se propone su versión
 /// ligera (solo los 6 principales).
 const maxTestMoves = 2;
@@ -35,6 +39,7 @@ class TestMove {
     required this.from,
     required this.to,
     required this.reasons,
+    this.manual = false,
   });
 
   /// Lunes de inicio del v3.1 al que pertenece el test.
@@ -44,6 +49,10 @@ class TestMove {
   final DateTime from;
   final DateTime to;
   final List<String> reasons;
+
+  /// Plan 054: el owner eligió el día (no la recuperación). No gasta el
+  /// tope de [maxTestMoves].
+  final bool manual;
 }
 
 /// Si el test de ese día se puede hacer.
@@ -321,6 +330,7 @@ class ReadinessRepository {
       from: parseDay(e['from']! as String),
       to: parseDay(r.reviewAfter!),
       reasons: (e['reasons'] as List? ?? const []).cast<String>(),
+      manual: e['manual'] == true,
     );
   }
 
@@ -712,28 +722,40 @@ class ReadinessRepository {
         done);
   }
 
-  /// Mueve el test al día siguiente de `from`, que tiene que ser el día que
-  /// le toca ahora: no se mueve una fecha cualquiera ni se repite un
-  /// movimiento. null si ya se movió 2 veces: entonces toca la versión
-  /// ligera, no otro aplazamiento.
+  /// Mueve el test desde `from`, que tiene que ser el día que le toca ahora:
+  /// no se mueve una fecha cualquiera. Sin `to`, al día siguiente (la
+  /// recuperación activa, como máximo 2 veces: después toca la versión
+  /// ligera y devuelve null). Con `to` (plan 054, §16.28.1), el día que eligió
+  /// el owner, que tiene que ser posterior a hoy; ese movimiento no gasta el
+  /// tope. Las reglas de piernas (descanso tras el torso, 48 h tras un
+  /// partido, escaleras) se siguen aplicando al leer la fecha.
   Future<DateTime?> moveTest({
     required DateTime start,
     required int round,
     required TestPart part,
     required DateTime from,
     required List<String> reasons,
+    DateTime? to,
     DateTime? now,
     TestScheduleKey? key,
   }) =>
       db.transaction(() async {
         final done = await moves(start, round, part, key: key);
-        if (done.length >= maxTestMoves) return null;
+        final manual = to != null;
+        if (!manual && done.where((m) => !m.manual).length >= maxTestMoves) {
+          return null;
+        }
         final current = await currentTestDate(start, round, part, key: key);
         if (current == null || current != dateOnly(from)) {
           throw ArgumentError(
               'El test $round (${part.name}) no toca el ${dayKey(dateOnly(from))}');
         }
-        final to = addDays(current, 1);
+        if (manual &&
+            (!dateOnly(to).isAfter(dateOnly(now ?? DateTime.now())) ||
+                dateOnly(to) == current)) {
+          throw ArgumentError('El test se mueve a un día posterior a hoy');
+        }
+        final target = manual ? dateOnly(to) : addDays(current, 1);
         await db.into(db.coachProposals).insert(CoachProposalsCompanion.insert(
               id: '${_movePrefix(start, round, part, key)}${done.length + 1}',
               kind: testMoveProposalKind,
@@ -744,15 +766,60 @@ class ReadinessRepository {
                 'part': part.name,
                 'from': dayKey(current),
                 'reasons': reasons,
+                if (manual) 'manual': true,
                 if (key != null) 'scheme': key.scheme,
                 if (key != null) 'protocol': key.protocolId.name,
               }),
               createdOn: dayKey(current),
               decidedOn: Value(dayKey(dateOnly(now ?? DateTime.now()))),
-              reviewAfter: Value(dayKey(to)),
+              reviewAfter: Value(dayKey(target)),
             ));
-        return to;
+        return target;
       });
+
+  /// Plan 054 (§16.28.1): tests cuya fecha ya pasó sin completarse (por
+  /// ejemplo, se hizo la sesión en vez del test). Hoy los muestra para
+  /// elegir el día. Sólo los de las últimas 3 semanas.
+  Future<List<EffectiveTest>> overdueTests(DateTime today,
+      {required String scheme,
+      required DateTime blockStart,
+      required TestProtocolId protocol}) async {
+    final d = dateOnly(today);
+    return [
+      for (final t in await testAgenda(
+          scheme: scheme,
+          blockStart: blockStart,
+          protocol: protocol,
+          gates: false))
+        if (t.date.isBefore(d) &&
+            !t.date.isBefore(addDays(d, -21)) &&
+            await _completedTestDate(t.key) == null)
+          t
+    ];
+  }
+
+  String _skipId(TestScheduleKey key, DateTime date) =>
+      '$testSkipProposalKind:${key.scheme}:${dayKey(dateOnly(key.blockStart))}:'
+      '${key.protocolId.name}:${key.round}:${key.part.name}:${dayKey(dateOnly(date))}';
+
+  /// Plan 054: «Saltar el test esta vez» (queda registrado; el test sigue
+  /// pendiente y la sesión del día se habilita).
+  Future<void> skipTest(TestScheduleKey key, DateTime date, {DateTime? now}) =>
+      db.into(db.coachProposals).insertOnConflictUpdate(
+          CoachProposalsCompanion.insert(
+            id: _skipId(key, date),
+            kind: testSkipProposalKind,
+            status: 'aceptada',
+            evidence: jsonEncode({'date': dayKey(dateOnly(date))}),
+            createdOn: dayKey(dateOnly(date)),
+            decidedOn: Value(dayKey(dateOnly(now ?? DateTime.now()))),
+          ));
+
+  Future<bool> testSkipped(TestScheduleKey key, DateTime date) async =>
+      await (db.select(db.coachProposals)
+            ..where((t) => t.id.equals(_skipId(key, date))))
+          .getSingleOrNull() !=
+      null;
 
   /// El test que toca `date` en el v3.1 que empezó `start`, con los
   /// movimientos de ese plan aplicados. `moves`: veces que ya se movió.
@@ -816,7 +883,8 @@ class ReadinessRepository {
           key: key,
           planned: planned,
           date: date,
-          moves: done.length,
+          // Plan 054: lo que eligió el owner no cuenta como aplazamiento.
+          moves: done.where((m) => !m.manual).length,
           gate: gates ? await _gate(part, date) : null,
           kneePushedFrom: unpushed == date ? null : unpushed,
           kneeStairsThen: unpushed == date

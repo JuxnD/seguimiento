@@ -40,6 +40,7 @@ import '../meals/meal_form_screen.dart';
 import 'coach_card.dart';
 import 'morning_check_screen.dart';
 import 'roll_day_row.dart';
+import 'test_day_picker.dart';
 import 'readiness_card.dart';
 import 'sleep_hours_dialog.dart';
 import 'steps_source_line.dart';
@@ -420,6 +421,10 @@ class _PlanHero extends StatelessWidget {
             ],
             // Plan 053: rodar la programación un día (o deshacerlo hoy).
             RollDayRow(date: dashboard.date, trained: dashboard.trained),
+            // Plan 054: un test que se pasó sin hacer: elegir el día.
+            if (dashboard.overdueTest case final t?
+                when dashboard.fitnessTest == null)
+              OverdueTestRow(test: t),
             if (dashboard.hardFootballYesterday case final game?
                 when dashboard.dayType.isTraining)
               Padding(
@@ -558,6 +563,35 @@ class _StartButtons extends ConsumerWidget {
     await startGuidedSession(context, ref);
   }
 
+  /// Plan 054: «Saltar el test esta vez» queda registrado; el test sigue
+  /// pendiente y la sesión del día se habilita.
+  Future<void> _skipTest(
+      BuildContext context, WidgetRef ref, TestScheduleKey key) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('¿Saltar el test esta vez?'),
+        content: const Text(
+            'Queda registrado y el test sigue pendiente: después elige el día para hacerlo.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(c, false),
+              child: const Text('Cancelar')),
+          FilledButton(
+              onPressed: () => Navigator.pop(c, true),
+              child: const Text('Saltar esta vez')),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    await guarded(context, () async {
+      await ref
+          .read(readinessRepositoryProvider)
+          .skipTest(key, dashboard.date, now: clock.now());
+      ref.invalidate(dashboardProvider);
+    });
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final d = dashboard;
@@ -611,6 +645,10 @@ class _StartButtons extends ConsumerWidget {
                     part: test.part,
                     scheduleKey: scheduleKey)),
           );
+      // Plan 054 (§16.28.1): el día de test el test va primero. La sesión
+      // se habilita al terminarlo, moverlo o saltarlo esta vez; antes había
+      // dos botones y el 15 oct se hizo la sesión creyendo que era el test.
+      final pendingToday = !test.done && !d.testSkipped;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -624,7 +662,7 @@ class _StartButtons extends ConsumerWidget {
                 : 'Test ${test.round} de piernas: 4 pruebas + 5 benchmarks de movilidad, después del FIFA 11+.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          if (!torso) ...[
+          if (!torso && pendingToday) ...[
             const SizedBox(height: 4),
             TextButton.icon(
               onPressed: () => Navigator.push(
@@ -636,31 +674,68 @@ class _StartButtons extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 8),
-          FilledButton.icon(
-            onPressed: openTest,
-            style: FilledButton.styleFrom(
-                backgroundColor: color, minimumSize: const Size.fromHeight(52)),
-            icon: const Icon(Icons.assignment_turned_in_outlined),
-            label: Text(
-                test.done ? 'Revisar o editar test' : 'Abrir o continuar test'),
-          ),
-          const SizedBox(height: 8),
-          if (d.trained)
-            _DayComplete(
-                dashboard: d,
-                color: color,
-                onAnother: () => _another(context, ref))
-          else if (torso && d.date.weekday == DateTime.monday)
-            TextButton(
-              onPressed: () => startGuidedSession(context, ref),
-              child: const Text('Hacer la sesión de tirón en su lugar'),
-            )
-          else
-            OutlinedButton.icon(
-              onPressed: () => startGuidedSession(context, ref),
-              icon: const Icon(Icons.play_arrow),
-              label: Text('Empezar ${d.dayType.label.toLowerCase()}'),
+          if (pendingToday) ...[
+            FilledButton.icon(
+              key: const ValueKey('hacer-el-test'),
+              onPressed: openTest,
+              style: FilledButton.styleFrom(
+                  backgroundColor: color,
+                  minimumSize: const Size.fromHeight(52)),
+              icon: const Icon(Icons.assignment_turned_in_outlined),
+              label: const Text('Hacer el test'),
             ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                if (start != null && scheduleKey != null)
+                  OutlinedButton.icon(
+                    key: const ValueKey('mover-el-test'),
+                    onPressed: () => pickTestDay(context, ref,
+                        from: d.date, start: start, key: scheduleKey),
+                    icon: const Icon(Icons.event_repeat),
+                    label: const Text('Mover el test'),
+                  ),
+                if (scheduleKey != null)
+                  TextButton(
+                    key: const ValueKey('saltar-el-test'),
+                    onPressed: () => _skipTest(context, ref, scheduleKey),
+                    child: const Text('Saltar el test esta vez'),
+                  ),
+              ],
+            ),
+            Text('La sesión de hoy se habilita al terminar, mover o saltar el test.',
+                style: Theme.of(context).textTheme.bodySmall),
+          ] else ...[
+            if (test.done)
+              OutlinedButton.icon(
+                onPressed: openTest,
+                icon: const Icon(Icons.assignment_turned_in_outlined),
+                label: const Text('Revisar o editar test'),
+              ),
+            const SizedBox(height: 8),
+            if (d.trained)
+              _DayComplete(
+                  dashboard: d,
+                  color: color,
+                  onAnother: () => _another(context, ref))
+            else if (test.done && torso && d.date.weekday == DateTime.monday)
+              TextButton(
+                onPressed: () => startGuidedSession(context, ref),
+                child: const Text('Hacer la sesión de tirón igual'),
+              )
+            else
+              FilledButton.icon(
+                key: const ValueKey('empezar-tras-test'),
+                onPressed: () => startGuidedSession(context, ref),
+                style: FilledButton.styleFrom(
+                    backgroundColor: color,
+                    minimumSize: const Size.fromHeight(52)),
+                icon: const Icon(Icons.play_arrow),
+                label: Text('Empezar ${d.dayType.label.toLowerCase()}'),
+              ),
+          ],
         ],
       );
     }

@@ -89,6 +89,19 @@ no se mueve; el primer descanso absorbe y, sin descanso, se avisa qué sesión s
 pierde antes de confirmar. El día libre lo dice y ofrece **Deshacer**. Toda la
 app lee el mismo día corrido (`PlanRepository.dayFor`).
 
+### Día de test (054)
+
+El día de un test, la tarjeta del día tiene un solo botón principal, **Hacer el
+test**, con **Mover el test** (elegir uno de los próximos 14 días sin fútbol;
+para piernas propone el primer día de piernas) y **Saltar el test esta vez**
+(con confirmación; queda registrado y el test sigue pendiente). La sesión del
+día no se ofrece hasta terminar, mover o saltar el test. En el día de piernas
+del test, la sesión que sigue es la corta (sin saltos ni sprints; búlgara,
+peso muerto y nórdico a 2 series), también en la fecha nominal. Un test cuya
+fecha pasó sin hacerse aparece en la tarjeta como pendiente con **Elegir el
+día del test** durante 3 semanas. Elegir el día no gasta los 2 aplazamientos
+de la recuperación.
+
 ## Edición del plan y claves de técnica
 
 El editor de una nueva versión permite modificar sostén mínimo/máximo en

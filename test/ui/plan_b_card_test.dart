@@ -183,7 +183,7 @@ void main() {
   testWidgets('día de test: el test va primero y no hay tarjeta de Plan B encima', (tester) async {
     final advice = planBAdvice(dayHasLegs: true, legs: three);
     final db = await mount(tester, advice, test: (round: 1, part: TestPart.piernas, done: false));
-    expect(find.text('Abrir o continuar test'), findsOneWidget);
+    expect(find.text('Hacer el test'), findsOneWidget);
     expect(find.text('Plan B: solo torso'), findsNothing);
     expect(find.text('Empezar plan B'), findsNothing);
     await close(tester, db);

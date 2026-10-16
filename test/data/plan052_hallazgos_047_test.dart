@@ -4,8 +4,11 @@ import 'package:seguimiento/data/database.dart';
 import 'package:seguimiento/data/plan_v32_template.dart';
 import 'package:seguimiento/data/repositories/exercise_repository.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
+import 'package:seguimiento/data/repositories/readiness_repository.dart';
 import 'package:seguimiento/data/repositories/training_repository.dart';
+import 'package:seguimiento/domain/fitness_test.dart' show TestPart;
 import 'package:seguimiento/domain/plan_v32.dart';
+import 'package:seguimiento/domain/test_protocol.dart';
 import '../support/sqlite_host.dart';
 
 /// Plan 052: hallazgos 2–5 de la auditoría 047 con las decisiones del owner
@@ -44,12 +47,24 @@ void main() {
   test('hallazgo 4: el aterrizaje progresa por semana y va tras el FIFA 11+', () async {
     Future<String?> variant(DateTime date) async =>
         (await day(date)).exercises.singleWhere((e) => e.name == 'Aterrizaje clavado').physicalVariantKey;
-    expect(await variant(DateTime(2030, 2, 6)), landingBilateral, reason: 'semana 1');
+    // El mié 6 feb es el día del Test 1 de piernas: desde el plan 054 lleva la
+    // sesión corta (sin saltos ni aterrizaje). La semana 2 también es bilateral.
+    expect(await variant(DateTime(2030, 2, 13)), landingBilateral, reason: 'semana 2');
     expect(await variant(DateTime(2030, 2, 20)), landingUnilateral, reason: 'semana 3');
     expect(await variant(DateTime(2030, 3, 6)), landingUnilateral, reason: 'semana 5');
+    // El mié 13 mar (descarga) es el día del Test 2 de piernas: saltado esta
+    // vez, va la sesión de piernas completa (plan 054).
+    await ReadinessRepository(db).skipTest(
+        TestScheduleKey(
+            scheme: v32Scheme,
+            blockStart: start,
+            protocolId: TestProtocolId.v32_13,
+            round: 2,
+            part: TestPart.piernas),
+        DateTime(2030, 3, 13));
     expect(await variant(DateTime(2030, 3, 13)), landingBilateral, reason: 'descarga');
     expect(await variant(DateTime(2030, 3, 20)), landingLateral, reason: 'semana 7');
-    final wednesday = names(await day(DateTime(2030, 2, 6)));
+    final wednesday = names(await day(DateTime(2030, 2, 13)));
     final fifa = wednesday.indexOf('Calentamiento tipo FIFA 11+');
     if (fifa >= 0) {
       expect(wednesday.indexOf('Aterrizaje clavado'), fifa + 1);

@@ -1057,6 +1057,12 @@ class TrainingRepository {
       case TestWeekRole.none:
         final normal = await _composeBlocks(day, date, v3, at,
             planche: planche, rings: rings);
+        // Plan 054 (§16.28.2): también en el día de piernas que le toca al
+        // test (nominal o elegido), después del test va la sesión corta.
+        if (normal.type == DayType.piernas && await _legsTestToday(date, v3)) {
+          return labeled(_shortLegs(normal),
+              'Hoy: FIFA 11+ → test de piernas (4 pruebas) + benchmarks de movilidad (5) → sesión de piernas corta. Sin sprints ni saltos extra: el salto largo ya está en el test.');
+        }
         if (!await _dayAfterTorsoTest(date, v3)) return normal;
         // §16.27 regla 3: el día después del test de torso no lleva series
         // máximas de torso.
@@ -1093,29 +1099,7 @@ class TrainingRepository {
             ]);
       case TestWeekRole.legsTest:
         final legs = await composeFrom(week.legsPlanned!);
-        var short = [
-          for (final e in legs.exercises)
-            if (testDayLegExercises.contains(e.name)) e
-        ];
-        // Plantillas sin esos nombres (v3.1): piernas sin sprints ni saltos.
-        if (short.length <= 1) {
-          short = [
-            for (final e in legs.exercises)
-              if (!RegExp('Salto|Sprint|Aceleración|Aterrizaje|Burpee')
-                  .hasMatch(e.name))
-                e
-          ];
-        }
-        for (final e in short) {
-          if (testDayTwoSets.contains(e.name) && (e.sets ?? 0) > 2) e.sets = 2;
-        }
-        return labeled(
-            PlanDayDraft(
-                weekday: date.weekday,
-                type: legs.type,
-                notes: legs.notes,
-                exercises: short,
-                coreEpochs: legs.coreEpochs),
+        return labeled(_shortLegs(legs),
             'Hoy: FIFA 11+ → test de piernas (4 pruebas) + benchmarks de movilidad (5) → sesión de piernas corta. Sin sprints ni saltos extra: el salto largo ya está en el test. La sesión propia de hoy se descarta.');
       case TestWeekRole.noLegLoad:
         final today = await _composeBlocks(day, date, v3, at,
@@ -1131,6 +1115,54 @@ class TrainingRepository {
         return labeled(moved,
             'Hoy va la sesión que desplazó el test de piernas, sin pistol ni piernas: ayer se testearon.');
     }
+  }
+
+  /// La sesión corta de piernas tras el test (§16.27): sin sprints ni
+  /// saltos, y búlgara, peso muerto y nórdico a 2 series.
+  PlanDayDraft _shortLegs(PlanDayDraft legs) {
+    var short = [
+      for (final e in legs.exercises)
+        if (testDayLegExercises.contains(e.name)) e
+    ];
+    // Plantillas sin esos nombres (v3.1): piernas sin sprints ni saltos.
+    if (short.length <= 1) {
+      short = [
+        for (final e in legs.exercises)
+          if (!RegExp('Salto|Sprint|Aceleración|Aterrizaje|Burpee')
+              .hasMatch(e.name))
+            e
+      ];
+    }
+    for (final e in short) {
+      if (testDayTwoSets.contains(e.name) && (e.sets ?? 0) > 2) e.sets = 2;
+    }
+    return PlanDayDraft(
+        weekday: legs.weekday,
+        type: legs.type,
+        notes: legs.notes,
+        exercises: short,
+        coreEpochs: legs.coreEpochs);
+  }
+
+  /// Plan 054: hoy toca un test de piernas (fecha efectiva) que no se saltó.
+  Future<bool> _legsTestToday(DateTime date, V3Day v3) async {
+    final start =
+        addDays(dateOnly(date), -(date.weekday - 1) - (v3.week - 1) * 7);
+    final protocol = v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12;
+    final readiness = ReadinessRepository(db);
+    for (final round in [1, 2, 3]) {
+      final key = TestScheduleKey(
+          scheme: v3.scheme,
+          blockStart: start,
+          protocolId: protocol,
+          round: round,
+          part: TestPart.piernas);
+      final legs = await readiness.currentTestDate(
+          start, round, TestPart.piernas,
+          key: protocol == TestProtocolId.v31_12 ? null : key);
+      if (legs == dateOnly(date)) return !await readiness.testSkipped(key, date);
+    }
+    return false;
   }
 
   /// Ejercicios de la sesión corta de piernas tras el test (§16.27).

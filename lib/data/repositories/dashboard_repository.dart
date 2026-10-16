@@ -79,6 +79,8 @@ class TodayDashboard {
     this.planBAdvice = PlanBAdvice.none,
     this.fitnessTest,
     this.fitnessTestStart,
+    this.testSkipped = false,
+    this.overdueTest,
     this.techniqueSuggested = false,
     this.coach,
     this.strength = const [],
@@ -101,6 +103,13 @@ class TodayDashboard {
 
   /// Lunes de inicio del v3.1 del test de hoy: su identidad para moverlo.
   final DateTime? fitnessTestStart;
+
+  /// Plan 054 (§16.28.1): hoy se eligió «Saltar el test esta vez»; la sesión
+  /// del día queda habilitada aunque el test siga pendiente.
+  final bool testSkipped;
+
+  /// Plan 054: un test cuya fecha ya pasó sin hacerse, para elegir el día.
+  final EffectiveTest? overdueTest;
 
   final DateTime date;
   final int weekIndex;
@@ -439,6 +448,8 @@ class DashboardRepository {
       v3Suggestion: v3 == null || !v3.isV31 ? await _v3Suggestion(date) : null,
       fitnessTest: test,
       fitnessTestStart: test == null ? null : _v31StartFor(date, v3),
+      testSkipped: await _testSkipped(date, v3, test),
+      overdueTest: test != null && !test.done ? null : await _overdueTest(date, v3),
       coach: coach,
       strength: view == null || type == DayType.resistencia
           ? const []
@@ -505,6 +516,35 @@ class DashboardRepository {
       done: await FitnessTestRepository(db)
           .done(t.round, t.part, protocol: protocol, key: key)
     );
+  }
+
+  TestScheduleKey? _testKey(
+      DateTime date, V3Day? v3, ({int round, TestPart part, bool done})? t) {
+    final start = _v31StartFor(date, v3);
+    if (t == null || start == null) return null;
+    return TestScheduleKey(
+        scheme: v3!.scheme,
+        blockStart: start,
+        protocolId: v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12,
+        round: t.round,
+        part: t.part);
+  }
+
+  Future<bool> _testSkipped(DateTime date, V3Day? v3,
+      ({int round, TestPart part, bool done})? t) async {
+    final key = _testKey(date, v3, t);
+    return key != null && await ReadinessRepository(db).testSkipped(key, date);
+  }
+
+  Future<EffectiveTest?> _overdueTest(DateTime date, V3Day? v3) async {
+    final start = _v31StartFor(date, v3);
+    if (start == null) return null;
+    return (await ReadinessRepository(db).overdueTests(date,
+            scheme: v3!.scheme,
+            blockStart: start,
+            protocol:
+                v3.isV32 ? TestProtocolId.v32_13 : TestProtocolId.v31_12))
+        .firstOrNull;
   }
 
   /// La sesión del récord, si el plan de ese día no era de circuito.

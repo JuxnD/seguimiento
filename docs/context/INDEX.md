@@ -1,3 +1,5 @@
+**054 día de test (1.28.0+41, sin publicar), 16 oct (Claude):** el día de test Hoy pide primero el test (un botón; mover a un día elegido o saltar esta vez habilitan la sesión), un test vencido sale en Hoy para elegir el día y el día de piernas del test lleva la sesión corta también en la fecha nominal. Sin cambio de esquema: `mover_test` con `manual` y `saltar_test`. [Decisiones y evidencia](sessions/2026-10-16-054-dia-de-test.md).
+
 **053 rodar 1 día (1.27.0+39), 15 oct (Claude):** botón en Hoy que corre la semana un día; los tests viajan con su sesión, el fútbol no se mueve y se puede deshacer o registrar desde un día anterior de la semana. Sin cambio de esquema: cada corrimiento es una decisión `rodar_dia`. [Decisiones y evidencia](sessions/2026-10-15-053-rodar-dia.md). La auditoría de interfaz (solo revisión; 2 P0 y 9 P1 pendientes de corregir) está en [su informe](sessions/2026-10-15-053-auditoria-ui.md).
 
 **1.26.1–1.26.3 (15 oct):** parches del test de piernas tras el torso y las 61 figuras corregidas contra su guía; v1.26.3 publicada. Detalle en la sesión 052.
