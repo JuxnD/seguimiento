@@ -378,7 +378,7 @@ void _sessions(StringBuffer b, ReportStats s) {
     final rounds = _roundsCell(x);
     final splits = x.sets.where((e) => e.split).length;
     b.writeln(
-        '| ${_dayLabel(x.date, x.startTime)} | ${x.typeLabel}${x.outOfPlan ? ' ⚠ fuera de plan' : ''} | '
+        '| ${_dayLabel(x.date, x.startTime)} | ${x.typeLabel}${x.outOfPlan && !x.isTest ? ' ⚠ fuera de plan' : ''} | '
         '${formatDuration(x.totalSec)} | '
         '${formatDuration(x.warmupSec)} / ${formatDuration(x.cooldownSec)} | '
         '${x.restSec == 0 ? '—' : formatDuration(x.restSec)} | ${formatDuration(net)} | $rounds | '
@@ -456,7 +456,7 @@ void _sessions(StringBuffer b, ReportStats s) {
 
 /// `7/8 (incompleta)`, `~6 (est.)`, `8`.
 String _roundsCell(SessionEntry x) {
-  if (x.roundsDone == null) return '—';
+  if (x.roundsDone == null || x.isTest) return '—';
   final prefix = x.roundsEstimated ? '~' : '';
   final target = x.plannedRounds == null ? '' : '/${x.plannedRounds}';
   final estimated = x.roundsEstimated ? ' (est.)' : '';

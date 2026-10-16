@@ -658,7 +658,11 @@ class _StartButtons extends ConsumerWidget {
                     ? 'Test ${test.round} de torso: 13 pruebas. Completo reemplaza únicamente la sesión de hoy.'
                     : d.date.weekday == DateTime.monday
                         ? 'Día de test ${test.round}: torso, core y habilidades. Completo sustituye tirón.'
-                        : 'Test ${test.round} de torso y core. La Cindy de hoy sigue pendiente.')
+                        // El 13 oct (semana rodada) salía un martes; la
+                        // Cindy sólo sigue pendiente un viernes.
+                        : d.date.weekday == DateTime.friday
+                            ? 'Test ${test.round} de torso y core. La Cindy de hoy sigue pendiente.'
+                            : 'Día de test ${test.round}: torso, core y habilidades. Completo sustituye la sesión de hoy.')
                 : 'Test ${test.round} de piernas: 4 pruebas + 5 benchmarks de movilidad, después del FIFA 11+.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -1317,6 +1321,17 @@ class _RingsCard extends ConsumerWidget {
                 color: style.color,
               ),
           ],
+        ),
+        // §16.30.4: la grasa frente a su meta, como kcal y proteína.
+        Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Text(
+            [fatGoalLine(d.macros.fat), if (fatAlert(d.macros.fat) case final a?) a]
+                .join(' · '),
+            key: const ValueKey('grasa-hoy'),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ),
         if (d.gamesToday.isNotEmpty && d.sessionsToday > 0)
           TextButton.icon(

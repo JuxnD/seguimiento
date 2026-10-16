@@ -107,6 +107,12 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
       showSnack(context, 'El pulso en reposo debe estar entre 25 y 220 lpm');
       return;
     }
+    // §16.30.5: sin las escaleras, el semáforo de rodilla, el test de
+    // piernas y el plan B deciden a ciegas.
+    if (_kneeStairs == null) {
+      showSnack(context, 'Falta la rodilla en escaleras (0 = nada)');
+      return;
+    }
     final now = TimeOfDay.now();
     final ok = await guarded(context, () async {
       if (kg != null && kg > 0) {
@@ -298,12 +304,12 @@ class _MorningCheckScreenState extends ConsumerState<MorningCheckScreen> {
                 ),
                 AppCard(title: 'Rodilla en escaleras al despertar', children: [
                   DropdownButtonFormField<int>(
+                      key: const ValueKey('escaleras'),
                       value: _kneeStairs,
                       decoration: const InputDecoration(
-                          labelText: '0 = nada · sin dato es desconocido'),
+                          labelText: 'Obligatorio · 0 = nada'),
+                      hint: const Text('Elige de 0 a 10'),
                       items: [
-                        const DropdownMenuItem<int>(
-                            value: null, child: Text('Sin dato')),
                         for (var value = 0; value <= 10; value++)
                           DropdownMenuItem(
                               value: value, child: Text('$value / 10'))

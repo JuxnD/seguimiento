@@ -268,7 +268,7 @@ PlanDraft planV31(DateTime start) {
     ..scheme = v31Scheme
     ..notes = 'v3.1: fuerza a RIR 0–3 con doble progresión, piernas el miércoles y una sola sesión '
         'metabólica (viernes). 9 semanas: pruebas el ${formatLong(v31TestDate(start))}. '
-        'Calentamiento general de 8 min.';
+        'Calentamiento general de 6 min.';
 
   PlanExerciseDraft ex(String name, int sets,
           {int? reps,
@@ -334,8 +334,9 @@ PlanDraft planV31(DateTime start) {
           notes: 'Con mochila cuando salgan 4 × 10.'),
       // Ajuste del 6 oct: ya salen 5 a una mano por lado y más de 15 diamante;
       // fuera el arquero y los pies elevados. A una mano se retoma conservador.
-      ex('Flexión a una mano', 3, reps: 3, repsMax: 4, rir: 2, rest: 120, perSide: true,
-          notes: 'Semana 1: 3 × 3–4; luego 3 × 4–5. Con 3 × 5 limpias: 3 × 6 → 3 × 6–8 → pies más juntos → '
+      // §16.30.3: doble progresión normal en 3 × 3–5 desde el Test 1.
+      ex('Flexión a una mano', 3, reps: 3, repsMax: 5, rir: 2, rest: 120, perSide: true,
+          notes: 'Con 3 × 5 limpias: 3 × 6 → 3 × 6–8 → pies más juntos → '
               'pies elevados → con mochila.'),
       ex('Flexiones diamante', 3, reps: 8, repsMax: 12, rir: 1, rirMax: 2, rest: 90,
           notes: 'Con mochila: +2–3 kg al llegar a 3 × 12.'),

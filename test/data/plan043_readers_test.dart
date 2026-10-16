@@ -134,7 +134,8 @@ void main() {
       expect(thursday.body, contains('Benchmarks de movilidad'));
       expect(session(wed).title, isNot(contains('Test')), reason: 'el miércoles ya no es día de test');
       expect(session(wed).body, isNot(contains('Benchmarks')));
-      expect(await db.select(db.reminders).get(), hasLength(14), reason: 'sin tipos nuevos de recordatorio');
+      // Plan 055 agregó la víspera de un test.
+      expect(await db.select(db.reminders).get(), hasLength(15), reason: 'sólo la víspera es nueva');
     });
   });
 

@@ -76,10 +76,12 @@ void main() {
   });
 
   group('benchmarks', () {
-    test('cada 28 días desde el miércoles de la semana 1; siguen al test de piernas movido', () async {
+    // Plan 055 (§16.30.2): con cada test de piernas (semanas 1, 6 y 9), ya no
+    // cada 28 días.
+    test('con cada test de piernas; siguen al test de piernas movido', () async {
       var due = await benchmarks.schedule(
           scheme: scheme, blockStart: start, protocol: protocol, from: start, to: DateTime(2030, 4, 30));
-      expect(due.map((m) => m.date), [wed, DateTime(2030, 4, 3)]);
+      expect(due.map((m) => m.date), [wed, DateTime(2030, 4, 10)]);
       expect(due.every((m) => m.status == BenchmarkStatus.pending), isTrue);
       await readiness.moveTest(start: start, round: 1, part: TestPart.piernas, from: wed, reasons: const ['x'], key: legs);
       due = await benchmarks.schedule(

@@ -6,6 +6,7 @@ import '../../domain/dates.dart';
 import '../../domain/enums.dart';
 import '../../domain/format.dart';
 import '../../domain/plan_shift.dart';
+import '../../domain/plan_v3.dart' show v31Scheme;
 import '../../domain/plan_v32.dart';
 import '../database.dart';
 import '../exercise_details.dart';
@@ -364,7 +365,11 @@ class PlanRepository {
         .get();
     var start = parseDay(v.validFrom);
     for (final x in all) {
-      if (x.scheme != v.scheme) break;
+      // §16.30.1: el v3.2 activado sobre un v3.1 sigue el mismo bloque (las
+      // semanas, la descarga y los tests cuentan desde el inicio del v3.1).
+      final sameBlock = x.scheme == v.scheme ||
+          (v.scheme == v32Scheme && x.scheme == v31Scheme);
+      if (!sameBlock) break;
       start = parseDay(x.validFrom);
     }
     // Effective validity stays today; the v3.2 calendar is Monday based.

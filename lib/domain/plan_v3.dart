@@ -184,6 +184,15 @@ DateTime? v31NextMeasurement(DateTime start, DateTime today) {
       : (mode: ResistanceMode.tabata, cindyTest: false);
 }
 
+/// Viernes del v3.2 (§16.30.2): Cindy de prueba en las semanas 2, 6 y 9
+/// (línea base, descarga y final) y las 10 rondas por tiempo en la 4 y la 8.
+/// Los demás viernes, el circuito de mantenimiento.
+({ResistanceMode mode, bool cindyTest})? v32Friday(int week) => switch (week) {
+      2 || 6 || 9 => (mode: ResistanceMode.cindy, cindyTest: true),
+      4 || 8 => (mode: ResistanceMode.porTiempo, cindyTest: false),
+      _ => null,
+    };
+
 /// Resumen de un día dentro del bloque, para Hoy y el cronómetro.
 class V3Day {
   const V3Day({
@@ -254,7 +263,7 @@ V3Day? v3Day(DateTime start, DateTime date,
   if (scheme == v31Scheme || scheme == v32Scheme) {
     final testDate = v31TestDate(start);
     final friday = scheme == v32Scheme
-        ? null
+        ? (date.weekday == DateTime.friday ? v32Friday(week) : null)
         : date.weekday == DateTime.friday
             ? v31Friday(date: date, testDate: testDate, cleanTen: cleanTen)
             : null;

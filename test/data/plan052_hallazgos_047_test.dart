@@ -98,7 +98,9 @@ void main() {
     expect((await day(DateTime(2030, 3, 5))).notes, contains('fútbol entre semana el 2030-03-04'));
   });
 
-  test('hallazgo 5: el bloque 2 no tiene viernes de 10 rondas (decisión del owner)', () {
-    expect([for (var w = 1; w <= 9; w++) maintenanceRounds(w)], [6, 6, 6, 10, 6, 6, 6, 6, 6]);
+  // §16.30.2 (16 oct) reemplaza la decisión del 14 oct: 10 rondas por tiempo
+  // también el vie 4 dic (semana 8).
+  test('hallazgo 5: 10 rondas en las semanas 4 y 8', () {
+    expect([for (var w = 1; w <= 9; w++) maintenanceRounds(w)], [6, 6, 6, 10, 6, 6, 6, 10, 6]);
   });
 }

@@ -257,8 +257,13 @@ class SessionEntry {
         'cindy' => '${type.label} (Cindy)',
         'tabata' => '${type.label} (Tabata)',
         'porTiempo' => '${type.label} (10 rondas por tiempo)',
+        // §16.29.1: un test no es una sesión de circuito.
+        'test' => 'Test de condición',
         _ => type.label,
       };
+
+  /// §16.29.1: el test no cuenta como «fuera de plan» ni estima rondas.
+  bool get isTest => mode == 'test';
 
   // Condiciones de la regla de progresión; null = no registrado.
   final bool? techniqueOk;

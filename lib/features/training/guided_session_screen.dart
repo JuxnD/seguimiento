@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../app/providers.dart';
+import '../../domain/reminders.dart' show ReminderKind;
 import '../../data/database.dart' show ExerciseRow;
 import '../../data/guided_plan_snapshot.dart';
 import '../../data/exercise_details.dart';
@@ -152,6 +153,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     for (final e in widget.day.exercises)
       if (e.block == warmupBlock) e
   ];
+
+  /// RIR objetivo del ejercicio en el plan de hoy. null si el plan no pide
+  /// RIR (saltos, aceleraciones, cargas, core): ahí no se pregunta
+  /// (§16.29.4).
+  ({int min, int max})? _plannedRir(String exercise) {
+    final e = widget.day.exercises
+        .where((x) => x.name == exercise && x.rirMin != null)
+        .firstOrNull;
+    return e == null ? null : (min: e.rirMin!, max: e.rirMax ?? e.rirMin!);
+  }
 
   /// Anota el RIR de una serie ya hecha (se elige durante el descanso).
   void _setRir(int doneIndex, int? rir) {
@@ -487,6 +498,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
   void initState() {
     super.initState();
     _notifications = ref.read(notificationServiceProvider);
+    unawaited(_loadRestNotice());
     unawaited(_loadGuides());
     unawaited(_restoreLumbar());
     unawaited(_loadSoreness());
@@ -494,6 +506,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     WakelockPlus.enable();
     // Una sesión retomada en mitad de un descanso vuelve a programar su aviso.
     if (widget.resume != null &&
+        _restNoticeOn &&
         _current is RestStep &&
         _restStartedAt != null) {
       final left = (_current as RestStep).seconds -
@@ -505,6 +518,19 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       }
     }
     _persist();
+  }
+
+  /// Plan 055 (bug del manual): el interruptor «Fin del descanso» de Ajustes
+  /// apaga el aviso; antes sólo cambiaba una advertencia de permisos.
+  bool _restNoticeOn = true;
+
+  Future<void> _loadRestNotice() async {
+    try {
+      final s = await ref.read(reminderRepositoryProvider).settings();
+      _restNoticeOn = s[ReminderKind.descanso]?.enabled ?? true;
+    } on Object {
+      _restNoticeOn = true;
+    }
   }
 
   Future<void> _restoreLumbar() async {
@@ -852,6 +878,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
       unawaited(notifications.cancelRestEnd());
     } else if (step is RestStep) {
       _restStartedAt = clock.now();
+      if (!_restNoticeOn) return;
       // Con la app en segundo plano el sonido no llega: la notificación sí.
       unawaited(notifications
           .scheduleRestEnd(
@@ -1189,7 +1216,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
     final text = Theme.of(context).textTheme;
     final target = step.targetReps;
     final next = _nextWorkLabel();
-    return Column(
+    return _fill(Column(
       children: [
         Text(step.counterLabel.toUpperCase(),
             style: text.titleMedium?.copyWith(letterSpacing: 2)),
@@ -1292,8 +1319,20 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           child: _BigButton(label: 'Hecho', icon: Icons.check, onTap: _tapDone),
         ),
       ],
-    );
+    ));
   }
+
+  /// Auditoría 053, P0: con la letra al 2,0× la columna no cabía y «Hecho»
+  /// quedaba fuera de la pantalla. Llena el alto si cabe y, si no, se
+  /// desplaza.
+  Widget _fill(Widget column) => LayoutBuilder(
+        builder: (context, c) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: c.maxHeight),
+            child: IntrinsicHeight(child: column),
+          ),
+        ),
+      );
 
   /// Aguante: "Empezar" da 5 s para colocarse, luego cuenta. Al llegar al
   /// mínimo vibra; al máximo suena y pasa solo al siguiente paso.
@@ -1439,7 +1478,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         ? prev.position
         : null;
     final laps = _roundWork;
-    return Column(
+    return _fill(Column(
       children: [
         if (closedRound != null)
           Padding(
@@ -1455,10 +1494,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         if (prev is WorkStep &&
             !prev.isRound &&
             !prev.isHold &&
-            _done.isNotEmpty)
+            _done.isNotEmpty &&
+            _plannedRir(prev.exercise) != null)
           _RirPicker(
             exercise: prev.exercise,
             value: _done.last.rir,
+            target: _plannedRir(prev.exercise)!,
             onChanged: (v) => _setRir(_done.length - 1, v),
           ),
         if (prev is WorkStep && _done.isNotEmpty)
@@ -1503,7 +1544,7 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
           ),
         ),
       ],
-    );
+    ));
   }
 
   /// Barra de avance de la sesión: cuánto va de lo que pide el plan.
@@ -1742,10 +1783,12 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
         if (lastWork != null &&
             !lastWork.isRound &&
             !lastWork.isHold &&
-            _done.isNotEmpty)
+            _done.isNotEmpty &&
+            _plannedRir(lastWork.exercise) != null)
           _RirPicker(
             exercise: lastWork.exercise,
             value: _done.last.rir,
+            target: _plannedRir(lastWork.exercise)!,
             onChanged: (v) => _setRir(_done.length - 1, v),
           ),
         if (lastWork != null && _done.isNotEmpty)
@@ -1963,10 +2006,16 @@ class _GuidedSessionScreenState extends ConsumerState<GuidedSessionScreen> {
 /// Tocar el mismo valor lo borra.
 class _RirPicker extends StatelessWidget {
   const _RirPicker(
-      {required this.exercise, required this.value, required this.onChanged});
+      {required this.exercise,
+      required this.value,
+      required this.target,
+      required this.onChanged});
 
   final String exercise;
   final int? value;
+
+  /// Plan 055 (§16.29.5): RIR del plan de hoy; por debajo, avisa.
+  final ({int min, int max}) target;
   final ValueChanged<int?> onChanged;
 
   @override
@@ -1991,6 +2040,17 @@ class _RirPicker extends StatelessWidget {
                 ),
             ],
           ),
+          if (value != null && value! < target.min)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                'Por debajo del objetivo: hoy deja ${target.min == target.max ? '${target.min}' : '${target.min}–${target.max}'} en reserva.',
+                key: const ValueKey('rir-bajo-objetivo'),
+                textAlign: TextAlign.center,
+                style: text.bodySmall
+                    ?.copyWith(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
         ],
       ),
     );

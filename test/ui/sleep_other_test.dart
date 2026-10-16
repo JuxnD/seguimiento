@@ -44,6 +44,7 @@ void main() {
     await settle(tester);
     expect(find.text('Otro: 10 h 11 min'), findsOneWidget);
 
+    await pickStairs(tester);
     await tester.tap(find.text('Guardar'));
     await settle(tester);
     final row = (await tester.runAsync(() => db.select(db.sleepLogs).getSingle()))!;
@@ -53,4 +54,14 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.runAsync(db.close);
   });
+}
+
+/// Plan 055: la rodilla en escaleras es obligatoria para guardar.
+Future<void> pickStairs(WidgetTester tester) async {
+  final field = find.byKey(const ValueKey('escaleras'));
+  await tester.ensureVisible(field);
+  await tester.tap(field);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('0 / 10').last);
+  await tester.pumpAndSettle();
 }

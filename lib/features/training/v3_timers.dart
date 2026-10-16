@@ -930,3 +930,39 @@ class _NumberDialogState extends State<_NumberDialog> {
         ],
       );
 }
+
+
+/// Auditoría 053, P0: Cindy, Tabata y EMOM se cerraban con «atrás» y se
+/// perdía lo hecho. Ahora pregunta antes de salir.
+class TimerExitGuard extends StatelessWidget {
+  const TimerExitGuard({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
+          final navigator = Navigator.of(context);
+          final leave = await showDialog<bool>(
+            context: context,
+            builder: (c) => AlertDialog(
+              title: const Text('¿Salir del cronómetro?'),
+              content: const Text(
+                  'Si sales ahora, lo de esta sesión no se guarda. Para guardarlo, termina o usa «Terminar».'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(c, true),
+                    child: const Text('Salir sin guardar')),
+                FilledButton(
+                    onPressed: () => Navigator.pop(c, false),
+                    child: const Text('Seguir')),
+              ],
+            ),
+          );
+          if (leave == true) navigator.pop();
+        },
+        child: child,
+      );
+}

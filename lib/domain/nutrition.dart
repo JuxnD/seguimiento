@@ -79,3 +79,21 @@ List<MealSlot> missingMainMeals(Set<MealSlot> slots) => [
       for (final s in mainMealSlots)
         if (!slots.contains(s)) s
     ];
+
+
+/// Meta de grasa (§16.30.4, decidida por el usuario el 16 oct): 60–75 g al
+/// día en todos los tipos de día. Por encima de [fatAlertG], se avisa.
+const fatGoalMinG = 60, fatGoalMaxG = 75, fatAlertG = 90;
+
+/// «Grasa 82 g · meta 60–75 g».
+String fatGoalLine(double fat) =>
+    'Grasa ${fat.round()} g · meta $fatGoalMinG–$fatGoalMaxG g';
+
+/// Aviso con la comida que más grasa aportó, o null si no pasa de 90 g.
+String? fatAlert(double fat, {String? topMeal, double? topFat}) {
+  if (fat <= fatAlertG) return null;
+  final top = topMeal == null || topFat == null
+      ? ''
+      : ' Lo que más aportó: $topMeal (${topFat.round()} g).';
+  return 'Grasa por encima de $fatAlertG g.$top';
+}

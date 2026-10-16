@@ -58,9 +58,19 @@ void main() {
   test('los tipos nuevos van al final: los ids de los avisos de antes no cambian', () {
     expect(ReminderKind.values.indexOf(ReminderKind.pasos), 10);
     expect(ReminderKind.values.indexOf(ReminderKind.personalizado), 11);
-    expect(ReminderKind.values.sublist(12),
-        [ReminderKind.recuperacionManana, ReminderKind.rutinaManana, ReminderKind.rutinaNoche]);
-    for (final k in [ReminderKind.recuperacionManana, ReminderKind.rutinaManana, ReminderKind.rutinaNoche]) {
+    // Plan 055: la víspera de un test, también al final.
+    expect(ReminderKind.values.sublist(12), [
+      ReminderKind.recuperacionManana,
+      ReminderKind.rutinaManana,
+      ReminderKind.rutinaNoche,
+      ReminderKind.visperaTest
+    ]);
+    for (final k in [
+      ReminderKind.recuperacionManana,
+      ReminderKind.rutinaManana,
+      ReminderKind.rutinaNoche,
+      ReminderKind.visperaTest
+    ]) {
       expect(defaultReminders[k]?.$1, isTrue, reason: '$k activo por defecto');
       expect(k.label, isNotEmpty);
       expect(k.description, isNotEmpty);

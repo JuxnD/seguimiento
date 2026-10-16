@@ -456,7 +456,9 @@ Future<void> _runTimer(
   final store = ref.read(activeSessionStoreProvider);
   void save(TimerSnapshot s) => unawaited(store.save(s));
   final draft = await nav.push<SessionDraft>(MaterialPageRoute(
-    builder: (_) => mode == 'cindy'
+    // Auditoría 053, P0: «atrás» cerraba el cronómetro sin preguntar.
+    builder: (_) => TimerExitGuard(
+        child: mode == 'cindy'
         ? AmrapScreen(
             date: date, resume: resume, onSnapshot: save, attempt: cindyTest)
         : mode == 'running1515'
@@ -469,7 +471,7 @@ Future<void> _runTimer(
                 date: date,
                 exercises: exercises,
                 resume: resume,
-                onSnapshot: save),
+                onSnapshot: save)),
   ));
   await _clearActive(container);
   if (draft == null) return;
@@ -520,7 +522,9 @@ Future<void> startBurpeesEmom(BuildContext context, WidgetRef ref, DateTime day,
   final repo = ref.read(trainingRepositoryProvider);
   final result = await Navigator.push<EmomResult>(
     context,
-    MaterialPageRoute(builder: (_) => EmomScreen(minutes: minutes, reps: reps)),
+    MaterialPageRoute(
+        builder: (_) =>
+            TimerExitGuard(child: EmomScreen(minutes: minutes, reps: reps))),
   );
   if (result == null) return;
   final note =

@@ -161,8 +161,25 @@ class _MealsScreenState extends ConsumerState<MealsScreen> {
                                     builder: (_) => const SettingsScreen())),
                             child: const Text('Definir metas')),
                       ],
-                      Text('Carbos ${fmtInt(total.carbs)} g · Grasa ${fmtInt(total.fat)} g',
+                      Text('Carbos ${fmtInt(total.carbs)} g · ${fatGoalLine(total.fat)}',
+                          key: const ValueKey('grasa-meta'),
                           style: Theme.of(context).textTheme.bodySmall),
+                      if (list.isNotEmpty)
+                        if (fatAlert(total.fat,
+                                topMeal: (list.toList()
+                                      ..sort((a, b) =>
+                                          b.macros.fat.compareTo(a.macros.fat)))
+                                    .first
+                                    .meal
+                                    .slot
+                                    .label,
+                                topFat: list
+                                    .map((m) => m.macros.fat)
+                                    .reduce((a, b) => a > b ? a : b))
+                            case final alert?)
+                          Text(alert,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.error)),
                       if (!_day.isAfter(today) && list.isNotEmpty)
                         _DayStatus(
                           day: _day,

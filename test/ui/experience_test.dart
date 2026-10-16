@@ -407,6 +407,11 @@ void main() {
             expect(morning.hitTestable(), findsOneWidget);
             await tester.scrollUntilVisible(find.text('Ver rutina'), -120,
                 scrollable: find.byType(Scrollable).first);
+            // Plan 055: la línea de grasa corre el contenido; centrarlo para
+            // que no quede bajo la barra.
+            await Scrollable.ensureVisible(tester.element(find.text('Ver rutina')),
+                alignment: 0.5);
+            await tester.pump();
             await tester.tap(find.text('Ver rutina'));
             await settle(tester);
             await tester.scrollUntilVisible(find.text('• Ejercicio 12'), 180,

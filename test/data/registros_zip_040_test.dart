@@ -54,7 +54,8 @@ void main() {
 
     Future<void> exactDefaults() async {
       final rows = await host.db.select(host.db.reminders).get();
-      expect(rows.length, 14);
+      // Plan 055: + la víspera de un test.
+      expect(rows.length, 15);
       final actual = {
         for (final r in rows.where((r) => [
               ReminderKind.recuperacionManana,
@@ -112,7 +113,7 @@ void main() {
       final encoded = jsonEncode(before);
       // Las cantidades y valores que el paquete tiene que devolver.
       expect({for (final e in before.entries) e.key: e.value.length},
-          {'sleep_logs': 3, 'custom_reminders': 2, 'football_games': 3, 'reminders': 14, 'morning_checks': 1});
+          {'sleep_logs': 3, 'custom_reminders': 2, 'football_games': 3, 'reminders': 15, 'morning_checks': 1});
       expect([for (final r in before['custom_reminders']!) r['origin']], ['usuario', null],
           reason: 'lo de antes, aunque se edite, no gana un origen inventado');
       expect([for (final r in before['football_games']!) (r['weights_comparable'], r['fluid_ml'])],

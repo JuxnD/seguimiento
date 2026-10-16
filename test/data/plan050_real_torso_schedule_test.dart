@@ -9,6 +9,7 @@ import 'package:seguimiento/data/repositories/report_repository.dart';
 import 'package:seguimiento/data/repositories/fitness_test_repository.dart';
 import 'package:seguimiento/data/repositories/dashboard_repository.dart';
 import 'package:seguimiento/data/repositories/exercise_repository.dart';
+import 'package:seguimiento/data/repositories/goal_repository.dart';
 import 'package:seguimiento/data/repositories/nutrition_repository.dart';
 import 'package:seguimiento/data/repositories/plan_repository.dart';
 import 'package:seguimiento/data/repositories/profile_repository.dart';
@@ -300,11 +301,12 @@ void main() {
     expect(await repo.currentTestDate(start, 1, TestPart.piernas), thu,
         reason: 'el descanso sigue al esfuerzo real');
   });
-  test('Test3 piernas miércoles precede torso viernes: conserva orden nominal',
+  // §16.30.2: el Test 3 de torso pasa al lunes y piernas queda 2 días después.
+  test('Test3: torso el lunes y piernas el miércoles, a 2 días',
       () async {
     final legDay = repo.plannedTestDate(start, 3, TestPart.piernas)!;
     final torsoDay = repo.plannedTestDate(start, 3, TestPart.torso)!;
-    expect(torsoDay.isAfter(legDay), isTrue);
+    expect(legDay.difference(torsoDay).inDays, 2);
     await save(round: 3, date: torsoDay);
     final agenda = await repo.testAgenda(
         scheme: 'v3.2', blockStart: start, protocol: protocol, gates: false);
@@ -338,6 +340,9 @@ void main() {
         await save(p: TestProtocolId.v31_12);
       }
       await activatePlanV32(db, plan, wed);
+      // La meta de pasos del v3.2 (§16.30.4) entra al perfil al abrir Hoy;
+      // eso no es del calendario de tests.
+      await GoalRepository(db).projectDueGoals(thu);
       final before =
           (await db.customSelect('SELECT total_changes() AS n').getSingle())
               .read<int>('n');

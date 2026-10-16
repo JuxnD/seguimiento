@@ -1,5 +1,7 @@
 import '../domain/enums.dart';
+import '../domain/goal_history.dart' show GoalMetric, GoalOrigin;
 import 'database.dart';
+import 'repositories/goal_repository.dart';
 import 'exercise_details.dart';
 import 'repositories/exercise_repository.dart';
 import '../domain/plan_v32.dart';
@@ -23,15 +25,29 @@ Future<int> activatePlanV32(
         // The shared fixed guide is consulted by name; existing editable cues stay intact.
         if (exerciseDetail(name) == null) throw StateError('Falta guía: $name');
       }
-      return repository.saveAsNewVersion(planV32(start));
+      final id = await repository.saveAsNewVersion(planV32(start));
+      // §16.30.4: el plan pide 7.000 pasos entre semana (§19.3); rige desde
+      // el día en que empieza el v3.2 y el aviso de las 18:00 la usa.
+      // Con vigencia desde `start` (puede ser el próximo lunes): el perfil
+      // la toma cuando entra en vigor.
+      await GoalRepository(db).scheduleGoal(
+          GoalMetric.pasos, v32StepsWeekday.toDouble(),
+          effectiveFrom: start,
+          origin: GoalOrigin.plan,
+          reason: 'Activación del v3.2: 7.000 pasos entre semana');
+      return id;
     });
+
+/// Pasos entre semana del plan (§19.3, §16.30.4).
+const v32StepsWeekday = 7000;
 
 /// The complete week from §19.13, retaining the shared immutable plan model.
 PlanDraft planV32(DateTime start) {
   final draft = planV31(start)
     ..scheme = v32Scheme
-    ..notes = 'v3.2: mantenimiento de 6 rondas; 10 en semana 4 de cada bloque. '
-        'Planche martes/viernes con paralelas. Tests de 13 pruebas; movilidad cada 28 días.';
+    ..notes = 'v3.2: mantenimiento de 6 rondas; 10 por tiempo en las semanas 4 y 8; '
+        'Cindy en las semanas 2, 6 y 9. Planche martes/viernes con paralelas. '
+        'Tests de 13 pruebas; movilidad con cada test de piernas.';
   PlanExerciseDraft ex(String name, int sets,
           {int? min,
           int? max,

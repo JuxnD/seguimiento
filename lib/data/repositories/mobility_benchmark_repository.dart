@@ -88,22 +88,26 @@ class MobilityBenchmarkRepository {
     final agenda = await ReadinessRepository(db).testAgenda(
         scheme: scheme, blockStart: s, protocol: protocol, gates: false);
     final out = <BenchmarkOccurrence>[];
-    // Un movimiento sólo lleva la toma hacia adelante: basta mirar las
-    // previstas hasta `to`.
-    for (var planned = addDays(s, 2);
-        !planned.isAfter(dateOnly(to));
-        planned = addDays(planned, 28)) {
-      if (!mobilityBenchmarkDue(s, planned)) continue;
-      final leg = agenda
-          .where((t) => t.part == TestPart.piernas && t.planned == planned)
-          .firstOrNull;
+    // §16.30.2: los benchmarks van junto con cada test de piernas (21 oct,
+    // 18 nov, 9 dic), no cada 28 días. Un movimiento sólo lleva la toma hacia
+    // adelante: basta mirar las previstas hasta `to`.
+    final legs = [
+      for (final t in agenda)
+        if (t.part == TestPart.piernas) t
+    ]..sort((a, b) => a.planned.compareTo(b.planned));
+    for (var i = 0; i < legs.length; i++) {
+      final leg = legs[i];
+      final planned = leg.planned;
+      if (planned.isAfter(dateOnly(to))) break;
       // Plan 052 (§16.27): si la rodilla corrió el test de piernas, los
       // benchmarks se quedan el día que se iba a testear (isométricos +
       // benchmarks).
-      final date = leg?.kneePushedFrom ?? leg?.date ?? planned;
+      final date = leg.kneePushedFrom ?? leg.date;
       if (date.isBefore(dateOnly(from)) || date.isAfter(dateOnly(to))) continue;
       final windowStart = date.isBefore(planned) ? date : planned;
-      final windowEnd = addDays(planned, 27);
+      final windowEnd = i + 1 < legs.length
+          ? addDays(legs[i + 1].planned, -1)
+          : addDays(planned, 27);
       final rows = await (db.select(db.mobilityBenchmarks)
             ..where((t) =>
                 t.date.isBetweenValues(dayKey(windowStart),
@@ -128,7 +132,7 @@ class MobilityBenchmarkRepository {
       out.add(BenchmarkOccurrence(
         planned: planned,
         date: date,
-        withMovedLegTest: leg != null && leg.moved,
+        withMovedLegTest: leg.moved,
         status: missing.isEmpty
             ? BenchmarkStatus.complete
             // knee_to_wall cuenta dos veces (un lado cada vez).

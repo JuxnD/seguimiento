@@ -313,11 +313,18 @@ class ReadinessRepository {
   Future<List<TestMove>> moves(DateTime start, int round, TestPart part,
       {TestScheduleKey? key}) async {
     final prefix = _movePrefix(start, round, part, key);
-    final rows = await (db.select(db.coachProposals)
-          ..where((t) =>
-              t.kind.equals(testMoveProposalKind) & t.id.like('$prefix%'))
-          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-        .get();
+    Future<List<CoachProposalRow>> rowsFor(String prefix) =>
+        (db.select(db.coachProposals)
+              ..where((t) =>
+                  t.kind.equals(testMoveProposalKind) & t.id.like('$prefix%'))
+              ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+            .get();
+    var rows = await rowsFor(prefix);
+    // §16.30.1: el v3.2 sigue el bloque del v3.1; un test que se movió con
+    // el v3.1 (por ejemplo, el Test 1 de piernas al mié 21) conserva su día.
+    if (rows.isEmpty && key != null && key.protocolId == TestProtocolId.v32_13) {
+      rows = await rowsFor(_movePrefix(key.blockStart, key.round, key.part));
+    }
     return [for (final r in rows) _move(r)];
   }
 
@@ -793,9 +800,31 @@ class ReadinessRepository {
           gates: false))
         if (t.date.isBefore(d) &&
             !t.date.isBefore(addDays(d, -21)) &&
-            await _completedTestDate(t.key) == null)
+            await _completedTestDate(t.key) == null &&
+            !await _attempted(t.key))
           t
     ];
+  }
+
+  /// Hay un intento guardado de ese test (aunque le falte alguna prueba,
+  /// como el pino sin colchoneta). Lo que falta lo sigue la tarjeta «Test
+  /// pendiente»; no se anuncia como test sin hacer. Con el v3.2 cuenta
+  /// también el intento del v3.1 del mismo bloque.
+  Future<bool> _attempted(TestScheduleKey key) async {
+    Future<bool> header(String scheme, TestProtocolId protocol) async =>
+        await (db.select(db.fitnessTestAttempts)
+              ..where((t) =>
+                  t.scheme.equals(scheme) &
+                  t.blockStart.equals(dayKey(key.blockStart)) &
+                  t.protocolId.equals(protocol.name) &
+                  t.round.equals(key.round) &
+                  t.part.equals(key.part.name))
+              ..limit(1))
+            .getSingleOrNull() !=
+        null;
+    if (await header(key.scheme, key.protocolId)) return true;
+    return key.protocolId == TestProtocolId.v32_13 &&
+        await header('v3.1', TestProtocolId.v31_12);
   }
 
   String _skipId(TestScheduleKey key, DateTime date) =>

@@ -35,6 +35,9 @@ enum ReminderKind {
 
   /// Rutina de la noche "Suelta" (§19.15).
   rutinaNoche,
+
+  /// Plan 055 (§16.28.3): la víspera de un test.
+  visperaTest,
 }
 
 extension ReminderKindLabel on ReminderKind {
@@ -54,6 +57,7 @@ extension ReminderKindLabel on ReminderKind {
         ReminderKind.recuperacionManana => 'Recuperación de mañana',
         ReminderKind.rutinaManana => 'Rutina de la mañana',
         ReminderKind.rutinaNoche => 'Rutina de la noche',
+        ReminderKind.visperaTest => 'Víspera de un test',
       };
 
   String get description => switch (this) {
@@ -74,6 +78,8 @@ extension ReminderKindLabel on ReminderKind {
           'Si la carga de ayer y hoy ya es alta, avisa que mañana probablemente toca recuperación activa',
         ReminderKind.rutinaManana => 'Activa, 10 min después de despertar. No suena si ya la hiciste',
         ReminderKind.rutinaNoche => 'Suelta, antes de dormir. No suena si ya la hiciste',
+        ReminderKind.visperaTest =>
+          'La noche antes de un test: cena y sueño para llegar bien',
       };
 
   /// Los que no se programan por hora del día.
@@ -229,6 +235,7 @@ List<PlannedNotification> planReminders(ReminderContext ctx) {
     out.addAll(_dailyRoutines(ctx, day));
   }
   out.addAll(_recoveryEve(ctx));
+  out.addAll(_testEve(ctx));
   out.addAll(_protein(ctx));
   out.addAll(_calories(ctx));
   out.addAll(_missingMeals(ctx));
@@ -328,6 +335,24 @@ Iterable<PlannedNotification> _calories(ReminderContext ctx) sync* {
     title: 'Calorías: ${ctx.kcalToday.round()} kcal',
     body: 'Faltan $missing kcal para la meta de ${ctx.kcalTarget}. El déficit es lo que frena la recomposición.',
   );
+}
+
+/// Plan 055 (§16.28.3): «Mañana es test de X» la noche anterior.
+Iterable<PlannedNotification> _testEve(ReminderContext ctx) sync* {
+  final s = ctx.setting(ReminderKind.visperaTest);
+  if (s == null || !s.enabled) return;
+  final byDay = {for (final d in ctx.days) dateOnly(d.date): d};
+  for (final day in ctx.days) {
+    final test = byDay[addDays(dateOnly(day.date), 1)]?.test;
+    if (test == null) continue;
+    yield PlannedNotification(
+      kind: ReminderKind.visperaTest,
+      when: _at(day.date, s),
+      title: 'Mañana: ${test.title}',
+      body: 'Mañana es ${test.title.replaceFirst('Test', 'test')}: cena con '
+          'carbohidrato y poca grasa 3 h antes y duerme 8 h.',
+    );
+  }
 }
 
 Iterable<PlannedNotification> _recoveryEve(ReminderContext ctx) sync* {

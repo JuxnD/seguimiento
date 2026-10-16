@@ -1,5 +1,4 @@
 import 'dates.dart';
-import 'plan_v3.dart' show v31TestDate;
 
 // Test de condición del v3.1 (§19.11): una serie máxima por prueba con
 // técnica estricta, cortada en la primera repetición fea. Test 1 en la
@@ -92,12 +91,12 @@ String? testResultError(TestItem item, double? value) {
 ({int round, TestPart part})? scheduledTest(DateTime start, DateTime date) {
   final s = dateOnly(start);
   final d = dateOnly(date);
-  final testDay = v31TestDate(s);
   for (final (round, week) in const [(1, 1), (2, 6), (3, 9)]) {
     final monday = addDays(s, (week - 1) * 7);
     final wednesday = addDays(monday, 2);
-    // El Test 3 de torso va con las pruebas del viernes (11 dic).
-    final torsoDay = round == 3 ? testDay : monday;
+    // §16.30.2: el Test 3 de torso también va el lunes (7 dic), así piernas
+    // (mié 9) queda a 2 días del torso y el viernes 11 sólo lleva la Cindy.
+    final torsoDay = monday;
     if (d == torsoDay) return (round: round, part: TestPart.torso);
     if (d == wednesday) return (round: round, part: TestPart.piernas);
   }

@@ -47,6 +47,13 @@ const _restoredReminderDefaults = [
     'hour': 21,
     'minute': 30,
     'threshold': null
+  },  // Plan 055: la víspera de un test.
+  {
+    'kind': 'visperaTest',
+    'enabled': 1,
+    'hour': 20,
+    'minute': 0,
+    'threshold': null
   },
 ];
 
@@ -113,7 +120,7 @@ void main() {
                 .customSelect('SELECT COUNT(*) AS n FROM reminders')
                 .getSingle())
             .data['n'],
-        afterRestore ? 14 : 11);
+        afterRestore ? 15 : 11); // plan 055: + víspera de un test
     final expected = manifest['expected'] as Map<String, dynamic>;
     for (final entry in expected.entries) {
       final wanted = (entry.value as List).cast<Map<String, dynamic>>();

@@ -139,8 +139,8 @@ class RecoveryProposalCard extends ConsumerWidget {
         builder: (c) => AlertDialog(
           title: const Text('Este test ya se movió 2 veces'),
           content: const Text(
-              'No se mueve otra vez. Si sigues sin recuperarte, haz la versión ligera: '
-              'solo las 6 pruebas principales.'),
+              'No se mueve otra vez a mañana. Si sigues sin recuperarte, '
+              'elige el día con «Mover el test» en la tarjeta del día.'),
           actions: [
             FilledButton(
                 onPressed: () => Navigator.pop(c),

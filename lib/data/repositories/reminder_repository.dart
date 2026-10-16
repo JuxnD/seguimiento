@@ -22,6 +22,8 @@ const defaultReminders = <ReminderKind, (bool, int?, int, int?)>{
   ReminderKind.recuperacionManana: (true, 22, 0, null),
   ReminderKind.rutinaManana: (true, 7, 15, null),
   ReminderKind.rutinaNoche: (true, 21, 30, null),
+  // Plan 055: la víspera de un test.
+  ReminderKind.visperaTest: (true, 20, 0, null),
 };
 
 class ReminderRepository {

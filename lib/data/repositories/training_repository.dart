@@ -1025,7 +1025,49 @@ class TrainingRepository {
     final composed = await _composeV31Day(day, date, v3, at,
         planche: statuses[EquipmentKeys.parallettes] == EquipmentStatus.tengo,
         rings: statuses[EquipmentKeys.rings] == EquipmentStatus.tengo);
+    await _phaseDose(composed, date, v3);
     return applyEquipmentDetailed(composed, statuses);
+  }
+
+  /// Plan 055 (§16.30.3), lo que antes era sólo texto:
+  /// - semanas 1 y 2 del bloque: RIR mínimo 2–3 (el más alto entre el del
+  ///   ejercicio y el de la fase; la semana 2 es la primera del v3.2);
+  /// - nórdico: 2 series en sus 2 primeras semanas, contadas desde su primer
+  ///   registro real.
+  Future<void> _phaseDose(PlanDayDraft day, DateTime date, V3Day? v3) async {
+    if (v3 == null || !v3.isV31) return;
+    if (v3.week <= 2) {
+      for (final e in day.exercises) {
+        if (e.rirMin == null) continue;
+        if (e.rirMin! < phaseRirMin) e.rirMin = phaseRirMin;
+        if (e.rirMax == null || e.rirMax! < phaseRirMax) e.rirMax = phaseRirMax;
+      }
+    }
+    final nordic =
+        day.exercises.where((e) => e.name == nordicName).firstOrNull;
+    if (nordic != null && (nordic.sets ?? 0) > 2) {
+      final first = await _firstRecordOf(nordicName);
+      if (first == null || daysBetween(first, dateOnly(date)) < 14) {
+        nordic.sets = 2;
+      }
+    }
+  }
+
+  static const nordicName = 'Nórdico (isquios)';
+  static const phaseRirMin = 2, phaseRirMax = 3;
+
+  /// Fecha de la primera serie guardada del ejercicio, o null.
+  Future<DateTime?> _firstRecordOf(String exercise) async {
+    final exId = await exercises.idOf(exercise);
+    if (exId == null) return null;
+    final row = await (db.select(db.sessionSets).join([
+      innerJoin(db.sessions, db.sessions.id.equalsExp(db.sessionSets.sessionId))
+    ])
+          ..where(db.sessionSets.exerciseId.equals(exId))
+          ..orderBy([OrderingTerm(expression: db.sessions.date)])
+          ..limit(1))
+        .getSingleOrNull();
+    return row == null ? null : parseDay(row.readTable(db.sessions).date);
   }
 
   Future<PlanDayDraft> _composeV31Day(

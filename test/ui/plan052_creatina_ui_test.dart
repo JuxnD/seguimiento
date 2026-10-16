@@ -107,6 +107,7 @@ void main() {
     await tester.tap(chip);
     await tester.pump();
     expect(find.widgetWithText(FilterChip, 'Creatina ✓'), findsOneWidget);
+    await pickStairs(tester);
     await tester.tap(find.text('Guardar'));
     await settle(tester);
     expect([for (final l in await logs()) (l.supplementId, l.date)], [(id, '2026-10-08')]);
@@ -117,6 +118,7 @@ void main() {
     await tester.ensureVisible(taken);
     await tester.tap(taken);
     await tester.pump();
+    await pickStairs(tester);
     await tester.tap(find.text('Guardar'));
     await settle(tester);
     expect(await logs(), isEmpty);
@@ -126,4 +128,14 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.runAsync(db.close);
   });
+}
+
+/// Plan 055: la rodilla en escaleras es obligatoria para guardar.
+Future<void> pickStairs(WidgetTester tester) async {
+  final field = find.byKey(const ValueKey('escaleras'));
+  await tester.ensureVisible(field);
+  await tester.tap(field);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('0 / 10').last);
+  await tester.pumpAndSettle();
 }

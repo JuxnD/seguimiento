@@ -68,15 +68,16 @@ void main() {
   group('test de condición', () {
     final start = d(10, 12);
 
-    test('Test 1 el lun 12 y el mié 14; Test 2 en la descarga; Test 3 con las pruebas del 11 dic', () {
+    // §16.30.2: el Test 3 de torso pasa del vie 11 dic al lun 7 dic.
+    test('Test 1 el lun 12 y el mié 14; Test 2 en la descarga; Test 3 lun 7 y mié 9 dic', () {
       expect(scheduledTest(start, d(10, 12)), (round: 1, part: TestPart.torso));
       expect(scheduledTest(start, d(10, 14)), (round: 1, part: TestPart.piernas));
       expect(scheduledTest(start, d(10, 13)), isNull);
       expect(scheduledTest(start, d(11, 16)), (round: 2, part: TestPart.torso));
       expect(scheduledTest(start, d(11, 18)), (round: 2, part: TestPart.piernas));
-      expect(scheduledTest(start, d(12, 11)), (round: 3, part: TestPart.torso));
+      expect(scheduledTest(start, d(12, 7)), (round: 3, part: TestPart.torso));
       expect(scheduledTest(start, d(12, 9)), (round: 3, part: TestPart.piernas));
-      expect(scheduledTest(start, d(12, 7)), isNull, reason: 'el lunes de la semana 9 entrena normal');
+      expect(scheduledTest(start, d(12, 11)), isNull, reason: 'el vie 11 sólo lleva la Cindy final');
     });
 
     test('12 pruebas de torso y 4 de piernas', () {

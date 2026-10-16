@@ -35,6 +35,8 @@ const _restoredReminderRows = [
   ['recuperacionManana', 1, 22, 0, null],
   ['rutinaManana', 1, 7, 15, null],
   ['rutinaNoche', 1, 21, 30, null],
+  // Plan 055: la víspera de un test.
+  ['visperaTest', 1, 20, 0, null],
 ];
 
 void main() {

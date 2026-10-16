@@ -39,6 +39,13 @@ const _restoredReminderDefaults = [
     'hour': 21,
     'minute': 30,
     'threshold': null
+  },  // Plan 055: la víspera de un test.
+  {
+    'kind': 'visperaTest',
+    'enabled': 1,
+    'hour': 20,
+    'minute': 0,
+    'threshold': null
   },
 ];
 

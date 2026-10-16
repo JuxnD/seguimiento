@@ -45,8 +45,9 @@ String? benchmarkError(
   return null;
 }
 
-int maintenanceRounds(int week) =>
-    ((week <= 5 ? week : week - 6) == 4) ? 10 : 6;
+/// Rondas del viernes del v3.2: 10 (por tiempo) en las semanas 4 y 8; 6 en
+/// las demás (§16.30.2).
+int maintenanceRounds(int week) => week == 4 || week == 8 ? 10 : 6;
 
 const v32ExerciseNames = <String, String>{
   'copenhagen': 'Copenhague',
