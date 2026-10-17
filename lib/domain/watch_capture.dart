@@ -230,7 +230,7 @@ WatchReading parseWatchText(String text) {
 
 /// El número justo antes de la unidad («49 kcal», «2.071 pasos»).
 int? _unit(String text, String unit) {
-  final m = RegExp(r'(\d{1,3}(?:[.,]\d{3})+|\d+)\s*(?:' + unit + ')',
+  final m = RegExp('(\\d{1,3}(?:[.,]\\d{3})+|\\d+)\\s*(?:$unit)',
           caseSensitive: false)
       .firstMatch(text);
   return m == null ? null : _int(m.group(1)!);
